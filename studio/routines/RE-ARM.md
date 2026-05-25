@@ -1,59 +1,57 @@
-# Weekly Cron Re-Arm
+# Schedule Management
 
-`CronCreate` jobs auto-expire after 7 days. To keep the studio running, the watcher (or a re-arm cron itself) re-creates the seven jobs each week.
-
-## How to re-arm (manual)
-
-Open Claude Code in `C:\Projects\ai_dino_park` and say:
-
-> `/loop re-arm dino routines`
-
-Or paste the schedule below into a fresh message and ask Claude to call `CronCreate` for each one.
-
-## The schedule (Pacific Time, off-minute jitter)
-
-| Day | Time  | Routine        | Prompt file                        |
-|-----|-------|----------------|------------------------------------|
-| Mon | 07:07 | Lore-smith     | `studio/routines/1-lore-smith.md`  |
-| Mon | 10:13 | Designer       | `studio/routines/2-designer.md`    |
-| Mon | 14:23 | Code-planner   | `studio/routines/3-code-planner.md`|
-| Mon | 18:37 | Coder          | `studio/routines/4-coder.md`       |
-| Tue | 09:11 | QA             | `studio/routines/5-qa.md`          |
-| Tue | 13:47 | Validator      | `studio/routines/6-validator.md`   |
-| Wed | 08:19 | Artist         | `studio/routines/7-artist.md`      |
-
-Cron expressions:
+The 7 routines run as **persistent scheduled tasks** managed by Claude Code's scheduled-tasks system. They live at:
 
 ```
-7 7  * * 1     # Mon 07:07 — Lore-smith
-13 10 * * 1    # Mon 10:13 — Designer
-23 14 * * 1    # Mon 14:23 — Code-planner
-37 18 * * 1    # Mon 18:37 — Coder
-11 9  * * 2    # Tue 09:11 — QA
-47 13 * * 2    # Tue 13:47 — Validator
-19 8  * * 3    # Wed 08:19 — Artist
+C:\Users\jorda\.claude\scheduled-tasks\dino-N-<routine>\SKILL.md
 ```
 
-## Each routine's prompt (paste verbatim into CronCreate `prompt`)
+(Where `N` is 1..7.)
 
-The cron just fires a prompt that tells Claude to read the matching routine prompt file and execute it.
+## Persistence
 
-```
-You are firing routine LORE-SMITH for the AI Dino Park project at C:\Projects\ai_dino_park. Read C:\Projects\ai_dino_park\studio\routines\1-lore-smith.md and execute it exactly. Commit your work when done. Do NOT chain into the next routine — only do your assigned step.
-```
+**Good news:** these tasks are persistent — they survive Claude Code restarts. No 7-day expiry. No weekly re-arm needed.
 
-(Same pattern for the other six, substituting the routine name and prompt file path.)
+**Caveat:** scheduled tasks only fire when Claude Code is open. If Claude is closed at fire time, the task fires on next launch. So leaving Claude Code running on your machine maximizes on-time fires.
 
-## Why off-minute times
+## Current schedule (PT local time)
 
-A million people schedule "every hour at :00" — fleet-wide load spikes. The off-minute jitter (`:07`, `:13`, `:23`, `:37`, `:11`, `:47`, `:19`) spreads requests.
+| Day | Time  | Task ID                | Routine        |
+|-----|-------|------------------------|----------------|
+| Mon | 07:09 | `dino-1-lore-smith`    | Lore-smith     |
+| Mon | 10:20 | `dino-2-designer`      | Designer       |
+| Mon | 14:28 | `dino-3-code-planner`  | Code-planner   |
+| Mon | 18:46 | `dino-4-coder`         | Coder          |
+| Tue | 09:13 | `dino-5-qa`            | QA             |
+| Tue | 13:55 | `dino-6-validator`     | Validator      |
+| Wed | 08:28 | `dino-7-artist`        | Artist         |
 
-## When something goes wrong
+(Times include the small auto-jitter the scheduler applies to spread load.)
 
-- **Routine didn't fire** — Claude session was busy at the cron tick. Cron will retry next interval, OR you fire it manually by pasting the prompt.
-- **Routine produced garbage** — Validator should reject (REWORK / ABANDON). If Validator is the broken one, edit `6-validator.md` and amend CHARTER.
-- **Cron jobs disappeared after 7 days** — re-run `/loop re-arm dino routines`.
+## Managing tasks
 
-## Bootstrap fire (first time only)
+In Claude Code: open the "Scheduled" section in the sidebar to:
+- See next run time
+- Pause/resume a routine
+- "Run now" to fire on demand
+- Edit prompt or schedule
 
-First fire happens manually right after bootstrap, on whatever day is convenient — call CronCreate for all seven jobs, and additionally fire Lore-smith once now as a smoke test.
+Or use the `/schedule` slash command in a Claude conversation.
+
+## Changing cadence
+
+Edit `cronExpression` on the task via `update_scheduled_task` or the sidebar. Standard 5-field cron in local time.
+
+If you want it hotter (e.g., two cycles per week), reschedule routines into Thu/Fri slots in addition to Mon/Tue.
+
+If you want it cooler, push the chain to fortnightly.
+
+## Adding a new routine
+
+1. Write `studio/routines/N-<name>.md` with the routine's prompt template
+2. Call `create_scheduled_task` with a `dino-N-<name>` taskId, your cron, and a wrapper prompt that points at the routine file
+3. Amend CHARTER.md if the routine is a new step in the chain (so existing routines know about it)
+
+## Disabling
+
+Pause a single routine via the sidebar (set `enabled: false`). Re-enable later. Useful when actively hand-iterating.
