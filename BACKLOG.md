@@ -12,10 +12,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Core loop (shipped first)
 
-- [ ] BACKLOG-001 [core] One walkable tile map — 20x15 grass map, player sprite, arrow-key movement, collision on edges
-- [ ] BACKLOG-002 [core] One NPC dino spawned on map — placeholder triceratops sprite, stands still
-- [ ] BACKLOG-003 [core] Talk-to-NPC dialog — press Z near NPC, opens Pokemon-style dialog box
-- [ ] BACKLOG-004 [ai] NPCBrain interface scaffold — `brain.ts` with `respond(observation): Promise<Reply>` signature, dummy implementation returns canned text
+- [x] BACKLOG-001 [core] One walkable tile map — 20x15 grass map, player sprite, arrow-key movement, collision on edges  *(shipped: bootstrap, cycle 0)*
+- [x] BACKLOG-002 [core] One NPC dino spawned on map — placeholder triceratops sprite, stands still  *(shipped: bootstrap, cycle 0)*
+- [x] BACKLOG-003 [core] Talk-to-NPC dialog — press Z near NPC, opens Pokemon-style dialog box  *(shipped: bootstrap, cycle 0)*
+- [x] BACKLOG-004 [ai] NPCBrain interface scaffold — `brain.ts` with `respond(observation): Promise<Reply>` signature, dummy implementation returns canned text  *(shipped: bootstrap, cycle 0)*
 - [ ] BACKLOG-005 [ai] WebLLM-backed brain — implement NPCBrain with WebLLM + Qwen2.5-0.5B, lazy-loaded on first dialog
 - [ ] BACKLOG-006 [ai] Device probe — detect VRAM and pick 0.5B / 1.5B / 3B, write to `config.json`
 - [ ] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast
@@ -74,6 +74,14 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
 - [ ] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook
 
+## Cycle 1 lore additions (2026-05-25)
+
+- [ ] BACKLOG-041 [emergent] Sleeping huddles — at night, NPCs with affinity ≥ 3 gather at a fixed tile and form a stacked sprite pile until morning. Small affinity boost each shared night.
+- [ ] BACKLOG-042 [pokemon] Egg phase — when two high-affinity NPCs share a sleeping huddle on a clear night, an egg sprite may appear nearby. Hatches into a new NPC after 3 in-game days with traits blended from the parents.
+- [ ] BACKLOG-043 [ai] Personality drift — over many in-game weeks, an NPC's personality traits can shift toward those of the NPC they spend most ticks adjacent to. Very slow (cap: one trait swap per in-game month).
+- [ ] BACKLOG-044 [emergent] Lost-item lore — when the player drops an item and an NPC picks it up later, the NPC's brain may invent a story about its origin. Story is stored in NPC memory and may surface in unrelated dialog later.
+- [ ] BACKLOG-045 [social] Catchphrase emergence — first non-trivial line an NPC speaks each in-game morning is logged. If the same line surfaces 3+ days running, it becomes that NPC's catchphrase, shown in the collection book.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
@@ -83,4 +91,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Closed log
 
-(none yet — Validator will move closed items here)
+### Cycle 0 — 2026-05-25 — Bootstrap
+- BACKLOG-001 shipped — walkable map
+- BACKLOG-002 shipped — Rex spawned
+- BACKLOG-003 shipped — dialog box (Z key)
+- BACKLOG-004 shipped — NPCBrain interface + stub

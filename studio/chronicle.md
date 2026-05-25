@@ -20,3 +20,10 @@ Bootstrap shipped:
 - CI workflow (GitHub Actions).
 
 Studio armed and waiting for first scheduled fire of Lore-smith.
+
+## 2026-05-25 — cycle 001 — lore-smith — seeded
+
+Smoke-test fire of Lore-smith by the bootstrap session. Bumped cycle 0 → 1. Closed BACKLOG-001..004 (shipped at bootstrap). Added five fresh items (041–045) leaning into emergence: sleeping huddles, eggs, personality drift, lost-item folklore, catchphrase emergence. Suggested next-up to Designer: BACKLOG-007 (world tick clock) — small foundation, unblocks the most downstream BACKLOG.
+
+State advanced to `phase: designer-pending`. Next scheduled fire: Designer, Mon 10:20 PT next week. Coder is scheduled tonight at 18:46 PT but will see `phase != coder-pending` and politely no-op.
+
