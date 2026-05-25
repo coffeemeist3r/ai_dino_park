@@ -27,3 +27,7 @@ Smoke-test fire of Lore-smith by the bootstrap session. Bumped cycle 0 → 1. Cl
 
 State advanced to `phase: designer-pending`. Next scheduled fire: Designer, Mon 10:20 PT next week. Coder is scheduled tonight at 18:46 PT but will see `phase != coder-pending` and politely no-op.
 
+## 2026-05-25 18:46 — cycle 001 — coder — no-op
+
+Phase is `designer-pending`, not `coder-pending`. No codeplan exists yet. Coder stood down as expected. Waiting for Designer → Code-planner chain to complete before next fire.
+
