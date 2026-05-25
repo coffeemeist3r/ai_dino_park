@@ -1,0 +1,18 @@
+{
+  "cycle": 0,
+  "phase": "bootstrap",
+  "currentItem": null,
+  "lastVerdict": null,
+  "reworkCount": {},
+  "lockedFiles": [],
+  "artPipelineReady": false,
+  "lastFire": {
+    "lore-smith": null,
+    "designer": null,
+    "code-planner": null,
+    "coder": null,
+    "qa": null,
+    "validator": null,
+    "artist": null
+  }
+}

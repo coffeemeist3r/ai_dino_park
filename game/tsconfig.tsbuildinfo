@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/ai/brain.ts","./src/entities/dino.ts","./src/scenes/bootscene.ts","./src/scenes/worldscene.ts","./src/ui/dialogbox.ts","./src/world/clock.ts"],"version":"5.9.3"}

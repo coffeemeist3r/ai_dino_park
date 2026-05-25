@@ -1,0 +1,8 @@
+# Handoff directory. Each cycle drops numbered artifacts here:
+#   cycle-NNN-lore.md
+#   cycle-NNN-design.md
+#   cycle-NNN-codeplan.md
+#   cycle-NNN-qa.md
+#   cycle-NNN-verdict.md
+#
+# Validator may prune old cycles after a charter-defined retention window.

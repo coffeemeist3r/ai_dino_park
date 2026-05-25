@@ -1,0 +1,57 @@
+import Phaser from 'phaser';
+import type { NPCBrain, NPCContext } from '../ai/brain';
+
+const TILE = 32;
+
+export interface DinoConfig {
+  name: string;
+  species: string;
+  personality: string;
+  brain: NPCBrain;
+}
+
+export class Dino {
+  readonly name: string;
+  readonly species: string;
+  readonly personality: string;
+  readonly sprite: Phaser.GameObjects.Rectangle;
+  readonly label: Phaser.GameObjects.Text;
+  private readonly brain: NPCBrain;
+
+  constructor(scene: Phaser.Scene, x: number, y: number, cfg: DinoConfig) {
+    this.name = cfg.name;
+    this.species = cfg.species;
+    this.personality = cfg.personality;
+    this.brain = cfg.brain;
+
+    this.sprite = scene.add.rectangle(x, y, TILE - 6, TILE - 6, 0x8a4a3a);
+    this.sprite.setStrokeStyle(2, 0x2a1010);
+
+    this.label = scene.add.text(x, y - TILE, cfg.name, {
+      fontFamily: 'monospace',
+      fontSize: '10px',
+      color: '#ffffff',
+      backgroundColor: '#000000aa',
+      padding: { x: 2, y: 1 },
+    });
+    this.label.setOrigin(0.5, 1);
+  }
+
+  get x(): number {
+    return this.sprite.x;
+  }
+
+  get y(): number {
+    return this.sprite.y;
+  }
+
+  async greet(): Promise<string> {
+    const ctx: NPCContext = {
+      name: this.name,
+      species: this.species,
+      personality: this.personality,
+    };
+    const reply = await this.brain.respond(ctx, { kind: 'player_greet' });
+    return reply.text;
+  }
+}
