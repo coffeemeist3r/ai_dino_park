@@ -18,3 +18,16 @@ test('canvas responds to arrow key press', async ({ page }) => {
   // Smoke only — full movement assertion arrives with a save-state inspect API.
   expect(true).toBe(true);
 });
+
+test('world clock ticks in real time', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  // Wait 2.5 real seconds = 2-3 in-game minutes
+  await page.waitForTimeout(2_500);
+  const t = await page.evaluate(() => {
+    const fn = (window as Record<string, unknown>).__clockNow;
+    return typeof fn === 'function' ? fn() : null;
+  });
+  expect(t).not.toBeNull();
+  expect((t as { minute: number }).minute).toBeGreaterThanOrEqual(2);
+});

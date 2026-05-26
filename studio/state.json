@@ -1,6 +1,6 @@
 {
   "cycle": 1,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-007: World tick clock",
   "lastVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
     "lore-smith": "2026-05-25T18:30:00-07:00",
     "designer": "2026-05-25T21:37:00-05:00",
     "code-planner": "2026-05-25T21:38:00-05:00",
-    "coder": null,
+    "coder": "2026-05-25T21:44:00-05:00",
     "qa": null,
     "validator": null,
     "artist": null

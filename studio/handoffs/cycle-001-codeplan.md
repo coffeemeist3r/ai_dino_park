@@ -197,3 +197,24 @@ test('world clock ticks in real time', async ({ page }) => {
 - `game/src/scenes/WorldScene.ts` — 3 additions
 - `tests/unit/clock.test.ts` — new
 - `tests/e2e/smoke.spec.ts` — 1 new test
+
+---
+
+## Shipped
+
+**Files actually touched (4):**
+- `game/src/world/clock.ts` — rewrote stub to `WorldClock` class per plan
+- `game/src/scenes/WorldScene.ts` — added `clockHud` field, `setupClock()` method, clock import
+- `tests/unit/clock.test.ts` — created; 6 unit tests
+- `tests/e2e/smoke.spec.ts` — added `world clock ticks in real time` test
+
+**Deviations from plan:**
+- Used `SceneTimer` local interface instead of `import type Phaser` — eliminates Vitest/Node risk entirely (risk #1 in plan).
+- `window.__clockNow` set immediately in `setupClock()` and updated on each `onTick` — plan said `onHour` but per-tick is correct for the e2e test.
+- No `callbackScope` needed; used arrow function `() => this.tick()` in `start()` — cleaner, avoids Phaser-specific context quirk.
+
+**Build status:** `npm --prefix game run build` — ✅ exit 0 (chunk-size warning from Phaser is pre-existing, not new).
+
+**Unit tests:** `npm run test:unit` — ✅ 8/8 passed (2 brain + 6 clock).
+
+**Dev server smoke:** HTTP 200 on `localhost:5173` — ✅.

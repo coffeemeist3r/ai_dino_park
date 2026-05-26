@@ -31,6 +31,10 @@ State advanced to `phase: designer-pending`. Schedule note: routines run in user
 
 Phase is `designer-pending`, not `coder-pending`. No codeplan exists yet. Coder stood down as expected. Phase guard works — first proof of the autonomous system behaving correctly under a misfire scenario.
 
+## 2026-05-25 21:44 CDT — cycle 001 — coder — BACKLOG-007 World tick clock
+
+Implemented `WorldClock` class in `clock.ts` (pure TS, no Phaser runtime import — testable in Node via `SceneTimer` structural interface). Wired into `WorldScene` via `setupClock()`: HUD text at top-left updates every in-game second showing `Day N — HH:MM`, and `window.__clockNow` dev hook exposed for Playwright. 6 new unit tests, 1 new e2e test added. Build clean; 8/8 unit tests green; dev server HTTP 200. State advanced to `phase: qa-pending`. QA fires Tue 09:13 CDT.
+
 ## 2026-05-25 21:38 CDT — cycle 001 — code-planner — BACKLOG-007 World tick clock
 
 Code-planner audited `game/src/` and found the `clock.ts` stub already has the right `GameTime` interface and `advanceMinutes` arithmetic — both reused. Plan: rewrite `clock.ts` as a `WorldClock` class (pure TS, no Phaser, testable in Node) with `tick()`, `onTick()`, `onHour()`, `now()`, and `start(scene)`. Wire into `WorldScene` for HUD display and `window.__clockNow` dev hook. 4 files touched, 6 unit tests, 1 new e2e test. Key risk: `import type Phaser` in Node/Vitest env — mitigation documented. State advanced to `phase: coder-pending`.

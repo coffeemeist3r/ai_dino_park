@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { makeBrain } from '../ai/brain';
 import { Dino } from '../entities/dino';
 import { DialogBox } from '../ui/DialogBox';
+import { getWorldClock, type GameTime } from '../world/clock';
 
 const TILE = 32;
 const COLS = 20;
@@ -14,6 +15,7 @@ export class WorldScene extends Phaser.Scene {
   private dinos: Dino[] = [];
   private dialog!: DialogBox;
   private dialogOpen = false;
+  private clockHud!: Phaser.GameObjects.Text;
 
   constructor() {
     super('World');
@@ -40,6 +42,8 @@ export class WorldScene extends Phaser.Scene {
     this.dialog = new DialogBox(this);
 
     this.interactKey.on('down', () => this.handleInteract());
+
+    this.setupClock();
   }
 
   update(): void {
@@ -82,6 +86,33 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     return best;
+  }
+
+  private setupClock(): void {
+    const clock = getWorldClock();
+
+    const fmt = (t: GameTime): string =>
+      `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`;
+
+    this.clockHud = this.add
+      .text(6, 4, fmt(clock.now()), {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+      })
+      .setDepth(10);
+
+    clock.onTick((t) => {
+      this.clockHud.setText(fmt(t));
+      // any: dev-only Playwright hook — not exposed in production builds
+      (window as any).__clockNow = clock.now.bind(clock);
+    });
+
+    // any: dev-only Playwright hook — not exposed in production builds
+    (window as any).__clockNow = clock.now.bind(clock);
+
+    clock.start(this);
   }
 
   private drawGrassMap(): void {
