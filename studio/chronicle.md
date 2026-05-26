@@ -43,6 +43,21 @@ Code-planner audited `game/src/` and found the `clock.ts` stub already has the r
 
 Designer picked BACKLOG-007 (world tick clock) per Lore-smith's recommendation. The `clock.ts` stub already has the right `GameTime` shape and pure `advanceMinutes()` helper — BACKLOG-007 promotes it to a real Phaser-driven ticker with hour event broadcast and a HUD display. Design doc written with 9 acceptance criteria, all testable. BACKLOG-007 marked `[~]`. State advanced to `phase: codeplan-pending`.
 
+## 2026-05-26 09:20 CDT — cycle 001 — qa — APPROVE
+
+QA fired for BACKLOG-007 (World tick clock). Results:
+
+- **Build:** ✅ exit 0 (pre-existing Phaser chunk-size warning, not new)
+- **Unit tests:** ✅ 8/8 passed (2 brain + 6 clock)
+- **E2E tests:** ✅ 3/3 passed (game boots, keyboard smoke, clock ticks in real time)
+- **All 9 acceptance criteria:** ✅ PASS
+
+Code is clean: `WorldClock` pure TS, no Phaser runtime leak, singleton resets for tests, backward-compat `now()` export intact, Z-key dialog flow untouched.
+
+**Infrastructure note:** Vite binds IPv6 `[::1]` on this host; Playwright config checks `127.0.0.1` — caused a timeout on first run. Worked around via `playwright.qa-override.config.ts`. BUG-001 logged in QA handoff; fix is `host: '0.0.0.0'` in `game/vite.config.ts`. Does not affect gameplay.
+
+**Recommendation: APPROVE.** State advanced to `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
