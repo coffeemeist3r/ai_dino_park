@@ -31,6 +31,10 @@ State advanced to `phase: designer-pending`. Schedule note: routines run in user
 
 Phase is `designer-pending`, not `coder-pending`. No codeplan exists yet. Coder stood down as expected. Phase guard works — first proof of the autonomous system behaving correctly under a misfire scenario.
 
+## 2026-05-25 21:37 CDT — cycle 001 — designer — BACKLOG-007 World tick clock
+
+Designer picked BACKLOG-007 (world tick clock) per Lore-smith's recommendation. The `clock.ts` stub already has the right `GameTime` shape and pure `advanceMinutes()` helper — BACKLOG-007 promotes it to a real Phaser-driven ticker with hour event broadcast and a HUD display. Design doc written with 9 acceptance criteria, all testable. BACKLOG-007 marked `[~]`. State advanced to `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

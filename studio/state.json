@@ -1,14 +1,14 @@
 {
   "cycle": 1,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-007: World tick clock",
   "lastVerdict": null,
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-25T18:30:00-07:00",
-    "designer": null,
+    "designer": "2026-05-25T21:37:00-05:00",
     "code-planner": null,
     "coder": null,
     "qa": null,
