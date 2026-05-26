@@ -18,7 +18,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-004 [ai] NPCBrain interface scaffold — `brain.ts` with `respond(observation): Promise<Reply>` signature, dummy implementation returns canned text  *(shipped: bootstrap, cycle 0)*
 - [ ] BACKLOG-005 [ai] WebLLM-backed brain — implement NPCBrain with WebLLM + Qwen2.5-0.5B, lazy-loaded on first dialog
 - [ ] BACKLOG-006 [ai] Device probe — detect VRAM and pick 0.5B / 1.5B / 3B, write to `config.json`
-- [~] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast
+- [x] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast  *(shipped: cycle 1, 2026-05-26)*
 - [ ] BACKLOG-008 [core] Day/night palette shift — tint overlay based on in-game hour
 - [ ] BACKLOG-009 [core] Save / load via IndexedDB — auto-save every in-game hour, manual export to JSON
 
@@ -96,3 +96,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - BACKLOG-002 shipped — Rex spawned
 - BACKLOG-003 shipped — dialog box (Z key)
 - BACKLOG-004 shipped — NPCBrain interface + stub
+
+### Cycle 1 — 2026-05-26
+- BACKLOG-007 shipped — World tick clock (1 real second = 1 in-game minute; HUD display; hour event; 9/9 AC pass)
