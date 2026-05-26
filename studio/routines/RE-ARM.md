@@ -14,7 +14,7 @@ C:\Users\jorda\.claude\scheduled-tasks\dino-N-<routine>\SKILL.md
 
 **Caveat:** scheduled tasks only fire when Claude Code is open. If Claude is closed at fire time, the task fires on next launch. So leaving Claude Code running on your machine maximizes on-time fires.
 
-## Current schedule (PT local time)
+## Current schedule (user local time — CDT)
 
 | Day | Time  | Task ID                | Routine        |
 |-----|-------|------------------------|----------------|

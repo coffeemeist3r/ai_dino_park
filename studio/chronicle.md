@@ -25,9 +25,13 @@ Studio armed and waiting for first scheduled fire of Lore-smith.
 
 Smoke-test fire of Lore-smith by the bootstrap session. Bumped cycle 0 → 1. Closed BACKLOG-001..004 (shipped at bootstrap). Added five fresh items (041–045) leaning into emergence: sleeping huddles, eggs, personality drift, lost-item folklore, catchphrase emergence. Suggested next-up to Designer: BACKLOG-007 (world tick clock) — small foundation, unblocks the most downstream BACKLOG.
 
-State advanced to `phase: designer-pending`. Next scheduled fire: Designer, Mon 10:20 PT next week. Coder is scheduled tonight at 18:46 PT but will see `phase != coder-pending` and politely no-op.
+State advanced to `phase: designer-pending`. Schedule note: routines run in user local timezone (CDT), not PT as earlier docs suggested.
 
-## 2026-05-25 18:46 — cycle 001 — coder — no-op
+## 2026-05-25 18:46 CDT — cycle 001 — coder — no-op
 
-Phase is `designer-pending`, not `coder-pending`. No codeplan exists yet. Coder stood down as expected. Waiting for Designer → Code-planner chain to complete before next fire.
+Phase is `designer-pending`, not `coder-pending`. No codeplan exists yet. Coder stood down as expected. Phase guard works — first proof of the autonomous system behaving correctly under a misfire scenario.
+
+## 2026-05-25 19:35 CDT — bootstrap catchup armed
+
+Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
 
