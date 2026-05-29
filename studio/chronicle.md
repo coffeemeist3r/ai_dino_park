@@ -216,6 +216,10 @@ Plan: pure `social/friendship.ts` (`heartsFromPoints`, `bumpPoints` immutable+cl
 
 Shipped pure `social/friendship.ts` (points 0..100 → 0..10 hearts, immutable `bumpPoints`, `heartString`, `greetGain` scaled by warmth/sociability). `saveGame.ts` carries `friendship`, deserialize defaults missing→{} (cycle-3 saves still load), SAVE_VERSION stays 1. WorldScene bumps affinity on greet + saves, **C** toggles a depth-11 text panel of all 5 dinos + heart bars, restores on load, exposes `__hearts`/`__greet`/`__heartsPanelVisible`. Reused ROSTER + Dino.traits + the existing save path + the greet flow. Touched the 5 planned files. One test-only fix (greet 5× to cross a heart — one greet is ~3 of 10 points; grind is by design). Build clean; **37/37 unit** (7 new, saveGame still 6/6); **18/18 e2e** (2 new: greet→persist, C-toggle). State → `phase: qa-pending`.
 
+## 2026-05-29 22:58 CDT — cycle 006 — qa — 9/9 criteria pass — APPROVE
+
+QA fired for BACKLOG-016. Build ✅, unit ✅ 37/37, e2e ✅ 18/18. All 9 criteria PASS: hearts math clamps, `bumpPoints` immutable, `heartString` correct, `greetGain` rewards warm+social within bounds, save round-trips affinity and a v1 save with no field defaults to {} (back-compat — saveGame.test.ts still 6/6), greeting raises hearts and survives reload, **C** toggles the panel, and the cycle-2..5 suites are regression-clean. Additive save change (version unchanged), greet hooks the existing flow, panel at depth 11. No bugs, no deps. Design note: ~3 points/greet so hearts tick every ~3 greets — intended grind. **Recommendation: APPROVE.** State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
