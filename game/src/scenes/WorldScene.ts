@@ -4,6 +4,8 @@ import { Dino } from '../entities/dino';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
 import { tintFor } from '../world/dayNight';
+import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
+import { loadFromDb, saveToDb } from '../world/saveStore';
 
 const TILE = 32;
 const COLS = 20;
@@ -47,6 +49,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.setupClock();
     this.setupDayNight();
+    this.setupSave();
   }
 
   update(): void {
@@ -91,14 +94,15 @@ export class WorldScene extends Phaser.Scene {
     return best;
   }
 
+  private fmtClock(t: GameTime): string {
+    return `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`;
+  }
+
   private setupClock(): void {
     const clock = getWorldClock();
 
-    const fmt = (t: GameTime): string =>
-      `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`;
-
     this.clockHud = this.add
-      .text(6, 4, fmt(clock.now()), {
+      .text(6, 4, this.fmtClock(clock.now()), {
         fontFamily: 'monospace',
         fontSize: '12px',
         color: '#ffffff',
@@ -107,7 +111,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(10);
 
     clock.onTick((t) => {
-      this.clockHud.setText(fmt(t));
+      this.clockHud.setText(this.fmtClock(t));
       // any: dev-only Playwright hook — not exposed in production builds
       (window as any).__clockNow = clock.now.bind(clock);
     });
@@ -127,10 +131,7 @@ export class WorldScene extends Phaser.Scene {
       .rectangle((TILE * COLS) / 2, (TILE * ROWS) / 2, TILE * COLS, TILE * ROWS, initial.color, initial.alpha)
       .setDepth(5);
 
-    clock.onTick((t) => {
-      const tint = tintFor(t);
-      this.nightOverlay.setFillStyle(tint.color, tint.alpha);
-    });
+    clock.onTick((t) => this.applyTint(t));
 
     // any: dev-only Playwright hooks — mirror the __clockNow pattern, not in production builds
     (window as any).__readTint = () => ({
@@ -139,10 +140,76 @@ export class WorldScene extends Phaser.Scene {
     });
     // any: dev-only Playwright hook — drive the live overlay to a given hour
     (window as any).__forceHour = (h: number) => {
-      const tint = tintFor({ day: 1, hour: h, minute: 0 });
-      this.nightOverlay.setFillStyle(tint.color, tint.alpha);
+      this.applyTint({ day: 1, hour: h, minute: 0 });
       return { color: this.nightOverlay.fillColor, alpha: this.nightOverlay.fillAlpha };
     };
+  }
+
+  /** Paint the day/night overlay for a given time. Shared by the tick listener and save-restore. */
+  private applyTint(t: GameTime): void {
+    const tint = tintFor(t);
+    this.nightOverlay.setFillStyle(tint.color, tint.alpha);
+  }
+
+  private currentSaveData(): SaveData {
+    return {
+      version: SAVE_VERSION,
+      time: getWorldClock().now(),
+      player: { x: this.player.x, y: this.player.y },
+    };
+  }
+
+  private async saveGame(): Promise<void> {
+    try {
+      await saveToDb(this.currentSaveData());
+    } catch (err) {
+      // No silent failures (CHARTER §Quality bar) — surface to the console for the chronicle.
+      console.error('[save] auto-save failed', err);
+    }
+  }
+
+  private setupSave(): void {
+    const clock = getWorldClock();
+
+    // Restore on boot. create() has already built the HUD/overlay at the default
+    // 08:00 and started the clock; loadFromDb resolves a beat later and overrides.
+    void loadFromDb().then((save) => {
+      if (!save) return;
+      clock.set(save.time);
+      this.player.setPosition(save.player.x, save.player.y);
+      this.clockHud.setText(this.fmtClock(clock.now()));
+      this.applyTint(clock.now());
+    });
+
+    clock.onHour(() => void this.saveGame());
+
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.E).on('down', () => this.exportSave());
+
+    // any: dev-only Playwright hooks — mirror the __clockNow pattern, not in production builds
+    (window as any).__saveNow = async () => {
+      const data = this.currentSaveData();
+      await saveToDb(data);
+      return data;
+    };
+    // any: dev-only Playwright hook — serialized current state
+    (window as any).__exportSave = () => serialize(this.currentSaveData());
+    // any: dev-only Playwright hook — advance the clock n in-game minutes (fires tick/hour listeners)
+    (window as any).__advanceMinutes = (n: number) => {
+      for (let i = 0; i < n; i++) clock.tick();
+      return clock.now();
+    };
+    // any: dev-only Playwright hook — current player position
+    (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
+  }
+
+  private exportSave(): void {
+    const blob = new Blob([serialize(this.currentSaveData())], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'dino-save.json';
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   private drawGrassMap(): void {

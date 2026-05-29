@@ -120,6 +120,10 @@ Picked BACKLOG-009. Spec'd: restore in-game time + player position from IndexedD
 
 Plan: pure `saveGame.ts` (`serialize`/`deserialize`, `SaveData`, `SAVE_VERSION=1`, validates + returns null on bad input — Node-testable) split from thin async `saveStore.ts` (raw IndexedDB, one store, key `'current'`, e2e-only). `clock.ts` gains a one-line `set(t)` for restore. WorldScene `setupSave()`: load-on-boot → `clock.set` + move player + refresh HUD/tint, autosave on `onHour`, **E** exports a JSON Blob, plus `__saveNow`/`__exportSave`/`__advanceMinutes`/`__playerPos` hooks. Reuse mandated: clock singleton, `tintFor`+`nightOverlay` (factor an `applyTint(t)` helper shared by tick + restore). No new deps. 6 files, at ceiling. Risks noted: async-load vs sync-create ordering, no IDB in Node (hence the split), Playwright DB-clear hygiene. State → `phase: coder-pending`.
 
+## 2026-05-29 20:15 CDT — cycle 003 — coder — BACKLOG-009 Save/load
+
+Implemented pure `saveGame.ts` (`serialize`/`deserialize`, version-gated, null-on-bad, never throws) + thin `saveStore.ts` (raw IndexedDB, DB `dino-park`/store `state`/key `current`). `clock.ts` got the one-line `set(t)`. WorldScene `setupSave()` restores time + player on boot and refreshes HUD/tint, auto-saves on `onHour`, exports JSON on **E**; extracted `fmtClock()`/`applyTint()` so tick and restore share one path (no dup). Auto-save errors hit `console.error` (no silent failures). Touched the 6 planned files. Build clean; **20/20 unit** (6 new saveGame); **10/10 e2e** (5 new save: fresh-boot defaults, autosave→reload→restore hour, player position across reload, export JSON shape, restore-into-night re-tints overlay). State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

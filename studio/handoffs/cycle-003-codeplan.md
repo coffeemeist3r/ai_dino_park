@@ -61,3 +61,19 @@ none — raw `indexedDB` browser API; CHARTER forbids adding `idb`/`fake-indexed
 
 ## Estimated touch count
 6 files (2 new src, 2 modified src, 2 new tests) + handoff. At the ceiling, not over. No split needed — `clock.ts` change is a one-liner.
+
+## Shipped
+**Files touched:**
+- `game/src/world/saveGame.ts` (new) — `SaveData`, `SAVE_VERSION=1`, `serialize`, `deserialize` (validates, returns null, never throws).
+- `game/src/world/saveStore.ts` (new) — raw IndexedDB `saveToDb`/`loadFromDb` (DB `dino-park`, store `state`, key `current`).
+- `game/src/world/clock.ts` (modified) — added one-line `set(t)` for restore.
+- `game/src/scenes/WorldScene.ts` (modified) — `setupSave()` (load-on-boot restore, `onHour` auto-save, **E** JSON export), extracted `fmtClock()` + `applyTint()` helpers (shared by tick/restore so no logic duplicated), dev hooks `__saveNow`/`__exportSave`/`__advanceMinutes`/`__playerPos`.
+- `tests/unit/saveGame.test.ts` (new) — 6 tests.
+- `tests/e2e/cycle-003-save.spec.ts` (new) — 5 tests.
+
+**Deviations from plan:** none material. Extracted `fmtClock()` to a method (planned `applyTint` refactor; `fmtClock` was the same shape and needed by restore) — strictly a dedup, no behavior change. Auto-save errors are logged via `console.error` to honor CHARTER "no silent failures."
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing Phaser chunk-size warning only).
+- `npm run test:unit` — ✅ 20/20 (2 brain + 6 clock + 6 dayNight + 6 saveGame).
+- `npx playwright test` — ✅ 10/10 (3 smoke + 2 day/night + 5 save), default config.

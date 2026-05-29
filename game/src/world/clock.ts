@@ -37,6 +37,11 @@ export class WorldClock {
     return { ...this._time };
   }
 
+  /** Overwrite current time — used to restore a save. Does not fire tick/hour listeners. */
+  set(t: GameTime): void {
+    this._time = { ...t };
+  }
+
   onTick(fn: TimeListener): void {
     this._tickListeners.push(fn);
   }

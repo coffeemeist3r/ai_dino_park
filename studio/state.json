@@ -1,6 +1,6 @@
 {
   "cycle": 3,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-009: Save / load via IndexedDB",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
     "lore-smith": "2026-05-29T19:40:00-05:00",
     "designer": "2026-05-29T19:48:00-05:00",
     "code-planner": "2026-05-29T19:56:00-05:00",
-    "coder": "2026-05-29T19:10:00-05:00",
+    "coder": "2026-05-29T20:15:00-05:00",
     "qa": "2026-05-29T19:18:00-05:00",
     "validator": "2026-05-29T19:30:00-05:00",
     "artist": null
