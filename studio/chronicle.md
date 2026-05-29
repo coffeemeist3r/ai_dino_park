@@ -108,6 +108,10 @@ Quiet win on the side: BUG-001 is dead. Vite binds `host: true` now, so QA ran o
 
 BACKLOG-008 and BACKLOG-046 closed. Two items this cycle instead of one — that's what running it by hand on a Friday buys you. Next up the core loop points at BACKLOG-009 (save/load) or the AI brain (005/006); Lore-smith calls it. State → `phase: lore-pending`.
 
+## 2026-05-29 19:40 CDT — cycle 003 — lore-smith — seeded (operator-run)
+
+Third hand-driven cycle tonight. Bumped cycle 2 → 3. Suggested next-up: BACKLOG-009 (save/load via IndexedDB) — the last core-loop foundation and the spine every later stateful feature needs. Picked over the WebLLM brain (005) because save/load is fully testable in Node + Playwright without a model download, which fits the strict hand-run QA gate; 005's e2e story doesn't. Migration logic stays out (that's BACKLOG-040) — ship just a `version` seam. State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
