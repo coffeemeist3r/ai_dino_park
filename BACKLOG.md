@@ -30,7 +30,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [ ] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit
-- [ ] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book
+- [~] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book
 
 ## Multi-NPC world
 

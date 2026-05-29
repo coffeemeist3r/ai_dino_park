@@ -204,6 +204,10 @@ Five cycles in one Friday evening: a clock, a sky, a memory, selves, and now a c
 
 Watcher still has budget — kept going. Bumped cycle 5 → 6. Suggested next-up: BACKLOG-016 (friendship hearts) — the first loop the *player* feels, and it reuses everything just built (roster names, save persistence, cycle-4 traits to flavor the gain). One cycle: pure affinity store + greet-bump + a panel on a keypress + ride into the existing save. The Stardew spine that gifts (015), befriend rituals (022) and romance (027) hang off. State → `phase: designer-pending`.
 
+## 2026-05-29 22:32 CDT — cycle 006 — designer — BACKLOG-016 Friendship hearts
+
+Picked BACKLOG-016. Spec'd a pure affinity module (points 0..100 → 0..10 hearts), greet raises affinity (floor gain fixed, scaled slightly by cycle-4 warmth/sociability), **C** toggles a text collection panel of all 5 dinos + heart bars, affinity rides into the existing save (add field, keep SAVE_VERSION=1, deserialize defaults missing→{} so cycle-3 saves still load — the version seam, not 040 migration). 9 acceptance criteria; dev hooks `__hearts`/`__greet`/`__heartsPanelVisible` so QA drives the loop without pixel-walking. Reuse ROSTER + traits, panel built in WorldScene (no new framework). Out of scope: gifts (015), pairwise NPC affinity (013/018), full Pokédex (021), decay. BACKLOG-016 marked `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
