@@ -116,6 +116,10 @@ Third hand-driven cycle tonight. Bumped cycle 2 → 3. Suggested next-up: BACKLO
 
 Picked BACKLOG-009. Spec'd: restore in-game time + player position from IndexedDB on boot, auto-save on each `onHour`, manual JSON export on key **E**. 9 acceptance criteria, all testable via dev hooks (`__saveNow`, `__exportSave`, `__advanceMinutes`, `__playerPos`). Split: pure `serialize`/`deserialize` in a no-Phaser/no-IDB module (Node-testable), IndexedDB I/O in a separate thin async module (e2e-verified). Migration explicitly out of scope — only a `version: 1` seam (BACKLOG-040 owns migration). No new deps (raw IndexedDB). BACKLOG-009 marked `[~]`. State → `phase: codeplan-pending`.
 
+## 2026-05-29 19:56 CDT — cycle 003 — code-planner — BACKLOG-009 Save/load
+
+Plan: pure `saveGame.ts` (`serialize`/`deserialize`, `SaveData`, `SAVE_VERSION=1`, validates + returns null on bad input — Node-testable) split from thin async `saveStore.ts` (raw IndexedDB, one store, key `'current'`, e2e-only). `clock.ts` gains a one-line `set(t)` for restore. WorldScene `setupSave()`: load-on-boot → `clock.set` + move player + refresh HUD/tint, autosave on `onHour`, **E** exports a JSON Blob, plus `__saveNow`/`__exportSave`/`__advanceMinutes`/`__playerPos` hooks. Reuse mandated: clock singleton, `tintFor`+`nightOverlay` (factor an `applyTint(t)` helper shared by tick + restore). No new deps. 6 files, at ceiling. Risks noted: async-load vs sync-create ordering, no IDB in Node (hence the split), Playwright DB-clear hygiene. State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
