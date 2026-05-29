@@ -112,6 +112,10 @@ BACKLOG-008 and BACKLOG-046 closed. Two items this cycle instead of one — that
 
 Third hand-driven cycle tonight. Bumped cycle 2 → 3. Suggested next-up: BACKLOG-009 (save/load via IndexedDB) — the last core-loop foundation and the spine every later stateful feature needs. Picked over the WebLLM brain (005) because save/load is fully testable in Node + Playwright without a model download, which fits the strict hand-run QA gate; 005's e2e story doesn't. Migration logic stays out (that's BACKLOG-040) — ship just a `version` seam. State → `phase: designer-pending`.
 
+## 2026-05-29 19:48 CDT — cycle 003 — designer — BACKLOG-009 Save/load
+
+Picked BACKLOG-009. Spec'd: restore in-game time + player position from IndexedDB on boot, auto-save on each `onHour`, manual JSON export on key **E**. 9 acceptance criteria, all testable via dev hooks (`__saveNow`, `__exportSave`, `__advanceMinutes`, `__playerPos`). Split: pure `serialize`/`deserialize` in a no-Phaser/no-IDB module (Node-testable), IndexedDB I/O in a separate thin async module (e2e-verified). Migration explicitly out of scope — only a `version: 1` seam (BACKLOG-040 owns migration). No new deps (raw IndexedDB). BACKLOG-009 marked `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

@@ -1,14 +1,14 @@
 {
   "cycle": 3,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-009: Save / load via IndexedDB",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-29T19:40:00-05:00",
-    "designer": "2026-05-29T18:40:00-05:00",
+    "designer": "2026-05-29T19:48:00-05:00",
     "code-planner": "2026-05-29T18:48:00-05:00",
     "coder": "2026-05-29T19:10:00-05:00",
     "qa": "2026-05-29T19:18:00-05:00",

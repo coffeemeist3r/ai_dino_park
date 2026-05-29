@@ -20,7 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-006 [ai] Device probe — detect VRAM and pick 0.5B / 1.5B / 3B, write to `config.json`
 - [x] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast  *(shipped: cycle 1, 2026-05-26)*
 - [x] BACKLOG-008 [core] Day/night palette shift — tint overlay based on in-game hour  *(shipped: cycle 2, 2026-05-29)*
-- [ ] BACKLOG-009 [core] Save / load via IndexedDB — auto-save every in-game hour, manual export to JSON
+- [~] BACKLOG-009 [core] Save / load via IndexedDB — auto-save every in-game hour, manual export to JSON
 
 ## NPC depth
 
