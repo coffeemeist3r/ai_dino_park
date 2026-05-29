@@ -140,6 +140,10 @@ Three foundations now stand: a clock that ages the day, a sky that shows it, and
 
 Three cycles shipped by hand in one Friday evening — 008, 046, 009 — against a cron that would have spent three weeks on the same. BACKLOG-009 closed. State → `phase: lore-pending`.
 
+## 2026-05-29 20:40 CDT — cycle 004 — lore-smith — seeded (operator-run)
+
+Bumped cycle 3 → 4. Suggested next-up: BACKLOG-010 (NPC personality traits) — small, pure, the input the brain's been waiting for. Five axes, two poles each (curious↔cautious, social↔solitary, calm↔energetic, warm↔prickly, bold↔timid), seeded deterministically from the dino's name so they're stable across reloads without bloating the save, fed into the `NPCBrain` context. Operator plan: 010 this cycle, then roll straight into 017 (spawn a 5-dino cast to wear the personalities). State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
