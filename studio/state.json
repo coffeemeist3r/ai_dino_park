@@ -1,14 +1,14 @@
 {
   "cycle": 5,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-017: Spawn 5 NPCs",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-29T21:32:00-05:00",
-    "designer": "2026-05-29T20:48:00-05:00",
+    "designer": "2026-05-29T21:40:00-05:00",
     "code-planner": "2026-05-29T20:56:00-05:00",
     "coder": "2026-05-29T21:08:00-05:00",
     "qa": "2026-05-29T21:14:00-05:00",

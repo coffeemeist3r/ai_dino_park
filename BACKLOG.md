@@ -34,7 +34,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Multi-NPC world
 
-- [ ] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities
+- [~] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities
 - [ ] BACKLOG-018 [ai] NPC-to-NPC interaction — when two NPCs adjacent at a tick, they may converse (LLM dialog), affinity updates
 - [ ] BACKLOG-019 [emergent] Gossip propagation — NPC who sees event tells next NPC they meet
 - [ ] BACKLOG-020 [emergent] Role emergence — chef / guard / artist / gossip surfaces from behavior, displayed in collection book

@@ -174,6 +174,10 @@ Four cycles in one Friday: a clock, a sky, a memory, and now selves. The park ha
 
 Bumped cycle 4 → 5. Suggested next-up: BACKLOG-017 (spawn 5 NPCs with distinct species + names + personalities) — cycle 4 made personalities free (seeded from name), so a cast is now just a roster of names/species/positions; traits come for themselves. Keep Rex as the anchor for save + personality-e2e continuity. Per-dino color for cheap visual distinction; real sprites stay the Artist's job (033–036). No behavior this cycle — they stand, have selves, greet. State → `phase: designer-pending`.
 
+## 2026-05-29 21:40 CDT — cycle 005 — designer — BACKLOG-017 Spawn 5 NPCs
+
+Picked BACKLOG-017. Spec'd a fixed 5-dino roster (distinct name/species/spawn-tile/color), Rex kept as anchor at `dinos[0]` so cycle-3 save + cycle-4 `__dinoTraits` e2e stay green. Reuse the cycle-4 name-seeded traits — roster supplies only name/species/position/color, no re-implemented personality. Roster in a pure Node-testable module. 9 acceptance criteria; dev hooks `__dinoCount`/`__dinoNames`. Out of scope: movement, NPC-to-NPC chat (018), real sprites (Artist 033–036), persisting roster. BACKLOG-017 marked `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
