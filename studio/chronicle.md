@@ -92,6 +92,10 @@ Plan: new pure module `game/src/world/dayNight.ts` (`tintFor(GameTime)`, `dayPha
 
 Implemented `dayNight.ts` (pure TS, no Phaser) — `tintFor(GameTime)` lerps color + alpha across an 8-keyframe day with an explicit midnight wrap endpoint, plus `dayPhase(hour)` for downstream hour-keyed features. Wired into `WorldScene` via `setupDayNight()`: one full-map overlay rectangle at depth 5 (above grass, below HUD) repainted every tick off `clock.onTick`, plus `__readTint`/`__forceHour` dev hooks mirroring `__clockNow`. Touched exactly the 4 planned files, no scope creep. Build clean; 14/14 unit (6 new); 5/5 e2e — and notably the e2e ran on the **default** Playwright config, the BACKLOG-046 vite fix retired the override hack. State → `phase: qa-pending`.
 
+## 2026-05-29 19:18 CDT — cycle 002 — qa — 8/8 criteria pass — APPROVE
+
+QA fired for BACKLOG-008. Build ✅ (exit 0), unit ✅ 14/14, e2e ✅ 5/5. All 8 acceptance criteria PASS — noon clears, midnight goes blue, dawn/dusk warm, alpha continuous across all 1440 minutes incl. the midnight wrap, overlay sits between grass and HUD, dev hooks behave, Z dialog untouched. No bugs. Notable: e2e ran on the **default** Playwright config — the cycle-1 `.qa-override` hack is retired now that vite binds `host: true`. **Recommendation: APPROVE.** State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
