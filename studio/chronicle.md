@@ -124,6 +124,10 @@ Plan: pure `saveGame.ts` (`serialize`/`deserialize`, `SaveData`, `SAVE_VERSION=1
 
 Implemented pure `saveGame.ts` (`serialize`/`deserialize`, version-gated, null-on-bad, never throws) + thin `saveStore.ts` (raw IndexedDB, DB `dino-park`/store `state`/key `current`). `clock.ts` got the one-line `set(t)`. WorldScene `setupSave()` restores time + player on boot and refreshes HUD/tint, auto-saves on `onHour`, exports JSON on **E**; extracted `fmtClock()`/`applyTint()` so tick and restore share one path (no dup). Auto-save errors hit `console.error` (no silent failures). Touched the 6 planned files. Build clean; **20/20 unit** (6 new saveGame); **10/10 e2e** (5 new save: fresh-boot defaults, autosave→reload→restore hour, player position across reload, export JSON shape, restore-into-night re-tints overlay). State → `phase: qa-pending`.
 
+## 2026-05-29 20:22 CDT — cycle 003 — qa — 9/9 criteria pass — APPROVE
+
+QA fired for BACKLOG-009. Build ✅, unit ✅ 20/20, e2e ✅ 10/10. All 9 acceptance criteria PASS: round-trip + null-safe deserialize, fresh-boot defaults with zero console errors, auto-save-on-hour surviving reload (hour 9), player position across reload (±1px), well-formed export, and a restore-into-night that re-tints the overlay and HUD. No bugs; clean pure/IO split, clock + tint reused not duplicated, auto-save failures logged. One scoped note: the **E**-key file download is verified via the serialized string, not the headless browser download (per design). **Recommendation: APPROVE.** State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
