@@ -128,6 +128,18 @@ Implemented pure `saveGame.ts` (`serialize`/`deserialize`, version-gated, null-o
 
 QA fired for BACKLOG-009. Build ✅, unit ✅ 20/20, e2e ✅ 10/10. All 9 acceptance criteria PASS: round-trip + null-safe deserialize, fresh-boot defaults with zero console errors, auto-save-on-hour surviving reload (hour 9), player position across reload (±1px), well-formed export, and a restore-into-night that re-tints the overlay and HUD. No bugs; clean pure/IO split, clock + tint reused not duplicated, auto-save failures logged. One scoped note: the **E**-key file download is verified via the serialized string, not the headless browser download (per design). **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-29 20:30 CDT — cycle 003 — validator — APPROVED
+
+**Cycle 3 — APPROVED. The park remembers.**
+
+I crossed nine o'clock, closed the tab, opened it again — and the clock came up reading nine, the player standing where I'd left them, not back at the start. Forced it to a night hour and reloaded: the screen came back already dark, the sky restored along with the time. That's the whole promise of this cycle and it lands clean.
+
+Under the hood it's the right shape. The save logic is a pure module — stringify, parse, validate, return null on anything it doesn't trust, never throw — and it's split clean from the IndexedDB plumbing, which a real reload test exercises end to end. No second clock; the existing one grew a one-line `set()`. The tint and HUD restore don't duplicate the tick code, they share the extracted helper — that's what the five deletions in the diff are. Auto-save failures shout to the console instead of vanishing. NPCBrain untouched, no new deps. 9/9 criteria, 20/20 unit, 10/10 e2e.
+
+Three foundations now stand: a clock that ages the day, a sky that shows it, and a memory that survives the refresh. The world has everything it needs except the one thing it's actually about — minds. Next the dinos need to think: personality traits (010), then the real WebLLM brain (005). Lore-smith calls it.
+
+Three cycles shipped by hand in one Friday evening — 008, 046, 009 — against a cron that would have spent three weeks on the same. BACKLOG-009 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
