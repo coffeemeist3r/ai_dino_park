@@ -30,7 +30,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [ ] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit
-- [~] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book
+- [x] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book  *(shipped: cycle 6, 2026-05-29)*
 
 ## Multi-NPC world
 
@@ -113,3 +113,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 5 — 2026-05-29
 - BACKLOG-017 shipped — Spawn 5 NPCs (pure `ROSTER` of Rex/Mossback/Sunny/Twitch/Glade, distinct species/tiles/colors, name-seeded personalities; Rex anchored at index 0; 9/9 AC pass)
+
+### Cycle 6 — 2026-05-29
+- BACKLOG-016 shipped — Friendship hearts (greet raises affinity, **C** shows a 0–10 heart panel per dino, persisted in the save; gain scaled by warmth/sociability; 9/9 AC pass)

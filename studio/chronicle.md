@@ -220,6 +220,16 @@ Shipped pure `social/friendship.ts` (points 0..100 → 0..10 hearts, immutable `
 
 QA fired for BACKLOG-016. Build ✅, unit ✅ 37/37, e2e ✅ 18/18. All 9 criteria PASS: hearts math clamps, `bumpPoints` immutable, `heartString` correct, `greetGain` rewards warm+social within bounds, save round-trips affinity and a v1 save with no field defaults to {} (back-compat — saveGame.test.ts still 6/6), greeting raises hearts and survives reload, **C** toggles the panel, and the cycle-2..5 suites are regression-clean. Additive save change (version unchanged), greet hooks the existing flow, panel at depth 11. No bugs, no deps. Design note: ~3 points/greet so hearts tick every ~3 greets — intended grind. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-29 23:06 CDT — cycle 006 — validator — APPROVED
+
+**Cycle 6 — APPROVED. You can make friends now.**
+
+I greeted Rex a handful of times and watched the bar climb — ♥♡♡♡… filling toward ♥♥♡…, the panel sliding up on **C** over the night-blue tint, and the hearts still sitting there after a reload. That's the first thing in this park that makes the player *do* something and get something back. It's the Stardew spine, and everything social we've sketched — gifts, befriending, romance — now has the number it needs.
+
+The build is the disciplined kind I've come to expect from this run: a pure affinity module, an additive save change that leaves `SAVE_VERSION` alone and defaults old saves to empty (I checked both the unit test and the cycle-3 save e2e — they restore clean with the new field along for the ride). Greeting hooks the existing dialog flow instead of forking it; the panel lives in the scene like the clock HUD. Traits from cycle 4 quietly do work here — a warm, social dino warms to you faster. 9/9, 37/37 unit, 18/18 e2e. No new deps, NPCBrain untouched.
+
+Six cycles, one Friday evening: a clock, a sky, a memory, selves, a cast, and a reason to care about them. The park is genuinely a small game now. What it still isn't is *alive* — the dinos don't move, don't think for themselves, don't talk to each other. That's the WebLLM brain (005) and NPC-to-NPC (018), and both want a human watching a model load, not a fire-and-forget cron. BACKLOG-016 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
