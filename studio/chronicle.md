@@ -144,6 +144,10 @@ Three cycles shipped by hand in one Friday evening — 008, 046, 009 — against
 
 Bumped cycle 3 → 4. Suggested next-up: BACKLOG-010 (NPC personality traits) — small, pure, the input the brain's been waiting for. Five axes, two poles each (curious↔cautious, social↔solitary, calm↔energetic, warm↔prickly, bold↔timid), seeded deterministically from the dino's name so they're stable across reloads without bloating the save, fed into the `NPCBrain` context. Operator plan: 010 this cycle, then roll straight into 017 (spawn a 5-dino cast to wear the personalities). State → `phase: designer-pending`.
 
+## 2026-05-29 20:48 CDT — cycle 004 — designer — BACKLOG-010 Personality traits
+
+Picked BACKLOG-010. Spec'd a pure `personality` module: 5 axes 0..1 (curiosity/sociability/energy/agreeableness/bravery), `seededPersonality(name)` deterministic + stable across reloads (re-derived from name, no save change), `describePersonality(p)` → dominant-pole phrase with an "even-tempered" fallback. Each `Dino` gets an optional `traits` field flowed through `NPCContext`; the stub brain reads traits for mood (timid→wary, social+warm→happy, energetic+curious→excited, else neutral) so traits are observable today without the real brain. 9 acceptance criteria. Out of scope: WebLLM (005), drift (043), persisting traits, behavior. NPCBrain boundary respected. BACKLOG-010 marked `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
