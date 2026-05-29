@@ -1,6 +1,6 @@
 {
   "cycle": 5,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-017: Spawn 5 NPCs",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
     "lore-smith": "2026-05-29T21:32:00-05:00",
     "designer": "2026-05-29T21:40:00-05:00",
     "code-planner": "2026-05-29T21:48:00-05:00",
-    "coder": "2026-05-29T21:08:00-05:00",
+    "coder": "2026-05-29T22:00:00-05:00",
     "qa": "2026-05-29T21:14:00-05:00",
     "validator": "2026-05-29T21:22:00-05:00",
     "artist": null

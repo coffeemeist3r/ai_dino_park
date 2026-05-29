@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { makeBrain } from '../ai/brain';
 import { Dino } from '../entities/dino';
+import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
 import { tintFor } from '../world/dayNight';
@@ -31,14 +32,17 @@ export class WorldScene extends Phaser.Scene {
     this.player = this.add.rectangle(TILE * 3 + TILE / 2, TILE * 3 + TILE / 2, TILE - 4, TILE - 4, 0xe8c878);
     this.player.setStrokeStyle(2, 0x6a4020);
 
-    this.dinos.push(
-      new Dino(this, TILE * 10 + TILE / 2, TILE * 7 + TILE / 2, {
-        name: 'Rex',
-        species: 'triceratops',
-        personality: 'curious, friendly, loves rocks',
-        brain: makeBrain('stub'),
-      }),
-    );
+    for (const spawn of ROSTER) {
+      this.dinos.push(
+        new Dino(this, spawn.tileX * TILE + TILE / 2, spawn.tileY * TILE + TILE / 2, {
+          name: spawn.name,
+          species: spawn.species,
+          personality: spawn.personality,
+          color: spawn.color,
+          brain: makeBrain('stub'),
+        }),
+      );
+    }
 
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.interactKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -202,6 +206,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits
     (window as any).__dinoTraits = () => this.dinos[0]?.traits;
+    // any: dev-only Playwright hook — roster size + names
+    (window as any).__dinoCount = () => this.dinos.length;
+    // any: dev-only Playwright hook — every dino's name
+    (window as any).__dinoNames = () => this.dinos.map((d) => d.name);
   }
 
   private exportSave(): void {

@@ -182,6 +182,10 @@ Picked BACKLOG-017. Spec'd a fixed 5-dino roster (distinct name/species/spawn-ti
 
 Plan: pure `roster.ts` (`DinoSpawn` + 5-entry `ROSTER`, Rex first). `dino.ts` gains `color?`. WorldScene replaces the single-Rex push with a loop over ROSTER (tile→pixel), plus `__dinoCount`/`__dinoNames` hooks. Reuse: `Dino` + name-seeded traits, `makeBrain('stub')` per dino, `nearestDino()` already loops so greet works for 5, TILE/COLS/ROWS for math. No deps. 5 files, under ceiling. Risks: keep Rex at `ROSTER[0]` (cycle-3 save + cycle-4 traits e2e depend on `dinos[0]`); assert spawn tiles distinct + in-bounds so a future roster edit can't stack/offmap a dino; per-dino color is distinction not art (not Artist scope creep). State → `phase: coder-pending`.
 
+## 2026-05-29 22:00 CDT — cycle 005 — coder — BACKLOG-017 Spawn 5 NPCs
+
+Shipped pure `roster.ts` (5 dinos: Rex, Mossback, Sunny, Twitch, Glade — Rex at index 0). `dino.ts` got `color?`. WorldScene now loops `ROSTER` (tile→pixel) instead of hardcoding Rex, exposes `__dinoCount`/`__dinoNames`. Reused `Dino` + name-seeded traits, `makeBrain('stub')` per dino, `nearestDino()` unchanged. Touched the 5 planned files. Build clean; **30/30 unit** (4 new roster); **16/16 e2e** (4 new: 5 spawn, unique names, Rex anchor + traits, greet regression). State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

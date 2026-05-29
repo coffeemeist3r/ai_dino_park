@@ -9,6 +9,7 @@ export interface DinoConfig {
   species: string;
   personality: string;
   traits?: Personality;
+  color?: number;
   brain: NPCBrain;
 }
 
@@ -28,7 +29,7 @@ export class Dino {
     this.traits = cfg.traits ?? seededPersonality(cfg.name);
     this.brain = cfg.brain;
 
-    this.sprite = scene.add.rectangle(x, y, TILE - 6, TILE - 6, 0x8a4a3a);
+    this.sprite = scene.add.rectangle(x, y, TILE - 6, TILE - 6, cfg.color ?? 0x8a4a3a);
     this.sprite.setStrokeStyle(2, 0x2a1010);
 
     this.label = scene.add.text(x, y - TILE, cfg.name, {

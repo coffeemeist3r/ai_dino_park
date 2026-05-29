@@ -47,3 +47,18 @@ none.
 
 ## Estimated touch count
 5 files (1 new src, 2 modified src, 1 new unit, 1 new e2e). Under the ceiling.
+
+## Shipped
+**Files touched:**
+- `game/src/entities/roster.ts` (new) — `DinoSpawn` + 5-entry `ROSTER` (Rex, Mossback, Sunny, Twitch, Glade), Rex at index 0.
+- `game/src/entities/dino.ts` (modified) — `DinoConfig.color?`, sprite uses `cfg.color ?? 0x8a4a3a`.
+- `game/src/scenes/WorldScene.ts` (modified) — spawn loop over `ROSTER` (tile→pixel), `__dinoCount`/`__dinoNames` hooks.
+- `tests/unit/roster.test.ts` (new) — 4 tests.
+- `tests/e2e/cycle-005-roster.spec.ts` (new) — 4 tests.
+
+**Deviations:** none.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing chunk-size warning only).
+- `npm run test:unit` — ✅ 30/30 (2 brain + 6 clock + 6 dayNight + 6 saveGame + 6 personality + 4 roster).
+- `npx playwright test` — ✅ 16/16 (default config).
