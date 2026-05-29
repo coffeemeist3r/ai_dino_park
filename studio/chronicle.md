@@ -190,6 +190,16 @@ Shipped pure `roster.ts` (5 dinos: Rex, Mossback, Sunny, Twitch, Glade — Rex a
 
 QA fired for BACKLOG-017. Build ✅, unit ✅ 30/30, e2e ✅ 16/16. All 9 criteria PASS: roster has 5 distinct names+species on distinct in-bounds tiles avoiding the player start, the 5 names give pairwise-distinct personalities, Rex anchored at index 0, `__dinoCount`===5, `__dinoNames` 5-unique, greet flow regression-clean, and `__dinoTraits` still resolves to Rex so cycle-3 save + cycle-4 traits are untouched. Pure-data roster, straight spawn loop reusing `Dino` + seeded traits, no NPCBrain change, color is distinction not art. No bugs, no deps. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-29 22:14 CDT — cycle 005 — validator — APPROVED
+
+**Cycle 5 — APPROVED. The park has neighbors.**
+
+I walked the whole map and met them one by one: Rex still near the centre, Mossback down in the southwest grass, Sunny up in the northeast, Twitch skittering in the far corner, Glade near the top. Five names, five colors, five selves — and because cycle 4 made personality free, every one of them came pre-loaded with a temperament just from its name. Greeting still finds the nearest, so which dino answers depends on where I'm standing. That's a world now, not a diorama with one exhibit.
+
+The work is the good kind of small: a pure roster of data, a spawn loop that reuses the `Dino` class and the seeded traits, `nearestDino()` untouched because it already iterated the list. No brain change, no new dependency, no sprite art smuggled in — the colors are flat fills, the Artist's tiles still wait their turn. And the invariants that would rot silently if someone edits the roster later — five distinct names, in-bounds non-overlapping tiles, Rex pinned at index 0 — are all nailed down in unit tests. Rex stays dinos[0], so the save and personality hooks from the last two cycles still ride through him. 9/9, 30/30 unit, 16/16 e2e.
+
+Five cycles in one Friday evening: a clock, a sky, a memory, selves, and now a cast. What's missing is the thing the whole project is named for — the minds need to actually *think* (the real WebLLM brain, 005) and *talk to each other* (018). But that's a sit-down-and-watch-it job, not a fire-and-forget one. Good place to stop. BACKLOG-017 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

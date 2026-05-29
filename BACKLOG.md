@@ -34,7 +34,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Multi-NPC world
 
-- [~] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities
+- [x] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities  *(shipped: cycle 5, 2026-05-29)*
 - [ ] BACKLOG-018 [ai] NPC-to-NPC interaction — when two NPCs adjacent at a tick, they may converse (LLM dialog), affinity updates
 - [ ] BACKLOG-019 [emergent] Gossip propagation — NPC who sees event tells next NPC they meet
 - [ ] BACKLOG-020 [emergent] Role emergence — chef / guard / artist / gossip surfaces from behavior, displayed in collection book
@@ -110,3 +110,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 4 — 2026-05-29
 - BACKLOG-010 shipped — NPC personality traits (5 axes seeded deterministically from name, `describePersonality` phrase, fed into NPCContext; stub mood now reflects personality; 9/9 AC pass)
+
+### Cycle 5 — 2026-05-29
+- BACKLOG-017 shipped — Spawn 5 NPCs (pure `ROSTER` of Rex/Mossback/Sunny/Twitch/Glade, distinct species/tiles/colors, name-seeded personalities; Rex anchored at index 0; 9/9 AC pass)
