@@ -200,6 +200,10 @@ The work is the good kind of small: a pure roster of data, a spawn loop that reu
 
 Five cycles in one Friday evening: a clock, a sky, a memory, selves, and now a cast. What's missing is the thing the whole project is named for — the minds need to actually *think* (the real WebLLM brain, 005) and *talk to each other* (018). But that's a sit-down-and-watch-it job, not a fire-and-forget one. Good place to stop. BACKLOG-017 closed. State → `phase: lore-pending`.
 
+## 2026-05-29 22:24 CDT — cycle 006 — lore-smith — seeded (operator-run)
+
+Watcher still has budget — kept going. Bumped cycle 5 → 6. Suggested next-up: BACKLOG-016 (friendship hearts) — the first loop the *player* feels, and it reuses everything just built (roster names, save persistence, cycle-4 traits to flavor the gain). One cycle: pure affinity store + greet-bump + a panel on a keypress + ride into the existing save. The Stardew spine that gifts (015), befriend rituals (022) and romance (027) hang off. State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
