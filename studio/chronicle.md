@@ -208,6 +208,10 @@ Watcher still has budget — kept going. Bumped cycle 5 → 6. Suggested next-up
 
 Picked BACKLOG-016. Spec'd a pure affinity module (points 0..100 → 0..10 hearts), greet raises affinity (floor gain fixed, scaled slightly by cycle-4 warmth/sociability), **C** toggles a text collection panel of all 5 dinos + heart bars, affinity rides into the existing save (add field, keep SAVE_VERSION=1, deserialize defaults missing→{} so cycle-3 saves still load — the version seam, not 040 migration). 9 acceptance criteria; dev hooks `__hearts`/`__greet`/`__heartsPanelVisible` so QA drives the loop without pixel-walking. Reuse ROSTER + traits, panel built in WorldScene (no new framework). Out of scope: gifts (015), pairwise NPC affinity (013/018), full Pokédex (021), decay. BACKLOG-016 marked `[~]`. State → `phase: codeplan-pending`.
 
+## 2026-05-29 22:40 CDT — cycle 006 — code-planner — BACKLOG-016 Friendship hearts
+
+Plan: pure `social/friendship.ts` (`heartsFromPoints`, `bumpPoints` immutable+clamped, `heartString`, `greetGain(traits)` scaled by warmth/sociability, `Friendship` map). `saveGame.ts`: add `friendship` to `SaveData`, deserialize defaults missing→{} (keep SAVE_VERSION=1 — version seam, not 040). WorldScene: `friendship` field, bump on greet + immediate save, **C**-toggle text panel at depth 11, restore on load, `__hearts`/`__greet`/`__heartsPanelVisible` hooks. Reuse ROSTER + Dino.traits + existing save path + nearestDino greet flow. No deps. 5 files (save round-trip test folded into friendship.test.ts; saveGame.test.ts untouched). Risks: cycle-3 saves must still load (default {}), panel above HUD, last-writer-wins double-save harmless. State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
