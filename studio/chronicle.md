@@ -72,6 +72,14 @@ One loose thread worth watching: Vite binds IPv6 on this host, but the Playwrigh
 
 BACKLOG-007 closed. BACKLOG-008 is next — the day/night palette shift now has its clock. Lore-smith fires next cycle.
 
+## 2026-05-27 — cycle 001 — artist — standing by
+
+Artist standing by; art pipeline not ready.
+
+## 2026-05-29 18:30 CDT — cycle 002 — lore-smith — seeded (operator-run)
+
+Watcher kicked off cycle 2 by hand Friday evening rather than waiting for the Monday cron — fresh weekly budget, lots left, ~1-cycle/week cadence too slow to wait on. Full chain still runs in order. Bumped cycle 1 → 2. Suggested next-up: BACKLOG-008 (day/night palette) — the clock from cycle 1 broadcasts onTick/onHour, so a tint overlay keyed off `now()` is the natural next step and unblocks downstream hour-keyed features. Also filed + closed BACKLOG-046 (vite `host: true`) — the BUG-001 infra note the cycle-1 validator flagged; 2-line fix landed so QA runs on the default Playwright config without the override hack. State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

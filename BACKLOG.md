@@ -73,6 +73,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
 - [ ] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook
+- [x] BACKLOG-046 [infra] Vite host bind — `host: true` so Playwright reaches `127.0.0.1` (was IPv6-only)  *(shipped: cycle 2, 2026-05-29)*
 
 ## Cycle 1 lore additions (2026-05-25)
 
