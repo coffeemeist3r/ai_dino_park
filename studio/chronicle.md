@@ -152,6 +152,10 @@ Picked BACKLOG-010. Spec'd a pure `personality` module: 5 axes 0..1 (curiosity/s
 
 Plan: pure `personality.ts` — `Personality` (5 axes), `AXES` as the single source of keys+pole labels, `seededPersonality(name)` (cyrb-style 32-bit hash → mulberry32 → 5 draws, deterministic), `describePersonality` (dominant pole >0.6/<0.4, "even-tempered" fallback). `brain.ts`: `NPCContext.traits?` + stub mood logic (timid→wary, social+warm→happy, energetic+curious→excited). `dino.ts`: `traits` field seeded from name, flowed into `greet()`'s context. WorldScene: `__dinoTraits` hook. Reuse: existing NPCContext (no boundary breach), name as seed, AXES drives describe. No deps. 6 files — mood tests folded into `personality.test.ts` so `brain.test.ts` stays untouched and the count holds at the ceiling. Risk: weak hash collisions → use a mixing hash; covered by the "names differ" test. State → `phase: coder-pending`.
 
+## 2026-05-29 21:08 CDT — cycle 004 — coder — BACKLOG-010 Personality traits
+
+Shipped pure `personality.ts` (`seededPersonality` via cyrb-lite hash → mulberry32, `describePersonality` dominant-pole phrase, `AXES` single source). `brain.ts` got `NPCContext.traits?` + `moodFromTraits` so the stub's mood now reflects personality (timid→wary, social+warm→happy, energetic+curious→excited). `dino.ts` seeds `traits` from name and flows them into `greet()`; WorldScene exposes `__dinoTraits`. Touched the 6 planned files; `brain.test.ts` untouched and still green. Build clean; **26/26 unit** (6 new); **12/12 e2e** (2 new: traits-shape hook, dialog regression). State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

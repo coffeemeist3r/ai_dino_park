@@ -9,10 +9,13 @@
  * must not leak past it."
  */
 
+import type { Personality } from './personality';
+
 export interface NPCContext {
   name: string;
   species: string;
   personality: string;
+  traits?: Personality;
   recentMemory?: string[];
 }
 
@@ -37,13 +40,22 @@ const cannedGreetings = [
   "Don't step on my favorite rock, please. That one. Yes, that one.",
 ];
 
+/** Mood reflects personality so traits are observable before the real brain (BACKLOG-005) lands. */
+function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
+  if (!t) return 'neutral';
+  if (t.bravery <= 0.2) return 'wary';
+  if (t.sociability >= 0.8 && t.agreeableness >= 0.7) return 'happy';
+  if (t.energy >= 0.65 && t.curiosity >= 0.6) return 'excited';
+  return 'neutral';
+}
+
 class StubBrain implements NPCBrain {
   async respond(ctx: NPCContext, _obs: Observation): Promise<Reply> {
     const idx = Math.floor(Math.random() * cannedGreetings.length);
     const text = cannedGreetings[idx]
       .replace('the park', `the park, ${ctx.name} here`)
       .slice(0, 200);
-    return { text, mood: 'neutral' };
+    return { text, mood: moodFromTraits(ctx.traits) };
   }
 }
 

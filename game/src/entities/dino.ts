@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { NPCBrain, NPCContext } from '../ai/brain';
+import { seededPersonality, type Personality } from '../ai/personality';
 
 const TILE = 32;
 
@@ -7,6 +8,7 @@ export interface DinoConfig {
   name: string;
   species: string;
   personality: string;
+  traits?: Personality;
   brain: NPCBrain;
 }
 
@@ -14,6 +16,7 @@ export class Dino {
   readonly name: string;
   readonly species: string;
   readonly personality: string;
+  readonly traits: Personality;
   readonly sprite: Phaser.GameObjects.Rectangle;
   readonly label: Phaser.GameObjects.Text;
   private readonly brain: NPCBrain;
@@ -22,6 +25,7 @@ export class Dino {
     this.name = cfg.name;
     this.species = cfg.species;
     this.personality = cfg.personality;
+    this.traits = cfg.traits ?? seededPersonality(cfg.name);
     this.brain = cfg.brain;
 
     this.sprite = scene.add.rectangle(x, y, TILE - 6, TILE - 6, 0x8a4a3a);
@@ -50,6 +54,7 @@ export class Dino {
       name: this.name,
       species: this.species,
       personality: this.personality,
+      traits: this.traits,
     };
     const reply = await this.brain.respond(ctx, { kind: 'player_greet' });
     return reply.text;

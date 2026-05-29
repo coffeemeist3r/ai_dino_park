@@ -51,3 +51,19 @@ none — hash + PRNG are ~10 lines of arithmetic. CHARTER forbids adding an RNG 
 
 ## Estimated touch count
 6 files (1 new src, 3 modified src, 1 new unit, 1 new e2e). At the ceiling. Mood tests folded into `personality.test.ts` to avoid a 7th touch; `brain.test.ts` left untouched (and must stay green).
+
+## Shipped
+**Files touched:**
+- `game/src/ai/personality.ts` (new) — `Personality`, `AXES`, `seededPersonality` (cyrb-lite hash → mulberry32), `describePersonality`.
+- `game/src/ai/brain.ts` (modified) — `NPCContext.traits?`, `moodFromTraits()` driving the stub's mood.
+- `game/src/entities/dino.ts` (modified) — `traits` field (seeded from name if absent), flowed into `greet()` context.
+- `game/src/scenes/WorldScene.ts` (modified) — `__dinoTraits` dev hook.
+- `tests/unit/personality.test.ts` (new) — 6 tests (4 personality + 2 stub-brain mood).
+- `tests/e2e/cycle-004-personality.spec.ts` (new) — 2 tests.
+
+**Deviations:** none. `brain.test.ts` untouched and still green (back-compat).
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing chunk-size warning only).
+- `npm run test:unit` — ✅ 26/26 (2 brain + 6 clock + 6 dayNight + 6 saveGame + 6 personality).
+- `npx playwright test` — ✅ 12/12 (default config).

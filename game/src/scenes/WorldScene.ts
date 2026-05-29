@@ -200,6 +200,8 @@ export class WorldScene extends Phaser.Scene {
     };
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
+    // any: dev-only Playwright hook — first dino's seeded personality traits
+    (window as any).__dinoTraits = () => this.dinos[0]?.traits;
   }
 
   private exportSave(): void {
