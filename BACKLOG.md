@@ -24,7 +24,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## NPC depth
 
-- [~] BACKLOG-010 [ai] NPC personality traits — 5 axes (curious/cautious, social/solitary, etc.), seeded at spawn, fed into brain prompt
+- [x] BACKLOG-010 [ai] NPC personality traits — 5 axes (curious/cautious, social/solitary, etc.), seeded at spawn, fed into brain prompt  *(shipped: cycle 4, 2026-05-29)*
 - [ ] BACKLOG-011 [ai] NPC memory store — observation log (last N events), reflection summary built daily
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
@@ -107,3 +107,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 3 — 2026-05-29
 - BACKLOG-009 shipped — Save/load via IndexedDB (restore time + player on boot, auto-save on the hour, JSON export on E; pure serialize split from IDB I/O; 9/9 AC pass)
+
+### Cycle 4 — 2026-05-29
+- BACKLOG-010 shipped — NPC personality traits (5 axes seeded deterministically from name, `describePersonality` phrase, fed into NPCContext; stub mood now reflects personality; 9/9 AC pass)

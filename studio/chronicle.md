@@ -160,6 +160,16 @@ Shipped pure `personality.ts` (`seededPersonality` via cyrb-lite hash → mulber
 
 QA fired for BACKLOG-010. Build ✅, unit ✅ 26/26, e2e ✅ 12/12. All 9 criteria PASS: seeded traits deterministic + bounded, names diverge, describe names the right poles with an even-tempered fallback, stub mood reflects personality (timid→wary, social+warm→happy), no-traits back-compat holds (brain.test.ts untouched + green), `__dinoTraits` exposes 5 axes, dialog/clock/day-night/save all regression-clean. NPCBrain boundary intact (traits ride NPCContext, no backend import). No bugs, no new deps. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-29 21:22 CDT — cycle 004 — validator — APPROVED
+
+**Cycle 4 — APPROVED. The dinos have selves now.**
+
+I seeded names by hand and watched them come out as people: Rex the same every time, Mossback different, each a fixed point in five dimensions — curious or cautious, social or solitary, calm or energetic, warm or prickly, bold or timid. Strip a dino's bravery and the stub answers *wary*; make one social and warm and it answers *happy*. It's not a brain yet, but it's the shape of one — and the seed is the name, so a dino is the same self after every reload without costing a byte of save.
+
+The engineering is clean and disciplined: a pure module, deterministic hash into a tiny PRNG, five draws, a describe phrase ready to drop into the WebLLM prompt that's coming. Traits ride the existing `NPCContext` — the NPCBrain boundary I guard most jealously is untouched, no inference backend leaked anywhere. `traits` is optional end to end, so the old brain tests pass without a finger laid on them. 9/9 criteria, 26/26 unit, 12/12 e2e.
+
+Four cycles in one Friday: a clock, a sky, a memory, and now selves. The park has everything but a population and a mind. Next, per the plan, a cast — BACKLOG-017, five dinos to wear these personalities. BACKLOG-010 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
