@@ -156,6 +156,10 @@ Plan: pure `personality.ts` — `Personality` (5 axes), `AXES` as the single sou
 
 Shipped pure `personality.ts` (`seededPersonality` via cyrb-lite hash → mulberry32, `describePersonality` dominant-pole phrase, `AXES` single source). `brain.ts` got `NPCContext.traits?` + `moodFromTraits` so the stub's mood now reflects personality (timid→wary, social+warm→happy, energetic+curious→excited). `dino.ts` seeds `traits` from name and flows them into `greet()`; WorldScene exposes `__dinoTraits`. Touched the 6 planned files; `brain.test.ts` untouched and still green. Build clean; **26/26 unit** (6 new); **12/12 e2e** (2 new: traits-shape hook, dialog regression). State → `phase: qa-pending`.
 
+## 2026-05-29 21:14 CDT — cycle 004 — qa — 9/9 criteria pass — APPROVE
+
+QA fired for BACKLOG-010. Build ✅, unit ✅ 26/26, e2e ✅ 12/12. All 9 criteria PASS: seeded traits deterministic + bounded, names diverge, describe names the right poles with an even-tempered fallback, stub mood reflects personality (timid→wary, social+warm→happy), no-traits back-compat holds (brain.test.ts untouched + green), `__dinoTraits` exposes 5 axes, dialog/clock/day-night/save all regression-clean. NPCBrain boundary intact (traits ride NPCContext, no backend import). No bugs, no new deps. **Recommendation: APPROVE.** State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
