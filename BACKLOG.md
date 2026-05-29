@@ -19,7 +19,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-005 [ai] WebLLM-backed brain — implement NPCBrain with WebLLM + Qwen2.5-0.5B, lazy-loaded on first dialog
 - [ ] BACKLOG-006 [ai] Device probe — detect VRAM and pick 0.5B / 1.5B / 3B, write to `config.json`
 - [x] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast  *(shipped: cycle 1, 2026-05-26)*
-- [~] BACKLOG-008 [core] Day/night palette shift — tint overlay based on in-game hour
+- [x] BACKLOG-008 [core] Day/night palette shift — tint overlay based on in-game hour  *(shipped: cycle 2, 2026-05-29)*
 - [ ] BACKLOG-009 [core] Save / load via IndexedDB — auto-save every in-game hour, manual export to JSON
 
 ## NPC depth
@@ -100,3 +100,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 1 — 2026-05-26
 - BACKLOG-007 shipped — World tick clock (1 real second = 1 in-game minute; HUD display; hour event; 9/9 AC pass)
+
+### Cycle 2 — 2026-05-29
+- BACKLOG-008 shipped — Day/night palette (full-map tint overlay lerped across the day off the clock; 8/8 AC pass)
+- BACKLOG-046 shipped — Vite `host: true` (fixed BUG-001 IPv6-only bind; default Playwright config now works)

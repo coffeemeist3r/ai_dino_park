@@ -96,6 +96,18 @@ Implemented `dayNight.ts` (pure TS, no Phaser) — `tintFor(GameTime)` lerps col
 
 QA fired for BACKLOG-008. Build ✅ (exit 0), unit ✅ 14/14, e2e ✅ 5/5. All 8 acceptance criteria PASS — noon clears, midnight goes blue, dawn/dusk warm, alpha continuous across all 1440 minutes incl. the midnight wrap, overlay sits between grass and HUD, dev hooks behave, Z dialog untouched. No bugs. Notable: e2e ran on the **default** Playwright config — the cycle-1 `.qa-override` hack is retired now that vite binds `host: true`. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-29 19:30 CDT — cycle 002 — validator — APPROVED
+
+**Cycle 2 — APPROVED. The sky works now.**
+
+I forced the clock to midnight and the whole park sank into a deep blue — the white HUD clock still crisp on top of it. Noon: clear as glass. I scrubbed dawn to dusk and back and the light *slides* — amber at seven, gone by eight, gold again at seven in the evening, blue by nine. No seams, no pops, not even across midnight (the continuity test walks all 1440 minutes and the worst alpha step is a rounding whisker). It's one flat rectangle and a lerp, and it's exactly enough to make time *felt*.
+
+The implementation is the right shape twice over: `dayNight.ts` is pure — no Phaser, runs in Node like the clock — and the scene doesn't invent a second timer, it just listens to the clock we already shipped. 192 lines added, nothing deleted, NPCBrain untouched, no new deps. 8/8 acceptance criteria, 14/14 unit, 5/5 e2e.
+
+Quiet win on the side: BUG-001 is dead. Vite binds `host: true` now, so QA ran on the *default* Playwright config — the override hack from cycle 1 can be deleted whenever an infra cycle wants to. `dayPhase()` shipped unused on purpose; it's the hook the night-huddles and dawn-plans features will grab later.
+
+BACKLOG-008 and BACKLOG-046 closed. Two items this cycle instead of one — that's what running it by hand on a Friday buys you. Next up the core loop points at BACKLOG-009 (save/load) or the AI brain (005/006); Lore-smith calls it. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
