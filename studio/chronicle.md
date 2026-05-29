@@ -212,6 +212,10 @@ Picked BACKLOG-016. Spec'd a pure affinity module (points 0..100 → 0..10 heart
 
 Plan: pure `social/friendship.ts` (`heartsFromPoints`, `bumpPoints` immutable+clamped, `heartString`, `greetGain(traits)` scaled by warmth/sociability, `Friendship` map). `saveGame.ts`: add `friendship` to `SaveData`, deserialize defaults missing→{} (keep SAVE_VERSION=1 — version seam, not 040). WorldScene: `friendship` field, bump on greet + immediate save, **C**-toggle text panel at depth 11, restore on load, `__hearts`/`__greet`/`__heartsPanelVisible` hooks. Reuse ROSTER + Dino.traits + existing save path + nearestDino greet flow. No deps. 5 files (save round-trip test folded into friendship.test.ts; saveGame.test.ts untouched). Risks: cycle-3 saves must still load (default {}), panel above HUD, last-writer-wins double-save harmless. State → `phase: coder-pending`.
 
+## 2026-05-29 22:52 CDT — cycle 006 — coder — BACKLOG-016 Friendship hearts
+
+Shipped pure `social/friendship.ts` (points 0..100 → 0..10 hearts, immutable `bumpPoints`, `heartString`, `greetGain` scaled by warmth/sociability). `saveGame.ts` carries `friendship`, deserialize defaults missing→{} (cycle-3 saves still load), SAVE_VERSION stays 1. WorldScene bumps affinity on greet + saves, **C** toggles a depth-11 text panel of all 5 dinos + heart bars, restores on load, exposes `__hearts`/`__greet`/`__heartsPanelVisible`. Reused ROSTER + Dino.traits + the existing save path + the greet flow. Touched the 5 planned files. One test-only fix (greet 5× to cross a heart — one greet is ~3 of 10 points; grind is by design). Build clean; **37/37 unit** (7 new, saveGame still 6/6); **18/18 e2e** (2 new: greet→persist, C-toggle). State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

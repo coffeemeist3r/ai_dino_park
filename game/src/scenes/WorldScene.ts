@@ -7,6 +7,13 @@ import { getWorldClock, type GameTime } from '../world/clock';
 import { tintFor } from '../world/dayNight';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { loadFromDb, saveToDb } from '../world/saveStore';
+import {
+  bumpPoints,
+  greetGain,
+  heartString,
+  heartsFromPoints,
+  type Friendship,
+} from '../social/friendship';
 
 const TILE = 32;
 const COLS = 20;
@@ -21,6 +28,8 @@ export class WorldScene extends Phaser.Scene {
   private dialogOpen = false;
   private clockHud!: Phaser.GameObjects.Text;
   private nightOverlay!: Phaser.GameObjects.Rectangle;
+  private heartsPanel!: Phaser.GameObjects.Text;
+  private friendship: Friendship = {};
 
   constructor() {
     super('World');
@@ -54,6 +63,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupClock();
     this.setupDayNight();
     this.setupSave();
+    this.setupHearts();
   }
 
   update(): void {
@@ -79,10 +89,19 @@ export class WorldScene extends Phaser.Scene {
     const target = this.nearestDino();
     if (!target) return;
 
+    this.recordGreet(target.name, target.traits);
+
     this.dialogOpen = true;
     this.dialog.show(`${target.name}: ...`);
     const reply = await target.greet();
     this.dialog.show(`${target.name}: ${reply}`);
+  }
+
+  /** Raise a dino's affinity from a greet, persist, and refresh the panel. */
+  private recordGreet(name: string, traits?: Dino['traits']): void {
+    this.friendship = bumpPoints(this.friendship, name, greetGain(traits));
+    void this.saveGame();
+    this.refreshHeartsPanel();
   }
 
   private nearestDino(): Dino | null {
@@ -160,6 +179,7 @@ export class WorldScene extends Phaser.Scene {
       version: SAVE_VERSION,
       time: getWorldClock().now(),
       player: { x: this.player.x, y: this.player.y },
+      friendship: this.friendship,
     };
   }
 
@@ -181,8 +201,10 @@ export class WorldScene extends Phaser.Scene {
       if (!save) return;
       clock.set(save.time);
       this.player.setPosition(save.player.x, save.player.y);
+      this.friendship = save.friendship;
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
+      this.refreshHeartsPanel();
     });
 
     clock.onHour(() => void this.saveGame());
@@ -210,6 +232,51 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__dinoCount = () => this.dinos.length;
     // any: dev-only Playwright hook — every dino's name
     (window as any).__dinoNames = () => this.dinos.map((d) => d.name);
+  }
+
+  private setupHearts(): void {
+    this.heartsPanel = this.add
+      .text(TILE * COLS - 6, 22, '', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        align: 'right',
+        backgroundColor: '#000000cc',
+        padding: { x: 6, y: 4 },
+      })
+      .setOrigin(1, 0)
+      .setDepth(11)
+      .setVisible(false);
+    this.refreshHeartsPanel();
+
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.C).on('down', () => {
+      this.heartsPanel.setVisible(!this.heartsPanel.visible);
+      if (this.heartsPanel.visible) this.refreshHeartsPanel();
+    });
+
+    // any: dev-only Playwright hook — name → heart count for every dino
+    (window as any).__hearts = () => {
+      const out: Record<string, number> = {};
+      for (const d of this.dinos) out[d.name] = heartsFromPoints(this.friendship[d.name] ?? 0);
+      return out;
+    };
+    // any: dev-only Playwright hook — apply one greet's gain to a named dino
+    (window as any).__greet = (name: string) => {
+      const dino = this.dinos.find((d) => d.name === name);
+      this.recordGreet(name, dino?.traits);
+      return heartsFromPoints(this.friendship[name] ?? 0);
+    };
+    // any: dev-only Playwright hook — is the hearts panel showing
+    (window as any).__heartsPanelVisible = () => this.heartsPanel.visible;
+  }
+
+  private refreshHeartsPanel(): void {
+    if (!this.heartsPanel) return;
+    const lines = this.dinos.map((d) => {
+      const hearts = heartsFromPoints(this.friendship[d.name] ?? 0);
+      return `${d.name.padEnd(9)} ${heartString(hearts)}`;
+    });
+    this.heartsPanel.setText(['— Friends —', ...lines].join('\n'));
   }
 
   private exportSave(): void {

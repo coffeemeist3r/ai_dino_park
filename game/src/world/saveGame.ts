@@ -8,6 +8,7 @@
  */
 
 import type { GameTime } from './clock';
+import type { Friendship } from '../social/friendship';
 
 export const SAVE_VERSION = 1;
 
@@ -15,6 +16,7 @@ export interface SaveData {
   version: number;
   time: GameTime;
   player: { x: number; y: number };
+  friendship: Friendship;
 }
 
 export function serialize(data: SaveData): string {
@@ -43,9 +45,21 @@ export function deserialize(json: string): SaveData | null {
   const player = o.player as Record<string, unknown> | undefined;
   if (!player || !isNum(player.x) || !isNum(player.y)) return null;
 
+  // friendship is additive over v1 — absent in older saves (default {}); reject only if malformed.
+  let friendship: Friendship = {};
+  if (o.friendship !== undefined) {
+    if (typeof o.friendship !== 'object' || o.friendship === null) return null;
+    const entries = o.friendship as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      friendship[k] = entries[k] as number;
+    }
+  }
+
   return {
     version: SAVE_VERSION,
     time: { day: time.day, hour: time.hour, minute: time.minute },
     player: { x: player.x, y: player.y },
+    friendship,
   };
 }

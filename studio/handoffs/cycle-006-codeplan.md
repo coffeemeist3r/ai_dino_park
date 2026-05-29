@@ -59,3 +59,18 @@ none.
 
 ## Estimated touch count
 5 files (1 new src, 2 modified src, 1 new unit, 1 new e2e). Under the ceiling. Save round-trip test folded into `friendship.test.ts`; `saveGame.test.ts` left as-is (and must stay green with the additive field).
+
+## Shipped
+**Files touched:**
+- `game/src/social/friendship.ts` (new) — `Friendship` map, `heartsFromPoints`, `bumpPoints` (immutable+clamped), `heartString`, `greetGain(traits)`.
+- `game/src/world/saveGame.ts` (modified) — `SaveData.friendship`; `deserialize` defaults absent→`{}`, validates when present; `SAVE_VERSION` still 1.
+- `game/src/scenes/WorldScene.ts` (modified) — `friendship` field + `heartsPanel`; `recordGreet` bumps on greet & saves; **C** toggles the panel; restore on load; `__hearts`/`__greet`/`__heartsPanelVisible` hooks.
+- `tests/unit/friendship.test.ts` (new) — 7 tests (incl. save round-trip + v1 back-compat).
+- `tests/e2e/cycle-006-hearts.spec.ts` (new) — 2 tests.
+
+**Deviations:** one test fix, no code change — the persistence e2e initially greeted once and asserted ≥1 heart, but one greet adds ~3 points (a heart = 10 points), so it now greets 5× to cross a heart. The grind is by design (Stardew-like); `saveGame.test.ts` `sample` gained `friendship` to match the extended type. No production deviation from the plan.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing chunk-size warning only).
+- `npm run test:unit` — ✅ 37/37 (2 brain + 6 clock + 6 dayNight + 6 saveGame + 6 personality + 4 roster + 7 friendship).
+- `npx playwright test` — ✅ 18/18 (default config).

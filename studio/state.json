@@ -1,6 +1,6 @@
 {
   "cycle": 6,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-016: Friendship hearts",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
     "lore-smith": "2026-05-29T22:24:00-05:00",
     "designer": "2026-05-29T22:32:00-05:00",
     "code-planner": "2026-05-29T22:40:00-05:00",
-    "coder": "2026-05-29T22:00:00-05:00",
+    "coder": "2026-05-29T22:52:00-05:00",
     "qa": "2026-05-29T22:06:00-05:00",
     "validator": "2026-05-29T22:14:00-05:00",
     "artist": null
