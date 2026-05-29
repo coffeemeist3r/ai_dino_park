@@ -88,6 +88,10 @@ Picked BACKLOG-008 per Lore-smith. Spec'd a single full-screen tint overlay (abo
 
 Plan: new pure module `game/src/world/dayNight.ts` (`tintFor(GameTime)`, `dayPhase(hour)`, no Phaser — testable in Node like `clock.ts`). Reuse audit: MUST reuse `getWorldClock().onTick`/`now()` (no second timer) and the existing `__clockNow` dev-hook pattern. WorldScene gains one overlay rectangle at depth 5 (between grass depth 0 and HUD depth 10), updated on every tick, plus `__readTint`/`__forceHour` dev hooks for QA. No new deps. ~5 files, under ceiling. Key risk noted: keyframe table needs an explicit 1440-min endpoint matching 0-min so the midnight wrap doesn't pop; continuity test covers it. State → `phase: coder-pending`.
 
+## 2026-05-29 19:10 CDT — cycle 002 — coder — BACKLOG-008 Day/night palette
+
+Implemented `dayNight.ts` (pure TS, no Phaser) — `tintFor(GameTime)` lerps color + alpha across an 8-keyframe day with an explicit midnight wrap endpoint, plus `dayPhase(hour)` for downstream hour-keyed features. Wired into `WorldScene` via `setupDayNight()`: one full-map overlay rectangle at depth 5 (above grass, below HUD) repainted every tick off `clock.onTick`, plus `__readTint`/`__forceHour` dev hooks mirroring `__clockNow`. Touched exactly the 4 planned files, no scope creep. Build clean; 14/14 unit (6 new); 5/5 e2e — and notably the e2e ran on the **default** Playwright config, the BACKLOG-046 vite fix retired the override hack. State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

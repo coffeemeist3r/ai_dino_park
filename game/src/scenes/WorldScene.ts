@@ -3,6 +3,7 @@ import { makeBrain } from '../ai/brain';
 import { Dino } from '../entities/dino';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
+import { tintFor } from '../world/dayNight';
 
 const TILE = 32;
 const COLS = 20;
@@ -16,6 +17,7 @@ export class WorldScene extends Phaser.Scene {
   private dialog!: DialogBox;
   private dialogOpen = false;
   private clockHud!: Phaser.GameObjects.Text;
+  private nightOverlay!: Phaser.GameObjects.Rectangle;
 
   constructor() {
     super('World');
@@ -44,6 +46,7 @@ export class WorldScene extends Phaser.Scene {
     this.interactKey.on('down', () => this.handleInteract());
 
     this.setupClock();
+    this.setupDayNight();
   }
 
   update(): void {
@@ -113,6 +116,33 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__clockNow = clock.now.bind(clock);
 
     clock.start(this);
+  }
+
+  private setupDayNight(): void {
+    const clock = getWorldClock();
+
+    // Full-map overlay between the grass (depth 0) and the HUD (depth 10).
+    const initial = tintFor(clock.now());
+    this.nightOverlay = this.add
+      .rectangle((TILE * COLS) / 2, (TILE * ROWS) / 2, TILE * COLS, TILE * ROWS, initial.color, initial.alpha)
+      .setDepth(5);
+
+    clock.onTick((t) => {
+      const tint = tintFor(t);
+      this.nightOverlay.setFillStyle(tint.color, tint.alpha);
+    });
+
+    // any: dev-only Playwright hooks — mirror the __clockNow pattern, not in production builds
+    (window as any).__readTint = () => ({
+      color: this.nightOverlay.fillColor,
+      alpha: this.nightOverlay.fillAlpha,
+    });
+    // any: dev-only Playwright hook — drive the live overlay to a given hour
+    (window as any).__forceHour = (h: number) => {
+      const tint = tintFor({ day: 1, hour: h, minute: 0 });
+      this.nightOverlay.setFillStyle(tint.color, tint.alpha);
+      return { color: this.nightOverlay.fillColor, alpha: this.nightOverlay.fillAlpha };
+    };
   }
 
   private drawGrassMap(): void {

@@ -50,3 +50,17 @@ none — feature is built from Phaser primitives + existing clock.
 
 ## Estimated touch count
 ~5 files (1 new src, 1 modified src, 2 new tests, 1 handoff). Under the 6-file ceiling. No split needed.
+
+## Shipped
+**Files touched:**
+- `game/src/world/dayNight.ts` (new) — `tintFor(GameTime)`, `dayPhase(hour)`, pure, no Phaser. 8-keyframe table with explicit 1440 wrap endpoint.
+- `game/src/scenes/WorldScene.ts` (modified) — added `nightOverlay` rectangle at depth 5, `setupDayNight()` subscribing to `clock.onTick`, dev hooks `__readTint`/`__forceHour`.
+- `tests/unit/dayNight.test.ts` (new) — 6 tests.
+- `tests/e2e/cycle-002-daynight.spec.ts` (new) — 2 tests.
+
+**Deviations from plan:** none. Touched exactly the planned files.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing Phaser chunk-size warning only, not new).
+- `npm run test:unit` — ✅ 14/14 (2 brain + 6 clock + 6 dayNight).
+- `npx playwright test` — ✅ 5/5 on the **default** `playwright.config.ts` (the vite `host: true` fix from BACKLOG-046 means the `.qa-override` config is no longer needed).
