@@ -80,6 +80,10 @@ Artist standing by; art pipeline not ready.
 
 Watcher kicked off cycle 2 by hand Friday evening rather than waiting for the Monday cron — fresh weekly budget, lots left, ~1-cycle/week cadence too slow to wait on. Full chain still runs in order. Bumped cycle 1 → 2. Suggested next-up: BACKLOG-008 (day/night palette) — the clock from cycle 1 broadcasts onTick/onHour, so a tint overlay keyed off `now()` is the natural next step and unblocks downstream hour-keyed features. Also filed + closed BACKLOG-046 (vite `host: true`) — the BUG-001 infra note the cycle-1 validator flagged; 2-line fix landed so QA runs on the default Playwright config without the override hack. State → `phase: designer-pending`.
 
+## 2026-05-29 18:40 CDT — cycle 002 — designer — BACKLOG-008 Day/night palette
+
+Picked BACKLOG-008 per Lore-smith. Spec'd a single full-screen tint overlay (above grass, below HUD) whose color + alpha lerp across the day off the existing `WorldClock.onTick`. 8 acceptance criteria, all testable — two dev hooks (`__readTint`, `__forceHour`) let QA verify midnight/noon without waiting a real day. Tint math constrained to a pure no-Phaser module mirroring `clock.ts`. Out of scope: shaders, per-tile light, weather. BACKLOG-008 marked `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

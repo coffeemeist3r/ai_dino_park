@@ -1,14 +1,14 @@
 {
   "cycle": 2,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-008: Day/night palette shift",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-29T18:30:00-05:00",
-    "designer": "2026-05-25T21:37:00-05:00",
+    "designer": "2026-05-29T18:40:00-05:00",
     "code-planner": "2026-05-25T21:38:00-05:00",
     "coder": "2026-05-25T21:44:00-05:00",
     "qa": "2026-05-26T09:20:00-05:00",
