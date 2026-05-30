@@ -326,6 +326,14 @@ Nine cycles in one night: time, sky, save, selves, a cast, in-character minds, a
 
 Operator hit two live issues: gameplay lags while the model thinks (main-thread), and dialog reads as "mostly hellos" with no way to tell LLM from canned fallback. Diagnosis: replies fall back to canned whenever the model isn't ready yet OR when cycle-8's `cleanReply` strips an all-assistant generation to empty — and there's no status indicator to reveal which. Bumped cycle 9 → 10. Suggested next-up: BACKLOG-049 (offload WebLLM to a Web Worker) + surface brain status ("thinking/ready/offline") and a per-reply source tag (🧠 = model-written). Fixes the lag and answers "how do I tell if it's the LLM?". Next after: BACKLOG-018 (dinos move + meet). State → `phase: designer-pending`.
 
+## 2026-05-30 02:12 CDT — cycle 010 — designer — BACKLOG-049 Worker offload + observability
+
+Spec'd: WebLLM runs in a dedicated Web Worker (`CreateWebWorkerMLCEngine`) so model load/inference no longer block the render loop; brain-status HUD (`🧠 zzz/thinking…/ready/offline`); `Reply.source` (`llm`|`canned`) with the dialog prefixing 🧠 on model-written lines. Answers the operator's "how do I tell if it's the LLM?" and fixes the lag. 9 ACs (8 automatable via fake-engine/pure helpers; 1 human smoothness+tag check). Boundary holds (web-llm now in 2 files, both under `ai/`); injected-loader seam preserved so tests never spawn a worker. State → `phase: designer-pending`.
+
+## 2026-05-30 02:20 CDT — cycle 010 — code-planner — BACKLOG-049 Worker offload + observability
+
+Plan: new `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`). `brain.ts`: `Reply.source?`, `cannedReply`→'canned', pure `replyPrefix`. `webllmBrain.ts`: `defaultLoader` builds a `Worker(new URL('./webllm.worker.ts', import.meta.url),{type:'module'})` + `CreateWebWorkerMLCEngine`; `generate`→source 'llm'; track `lastReplySource()`. WorldScene: status HUD on tick + `replyPrefix` on shown reply + `__lastReplySource` hook; `Dino.greet()` returns full `Reply` (one call site). Reuse the library worker path + injected-loader seam (tests never spawn a Worker). 6 files, at ceiling. Risk: Vite worker bundling — verify build; boundary now 2 ai/ files. State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
