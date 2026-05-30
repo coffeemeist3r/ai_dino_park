@@ -69,7 +69,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Infra
 
-- [ ] BACKLOG-047 [infra] Human spot-check WebLLM live inference — on a WebGPU browser, greet a dino, confirm `__brainStatus` goes loading→ready and a non-canned reply appears; note first-load model-download time  *(filed: cycle 7 validator)*
+- [x] BACKLOG-047 [infra] Human spot-check WebLLM live inference — confirmed working (load lag → generated reply); surfaced persona bug → BACKLOG-048  *(confirmed: human, cycle 8)*
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
@@ -81,6 +81,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-041 [emergent] Sleeping huddles — at night, NPCs with affinity ≥ 3 gather at a fixed tile and form a stacked sprite pile until morning. Small affinity boost each shared night.
 - [ ] BACKLOG-042 [pokemon] Egg phase — when two high-affinity NPCs share a sleeping huddle on a clear night, an egg sprite may appear nearby. Hatches into a new NPC after 3 in-game days with traits blended from the parents.
 - [ ] BACKLOG-043 [ai] Personality drift — over many in-game weeks, an NPC's personality traits can shift toward those of the NPC they spend most ticks adjacent to. Very slow (cap: one trait swap per in-game month).
+- [ ] BACKLOG-048 [ai] In-character dino dialogue — strengthen the WebLLM system prompt (+ one-shot example) and clean the reply so dinos never speak as an AI assistant ("how can I assist?"). Surfaced by the BACKLOG-047 spot-check.
+- [ ] BACKLOG-049 [ai] Offload WebLLM to a Web Worker — model load/inference currently runs on the main thread and lags gameplay; move to `CreateWebWorkerMLCEngine`.
 - [ ] BACKLOG-044 [emergent] Lost-item lore — when the player drops an item and an NPC picks it up later, the NPC's brain may invent a story about its origin. Story is stored in NPC memory and may surface in unrelated dialog later.
 - [ ] BACKLOG-045 [social] Catchphrase emergence — first non-trivial line an NPC speaks each in-game morning is logged. If the same line surfaces 3+ days running, it becomes that NPC's catchphrase, shown in the collection book.
 
