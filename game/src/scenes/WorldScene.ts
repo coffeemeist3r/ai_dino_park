@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { makeBrain, type NPCBrain } from '../ai/brain';
+import { makeBrain, replyPrefix, type NPCBrain } from '../ai/brain';
 import { Dino } from '../entities/dino';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
@@ -34,6 +34,7 @@ export class WorldScene extends Phaser.Scene {
   private npcBrain!: NPCBrain;
   private giftHud!: Phaser.GameObjects.Text;
   private heldItemIndex = 0;
+  private brainHud!: Phaser.GameObjects.Text;
 
   constructor() {
     super('World');
@@ -71,6 +72,34 @@ export class WorldScene extends Phaser.Scene {
     this.setupSave();
     this.setupHearts();
     this.setupGifts();
+    this.setupBrainHud();
+  }
+
+  private setupBrainHud(): void {
+    this.brainHud = this.add
+      .text(TILE * COLS - 6, 4, '', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#cfe8ff',
+        align: 'right',
+        shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+      })
+      .setOrigin(1, 0)
+      .setDepth(11);
+
+    const label: Record<string, string> = {
+      idle: '🧠 zzz',
+      loading: '🧠 thinking…',
+      ready: '🧠 ready',
+      fallback: '🧠 offline',
+    };
+    const refresh = () => this.brainHud.setText(label[this.npcBrain.status?.() ?? ''] ?? '🧠 —');
+    refresh();
+    getWorldClock().onTick(refresh);
+
+    // any: dev-only Playwright hook — source of the most recent reply
+    (window as any).__lastReplySource = () =>
+      (this.npcBrain as { lastReplySource?: () => unknown }).lastReplySource?.() ?? null;
   }
 
   update(): void {
@@ -101,7 +130,7 @@ export class WorldScene extends Phaser.Scene {
     this.dialogOpen = true;
     this.dialog.show(`${target.name}: ...`);
     const reply = await target.greet();
-    this.dialog.show(`${target.name}: ${reply}`);
+    this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
   }
 
   /** Raise a dino's affinity from a greet, persist, and refresh the panel. */

@@ -85,16 +85,23 @@ export function cleanReply(raw: string): string {
 async function defaultLoader(): Promise<ChatEngine> {
   // Dynamic import keeps web-llm out of the entry bundle and out of Node tests.
   const webllm = await import('@mlc-ai/web-llm');
-  return (await webllm.CreateMLCEngine(MODEL_ID)) as unknown as ChatEngine;
+  // Run the engine in a dedicated worker so model load + inference don't block the render loop.
+  const worker = new Worker(new URL('./webllm.worker.ts', import.meta.url), { type: 'module' });
+  return (await webllm.CreateWebWorkerMLCEngine(worker, MODEL_ID)) as unknown as ChatEngine;
 }
 
 export class WebLLMBrain implements NPCBrain {
   private _status: BrainStatus = 'idle';
   private engine: ChatEngine | null = null;
   private initStarted = false;
+  private _lastSource: 'llm' | 'canned' | null = null;
 
   status(): BrainStatus {
     return this._status;
+  }
+
+  lastReplySource(): 'llm' | 'canned' | null {
+    return this._lastSource;
   }
 
   /** Load the engine. Accepts an injectable loader for tests; defaults to the real WebLLM import. */
@@ -115,14 +122,18 @@ export class WebLLMBrain implements NPCBrain {
   async respond(ctx: NPCContext, obs: Observation): Promise<Reply> {
     if (this._status === 'ready' && this.engine) {
       try {
-        return await this.generate(this.engine, ctx, obs);
+        const reply = await this.generate(this.engine, ctx, obs);
+        this._lastSource = reply.source ?? 'llm';
+        return reply;
       } catch (err) {
         console.error('[webllm] generation failed; using canned fallback', err);
+        this._lastSource = 'canned';
         return cannedReply(ctx);
       }
     }
     // Not ready yet: kick off loading once, and answer instantly from the fallback meanwhile.
     if (this._status === 'idle') void this.init();
+    this._lastSource = 'canned';
     return cannedReply(ctx);
   }
 
@@ -135,6 +146,6 @@ export class WebLLMBrain implements NPCBrain {
     const cleaned = cleanReply(res.choices[0]?.message?.content ?? '');
     // Empty after cleaning means it was all assistant-speak — fall back rather than show it.
     if (!cleaned) return cannedReply(ctx);
-    return { text: cleaned, mood: moodFromTraits(ctx.traits) };
+    return { text: cleaned, mood: moodFromTraits(ctx.traits), source: 'llm' };
   }
 }

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { makeBrain } from '../../game/src/ai/brain';
+import { makeBrain, cannedReply, replyPrefix } from '../../game/src/ai/brain';
 import { WebLLMBrain, buildMessages, cleanReply, type ChatEngine } from '../../game/src/ai/webllmBrain';
 
 describe('NPCBrain', () => {
@@ -76,6 +76,29 @@ describe('WebLLMBrain', () => {
 function fake(content: string): ChatEngine {
   return { chat: { completions: { create: async () => ({ choices: [{ message: { content } }] }) } } };
 }
+
+describe('reply source + prefix', () => {
+  it('cannedReply is tagged canned; replyPrefix marks llm only', () => {
+    expect(cannedReply(ctx).source).toBe('canned');
+    expect(replyPrefix('llm')).toBe('🧠 ');
+    expect(replyPrefix('canned')).toBe('');
+    expect(replyPrefix(undefined)).toBe('');
+  });
+
+  it('a ready model reply is tagged llm; a not-ready reply is canned', async () => {
+    const ready = new WebLLMBrain();
+    await ready.init(() => Promise.resolve(fake('I am basking on a warm rock.')));
+    const r = await ready.respond(ctx, { kind: 'player_greet' });
+    expect(r.source).toBe('llm');
+    expect(ready.lastReplySource()).toBe('llm');
+
+    const loading = new WebLLMBrain();
+    void loading.init(() => new Promise<never>(() => {}));
+    const c = await loading.respond(ctx, { kind: 'player_greet' });
+    expect(c.source).toBe('canned');
+    expect(loading.lastReplySource()).toBe('canned');
+  });
+});
 
 describe('cleanReply', () => {
   it('strips wrapping quotes', () => {

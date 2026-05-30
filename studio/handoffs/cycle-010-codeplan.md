@@ -49,3 +49,21 @@ none.
 
 ## Estimated touch count
 6 files (1 new src worker, 3 modified src, 1 modified unit, 1 new e2e). At the ceiling.
+
+## Shipped
+**Files touched:**
+- `game/src/ai/webllm.worker.ts` (new) — `WebWorkerMLCEngineHandler`.
+- `game/src/ai/brain.ts` (modified) — `Reply.source?`, `cannedReply`→'canned', pure `replyPrefix`.
+- `game/src/ai/webllmBrain.ts` (modified) — `defaultLoader` spins a Worker + `CreateWebWorkerMLCEngine`; `generate`→source 'llm'; `lastReplySource()` tracking in `respond`.
+- `game/src/entities/dino.ts` (modified) — `greet()` returns the full `Reply`.
+- `game/src/scenes/WorldScene.ts` (modified) — brain-status HUD (top-right, updates on tick), dialog prefixes 🧠 on LLM lines, `__lastReplySource` hook.
+- `tests/unit/brain.test.ts` (modified) — source/prefix + ready-vs-loading source tests.
+- `tests/e2e/cycle-010-brain-status.spec.ts` (new) — status hook + greet-source.
+
+**Deviations:** none. (`greet()` return type changed string→`Reply`; the one call site updated.)
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0; web-llm now code-split into the **worker chunk** (separate from the 1.5 MB entry), confirming the offload. Pre-existing chunk-size warning unchanged for the entry.
+- `npm run test:unit` — ✅ 55/55.
+- `npx playwright test` — ✅ 24/24.
+- Boundary: `@mlc-ai/web-llm` imported only under `game/src/ai/` (`webllmBrain.ts` + `webllm.worker.ts`).

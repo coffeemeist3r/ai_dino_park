@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import type { NPCBrain, NPCContext } from '../ai/brain';
+import type { NPCBrain, NPCContext, Reply } from '../ai/brain';
 import { seededPersonality, type Personality } from '../ai/personality';
 
 const TILE = 32;
@@ -50,14 +50,13 @@ export class Dino {
     return this.sprite.y;
   }
 
-  async greet(): Promise<string> {
+  async greet(): Promise<Reply> {
     const ctx: NPCContext = {
       name: this.name,
       species: this.species,
       personality: this.personality,
       traits: this.traits,
     };
-    const reply = await this.brain.respond(ctx, { kind: 'player_greet' });
-    return reply.text;
+    return this.brain.respond(ctx, { kind: 'player_greet' });
   }
 }

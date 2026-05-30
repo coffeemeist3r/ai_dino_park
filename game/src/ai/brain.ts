@@ -28,6 +28,13 @@ export interface Observation {
 export interface Reply {
   text: string;
   mood?: 'happy' | 'neutral' | 'wary' | 'excited';
+  /** Where the line came from — the model, or the canned safety net. */
+  source?: 'llm' | 'canned';
+}
+
+/** Dialog marker so the player can tell a model-written line from the fallback. */
+export function replyPrefix(source?: Reply['source']): string {
+  return source === 'llm' ? '🧠 ' : '';
 }
 
 export interface NPCBrain {
@@ -56,7 +63,7 @@ export function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
 export function cannedReply(ctx: NPCContext): Reply {
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
-  return { text, mood: moodFromTraits(ctx.traits) };
+  return { text, mood: moodFromTraits(ctx.traits), source: 'canned' };
 }
 
 class StubBrain implements NPCBrain {

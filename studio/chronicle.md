@@ -334,6 +334,10 @@ Spec'd: WebLLM runs in a dedicated Web Worker (`CreateWebWorkerMLCEngine`) so mo
 
 Plan: new `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`). `brain.ts`: `Reply.source?`, `cannedReply`→'canned', pure `replyPrefix`. `webllmBrain.ts`: `defaultLoader` builds a `Worker(new URL('./webllm.worker.ts', import.meta.url),{type:'module'})` + `CreateWebWorkerMLCEngine`; `generate`→source 'llm'; track `lastReplySource()`. WorldScene: status HUD on tick + `replyPrefix` on shown reply + `__lastReplySource` hook; `Dino.greet()` returns full `Reply` (one call site). Reuse the library worker path + injected-loader seam (tests never spawn a Worker). 6 files, at ceiling. Risk: Vite worker bundling — verify build; boundary now 2 ai/ files. State → `phase: coder-pending`.
 
+## 2026-05-30 02:36 CDT — cycle 010 — coder — BACKLOG-049 Worker offload + observability
+
+Shipped `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`); `defaultLoader` now spins a module Worker + `CreateWebWorkerMLCEngine` so the model runs off the main thread. `Reply.source` ('llm'|'canned'), `cannedReply`→canned, generate→llm, `lastReplySource()` tracked; pure `replyPrefix` puts 🧠 on model lines. WorldScene shows a brain-status HUD (🧠 zzz/thinking…/ready/offline, refreshed each tick) and prefixes the dialog; `Dino.greet()` now returns the full `Reply`. Build confirms the offload — web-llm is code-split into a separate ~6 MB worker chunk, out of the 1.5 MB entry. **55/55 unit**, **24/24 e2e**. Boundary: web-llm only under `ai/`. State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
