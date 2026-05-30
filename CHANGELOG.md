@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 024 — 2026-05-30
+
+- BACKLOG-058: The Plaque — APPROVED. An engraved brass nameplate sits under the bowl — *"VIVARIUM · Pocket Cretaceous"* over a live stat line: `Day N · M specimens · G generations`. The generation count is a pure readout of the lineage the breeding loop produced: founders are gen 1, a hatchling is 1 + the deeper of its two parents, so the plaque deepens on its own as families breed across days. Pure `ui/plaque.ts` (`generationOf` memoized + cycle-guarded, `maxGeneration`, `plaqueLines` with pluralization); the scene renders it bottom-center, refreshed on the clock tick. 5 new unit + 1 new e2e (plaque reports population and ticks to 2 generations when an egg hatches); full suite **125 unit / 48 e2e** green. The bowl now wears its label.
+
 ## Cycle 023 — 2026-05-30
 
 - BACKLOG-057: Tap the glass — APPROVED. The keeper can now rap the vivarium wall (click anywhere): a ripple ring expands at the tap and every dino within range reacts **by temperament** — the timid bolt away (❗), the bold creep closer to investigate (❓), the far-off don't notice. The reaction is decided by the dino's seeded `bravery` and its distance from the tap, and the scare is written into the dino's memory ("the glass shook and you bolted/crept closer") so it can ripple into gossip and dialogue. Pure `world/startle.ts` (`reactionFor`/`fleeStep`/`startleStep`, reusing `stepToward`); WorldScene adds a `pointerdown` handler, the ripple tween, and the ❗/❓ flash. 6 new unit + 2 new e2e; full suite **120 unit / 47 e2e** green. First time the keeper can *touch* the bowl.

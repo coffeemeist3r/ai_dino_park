@@ -25,6 +25,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
+import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -76,6 +77,7 @@ export class WorldScene extends Phaser.Scene {
   private bondGfx!: Phaser.GameObjects.Graphics;
   private tickerPanel!: Phaser.GameObjects.Text;
   private lensLabel!: Phaser.GameObjects.Text;
+  private plaque!: Phaser.GameObjects.Text;
   private eventLog: string[] = [];
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private moveTicks = 0;
@@ -121,6 +123,42 @@ export class WorldScene extends Phaser.Scene {
     this.setupLenses();
     this.setupGlass();
     this.setupTap();
+    this.setupPlaque();
+  }
+
+  /** The Plaque (BACKLOG-058): an engraved nameplate under the bowl with live vivarium stats. */
+  private setupPlaque(): void {
+    this.plaque = this.add
+      .text((TILE * COLS) / 2, TILE * ROWS - 4, '', {
+        fontFamily: 'serif',
+        fontSize: '11px',
+        color: '#f4d58d',
+        align: 'center',
+        backgroundColor: '#3a2a14e6',
+        padding: { x: 10, y: 4 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(11);
+    this.refreshPlaque();
+    getWorldClock().onTick(() => this.refreshPlaque());
+
+    // dev-only Playwright hook — current plaque stats
+    (window as any).__plaque = () => ({
+      population: this.dinos.length,
+      day: getWorldClock().now().day,
+      generations: maxGeneration(this.born),
+    });
+  }
+
+  private refreshPlaque(): void {
+    if (!this.plaque) return;
+    this.plaque.setText(
+      plaqueLines({
+        population: this.dinos.length,
+        day: getWorldClock().now().day,
+        generations: maxGeneration(this.born),
+      }).join('\n'),
+    );
   }
 
   /** Tap the glass (BACKLOG-057): a click raps the bowl; nearby dinos react by temperament. */

@@ -438,6 +438,14 @@ First interaction that's pure fishbowl: rap the glass (click anywhere) and the d
 
 All the decision logic is pure and unit-tested (`world/startle.ts`: `reactionFor` by bravery+distance, `fleeStep` one tile directly away clamped, `startleStep` dispatching flee/approach/stay; the approach reuses `stepToward`). WorldScene just wires a `pointerdown` → `tapGlass(px,py)`, the ripple tween, and the ❗/❓ flash, plus a `__tapGlass` hook. 6 new unit + 2 new e2e (a tap on a dino startles it + is remembered; a far dino ignores a tap across the bowl); full suite **120 unit / 47 e2e** green (one known cycle-002 parallel-load flake, green isolated + on the confirming full run). Preview tooling was flaky this cycle (multi-tab, screenshot hang) so the live eyeball was skipped — behavior is covered deterministically by the e2e. BACKLOG-057 closed. Remaining fishbowl furniture: 058 plaque, 059 feeding hatch, 060 idle/ambient mode. State → `phase: lore-pending`.
 
+## 2026-05-30 — cycle 024 — full chain — BACKLOG-058 (the plaque) APPROVED
+
+**Cycle 24 — APPROVED. The bowl wears its label.**
+
+An engraved brass nameplate now sits under the vivarium: *"VIVARIUM · Pocket Cretaceous"* over a live line — `Day N · M specimens · G generations`. The clever bit is the generation count: it's a pure readout of the lineage the breeding loop already produces — founders are gen 1, a hatchling is 1 + the deeper parent — so as families breed across days the plaque quietly climbs to "2 generations", "3 generations", and the keeper can watch the family tree deepen without opening anything. Sells the "specimen on a shelf" feel and rewards leaving the bowl running.
+
+Pure, Node-tested `ui/plaque.ts` (`generationOf` — memoized and guarded against a malformed self-parent loop — `maxGeneration`, `plaqueLines` with singular/plural). The scene renders it bottom-center at depth 11 and refreshes on the clock tick; `__plaque` hook exposes the stats. 5 new unit + 1 new e2e (population + generations both move when an egg hatches); full suite **125 unit / 48 e2e** green. Two different specs flaked once each under parallel load this session (cycle-002, cycle-020) — both green isolated and on the confirming full run; root cause is hooks read before `create()` attaches them, so I filed an out-of-scope task to add a shared "scene ready" boot wait across the e2e specs. Preview MCP still flaky, so the plaque was verified via e2e rather than a live screenshot. BACKLOG-058 closed. Remaining fishbowl furniture: 059 feeding hatch, 060 idle/ambient mode. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
