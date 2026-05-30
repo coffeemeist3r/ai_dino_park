@@ -37,7 +37,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [x] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities  *(shipped: cycle 5, 2026-05-29)*
 - [x] BACKLOG-018 [ai] NPC-to-NPC interaction — movement + meeting spine (dinos wander, adjacency recorded); LLM dino-to-dino dialogue → BACKLOG-052  *(shipped: cycle 11, 2026-05-30)*
-- [ ] BACKLOG-019 [emergent] Gossip propagation — NPC who sees event tells next NPC they meet
+- [x] BACKLOG-019 [emergent] Gossip propagation — NPC who sees event tells next NPC they meet  *(shipped: cycle 20, 2026-05-30)*
 - [ ] BACKLOG-020 [emergent] Role emergence — chef / guard / artist / gossip surfaces from behavior, displayed in collection book
 
 ## Pokemon flavor

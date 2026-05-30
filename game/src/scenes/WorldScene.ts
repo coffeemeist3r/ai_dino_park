@@ -20,6 +20,7 @@ import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
+import { spreadGossip } from '../social/gossip';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -315,6 +316,12 @@ export class WorldScene extends Phaser.Scene {
     });
 
     (window as any).__memory = () => ({ ...this.memory });
+    // dev-only: spread one piece of gossip speaker→listener, returns the planted rumor
+    (window as any).__spreadGossip = (a: string, b: string) => {
+      const g = spreadGossip(this.memory, a, b);
+      this.memory = g.store;
+      return g.rumor;
+    };
     (window as any).__lastConversation = () => this.lastConversation;
     (window as any).__forceConverse = async () => {
       if (this.dinos.length >= 2) {
@@ -402,6 +409,8 @@ export class WorldScene extends Phaser.Scene {
       );
       this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
       this.memory = remember(this.memory, a.name, `you ran into ${b.name} the ${b.species}`);
+      // Gossip: the speaker passes a recent first-hand memory to the listener as news (BACKLOG-019).
+      this.memory = spreadGossip(this.memory, a.name, b.name).store;
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
     } finally {
       this.convoInFlight = false;

@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 020 — 2026-05-30
+
+- BACKLOG-019: Gossip propagation — APPROVED. When two dinos converse on meeting, the speaker passes a recent **first-hand** memory to the listener as second-hand news, planted in the listener's memory marked `told me:` so it won't re-spread (1 hop, no loops). Because memory already feeds the prompt as "Lately: …", a dino can now bring up things it only *heard* about — news ripples through the park as the cast mingles. Pure `social/gossip.ts` (`swapPronouns`/`isShareable`/`pickGossip`/`makeRumor`/`spreadGossip`), wired into the throttled `converse` path so it spreads at conversation cadence. 7 new unit + 2 new e2e; full suite **99 unit / 41 e2e**, green across two consecutive e2e runs.
+
 ## Cycle 019 — 2026-05-30
 
 - BACKLOG-042: Egg phase — APPROVED. The park grows itself. When two dinos whose bond clears the threshold (`EGG_BOND_THRESHOLD=60`) share a sleeping huddle on a clear night, a 🥚 appears by the den; after `EGG_HATCH_DAYS=3` in-game days it hatches into a brand-new dino whose traits, color, and species are **blended from the two parents** (pure `breeding.ts`: `blendTraits`/`blendColor`/`childName`/`shouldLay`/`hatch`). Born dinos and pending eggs ride into the save (additive, version 1) and respawn on reload, so the family tree survives sessions. A hard `MAX_POPULATION=12` cap stops runaway breeding. Weather isn't in yet (BACKLOG-028) so every night counts as "clear". 12 new unit + 3 new e2e; full suite **92 unit / 39 e2e**, green across two consecutive e2e runs. Closes the social loop started by cycle-18 huddles: meet → bond → huddle → **breed**.
