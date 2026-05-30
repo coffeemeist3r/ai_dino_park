@@ -1,6 +1,6 @@
 {
   "cycle": 7,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-005: WebLLM-backed brain",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-05-29T23:16:00-05:00",
     "designer": "2026-05-29T23:24:00-05:00",
-    "code-planner": "2026-05-29T22:40:00-05:00",
+    "code-planner": "2026-05-29T23:32:00-05:00",
     "coder": "2026-05-29T22:52:00-05:00",
     "qa": "2026-05-29T22:58:00-05:00",
     "validator": "2026-05-29T23:06:00-05:00",
