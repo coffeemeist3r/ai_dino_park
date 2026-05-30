@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { makeBrain, replyPrefix, type NPCBrain } from '../ai/brain';
+import { currentModel } from '../ai/deviceProbe';
 import { Dino } from '../entities/dino';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
@@ -254,6 +255,8 @@ export class WorldScene extends Phaser.Scene {
     refresh();
     getWorldClock().onTick(refresh);
 
+    // any: dev-only Playwright hook — the model tier picked for this device
+    (window as any).__modelInfo = () => currentModel();
     // any: dev-only Playwright hook — source of the most recent reply
     (window as any).__lastReplySource = () =>
       (this.npcBrain as { lastReplySource?: () => unknown }).lastReplySource?.() ?? null;

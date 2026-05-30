@@ -17,7 +17,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-003 [core] Talk-to-NPC dialog — press Z near NPC, opens Pokemon-style dialog box  *(shipped: bootstrap, cycle 0)*
 - [x] BACKLOG-004 [ai] NPCBrain interface scaffold — `brain.ts` with `respond(observation): Promise<Reply>` signature, dummy implementation returns canned text  *(shipped: bootstrap, cycle 0)*
 - [x] BACKLOG-005 [ai] WebLLM-backed brain — implement NPCBrain with WebLLM + Qwen2.5-0.5B, lazy-loaded on first dialog  *(shipped: cycle 7, 2026-05-30)*
-- [ ] BACKLOG-006 [ai] Device probe — detect VRAM and pick 0.5B / 1.5B / 3B, write to `config.json`
+- [x] BACKLOG-006 [ai] Device probe — pick 0.5B/1.5B/3B from `navigator.deviceMemory` + WebGPU buffer cap; surfaced via `window.__modelLabel`/`__modelInfo` (browser can't write config.json — exposed instead)  *(shipped: cycle 16, 2026-05-30)*
 - [x] BACKLOG-007 [core] World tick clock — in-game minute every real second, hour event broadcast  *(shipped: cycle 1, 2026-05-26)*
 - [x] BACKLOG-008 [core] Day/night palette shift — tint overlay based on in-game hour  *(shipped: cycle 2, 2026-05-29)*
 - [x] BACKLOG-009 [core] Save / load via IndexedDB — auto-save every in-game hour, manual export to JSON  *(shipped: cycle 3, 2026-05-29)*

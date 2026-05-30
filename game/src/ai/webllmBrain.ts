@@ -12,6 +12,7 @@
 
 import { cannedReply, moodFromTraits, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
+import { currentModel } from './deviceProbe';
 
 /** Describe the player's standing with the dino from their friendship hearts. */
 export function relationshipLabel(affection?: number): string {
@@ -39,7 +40,6 @@ export interface ChatEngine {
 
 export type EngineLoader = () => Promise<ChatEngine>;
 
-const MODEL_ID = 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC';
 const MAX_REPLY = 200;
 
 const OBSERVATION_PROMPT: Record<Observation['kind'], string> = {
@@ -111,11 +111,14 @@ async function defaultLoader(): Promise<ChatEngine> {
   if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
     throw new Error('WebGPU unavailable');
   }
+  // Pick a model sized to the device (cycle 16), surface the choice.
+  const model = await currentModel();
+  (globalThis as unknown as { __modelLabel?: string }).__modelLabel = model.label;
   // Dynamic import keeps web-llm out of the entry bundle and out of Node tests.
   const webllm = await import('@mlc-ai/web-llm');
   // Run the engine in a dedicated worker so model load + inference don't block the render loop.
   const worker = new Worker(new URL('./webllm.worker.ts', import.meta.url), { type: 'module' });
-  return (await webllm.CreateWebWorkerMLCEngine(worker, MODEL_ID)) as unknown as ChatEngine;
+  return (await webllm.CreateWebWorkerMLCEngine(worker, model.id)) as unknown as ChatEngine;
 }
 
 export class WebLLMBrain implements NPCBrain {
