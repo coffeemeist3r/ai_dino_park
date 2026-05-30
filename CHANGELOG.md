@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 022 — 2026-05-30
+
+- BACKLOG-056: The Glass (vivarium frame) — APPROVED. Reframes the whole game per the operator's "mini dino fishbowl" idea: the world is now a **sealed glass vivarium** the player keeps and watches. Draws the bowl — an edge vignette (corners doubled for a deeper shadow), a crisp pale-cyan glass rim with a faint inner highlight, two reflection streaks, and a curved light-catch arc along the top lip. Pure geometry in `ui/glass.ts` (`cornerRadius`/`rimRects`/`edgeBands`/`glarePolys`/`toPoints`); the scene draws it at depth 8 (over the night tint + bond lines, under the HUD). No sim change — purely visual. New lore doc `studio/lore/vivarium.md` + a fishbowl backlog section (057 tap-the-glass, 058 plaque, 059 feeding hatch, 060 idle mode). 5 new unit + 1 new e2e; full suite **114 unit / 45 e2e**, green across two consecutive runs. Visually verified in a live preview.
+
 ## Cycle 021 — 2026-05-30
 
 - BACKLOG-021 + BACKLOG-020: Observer lenses — APPROVED. One key (**V**) cycles the player through ways of *seeing* the emergent sim, each a pure readout of state the sim already produced (no new scripting): **📖 Collection Book** (every dino incl. hatchlings — species, hearts, strongest bond, emergent role, lineage "child of X + Y", rumors heard), **🔗 Bonds** (lines drawn between bonded pairs on the map, thicker = stronger), **🎭 Roles** (a role tag floats over each dino — `gossip`/`homebody`/`socialite`/`wanderer` **derived from behavior**, BACKLOG-020), **📰 Park News** (live ticker of births/hatches/gossip). Pure `ai/roles.ts` (`deriveRole`) + `ui/lenses.ts` (`nextLens`/`bondedPairs`/`tickerLines`/`bookLines`); `BornDino` gains a `parents` field for lineage (additive). WorldScene adds the lens layer + an event log. 14 new unit + 3 new e2e; full suite **109 unit / 44 e2e**, green across two consecutive e2e runs. Visually verified all four lenses in a live preview. Turns the invisible sim into something you watch — without ever authoring an outcome.

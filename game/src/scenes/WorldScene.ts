@@ -23,6 +23,7 @@ import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
+import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -117,6 +118,41 @@ export class WorldScene extends Phaser.Scene {
     this.setupMovement();
     this.setupHuddle();
     this.setupLenses();
+    this.setupGlass();
+  }
+
+  /** The Glass (BACKLOG-056): draw the vivarium bowl — edge shadow, glass rim, reflections. */
+  private setupGlass(): void {
+    const W = TILE * COLS;
+    const H = TILE * ROWS;
+    const r = cornerRadius(TILE);
+
+    // depth 8: over the night overlay (5) and bond lines (6), under the HUD/labels (10+)
+    const g = this.add.graphics().setDepth(8);
+
+    // edge vignette — darken the rim inward; corners double up for a deeper bowl shadow
+    g.fillStyle(GLASS.vignetteColor, GLASS.vignetteAlpha);
+    for (const b of edgeBands(W, H)) g.fillRect(b.x, b.y, b.width, b.height);
+
+    // crisp glass rim + faint inner highlight
+    const rims = rimRects(W, H);
+    g.lineStyle(GLASS.rim, GLASS.rimColor, 0.7);
+    g.strokeRoundedRect(rims[0].x, rims[0].y, rims[0].width, rims[0].height, r);
+    g.lineStyle(1, GLASS.innerColor, 0.25);
+    g.strokeRoundedRect(rims[1].x, rims[1].y, rims[1].width, rims[1].height, r - 3);
+
+    // reflection streaks catching the light off the curved glass
+    g.fillStyle(GLASS.glareColor, GLASS.glareAlpha);
+    for (const poly of glarePolys(W, H)) g.fillPoints(toPoints(poly), true);
+
+    // curved highlight along the top rim — the catch of light on a bowl's lip
+    g.lineStyle(2, GLASS.rimColor, 0.4);
+    g.beginPath();
+    g.arc(W / 2, H * 0.16, W * 0.46, Phaser.Math.DegToRad(205), Phaser.Math.DegToRad(335));
+    g.strokePath();
+
+    // dev-only Playwright hook — confirms the glass drew and reports its rim
+    (window as any).__glass = () => ({ width: W, height: H, radius: r });
   }
 
   /** Spawn a dino (roster or born), keeping its 💤 sleep-mark index-aligned in `sleepMarks`. */
