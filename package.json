@@ -5,6 +5,8 @@
   "description": "Autonomous AI-built dino park simulator. Game lives in game/. Studio lives in studio/.",
   "scripts": {
     "dev": "npm --prefix game run dev",
+    "dev:fresh": "npx --yes kill-port 5173 && npm --prefix game run dev",
+    "kill": "npx --yes kill-port 5173",
     "build": "npm --prefix game run build",
     "test": "vitest run && npm run test:e2e",
     "test:unit": "vitest run",

@@ -201,6 +201,17 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private addControlsHint(): void {
+    // Build stamp — short HH:MM:SS of the running build so a restart is visible in-game.
+    const stamp = typeof __BUILD_TIME__ === 'string' ? __BUILD_TIME__.slice(11, 19) : '?';
+    this.add
+      .text(6, 20, `build ${stamp}`, {
+        fontFamily: 'monospace',
+        fontSize: '9px',
+        color: '#7fa',
+        shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+      })
+      .setDepth(11);
+
     this.add
       .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · [ ] item · C friends · O export', {
         fontFamily: 'monospace',

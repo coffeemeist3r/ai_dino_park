@@ -70,6 +70,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Infra
 
 - [x] BACKLOG-053 [core] Sane controls — WASD movement, E to interact, F to give (Z/G/arrows kept as aliases; save-export moved to O). Operator feedback.  *(shipped: cycle 13, 2026-05-30)*
+- [x] BACKLOG-054 [infra] Build stamp + fresh-restart script — vite injects `__BUILD_TIME__` (console + on-screen `build HH:MM:SS` label + `window.__buildTime`) so a restart is visible; `npm run dev:fresh` / `npm run kill` free port 5173 to prevent orphan dev servers serving a stale build.  *(shipped: operator, 2026-05-30)*
 - [x] BACKLOG-047 [infra] Human spot-check WebLLM live inference — confirmed working (load lag → generated reply); surfaced persona bug → BACKLOG-048  *(confirmed: human, cycle 8)*
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test

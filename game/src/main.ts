@@ -2,6 +2,11 @@ import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { WorldScene } from './scenes/WorldScene';
 
+// Build stamp — confirm a restart took (this changes each time vite (re)starts).
+// eslint-disable-next-line no-console
+console.log(`%c[dino] build ${__BUILD_TIME__}`, 'color:#8fd');
+(window as unknown as { __buildTime: string }).__buildTime = __BUILD_TIME__;
+
 const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
