@@ -100,6 +100,10 @@ export function cleanReply(raw: string): string {
 }
 
 async function defaultLoader(): Promise<ChatEngine> {
+  // No WebGPU → no point spawning a worker that can't run the model; fail fast to the fallback.
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
+    throw new Error('WebGPU unavailable');
+  }
   // Dynamic import keeps web-llm out of the entry bundle and out of Node tests.
   const webllm = await import('@mlc-ai/web-llm');
   // Run the engine in a dedicated worker so model load + inference don't block the render loop.

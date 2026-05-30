@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { wanderStep, WANDER_DIRS } from '../../game/src/world/movement';
+import { wanderStep, stepToward, WANDER_DIRS } from '../../game/src/world/movement';
 import { pairKey, recordMeet } from '../../game/src/social/meetings';
 
 const COLS = 20;
@@ -35,6 +35,24 @@ describe('wanderStep', () => {
 
   it('direction 0 is a no-op (stay)', () => {
     expect(wanderStep({ tileX: 3, tileY: 4 }, 0, COLS, ROWS)).toEqual({ tileX: 3, tileY: 4 });
+  });
+});
+
+describe('stepToward', () => {
+  it('moves one tile along the larger-delta axis toward the target', () => {
+    expect(stepToward({ tileX: 0, tileY: 0 }, { tileX: 5, tileY: 3 }, COLS, ROWS)).toEqual({ tileX: 1, tileY: 0 });
+    expect(stepToward({ tileX: 0, tileY: 0 }, { tileX: 2, tileY: 5 }, COLS, ROWS)).toEqual({ tileX: 0, tileY: 1 });
+  });
+
+  it('reduces distance to the target and stays in bounds', () => {
+    let pos = { tileX: 0, tileY: 0 };
+    const target = { tileX: 19, tileY: 14 };
+    for (let i = 0; i < 40; i++) pos = stepToward(pos, target, COLS, ROWS);
+    expect(pos).toEqual(target);
+  });
+
+  it('is a no-op when already on the target', () => {
+    expect(stepToward({ tileX: 4, tileY: 4 }, { tileX: 4, tileY: 4 }, COLS, ROWS)).toEqual({ tileX: 4, tileY: 4 });
   });
 });
 

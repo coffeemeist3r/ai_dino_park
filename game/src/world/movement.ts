@@ -30,3 +30,15 @@ export function wanderStep(t: Tile, dirIndex: number, cols: number, rows: number
     tileY: clamp(t.tileY + dy, 0, rows - 1),
   };
 }
+
+/** One tile toward `target`, stepping along the axis with the larger remaining distance. Clamped. */
+export function stepToward(from: Tile, target: Tile, cols: number, rows: number): Tile {
+  const ax = target.tileX - from.tileX;
+  const ay = target.tileY - from.tileY;
+  if (ax === 0 && ay === 0) return { ...from };
+  let nx = from.tileX;
+  let ny = from.tileY;
+  if (Math.abs(ax) >= Math.abs(ay)) nx += Math.sign(ax);
+  else ny += Math.sign(ay);
+  return { tileX: clamp(nx, 0, cols - 1), tileY: clamp(ny, 0, rows - 1) };
+}

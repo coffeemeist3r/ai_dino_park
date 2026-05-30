@@ -16,7 +16,7 @@ import {
   type Friendship,
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
-import { wanderStep } from '../world/movement';
+import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, type Meetings } from '../social/meetings';
 
 const TILE = 32;
@@ -41,6 +41,9 @@ export class WorldScene extends Phaser.Scene {
   private brainHud!: Phaser.GameObjects.Text;
   private meetings: Meetings = {};
   private moveTicks = 0;
+  private convoCooldown = 0;
+  private convoInFlight = false;
+  private lastConversation: { speaker: string; text: string; source?: string } | null = null;
 
   constructor() {
     super('World');
@@ -100,18 +103,50 @@ export class WorldScene extends Phaser.Scene {
       this.forceStep();
       return this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
     };
+    (window as any).__lastConversation = () => this.lastConversation;
+    (window as any).__forceConverse = async () => {
+      if (this.dinos.length >= 2) {
+        this.convoCooldown = 0;
+        this.convoInFlight = false;
+        await this.converse(this.dinos[0], this.dinos[1]);
+      }
+      return this.lastConversation;
+    };
+  }
+
+  private tileOf(d: Dino): { tileX: number; tileY: number } {
+    return { tileX: Math.round((d.x - TILE / 2) / TILE), tileY: Math.round((d.y - TILE / 2) / TILE) };
+  }
+
+  private nearestOther(d: Dino): Dino | null {
+    let best: Dino | null = null;
+    let bestDist = Infinity;
+    for (const o of this.dinos) {
+      if (o === d) continue;
+      const dist = Phaser.Math.Distance.Between(d.x, d.y, o.x, o.y);
+      if (dist < bestDist) {
+        best = o;
+        bestDist = dist;
+      }
+    }
+    return best;
   }
 
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
+    if (this.convoCooldown > 0) this.convoCooldown--;
+
     for (const d of this.dinos) {
-      const cur = {
-        tileX: Math.round((d.x - TILE / 2) / TILE),
-        tileY: Math.round((d.y - TILE / 2) / TILE),
-      };
-      const next = wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
+      const cur = this.tileOf(d);
+      const other = this.nearestOther(d);
+      // ~45% of the time, drift toward the nearest dino so the park clusters and converses.
+      const next =
+        other && Math.random() < 0.45
+          ? stepToward(cur, this.tileOf(other), COLS, ROWS)
+          : wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
     }
+
     for (let i = 0; i < this.dinos.length; i++) {
       for (let j = i + 1; j < this.dinos.length; j++) {
         const a = this.dinos[i];
@@ -119,9 +154,50 @@ export class WorldScene extends Phaser.Scene {
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
           this.flashMeet(a, b);
+          if (this.convoCooldown <= 0 && !this.convoInFlight) void this.converse(a, b);
         }
       }
     }
+  }
+
+  /** One dino remarks on meeting another — a floating speech bubble via the shared brain. */
+  private async converse(a: Dino, b: Dino): Promise<void> {
+    if (this.convoInFlight) return;
+    this.convoInFlight = true;
+    this.convoCooldown = 8; // protect the single shared engine; space out NPC chatter
+    try {
+      const now = getWorldClock().now();
+      const reply = await this.npcBrain.respond(
+        {
+          name: a.name,
+          species: a.species,
+          personality: a.personality,
+          traits: a.traits,
+          timeOfDay: dayPhase(now.hour),
+        },
+        { kind: 'npc_meet', detail: `${b.name} the ${b.species} wanders up` },
+      );
+      this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
+      this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
+    } finally {
+      this.convoInFlight = false;
+    }
+  }
+
+  private showBubble(d: Dino, text: string): void {
+    const bubble = this.add
+      .text(d.x, d.y - TILE * 1.4, text, {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#ffffff',
+        align: 'center',
+        wordWrap: { width: TILE * 5 },
+        backgroundColor: '#2a2a3acc',
+        padding: { x: 4, y: 2 },
+      })
+      .setOrigin(0.5, 1)
+      .setDepth(12);
+    this.time.delayedCall(3500, () => bubble.destroy());
   }
 
   private addControlsHint(): void {

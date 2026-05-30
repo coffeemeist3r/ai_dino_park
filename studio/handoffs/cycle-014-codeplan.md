@@ -31,3 +31,11 @@ none.
 
 ## Touch count
 4 files (1 mod src, 1 mod src scene, 1 mod unit, 1 new e2e). Under ceiling.
+
+## Shipped
+- `world/movement.ts` (mod) — pure `stepToward`.
+- `scenes/WorldScene.ts` (mod) — attraction (~45% drift toward nearest dino), `converse`/`showBubble` (floating speech bubble via shared brain, 🧠-tagged), convo cooldown + in-flight guard, `__lastConversation`/`__forceConverse` hooks.
+- `ai/webllmBrain.ts` (mod) — **WebGPU guard** in `defaultLoader` (no `navigator.gpu` → fail fast to fallback, no doomed worker). Out-of-plan; fixes a parallel-load e2e flake + avoids wasted worker on non-WebGPU.
+- `tests/unit/movement.test.ts` (mod, 3 new), `tests/e2e/cycle-014-npc-convo.spec.ts` (new, 2).
+
+Build ✅; unit ✅ 65/65; e2e ✅ 32/32 (full suite, flake gone).

@@ -372,6 +372,10 @@ Operator flagged the dialogue as "mostly hellos." Root fix: the prompt was conte
 
 Operator: "WASD????? E interact, F give." Shipped: WASD added alongside arrows; **E** interacts (Z alias kept), **F** gives (G alias kept), save-export moved off E → **O**; controls-hint HUD bottom-right. Arrows/Z/G preserved so all existing e2e stay green. Build clean; **62/62 unit**, **30/30 e2e** (2 new: WASD moves, E talk + F give no-throw). BACKLOG-053 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 09:36 CDT — cycle 014 — full chain — BACKLOG-052 (NPC↔NPC dialogue) APPROVED
+
+Operator: "haven't seen them interact; LLM interaction not running as much as hoped." Two fixes shipped. (1) **They talk:** on meeting, one dino speaks a brain-generated `npc_meet` line in a floating speech bubble above it (🧠-tagged when model-written), with a cooldown + in-flight guard so the single shared 0.5B engine isn't spammed. (2) **They actually meet:** ~45% of wander steps now drift toward the nearest dino (pure `stepToward`), so the park clusters instead of milling apart — e2e confirms meetings get recorded over 60 steps. Bonus: a **WebGPU guard** in the brain loader (no `navigator.gpu` → instant fallback, no doomed worker) — better behavior and it killed a parallel-suite flake. Build clean; **65/65 unit**, **32/32 e2e** (full suite green). Pairwise affinity still just a tally (013 can deepen it). BACKLOG-052 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

@@ -9,6 +9,14 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 014 — 2026-05-30
+
+- BACKLOG-052: NPC↔NPC dialogue — APPROVED. Dinos now drift toward each other (~45% of steps via pure `stepToward`) so they actually cluster and meet, and on meeting one speaks a brain-generated line (`npc_meet`) in a floating speech bubble above it (🧠-tagged when model-written), throttled by a cooldown + in-flight guard to protect the single shared engine. Also added a WebGPU guard so the brain fails fast to the canned fallback (and skips a doomed worker) on browsers without WebGPU. 3 new unit + 2 new e2e.
+
+## Cycle 013 — 2026-05-30
+
+- BACKLOG-053: Sane controls — APPROVED. WASD movement (arrows kept), E to interact and F to give (Z/G kept as aliases), save-export moved off E to O, plus an on-screen controls hint. 2 new e2e.
+
 ## Cycle 012 — 2026-05-30
 
 - BACKLOG-051: Richer dialogue context — APPROVED. The WebLLM prompt now carries the time of day (`dayPhase`), the dino's current mood (`moodFromTraits`), and the player's friendship level (hearts → `relationshipLabel`), and the greet line itself changes with the relationship (stranger → dear friend). Pure prompt enrichment reusing three existing signals; verifiable via the new `__greetPrompt` dev hook. 2 new unit + 2 new e2e; 7/7 AC pass. Directly targets the "mostly hellos" sameness.
