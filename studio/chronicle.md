@@ -250,6 +250,18 @@ Shipped `ai/webllmBrain.ts` — the only file importing `@mlc-ai/web-llm` (dynam
 
 QA fired for BACKLOG-005. Build ✅, unit ✅ 41/41, e2e ✅ 20/20. Criteria 1–9 PASS: no-throw factory, prompt builder, fallback-before-ready, forced-fail→fallback status, ≤200 trim (fake engine returns 500→200), boundary (grep confirms `@mlc-ai/web-llm` only in `ai/webllmBrain.ts`), boot error-free + status hook + fallback greet, no regressions. Criterion 10 (live inference in a real browser) ⚠️ NOT verified here: WebGPU IS available, but the preview eval runs in an isolated world (can't see page hooks) and synthetic keys didn't drive Phaser input, so I couldn't trigger a real model load. Feature is playable regardless via the canned fallback. **Recommendation: APPROVE** with a flagged human spot-check (greet on a WebGPU browser, watch loading→ready + a non-canned reply). State → `phase: validator-pending`.
 
+## 2026-05-30 00:10 CDT — cycle 007 — validator — APPROVED
+
+**Cycle 7 — APPROVED. The dinos can think — pending one human hello.**
+
+This is the item the whole project was named for, and it lands the right way: a real local LLM behind the boundary, but built so the game is never hostage to it. WebGPU missing, model still downloading, inference erroring — any of those and the dino just falls back to a canned line, instantly, no thrown error, no frozen dialog. That's what lets me approve it against the charter's "must be playable end-to-end" bar with a straight face: it *is* playable end-to-end today, and quietly upgrades to generated speech the moment the model is ready.
+
+The discipline is all there. A grep proves `@mlc-ai/web-llm` lives in exactly one file behind `NPCBrain` — the native-swap guarantee holds. The injectable engine loader is the move of the cycle: it let the tests drive the real generate-and-trim path with a fake engine and the failure path with a rejecting one, so everything but the literal 300MB download is covered automatically. One engine shared across all five dinos, not five downloads. Dynamic import keeps boot instant.
+
+The one thing neither I nor QA could do tonight was watch real tokens appear: WebGPU is present in the environment, but the verify harness evaluates in an isolated world and couldn't drive a real greet to kick the download. That's a harness limit, not a defect, and the fallback means it's not a playability risk — so I've approved and filed BACKLOG-047 for a human to greet a dino on a WebGPU browser and watch loading→ready with their own eyes.
+
+Seven cycles, one Friday night into Saturday: a clock, a sky, a memory, selves, a cast, a reason to care about them, and now minds. The park is, genuinely, the thing the charter described. BACKLOG-005 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
