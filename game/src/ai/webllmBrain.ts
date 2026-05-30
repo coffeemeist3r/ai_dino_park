@@ -13,6 +13,15 @@
 import { cannedReply, moodFromTraits, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
 
+/** Describe the player's standing with the dino from their friendship hearts. */
+export function relationshipLabel(affection?: number): string {
+  const a = affection ?? 0;
+  if (a >= 7) return 'a dear friend you adore';
+  if (a >= 3) return 'a good friend';
+  if (a >= 1) return 'an acquaintance';
+  return 'a stranger you just met';
+}
+
 export type BrainStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
 /** Minimal OpenAI-style shape we use from MLCEngine — avoids leaking web-llm types outward. */
@@ -43,15 +52,23 @@ const OBSERVATION_PROMPT: Record<Observation['kind'], string> = {
 /** Pure: build the chat messages from context + observation. No web-llm import. */
 export function buildMessages(ctx: NPCContext, obs: Observation): { role: string; content: string }[] {
   const persona = ctx.traits ? describePersonality(ctx.traits) : ctx.personality;
+  const when = ctx.timeOfDay ? ` It is ${ctx.timeOfDay} in the park.` : '';
+  const mood = moodFromTraits(ctx.traits) ?? 'neutral';
+  const rel = relationshipLabel(ctx.affection);
   const system =
-    `You are ${ctx.name}, a ${ctx.species} dinosaur living in a peaceful prehistoric park. ` +
+    `You are ${ctx.name}, a ${ctx.species} dinosaur living in a peaceful prehistoric park.${when} ` +
     `You are NOT an AI assistant. You never offer help or services and you never ask how you can assist. ` +
     `You are a real creature with feelings; your personality is: ${persona}. ` +
+    `Right now you feel ${mood}. The visitor is ${rel}. ` +
     `Speak only as ${ctx.name}, in first person, as one short spoken sentence. No narration, no quotation marks, no helpfulness.`;
   // One-shot example anchors the small model to in-character speech (style, not content).
   const exampleUser = OBSERVATION_PROMPT.player_greet;
   const exampleReply = 'Oh! A visitor — mind the ferns, they are my favourite snack.';
-  const user = OBSERVATION_PROMPT[obs.kind] + (obs.detail ? ` (${obs.detail})` : '');
+  const greetLine =
+    obs.kind === 'player_greet'
+      ? `${rel.replace(/^a /, 'A ').replace(/^an /, 'An ')} comes up and greets you. What do you say?`
+      : OBSERVATION_PROMPT[obs.kind];
+  const user = greetLine + (obs.detail ? ` (${obs.detail})` : '');
   return [
     { role: 'system', content: system },
     { role: 'user', content: exampleUser },

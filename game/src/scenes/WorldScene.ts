@@ -4,7 +4,8 @@ import { Dino } from '../entities/dino';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
-import { tintFor } from '../world/dayNight';
+import { tintFor, dayPhase } from '../world/dayNight';
+import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
@@ -149,6 +150,24 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hook — source of the most recent reply
     (window as any).__lastReplySource = () =>
       (this.npcBrain as { lastReplySource?: () => unknown }).lastReplySource?.() ?? null;
+    // any: dev-only Playwright hook — the enriched system prompt for a named dino
+    (window as any).__greetPrompt = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return null;
+      const now = getWorldClock().now();
+      const msgs = buildMessages(
+        {
+          name: d.name,
+          species: d.species,
+          personality: d.personality,
+          traits: d.traits,
+          timeOfDay: dayPhase(now.hour),
+          affection: heartsFromPoints(this.friendship[d.name] ?? 0),
+        },
+        { kind: 'player_greet' },
+      );
+      return msgs[0].content;
+    };
   }
 
   update(): void {
@@ -178,7 +197,11 @@ export class WorldScene extends Phaser.Scene {
 
     this.dialogOpen = true;
     this.dialog.show(`${target.name}: ...`);
-    const reply = await target.greet();
+    const now = getWorldClock().now();
+    const reply = await target.greet({
+      timeOfDay: dayPhase(now.hour),
+      affection: heartsFromPoints(this.friendship[target.name] ?? 0),
+    });
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
   }
 

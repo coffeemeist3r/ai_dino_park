@@ -1,6 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { makeBrain, cannedReply, replyPrefix } from '../../game/src/ai/brain';
-import { WebLLMBrain, buildMessages, cleanReply, type ChatEngine } from '../../game/src/ai/webllmBrain';
+import {
+  WebLLMBrain,
+  buildMessages,
+  cleanReply,
+  relationshipLabel,
+  type ChatEngine,
+} from '../../game/src/ai/webllmBrain';
 
 describe('NPCBrain', () => {
   it('stub brain returns a non-empty reply', async () => {
@@ -97,6 +103,24 @@ describe('reply source + prefix', () => {
     const c = await loading.respond(ctx, { kind: 'player_greet' });
     expect(c.source).toBe('canned');
     expect(loading.lastReplySource()).toBe('canned');
+  });
+});
+
+describe('dialogue context (BACKLOG-051)', () => {
+  it('relationshipLabel scales with affection', () => {
+    expect(relationshipLabel(0)).toMatch(/stranger/);
+    expect(relationshipLabel(2)).toMatch(/acquaintance/);
+    expect(relationshipLabel(5)).toMatch(/good friend/);
+    expect(relationshipLabel(9)).toMatch(/dear friend/);
+  });
+
+  it('buildMessages weaves in time-of-day and relationship, and varies with affection', () => {
+    const night = buildMessages({ ...ctx, timeOfDay: 'night', affection: 10 }, { kind: 'player_greet' })[0].content;
+    expect(night).toContain('night');
+    expect(night).toMatch(/dear friend/);
+    const stranger = buildMessages({ ...ctx, timeOfDay: 'night', affection: 0 }, { kind: 'player_greet' })[0].content;
+    expect(stranger).toMatch(/stranger/);
+    expect(night).not.toBe(stranger);
   });
 });
 

@@ -362,6 +362,12 @@ Bumped cycle 10 → 11. Operator-requested item. Scope call: ship the **movement
 
 Shipped pure `world/movement.ts` (`wanderStep`, clamped) + `social/meetings.ts` (`pairKey`/`recordMeet`), `Dino.setPosition`, and WorldScene `setupMovement`/`forceStep`/`flashMeet` off the clock tick (throttled, force-able for tests). Dinos now wander the map and, when two end a step adjacent, the pair's meeting count ticks up and both labels flash gold. `nearestDino` reads live positions so greeting/gifting follow them around. Build clean; **60/60 unit** (5 new); **26/26 e2e** (dinos provably move + stay in-bounds; greet still works after movement). LLM dino-to-dino dialogue deferred to BACKLOG-052; pairwise affinity (013) can build on the meeting counter. Eleven cycles tonight — the world visibly lives now. BACKLOG-018 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 04:06 CDT — cycle 012 — full chain — BACKLOG-051 APPROVED
+
+**Cycle 12 — APPROVED. The dinos have something to talk about.**
+
+Operator flagged the dialogue as "mostly hellos." Root fix: the prompt was context-free. Now `buildMessages` weaves in the time of day (`dayPhase`), the dino's mood (`moodFromTraits`), and how close the player is (hearts → `relationshipLabel`), and the greet line itself shifts — a stranger at dawn gets a different opening than a 10-heart friend at midnight. Reuses three signals we already had; adds none. Verified via a new `__greetPrompt` hook (e2e: advance to 22:00 → the prompt says "night"); 62/62 unit, 28/28 e2e (one parallel flake on cycle-003 export, green isolated + on re-run). Whether the *generated* line is more varied is the human's WebGPU re-greet to judge — but the prompt is provably richer. BACKLOG-051 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

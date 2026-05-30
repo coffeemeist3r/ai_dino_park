@@ -18,6 +18,10 @@ export interface NPCContext {
   personality: string;
   traits?: Personality;
   recentMemory?: string[];
+  /** Time-of-day phase (dawn/day/dusk/night) for prompt flavor. */
+  timeOfDay?: string;
+  /** Player friendship level with this dino, 0–10 hearts. */
+  affection?: number;
 }
 
 export interface Observation {

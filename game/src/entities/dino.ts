@@ -56,12 +56,13 @@ export class Dino {
     return this.sprite.y;
   }
 
-  async greet(): Promise<Reply> {
+  async greet(extra?: Partial<NPCContext>): Promise<Reply> {
     const ctx: NPCContext = {
       name: this.name,
       species: this.species,
       personality: this.personality,
       traits: this.traits,
+      ...extra,
     };
     return this.brain.respond(ctx, { kind: 'player_greet' });
   }
