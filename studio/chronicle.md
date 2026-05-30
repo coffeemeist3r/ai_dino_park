@@ -296,6 +296,10 @@ Eight cycles, one long Friday night: clock, sky, memory, selves, cast, friendshi
 
 Bumped cycle 8 → 9. Suggested next-up: BACKLOG-015 (gift system) — hand a dino an item, affinity shifts by personality fit. Reuses friendship store (016) for the delta, traits (010) for the reaction, save (009) for persistence; pure reaction math, no model. A handful of items (shiny shell, wildflower, smooth rock, sparring stick, mossy snack), reactions loved/liked/neutral/disliked read aloud. Turns the 5 personalities from flavor into a puzzle the player solves. State → `phase: designer-pending`.
 
+## 2026-05-30 01:20 CDT — cycle 009 — designer — BACKLOG-015 Gift system
+
+Picked BACKLOG-015. Spec'd: hold an item (cycle with [ / ]), press **G** near a dino to give → `giftReaction(item, traits)` yields verdict (loved/liked/neutral/disliked) + affinity delta (+12/+6/+1/−4), applied via the existing `bumpPoints` and persisted by the existing save; reaction shown in the dialog box; held-item HUD. 5 items each flattering a temperament (shell→curious, flower→social, rock→calm, stick→bold, snack→agreeable). 9 ACs, pure reaction math fully unit-testable. Out of scope: world inventory/pickup, cooldowns, item art. Reuse friendship + traits + save; no second store. BACKLOG-015 `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

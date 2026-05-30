@@ -29,7 +29,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
-- [ ] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit
+- [~] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit
 - [x] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book  *(shipped: cycle 6, 2026-05-29)*
 
 ## Multi-NPC world
