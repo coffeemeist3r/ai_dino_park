@@ -230,6 +230,10 @@ The build is the disciplined kind I've come to expect from this run: a pure affi
 
 Six cycles, one Friday evening: a clock, a sky, a memory, selves, a cast, and a reason to care about them. The park is genuinely a small game now. What it still isn't is *alive* — the dinos don't move, don't think for themselves, don't talk to each other. That's the WebLLM brain (005) and NPC-to-NPC (018), and both want a human watching a model load, not a fire-and-forget cron. BACKLOG-016 closed. State → `phase: lore-pending`.
 
+## 2026-05-29 23:16 CDT — cycle 007 — lore-smith — seeded (operator-run)
+
+The big one, with the operator at the keyboard. Bumped cycle 6 → 7. Suggested next-up: BACKLOG-005 (WebLLM-backed brain, Qwen2.5-0.5B, lazy-loaded). `@mlc-ai/web-llm@0.2.84` installed (charter-sanctioned stack, not a forbidden framework). Critical downstream constraints flagged: cannot be fully verified headless (WebGPU + ~300MB model), so the brain MUST degrade gracefully to the canned stub when the model isn't ready or WebGPU is absent — game never breaks. WebLLM stays inside `game/src/ai/` behind `NPCBrain` (hard boundary). Dynamic import for code-split + fast boot; progressive enhancement (instant canned reply → the dino's own words once loaded). State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
