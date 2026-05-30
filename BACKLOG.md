@@ -25,6 +25,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## NPC depth
 
 - [x] BACKLOG-010 [ai] NPC personality traits — 5 axes (curious/cautious, social/solitary, etc.), seeded at spawn, fed into brain prompt  *(shipped: cycle 4, 2026-05-29)*
+- [~] BACKLOG-055 [ai] Livelier character voice — feed the roster flavor + traits into the prompt, drop the negative-heavy framing, allow ~2 sentences, raise tokens/temp. Fixes bland/lifeless replies (operator-diagnosed).
 - [ ] BACKLOG-011 [ai] NPC memory store — observation log (last N events), reflection summary built daily
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
