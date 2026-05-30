@@ -300,6 +300,10 @@ Bumped cycle 8 → 9. Suggested next-up: BACKLOG-015 (gift system) — hand a di
 
 Picked BACKLOG-015. Spec'd: hold an item (cycle with [ / ]), press **G** near a dino to give → `giftReaction(item, traits)` yields verdict (loved/liked/neutral/disliked) + affinity delta (+12/+6/+1/−4), applied via the existing `bumpPoints` and persisted by the existing save; reaction shown in the dialog box; held-item HUD. 5 items each flattering a temperament (shell→curious, flower→social, rock→calm, stick→bold, snack→agreeable). 9 ACs, pure reaction math fully unit-testable. Out of scope: world inventory/pickup, cooldowns, item art. Reuse friendship + traits + save; no second store. BACKLOG-015 `[~]`. State → `phase: codeplan-pending`.
 
+## 2026-05-30 01:28 CDT — cycle 009 — code-planner — BACKLOG-015 Gift system
+
+Plan: pure `social/gifts.ts` — `Gift`/`GIFTS` (5 items, appeal weights), `giftScore` (Σ appeal·(trait·2−1)), `giftReaction` (≥0.6 loved+12 / ≥0.2 liked+6 / ≤−0.2 disliked−4 / else neutral+1). WorldScene: held-item HUD + `[`/`]` cycle + **G** give-to-nearest (applies delta via `bumpPoints`, persists, dialog readout) + `__heldItem`/`__cycleItem`/`__giveGift` hooks. Reuse friendship store/save/traits/nearestDino — no second affinity store. 4 files, under ceiling. Risks: loved needs trait≥0.8 (rare in-game by design; tests use extremes), disliked clamps at 0 (friendship handles), held-item not persisted (intentional). State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
