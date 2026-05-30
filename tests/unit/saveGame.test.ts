@@ -8,6 +8,20 @@ const sample: SaveData = {
   friendship: { Rex: 30 },
   memory: { Rex: ['said hello'] },
   bonds: { 'Mossback|Rex': 12 },
+  eggs: [
+    { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
+  ],
+  born: [
+    {
+      name: 'Rexback',
+      species: 'triceratops',
+      personality: 'young, warm, child of Rex and Mossback',
+      traits: { curiosity: 0.5, sociability: 0.5, energy: 0.5, agreeableness: 0.5, bravery: 0.5 },
+      color: 0x6a6242,
+      tileX: 11,
+      tileY: 11,
+    },
+  ],
 };
 
 describe('saveGame', () => {

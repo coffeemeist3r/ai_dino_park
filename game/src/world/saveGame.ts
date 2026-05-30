@@ -11,6 +11,7 @@ import type { GameTime } from './clock';
 import type { Friendship } from '../social/friendship';
 import type { MemoryStore } from '../ai/memory';
 import type { Bonds } from '../social/bonds';
+import type { Egg, BornDino } from '../social/breeding';
 
 export const SAVE_VERSION = 1;
 
@@ -21,6 +22,8 @@ export interface SaveData {
   friendship: Friendship;
   memory: MemoryStore;
   bonds: Bonds;
+  eggs: Egg[];
+  born: BornDino[];
 }
 
 export function serialize(data: SaveData): string {
@@ -83,6 +86,48 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
+  let eggs: Egg[] = [];
+  if (o.eggs !== undefined) {
+    if (!Array.isArray(o.eggs)) return null;
+    for (const e of o.eggs) {
+      if (typeof e !== 'object' || e === null) return null;
+      const r = e as Record<string, unknown>;
+      if (
+        typeof r.id !== 'string' ||
+        typeof r.parentA !== 'string' ||
+        typeof r.parentB !== 'string' ||
+        !isNum(r.layedDay) ||
+        !isNum(r.hatchDay) ||
+        !isNum(r.tileX) ||
+        !isNum(r.tileY)
+      )
+        return null;
+    }
+    eggs = o.eggs as Egg[];
+  }
+
+  let born: BornDino[] = [];
+  if (o.born !== undefined) {
+    if (!Array.isArray(o.born)) return null;
+    for (const b of o.born) {
+      if (typeof b !== 'object' || b === null) return null;
+      const r = b as Record<string, unknown>;
+      if (
+        typeof r.name !== 'string' ||
+        typeof r.species !== 'string' ||
+        typeof r.personality !== 'string' ||
+        !isNum(r.color) ||
+        !isNum(r.tileX) ||
+        !isNum(r.tileY) ||
+        typeof r.traits !== 'object' ||
+        r.traits === null
+      )
+        return null;
+    }
+    born = o.born as BornDino[];
+  }
+
   return {
     version: SAVE_VERSION,
     time: { day: time.day, hour: time.hour, minute: time.minute },
@@ -90,5 +135,7 @@ export function deserialize(json: string): SaveData | null {
     friendship,
     memory,
     bonds,
+    eggs,
+    born,
   };
 }

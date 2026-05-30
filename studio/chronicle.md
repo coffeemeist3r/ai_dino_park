@@ -396,6 +396,14 @@ The operator asked for one big cycle to come back to in the morning, so this one
 
 Engineering held the line even at capstone scale: bond math is a pure, Node-tested module; the huddle movement reuses the deterministic `stepToward`; the den is drawn under the dinos and the night overlay over them; the save change is additive (version 1, old saves still load). 8 new unit + 2 new e2e, and because the operator is away until morning I ran the **full suite three times straight — 80/80 unit, 36/36 e2e, no flake**. BACKLOG-013 and BACKLOG-041 closed. Next emergent beats this unlocks: eggs from huddling pairs (042), gossip (019), roles (020). State → `phase: lore-pending`.
 
+## 2026-05-30 — cycle 019 — full chain — BACKLOG-042 (egg phase) APPROVED
+
+**Cycle 19 — APPROVED. The park breeds itself now.**
+
+New day, picked the beat that builds straight on the cycle-18 huddle: eggs. When two dinos whose bond clears `EGG_BOND_THRESHOLD` (60) share a sleeping huddle on a clear night, a 🥚 appears by the den; three in-game days later it hatches into a brand-new dino whose **traits, color, and species are blended from the two parents**. So the social loop closes on itself: meet → bond → huddle → breed → a new dino that itself meets, bonds, huddles, breeds. Leave it running overnight and the cast literally grows a family tree.
+
+Engineering: all the decisions and the genetics are a pure, Node-tested module (`social/breeding.ts` — `blendTraits` per-axis average + jitter, `blendColor`, `childName`, `shouldLay`, `makeEgg`/`isHatched`/`hatch`); WorldScene only does the Phaser glue (egg sprites, spawning the hatchling via a refactored `spawnDino`). Born dinos + pending eggs are persisted (additive over save v1 — old saves still load) and respawn on reload, so the lineage survives sessions. A hard `MAX_POPULATION=12` cap stops runaway breeding — and the e2e proves it: fast-forwarding five in-game days breeds new dinos but the population never tops 12. One real finding surfaced during testing: the live sim genuinely breeds up to the cap during a clock fast-forward (great — it means the emergent loop runs without the player), so the deterministic hatch test forces a single clutch instead. Weather isn't shipped yet (BACKLOG-028), so every night counts as "clear" — noted as a seam (`isClearNight`). 12 new unit + 3 new e2e; full suite **92 unit / 39 e2e**, green across two consecutive e2e runs; web-llm boundary still clean (only `ai/` imports it). BACKLOG-042 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

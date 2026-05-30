@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 019 — 2026-05-30
+
+- BACKLOG-042: Egg phase — APPROVED. The park grows itself. When two dinos whose bond clears the threshold (`EGG_BOND_THRESHOLD=60`) share a sleeping huddle on a clear night, a 🥚 appears by the den; after `EGG_HATCH_DAYS=3` in-game days it hatches into a brand-new dino whose traits, color, and species are **blended from the two parents** (pure `breeding.ts`: `blendTraits`/`blendColor`/`childName`/`shouldLay`/`hatch`). Born dinos and pending eggs ride into the save (additive, version 1) and respawn on reload, so the family tree survives sessions. A hard `MAX_POPULATION=12` cap stops runaway breeding. Weather isn't in yet (BACKLOG-028) so every night counts as "clear". 12 new unit + 3 new e2e; full suite **92 unit / 39 e2e**, green across two consecutive e2e runs. Closes the social loop started by cycle-18 huddles: meet → bond → huddle → **breed**.
+
 ## Cycle 018 — 2026-05-30  (capstone)
 
 - BACKLOG-013 + BACKLOG-041: Pairwise bonds + night sleeping huddles — APPROVED. Every NPC↔NPC meeting strengthens a symmetric pairwise **bond** (0–100, pure `bonds.ts`, persisted). A visible **den** sits lower-centre; at **night** any dino whose strongest bond ≥ threshold walks to the den instead of wandering, clusters with its friends (💤 over each), and the huddle adjacency keeps deepening the bond — then they disperse at dawn. Self-reinforcing: meeting builds bonds, bonds drive huddling, huddling builds bonds. 8 new unit + 2 new e2e; full suite 80 unit / 36 e2e, green across three consecutive runs.

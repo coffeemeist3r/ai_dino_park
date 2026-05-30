@@ -18,9 +18,20 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { wanderStep, stepToward } from '../world/movement';
-import { recordMeet, type Meetings } from '../social/meetings';
+import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
+import {
+  shouldLay,
+  makeEgg,
+  isHatched,
+  hatch,
+  childName,
+  EGG_BOND_THRESHOLD,
+  MAX_POPULATION,
+  type Egg,
+  type BornDino,
+} from '../social/breeding';
 
 const TILE = 32;
 const COLS = 20;
@@ -50,6 +61,9 @@ export class WorldScene extends Phaser.Scene {
   private meetings: Meetings = {};
   private memory: MemoryStore = {};
   private bonds: Bonds = {};
+  private eggs: Egg[] = [];
+  private born: BornDino[] = [];
+  private eggSprites = new Map<string, Phaser.GameObjects.Text>();
   private sleepMarks: Phaser.GameObjects.Text[] = [];
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private moveTicks = 0;
@@ -70,17 +84,7 @@ export class WorldScene extends Phaser.Scene {
 
     // One shared brain across all dinos — five WebLLM engines would mean five model downloads.
     this.npcBrain = makeBrain('webllm');
-    for (const spawn of ROSTER) {
-      this.dinos.push(
-        new Dino(this, spawn.tileX * TILE + TILE / 2, spawn.tileY * TILE + TILE / 2, {
-          name: spawn.name,
-          species: spawn.species,
-          personality: spawn.personality,
-          color: spawn.color,
-          brain: this.npcBrain,
-        }),
-      );
-    }
+    for (const spawn of ROSTER) this.spawnDino(spawn);
 
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.wasd = this.input.keyboard!.addKeys('W,A,S,D') as Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
@@ -104,6 +108,31 @@ export class WorldScene extends Phaser.Scene {
     this.setupHuddle();
   }
 
+  /** Spawn a dino (roster or born), keeping its 💤 sleep-mark index-aligned in `sleepMarks`. */
+  private spawnDino(cfg: {
+    name: string;
+    species: string;
+    personality: string;
+    color: number;
+    tileX: number;
+    tileY: number;
+    traits?: BornDino['traits'];
+  }): Dino {
+    const dino = new Dino(this, cfg.tileX * TILE + TILE / 2, cfg.tileY * TILE + TILE / 2, {
+      name: cfg.name,
+      species: cfg.species,
+      personality: cfg.personality,
+      color: cfg.color,
+      traits: cfg.traits,
+      brain: this.npcBrain,
+    });
+    this.dinos.push(dino);
+    this.sleepMarks.push(
+      this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
+    return dino;
+  }
+
   private drawDen(): void {
     const g = this.add.graphics();
     g.fillStyle(0x4a3f5a, 0.55);
@@ -113,9 +142,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private setupHuddle(): void {
-    this.sleepMarks = this.dinos.map(() =>
-      this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
-    );
+    // sleepMarks are created per-dino in spawnDino so born dinos get one too.
 
     // any: dev-only Playwright hooks
     (window as any).__bonds = () => ({ ...this.bonds });
@@ -124,6 +151,114 @@ export class WorldScene extends Phaser.Scene {
       return bondPoints(this.bonds, a, b);
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
+
+    // egg-phase hooks (BACKLOG-042)
+    (window as any).__eggs = () => this.eggs.map((e) => ({ ...e }));
+    (window as any).__population = () => this.dinos.length;
+    // force a clutch from two parents (sets a high bond, then lays regardless of time)
+    (window as any).__layEgg = (a: string, b: string) => {
+      this.bonds = strengthen(this.bonds, a, b, EGG_BOND_THRESHOLD);
+      return this.layEgg(a, b);
+    };
+    // hatch every pending egg now (independent of the clock)
+    (window as any).__forceHatch = () => {
+      for (const e of [...this.eggs]) this.hatchEgg(e);
+      return this.dinos.length;
+    };
+  }
+
+  /** A clear night for breeding. No weather yet (BACKLOG-028) — every night counts as clear. */
+  private isClearNight(): boolean {
+    return this.isNight();
+  }
+
+  private hasEggForPair(a: string, b: string): boolean {
+    const key = pairKey(a, b);
+    return this.eggs.some((e) => pairKey(e.parentA, e.parentB) === key);
+  }
+
+  /** Lay an egg from a bonded pair by the den. Returns the egg, or null if one is already pending. */
+  private layEgg(a: string, b: string): Egg | null {
+    if (this.hasEggForPair(a, b)) return null;
+    const day = getWorldClock().now().day;
+    const tile = { tileX: HUDDLE_TILE.tileX + 1, tileY: HUDDLE_TILE.tileY };
+    const egg = makeEgg(a, b, day, tile);
+    this.eggs.push(egg);
+    this.drawEgg(egg);
+    void this.saveGame();
+    return egg;
+  }
+
+  private drawEgg(egg: Egg): void {
+    const sprite = this.add
+      .text(egg.tileX * TILE + TILE / 2, egg.tileY * TILE + TILE / 2, '🥚', { fontSize: '18px' })
+      .setOrigin(0.5)
+      .setDepth(2);
+    this.eggSprites.set(egg.id, sprite);
+  }
+
+  /** Scan huddling pairs on a clear night; bonded enough → an egg appears by the den. */
+  private maybeLayEggs(): void {
+    if (!this.isClearNight()) return;
+    const huddlers = this.dinos.filter((d) => this.isHuddling(d));
+    for (let i = 0; i < huddlers.length; i++) {
+      for (let j = i + 1; j < huddlers.length; j++) {
+        const a = huddlers[i];
+        const b = huddlers[j];
+        if (
+          shouldLay({
+            bond: bondPoints(this.bonds, a.name, b.name),
+            population: this.dinos.length + this.eggs.length,
+            isClearNight: true,
+            bothHuddling: true,
+            hasEggForPair: this.hasEggForPair(a.name, b.name),
+          })
+        ) {
+          this.layEgg(a.name, b.name);
+        }
+      }
+    }
+  }
+
+  /** Hatch any egg whose day has come into a new blended dino. */
+  private checkHatch(): void {
+    const day = getWorldClock().now().day;
+    for (const egg of [...this.eggs]) {
+      if (isHatched(egg, day)) this.hatchEgg(egg);
+    }
+  }
+
+  private hatchEgg(egg: Egg): void {
+    // remove the clutch regardless of outcome so a missing parent can't wedge it forever
+    this.eggs = this.eggs.filter((e) => e.id !== egg.id);
+    this.eggSprites.get(egg.id)?.destroy();
+    this.eggSprites.delete(egg.id);
+
+    if (this.dinos.length >= MAX_POPULATION) return; // at cap — clutch is lost
+    const pa = this.dinos.find((d) => d.name === egg.parentA);
+    const pb = this.dinos.find((d) => d.name === egg.parentB);
+    if (!pa || !pb) return; // a parent left the world
+
+    const taken = new Set(this.dinos.map((d) => d.name));
+    let name = childName(egg.parentA, egg.parentB);
+    for (let i = 2; taken.has(name); i++) name = `${childName(egg.parentA, egg.parentB)}${i}`;
+
+    const baby = hatch(
+      egg,
+      {
+        traitsA: pa.traits,
+        traitsB: pb.traits,
+        speciesA: pa.species,
+        speciesB: pb.species,
+        colorA: pa.sprite.fillColor,
+        colorB: pb.sprite.fillColor,
+      },
+      name,
+    );
+    this.born.push(baby);
+    const dino = this.spawnDino(baby);
+    this.showBubble(dino, `${name} hatches! 🐣`);
+    void this.saveGame();
   }
 
   /** Strongest bond this dino has with any other. */
@@ -244,6 +379,8 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.refreshSleepMarks();
+    this.maybeLayEggs();
+    this.checkHatch();
   }
 
   /** One dino remarks on meeting another — a floating speech bubble via the shared brain. */
@@ -489,6 +626,8 @@ export class WorldScene extends Phaser.Scene {
       friendship: this.friendship,
       memory: this.memory,
       bonds: this.bonds,
+      eggs: this.eggs,
+      born: this.born,
     };
   }
 
@@ -513,6 +652,11 @@ export class WorldScene extends Phaser.Scene {
       this.friendship = save.friendship;
       this.memory = save.memory;
       this.bonds = save.bonds;
+      // Respawn dinos born in a previous session, then redraw any pending eggs.
+      this.born = save.born ?? [];
+      for (const b of this.born) this.spawnDino(b);
+      this.eggs = save.eggs ?? [];
+      for (const e of this.eggs) this.drawEgg(e);
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.refreshHeartsPanel();
