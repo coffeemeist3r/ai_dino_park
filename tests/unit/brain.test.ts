@@ -27,14 +27,14 @@ describe('NPCBrain', () => {
 const ctx = { name: 'Rex', species: 'triceratops', personality: 'curious, bold' };
 
 describe('WebLLMBrain', () => {
-  it('buildMessages forbids assistant behavior and includes identity + a one-shot example', () => {
+  it('buildMessages forbids assistant behavior and includes identity + flavor + a one-shot example', () => {
     const msgs = buildMessages(ctx, { kind: 'player_greet' });
     expect(msgs.length).toBeGreaterThanOrEqual(4);
     expect(msgs[0].role).toBe('system');
-    expect(msgs[0].content).toMatch(/not an ai|never offer help|never ask how you can assist/i);
+    expect(msgs[0].content).toMatch(/never a chatbot|never a .*helper|real animal/i);
     expect(msgs[0].content).toContain('Rex');
     expect(msgs[0].content).toContain('triceratops');
-    expect(msgs[0].content).toContain('curious');
+    expect(msgs[0].content).toContain('curious'); // roster flavor reaches the prompt
     // one-shot: example user + example assistant before the real user
     expect(msgs[1].role).toBe('user');
     expect(msgs[2].role).toBe('assistant');
@@ -133,8 +133,12 @@ describe('cleanReply', () => {
     expect(cleanReply('Sure! How can I assist you today?')).not.toMatch(/assist|\bai\b/i);
   });
 
-  it('keeps only the first sentence', () => {
-    expect(cleanReply('I love this sunny rock. It is warm and nice.')).toBe('I love this sunny rock.');
+  it('keeps up to two sentences', () => {
+    expect(cleanReply('I love this sunny rock. It is warm and nice.')).toBe('I love this sunny rock. It is warm and nice.');
+  });
+
+  it('truncates to the first two in-character sentences', () => {
+    expect(cleanReply('One thing. Two thing. Three thing.')).toBe('One thing. Two thing.');
   });
 
   it('leaves a clean in-character line unchanged', () => {

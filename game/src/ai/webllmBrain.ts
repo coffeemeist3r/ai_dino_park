@@ -51,22 +51,27 @@ const OBSERVATION_PROMPT: Record<Observation['kind'], string> = {
 
 /** Pure: build the chat messages from context + observation. No web-llm import. */
 export function buildMessages(ctx: NPCContext, obs: Observation): { role: string; content: string }[] {
-  const persona = ctx.traits ? describePersonality(ctx.traits) : ctx.personality;
-  const when = ctx.timeOfDay ? ` It is ${ctx.timeOfDay} in the park.` : '';
+  // Use BOTH the hand-written roster flavor and the seeded trait adjectives — the
+  // flavor ("loves rocks", "quick to bolt") is what makes a dino sound like itself.
+  const adjectives = ctx.traits ? describePersonality(ctx.traits) : '';
+  const character = [ctx.personality, adjectives].filter(Boolean).join('; ');
+  const when = ctx.timeOfDay ? `It is ${ctx.timeOfDay}. ` : '';
   const mood = moodFromTraits(ctx.traits) ?? 'neutral';
   const rel = relationshipLabel(ctx.affection);
+  // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
-    `You are ${ctx.name}, a ${ctx.species} dinosaur living in a peaceful prehistoric park.${when} ` +
-    `You are NOT an AI assistant. You never offer help or services and you never ask how you can assist. ` +
-    `You are a real creature with feelings; your personality is: ${persona}. ` +
-    `Right now you feel ${mood}. The visitor is ${rel}. ` +
-    `Speak only as ${ctx.name}, in first person, as one short spoken sentence. No narration, no quotation marks, no helpfulness.`;
-  // One-shot example anchors the small model to in-character speech (style, not content).
-  const exampleUser = OBSERVATION_PROMPT.player_greet;
-  const exampleReply = 'Oh! A visitor — mind the ferns, they are my favourite snack.';
+    `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
+    `You are a real animal, never a chatbot or helper. ` +
+    `Who you are: ${character}. ` +
+    `${when}You feel ${mood}, and the visitor is ${rel}. ` +
+    `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
+    `First person, present tense, no narration and no quotation marks.`;
+  // One-shot example anchors the small model to lively in-character speech (style, not content).
+  const exampleUser = 'A human visitor walks up and greets you. What do you say?';
+  const exampleReply = 'Oh, you again! Did you bring me a shiny rock, or just those slow human feet?';
   const greetLine =
     obs.kind === 'player_greet'
-      ? `${rel.replace(/^a /, 'A ').replace(/^an /, 'An ')} comes up and greets you. What do you say?`
+      ? `${rel.replace(/^a /, 'A ').replace(/^an /, 'An ')} walks up and greets you. What do you say?`
       : OBSERVATION_PROMPT[obs.kind];
   const user = greetLine + (obs.detail ? ` (${obs.detail})` : '');
   return [
@@ -84,19 +89,21 @@ const LEADING_FILLER = /^(sure|of course|certainly|absolutely|well|okay|ok)[,!.]
 const ASSISTANT_TELL =
   /\b(as an ai|i'?m an ai|i am an ai|how (can|may) i (assist|help)|here to (assist|help)|assist you today|happy to help|how can i help you)\b/i;
 
-/** Strip assistant boilerplate + quotes from a model reply; return the first in-character sentence (≤200). */
-export function cleanReply(raw: string): string {
+/** Strip assistant boilerplate + quotes; return up to the first two in-character sentences (≤200). */
+export function cleanReply(raw: string, maxSentences = 2): string {
   let s = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!s) return '';
   s = s.replace(WRAP_QUOTES, '');
   s = s.replace(LEADING_FILLER, '').trim();
   const sentences = s.match(/[^.!?]+[.!?]?/g) ?? [s];
+  const kept: string[] = [];
   for (const sentence of sentences) {
-    const t = sentence.trim();
-    if (!t || ASSISTANT_TELL.test(t)) continue;
-    return t.replace(WRAP_QUOTES, '').slice(0, MAX_REPLY).trim();
+    const t = sentence.trim().replace(WRAP_QUOTES, '').trim();
+    if (!t || ASSISTANT_TELL.test(t)) continue; // skip assistant-voice sentences, keep the rest
+    kept.push(t);
+    if (kept.length >= maxSentences) break;
   }
-  return ''; // all assistant-speak → caller falls back to the canned line
+  return kept.join(' ').slice(0, MAX_REPLY).trim(); // '' if nothing survived → caller falls back
 }
 
 async function defaultLoader(): Promise<ChatEngine> {
@@ -161,8 +168,8 @@ export class WebLLMBrain implements NPCBrain {
   private async generate(engine: ChatEngine, ctx: NPCContext, obs: Observation): Promise<Reply> {
     const res = await engine.chat.completions.create({
       messages: buildMessages(ctx, obs),
-      max_tokens: 60,
-      temperature: 0.7,
+      max_tokens: 100,
+      temperature: 0.9,
     });
     const cleaned = cleanReply(res.choices[0]?.message?.content ?? '');
     // Empty after cleaning means it was all assistant-speak — fall back rather than show it.

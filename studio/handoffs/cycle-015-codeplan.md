@@ -36,3 +36,13 @@ BACKLOG-055 [ai] Livelier character voice — fix the bland/lifeless replies. Op
 
 ## Touch count
 2 files. Small, surgical.
+
+## Shipped
+- `ai/webllmBrain.ts` — system prompt rewritten (roster flavor + trait adjectives via `Who you are: <flavor>; <adjectives>`, positive-led, one light "never a chatbot or helper" clause, "one or two vivid specific sentences"); livelier one-shot example; `cleanReply(maxSentences=2)` keeps up to two in-character sentences; `generate` max_tokens 100 / temperature 0.9.
+- `tests/unit/brain.test.ts` — updated anti-assistant assertion wording; cleanReply now 2-sentence + a truncation test.
+
+Build ✅; unit ✅ 66/66; e2e ✅ 32/32.
+
+### Before → after (Twitch, dusk, 6 hearts)
+- **Before** `…your personality is: curious, solitary, energetic, prickly, timid. … one short spoken sentence. No narration, no quotation marks, no helpfulness.` (roster "jittery, quick to bolt" dropped; reply clipped to 1 sentence)
+- **After** `Who you are: jittery, watchful, quick to bolt; curious, solitary, energetic, prickly, timid. It is dusk. You feel wary, and the visitor is a good friend. Answer in your own voice — one or two vivid, specific sentences…`

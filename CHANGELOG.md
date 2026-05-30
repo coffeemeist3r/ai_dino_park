@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 015 — 2026-05-30
+
+- BACKLOG-055: Livelier character voice — APPROVED. Diagnosed bland replies: the prompt threw away the vivid roster flavor (only dry trait adjectives reached the model), was negative-heavy, and the output was triple-truncated (one sentence + 60 tokens + first-sentence-only cleaner). Fix: the system prompt now leads with character and feeds BOTH the roster flavor ("loves rocks", "quick to bolt") and the trait adjectives, with a single light "never a chatbot or helper" clause and an invitation for "one or two vivid, specific sentences"; `cleanReply` keeps up to 2 sentences; generation is `max_tokens 100` / `temperature 0.9`. 66 unit / 32 e2e green.
+
 ## Cycle 014 — 2026-05-30
 
 - BACKLOG-052: NPC↔NPC dialogue — APPROVED. Dinos now drift toward each other (~45% of steps via pure `stepToward`) so they actually cluster and meet, and on meeting one speaks a brain-generated line (`npc_meet`) in a floating speech bubble above it (🧠-tagged when model-written), throttled by a cooldown + in-flight guard to protect the single shared engine. Also added a WebGPU guard so the brain fails fast to the canned fallback (and skips a doomed worker) on browsers without WebGPU. 3 new unit + 2 new e2e.
