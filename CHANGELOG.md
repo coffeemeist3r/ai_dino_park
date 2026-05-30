@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 017 — 2026-05-30
+
+- BACKLOG-011: NPC memory store — APPROVED. Each dino keeps a small ring buffer of recent events (you greeting it, gifts + how it reacted, running into other dinos). The last few are woven into its prompt ("Lately: …") so it reacts to history, and the memory rides into the save — so a dino remembers you next session. At dawn each dino folds its events into a one-line reflection. Pure `memory.ts` (`remember`/`recall`/`reflect`); additive save field (version unchanged, old saves default to empty). 7 new unit + 1 new e2e.
+
 ## Cycle 016 — 2026-05-30
 
 - BACKLOG-006: Device probe — APPROVED. The brain sizes the model to the device instead of hardcoding 0.5B: pure `pickTier` scores `navigator.deviceMemory` + the WebGPU adapter's max storage-buffer size into tiny (0.5B) / small (1.5B) / medium (3B), and `defaultLoader` loads that model; choice surfaced via `window.__modelLabel`/`__modelInfo`. (Browsers can't write `config.json` — selection is exposed instead.) 5 new unit + 1 new e2e.

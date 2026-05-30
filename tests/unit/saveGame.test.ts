@@ -6,6 +6,7 @@ const sample: SaveData = {
   time: { day: 3, hour: 21, minute: 14 },
   player: { x: 123.5, y: 456 },
   friendship: { Rex: 30 },
+  memory: { Rex: ['said hello'] },
 };
 
 describe('saveGame', () => {

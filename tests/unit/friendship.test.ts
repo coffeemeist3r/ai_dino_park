@@ -67,6 +67,7 @@ describe('friendship in the save', () => {
       time: { day: 1, hour: 8, minute: 0 },
       player: { x: 0, y: 0 },
       friendship: { Rex: 40, Sunny: 10 },
+      memory: {},
     };
     expect(deserialize(serialize(data))?.friendship).toEqual({ Rex: 40, Sunny: 10 });
   });

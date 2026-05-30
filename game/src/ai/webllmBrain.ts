@@ -58,12 +58,14 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const when = ctx.timeOfDay ? `It is ${ctx.timeOfDay}. ` : '';
   const mood = moodFromTraits(ctx.traits) ?? 'neutral';
   const rel = relationshipLabel(ctx.affection);
+  const lately = ctx.recentMemory?.length ? `Lately: ${ctx.recentMemory.slice(-3).join('; ')}. ` : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
+    `${lately}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

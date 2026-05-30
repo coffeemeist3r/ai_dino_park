@@ -26,7 +26,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [x] BACKLOG-010 [ai] NPC personality traits — 5 axes (curious/cautious, social/solitary, etc.), seeded at spawn, fed into brain prompt  *(shipped: cycle 4, 2026-05-29)*
 - [x] BACKLOG-055 [ai] Livelier character voice — feed the roster flavor + traits into the prompt, drop the negative-heavy framing, allow ~2 sentences, raise tokens/temp. Fixes bland/lifeless replies (operator-diagnosed).  *(shipped: cycle 15, 2026-05-30)*
-- [ ] BACKLOG-011 [ai] NPC memory store — observation log (last N events), reflection summary built daily
+- [x] BACKLOG-011 [ai] NPC memory store — per-dino ring buffer of recent events (greet/gift/meet), woven into the prompt ("Lately: …"), persisted in the save, daily dawn reflection  *(shipped: cycle 17, 2026-05-30)*
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory

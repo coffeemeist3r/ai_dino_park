@@ -380,6 +380,14 @@ Operator: "haven't seen them interact; LLM interaction not running as much as ho
 
 Operator asked us to check the character system prompt for the bland replies — and it was the culprit, four ways: (1) the vivid roster flavor ("loves rocks", "quick to bolt") was dropped because traits override it — only dry adjectives reached the model; (2) the prompt was mostly prohibitions (NOT assistant / no help / no narration / no quotes / no helpfulness) which a 0.5B model obeys into blandness; (3) triple truncation — "one short sentence" + 60 tokens + a first-sentence-only cleaner; (4) temp 0.7. Fix shipped: system prompt now leads with character and feeds BOTH flavor + trait adjectives (`Who you are: <flavor>; <adjectives>`), one light "never a chatbot or helper" clause, and "one or two vivid, specific sentences"; `cleanReply` keeps up to 2 sentences; generation is 100 tokens / temp 0.9. Build clean; **66/66 unit**, **32/32 e2e**. The taste of the result is the operator's WebGPU re-greet (watch the 🧠 tag). BACKLOG-055 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 10:44 CDT — cycle 016 — full chain — BACKLOG-006 (device probe) APPROVED
+
+Brain now sizes the model to the device instead of hardcoding 0.5B. Pure `pickTier` scores `navigator.deviceMemory` + the WebGPU adapter's max storage-buffer size → tiny(0.5B)/small(1.5B)/medium(3B); `defaultLoader` loads that model and surfaces the choice (`__modelLabel`/`__modelInfo`). Browsers can't write `config.json`, so the pick is exposed/cached, not file-written. Build clean; **71/71 unit**, e2e green. A bigger model on a capable machine is the next lever against blandness beyond the prompt fix. BACKLOG-006 closed.
+
+## 2026-05-30 11:18 CDT — cycle 017 — full chain — BACKLOG-011 (NPC memory) APPROVED
+
+Dinos remember you now. Each keeps a 6-event ring buffer (you greeting, gifts + how it felt, running into other dinos); the last three are woven into its prompt as "Lately: …" so it reacts to history, and the store rides into the save — greet Rex, reload, he still remembers. At dawn each dino folds the day into a one-line reflection. Pure `memory.ts` (`remember`/`recall`/`reflect`); additive save field (version 1, old saves default empty). Build clean; **75/75 unit**, **34/34 e2e** (greet → remembered → reaches prompt → survives reload). Pairs with the cycle-15 voice fix: now the model has both vivid character *and* shared history to talk about. BACKLOG-011 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

@@ -19,6 +19,7 @@ import {
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, type Meetings } from '../social/meetings';
+import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
 
 const TILE = 32;
 const COLS = 20;
@@ -41,6 +42,7 @@ export class WorldScene extends Phaser.Scene {
   private heldItemIndex = 0;
   private brainHud!: Phaser.GameObjects.Text;
   private meetings: Meetings = {};
+  private memory: MemoryStore = {};
   private moveTicks = 0;
   private convoCooldown = 0;
   private convoInFlight = false;
@@ -104,6 +106,17 @@ export class WorldScene extends Phaser.Scene {
       this.forceStep();
       return this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
     };
+    // At dawn each dino folds its recent events into a one-line reflection.
+    getWorldClock().onHour((t) => {
+      if (t.hour !== 6) return;
+      for (const d of this.dinos) {
+        const events = recall(this.memory, d.name);
+        if (events.length) this.memory = remember(this.memory, d.name, reflect(events));
+      }
+      void this.saveGame();
+    });
+
+    (window as any).__memory = () => ({ ...this.memory });
     (window as any).__lastConversation = () => this.lastConversation;
     (window as any).__forceConverse = async () => {
       if (this.dinos.length >= 2) {
@@ -179,6 +192,7 @@ export class WorldScene extends Phaser.Scene {
         { kind: 'npc_meet', detail: `${b.name} the ${b.species} wanders up` },
       );
       this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
+      this.memory = remember(this.memory, a.name, `you ran into ${b.name} the ${b.species}`);
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
     } finally {
       this.convoInFlight = false;
@@ -273,6 +287,7 @@ export class WorldScene extends Phaser.Scene {
           traits: d.traits,
           timeOfDay: dayPhase(now.hour),
           affection: heartsFromPoints(this.friendship[d.name] ?? 0),
+          recentMemory: recall(this.memory, d.name),
         },
         { kind: 'player_greet' },
       );
@@ -311,6 +326,7 @@ export class WorldScene extends Phaser.Scene {
     const reply = await target.greet({
       timeOfDay: dayPhase(now.hour),
       affection: heartsFromPoints(this.friendship[target.name] ?? 0),
+      recentMemory: recall(this.memory, target.name),
     });
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
   }
@@ -318,6 +334,7 @@ export class WorldScene extends Phaser.Scene {
   /** Raise a dino's affinity from a greet, persist, and refresh the panel. */
   private recordGreet(name: string, traits?: Dino['traits']): void {
     this.friendship = bumpPoints(this.friendship, name, greetGain(traits));
+    this.memory = remember(this.memory, name, 'the human stopped by to say hello');
     void this.saveGame();
     this.refreshHeartsPanel();
   }
@@ -398,6 +415,7 @@ export class WorldScene extends Phaser.Scene {
       time: getWorldClock().now(),
       player: { x: this.player.x, y: this.player.y },
       friendship: this.friendship,
+      memory: this.memory,
     };
   }
 
@@ -420,6 +438,7 @@ export class WorldScene extends Phaser.Scene {
       clock.set(save.time);
       this.player.setPosition(save.player.x, save.player.y);
       this.friendship = save.friendship;
+      this.memory = save.memory;
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.refreshHeartsPanel();
@@ -549,6 +568,7 @@ export class WorldScene extends Phaser.Scene {
     const gift = GIFTS[this.heldItemIndex];
     const { verdict, delta } = giftReaction(gift, traits);
     this.friendship = bumpPoints(this.friendship, name, delta);
+    this.memory = remember(this.memory, name, `the human gave you a ${gift.label}, and you ${verdict} it`);
     void this.saveGame();
     this.refreshHeartsPanel();
     return verdict;
