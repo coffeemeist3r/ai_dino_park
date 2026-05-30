@@ -278,6 +278,10 @@ Plan: rewrite `buildMessages` to ≥4 messages (hardened anti-assistant system +
 
 Hardened `buildMessages` — system now bluntly forbids assistant behavior ("You are NOT an AI assistant... never offer help") + a one-shot in-character example (4 messages) to anchor the 0.5B model. Added pure `cleanReply`: strips wrapping quotes, drops leading filler ("Sure!"), skips any sentence with assistant-tells (how can I assist / I am an AI / happy to help), returns the first in-character sentence ≤200 — empty means caller falls back. `generate` runs model output through it (temp 0.7, max_tokens 60). 2 files, boundary intact. Build clean; **46/46 unit** (added cleanReply + generate-cleans cases; one test-only regex narrowing for apostrophes); **20/20 e2e**. The vibe itself is the human's re-greet to confirm. State → `phase: qa-pending`.
 
+## 2026-05-30 00:54 CDT — cycle 008 — qa — 9/9 automatable pass, 1 human-pending — APPROVE
+
+QA fired for BACKLOG-048. Build ✅, unit ✅ 46/46, e2e ✅ 20/20. Criteria 1–9 PASS: system prompt forbids assistant behavior + carries identity/persona, one-shot example present (4 msgs), `cleanReply` strips quotes / drops assistant-voice / keeps first sentence / leaves clean text alone, and `generate` runs output through it (fake-engine test: "Sure! How can I assist…" → quote-free, no assist/AI, falls back to a dino line). Boundary intact, fallback unchanged, no deps. Criterion 10 (human re-greet reads in-character) ⏳ pending the operator. The deterministic cleaner means help-desk text can't surface regardless of the model. **Recommendation: APPROVE** with a human voice-check follow-up. State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
