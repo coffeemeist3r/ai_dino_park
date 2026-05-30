@@ -50,3 +50,17 @@ none.
 
 ## Estimated touch count
 4 files (1 new src, 1 modified src, 1 new unit, 1 new e2e). Under the ceiling.
+
+## Shipped
+**Files touched:**
+- `game/src/social/gifts.ts` (new) — `Gift`/`GIFTS` (5 items), `giftScore`, `giftReaction` (loved/liked/neutral/disliked + delta), `verdictPhrase`.
+- `game/src/scenes/WorldScene.ts` (modified) — held-item HUD, `[`/`]` cycle + **G** give, `applyGift`/`giveGift`/`refreshGiftHud`, `__heldItem`/`__cycleItem`/`__giveGift` hooks. Affinity delta applied via existing `bumpPoints` + saved.
+- `tests/unit/gifts.test.ts` (new) — 7 tests.
+- `tests/e2e/cycle-009-gifts.spec.ts` (new) — 2 tests.
+
+**Deviations:** none. (Typed `applyGift` to return `GiftVerdict` to avoid an `as never` cast — cleanup, not a behavior change.)
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing chunk-size warning only).
+- `npm run test:unit` — ✅ 53/53 (7 new gifts).
+- `npx playwright test` — ✅ 22/22.

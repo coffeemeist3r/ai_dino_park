@@ -14,6 +14,7 @@ import {
   heartsFromPoints,
   type Friendship,
 } from '../social/friendship';
+import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 
 const TILE = 32;
 const COLS = 20;
@@ -31,6 +32,8 @@ export class WorldScene extends Phaser.Scene {
   private heartsPanel!: Phaser.GameObjects.Text;
   private friendship: Friendship = {};
   private npcBrain!: NPCBrain;
+  private giftHud!: Phaser.GameObjects.Text;
+  private heldItemIndex = 0;
 
   constructor() {
     super('World');
@@ -67,6 +70,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupDayNight();
     this.setupSave();
     this.setupHearts();
+    this.setupGifts();
   }
 
   update(): void {
@@ -282,6 +286,68 @@ export class WorldScene extends Phaser.Scene {
       return `${d.name.padEnd(9)} ${heartString(hearts)}`;
     });
     this.heartsPanel.setText(['— Friends —', ...lines].join('\n'));
+  }
+
+  private setupGifts(): void {
+    this.giftHud = this.add
+      .text(6, TILE * ROWS - 6, '', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        backgroundColor: '#000000aa',
+        padding: { x: 4, y: 2 },
+      })
+      .setOrigin(0, 1)
+      .setDepth(11);
+    this.refreshGiftHud();
+
+    const kb = this.input.keyboard!;
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET).on('down', () => this.cycleItem(1));
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.OPEN_BRACKET).on('down', () => this.cycleItem(-1));
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.G).on('down', () => this.giveGift());
+
+    // any: dev-only Playwright hooks — mirror the __clockNow pattern
+    (window as any).__heldItem = () => GIFTS[this.heldItemIndex].id;
+    (window as any).__cycleItem = () => {
+      this.cycleItem(1);
+      return GIFTS[this.heldItemIndex].id;
+    };
+    (window as any).__giveGift = (name: string) => {
+      const target = this.dinos.find((d) => d.name === name);
+      if (!target) return null;
+      const verdict = this.applyGift(target.name, target.traits);
+      return { verdict, hearts: heartsFromPoints(this.friendship[target.name] ?? 0) };
+    };
+  }
+
+  private cycleItem(dir: number): void {
+    this.heldItemIndex = (this.heldItemIndex + dir + GIFTS.length) % GIFTS.length;
+    this.refreshGiftHud();
+  }
+
+  private refreshGiftHud(): void {
+    if (!this.giftHud) return;
+    this.giftHud.setText(`Holding: ${GIFTS[this.heldItemIndex].label}  ([ ] to switch, G to give)`);
+  }
+
+  /** Apply the held gift's reaction to a dino's affinity; returns the verdict. */
+  private applyGift(name: string, traits?: Dino['traits']): GiftVerdict {
+    const gift = GIFTS[this.heldItemIndex];
+    const { verdict, delta } = giftReaction(gift, traits);
+    this.friendship = bumpPoints(this.friendship, name, delta);
+    void this.saveGame();
+    this.refreshHeartsPanel();
+    return verdict;
+  }
+
+  private giveGift(): void {
+    if (this.dialogOpen) return;
+    const target = this.nearestDino();
+    if (!target) return;
+    const gift = GIFTS[this.heldItemIndex];
+    const verdict = this.applyGift(target.name, target.traits);
+    this.dialogOpen = true;
+    this.dialog.show(`${target.name} ${verdictPhrase(verdict)} the ${gift.label}!`);
   }
 
   private exportSave(): void {
