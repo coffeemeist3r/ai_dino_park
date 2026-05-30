@@ -282,6 +282,16 @@ Hardened `buildMessages` — system now bluntly forbids assistant behavior ("You
 
 QA fired for BACKLOG-048. Build ✅, unit ✅ 46/46, e2e ✅ 20/20. Criteria 1–9 PASS: system prompt forbids assistant behavior + carries identity/persona, one-shot example present (4 msgs), `cleanReply` strips quotes / drops assistant-voice / keeps first sentence / leaves clean text alone, and `generate` runs output through it (fake-engine test: "Sure! How can I assist…" → quote-free, no assist/AI, falls back to a dino line). Boundary intact, fallback unchanged, no deps. Criterion 10 (human re-greet reads in-character) ⏳ pending the operator. The deterministic cleaner means help-desk text can't surface regardless of the model. **Recommendation: APPROVE** with a human voice-check follow-up. State → `phase: validator-pending`.
 
+## 2026-05-30 01:02 CDT — cycle 008 — validator — APPROVED
+
+**Cycle 8 — APPROVED. Help desk: closed.**
+
+The human caught the dinos talking like a chatbot — "how can I assist you today?" — and this cycle shuts that down two ways. The system prompt now flatly forbids it and shows the model one in-character example to imitate; and behind that, a deterministic cleaner strips quotes, throws out any sentence that smells like an assistant, and keeps the first real dino line — falling back to a canned one if the model produces nothing but help-desk. Belt and suspenders, which is the only honest way to handle a half-billion-parameter model: even when it misbehaves, the player never sees it. Both pieces are pure and tested, the fake-engine test proves the cleaning runs in the live path, the boundary still holds, two files touched, no new deps. 46/46 unit, 20/20 e2e.
+
+What I can't sign off from here is the *taste* of the generated line — does Rex now sound like Rex? That's a greet the operator makes with their own eyes, same as last cycle. I'm approving on the strength of the guardrail (the regression is gone for certain) and the prompt being the best lever short of fine-tuning; if the voice still drifts, widening the tell-list is a five-minute follow-up, not a rebuild.
+
+Eight cycles, one long Friday night: clock, sky, memory, selves, cast, friendship, minds — and now those minds kept in character. BACKLOG-048 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
