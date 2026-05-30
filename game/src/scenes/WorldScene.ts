@@ -24,6 +24,7 @@ import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
+import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -119,6 +120,69 @@ export class WorldScene extends Phaser.Scene {
     this.setupHuddle();
     this.setupLenses();
     this.setupGlass();
+    this.setupTap();
+  }
+
+  /** Tap the glass (BACKLOG-057): a click raps the bowl; nearby dinos react by temperament. */
+  private setupTap(): void {
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => this.tapGlass(p.worldX, p.worldY));
+    // dev-only Playwright hook — tap at a pixel, returns each dino's reaction
+    (window as any).__tapGlass = (px: number, py: number) => this.tapGlass(px, py);
+  }
+
+  /** Rap the glass at a pixel; ripple, then every dino flees/approaches/ignores by bravery. */
+  private tapGlass(px: number, py: number): Array<{ name: string; reaction: StartleReaction }> {
+    this.spawnRipple(px, py);
+    const tap = {
+      tileX: Math.max(0, Math.min(COLS - 1, Math.round((px - TILE / 2) / TILE))),
+      tileY: Math.max(0, Math.min(ROWS - 1, Math.round((py - TILE / 2) / TILE))),
+    };
+
+    const out: Array<{ name: string; reaction: StartleReaction }> = [];
+    for (const d of this.dinos) {
+      const cur = this.tileOf(d);
+      const dist = Math.hypot(cur.tileX - tap.tileX, cur.tileY - tap.tileY);
+      const reaction = reactionFor(d.traits.bravery, dist);
+      out.push({ name: d.name, reaction });
+      if (reaction === 'ignore') continue;
+
+      // a startled dino jumps two tiles in its chosen direction
+      let next = cur;
+      for (let i = 0; i < 2; i++) next = startleStep(next, tap, reaction, COLS, ROWS);
+      d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+
+      this.flashStartle(d, reaction);
+      this.memory = remember(
+        this.memory,
+        d.name,
+        reaction === 'bolt' ? 'the glass shook and you bolted in fright' : 'the glass shook and you crept closer to look',
+      );
+    }
+    return out;
+  }
+
+  private spawnRipple(px: number, py: number): void {
+    const ring = this.add.circle(px, py, 6, 0xffffff, 0).setStrokeStyle(2, GLASS.rimColor, 0.9).setDepth(9);
+    this.tweens.add({
+      targets: ring,
+      radius: TILE * 2,
+      alpha: 0,
+      duration: 500,
+      ease: 'Quad.easeOut',
+      onComplete: () => ring.destroy(),
+    });
+  }
+
+  private flashStartle(d: Dino, reaction: StartleReaction): void {
+    const mark = this.add
+      .text(d.x, d.y - TILE * 0.9, reaction === 'bolt' ? '❗' : '❓', { fontSize: '14px' })
+      .setOrigin(0.5, 1)
+      .setDepth(12);
+    d.label.setColor(reaction === 'bolt' ? '#ff8080' : '#9fe8ff');
+    this.time.delayedCall(700, () => {
+      mark.destroy();
+      d.label.setColor('#ffffff');
+    });
   }
 
   /** The Glass (BACKLOG-056): draw the vivarium bowl — edge shadow, glass rim, reflections. */

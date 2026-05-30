@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 023 — 2026-05-30
+
+- BACKLOG-057: Tap the glass — APPROVED. The keeper can now rap the vivarium wall (click anywhere): a ripple ring expands at the tap and every dino within range reacts **by temperament** — the timid bolt away (❗), the bold creep closer to investigate (❓), the far-off don't notice. The reaction is decided by the dino's seeded `bravery` and its distance from the tap, and the scare is written into the dino's memory ("the glass shook and you bolted/crept closer") so it can ripple into gossip and dialogue. Pure `world/startle.ts` (`reactionFor`/`fleeStep`/`startleStep`, reusing `stepToward`); WorldScene adds a `pointerdown` handler, the ripple tween, and the ❗/❓ flash. 6 new unit + 2 new e2e; full suite **120 unit / 47 e2e** green. First time the keeper can *touch* the bowl.
+
 ## Cycle 022 — 2026-05-30
 
 - BACKLOG-056: The Glass (vivarium frame) — APPROVED. Reframes the whole game per the operator's "mini dino fishbowl" idea: the world is now a **sealed glass vivarium** the player keeps and watches. Draws the bowl — an edge vignette (corners doubled for a deeper shadow), a crisp pale-cyan glass rim with a faint inner highlight, two reflection streaks, and a curved light-catch arc along the top lip. Pure geometry in `ui/glass.ts` (`cornerRadius`/`rimRects`/`edgeBands`/`glarePolys`/`toPoints`); the scene draws it at depth 8 (over the night tint + bond lines, under the HUD). No sim change — purely visual. New lore doc `studio/lore/vivarium.md` + a fishbowl backlog section (057 tap-the-glass, 058 plaque, 059 feeding hatch, 060 idle mode). 5 new unit + 1 new e2e; full suite **114 unit / 45 e2e**, green across two consecutive runs. Visually verified in a live preview.
