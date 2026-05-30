@@ -85,7 +85,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-048 [ai] In-character dino dialogue — strengthen the WebLLM system prompt (+ one-shot example) and clean the reply so dinos never speak as an AI assistant ("how can I assist?"). Surfaced by the BACKLOG-047 spot-check.  *(shipped: cycle 8, 2026-05-30)*
 - [x] BACKLOG-049 [ai] Offload WebLLM to a Web Worker — model load/inference currently runs on the main thread and lags gameplay; move to `CreateWebWorkerMLCEngine`. (+ brain-status readout & per-reply source tag)  *(shipped: cycle 10, 2026-05-30)*
 - [x] BACKLOG-051 [ai] Richer dialogue context — feed time-of-day (dayPhase), the dino's mood, and the player's friendship level into the prompt so replies vary beyond greetings.  *(shipped: cycle 12, 2026-05-30)*
-- [ ] BACKLOG-052 [ai] LLM-driven NPC↔NPC dialogue — when two dinos meet (cycle 11 movement), have them exchange a short generated line and update pairwise affinity. Deferred from BACKLOG-018.
+- [~] BACKLOG-052 [ai] LLM-driven NPC↔NPC dialogue — when two dinos meet (cycle 11 movement), have them exchange a short generated line and update pairwise affinity. Deferred from BACKLOG-018.
 - [ ] BACKLOG-044 [emergent] Lost-item lore — when the player drops an item and an NPC picks it up later, the NPC's brain may invent a story about its origin. Story is stored in NPC memory and may surface in unrelated dialog later.
 - [ ] BACKLOG-045 [social] Catchphrase emergence — first non-trivial line an NPC speaks each in-game morning is logged. If the same line surfaces 3+ days running, it becomes that NPC's catchphrase, shown in the collection book.
 
