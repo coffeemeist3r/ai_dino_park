@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { makeBrain } from '../ai/brain';
+import { makeBrain, type NPCBrain } from '../ai/brain';
 import { Dino } from '../entities/dino';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
@@ -30,6 +30,7 @@ export class WorldScene extends Phaser.Scene {
   private nightOverlay!: Phaser.GameObjects.Rectangle;
   private heartsPanel!: Phaser.GameObjects.Text;
   private friendship: Friendship = {};
+  private npcBrain!: NPCBrain;
 
   constructor() {
     super('World');
@@ -41,6 +42,8 @@ export class WorldScene extends Phaser.Scene {
     this.player = this.add.rectangle(TILE * 3 + TILE / 2, TILE * 3 + TILE / 2, TILE - 4, TILE - 4, 0xe8c878);
     this.player.setStrokeStyle(2, 0x6a4020);
 
+    // One shared brain across all dinos — five WebLLM engines would mean five model downloads.
+    this.npcBrain = makeBrain('webllm');
     for (const spawn of ROSTER) {
       this.dinos.push(
         new Dino(this, spawn.tileX * TILE + TILE / 2, spawn.tileY * TILE + TILE / 2, {
@@ -48,7 +51,7 @@ export class WorldScene extends Phaser.Scene {
           species: spawn.species,
           personality: spawn.personality,
           color: spawn.color,
-          brain: makeBrain('stub'),
+          brain: this.npcBrain,
         }),
       );
     }
@@ -232,6 +235,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__dinoCount = () => this.dinos.length;
     // any: dev-only Playwright hook — every dino's name
     (window as any).__dinoNames = () => this.dinos.map((d) => d.name);
+    // any: dev-only Playwright hook — shared NPC brain load status
+    (window as any).__brainStatus = () => this.npcBrain.status?.() ?? 'n/a';
   }
 
   private setupHearts(): void {

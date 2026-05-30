@@ -58,3 +58,21 @@ Also: **all dinos share ONE `WebLLMBrain` instance** — five engines would mean
 
 ## Estimated touch count
 6 logical files (1 new src, 2 modified src, dep manifest, 1 modified unit, 1 new e2e). At the ceiling; `webllmBrain` tests folded into `brain.test.ts` to avoid a 7th.
+
+## Shipped
+**Files touched:**
+- `game/src/ai/webllmBrain.ts` (new) — `WebLLMBrain` (status, lazy `init(loader?)`, never-throw `respond`, `generate` trim≤200), pure `buildMessages`, `ChatEngine`/`EngineLoader`/`BrainStatus`. Only file importing `@mlc-ai/web-llm` (dynamic import).
+- `game/src/ai/brain.ts` (modified) — extracted `cannedReply`, exported `moodFromTraits`, added optional `status?()` to `NPCBrain`, `makeBrain('webllm')` returns `WebLLMBrain`.
+- `game/src/scenes/WorldScene.ts` (modified) — one shared `webllm` brain across all dinos, `__brainStatus` hook.
+- `game/package.json` + `game/package-lock.json` — `@mlc-ai/web-llm@0.2.84`.
+- `tests/unit/brain.test.ts` (modified) — 6 tests (stub, webllm-no-throw, buildMessages, loading-fallback, forced-fail fallback, ready+trim via fake engine).
+- `tests/e2e/cycle-007-brain.spec.ts` (new) — 2 tests (boot status + error-free, fallback greet).
+- `.claude/launch.json` (new) — dev-server config for the manual verify attempt (out-of-plan dev convenience; no runtime impact).
+
+**Deviations:** one test-only fix — the "before ready" unit test originally let `respond()` auto-kick the *real* loader in Node, producing an unhandled web-llm rejection; rewritten to inject a never-resolving loader so status is `loading` and the real import never runs in Node. No production deviation.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (web-llm dynamic-imported, code-split out of the entry chunk; pre-existing chunk-size warning unchanged).
+- `npm run test:unit` — ✅ 41/41 (added 4 net new brain/webllm; the one `console.error` printed is the *expected* forced-fail fallback log).
+- `npx playwright test` — ✅ 20/20 (default config).
+- Dev server — ✅ HTTP 200.

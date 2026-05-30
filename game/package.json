@@ -13,6 +13,7 @@
     "test:e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.84",
     "phaser": "^3.87.0"
   },
   "devDependencies": {

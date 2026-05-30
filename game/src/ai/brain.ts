@@ -10,6 +10,7 @@
  */
 
 import type { Personality } from './personality';
+import { WebLLMBrain } from './webllmBrain';
 
 export interface NPCContext {
   name: string;
@@ -31,6 +32,8 @@ export interface Reply {
 
 export interface NPCBrain {
   respond(ctx: NPCContext, obs: Observation): Promise<Reply>;
+  /** Optional lifecycle status for backends that load asynchronously (e.g. WebLLM). */
+  status?(): string;
 }
 
 const cannedGreetings = [
@@ -40,8 +43,8 @@ const cannedGreetings = [
   "Don't step on my favorite rock, please. That one. Yes, that one.",
 ];
 
-/** Mood reflects personality so traits are observable before the real brain (BACKLOG-005) lands. */
-function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
+/** Mood reflects personality so traits are observable in the dialog. */
+export function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
   if (!t) return 'neutral';
   if (t.bravery <= 0.2) return 'wary';
   if (t.sociability >= 0.8 && t.agreeableness >= 0.7) return 'happy';
@@ -49,13 +52,16 @@ function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
   return 'neutral';
 }
 
+/** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
+export function cannedReply(ctx: NPCContext): Reply {
+  const idx = Math.floor(Math.random() * cannedGreetings.length);
+  const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
+  return { text, mood: moodFromTraits(ctx.traits) };
+}
+
 class StubBrain implements NPCBrain {
   async respond(ctx: NPCContext, _obs: Observation): Promise<Reply> {
-    const idx = Math.floor(Math.random() * cannedGreetings.length);
-    const text = cannedGreetings[idx]
-      .replace('the park', `the park, ${ctx.name} here`)
-      .slice(0, 200);
-    return { text, mood: moodFromTraits(ctx.traits) };
+    return cannedReply(ctx);
   }
 }
 
@@ -66,6 +72,8 @@ export function makeBrain(kind: BrainKind): NPCBrain {
     case 'stub':
       return new StubBrain();
     case 'webllm':
-      throw new Error('WebLLM brain not implemented yet — BACKLOG-005');
+      // brain↔webllmBrain is a cyclic import, but the refs are only touched at call time
+      // (here / inside respond), never at module-eval, so ESM resolves it safely.
+      return new WebLLMBrain();
   }
 }
