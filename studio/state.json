@@ -1,14 +1,14 @@
 {
   "cycle": 8,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-048: In-character dino dialogue",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-30T00:20:00-05:00",
-    "designer": "2026-05-29T23:24:00-05:00",
+    "designer": "2026-05-30T00:28:00-05:00",
     "code-planner": "2026-05-29T23:32:00-05:00",
     "coder": "2026-05-29T23:50:00-05:00",
     "qa": "2026-05-30T00:00:00-05:00",

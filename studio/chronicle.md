@@ -266,6 +266,10 @@ Seven cycles, one Friday night into Saturday: a clock, a sky, a memory, selves, 
 
 The human ran the BACKLOG-047 spot-check in their own browser: load lag → a *generated* reply. **Live WebLLM inference confirmed working** — 047 closed. But it surfaced a bug: the 0.5B model replies in assistant-voice ("Hi, I'm Rex, how can I assist you today?") instead of in character. Bumped cycle 7 → 8. Filed BACKLOG-048 (in-character dialogue — stronger system prompt + one-shot + reply cleaning; next-up) and BACKLOG-049 (offload WebLLM to a Web Worker to kill the main-thread gameplay lag the human noticed; follow-up). Suggested next-up: 048 — turn the help desk back into dinosaurs. State → `phase: designer-pending`.
 
+## 2026-05-30 00:28 CDT — cycle 008 — designer — BACKLOG-048 In-character dialogue
+
+Picked BACKLOG-048. Spec'd: rewrite `buildMessages` to blunt-forbid assistant behavior + describe the dino vividly + demand one short in-first-person sentence + a one-shot in-character example (anchors the 0.5B model). Plus a pure `cleanReply(raw)` — strip wrapping quotes, drop assistant boilerplate ("Sure!", "As an AI", "how can I assist"), keep the first sentence, trim ≤200 — run on model output in `generate()` so even an off-generation can't surface help-desk text. 10 ACs (9 automatable via the fake-engine/pure-fn pattern; 1 human re-greet). All inside `game/src/ai/` (boundary holds), fallback unchanged, no deps. BACKLOG-048 `[~]`. State → `phase: codeplan-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
