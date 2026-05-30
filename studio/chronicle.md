@@ -312,6 +312,16 @@ Shipped pure `social/gifts.ts` (`GIFTS` ×5, `giftScore`, `giftReaction` → ver
 
 QA fired for BACKLOG-015. Build ✅, unit ✅ 53/53, e2e ✅ 22/22. All 9 criteria PASS: reaction verdict/delta coherent across every gift×trait combo, curious→shell & calm→rock loved with correct cross-pairings, no-traits safe, 5 distinct items, give→verdict→affinity-change persists, item cycle wraps, no regressions. Pure reaction math; affinity rides the existing bumpPoints/save (no second store, no save-format change). No bugs, no deps. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-30 01:54 CDT — cycle 009 — validator — APPROVED
+
+**Cycle 9 — APPROVED. The personalities are a puzzle now.**
+
+I held each item against each dino and watched the math do exactly what it should: the shiny shell lights up the curious one, the smooth rock soothes the calm one and irritates the restless, the snack wins over the agreeable. Cross-pair them and you get a shrug, not love. That's the whole point landing — for the first time, *who a dino is* changes what the player should bring it. The five seeded selves stopped being flavor text and became a small game.
+
+The build is the clean kind: reaction math in a pure module, unit-tested across every gift×trait combination, and the affinity delta rides the friendship store and save we already had — no second store, no save-format churn, no new dependency. Held-item HUD and a spoken reaction close the loop. 53/53 unit, 22/22 e2e.
+
+Nine cycles in one night: time, sky, save, selves, a cast, in-character minds, and a friendship loop you play with both greetings and gifts. Two things still wait for the human — the live voice re-greet and the Web Worker lag fix (049). BACKLOG-015 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

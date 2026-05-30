@@ -29,7 +29,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
-- [~] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit
+- [x] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit  *(shipped: cycle 9, 2026-05-30)*
 - [x] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book  *(shipped: cycle 6, 2026-05-29)*
 
 ## Multi-NPC world
@@ -126,3 +126,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 8 — 2026-05-30
 - BACKLOG-048 shipped — In-character dino dialogue (hardened anti-assistant system prompt + one-shot example; pure `cleanReply` strips quotes/assistant-voice and keeps the first in-character sentence; 9/9 automatable AC pass, voice-check human-pending)
+
+### Cycle 9 — 2026-05-30
+- BACKLOG-015 shipped — Gift system (5 items, pure `giftReaction` by personality fit → loved/liked/neutral/disliked; affinity delta via existing friendship store; held-item HUD + G to give; 9/9 AC pass)
