@@ -26,6 +26,7 @@ const ROWS = 15;
 export class WorldScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Rectangle;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private wasd!: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
   private interactKey!: Phaser.Input.Keyboard.Key;
   private dinos: Dino[] = [];
   private dialog!: DialogBox;
@@ -66,11 +67,16 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.cursors = this.input.keyboard!.createCursorKeys();
-    this.interactKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+    this.wasd = this.input.keyboard!.addKeys('W,A,S,D') as Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
+    this.interactKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
     this.dialog = new DialogBox(this);
 
+    // E is the primary interact key; Z kept as an alias.
     this.interactKey.on('down', () => this.handleInteract());
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z).on('down', () => this.handleInteract());
+
+    this.addControlsHint();
 
     this.setupClock();
     this.setupDayNight();
@@ -116,6 +122,20 @@ export class WorldScene extends Phaser.Scene {
         }
       }
     }
+  }
+
+  private addControlsHint(): void {
+    this.add
+      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · [ ] item · C friends · O export', {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#ffffff',
+        align: 'right',
+        backgroundColor: '#000000aa',
+        padding: { x: 4, y: 2 },
+      })
+      .setOrigin(1, 1)
+      .setDepth(11);
   }
 
   private flashMeet(a: Dino, b: Dino): void {
@@ -174,10 +194,10 @@ export class WorldScene extends Phaser.Scene {
     if (this.dialogOpen) return;
 
     const speed = 2;
-    if (this.cursors.left.isDown) this.player.x -= speed;
-    if (this.cursors.right.isDown) this.player.x += speed;
-    if (this.cursors.up.isDown) this.player.y -= speed;
-    if (this.cursors.down.isDown) this.player.y += speed;
+    if (this.cursors.left.isDown || this.wasd.A.isDown) this.player.x -= speed;
+    if (this.cursors.right.isDown || this.wasd.D.isDown) this.player.x += speed;
+    if (this.cursors.up.isDown || this.wasd.W.isDown) this.player.y -= speed;
+    if (this.cursors.down.isDown || this.wasd.S.isDown) this.player.y += speed;
 
     this.player.x = Phaser.Math.Clamp(this.player.x, TILE / 2, TILE * COLS - TILE / 2);
     this.player.y = Phaser.Math.Clamp(this.player.y, TILE / 2, TILE * ROWS - TILE / 2);
@@ -317,7 +337,8 @@ export class WorldScene extends Phaser.Scene {
 
     clock.onHour(() => void this.saveGame());
 
-    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.E).on('down', () => this.exportSave());
+    // Export moved off E (now the interact key) to O.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.O).on('down', () => this.exportSave());
 
     // any: dev-only Playwright hooks — mirror the __clockNow pattern, not in production builds
     (window as any).__saveNow = async () => {
@@ -405,6 +426,8 @@ export class WorldScene extends Phaser.Scene {
     const kb = this.input.keyboard!;
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET).on('down', () => this.cycleItem(1));
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.OPEN_BRACKET).on('down', () => this.cycleItem(-1));
+    // F is the primary give key; G kept as an alias.
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.F).on('down', () => this.giveGift());
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.G).on('down', () => this.giveGift());
 
     // any: dev-only Playwright hooks — mirror the __clockNow pattern

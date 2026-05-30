@@ -368,6 +368,10 @@ Shipped pure `world/movement.ts` (`wanderStep`, clamped) + `social/meetings.ts` 
 
 Operator flagged the dialogue as "mostly hellos." Root fix: the prompt was context-free. Now `buildMessages` weaves in the time of day (`dayPhase`), the dino's mood (`moodFromTraits`), and how close the player is (hearts → `relationshipLabel`), and the greet line itself shifts — a stranger at dawn gets a different opening than a 10-heart friend at midnight. Reuses three signals we already had; adds none. Verified via a new `__greetPrompt` hook (e2e: advance to 22:00 → the prompt says "night"); 62/62 unit, 28/28 e2e (one parallel flake on cycle-003 export, green isolated + on re-run). Whether the *generated* line is more varied is the human's WebGPU re-greet to judge — but the prompt is provably richer. BACKLOG-051 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 09:14 CDT — cycle 013 — full chain — BACKLOG-053 (controls) APPROVED
+
+Operator: "WASD????? E interact, F give." Shipped: WASD added alongside arrows; **E** interacts (Z alias kept), **F** gives (G alias kept), save-export moved off E → **O**; controls-hint HUD bottom-right. Arrows/Z/G preserved so all existing e2e stay green. Build clean; **62/62 unit**, **30/30 e2e** (2 new: WASD moves, E talk + F give no-throw). BACKLOG-053 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
