@@ -270,6 +270,10 @@ The human ran the BACKLOG-047 spot-check in their own browser: load lag → a *g
 
 Picked BACKLOG-048. Spec'd: rewrite `buildMessages` to blunt-forbid assistant behavior + describe the dino vividly + demand one short in-first-person sentence + a one-shot in-character example (anchors the 0.5B model). Plus a pure `cleanReply(raw)` — strip wrapping quotes, drop assistant boilerplate ("Sure!", "As an AI", "how can I assist"), keep the first sentence, trim ≤200 — run on model output in `generate()` so even an off-generation can't surface help-desk text. 10 ACs (9 automatable via the fake-engine/pure-fn pattern; 1 human re-greet). All inside `game/src/ai/` (boundary holds), fallback unchanged, no deps. BACKLOG-048 `[~]`. State → `phase: codeplan-pending`.
 
+## 2026-05-30 00:36 CDT — cycle 008 — code-planner — BACKLOG-048 In-character dialogue
+
+Plan: rewrite `buildMessages` to ≥4 messages (hardened anti-assistant system + one-shot example + real user) and add pure `cleanReply(raw)` (strip wrapping quotes → drop assistant boilerplate prefixes → first sentence → ≤200 → empty means caller falls back). `generate()` runs output through `cleanReply`, returns `cannedReply` if empty; temp 0.7, max_tokens ~60. Reuse describePersonality, cannedReply/moodFromTraits, the fake-engine test pattern, OBSERVATION_PROMPT. 2 files only (webllmBrain.ts + brain.test.ts), boundary untouched, no deps. Risks: over-aggressive cleaning (tight anchored list + idempotency test), small-model defiance (one-shot + cleaner backstop; human re-check is the real proof). State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
