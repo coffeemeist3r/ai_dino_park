@@ -338,6 +338,10 @@ Plan: new `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`). `brain.ts`: `Repl
 
 Shipped `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`); `defaultLoader` now spins a module Worker + `CreateWebWorkerMLCEngine` so the model runs off the main thread. `Reply.source` ('llm'|'canned'), `cannedReply`→canned, generate→llm, `lastReplySource()` tracked; pure `replyPrefix` puts 🧠 on model lines. WorldScene shows a brain-status HUD (🧠 zzz/thinking…/ready/offline, refreshed each tick) and prefixes the dialog; `Dino.greet()` now returns the full `Reply`. Build confirms the offload — web-llm is code-split into a separate ~6 MB worker chunk, out of the 1.5 MB entry. **55/55 unit**, **24/24 e2e**. Boundary: web-llm only under `ai/`. State → `phase: qa-pending`.
 
+## 2026-05-30 02:42 CDT — cycle 010 — qa — 8/8 automatable pass, 1 human-pending — APPROVE
+
+QA fired for BACKLOG-049. Build ✅ (web-llm now in its own worker chunk — offload confirmed structurally), unit ✅ 55/55, e2e ✅ 24/24. Criteria 1–8 PASS: `Reply.source` tagging (llm/canned), not-ready→canned, status HUD reflects `__brainStatus`, 🧠 prefix only on llm lines, tests never spawn a worker (injected loader), boundary intact (web-llm only under `ai/`), no regressions. Criterion 9 (human: smoothness + 🧠 tag on WebGPU) ⏳ pending. This gives the operator the tool to answer "is it the LLM?" — HUD `ready` + 🧠 tag = model driving; `offline`/untagged = documented fallback. **Recommendation: APPROVE.** State → `phase: validator-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
