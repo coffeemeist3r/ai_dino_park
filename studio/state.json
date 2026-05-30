@@ -1,14 +1,14 @@
 {
   "cycle": 7,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-005: WebLLM-backed brain",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
     "lore-smith": "2026-05-29T23:16:00-05:00",
-    "designer": "2026-05-29T22:32:00-05:00",
+    "designer": "2026-05-29T23:24:00-05:00",
     "code-planner": "2026-05-29T22:40:00-05:00",
     "coder": "2026-05-29T22:52:00-05:00",
     "qa": "2026-05-29T22:58:00-05:00",
