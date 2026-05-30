@@ -274,6 +274,10 @@ Picked BACKLOG-048. Spec'd: rewrite `buildMessages` to blunt-forbid assistant be
 
 Plan: rewrite `buildMessages` to ≥4 messages (hardened anti-assistant system + one-shot example + real user) and add pure `cleanReply(raw)` (strip wrapping quotes → drop assistant boilerplate prefixes → first sentence → ≤200 → empty means caller falls back). `generate()` runs output through `cleanReply`, returns `cannedReply` if empty; temp 0.7, max_tokens ~60. Reuse describePersonality, cannedReply/moodFromTraits, the fake-engine test pattern, OBSERVATION_PROMPT. 2 files only (webllmBrain.ts + brain.test.ts), boundary untouched, no deps. Risks: over-aggressive cleaning (tight anchored list + idempotency test), small-model defiance (one-shot + cleaner backstop; human re-check is the real proof). State → `phase: coder-pending`.
 
+## 2026-05-30 00:46 CDT — cycle 008 — coder — BACKLOG-048 In-character dialogue
+
+Hardened `buildMessages` — system now bluntly forbids assistant behavior ("You are NOT an AI assistant... never offer help") + a one-shot in-character example (4 messages) to anchor the 0.5B model. Added pure `cleanReply`: strips wrapping quotes, drops leading filler ("Sure!"), skips any sentence with assistant-tells (how can I assist / I am an AI / happy to help), returns the first in-character sentence ≤200 — empty means caller falls back. `generate` runs model output through it (temp 0.7, max_tokens 60). 2 files, boundary intact. Build clean; **46/46 unit** (added cleanReply + generate-cleans cases; one test-only regex narrowing for apostrophes); **20/20 e2e**. The vibe itself is the human's re-greet to confirm. State → `phase: qa-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

@@ -52,3 +52,16 @@ none.
 
 ## Estimated touch count
 2 files (1 modified src, 1 modified unit). Well under the ceiling — focused prompt/cleaning change.
+
+## Shipped
+**Files touched:**
+- `game/src/ai/webllmBrain.ts` (modified) — hardened `buildMessages` (anti-assistant system + one-shot example, 4 messages); new pure `cleanReply` (strip wrapping quotes → drop leading filler → skip assistant-tell sentences → first in-character sentence ≤200, '' if none); `generate` runs output through `cleanReply` and falls back to `cannedReply` on empty; temp 0.7 / max_tokens 60.
+- `tests/unit/brain.test.ts` (modified) — updated `buildMessages` assertions (≥4 msgs, anti-assistant phrase, one-shot roles); added 4 `cleanReply` tests + a `generate`-cleans-output test; added a `fake()` engine helper.
+
+**Deviations:** one test-only fix — the quote-free assertion initially used `/["'“”]/`, which flagged apostrophes in the canned fallback lines ("haven't"); narrowed to `/["“”]/` (wrapping double-quotes), since apostrophes in contractions are legitimate dialogue.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0 (pre-existing chunk-size warning only).
+- `npm run test:unit` — ✅ 46/46 (brain.test.ts now 11; the printed `console.error` is the expected forced-fail fallback log).
+- `npx playwright test` — ✅ 20/20.
+- Boundary still intact (`@mlc-ai/web-llm` only in `webllmBrain.ts`).
