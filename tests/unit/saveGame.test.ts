@@ -7,6 +7,7 @@ const sample: SaveData = {
   player: { x: 123.5, y: 456 },
   friendship: { Rex: 30 },
   memory: { Rex: ['said hello'] },
+  bonds: { 'Mossback|Rex': 12 },
 };
 
 describe('saveGame', () => {

@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 018 — 2026-05-30  (capstone)
+
+- BACKLOG-013 + BACKLOG-041: Pairwise bonds + night sleeping huddles — APPROVED. Every NPC↔NPC meeting strengthens a symmetric pairwise **bond** (0–100, pure `bonds.ts`, persisted). A visible **den** sits lower-centre; at **night** any dino whose strongest bond ≥ threshold walks to the den instead of wandering, clusters with its friends (💤 over each), and the huddle adjacency keeps deepening the bond — then they disperse at dawn. Self-reinforcing: meeting builds bonds, bonds drive huddling, huddling builds bonds. 8 new unit + 2 new e2e; full suite 80 unit / 36 e2e, green across three consecutive runs.
+
 ## Cycle 017 — 2026-05-30
 
 - BACKLOG-011: NPC memory store — APPROVED. Each dino keeps a small ring buffer of recent events (you greeting it, gifts + how it reacted, running into other dinos). The last few are woven into its prompt ("Lately: …") so it reacts to history, and the memory rides into the save — so a dino remembers you next session. At dawn each dino folds its events into a one-line reflection. Pure `memory.ts` (`remember`/`recall`/`reflect`); additive save field (version unchanged, old saves default to empty). 7 new unit + 1 new e2e.

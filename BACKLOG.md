@@ -28,7 +28,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-055 [ai] Livelier character voice — feed the roster flavor + traits into the prompt, drop the negative-heavy framing, allow ~2 sentences, raise tokens/temp. Fixes bland/lifeless replies (operator-diagnosed).  *(shipped: cycle 15, 2026-05-30)*
 - [x] BACKLOG-011 [ai] NPC memory store — per-dino ring buffer of recent events (greet/gift/meet), woven into the prompt ("Lately: …"), persisted in the save, daily dawn reflection  *(shipped: cycle 17, 2026-05-30)*
 - [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
-- [ ] BACKLOG-013 [ai] NPC relationships — pairwise affinity, updated by interactions
+- [x] BACKLOG-013 [ai] NPC relationships — pairwise bonds (0–100), strengthened on every meeting/huddle, persisted in the save  *(shipped: cycle 18, 2026-05-30)*
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [x] BACKLOG-015 [social] Gift system — give item to NPC, affinity changes based on personality fit  *(shipped: cycle 9, 2026-05-30)*
 - [x] BACKLOG-016 [social] Friendship hearts UI — 0–10 hearts per NPC, visible in collection book  *(shipped: cycle 6, 2026-05-29)*
@@ -81,7 +81,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 1 lore additions (2026-05-25)
 
-- [ ] BACKLOG-041 [emergent] Sleeping huddles — at night, NPCs with affinity ≥ 3 gather at a fixed tile and form a stacked sprite pile until morning. Small affinity boost each shared night.
+- [x] BACKLOG-041 [emergent] Sleeping huddles — at night, bonded dinos walk to the den tile and huddle (💤), strengthening the bond each shared night; disperse at dawn  *(shipped: cycle 18, 2026-05-30)*
 - [ ] BACKLOG-042 [pokemon] Egg phase — when two high-affinity NPCs share a sleeping huddle on a clear night, an egg sprite may appear nearby. Hatches into a new NPC after 3 in-game days with traits blended from the parents.
 - [ ] BACKLOG-043 [ai] Personality drift — over many in-game weeks, an NPC's personality traits can shift toward those of the NPC they spend most ticks adjacent to. Very slow (cap: one trait swap per in-game month).
 - [x] BACKLOG-048 [ai] In-character dino dialogue — strengthen the WebLLM system prompt (+ one-shot example) and clean the reply so dinos never speak as an AI assistant ("how can I assist?"). Surfaced by the BACKLOG-047 spot-check.  *(shipped: cycle 8, 2026-05-30)*

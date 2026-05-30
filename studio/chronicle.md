@@ -388,6 +388,14 @@ Brain now sizes the model to the device instead of hardcoding 0.5B. Pure `pickTi
 
 Dinos remember you now. Each keeps a 6-event ring buffer (you greeting, gifts + how it felt, running into other dinos); the last three are woven into its prompt as "Lately: …" so it reacts to history, and the store rides into the save — greet Rex, reload, he still remembers. At dawn each dino folds the day into a one-line reflection. Pure `memory.ts` (`remember`/`recall`/`reflect`); additive save field (version 1, old saves default empty). Build clean; **75/75 unit**, **34/34 e2e** (greet → remembered → reaches prompt → survives reload). Pairs with the cycle-15 voice fix: now the model has both vivid character *and* shared history to talk about. BACKLOG-011 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 12:30 CDT — cycle 018 — full chain — BACKLOG-013 + 041 (bonds + huddles) APPROVED — CAPSTONE
+
+**Cycle 18 — APPROVED. The park has a night life now.**
+
+The operator asked for one big cycle to come back to in the morning, so this one ties the social threads into a loop that runs itself. Every time two dinos meet, a symmetric **bond** (0–100) strengthens — pairwise affinity at last (013), persisted in the save. And at night (`dayPhase==='night'`), any dino whose strongest bond clears the threshold stops wandering and walks to the **den** — a visible mat lower-centre of the map — where it piles up with its friends under a 💤 and the closeness keeps deepening the bond (041). At dawn they scatter back into the day. It's self-reinforcing: meeting builds bonds, bonds pull them together at night, the huddle builds more bond. Leave it running and the cast sorts itself into little sleeping families.
+
+Engineering held the line even at capstone scale: bond math is a pure, Node-tested module; the huddle movement reuses the deterministic `stepToward`; the den is drawn under the dinos and the night overlay over them; the save change is additive (version 1, old saves still load). 8 new unit + 2 new e2e, and because the operator is away until morning I ran the **full suite three times straight — 80/80 unit, 36/36 e2e, no flake**. BACKLOG-013 and BACKLOG-041 closed. Next emergent beats this unlocks: eggs from huddling pairs (042), gossip (019), roles (020). State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

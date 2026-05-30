@@ -20,10 +20,16 @@ import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
+import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 
 const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
+
+// Night sleeping huddle (BACKLOG-041): bonded dinos gather at the den after dark.
+const HUDDLE_TILE = { tileX: 10, tileY: 11 };
+const HUDDLE_THRESHOLD = 8; // min strongest-bond to seek the den
+const BOND_PER_MEET = 4;
 
 export class WorldScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Rectangle;
@@ -43,6 +49,9 @@ export class WorldScene extends Phaser.Scene {
   private brainHud!: Phaser.GameObjects.Text;
   private meetings: Meetings = {};
   private memory: MemoryStore = {};
+  private bonds: Bonds = {};
+  private sleepMarks: Phaser.GameObjects.Text[] = [];
+  private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private moveTicks = 0;
   private convoCooldown = 0;
   private convoInFlight = false;
@@ -54,6 +63,7 @@ export class WorldScene extends Phaser.Scene {
 
   create(): void {
     this.drawGrassMap();
+    this.drawDen(); // drawn before dinos so they nap on top of it
 
     this.player = this.add.rectangle(TILE * 3 + TILE / 2, TILE * 3 + TILE / 2, TILE - 4, TILE - 4, 0xe8c878);
     this.player.setStrokeStyle(2, 0x6a4020);
@@ -91,6 +101,59 @@ export class WorldScene extends Phaser.Scene {
     this.setupGifts();
     this.setupBrainHud();
     this.setupMovement();
+    this.setupHuddle();
+  }
+
+  private drawDen(): void {
+    const g = this.add.graphics();
+    g.fillStyle(0x4a3f5a, 0.55);
+    g.fillEllipse(this.denCenter.x, this.denCenter.y, TILE * 3.4, TILE * 2.2);
+    g.lineStyle(2, 0x6a5f7a, 0.7);
+    g.strokeEllipse(this.denCenter.x, this.denCenter.y, TILE * 3.4, TILE * 2.2);
+  }
+
+  private setupHuddle(): void {
+    this.sleepMarks = this.dinos.map(() =>
+      this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
+
+    // any: dev-only Playwright hooks
+    (window as any).__bonds = () => ({ ...this.bonds });
+    (window as any).__bondPair = (a: string, b: string) => {
+      this.bonds = strengthen(this.bonds, a, b, HUDDLE_THRESHOLD);
+      return bondPoints(this.bonds, a, b);
+    };
+    (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
+  }
+
+  /** Strongest bond this dino has with any other. */
+  private maxBond(name: string): number {
+    let best = 0;
+    for (const o of this.dinos) {
+      if (o.name === name) continue;
+      best = Math.max(best, bondPoints(this.bonds, name, o.name));
+    }
+    return best;
+  }
+
+  private isNight(): boolean {
+    return dayPhase(getWorldClock().now().hour) === 'night';
+  }
+
+  private nearDen(d: Dino): boolean {
+    return Math.abs(d.x - this.denCenter.x) <= TILE * 1.5 && Math.abs(d.y - this.denCenter.y) <= TILE * 1.5;
+  }
+
+  private isHuddling(d: Dino): boolean {
+    return this.isNight() && this.nearDen(d);
+  }
+
+  private refreshSleepMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.sleepMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.isHuddling(d)).setPosition(d.x, d.y - TILE);
+    });
   }
 
   private setupMovement(): void {
@@ -150,14 +213,20 @@ export class WorldScene extends Phaser.Scene {
   private forceStep(): void {
     if (this.convoCooldown > 0) this.convoCooldown--;
 
+    const night = this.isNight();
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
       const other = this.nearestOther(d);
-      // ~45% of the time, drift toward the nearest dino so the park clusters and converses.
-      const next =
-        other && Math.random() < 0.45
-          ? stepToward(cur, this.tileOf(other), COLS, ROWS)
-          : wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
+      let next;
+      if (night && this.maxBond(d.name) >= HUDDLE_THRESHOLD) {
+        // Night: bonded dinos head for the den to sleep together.
+        next = stepToward(cur, HUDDLE_TILE, COLS, ROWS);
+      } else if (other && Math.random() < 0.45) {
+        // Day: ~45% of the time drift toward the nearest dino so the park clusters and converses.
+        next = stepToward(cur, this.tileOf(other), COLS, ROWS);
+      } else {
+        next = wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
+      }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
     }
 
@@ -167,11 +236,14 @@ export class WorldScene extends Phaser.Scene {
         const b = this.dinos[j];
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
+          this.bonds = strengthen(this.bonds, a.name, b.name, BOND_PER_MEET); // meeting (and huddling) deepens the bond
           this.flashMeet(a, b);
           if (this.convoCooldown <= 0 && !this.convoInFlight) void this.converse(a, b);
         }
       }
     }
+
+    this.refreshSleepMarks();
   }
 
   /** One dino remarks on meeting another — a floating speech bubble via the shared brain. */
@@ -416,6 +488,7 @@ export class WorldScene extends Phaser.Scene {
       player: { x: this.player.x, y: this.player.y },
       friendship: this.friendship,
       memory: this.memory,
+      bonds: this.bonds,
     };
   }
 
@@ -439,6 +512,7 @@ export class WorldScene extends Phaser.Scene {
       this.player.setPosition(save.player.x, save.player.y);
       this.friendship = save.friendship;
       this.memory = save.memory;
+      this.bonds = save.bonds;
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.refreshHeartsPanel();

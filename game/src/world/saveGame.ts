@@ -10,6 +10,7 @@
 import type { GameTime } from './clock';
 import type { Friendship } from '../social/friendship';
 import type { MemoryStore } from '../ai/memory';
+import type { Bonds } from '../social/bonds';
 
 export const SAVE_VERSION = 1;
 
@@ -19,6 +20,7 @@ export interface SaveData {
   player: { x: number; y: number };
   friendship: Friendship;
   memory: MemoryStore;
+  bonds: Bonds;
 }
 
 export function serialize(data: SaveData): string {
@@ -70,11 +72,23 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // bonds is additive over v1 — absent in older saves (default {}); reject only if malformed.
+  let bonds: Bonds = {};
+  if (o.bonds !== undefined) {
+    if (typeof o.bonds !== 'object' || o.bonds === null) return null;
+    const entries = o.bonds as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      bonds[k] = entries[k] as number;
+    }
+  }
+
   return {
     version: SAVE_VERSION,
     time: { day: time.day, hour: time.hour, minute: time.minute },
     player: { x: player.x, y: player.y },
     friendship,
     memory,
+    bonds,
   };
 }
