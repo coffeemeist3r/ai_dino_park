@@ -322,6 +322,10 @@ The build is the clean kind: reaction math in a pure module, unit-tested across 
 
 Nine cycles in one night: time, sky, save, selves, a cast, in-character minds, and a friendship loop you play with both greetings and gifts. Two things still wait for the human — the live voice re-greet and the Web Worker lag fix (049). BACKLOG-015 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 02:04 CDT — cycle 010 — lore-smith — seeded (operator-run)
+
+Operator hit two live issues: gameplay lags while the model thinks (main-thread), and dialog reads as "mostly hellos" with no way to tell LLM from canned fallback. Diagnosis: replies fall back to canned whenever the model isn't ready yet OR when cycle-8's `cleanReply` strips an all-assistant generation to empty — and there's no status indicator to reveal which. Bumped cycle 9 → 10. Suggested next-up: BACKLOG-049 (offload WebLLM to a Web Worker) + surface brain status ("thinking/ready/offline") and a per-reply source tag (🧠 = model-written). Fixes the lag and answers "how do I tell if it's the LLM?". Next after: BACKLOG-018 (dinos move + meet). State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
