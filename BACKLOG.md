@@ -35,7 +35,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Multi-NPC world
 
 - [x] BACKLOG-017 [core] Spawn 5 NPCs with distinct species + names + personalities  *(shipped: cycle 5, 2026-05-29)*
-- [~] BACKLOG-018 [ai] NPC-to-NPC interaction — when two NPCs adjacent at a tick, they may converse (LLM dialog), affinity updates  *(cycle 11: movement + meeting spine; LLM convo → BACKLOG-052)*
+- [x] BACKLOG-018 [ai] NPC-to-NPC interaction — movement + meeting spine (dinos wander, adjacency recorded); LLM dino-to-dino dialogue → BACKLOG-052  *(shipped: cycle 11, 2026-05-30)*
 - [ ] BACKLOG-019 [emergent] Gossip propagation — NPC who sees event tells next NPC they meet
 - [ ] BACKLOG-020 [emergent] Role emergence — chef / guard / artist / gossip surfaces from behavior, displayed in collection book
 
@@ -84,6 +84,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-048 [ai] In-character dino dialogue — strengthen the WebLLM system prompt (+ one-shot example) and clean the reply so dinos never speak as an AI assistant ("how can I assist?"). Surfaced by the BACKLOG-047 spot-check.  *(shipped: cycle 8, 2026-05-30)*
 - [x] BACKLOG-049 [ai] Offload WebLLM to a Web Worker — model load/inference currently runs on the main thread and lags gameplay; move to `CreateWebWorkerMLCEngine`. (+ brain-status readout & per-reply source tag)  *(shipped: cycle 10, 2026-05-30)*
 - [ ] BACKLOG-051 [ai] Richer dialogue context — feed time-of-day (dayPhase), the dino's mood, and the player's friendship level into the prompt so replies vary beyond greetings. (Addresses "mostly hellos".)
+- [ ] BACKLOG-052 [ai] LLM-driven NPC↔NPC dialogue — when two dinos meet (cycle 11 movement), have them exchange a short generated line and update pairwise affinity. Deferred from BACKLOG-018.
 - [ ] BACKLOG-044 [emergent] Lost-item lore — when the player drops an item and an NPC picks it up later, the NPC's brain may invent a story about its origin. Story is stored in NPC memory and may surface in unrelated dialog later.
 - [ ] BACKLOG-045 [social] Catchphrase emergence — first non-trivial line an NPC speaks each in-game morning is logged. If the same line surfaces 3+ days running, it becomes that NPC's catchphrase, shown in the collection book.
 
@@ -133,3 +134,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 10 — 2026-05-30
 - BACKLOG-049 shipped — WebLLM Web Worker offload (model runs off the render thread; build confirms web-llm in a separate worker chunk) + brain-status HUD (🧠 thinking/ready/offline) and per-reply source tag (🧠 on model-written lines); 8/8 automatable AC pass, smoothness human-pending
+
+### Cycle 11 — 2026-05-30
+- BACKLOG-018 shipped — NPC movement + meeting spine (dinos wander on a throttled tick, stay in bounds, adjacency recorded as a symmetric pairwise meeting counter with a label flash); LLM dino-to-dino dialogue deferred to BACKLOG-052; 8/8 AC pass

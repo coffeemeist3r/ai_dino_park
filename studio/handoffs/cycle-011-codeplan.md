@@ -51,3 +51,19 @@ none.
 
 ## Estimated touch count
 6 files (2 new src, 2 modified src, 1 new unit, 1 new e2e). At the ceiling.
+
+## Shipped
+**Files touched:**
+- `game/src/world/movement.ts` (new) — `Tile`, `WANDER_DIRS`, `wanderStep` (clamped).
+- `game/src/social/meetings.ts` (new) — `Meetings`, `pairKey`, `recordMeet`.
+- `game/src/entities/dino.ts` (modified) — `setPosition(x,y)` moves sprite + label.
+- `game/src/scenes/WorldScene.ts` (modified) — `setupMovement` (throttled `onTick`), `forceStep` (wander + adjacency→`recordMeet`+`flashMeet`), `__dinoPositions`/`__meetings`/`__stepWorld` hooks.
+- `tests/unit/movement.test.ts` (new) — 5 tests (movement + meetings).
+- `tests/e2e/cycle-011-movement.spec.ts` (new) — 2 tests.
+
+**Deviations:** none.
+
+**Build + test status:**
+- `npm run build` — ✅ exit 0.
+- `npm run test:unit` — ✅ 60/60 (5 new).
+- `npx playwright test` — ✅ 26/26 (dinos provably move + stay in-bounds; greet still works post-movement).

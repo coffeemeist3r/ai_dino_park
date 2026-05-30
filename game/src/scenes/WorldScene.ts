@@ -15,6 +15,8 @@ import {
   type Friendship,
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
+import { wanderStep } from '../world/movement';
+import { recordMeet, type Meetings } from '../social/meetings';
 
 const TILE = 32;
 const COLS = 20;
@@ -35,6 +37,8 @@ export class WorldScene extends Phaser.Scene {
   private giftHud!: Phaser.GameObjects.Text;
   private heldItemIndex = 0;
   private brainHud!: Phaser.GameObjects.Text;
+  private meetings: Meetings = {};
+  private moveTicks = 0;
 
   constructor() {
     super('World');
@@ -73,6 +77,51 @@ export class WorldScene extends Phaser.Scene {
     this.setupHearts();
     this.setupGifts();
     this.setupBrainHud();
+    this.setupMovement();
+  }
+
+  private setupMovement(): void {
+    getWorldClock().onTick(() => {
+      // Wander every 5 in-game minutes so the park mills about without jittering.
+      if (++this.moveTicks % 5 === 0) this.forceStep();
+    });
+
+    // any: dev-only Playwright hooks
+    (window as any).__dinoPositions = () => this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
+    (window as any).__meetings = () => ({ ...this.meetings });
+    (window as any).__stepWorld = () => {
+      this.forceStep();
+      return this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
+    };
+  }
+
+  /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
+  private forceStep(): void {
+    for (const d of this.dinos) {
+      const cur = {
+        tileX: Math.round((d.x - TILE / 2) / TILE),
+        tileY: Math.round((d.y - TILE / 2) / TILE),
+      };
+      const next = wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
+      d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+    }
+    for (let i = 0; i < this.dinos.length; i++) {
+      for (let j = i + 1; j < this.dinos.length; j++) {
+        const a = this.dinos[i];
+        const b = this.dinos[j];
+        if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
+          this.meetings = recordMeet(this.meetings, a.name, b.name);
+          this.flashMeet(a, b);
+        }
+      }
+    }
+  }
+
+  private flashMeet(a: Dino, b: Dino): void {
+    for (const d of [a, b]) {
+      d.label.setColor('#ffe066');
+      this.time.delayedCall(400, () => d.label.setColor('#ffffff'));
+    }
   }
 
   private setupBrainHud(): void {

@@ -42,6 +42,12 @@ export class Dino {
     this.label.setOrigin(0.5, 1);
   }
 
+  /** Move the dino (sprite + floating label) to a pixel position. */
+  setPosition(x: number, y: number): void {
+    this.sprite.setPosition(x, y);
+    this.label.setPosition(x, y - TILE);
+  }
+
   get x(): number {
     return this.sprite.x;
   }

@@ -356,6 +356,12 @@ I'll be honest about what this *doesn't* fix: if the little model keeps producin
 
 Bumped cycle 10 → 11. Operator-requested item. Scope call: ship the **movement + meeting spine** (dinos wander on a throttled tick, adjacency detected, a symmetric pairwise meeting counter increments — the seed of pairwise affinity 013 — with a label flash), and **defer LLM dino-to-dino dialogue** to BACKLOG-052 (heavy, hard to verify; movement is the visible win). Plan: pure `world/movement.ts` (`wanderStep` clamped) + `social/meetings.ts` (`pairKey`/`recordMeet`), `Dino.setPosition`, WorldScene `setupMovement`/`stepWorld`/`flashMeet` reusing `clock.onTick` (throttled, force-able for tests) + `__dinoPositions`/`__meetings`/`__stepWorld` hooks. Out of scope: pathfinding, position/meeting persistence, player consequences. 6 files. State → `phase: coder-pending`.
 
+## 2026-05-30 03:34 CDT — cycle 011 — coder→validator — BACKLOG-018 APPROVED
+
+**Cycle 11 — APPROVED. The park moves.**
+
+Shipped pure `world/movement.ts` (`wanderStep`, clamped) + `social/meetings.ts` (`pairKey`/`recordMeet`), `Dino.setPosition`, and WorldScene `setupMovement`/`forceStep`/`flashMeet` off the clock tick (throttled, force-able for tests). Dinos now wander the map and, when two end a step adjacent, the pair's meeting count ticks up and both labels flash gold. `nearestDino` reads live positions so greeting/gifting follow them around. Build clean; **60/60 unit** (5 new); **26/26 e2e** (dinos provably move + stay in-bounds; greet still works after movement). LLM dino-to-dino dialogue deferred to BACKLOG-052; pairwise affinity (013) can build on the meeting counter. Eleven cycles tonight — the world visibly lives now. BACKLOG-018 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
