@@ -342,6 +342,16 @@ Shipped `ai/webllm.worker.ts` (`WebWorkerMLCEngineHandler`); `defaultLoader` now
 
 QA fired for BACKLOG-049. Build ✅ (web-llm now in its own worker chunk — offload confirmed structurally), unit ✅ 55/55, e2e ✅ 24/24. Criteria 1–8 PASS: `Reply.source` tagging (llm/canned), not-ready→canned, status HUD reflects `__brainStatus`, 🧠 prefix only on llm lines, tests never spawn a worker (injected loader), boundary intact (web-llm only under `ai/`), no regressions. Criterion 9 (human: smoothness + 🧠 tag on WebGPU) ⏳ pending. This gives the operator the tool to answer "is it the LLM?" — HUD `ready` + 🧠 tag = model driving; `offline`/untagged = documented fallback. **Recommendation: APPROVE.** State → `phase: validator-pending`.
 
+## 2026-05-30 02:50 CDT — cycle 010 — validator — APPROVED
+
+**Cycle 10 — APPROVED. The mind runs off-thread, and you can see it think.**
+
+Two things the operator felt in their own browser, fixed together. The lag: inference now lives in a dedicated Web Worker — and I can prove the offload without a greet, because the build splits `@mlc-ai/web-llm` into its own ~6 MB worker chunk, clean off the entry bundle. The mystery: a brain-status HUD now reads `🧠 thinking… / ready / offline`, and every line the model actually writes gets a 🧠 in the dialog box. So "is this the LLM or the script?" finally has an answer on screen — `ready` + 🧠 means the dino spoke; `offline` or a bare line means the canned safety net did.
+
+Guardrails held: WebLLM still only under `ai/` (worker file included), the injected-loader seam keeps unit tests worker-free, `Reply.source` is additive, the `greet()` signature change touched one call site. 55/55 unit, 24/24 e2e, no new deps.
+
+I'll be honest about what this *doesn't* fix: if the little model keeps producing assistant-voice that `cleanReply` strips to nothing, you'll still see canned hellos — but now the HUD/tag will *tell* you that's what's happening. The real cure for "mostly hellos" is richer prompt context (time, mood, relationship), which I've filed as BACKLOG-051. Next per the operator's plan: BACKLOG-018, dinos that move and meet. BACKLOG-049 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
