@@ -20,6 +20,7 @@ const sample: SaveData = {
       color: 0x6a6242,
       tileX: 11,
       tileY: 11,
+      parents: ['Rex', 'Mossback'],
     },
   ],
 };

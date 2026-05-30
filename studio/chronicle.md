@@ -412,6 +412,16 @@ Builds on the two systems already in place: per-dino memory (cycle 17) and the m
 
 Pure `social/gossip.ts` (`swapPronouns` first→third person, `isShareable`, `pickGossip`, `makeRumor`, `spreadGossip`); the only WorldScene change is one line in the throttled `converse` path (so gossip spreads at conversation cadence, not every adjacency) plus a `__spreadGossip` dev hook. 7 new unit + 2 new e2e (a rumor is planted and provably won't re-spread; news reaches at least one dino over 40 mingling steps); full suite **99 unit / 41 e2e**, green across two consecutive e2e runs; web-llm boundary clean. BACKLOG-019 closed. Next emergent beats: role emergence (020), personality drift (043), catchphrases (045); or surface all of it to the player with the collection book (021). State → `phase: lore-pending`.
 
+## 2026-05-30 — cycle 021 — full chain — BACKLOG-021 + 020 (observer lenses) APPROVED
+
+**Cycle 21 — APPROVED. You can finally watch the sim.**
+
+The operator loves the emergent feel and asked to make more of it visible *without scripting it away* — so the design rule was: show a mirror, never author an outcome. Every lens reads state the sim already produced. One key (**V**) cycles five views: off → **📖 Collection Book** (every dino incl. hatchlings: species, hearts, strongest bond, emergent role, lineage "child of X + Y", rumors heard) → **🔗 Bonds** (lines between bonded pairs drawn on the map, thicker = stronger) → **🎭 Roles** (a tag floats over each dino) → **📰 Park News** (a live ticker of births, hatches, gossip) → off.
+
+The roles are themselves emergent (BACKLOG-020): `deriveRole` reads behavior tallies — a heavy rumor-carrier becomes the `gossip`, a deeply-bonded nester the `homebody`, a high-meeting mingler the `socialite`, the rest `wanderer`. Nothing is assigned; it falls out of what the dino did.
+
+Engineering: all the logic is pure and Node-tested (`ai/roles.ts`, `ui/lenses.ts` — `nextLens`/`bondedPairs`/`tickerLines`/`bookLines`); WorldScene only draws what they describe and keeps a small event log. `BornDino` gained a `parents` field (additive) so the book can show lineage. 14 new unit + 3 new e2e; full suite **109 unit / 44 e2e**, green across two consecutive e2e runs. **Visually verified all four lenses in a live preview** — and the screenshots caught the sim being alive: a hatchling (Rexback) born by the den, then on a reload it persisted and a sibling deduped to Rexback2, an in-character NPC bubble ("*sniffs the air* You smell like the human cave. Welcome."), Sunny tagged `gossip` after carrying rumors, Rex+Mossback a `homebody` pair on a bond-100 line. BACKLOG-021 and BACKLOG-020 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

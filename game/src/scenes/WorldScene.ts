@@ -20,7 +20,9 @@ import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
-import { spreadGossip } from '../social/gossip';
+import { spreadGossip, RUMOR_MARK } from '../social/gossip';
+import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
+import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -66,6 +68,13 @@ export class WorldScene extends Phaser.Scene {
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
   private sleepMarks: Phaser.GameObjects.Text[] = [];
+  private roleTags: Phaser.GameObjects.Text[] = [];
+  private lens: Lens = 'off';
+  private bookPanel!: Phaser.GameObjects.Text;
+  private bondGfx!: Phaser.GameObjects.Graphics;
+  private tickerPanel!: Phaser.GameObjects.Text;
+  private lensLabel!: Phaser.GameObjects.Text;
+  private eventLog: string[] = [];
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private moveTicks = 0;
   private convoCooldown = 0;
@@ -107,6 +116,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupBrainHud();
     this.setupMovement();
     this.setupHuddle();
+    this.setupLenses();
   }
 
   /** Spawn a dino (roster or born), keeping its 💤 sleep-mark index-aligned in `sleepMarks`. */
@@ -130,6 +140,13 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.push(dino);
     this.sleepMarks.push(
       this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
+    this.roleTags.push(
+      this.add
+        .text(0, 0, '', { fontFamily: 'monospace', fontSize: '9px', color: '#ffe0a0', backgroundColor: '#000000aa', padding: { x: 2, y: 1 } })
+        .setOrigin(0.5, 1)
+        .setDepth(12)
+        .setVisible(false),
     );
     return dino;
   }
@@ -186,6 +203,7 @@ export class WorldScene extends Phaser.Scene {
     const egg = makeEgg(a, b, day, tile);
     this.eggs.push(egg);
     this.drawEgg(egg);
+    this.logEvent(`🥚 ${a} & ${b} nested by the den`);
     void this.saveGame();
     return egg;
   }
@@ -259,6 +277,7 @@ export class WorldScene extends Phaser.Scene {
     this.born.push(baby);
     const dino = this.spawnDino(baby);
     this.showBubble(dino, `${name} hatches! 🐣`);
+    this.logEvent(`🐣 ${name} hatched (${egg.parentA} + ${egg.parentB})`);
     void this.saveGame();
   }
 
@@ -290,6 +309,143 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       mark.setVisible(this.isHuddling(d)).setPosition(d.x, d.y - TILE);
     });
+  }
+
+  // ── Observer lenses (BACKLOG-021 + 020): cycle V through ways of seeing the sim ──
+
+  private logEvent(line: string): void {
+    this.eventLog = [...this.eventLog, line].slice(-12);
+  }
+
+  private dinoByName(name: string): Dino | undefined {
+    return this.dinos.find((d) => d.name === name);
+  }
+
+  /** Total meetings this dino has been part of (summed over its pairs). */
+  private meetingsOf(name: string): number {
+    let n = 0;
+    for (const key of Object.keys(this.meetings)) {
+      if (key.split('|').includes(name)) n += this.meetings[key];
+    }
+    return n;
+  }
+
+  private rumorsOf(name: string): number {
+    return recall(this.memory, name).filter((e) => e.includes(RUMOR_MARK)).length;
+  }
+
+  /** A dino's emergent role, derived from how it has actually behaved. */
+  private roleOf(name: string): Role {
+    return deriveRole({ meetings: this.meetingsOf(name), rumorsHeard: this.rumorsOf(name), topBond: this.maxBond(name) });
+  }
+
+  private bookRows(): BookRow[] {
+    const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
+    return this.dinos.map((d) => ({
+      name: d.name,
+      species: d.species,
+      hearts: heartsFromPoints(this.friendship[d.name] ?? 0),
+      topBond: this.maxBond(d.name),
+      role: this.roleOf(d.name),
+      parents: parentsOf.get(d.name),
+      rumorsHeard: this.rumorsOf(d.name),
+    }));
+  }
+
+  private setupLenses(): void {
+    this.bondGfx = this.add.graphics().setDepth(6).setVisible(false); // over the night overlay, under HUD
+    this.bookPanel = this.add
+      .text((TILE * COLS) / 2, 30, '', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ffffff',
+        align: 'left',
+        backgroundColor: '#000000e6',
+        padding: { x: 10, y: 8 },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(13)
+      .setVisible(false);
+    this.tickerPanel = this.add
+      .text(6, 36, '', {
+        fontFamily: 'monospace',
+        fontSize: '10px',
+        color: '#ffffff',
+        align: 'left',
+        backgroundColor: '#000000cc',
+        padding: { x: 6, y: 4 },
+      })
+      .setOrigin(0, 0)
+      .setDepth(13)
+      .setVisible(false);
+    this.lensLabel = this.add
+      .text((TILE * COLS) / 2, 4, '', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ffe0a0',
+        shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(13);
+
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.V).on('down', () => this.cycleLens());
+    getWorldClock().onTick(() => this.refreshLens());
+
+    // dev-only Playwright hooks
+    (window as any).__lens = () => this.lens;
+    (window as any).__cycleLens = () => {
+      this.cycleLens();
+      return this.lens;
+    };
+    (window as any).__events = () => [...this.eventLog];
+    (window as any).__roles = () => {
+      const out: Record<string, string> = {};
+      for (const d of this.dinos) out[d.name] = this.roleOf(d.name);
+      return out;
+    };
+    (window as any).__bookRows = () => this.bookRows();
+
+    this.refreshLens();
+  }
+
+  private cycleLens(): void {
+    this.lens = nextLens(this.lens);
+    this.refreshLens();
+  }
+
+  private refreshLens(): void {
+    const L = this.lens;
+    this.lensLabel.setText(LENS_LABEL[L] ? `[V] ${LENS_LABEL[L]}` : '');
+    this.bookPanel.setVisible(L === 'book');
+    this.tickerPanel.setVisible(L === 'ticker');
+    this.bondGfx.setVisible(L === 'bonds');
+
+    // role tags float over each dino only in the roles lens
+    this.roleTags.forEach((tag, i) => {
+      const d = this.dinos[i];
+      const show = L === 'roles' && !!d;
+      tag.setVisible(show);
+      if (show) {
+        const r = this.roleOf(d.name);
+        tag.setText(`${ROLE_ICON[r]} ${r}`).setPosition(d.x, d.y - TILE * 1.15);
+      }
+    });
+
+    if (L === 'book') {
+      this.bookPanel.setText(bookLines(this.bookRows()).join('\n'));
+    } else if (L === 'ticker') {
+      const news = tickerLines(this.eventLog);
+      this.tickerPanel.setText(['— Park News —', ...(news.length ? news : ['(quiet so far…)'])].join('\n'));
+    } else if (L === 'bonds') {
+      this.bondGfx.clear();
+      for (const p of bondedPairs(this.bonds, HUDDLE_THRESHOLD)) {
+        const a = this.dinoByName(p.a);
+        const b = this.dinoByName(p.b);
+        if (!a || !b) continue;
+        this.bondGfx.lineStyle(Math.max(1, Math.round(p.points / 18)), 0xff6fae, 0.6);
+        this.bondGfx.lineBetween(a.x, a.y, b.x, b.y);
+      }
+    }
   }
 
   private setupMovement(): void {
@@ -410,7 +566,9 @@ export class WorldScene extends Phaser.Scene {
       this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
       this.memory = remember(this.memory, a.name, `you ran into ${b.name} the ${b.species}`);
       // Gossip: the speaker passes a recent first-hand memory to the listener as news (BACKLOG-019).
-      this.memory = spreadGossip(this.memory, a.name, b.name).store;
+      const gossip = spreadGossip(this.memory, a.name, b.name);
+      this.memory = gossip.store;
+      if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
     } finally {
       this.convoInFlight = false;
@@ -446,7 +604,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(11);
 
     this.add
-      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · [ ] item · C friends · O export', {
+      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · [ ] item · C friends · V lens · O export', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#ffffff',

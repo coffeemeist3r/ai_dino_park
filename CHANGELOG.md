@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 021 — 2026-05-30
+
+- BACKLOG-021 + BACKLOG-020: Observer lenses — APPROVED. One key (**V**) cycles the player through ways of *seeing* the emergent sim, each a pure readout of state the sim already produced (no new scripting): **📖 Collection Book** (every dino incl. hatchlings — species, hearts, strongest bond, emergent role, lineage "child of X + Y", rumors heard), **🔗 Bonds** (lines drawn between bonded pairs on the map, thicker = stronger), **🎭 Roles** (a role tag floats over each dino — `gossip`/`homebody`/`socialite`/`wanderer` **derived from behavior**, BACKLOG-020), **📰 Park News** (live ticker of births/hatches/gossip). Pure `ai/roles.ts` (`deriveRole`) + `ui/lenses.ts` (`nextLens`/`bondedPairs`/`tickerLines`/`bookLines`); `BornDino` gains a `parents` field for lineage (additive). WorldScene adds the lens layer + an event log. 14 new unit + 3 new e2e; full suite **109 unit / 44 e2e**, green across two consecutive e2e runs. Visually verified all four lenses in a live preview. Turns the invisible sim into something you watch — without ever authoring an outcome.
+
 ## Cycle 020 — 2026-05-30
 
 - BACKLOG-019: Gossip propagation — APPROVED. When two dinos converse on meeting, the speaker passes a recent **first-hand** memory to the listener as second-hand news, planted in the listener's memory marked `told me:` so it won't re-spread (1 hop, no loops). Because memory already feeds the prompt as "Lately: …", a dino can now bring up things it only *heard* about — news ripples through the park as the cast mingles. Pure `social/gossip.ts` (`swapPronouns`/`isShareable`/`pickGossip`/`makeRumor`/`spreadGossip`), wired into the throttled `converse` path so it spreads at conversation cadence. 7 new unit + 2 new e2e; full suite **99 unit / 41 e2e**, green across two consecutive e2e runs.

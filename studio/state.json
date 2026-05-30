@@ -1,5 +1,5 @@
 {
-  "cycle": 20,
+  "cycle": 21,
   "phase": "lore-pending",
   "currentItem": null,
   "lastVerdict": "APPROVED",
@@ -7,12 +7,12 @@
   "lockedFiles": [],
   "artPipelineReady": false,
   "lastFire": {
-    "lore-smith": "2026-05-30T14:00:00-05:00",
-    "designer": "2026-05-30T14:03:00-05:00",
-    "code-planner": "2026-05-30T14:06:00-05:00",
-    "coder": "2026-05-30T14:20:00-05:00",
-    "qa": "2026-05-30T14:24:00-05:00",
-    "validator": "2026-05-30T14:30:00-05:00",
+    "lore-smith": "2026-05-30T15:00:00-05:00",
+    "designer": "2026-05-30T15:03:00-05:00",
+    "code-planner": "2026-05-30T15:06:00-05:00",
+    "coder": "2026-05-30T15:25:00-05:00",
+    "qa": "2026-05-30T15:29:00-05:00",
+    "validator": "2026-05-30T15:35:00-05:00",
     "artist": null
   }
 }

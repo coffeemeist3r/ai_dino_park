@@ -35,6 +35,7 @@ export interface BornDino {
   color: number;
   tileX: number;
   tileY: number;
+  parents: [string, string]; // lineage, surfaced in the collection book
 }
 
 const clamp01 = (v: number): number => Math.max(0, Math.min(1, v));
@@ -138,5 +139,6 @@ export function hatch(egg: Egg, p: HatchParents, name: string, rand: () => numbe
     color: blendColor(p.colorA, p.colorB),
     tileX: egg.tileX,
     tileY: egg.tileY,
+    parents: [egg.parentA, egg.parentB],
   };
 }
