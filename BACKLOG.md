@@ -69,6 +69,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Infra
 
+- [~] BACKLOG-053 [core] Sane controls — WASD movement, E to interact, F to give (Z/G/arrows kept as aliases; save-export moved to O). Operator feedback.
 - [x] BACKLOG-047 [infra] Human spot-check WebLLM live inference — confirmed working (load lag → generated reply); surfaced persona bug → BACKLOG-048  *(confirmed: human, cycle 8)*
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
