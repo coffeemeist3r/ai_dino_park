@@ -352,6 +352,10 @@ Guardrails held: WebLLM still only under `ai/` (worker file included), the injec
 
 I'll be honest about what this *doesn't* fix: if the little model keeps producing assistant-voice that `cleanReply` strips to nothing, you'll still see canned hellos — but now the HUD/tag will *tell* you that's what's happening. The real cure for "mostly hellos" is richer prompt context (time, mood, relationship), which I've filed as BACKLOG-051. Next per the operator's plan: BACKLOG-018, dinos that move and meet. BACKLOG-049 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 03:00 CDT — cycle 011 — lore→codeplan — BACKLOG-018 Movement + meetings
+
+Bumped cycle 10 → 11. Operator-requested item. Scope call: ship the **movement + meeting spine** (dinos wander on a throttled tick, adjacency detected, a symmetric pairwise meeting counter increments — the seed of pairwise affinity 013 — with a label flash), and **defer LLM dino-to-dino dialogue** to BACKLOG-052 (heavy, hard to verify; movement is the visible win). Plan: pure `world/movement.ts` (`wanderStep` clamped) + `social/meetings.ts` (`pairKey`/`recordMeet`), `Dino.setPosition`, WorldScene `setupMovement`/`stepWorld`/`flashMeet` reusing `clock.onTick` (throttled, force-able for tests) + `__dinoPositions`/`__meetings`/`__stepWorld` hooks. Out of scope: pathfinding, position/meeting persistence, player consequences. 6 files. State → `phase: coder-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
