@@ -292,6 +292,10 @@ What I can't sign off from here is the *taste* of the generated line — does Re
 
 Eight cycles, one long Friday night: clock, sky, memory, selves, cast, friendship, minds — and now those minds kept in character. BACKLOG-048 closed. State → `phase: lore-pending`.
 
+## 2026-05-30 01:12 CDT — cycle 009 — lore-smith — seeded (operator-run)
+
+Bumped cycle 8 → 9. Suggested next-up: BACKLOG-015 (gift system) — hand a dino an item, affinity shifts by personality fit. Reuses friendship store (016) for the delta, traits (010) for the reaction, save (009) for persistence; pure reaction math, no model. A handful of items (shiny shell, wildflower, smooth rock, sparring stick, mossy snack), reactions loved/liked/neutral/disliked read aloud. Turns the 5 personalities from flavor into a puzzle the player solves. State → `phase: designer-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
