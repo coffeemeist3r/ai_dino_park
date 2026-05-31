@@ -99,6 +99,14 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-059 [social] Feeding hatch — drop food from the top of the bowl; it falls and the cast swarms it (reframes gifting as keeping)
 - [ ] BACKLOG-060 [infra] Idle / ambient mode — no input for a while → HUD fades + camera slowly drifts; the bowl as a quiet desktop companion
 
+## Cycle 25 lore additions — feeding (2026-05-31)
+
+- [ ] BACKLOG-061 [emergent] Food favorites — each dino prefers a food (from personality, like gifts); grabbing its favorite at the hatch = extra-happy (bigger bump, 😋) and remembered. Builds on 059.
+- [ ] BACKLOG-062 [emergent] Scramble standoff — two dinos reaching dropped food the same tick: the bolder wins, the loser sulks (memory + 😤), a low-bond pair loses a little bond.
+- [ ] BACKLOG-063 [social] Begging at the glass — a long-unfed dino drifts to the front wall and looks up at the keeper (📣), nudging a food drop.
+- [ ] BACKLOG-064 [emergent] Hoarder role — the dino that wins the food scramble most often emerges as the `hoarder` role tag, derived from feed tallies.
+- [ ] BACKLOG-065 [pokemon] Feeding log in the book — per-dino "fed Nx · last Day M" line in the collection book.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
