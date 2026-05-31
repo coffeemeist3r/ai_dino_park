@@ -57,3 +57,16 @@ none.
 
 ## Estimated touch count
 ~4 files (1 new module + 1 WorldScene + 2 test files). Under the 6-file split threshold.
+
+## Shipped (coder)
+**Files touched (exactly as planned, no scope creep):**
+- `game/src/world/feeding.ts` (new) — `reactionToFood`, `feedStep` (reuses `stepToward`), `reachedFood`, `foodLanding`, consts `FEED_RANGE=7`, `FEED_GAIN=5`, `EAGER=0.4`.
+- `game/src/scenes/WorldScene.ts` — fields `food`/`foodLanded`/`foodSprite`; `setupFeeding()` (H key + `__dropFood`/`__food` hooks); `dropFood()` (one-at-a-time, 🍖 falls via 600ms tween); food-rush branch at the top of the `forceStep` per-dino loop; `checkFeeding()`/`eatFood()`/`flashFeed()` (😋); `checkFeeding()` called after the meeting loop; controls hint gained `H feed`.
+- `tests/unit/feeding.test.ts` (new) — 9 unit tests.
+- `tests/e2e/cycle-025-feeding.spec.ts` (new) — 2 e2e tests.
+
+**Deviations:** none.
+
+**Determinism note:** dinos[0]=Rex spawns at tile (10,7); food drops at Rex's column → lands (10,6), so Rex starts adjacent. Rex energy 0.54 ≥ EAGER → rushes onto the food and `checkFeeding` eats it on the first `__stepWorld` (Sunny 0.66 / Glade 0.87 are in-range backups). No reliance on random wander to converge.
+
+**Status:** `npm run build` ✅ · `npx vitest run` feeding ✅ (9/9) · dev server renders (HTTP 200) ✅ · `cycle-025-feeding` e2e ✅ (2/2). Full-suite confirmation is QA's job.

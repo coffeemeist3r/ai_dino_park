@@ -25,6 +25,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
+import { reactionToFood, feedStep, reachedFood, foodLanding, FEED_GAIN } from '../world/feeding';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
@@ -80,6 +81,9 @@ export class WorldScene extends Phaser.Scene {
   private plaque!: Phaser.GameObjects.Text;
   private eventLog: string[] = [];
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
+  private food: { tileX: number; tileY: number } | null = null;
+  private foodLanded = false;
+  private foodSprite: Phaser.GameObjects.Text | null = null;
   private moveTicks = 0;
   private convoCooldown = 0;
   private convoInFlight = false;
@@ -123,6 +127,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupLenses();
     this.setupGlass();
     this.setupTap();
+    this.setupFeeding();
     this.setupPlaque();
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
@@ -221,6 +226,74 @@ export class WorldScene extends Phaser.Scene {
       .setOrigin(0.5, 1)
       .setDepth(12);
     d.label.setColor(reaction === 'bolt' ? '#ff8080' : '#9fe8ff');
+    this.time.delayedCall(700, () => {
+      mark.destroy();
+      d.label.setColor('#ffffff');
+    });
+  }
+
+  /** Feeding hatch (BACKLOG-059): press H to drop food; the cast swarms it; first to reach eats. */
+  private setupFeeding(): void {
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.H).on('down', () => this.dropFood());
+
+    // dev-only Playwright hooks. __dropFood lands the food immediately so tests
+    // skip the real-time fall tween; the H press uses the tween for the visual.
+    (window as any).__dropFood = (col?: number) => {
+      const tile = this.dropFood(col);
+      if (this.food) this.foodLanded = true;
+      return tile;
+    };
+    (window as any).__food = () => (this.food ? { ...this.food } : null);
+  }
+
+  /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
+  private dropFood(col?: number): { tileX: number; tileY: number } {
+    if (this.food) return this.food; // already a piece in play — ignore the drop
+    const landing = foodLanding(COLS, ROWS, col);
+    this.food = landing;
+    this.foodLanded = false;
+    const px = landing.tileX * TILE + TILE / 2;
+    const landY = landing.tileY * TILE + TILE / 2;
+    this.foodSprite = this.add.text(px, TILE * 0.4, '🍖', { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
+    this.tweens.add({
+      targets: this.foodSprite,
+      y: landY,
+      duration: 600,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        this.foodLanded = true;
+      },
+    });
+    this.logEvent('🍖 food dropped from the hatch');
+    return landing;
+  }
+
+  /** First dino standing on (or beside) the landed food eats it. */
+  private checkFeeding(): void {
+    if (!this.food || !this.foodLanded) return;
+    const eater = this.dinos.find((d) => reachedFood(this.tileOf(d), this.food!));
+    if (eater) this.eatFood(eater);
+  }
+
+  private eatFood(d: Dino): void {
+    this.foodSprite?.destroy();
+    this.foodSprite = null;
+    this.food = null;
+    this.foodLanded = false;
+    this.friendship = bumpPoints(this.friendship, d.name, FEED_GAIN);
+    this.memory = remember(this.memory, d.name, 'you scrambled to the hatch and snapped up the food');
+    this.flashFeed(d);
+    this.logEvent(`🍖 ${d.name} snapped up the food at the hatch`);
+    this.refreshHeartsPanel();
+    void this.saveGame();
+  }
+
+  private flashFeed(d: Dino): void {
+    const mark = this.add
+      .text(d.x, d.y - TILE * 0.9, '😋', { fontSize: '14px' })
+      .setOrigin(0.5, 1)
+      .setDepth(12);
+    d.label.setColor('#a8ff80');
     this.time.delayedCall(700, () => {
       mark.destroy();
       d.label.setColor('#ffffff');
@@ -656,6 +729,17 @@ export class WorldScene extends Phaser.Scene {
     const night = this.isNight();
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
+
+      // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides wandering.
+      if (this.food && this.foodLanded) {
+        const dist = Math.hypot(cur.tileX - this.food.tileX, cur.tileY - this.food.tileY);
+        if (reactionToFood(d.traits.energy, dist) === 'rush') {
+          const step = feedStep(cur, this.food, COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          continue;
+        }
+      }
+
       const other = this.nearestOther(d);
       let next;
       if (night && this.maxBond(d.name) >= HUDDLE_THRESHOLD) {
@@ -684,6 +768,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.refreshSleepMarks();
+    this.checkFeeding();
     this.maybeLayEggs();
     this.checkHatch();
   }
@@ -746,7 +831,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(11);
 
     this.add
-      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · [ ] item · C friends · V lens · O export', {
+      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · O export', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#ffffff',
