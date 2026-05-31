@@ -1,6 +1,6 @@
 {
   "cycle": 25,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-059: Feeding hatch",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
     "designer": "2026-05-31T11:49:00-05:00",
     "code-planner": "2026-05-31T11:53:00-05:00",
     "coder": "2026-05-31T12:18:00-05:00",
-    "qa": "2026-05-30T18:24:00-05:00",
+    "qa": "2026-05-31T12:30:00-05:00",
     "validator": "2026-05-30T18:30:00-05:00",
     "artist": null
   }
