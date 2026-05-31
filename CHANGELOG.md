@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 025 — 2026-05-31
+
+- BACKLOG-059: Feeding hatch — APPROVED. The bowl's lid has a hatch now: press **H** and a 🍖 falls from the top into the upper-middle feeding zone, and the cast swarms it. Eager, in-range dinos (`energy ≥ 0.4` within 7 tiles) make a beeline; the calm and the far-off keep wandering. The first dino to reach the food snaps it up — 😋, a friendship bump (`FEED_GAIN=5`), and a "scrambled to the hatch and snapped up the food" memory that can ripple into gossip; the rest disperse. One piece at a time; the drop + eat both post to the Park News ticker. Reframes gifting (F, hand-to-one) as feeding the tank (H, broadcast-to-cast) — the keeper picks the input, the bowl picks the winner. Pure `world/feeding.ts` (`reactionToFood`/`feedStep` reusing `stepToward`/`reachedFood`/`foodLanding`); WorldScene glue only. 9 new unit + 2 new e2e; full suite **134 unit / 50 e2e** green, no flake. Save unchanged (food is ephemeral). Spine for 061 favorites / 062 scramble / 063 begging / 064 hoarder role / 065 feed-log.
+
 ## Cycle 024 — 2026-05-30
 
 - BACKLOG-058: The Plaque — APPROVED. An engraved brass nameplate sits under the bowl — *"VIVARIUM · Pocket Cretaceous"* over a live stat line: `Day N · M specimens · G generations`. The generation count is a pure readout of the lineage the breeding loop produced: founders are gen 1, a hatchling is 1 + the deeper of its two parents, so the plaque deepens on its own as families breed across days. Pure `ui/plaque.ts` (`generationOf` memoized + cycle-guarded, `maxGeneration`, `plaqueLines` with pluralization); the scene renders it bottom-center, refreshed on the clock tick. 5 new unit + 1 new e2e (plaque reports population and ticks to 2 generations when an egg hatches); full suite **125 unit / 48 e2e** green. The bowl now wears its label.
