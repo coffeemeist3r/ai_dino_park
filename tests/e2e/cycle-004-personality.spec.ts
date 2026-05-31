@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
 
 type Personality = Record<string, number>;
 
 test('first dino exposes 5 numeric personality axes in [0,1]', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
   const traits = await page.evaluate(() =>
     ((window as Record<string, unknown>).__dinoTraits as () => Personality)(),
   );
@@ -17,8 +17,7 @@ test('first dino exposes 5 numeric personality axes in [0,1]', async ({ page }) 
 });
 
 test('talking to Rex still returns a reply (no regression)', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
   await page.locator('canvas').focus();
   // Walk left toward Rex (spawned near tile 10,7; player starts at tile 3,3) then greet.
   await page.keyboard.down('ArrowRight');

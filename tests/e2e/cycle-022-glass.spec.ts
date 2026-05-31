@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
 
 type W = Record<string, unknown>;
 
@@ -6,8 +7,7 @@ test('the vivarium glass is present and the world still runs inside it', async (
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(String(e)));
 
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
 
   // The glass drew and reports the bowl dimensions.
   const glass = await page.evaluate(() => ((window as W).__glass as () => { width: number; height: number; radius: number })());

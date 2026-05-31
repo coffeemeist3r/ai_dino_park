@@ -2,10 +2,7 @@ import { test, expect } from '@playwright/test';
 
 type W = Record<string, unknown>;
 
-async function boot(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
-}
+import { boot } from './helpers';
 
 test('a dino retells a first-hand memory to another as a rumor', async ({ page }) => {
   await boot(page);

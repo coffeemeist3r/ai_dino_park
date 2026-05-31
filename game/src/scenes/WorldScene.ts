@@ -124,6 +124,10 @@ export class WorldScene extends Phaser.Scene {
     this.setupGlass();
     this.setupTap();
     this.setupPlaque();
+
+    // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
+    // avoid the parallel-load flake of reading a hook before create() finishes.
+    (window as any).__ready = true;
   }
 
   /** The Plaque (BACKLOG-058): an engraved nameplate under the bowl with live vivarium stats. */

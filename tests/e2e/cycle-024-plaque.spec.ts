@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
 
 type W = Record<string, unknown>;
 
 test('the plaque reports population and grows a generation when an egg hatches', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
 
   const before = await page.evaluate(() =>
     ((window as W).__plaque as () => { population: number; day: number; generations: number })(),

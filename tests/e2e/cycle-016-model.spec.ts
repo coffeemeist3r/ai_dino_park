@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
 
 test('the device probe resolves a known model tier', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
   const info = await page.evaluate(() =>
     ((window as Record<string, unknown>).__modelInfo as () => Promise<{ tier: string; id: string }>)(),
   );

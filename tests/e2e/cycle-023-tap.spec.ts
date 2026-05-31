@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
 
 type W = Record<string, unknown>;
 
@@ -6,8 +7,7 @@ test('tapping the glass on a dino startles it and lands in its memory', async ({
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(String(e)));
 
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
 
   const result = await page.evaluate(() => {
     const pos = ((window as W).__dinoPositions as () => Array<{ name: string; x: number; y: number }>)();
@@ -35,8 +35,7 @@ test('tapping the glass on a dino startles it and lands in its memory', async ({
 });
 
 test('a far-off dino ignores a tap across the bowl', async ({ page }) => {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await boot(page);
 
   const sawIgnore = await page.evaluate(() => {
     // tap the extreme corner; with five dinos spread out, at least one is out of range

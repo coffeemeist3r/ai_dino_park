@@ -4,10 +4,7 @@ const COLS = 20;
 const ROWS = 15;
 const TILE = 32;
 
-async function boot(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
-}
+import { boot } from './helpers';
 
 test('dinos wander and stay in bounds', async ({ page }) => {
   await boot(page);

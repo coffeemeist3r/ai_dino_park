@@ -4,10 +4,7 @@ import { test, expect } from '@playwright/test';
 // these tests prove the safety net: the game boots and dialog still works on
 // the canned fallback path. Live model inference is verified manually (QA handoff).
 
-async function boot(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
-}
+import { boot } from './helpers';
 
 test('brain status is a defined string and boot is error-free', async ({ page }) => {
   const errors: string[] = [];

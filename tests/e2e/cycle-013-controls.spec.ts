@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
 
+import { boot as bootBase } from './helpers';
+
 async function boot(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
+  await bootBase(page);
   await page.locator('canvas').focus();
 }
 

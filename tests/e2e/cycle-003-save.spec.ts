@@ -6,10 +6,7 @@ import { test, expect } from '@playwright/test';
 
 type GameTime = { day: number; hour: number; minute: number };
 
-async function bootedCanvas(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
-}
+import { boot as bootedCanvas } from './helpers';
 
 test('fresh boot with no save starts at Day 1 08:00', async ({ page }) => {
   const errors: string[] = [];

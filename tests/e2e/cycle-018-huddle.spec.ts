@@ -1,9 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-async function boot(page: import('@playwright/test').Page) {
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: 10_000 });
-}
+import { boot } from './helpers';
 
 test('bonded dinos huddle at the den at night', async ({ page }) => {
   await boot(page);
