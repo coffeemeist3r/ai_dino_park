@@ -63,7 +63,12 @@ re-attempt — up to **2 rework loops**. If still failing after that, write an A
 ## Finish
 
 - End with `state.json.phase = "lore-pending"` and a clean working tree.
+- **Push to GitHub:** after the cycle is fully committed and the tree is clean, run
+  `git push origin main` so the night's work lands on the remote (origin =
+  https://github.com/coffeemeist3r/ai_dino_park.git, credential manager handles auth).
+  If the push fails (offline / auth), don't fail the cycle — append a one-line chronicle
+  note "push deferred: <reason>"; the next run will push the accumulated commits.
 - The Validator's chronicle entry is the human-facing journal — make it a good read.
 - If something blocks hard (e.g. build won't pass and can't be fixed), STOP gracefully: do not
   commit broken code to `main`; append a chronicle note explaining the block and leave state
-  recoverable for the next run.
+  recoverable for the next run. Still `git push` whatever IS safely committed.
