@@ -1,12 +1,45 @@
 # Schedule Management
 
-The 7 routines run as **persistent scheduled tasks** managed by Claude Code's scheduled-tasks system. They live at:
+## Current model (2026-05-31): one consolidated daily cycle
+
+As of 2026-05-31 the studio runs as a **single daily job** that executes the whole pipeline
+start-to-finish in one session — lore → designer → code-planner → coder → QA → validator →
+artist — shipping one BACKLOG item per day. This replaced the old 7-jobs-across-Mon→Wed
+layout (which only shipped ~1 item/week because stages were spread across days-of-week).
+
+| Task ID                    | Schedule          | What it runs                                   |
+|----------------------------|-------------------|------------------------------------------------|
+| `dino-studio-daily-cycle`  | Daily 03:00 local | `studio/routines/0-daily-cycle.md` (full chain)|
+
+- **Fully autonomous:** picks the work and ships it without asking; the human reads the
+  chronicle entry afterward.
+- **Intended model:** Opus 4.8 on high — set at the **app level** (scheduled tasks have no
+  model field; the job runs on whatever model the app defaults to at fire time).
+- **Caveat:** scheduled tasks only fire while Claude Code is open. 03:00 needs the app left
+  running overnight; otherwise it fires on next launch.
+- The old per-stage jobs `dino-1-lore-smith` … `dino-7-artist` are **disabled** (paused, not
+  deleted) so they can be re-enabled if we ever want to split the chain across sessions again.
+
+### Adding / removing a step
+The pipeline is just the numbered files in `studio/routines/`. The daily job executes them in
+numeric order, so to add a step, drop a new `studio/routines/N-<name>.md` (or insert
+`3.5-<name>.md`) — it's picked up automatically next run. No new scheduled task needed.
+
+### Changing cadence
+Edit `cronExpression` on `dino-studio-daily-cycle` via `update_scheduled_task` or the sidebar
+(5-field cron, local time). Twice daily → `0 3,15 * * *`. Weekdays only → `0 3 * * 1-5`.
+
+---
+
+## Legacy: the old 7-routine split (disabled)
+
+The 7 routines lived at:
 
 ```
 C:\Users\jorda\.claude\scheduled-tasks\dino-N-<routine>\SKILL.md
 ```
 
-(Where `N` is 1..7.)
+(Where `N` is 1..7.) They are now disabled; the consolidated daily job above supersedes them.
 
 ## Persistence
 
