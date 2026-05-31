@@ -97,7 +97,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-057 [core] Tap the glass — click the glass and nearby dinos startle (timid bolt, bold investigate); reads personality + bonds  *(shipped: cycle 23, 2026-05-30)*
 - [x] BACKLOG-058 [pokemon] The Plaque — engraved nameplate under the bowl: "VIVARIUM — Pocket Cretaceous", live population, day count, oldest lineage  *(shipped: cycle 24 — title + day + population + family-tree generations, 2026-05-30)*
 - [x] BACKLOG-059 [social] Feeding hatch — drop food from the top of the bowl; it falls and the cast swarms it (reframes gifting as keeping)  *(shipped: cycle 25 — H drops 🍖, eager in-range dinos swarm, first to reach eats; pure world/feeding.ts, 2026-05-31)*
-- [ ] BACKLOG-060 [infra] Idle / ambient mode — no input for a while → HUD fades + camera slowly drifts; the bowl as a quiet desktop companion
+- [x] BACKLOG-060 [infra] Idle / ambient mode — no input for a while → HUD fades + camera slowly drifts; the bowl as a quiet desktop companion  *(shipped: cycle 26, 2026-05-31)*
 
 ## Cycle 25 lore additions — feeding (2026-05-31)
 

@@ -27,6 +27,7 @@ import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, FEED_GAIN } from '../world/feeding';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
+import { hudAlpha, isIdle } from '../world/idle';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -80,6 +81,10 @@ export class WorldScene extends Phaser.Scene {
   private lensLabel!: Phaser.GameObjects.Text;
   private plaque!: Phaser.GameObjects.Text;
   private eventLog: string[] = [];
+  private hudElements: Array<{ setAlpha: (a: number) => unknown }> = [];
+  private lastInputAt = 0;
+  private ambientActive = false;
+  private ambientTween?: Phaser.Tweens.Tween;
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private food: { tileX: number; tileY: number } | null = null;
   private foodLanded = false;
@@ -129,10 +134,70 @@ export class WorldScene extends Phaser.Scene {
     this.setupTap();
     this.setupFeeding();
     this.setupPlaque();
+    this.setupIdle();
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
     // avoid the parallel-load flake of reading a hook before create() finishes.
     (window as any).__ready = true;
+  }
+
+  /** Idle / ambient mode (BACKLOG-060): fade the HUD + breathe the camera after a still spell. */
+  private setupIdle(): void {
+    this.lastInputAt = this.time.now;
+    // The always-on HUD that fades when the keeper steps away (panels toggled by keys are excluded).
+    this.hudElements.push(this.clockHud, this.brainHud, this.giftHud, this.plaque, this.lensLabel);
+
+    const markActive = () => {
+      this.lastInputAt = this.time.now;
+      if (this.ambientActive) this.exitAmbient();
+    };
+    this.input.keyboard!.on('keydown', markActive);
+    this.input.on('pointerdown', markActive);
+
+    // dev-only Playwright hooks
+    (window as any).__idleAlpha = () => hudAlpha(this.time.now - this.lastInputAt);
+    (window as any).__isAmbient = () => isIdle(this.time.now - this.lastInputAt);
+    (window as any).__forceIdle = (ms: number) => {
+      this.lastInputAt = this.time.now - ms;
+      this.applyIdle();
+      return hudAlpha(ms);
+    };
+    (window as any).__nudgeInput = () => {
+      markActive();
+      this.applyIdle();
+      return hudAlpha(0);
+    };
+  }
+
+  /** Fade the HUD to match how long we've been idle, and start/stop the camera breathing. */
+  private applyIdle(): void {
+    const idleMs = this.time.now - this.lastInputAt;
+    const a = hudAlpha(idleMs);
+    for (const el of this.hudElements) el.setAlpha(a);
+    if (isIdle(idleMs)) this.enterAmbient();
+  }
+
+  private enterAmbient(): void {
+    if (this.ambientActive) return;
+    this.ambientActive = true;
+    // Slow "breathing" zoom toward the centre of the bowl; yoyos forever until input.
+    this.ambientTween = this.tweens.add({
+      targets: this.cameras.main,
+      zoom: 1.04,
+      duration: 6_000,
+      ease: 'Sine.easeInOut',
+      yoyo: true,
+      repeat: -1,
+    });
+  }
+
+  private exitAmbient(): void {
+    if (!this.ambientActive) return;
+    this.ambientActive = false;
+    this.ambientTween?.stop();
+    this.ambientTween = undefined;
+    this.cameras.main.setZoom(1);
+    for (const el of this.hudElements) el.setAlpha(1);
   }
 
   /** The Plaque (BACKLOG-058): an engraved nameplate under the bowl with live vivarium stats. */
@@ -821,7 +886,7 @@ export class WorldScene extends Phaser.Scene {
   private addControlsHint(): void {
     // Build stamp — short HH:MM:SS of the running build so a restart is visible in-game.
     const stamp = typeof __BUILD_TIME__ === 'string' ? __BUILD_TIME__.slice(11, 19) : '?';
-    this.add
+    const buildText = this.add
       .text(6, 20, `build ${stamp}`, {
         fontFamily: 'monospace',
         fontSize: '9px',
@@ -830,7 +895,7 @@ export class WorldScene extends Phaser.Scene {
       })
       .setDepth(11);
 
-    this.add
+    const hintText = this.add
       .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · O export', {
         fontFamily: 'monospace',
         fontSize: '10px',
@@ -841,6 +906,9 @@ export class WorldScene extends Phaser.Scene {
       })
       .setOrigin(1, 1)
       .setDepth(11);
+
+    // Fade these with the rest of the HUD in ambient mode.
+    this.hudElements.push(buildText, hintText);
   }
 
   private flashMeet(a: Dino, b: Dino): void {
@@ -902,13 +970,25 @@ export class WorldScene extends Phaser.Scene {
     if (this.dialogOpen) return;
 
     const speed = 2;
-    if (this.cursors.left.isDown || this.wasd.A.isDown) this.player.x -= speed;
-    if (this.cursors.right.isDown || this.wasd.D.isDown) this.player.x += speed;
-    if (this.cursors.up.isDown || this.wasd.W.isDown) this.player.y -= speed;
-    if (this.cursors.down.isDown || this.wasd.S.isDown) this.player.y += speed;
+    const left = this.cursors.left.isDown || this.wasd.A.isDown;
+    const right = this.cursors.right.isDown || this.wasd.D.isDown;
+    const up = this.cursors.up.isDown || this.wasd.W.isDown;
+    const down = this.cursors.down.isDown || this.wasd.S.isDown;
+    if (left) this.player.x -= speed;
+    if (right) this.player.x += speed;
+    if (up) this.player.y -= speed;
+    if (down) this.player.y += speed;
+
+    // Held movement keys don't refire keydown events, so count them as activity here.
+    if (left || right || up || down) {
+      this.lastInputAt = this.time.now;
+      if (this.ambientActive) this.exitAmbient();
+    }
 
     this.player.x = Phaser.Math.Clamp(this.player.x, TILE / 2, TILE * COLS - TILE / 2);
     this.player.y = Phaser.Math.Clamp(this.player.y, TILE / 2, TILE * ROWS - TILE / 2);
+
+    this.applyIdle();
   }
 
   private async handleInteract(): Promise<void> {

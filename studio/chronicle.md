@@ -458,6 +458,14 @@ Engineering stayed honest to the charter: every decision is a pure, Node-tested 
 
 _Artist (cycle 025): standing by — `artPipelineReady` is false and no image-gen creds are configured. The 🍖 food (like 🥚/💤) is an emoji placeholder, not an art deliverable. No-op._
 
+## 2026-05-31 — cycle 026 — full chain — BACKLOG-060 (idle / ambient mode) APPROVED
+
+**Cycle 26 — APPROVED. The bowl knows when you've stepped away.**
+
+This is the last piece of fishbowl furniture, and it leans all the way into the "kept on a shelf" idea: leave the vivarium alone for 12 seconds and it quietly becomes a screensaver of itself — the HUD eases away to a ghostly 12% and the camera starts a slow breathing zoom toward the centre, so all that's left is the glass and the little lives inside it. Touch anything — a key, a click, even holding WASD to walk — and the whole interface snaps back to full instantly. (Held movement keys don't refire keydown, so the update loop counts them as activity directly; otherwise the bowl would fade while you were strolling around it.)
+
+Built to the usual line: the fade curve and the idle test are a pure, Node-tested module (`world/idle.ts` — `isIdle`, and a monotonic `hudAlpha` that lerps 1 → 0.12 over a 1.5s window after the 12s threshold); WorldScene only tracks `lastInputAt`, fades the always-on HUD texts, and drives the camera tween. No save change. 5 new unit + 2 new e2e (HUD fades and the ambient flag flips on idle; a real key press wakes it); full suite **139 unit / 52 e2e** green, no flake. With this the cycle-22 fishbowl set is complete: 056 glass, 057 tap, 058 plaque, 059 feed, 060 idle. The Vivarium is now a thing you can set down and just watch. BACKLOG-060 closed. State → `phase: lore-pending`.
+
 ## 2026-05-25 19:35 CDT — bootstrap catchup armed
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.

@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 026 — 2026-05-31
+
+- BACKLOG-060: Idle / ambient mode — APPROVED. The vivarium becomes a quiet desktop companion: after `IDLE_AFTER_MS=12s` with no input, the HUD eases down to `AMBIENT_ALPHA=0.12` over `FADE_MS=1.5s` and the camera starts a slow "breathing" zoom (1.0↔1.04, 6s yoyo) toward the centre of the bowl — leaving just the glass and its life. Any key, click, or held movement snaps everything back to full instantly. Held WASD counts as activity (movement polls `isDown` and doesn't refire keydown). Pure `world/idle.ts` (`isIdle`, `hudAlpha` — monotonic fade curve); WorldScene tracks `lastInputAt`, fades a set of always-on HUD texts, and runs the camera tween. Completes the fishbowl furniture (056 glass / 057 tap / 058 plaque / 059 feed / 060 idle). 5 new unit + 2 new e2e (fade + ambient flag on idle; real keypress wakes it); full suite **139 unit / 52 e2e** green. Save unchanged.
+
 ## Cycle 025 — 2026-05-31
 
 - BACKLOG-059: Feeding hatch — APPROVED. The bowl's lid has a hatch now: press **H** and a 🍖 falls from the top into the upper-middle feeding zone, and the cast swarms it. Eager, in-range dinos (`energy ≥ 0.4` within 7 tiles) make a beeline; the calm and the far-off keep wandering. The first dino to reach the food snaps it up — 😋, a friendship bump (`FEED_GAIN=5`), and a "scrambled to the hatch and snapped up the food" memory that can ripple into gossip; the rest disperse. One piece at a time; the drop + eat both post to the Park News ticker. Reframes gifting (F, hand-to-one) as feeding the tank (H, broadcast-to-cast) — the keeper picks the input, the bowl picks the winner. Pure `world/feeding.ts` (`reactionToFood`/`feedStep` reusing `stepToward`/`reachedFood`/`foodLanding`); WorldScene glue only. 9 new unit + 2 new e2e; full suite **134 unit / 50 e2e** green, no flake. Save unchanged (food is ephemeral). Spine for 061 favorites / 062 scramble / 063 begging / 064 hoarder role / 065 feed-log.
