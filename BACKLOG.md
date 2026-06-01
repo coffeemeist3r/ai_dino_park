@@ -101,7 +101,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 25 lore additions — feeding (2026-05-31)
 
-- [~] BACKLOG-061 [emergent] Food favorites — each dino prefers a food (from personality, like gifts); grabbing its favorite at the hatch = extra-happy (bigger bump, 😋) and remembered. Builds on 059.
+- [x] BACKLOG-061 [emergent] Food favorites — each dino prefers a food (from personality, like gifts); grabbing its favorite at the hatch = extra-happy (bigger bump, 😋) and remembered. Builds on 059.  *(shipped: cycle 27 — typed hatch feed 🍖🌿🐟🍓, per-dino favorite via reused giftScore, favorite eat = +9/😋/"favorite" memory and rushed harder, 2026-06-01)*
 - [ ] BACKLOG-062 [emergent] Scramble standoff — two dinos reaching dropped food the same tick: the bolder wins, the loser sulks (memory + 😤), a low-bond pair loses a little bond.
 - [ ] BACKLOG-063 [social] Begging at the glass — a long-unfed dino drifts to the front wall and looks up at the keeper (📣), nudging a food drop.
 - [ ] BACKLOG-064 [emergent] Hoarder role — the dino that wins the food scramble most often emerges as the `hoarder` role tag, derived from feed tallies.
