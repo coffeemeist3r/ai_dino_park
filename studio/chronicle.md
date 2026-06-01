@@ -470,3 +470,7 @@ Built to the usual line: the fade curve and the idle test are a pure, Node-teste
 
 Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 21:37 CDT tonight (after 5-hr session limit reset) so cycle 1 can complete this week. Scheduled as `dino-bootstrap-catchup-cycle-1`. After it fires, QA Tue 09:13 CDT and Validator Tue 13:55 CDT close the cycle naturally.
 
+
+## 2026-06-01 — cycle 027 — lore-smith
+
+Taste day. Queued BACKLOG-066..070 (taste talk, keeper-loaded hatch, acquired taste, menu in the book, picky/gobble). Suggested next-up: BACKLOG-061 food favorites — give the hatch feed a flavor and the dinos opinions.
