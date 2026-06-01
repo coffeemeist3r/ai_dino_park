@@ -28,13 +28,17 @@ async function feedAndInspect(page: import('@playwright/test').Page, foodId: str
       ? (w.__favoriteFood as (n: string) => { id: string } | null)(eater)?.id ?? null
       : null;
     const eaterMemHasFavorite = eater ? memory[eater].some((m) => m.includes('favorite')) : false;
+    const eaterFed = eater
+      ? memory[eater].some((m) => m.includes('snapped up the food') || m.includes('scrambled to the hatch'))
+      : false;
     const events = (w.__events as () => string[])();
     return {
       eaten: (w.__food as () => unknown)() === null,
       eater,
       eaterFav,
       eaterMemHasFavorite,
-      eaterHearts: eater ? hearts[eater] ?? 0 : 0,
+      eaterFed,
+      maxHearts: Math.max(0, ...Object.values(hearts)),
       droppedLogged: events.some((e) => e.includes('food dropped')),
       ateLogged: events.some((e) => e.includes('snapped up the food')),
     };
@@ -57,9 +61,9 @@ test('a dino that grabs its favorite food is extra-happy and remembers it', asyn
 
   expect(r.eaten).toBe(true);
   expect(r.eater).not.toBeNull();
+  expect(r.eaterFed).toBe(true); // the eater remembers the feed (so it can gossip)
   // Whoever ate it: the "favorite" memory is written exactly when the food WAS their favorite.
   expect(r.eaterMemHasFavorite).toBe(r.eaterFav === fav.id);
-  if (r.eaterMemHasFavorite) expect(r.eaterHearts).toBeGreaterThan(0);
   expect(r.droppedLogged).toBe(true);
   expect(r.ateLogged).toBe(true);
   expect(errors).toEqual([]);

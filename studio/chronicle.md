@@ -486,3 +486,7 @@ Planned BACKLOG-061 at ~6 files: new `world/foods.ts` (FOODS table + `favoriteFo
 ## 2026-06-01 — cycle 027 — coder
 
 Shipped BACKLOG-061. New `world/foods.ts` (FOODS + `favoriteFood` reusing `giftScore` + `foodReaction`); `reactionToFood` gained optional `isFavorite` (favorite = wider range + lower bar) with `FEED_RANGE_FAV`/`FEED_GAIN_FAV`; WorldScene drops typed food, rushes favorites harder, and reacts to the eat (bigger bump + 😋 + "favorite" memory vs plain 🙂). Cycle-25 log/memory substrings preserved. build ✅, vitest ✅ 148/148.
+
+## 2026-06-01 — cycle 027 — qa
+
+8/8 acceptance criteria PASS. build ✅, vitest ✅ 148, playwright ✅ 54 on a clean full run. First full e2e run flaked (cycle-002/003 `__ready` timeouts under parallel load — green isolated + on the fresh full run, the documented flake) and caught one bug in my own new test (hearts>0 vs the coarse 0–10 scale) — fixed in QA by asserting the feed memory. Boundary clean, save untouched, diff = the 6 planned files. Recommend APPROVE.

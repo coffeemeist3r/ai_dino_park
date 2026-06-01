@@ -1,6 +1,6 @@
 {
   "cycle": 27,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-061: Food favorites",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
     "designer": "2026-06-01T10:05:00-05:00",
     "code-planner": "2026-06-01T10:10:00-05:00",
     "coder": "2026-06-01T10:30:00-05:00",
-    "qa": "2026-05-31T14:26:00-05:00",
+    "qa": "2026-06-01T10:45:00-05:00",
     "validator": "2026-05-31T14:32:00-05:00",
     "artist": null
   }
