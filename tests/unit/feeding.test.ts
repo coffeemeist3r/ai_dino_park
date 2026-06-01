@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { reactionToFood, feedStep, reachedFood, foodLanding, FEED_RANGE } from '../../game/src/world/feeding';
+import {
+  reactionToFood,
+  feedStep,
+  reachedFood,
+  foodLanding,
+  FEED_RANGE,
+  FEED_RANGE_FAV,
+} from '../../game/src/world/feeding';
 
 describe('reactionToFood', () => {
   it('ignores food beyond range regardless of energy', () => {
@@ -14,6 +21,24 @@ describe('reactionToFood', () => {
 
   it('rushes at the eagerness threshold', () => {
     expect(reactionToFood(0.4, FEED_RANGE)).toBe('rush');
+  });
+
+  // BACKLOG-061: a favorite pulls harder. isFavorite must only ever ADD rushers,
+  // so the 2-arg (generic) calls above are unchanged.
+  it('a calm dino ignores generic food but rushes its favorite', () => {
+    expect(reactionToFood(0.2, 2)).toBe('ignore'); // below the normal EAGER bar
+    expect(reactionToFood(0.2, 2, true)).toBe('rush'); // favorite rouses it
+  });
+
+  it('a far dino ignores generic food but crosses the bowl for its favorite', () => {
+    const far = FEED_RANGE + 2; // beyond generic range, within FEED_RANGE_FAV
+    expect(far).toBeLessThanOrEqual(FEED_RANGE_FAV);
+    expect(reactionToFood(0.9, far)).toBe('ignore');
+    expect(reactionToFood(0.9, far, true)).toBe('rush');
+  });
+
+  it('even a favorite has a limit — beyond FEED_RANGE_FAV it is ignored', () => {
+    expect(reactionToFood(1.0, FEED_RANGE_FAV + 1, true)).toBe('ignore');
   });
 });
 

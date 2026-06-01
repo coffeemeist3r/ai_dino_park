@@ -61,3 +61,14 @@ none.
 
 ## Estimated touch count
 ~6 files (2 new src+test pairs counted): `world/foods.ts` (new), `world/feeding.ts` (mod), `scenes/WorldScene.ts` (mod), `tests/unit/foods.test.ts` (new), `tests/unit/feeding.test.ts` (mod), `tests/e2e/cycle-027-favorites.spec.ts` (new). Within budget; no split needed.
+
+## Shipped
+Files touched (exactly the plan):
+- `game/src/world/foods.ts` (new) — `FOODS` (meat/greens/fish/berries), `favoriteFood` (argmax of reused `giftScore`), `foodReaction` (favorite → `FEED_GAIN_FAV` + 😋, else `FEED_GAIN` + 🙂; pure-safe with no traits).
+- `game/src/world/feeding.ts` (mod) — added `FEED_RANGE_FAV = 12`, `FEED_GAIN_FAV = 9`, private `EAGER_FAV = 0.15`; `reactionToFood` gained an optional `isFavorite` (default false → byte-identical to cycle 25).
+- `game/src/scenes/WorldScene.ts` (mod) — `foodKind` state; `dropFood(col?, foodId?)` picks a random/forced food, uses its emoji + names it in Park News (keeps "food dropped"); favorite-aware rush branch in `forceStep`; `eatFood` consults `foodReaction` for gain/emoji/memory/log (both memory variants keep "snapped up the food"); `flashFeed(d, emoji)`; hooks `__dropFood(col?, foodId?)`, `__food()` now also returns `foodId`, new `__favoriteFood(name)`.
+- `tests/unit/foods.test.ts` (new, 6) + `tests/unit/feeding.test.ts` (mod, +3) + `tests/e2e/cycle-027-favorites.spec.ts` (new, 2).
+
+Deviations: none. Drop-log form chosen: `` `${emoji} food dropped from the hatch (${label})` `` (keeps the cycle-25 substring while naming the food).
+
+Build + unit status: `npm run build` ✅ clean (webllm still isolated in its own worker chunk). `npx vitest run` ✅ **148/148** (22 files). E2E deferred to the QA stage.

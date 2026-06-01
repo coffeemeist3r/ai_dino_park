@@ -25,7 +25,8 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, FEED_GAIN } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
+import { FOODS, favoriteFood, foodReaction, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { hudAlpha, isIdle } from '../world/idle';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
@@ -87,6 +88,7 @@ export class WorldScene extends Phaser.Scene {
   private ambientTween?: Phaser.Tweens.Tween;
   private readonly denCenter = { x: HUDDLE_TILE.tileX * TILE + TILE / 2, y: HUDDLE_TILE.tileY * TILE + TILE / 2 };
   private food: { tileX: number; tileY: number } | null = null;
+  private foodKind: Food | null = null;
   private foodLanded = false;
   private foodSprite: Phaser.GameObjects.Text | null = null;
   private moveTicks = 0;
@@ -303,23 +305,33 @@ export class WorldScene extends Phaser.Scene {
 
     // dev-only Playwright hooks. __dropFood lands the food immediately so tests
     // skip the real-time fall tween; the H press uses the tween for the visual.
-    (window as any).__dropFood = (col?: number) => {
-      const tile = this.dropFood(col);
+    // An optional foodId forces the kind (random when omitted).
+    (window as any).__dropFood = (col?: number, foodId?: string) => {
+      const tile = this.dropFood(col, foodId);
       if (this.food) this.foodLanded = true;
       return tile;
     };
-    (window as any).__food = () => (this.food ? { ...this.food } : null);
+    (window as any).__food = () =>
+      this.food ? { ...this.food, foodId: this.foodKind?.id ?? null } : null;
+    (window as any).__favoriteFood = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? { ...favoriteFood(d.traits) } : null;
+    };
   }
 
   /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
-  private dropFood(col?: number): { tileX: number; tileY: number } {
+  private dropFood(col?: number, foodId?: string): { tileX: number; tileY: number } {
     if (this.food) return this.food; // already a piece in play — ignore the drop
+    const kind = foodId
+      ? FOODS.find((f) => f.id === foodId) ?? FOODS[0]
+      : FOODS[Math.floor(Math.random() * FOODS.length)];
     const landing = foodLanding(COLS, ROWS, col);
     this.food = landing;
+    this.foodKind = kind;
     this.foodLanded = false;
     const px = landing.tileX * TILE + TILE / 2;
     const landY = landing.tileY * TILE + TILE / 2;
-    this.foodSprite = this.add.text(px, TILE * 0.4, '🍖', { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
+    this.foodSprite = this.add.text(px, TILE * 0.4, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
     this.tweens.add({
       targets: this.foodSprite,
       y: landY,
@@ -329,7 +341,7 @@ export class WorldScene extends Phaser.Scene {
         this.foodLanded = true;
       },
     });
-    this.logEvent('🍖 food dropped from the hatch');
+    this.logEvent(`${kind.emoji} food dropped from the hatch (${kind.label})`);
     return landing;
   }
 
@@ -341,21 +353,32 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private eatFood(d: Dino): void {
+    const kind = this.foodKind;
+    const r = foodReaction(kind!, d.traits);
     this.foodSprite?.destroy();
     this.foodSprite = null;
     this.food = null;
+    this.foodKind = null;
     this.foodLanded = false;
-    this.friendship = bumpPoints(this.friendship, d.name, FEED_GAIN);
-    this.memory = remember(this.memory, d.name, 'you scrambled to the hatch and snapped up the food');
-    this.flashFeed(d);
-    this.logEvent(`🍖 ${d.name} snapped up the food at the hatch`);
+    this.friendship = bumpPoints(this.friendship, d.name, r.gain);
+    this.memory = remember(
+      this.memory,
+      d.name,
+      r.favorite
+        ? `you snapped up the food at the hatch — your favorite ${kind!.label}!`
+        : 'you scrambled to the hatch and snapped up the food',
+    );
+    this.flashFeed(d, r.emoji);
+    this.logEvent(
+      `🍖 ${d.name} snapped up the food at the hatch${r.favorite ? ` — its favorite ${kind!.label}!` : ''}`,
+    );
     this.refreshHeartsPanel();
     void this.saveGame();
   }
 
-  private flashFeed(d: Dino): void {
+  private flashFeed(d: Dino, emoji = '😋'): void {
     const mark = this.add
-      .text(d.x, d.y - TILE * 0.9, '😋', { fontSize: '14px' })
+      .text(d.x, d.y - TILE * 0.9, emoji, { fontSize: '14px' })
       .setOrigin(0.5, 1)
       .setDepth(12);
     d.label.setColor('#a8ff80');
@@ -795,10 +818,12 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
 
-      // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides wandering.
+      // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
+      // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
         const dist = Math.hypot(cur.tileX - this.food.tileX, cur.tileY - this.food.tileY);
-        if (reactionToFood(d.traits.energy, dist) === 'rush') {
+        const isFav = !!this.foodKind && this.foodKind.id === favoriteFood(d.traits).id;
+        if (reactionToFood(d.traits.energy, dist, isFav) === 'rush') {
           const step = feedStep(cur, this.food, COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           continue;
