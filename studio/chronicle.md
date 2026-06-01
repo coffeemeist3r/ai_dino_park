@@ -478,3 +478,7 @@ Taste day. Queued BACKLOG-066..070 (taste talk, keeper-loaded hatch, acquired ta
 ## 2026-06-01 — cycle 027 — designer
 
 Picked BACKLOG-061 (food favorites). Spec: typed hatch food (🍖🌿🐟🍓), per-dino favorite from `giftScore`, favorite eat = bigger bump + 😋 + memory, favorite also rushed harder. Pure `world/foods.ts` + optional `isFavorite` on `reactionToFood`; cycle-25 substrings preserved so the feeding e2e holds.
+
+## 2026-06-01 — cycle 027 — code-planner
+
+Planned BACKLOG-061 at ~6 files: new `world/foods.ts` (FOODS table + `favoriteFood` reusing `giftScore` + `foodReaction`), optional `isFavorite` on `feeding.ts` `reactionToFood` (+ `FEED_GAIN_FAV`/`FEED_RANGE_FAV`), WorldScene glue (typed drop, favorite-aware rush, eat reaction, `__favoriteFood`/`__dropFood(col,foodId)` hooks), unit + e2e. Reuse: giftScore, stepToward, bumpPoints, remember, logEvent. No new deps.

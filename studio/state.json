@@ -1,6 +1,6 @@
 {
   "cycle": 27,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-061: Food favorites",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-06-01T10:00:00-05:00",
     "designer": "2026-06-01T10:05:00-05:00",
-    "code-planner": "2026-05-31T14:06:00-05:00",
+    "code-planner": "2026-06-01T10:10:00-05:00",
     "coder": "2026-05-31T14:20:00-05:00",
     "qa": "2026-05-31T14:26:00-05:00",
     "validator": "2026-05-31T14:32:00-05:00",
