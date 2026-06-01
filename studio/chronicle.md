@@ -474,3 +474,7 @@ Human requested a one-shot consolidated Designer + Code-planner + Coder fire at 
 ## 2026-06-01 — cycle 027 — lore-smith
 
 Taste day. Queued BACKLOG-066..070 (taste talk, keeper-loaded hatch, acquired taste, menu in the book, picky/gobble). Suggested next-up: BACKLOG-061 food favorites — give the hatch feed a flavor and the dinos opinions.
+
+## 2026-06-01 — cycle 027 — designer
+
+Picked BACKLOG-061 (food favorites). Spec: typed hatch food (🍖🌿🐟🍓), per-dino favorite from `giftScore`, favorite eat = bigger bump + 😋 + memory, favorite also rushed harder. Pure `world/foods.ts` + optional `isFavorite` on `reactionToFood`; cycle-25 substrings preserved so the feeding e2e holds.
