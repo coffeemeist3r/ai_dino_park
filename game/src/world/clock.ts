@@ -1,12 +1,18 @@
 /**
- * WorldClock — authoritative in-game time.
+ * WorldClock — authoritative in-game time, anchored to the wall clock.
  *
- * One real second = one in-game minute.
- * Fires onTick every minute, onHour every hour boundary.
+ * Time is derived from a real-time source (`Date.now()` by default) so the
+ * in-game clock stays correct even when the Phaser timer throttles in a
+ * background tab: on return, one `update()` catches the clock up to true time.
  *
- * Pure TypeScript — no Phaser import in the class body.
- * Call start(scene) to wire the Phaser timer; everything else
- * is testable in Node without a browser.
+ * `scale` is a realtime multiplier. At 1× a full in-game day takes 24 real
+ * hours (the fishbowl default); at 60× it takes 24 real minutes (1 real second
+ * ≈ 1 in-game minute — the old feel, for active watching).
+ *
+ * `tick()` is preserved as the one-minute boundary primitive: it advances
+ * exactly one in-game minute and fires listeners. `update()` realizes the
+ * wall-clock target by calling `tick()` for each whole minute crossed. The
+ * now-source is injectable so everything stays testable in Node.
  */
 
 export interface GameTime {
@@ -28,18 +34,73 @@ interface SceneTimer {
   };
 }
 
+const MINUTES_PER_DAY = 24 * 60;
+const MS_PER_REAL_MINUTE = 60_000;
+/**
+ * Cap on per-`update()` catch-up. A gap larger than this (a long-backgrounded
+ * tab) jumps the clock to the target instead of firing thousands of per-minute
+ * listeners and freezing the frame. Rich "while you were away" catch-up is
+ * BACKLOG-106; this only keeps the realtime clock honest without hanging.
+ */
+const MAX_CATCHUP_TICKS = MINUTES_PER_DAY;
+
+/** GameTime → absolute minutes since Day 1 00:00. */
+function timeToAbs(t: GameTime): number {
+  return (t.day - 1) * MINUTES_PER_DAY + t.hour * 60 + t.minute;
+}
+
+/** Absolute minutes since Day 1 00:00 → GameTime. */
+function absToTime(abs: number): GameTime {
+  const day = Math.floor(abs / MINUTES_PER_DAY) + 1;
+  const rem = ((abs % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+  return { day, hour: Math.floor(rem / 60), minute: rem % 60 };
+}
+
 export class WorldClock {
   private _time: GameTime = { day: 1, hour: 8, minute: 0 };
   private _tickListeners: TimeListener[] = [];
   private _hourListeners: TimeListener[] = [];
 
+  private _scale = 1; // realtime multiplier; 1× = 24 real hours per in-game day
+  private _nowSource: () => number = () => Date.now();
+  private _anchorEpochMs = 0;
+  private _anchorAbsMin = 0;
+
+  constructor() {
+    this.reanchor();
+  }
+
+  /** Re-base the wall-clock anchor at the current time, so future elapsed counts from now. */
+  private reanchor(): void {
+    this._anchorEpochMs = this._nowSource();
+    this._anchorAbsMin = timeToAbs(this._time);
+  }
+
+  /** Inject the real-time source (defaults to Date.now). Re-anchors. Test/dev hook. */
+  setNowSource(fn: () => number): void {
+    this._nowSource = fn;
+    this.reanchor();
+  }
+
+  getScale(): number {
+    return this._scale;
+  }
+
+  /** Change the realtime multiplier without jumping the displayed time. */
+  setScale(s: number): void {
+    if (!(s > 0)) return;
+    this._scale = s;
+    this.reanchor();
+  }
+
   now(): GameTime {
     return { ...this._time };
   }
 
-  /** Overwrite current time — used to restore a save. Does not fire tick/hour listeners. */
+  /** Overwrite current time — used to restore a save. Re-anchors so flow continues from t. */
   set(t: GameTime): void {
     this._time = { ...t };
+    this.reanchor();
   }
 
   onTick(fn: TimeListener): void {
@@ -53,8 +114,8 @@ export class WorldClock {
   tick(): void {
     const prevHour = this._time.hour;
     let total = this._time.hour * 60 + this._time.minute + 1;
-    const dayWrap = Math.floor(total / (24 * 60));
-    total = total % (24 * 60);
+    const dayWrap = Math.floor(total / MINUTES_PER_DAY);
+    total = total % MINUTES_PER_DAY;
     this._time = {
       day: this._time.day + dayWrap,
       hour: Math.floor(total / 60),
@@ -67,10 +128,26 @@ export class WorldClock {
     }
   }
 
+  /** Advance the clock to the wall-clock target. Called each frame/pump. */
+  update(): void {
+    const elapsedMs = this._nowSource() - this._anchorEpochMs;
+    if (elapsedMs <= 0) return;
+    const targetAbs = this._anchorAbsMin + Math.floor((elapsedMs * this._scale) / MS_PER_REAL_MINUTE);
+    let behind = targetAbs - timeToAbs(this._time);
+    if (behind <= 0) return;
+    if (behind > MAX_CATCHUP_TICKS) {
+      // Long gap: jump to target without flooding listeners (BACKLOG-106 owns the digest).
+      this.set(absToTime(targetAbs));
+      return;
+    }
+    while (behind-- > 0) this.tick();
+  }
+
   start(scene: SceneTimer): void {
+    this.reanchor();
     scene.time.addEvent({
-      delay: 1000,
-      callback: () => this.tick(),
+      delay: 500,
+      callback: () => this.update(),
       loop: true,
     });
   }

@@ -1061,11 +1061,24 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private fmtClock(t: GameTime): string {
-    return `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`;
+    const scale = getWorldClock().getScale();
+    return `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')} ·${scale}×`;
+  }
+
+  /** Cycle the realtime multiplier: 1× (24 real-hour day) ⇄ 60× (active watching). */
+  private toggleScale(): void {
+    const clock = getWorldClock();
+    clock.setScale(clock.getScale() === 1 ? 60 : 1);
+    this.clockHud.setText(this.fmtClock(clock.now()));
   }
 
   private setupClock(): void {
     const clock = getWorldClock();
+
+    // Wall-clock source with a dev-controllable offset so e2e can advance real
+    // time deterministically (prod offset stays 0 → plain Date.now()).
+    let wallOffset = 0;
+    clock.setNowSource(() => Date.now() + wallOffset);
 
     this.clockHud = this.add
       .text(6, 4, this.fmtClock(clock.now()), {
@@ -1082,8 +1095,20 @@ export class WorldScene extends Phaser.Scene {
       (window as any).__clockNow = clock.now.bind(clock);
     });
 
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.T).on('down', () => this.toggleScale());
+
     // any: dev-only Playwright hook — not exposed in production builds
     (window as any).__clockNow = clock.now.bind(clock);
+    // any: dev-only Playwright hook — current realtime multiplier
+    (window as any).__clockScale = () => clock.getScale();
+    // any: dev-only Playwright hook — the canvas-rendered clock HUD text
+    (window as any).__clockHudText = () => this.clockHud.text;
+    // any: dev-only Playwright hook — advance the wall clock n real ms, then pump
+    (window as any).__advanceWall = (ms: number) => {
+      wallOffset += ms;
+      clock.update();
+      return clock.now();
+    };
 
     clock.start(this);
   }
@@ -1127,6 +1152,8 @@ export class WorldScene extends Phaser.Scene {
       bonds: this.bonds,
       eggs: this.eggs,
       born: this.born,
+      savedAt: Date.now(),
+      scale: getWorldClock().getScale(),
     };
   }
 

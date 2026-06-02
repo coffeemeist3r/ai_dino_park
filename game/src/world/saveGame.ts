@@ -24,6 +24,10 @@ export interface SaveData {
   bonds: Bonds;
   eggs: Egg[];
   born: BornDino[];
+  /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
+  savedAt?: number;
+  /** Realtime multiplier in effect at save. Additive; absent → 1×. */
+  scale?: number;
 }
 
 export function serialize(data: SaveData): string {
@@ -128,6 +132,18 @@ export function deserialize(json: string): SaveData | null {
     born = o.born as BornDino[];
   }
 
+  // savedAt/scale are additive over v1 — absent in older saves; reject only if malformed.
+  let savedAt: number | undefined;
+  if (o.savedAt !== undefined) {
+    if (!isNum(o.savedAt)) return null;
+    savedAt = o.savedAt;
+  }
+  let scale = 1;
+  if (o.scale !== undefined) {
+    if (!isNum(o.scale)) return null;
+    scale = o.scale;
+  }
+
   return {
     version: SAVE_VERSION,
     time: { day: time.day, hour: time.hour, minute: time.minute },
@@ -137,5 +153,7 @@ export function deserialize(json: string): SaveData | null {
     bonds,
     eggs,
     born,
+    savedAt,
+    scale,
   };
 }

@@ -23,6 +23,8 @@ const sample: SaveData = {
       parents: ['Rex', 'Mossback'],
     },
   ],
+  savedAt: 1_717_290_000_000,
+  scale: 60,
 };
 
 describe('saveGame', () => {
@@ -55,6 +57,23 @@ describe('saveGame', () => {
       time: { day: 1, hour: '8', minute: 0 },
       player: { x: 0, y: 0 },
     });
+    expect(deserialize(bad)).toBeNull();
+  });
+
+  it('loads an older save lacking savedAt/scale, defaulting scale to 1', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.scale).toBe(1);
+    expect(out!.savedAt).toBeUndefined();
+  });
+
+  it('returns null for a present-but-non-numeric scale', () => {
+    const bad = JSON.stringify({ ...sample, scale: 'fast' });
     expect(deserialize(bad)).toBeNull();
   });
 });

@@ -63,3 +63,17 @@ none.
 
 ## Estimated touch count
 ~5 files (clock.ts, saveGame.ts, WorldScene.ts, clock.test.ts, saveGame.test.ts) + 1 new e2e = 6. At the cap; no split needed.
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/clock.ts` — wall-clock anchor (epoch + absMin), injectable `_nowSource`, `_scale`; `update()` pump (capped catch-up, jump past `MAX_CATCHUP_TICKS`); `getScale`/`setScale`/`setNowSource`; `set()` & `start()` re-anchor; `tick()`/`now()`/listeners/singleton preserved; `timeToAbs`/`absToTime` helpers.
+- `game/src/world/saveGame.ts` — additive `savedAt?`/`scale?` on `SaveData`; lenient numeric parse, `scale` defaults to 1. `SAVE_VERSION` unchanged (1).
+- `game/src/scenes/WorldScene.ts` — `fmtClock` appends `·N×`; `toggleScale()` on **T**; offset wall-clock now-source; `__clockScale`/`__clockHudText`/`__advanceWall` dev hooks; `savedAt`/`scale` written in `currentSaveData()`. `__advanceMinutes`/`__clockNow` kept.
+- `tests/unit/clock.test.ts` — +7 wall-clock tests (scale derivation, hour-boundary fires, cap/jump, setScale/set re-anchor, tick scale-independence). Original tick tests unchanged.
+- `tests/unit/saveGame.test.ts` — fixture gains `savedAt`/`scale`; +2 tests (old-save default, non-numeric scale rejected).
+- `tests/e2e/cycle-028-realtime.spec.ts` — new: 1× advance, T→60× + HUD readout, 60× advance.
+
+**Deviations:** added a `__clockHudText` hook (not in the original plan) so the e2e can honestly verify the canvas-rendered HUD shows the scale, rather than re-checking the scale hook.
+
+**Build:** ✅ `tsc -b && vite build` clean. **Unit:** ✅ 157/157 (was 148; +9). E2E deferred to QA stage.
