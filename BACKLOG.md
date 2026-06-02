@@ -124,6 +124,13 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-106 [emergent] Offline catch-up ("while you were away") — on load, read elapsed real time since last save (needs BACKLOG-105's wall-clock anchor + a `savedAt` timestamp in `SaveData`) and **fast-forward the world cheaply** — advance the clock, roll forward relationships / memory / gossip / feeding via **procedural summaries, NOT per-tick LLM** (thousands of inference calls is a non-starter). Surface a short "while you were away: …" digest on return (Stardew "slept through the night"). Pure-functional fast-forward so it's Node-testable; cap the simulated span so a week away doesn't hang the load.
 - [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary.
 
+## Cycle 28 lore additions — realtime rituals (2026-06-01)
+
+- [ ] BACKLOG-108 [emergent] Dawn stretch — at the in-game dawn boundary, idle dinos play a visible wake beat (a little ⤴ stretch + a "woke at dawn" memory). Turns realtime's slow day into a daily ritual you can catch. Builds on 105.
+- [ ] BACKLOG-109 [emergent] Diurnal vs. nocturnal temperament — a dino's energy/curiosity seeds whether it's a day-dino or a night-owl; night-owls wander at night while the rest huddle, day-dinos doze. With a 24h realtime day, *who's up when* becomes a personality tell. Builds on 105 + huddles (041).
+- [ ] BACKLOG-110 [social] Hour-aware greeting — a dino's first player line of the real day leans on the hour (a yawn near dawn, a sleepy note at night) layered onto the existing context prompt. Small living touch that realtime makes meaningful.
+- [ ] BACKLOG-111 [pokemon] Real-age on the plaque — the plaque/book shows a lineage's age anchored to wall-clock days ("founded 3 days ago"), reading the realtime clock so leaving it running visibly accrues history.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
