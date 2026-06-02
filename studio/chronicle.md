@@ -510,3 +510,7 @@ Realtime rituals day. Queued BACKLOG-108..111 (dawn stretch, diurnal/nocturnal t
 ## 2026-06-01 — cycle 028 — designer
 
 Picked BACKLOG-105 (wall-clock time). Spec: derive GameTime from Date.now()×scale via an injectable now() source; keep tick() as the minute primitive; default 1× realtime, T toggles 1×⇄60× without jumping; capped catch-up on resume; add additive savedAt/scale to SaveData (seed for 106); re-anchor (not fast-forward) on restore. 9 acceptance criteria.
+
+## 2026-06-01 — cycle 028 — code-planner
+
+Planned BACKLOG-105 at ~6 files. clock.ts: injectable now() source + anchor (epoch+absMin) + scale; new update() pump derives target minute from wall delta×scale and calls the preserved tick() (capped catch-up, jump past cap); set()/setScale() re-anchor; start() pumps update() on a 500ms timer. saveGame.ts: additive savedAt/scale. WorldScene: T toggle, scale in HUD, __advanceWall/__clockScale hooks, savedAt/scale in save. Reuse tick()/singleton/save additive pattern/boot helper. No new deps.
