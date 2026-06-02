@@ -534,3 +534,7 @@ There's a deliberate edge: catch-up is capped at one in-game day of minute-by-mi
 Built to the line, as ever: all the time math is a pure, Node-tested `world/clock.ts` with an injectable clock source, so the tests drive years of fake seconds without a browser; WorldScene only does the glue (the T key, the HUD, the dev hooks). 9 new unit + 2 new e2e; full suite **157 unit / 56 e2e**, green on a clean run. One real regression surfaced and was handled in QA — the old smoke test "world clock ticks in real time" still believed in the 60× rate and went quiet at the new 1× default; it now flips to 60× first and watches the *real* pump move, so it's testing the live clock, not a hook. The cornerstone's in. Next: the world that fills the time — 106 offline catch-up, then the realtime rituals (108 dawn stretch, 109 day-dinos vs. night-owls, 110 hour-aware greetings, 111 real-age on the plaque). State → `phase: lore-pending`.
 
 _Artist (cycle 028): standing by — `artPipelineReady` is false and no image-gen creds are configured. No-op._
+
+## 2026-06-02 — cycle 029 — lore-smith
+
+The keeper goes away. Queued BACKLOG-112..116 (homecoming nuzzle, drift-apart while away, away-log in the book, night-owl absence, missed-you memory) — all hanging off the offline catch-up. Suggested next-up: BACKLOG-106 — "while you were away": the direct payoff of cycle 28's realtime clock, now unblocked by savedAt. Turns "leave it running" from a clock that ticks into a world that lived.

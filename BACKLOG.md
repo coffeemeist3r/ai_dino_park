@@ -131,6 +131,14 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-110 [social] Hour-aware greeting — a dino's first player line of the real day leans on the hour (a yawn near dawn, a sleepy note at night) layered onto the existing context prompt. Small living touch that realtime makes meaningful.
 - [ ] BACKLOG-111 [pokemon] Real-age on the plaque — the plaque/book shows a lineage's age anchored to wall-clock days ("founded 3 days ago"), reading the realtime clock so leaving it running visibly accrues history.
 
+## Cycle 29 lore additions — the keeper goes away (2026-06-02)
+
+- [ ] BACKLOG-112 [emergent] Homecoming nuzzle — after a long away gap, the dino with the highest player-friendship plays a small "welcome back" beat (👋 bubble) on return, reading the BACKLOG-106 away duration. Builds on 106.
+- [ ] BACKLOG-113 [emergent] Drift apart while away — the away fast-forward isn't all warmth: a low-bond pair that never huddles loses a little bond over a long absence (capped decay), so the homecoming digest can carry a falling-out, not just companionship. Builds on 106.
+- [ ] BACKLOG-114 [pokemon] Away-log in the book — the collection book keeps the last "while you were away" digest so you can re-read what the bowl got up to. Builds on 106 + 021.
+- [ ] BACKLOG-115 [emergent] Night-owl absence — once diurnal/nocturnal temperament (109) lands, feed it into the away fast-forward: night-owls rack up more shared nights while away, so *who* grew closer becomes a personality tell. Cross-links 106 + 109.
+- [ ] BACKLOG-116 [social] Missed-you memory — a long absence leaves each dino a faint "the keeper was gone a while" memory that can color the very next greeting (layers onto 110's hour-aware line). Builds on 106.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
