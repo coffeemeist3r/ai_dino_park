@@ -121,7 +121,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Realtime fishbowl (2026-06-01 — operator: "make time realtime so I can just leave it running")
 
 - [x] BACKLOG-105 [core] Wall-clock-anchored time + configurable scale — *(shipped: cycle 28 — see closed log, 2026-06-01)*
-- [~] BACKLOG-106 [emergent] Offline catch-up ("while you were away") — on load, read elapsed real time since last save (needs BACKLOG-105's wall-clock anchor + a `savedAt` timestamp in `SaveData`) and **fast-forward the world cheaply** — advance the clock, roll forward relationships / memory / gossip / feeding via **procedural summaries, NOT per-tick LLM** (thousands of inference calls is a non-starter). Surface a short "while you were away: …" digest on return (Stardew "slept through the night"). Pure-functional fast-forward so it's Node-testable; cap the simulated span so a week away doesn't hang the load.
+- [x] BACKLOG-106 [emergent] Offline catch-up ("while you were away") — *(shipped: cycle 29, 2026-06-02)*
 - [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary.
 
 ## Cycle 28 lore additions — realtime rituals (2026-06-01)
@@ -191,3 +191,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 12 — 2026-05-30
 - BACKLOG-051 shipped — Richer dialogue context (time-of-day, mood, and friendship level woven into the WebLLM prompt; greet line varies by relationship); reuses dayPhase/moodFromTraits/heartsFromPoints; `__greetPrompt` dev hook; 7/7 AC pass. Targets "mostly hellos".
+
+### Cycle 29 — 2026-06-02
+- BACKLOG-106 shipped — Offline catch-up ("while you were away"): pure `world/away.ts` reads the real gap since `savedAt` × scale and fast-forwards cheaply (no per-tick, no LLM) — bonded pairs drift closer + gain a "kept each other company" memory, a "While you were away…" digest greets the player; span capped at 7 in-game days; additive save. 13 unit + 2 e2e; 9/9 AC pass. Spine for 112–116.
