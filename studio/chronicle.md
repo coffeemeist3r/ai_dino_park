@@ -538,3 +538,7 @@ _Artist (cycle 028): standing by — `artPipelineReady` is false and no image-ge
 ## 2026-06-02 — cycle 029 — lore-smith
 
 The keeper goes away. Queued BACKLOG-112..116 (homecoming nuzzle, drift-apart while away, away-log in the book, night-owl absence, missed-you memory) — all hanging off the offline catch-up. Suggested next-up: BACKLOG-106 — "while you were away": the direct payoff of cycle 28's realtime clock, now unblocked by savedAt. Turns "leave it running" from a clock that ticks into a world that lived.
+
+## 2026-06-02 — cycle 029 — designer
+
+Picked BACKLOG-106 (offline catch-up). Spec: pure world/away.ts fast-forward reads savedAt + scale + Date.now() to roll the world forward cheaply (no per-tick, no LLM) — bonded pairs drift closer, each leaves a memory, returns a "While you were away…" digest. Capped at 7 in-game days. Restore path also restores saved scale + shows the digest panel. __catchUp/__awayDigest dev hooks for deterministic e2e. 9 acceptance criteria. Additive save (no version bump); old saves no-op the catch-up.
