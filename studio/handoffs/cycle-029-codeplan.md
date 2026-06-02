@@ -52,3 +52,20 @@ none.
 
 ## Estimated touch count
 ~5 files (2 new src/test-shared modules + clock + WorldScene + 2 test files = within the 6-file budget; clock change is a 3-line additive export).
+
+---
+
+## Shipped (coder)
+
+**Files touched:**
+- `game/src/world/away.ts` (new) — `awayMinutes`, `fastForward`, `MAX_AWAY_DAYS`, `AwayInput`/`AwayResult`. Pure; reuses `bondedPairs`/`strengthen`/`remember`/`advanceTime`.
+- `game/src/world/clock.ts` — added exported pure `advanceTime(t, minutes)`; no change to `tick`/`update`.
+- `game/src/scenes/WorldScene.ts` — import `fastForward`; `lastAwayDigest` field; restore now re-applies saved scale, fast-forwards over the gap (`clock.set(away.time)`), applies rolled bonds/memory, shows "While you were away…" panel when `minutes > 0`; added `__catchUp`/`__awayDigest` dev hooks.
+- `tests/unit/away.test.ts` (new) — 13 cases.
+- `tests/e2e/cycle-029-away.spec.ts` (new) — 2 specs.
+
+**Deviations from plan:** none.
+
+**Build:** ✅ `npm run build` clean (tsc -b + vite build).
+**Unit:** ✅ `npm run test:unit` — 170 passed (was 157; +13 new in away.test.ts).
+**Dev render:** ✅ dev server returns HTTP 200 at `/`.

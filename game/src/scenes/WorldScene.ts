@@ -5,6 +5,7 @@ import { Dino } from '../entities/dino';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
+import { fastForward } from '../world/away';
 import { tintFor, dayPhase } from '../world/dayNight';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
@@ -70,6 +71,7 @@ export class WorldScene extends Phaser.Scene {
   private meetings: Meetings = {};
   private memory: MemoryStore = {};
   private bonds: Bonds = {};
+  private lastAwayDigest: string[] = [];
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -1173,11 +1175,20 @@ export class WorldScene extends Phaser.Scene {
     // 08:00 and started the clock; loadFromDb resolves a beat later and overrides.
     void loadFromDb().then((save) => {
       if (!save) return;
-      clock.set(save.time);
+      // Resume at the saved rate, then fast-forward the world over the real gap
+      // since the save (BACKLOG-106). clock.set re-anchors at now, so the live
+      // pump counts forward from the post-catch-up moment — no double-advance.
+      if (save.scale) clock.setScale(save.scale);
+      const away = fastForward(
+        { time: save.time, savedAt: save.savedAt, scale: save.scale, bonds: save.bonds, memory: save.memory },
+        Date.now(),
+      );
+      clock.set(away.time);
       this.player.setPosition(save.player.x, save.player.y);
       this.friendship = save.friendship;
-      this.memory = save.memory;
-      this.bonds = save.bonds;
+      this.memory = away.memory;
+      this.bonds = away.bonds;
+      this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
       this.born = save.born ?? [];
       for (const b of this.born) this.spawnDino(b);
@@ -1186,6 +1197,10 @@ export class WorldScene extends Phaser.Scene {
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.refreshHeartsPanel();
+      if (away.minutes > 0) {
+        this.dialogOpen = true;
+        this.dialog.show('While you were away…\n' + away.digest.join('\n'));
+      }
     });
 
     clock.onHour(() => void this.saveGame());
@@ -1205,6 +1220,22 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__advanceMinutes = (n: number) => {
       for (let i = 0; i < n; i++) clock.tick();
       return clock.now();
+    };
+    // any: dev-only Playwright hook — last "while you were away" digest
+    (window as any).__awayDigest = () => [...this.lastAwayDigest];
+    // any: dev-only Playwright hook — run offline catch-up for `realMs` of real time at the
+    // current scale (savedAt 0 so elapsed === realMs, deterministic), apply + return the result.
+    (window as any).__catchUp = (realMs: number) => {
+      const away = fastForward(
+        { time: clock.now(), savedAt: 0, scale: clock.getScale(), bonds: this.bonds, memory: this.memory },
+        realMs,
+      );
+      clock.set(away.time);
+      this.bonds = away.bonds;
+      this.memory = away.memory;
+      this.lastAwayDigest = away.digest;
+      this.refreshHeartsPanel();
+      return { days: away.days, minutes: away.minutes, capped: away.capped, digest: away.digest };
     };
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });

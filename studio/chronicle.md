@@ -546,3 +546,7 @@ Picked BACKLOG-106 (offline catch-up). Spec: pure world/away.ts fast-forward rea
 ## 2026-06-02 — cycle 029 — code-planner
 
 Planned BACKLOG-106 at ~5 files. New pure world/away.ts: awayMinutes(savedAt,scale,now) + fastForward(input,now) → {minutes,days,capped,time,bonds,memory,digest}; caps at 7 in-game days; companion pairs (bond ≥ 8) drift +2/day capped at +12, each gets a "kept each other company" memory; digest headlines the top 2. clock.ts gains a pure advanceTime(time,minutes) export reusing existing abs helpers. WorldScene restore: restore saved scale, fastForward over the gap, set post-catchup time, show "While you were away…" panel, + __catchUp/__awayDigest hooks. Reuse bondedPairs/strengthen/remember. No new deps. Additive save.
+
+## 2026-06-02 — cycle 029 — coder
+
+Shipped BACKLOG-106. New pure world/away.ts (awayMinutes + fastForward); clock.ts gained exported advanceTime. WorldScene restore now re-applies saved scale, fast-forwards the world over the real gap, and pops a "While you were away…" panel; __catchUp/__awayDigest hooks added. Reused bondedPairs/strengthen/remember. No new deps; additive save. build ✅, vitest ✅ 170 (+13), dev render 200.

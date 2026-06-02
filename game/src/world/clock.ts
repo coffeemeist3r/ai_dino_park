@@ -56,6 +56,11 @@ function absToTime(abs: number): GameTime {
   return { day, hour: Math.floor(rem / 60), minute: rem % 60 };
 }
 
+/** Pure helper: `t` moved forward by `minutes` (negative/fractional clamped to a whole step ≥ 0). */
+export function advanceTime(t: GameTime, minutes: number): GameTime {
+  return absToTime(timeToAbs(t) + Math.max(0, Math.floor(minutes)));
+}
+
 export class WorldClock {
   private _time: GameTime = { day: 1, hour: 8, minute: 0 };
   private _tickListeners: TimeListener[] = [];
