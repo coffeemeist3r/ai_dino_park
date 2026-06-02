@@ -514,3 +514,7 @@ Picked BACKLOG-105 (wall-clock time). Spec: derive GameTime from Date.now()×sca
 ## 2026-06-01 — cycle 028 — code-planner
 
 Planned BACKLOG-105 at ~6 files. clock.ts: injectable now() source + anchor (epoch+absMin) + scale; new update() pump derives target minute from wall delta×scale and calls the preserved tick() (capped catch-up, jump past cap); set()/setScale() re-anchor; start() pumps update() on a 500ms timer. saveGame.ts: additive savedAt/scale. WorldScene: T toggle, scale in HUD, __advanceWall/__clockScale hooks, savedAt/scale in save. Reuse tick()/singleton/save additive pattern/boot helper. No new deps.
+
+## 2026-06-01 — cycle 028 — qa
+
+9/9 acceptance criteria PASS. build ✅, vitest ✅ 157, playwright ✅ 56 on a clean full run. Caught + fixed a real regression: smoke "clock ticks in real time" assumed the old 60× rate; updated it to toggle to 60× and poll the real pump. Also fixed a test-timing artifact in my own new spec (live 60× pump slipped a minute between two evaluates → folded into one). Boundary clean, save additive, diff = 6 planned files + smoke fix. Recommend APPROVE.

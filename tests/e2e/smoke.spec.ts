@@ -22,13 +22,18 @@ test('canvas responds to arrow key press', async ({ page }) => {
 
 test('world clock ticks in real time', async ({ page }) => {
   await boot(page);
-  // The clock advances ~1 in-game minute per real second. Poll until it has
-  // demonstrably ticked rather than betting on a fixed wall-time window — slow
-  // CI runners throttle the game loop, so a fixed wait is flaky there.
+  // Default is 1× realtime (a full day = 24 real hours), too slow to observe in a
+  // test, so switch to the 60× watching rate (T) where ~1 in-game minute passes
+  // per real second. Time is wall-clock-derived, so a throttled game loop still
+  // catches up whenever the pump fires — poll rather than bet on a fixed window.
+  await page.locator('canvas').focus();
+  await page.keyboard.press('KeyT');
   await page.waitForFunction(
     () => {
-      const fn = (window as Record<string, unknown>).__clockNow as undefined | (() => { hour: number; minute: number });
-      if (!fn) return false;
+      const w = window as Record<string, unknown>;
+      const scaleFn = w.__clockScale as undefined | (() => number);
+      const fn = w.__clockNow as undefined | (() => { hour: number; minute: number });
+      if (!scaleFn || !fn || scaleFn() !== 60) return false;
       const t = fn();
       return t.minute >= 2 || t.hour > 8; // started at 08:00
     },
