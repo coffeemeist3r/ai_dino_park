@@ -542,3 +542,7 @@ The keeper goes away. Queued BACKLOG-112..116 (homecoming nuzzle, drift-apart wh
 ## 2026-06-02 — cycle 029 — designer
 
 Picked BACKLOG-106 (offline catch-up). Spec: pure world/away.ts fast-forward reads savedAt + scale + Date.now() to roll the world forward cheaply (no per-tick, no LLM) — bonded pairs drift closer, each leaves a memory, returns a "While you were away…" digest. Capped at 7 in-game days. Restore path also restores saved scale + shows the digest panel. __catchUp/__awayDigest dev hooks for deterministic e2e. 9 acceptance criteria. Additive save (no version bump); old saves no-op the catch-up.
+
+## 2026-06-02 — cycle 029 — code-planner
+
+Planned BACKLOG-106 at ~5 files. New pure world/away.ts: awayMinutes(savedAt,scale,now) + fastForward(input,now) → {minutes,days,capped,time,bonds,memory,digest}; caps at 7 in-game days; companion pairs (bond ≥ 8) drift +2/day capped at +12, each gets a "kept each other company" memory; digest headlines the top 2. clock.ts gains a pure advanceTime(time,minutes) export reusing existing abs helpers. WorldScene restore: restore saved scale, fastForward over the gap, set post-catchup time, show "While you were away…" panel, + __catchUp/__awayDigest hooks. Reuse bondedPairs/strengthen/remember. No new deps. Additive save.
