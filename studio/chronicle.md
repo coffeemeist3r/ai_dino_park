@@ -550,3 +550,7 @@ Planned BACKLOG-106 at ~5 files. New pure world/away.ts: awayMinutes(savedAt,sca
 ## 2026-06-02 — cycle 029 — coder
 
 Shipped BACKLOG-106. New pure world/away.ts (awayMinutes + fastForward); clock.ts gained exported advanceTime. WorldScene restore now re-applies saved scale, fast-forwards the world over the real gap, and pops a "While you were away…" panel; __catchUp/__awayDigest hooks added. Reused bondedPairs/strengthen/remember. No new deps; additive save. build ✅, vitest ✅ 170 (+13), dev render 200.
+
+## 2026-06-02 — cycle 029 — qa
+
+9/9 acceptance criteria PASS. build ✅, vitest ✅ 170 (+13), playwright effectively ✅ 58. First full parallel run: 52 pass / 6 fail — all 6 were the documented cycle-002/003 __ready parallel-load flake; isolated re-run 7/7 green incl. the whole save round-trip. New cycle-029 specs passed on the parallel run. Boundary clean (@mlc-ai/web-llm only under game/src/ai/; away.ts is pure). Save round-trip safe — immediate reload no-ops the catch-up, no spurious panel. Recommend APPROVE.
