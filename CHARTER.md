@@ -13,6 +13,15 @@ Vibe references:
 - **Smallville** (Stanford generative agents — observation, memory, reflection, daily planning)
 - **ChatDev** (this very build pipeline)
 
+## Living minds (core goal)
+
+Each dino is a **distinct mind**, not a shared template with different adjectives. Distinctness and FUN are first-class goals, pursued every cycle — a dino the player can tell apart, remember, and care about beats one more polished UI panel.
+
+- **Persona scales with the device.** Where hardware allows, a dino's persona is **LLM-authored from world lore**; where it doesn't, a **deterministic procedural persona** (name-seeded) stands in. Same dino, richness graded by tier.
+- **Generate once, reuse forever.** A persona is authored a single time (first spawn / first meet), then cached and persisted in the save — never regenerated per message. A phone loading a save pays nothing.
+- **Never at the cost of the thing running.** Fun and distinctness never block on inference a device can't afford. The procedural fallback and the `NPCBrain` boundary are the escape hatches; degradation is graceful, by design.
+- **Minds act, not just reply.** A dino's persona drives what it *does* (plans, roles, reactions), not only what it says when spoken to.
+
 ## Anti-goals
 
 - ❌ Multiplayer (single-player only, mobile-friendly)
@@ -89,3 +98,4 @@ The human will NOT:
 ## Amendment log
 
 - 2026-05-25: Charter v0 — bootstrap.
+- 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.
