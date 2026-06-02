@@ -506,3 +506,7 @@ _Artist (cycle 027): standing by — `artPipelineReady` is false and no image-ge
 ## 2026-06-01 — cycle 028 — lore-smith
 
 Realtime rituals day. Queued BACKLOG-108..111 (dawn stretch, diurnal/nocturnal temperament, hour-aware greeting, real-age on the plaque). Suggested next-up: BACKLOG-105 — wall-clock-anchored time + scale knob; the cornerstone the operator asked for, unblocks 106 offline catch-up and gives the new rituals a real day to hang on.
+
+## 2026-06-01 — cycle 028 — designer
+
+Picked BACKLOG-105 (wall-clock time). Spec: derive GameTime from Date.now()×scale via an injectable now() source; keep tick() as the minute primitive; default 1× realtime, T toggles 1×⇄60× without jumping; capped catch-up on resume; add additive savedAt/scale to SaveData (seed for 106); re-anchor (not fast-forward) on restore. 9 acceptance criteria.
