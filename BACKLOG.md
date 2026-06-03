@@ -138,7 +138,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 29 lore additions — the keeper goes away (2026-06-02)
 
-- [ ] BACKLOG-112 [emergent] Homecoming nuzzle — after a long away gap, the dino with the highest player-friendship plays a small "welcome back" beat (👋 bubble) on return, reading the BACKLOG-106 away duration. Builds on 106.
+- [~] BACKLOG-112 [emergent] Homecoming nuzzle — after a long away gap, the dino with the highest player-friendship plays a small "welcome back" beat (👋 bubble) on return, reading the BACKLOG-106 away duration. Builds on 106.
 - [ ] BACKLOG-113 [emergent] Drift apart while away — the away fast-forward isn't all warmth: a low-bond pair that never huddles loses a little bond over a long absence (capped decay), so the homecoming digest can carry a falling-out, not just companionship. Builds on 106.
 - [ ] BACKLOG-114 [pokemon] Away-log in the book — the collection book keeps the last "while you were away" digest so you can re-read what the bowl got up to. Builds on 106 + 021.
 - [ ] BACKLOG-115 [emergent] Night-owl absence — once diurnal/nocturnal temperament (109) lands, feed it into the away fast-forward: night-owls rack up more shared nights while away, so *who* grew closer becomes a personality tell. Cross-links 106 + 109.

@@ -605,3 +605,6 @@ The bowl has a face now, and a way to grow the rest of it.
 
 ## 2026-06-03 — cycle 030 — lore-smith
 Cycle 30 opens. Theme: the keeper's comings and goings become a relationship. Seeded BACKLOG-119 (goodbye glance), -120 (jealous nuzzle), -121 (keeper-shaped routine), -122 (homecoming streak). Suggested next-up: BACKLOG-112 homecoming nuzzle — the first beat that makes your *closest* dino notice you walk back in, sitting straight on the cycle-29 away spine.
+
+## 2026-06-03 — cycle 030 — designer
+Picked BACKLOG-112 (homecoming nuzzle). Spec: a pure `homecoming()` selects the highest-friendship dino (alpha tie-break), and only after a long catch-up; WorldScene shows a heart-graded 👋 welcome-back bubble over it on restore and writes a faint "keeper came home" memory. Additive save, no hearts change, pure+Node-testable like away.ts. 9 acceptance criteria.
