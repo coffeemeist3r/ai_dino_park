@@ -614,3 +614,6 @@ Plan: new pure `world/homecoming.ts` (mirrors away.ts) — `homecoming(friendshi
 
 ## 2026-06-03 — cycle 030 — coder
 Shipped BACKLOG-112. New pure `world/homecoming.ts` (selector + heart-graded 👋 line, gated at 6 in-game hours) + WorldScene glue (restore + `__catchUp` compute, `playHomecoming` bubble, `__homecoming` hook, faint memory). Reused friendship.heartsFromPoints + memory.remember. Build ✅ clean, unit ✅ 185 (+8), dev server HTTP 200. e2e to QA.
+
+## 2026-06-03 — cycle 030 — qa
+9/9 acceptance criteria PASS. Build ✅ clean, unit ✅ 185 (+8 homecoming), e2e ✅ 61 — the only red in the parallel run was the documented cycle-023 `__ready` boot flake (2/2 green isolated), not a regression; the new cycle-030-homecoming spec passed parallel + isolated. No hearts change, away digest untouched, boundary intact. Recommend APPROVE.
