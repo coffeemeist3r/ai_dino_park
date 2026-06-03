@@ -2,47 +2,89 @@
 
 The Artist routine reads this every fire. Humans amend; routines obey.
 
+## The medium: art is code
+
+We do **not** generate raster sprites from an image API (that pipeline sat dark for 29
+cycles waiting on keys it never got, and the game shipped colored rectangles). Instead:
+
+> **Claude authors the art directly, as procedural vector code, baked to animated Canvas textures — no API keys, no asset downloads, no copyright risk.**
+
+This is the approach that worked elsewhere: have Claude write the character as shapes
+(SVG-shaped thinking), then convert it to procedural Canvas for animation. Here:
+
+- A dino / prop is a **pure list of flat vector shapes** in a normalized `0..1` box
+  (`game/src/art/dinoArt.ts`). No Phaser import — so every frame is **Node-testable** and
+  the same rig **animates by re-posing**, not by re-drawing.
+- A thin Phaser glue layer (`game/src/art/bake.ts`) turns those shapes into textures + a
+  looping animation via `Graphics.generateTexture`. This is the "procedural Canvas" half.
+- The game falls back to a flat shape for any species the pipeline hasn't drawn yet, so art
+  rolls in **one character at a time** without ever breaking the build.
+
 ## North star
 
-**Pokemon Generation 3 (Game Boy Advance era):** FireRed, LeafGreen, Emerald. Soft saturated colors, hand-pixeled, clean tile edges.
+**Clean flat vector**, bold and readable at a tiny size: think modern flat illustration on a
+Pokemon-overworld footprint. Big confident silhouettes, a dark unifying outline, 2–3 tones
+of shading per part, a couple of accent shapes that make a species instantly recognizable
+(the triceratops frill + horns; the stego plates; the bronto neck). Charm over detail —
+a dino the player can tell apart at 32px beats a fussy one they can't.
 
-Reference: official GBA Pokemon palette is ~32 colors per sprite, no anti-aliasing on most tile work, gentle dithering on shadows only.
+Reference vibe: Pokemon overworld **legibility** + flat-vector **cleanliness**. The Gen3 pixel
+mandate is retired — vector reads better at this scale and is what Claude can author well.
 
-## Sprite specs
+## Per-character sub-agent workflow (the "secret sauce")
 
-| Asset | Size | Frames | Notes |
+One **dedicated sub-agent per character / asset**. Each owns one rig file and iterates hard:
+
+1. Spawn an Artist sub-agent scoped to a single subject ("the triceratops", "the dialog box").
+2. Give it STYLE-GUIDE + the species' identity (silhouette cues, palette seed from the roster
+   color). Tell it to **go all-out** — push the silhouette, the pose, the stride — then dial
+   back to what reads clean at 32–48px.
+3. It authors/extends a pure rig in `game/src/art/` and a Node unit test (shape count, palette
+   discipline, "frames actually differ" for any walk cycle).
+4. It bakes + wires the species into `bake.ts` (`hasArt` + a `make…`/`ensure…` path) and adds
+   one e2e proving the sprite renders and animates.
+5. Iterate until it pops. Reject your own first draft at least once.
+
+Sub-agents run in parallel across characters; they must not touch each other's rig files.
+
+## Specs
+
+| Asset | Box | Frames | Notes |
 |---|---|---|---|
-| Player avatar | 32×32 | 4-dir × (1 idle + 2 walk) = 12 frames | Centered, feet on bottom row |
-| NPC dinosaur | 32×32 (small) / 48×48 (large) | 4-dir × (1 idle + 2 walk) = 12 frames | Size by species |
-| Tile (grass, path, water) | 16×16 | 1 frame (or 2-frame water anim) | Tiles must abut without seams |
-| Tree / large prop | 32×32 or 32×48 | 1 frame, occluder | Player walks behind |
-| Dialog box | 240×56 px | static | 6px Gen3 border, off-white fill |
-| UI icons (heart, item) | 16×16 | static | High contrast |
+| NPC dinosaur | 40×40 baked | 4-frame walk loop (pose by phase) | Centered, feet near `y≈0.85`, head/face toward camera near `y≈0.25` |
+| Player avatar | 40×40 baked | idle + walk loop | Paleontologist-ish; warm tones |
+| Tile (grass / path / water) | 32×32 | 1 (or 2-frame water) | Must abut without seams |
+| Prop (tree, rock, den) | 32–48 | 1, occluder where tall | Player/dino can pass behind |
+| Dialog box / UI frame | vector, any | static | Soft rounded border, off-white fill |
 
 ## Palette
 
-Use the **GBA-faithful palette** (max 64 distinct colors total across the project). When generating, pin: warm pastel greens for grass, ochre paths, deep teal water, dawn/dusk overlays via game-side tint, not in source asset.
+**Disciplined, derived palette.** Each species takes one **base color** (its roster `color`)
+and derives the rest by `shade()` — belly (lighter), frill/accent (slightly lighter), legs
+(darker), outline (much darker) — plus shared **bone** (horns/beak) and **eye** tones. Keep a
+pose to **≤ 8 distinct colors** (unit-tested). Day/dusk/night coloring is applied game-side via
+the existing overlay tint — never bake time-of-day into the art.
 
-## Style words for image generators
-
-`pixel art, Game Boy Advance era, Pokemon FireRed style, 32x32 sprite, soft pastel colors, no anti-aliasing, clean outlines, top-down view, sprite sheet 4-direction walk cycle, transparent background`
-
-Avoid: modern hi-bit pixel art (Stardew Valley is too detailed for this project), Octopath-style HD-2D, painted/anime, photorealism.
-
-## Naming convention
+## Naming & location
 
 ```
-game/public/assets/sprites/
-  dino_triceratops_walk.png         ← sheet, all frames horizontal
-  player_paleontologist_walk.png
-  ui_dialog_box.png
-game/public/assets/tilesets/
-  outdoor_grass.png                  ← 16x16 grid
+game/src/art/
+  dinoArt.ts     ← pure shape rigs + pose/walk-frame builders + shade()/paletteOf() helpers
+  bake.ts        ← Phaser glue: shapes → textures → animation; hasArt(); make…() factory
 ```
+
+Texture/anim keys are colour-keyed and idempotent (e.g. `tri_walk_8a4a3a`) so every dino of a
+species reuses one bake.
 
 ## Source / license
 
-Artist routine MUST log source of every asset:
-- If AI-generated: model name + prompt → log in `studio/chronicle.md`
-- If CC0 (OpenGameArt, Kenney): URL + license note in `game/public/assets/CREDITS.md`
-- Never commit copyrighted assets (no Pokemon sprite rips)
+Every asset is **Claude-authored procedural code** — log it in `game/public/assets/CREDITS.md`
+(subject + module + cycle/date) and in `studio/chronicle.md`. Never commit copyrighted assets
+(no sprite rips). No external model, no raster download.
+
+## Avoid
+
+- Raster/image-API sprites, asset packs, anything needing a key or a download.
+- Over-detailed rendering that turns to mush at 32–48px (Stardew-grade pixel density, HD-2D).
+- Baking lighting/time-of-day into art (the overlay owns that).
+- Photorealism, anime, gradients-as-crutch. Flat tones + one clean outline.

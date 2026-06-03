@@ -574,8 +574,8 @@ export class WorldScene extends Phaser.Scene {
         traitsB: pb.traits,
         speciesA: pa.species,
         speciesB: pb.species,
-        colorA: pa.sprite.fillColor,
-        colorB: pb.sprite.fillColor,
+        colorA: pa.color,
+        colorB: pb.color,
       },
       name,
     );
@@ -761,6 +761,11 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks
     (window as any).__dinoPositions = () => this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
+    // any: dev-only Playwright hook — a dino's procedural-art anim key + whether it's playing
+    (window as any).__dinoArt = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? { artKey: d.artKey, animating: d.isAnimating() } : null;
+    };
     (window as any).__meetings = () => ({ ...this.meetings });
     (window as any).__stepWorld = () => {
       this.forceStep();

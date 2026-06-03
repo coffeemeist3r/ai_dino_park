@@ -63,7 +63,7 @@ One full cycle = one BACKLOG item shipped (or REWORK'd or ABANDON'd).
 | 4 | Coder | codeplan | code commit, updates codeplan with "shipped" | Sonnet | build |
 | 5 | QA | design (acceptance), changes | `cycle-NNN-qa.md` (pass/fail per criterion), runs tests | Sonnet | verify |
 | 6 | Validator | everything in cycle | `cycle-NNN-verdict.md` (APPROVED / REWORK / ABANDON), updates CHANGELOG + BACKLOG + chronicle | Opus | judge |
-| 7 | Artist (async) | BACKLOG art tasks, STYLE-GUIDE | sprite files + chronicle entry | (image API) | draw |
+| 7 | Artist (async) | BACKLOG art tasks, STYLE-GUIDE | vector rig modules (`game/src/art/`) + tests + chronicle | Opus (procedural, sub-agents) | draw |
 
 **Cycle number is monotonic.** Lore-smith bumps it. State lives in `studio/state.json`.
 
@@ -99,3 +99,4 @@ The human will NOT:
 
 - 2026-05-25: Charter v0 — bootstrap.
 - 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.
+- 2026-06-03: v2 — **Art pipeline = procedural code, not an image API.** The Artist now authors flat-vector dinos/props as pure shape rigs (`game/src/art/`) baked to animated Canvas textures, via a dedicated sub-agent per character — no API keys, no asset downloads, no copyright risk (the key-gated raster pipeline had stalled for 29 cycles). Gen3-pixel mandate retired in favour of clean flat vector at the same footprint; STYLE-GUIDE rewritten to match. Human-approved. Seeds BACKLOG-117/118; reframes BACKLOG-033–036 as vector.

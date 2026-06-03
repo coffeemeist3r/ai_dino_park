@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { NPCBrain, NPCContext, Reply } from '../ai/brain';
 import { seededPersonality, type Personality } from '../ai/personality';
+import { makeDinoArt } from '../art/bake';
 
 const TILE = 32;
 
@@ -18,7 +19,10 @@ export class Dino {
   readonly species: string;
   readonly personality: string;
   readonly traits: Personality;
-  readonly sprite: Phaser.GameObjects.Rectangle;
+  readonly color: number;
+  /** Procedural-art animation key, or null when this species falls back to a rectangle. */
+  readonly artKey: string | null;
+  readonly sprite: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
   readonly label: Phaser.GameObjects.Text;
   private readonly brain: NPCBrain;
 
@@ -27,10 +31,12 @@ export class Dino {
     this.species = cfg.species;
     this.personality = cfg.personality;
     this.traits = cfg.traits ?? seededPersonality(cfg.name);
+    this.color = cfg.color ?? 0x8a4a3a;
     this.brain = cfg.brain;
 
-    this.sprite = scene.add.rectangle(x, y, TILE - 6, TILE - 6, cfg.color ?? 0x8a4a3a);
-    this.sprite.setStrokeStyle(2, 0x2a1010);
+    const art = makeDinoArt(scene, x, y, cfg.species, this.color);
+    this.sprite = art.obj;
+    this.artKey = art.artKey;
 
     this.label = scene.add.text(x, y - TILE, cfg.name, {
       fontFamily: 'monospace',
@@ -54,6 +60,11 @@ export class Dino {
 
   get y(): number {
     return this.sprite.y;
+  }
+
+  /** True when this dino is a baked sprite playing its walk loop (proof the art pipeline ran). */
+  isAnimating(): boolean {
+    return this.sprite instanceof Phaser.GameObjects.Sprite && this.sprite.anims.isPlaying;
   }
 
   async greet(extra?: Partial<NPCContext>): Promise<Reply> {
