@@ -617,3 +617,34 @@ Shipped BACKLOG-112. New pure `world/homecoming.ts` (selector + heart-graded �
 
 ## 2026-06-03 — cycle 030 — qa
 9/9 acceptance criteria PASS. Build ✅ clean, unit ✅ 185 (+8 homecoming), e2e ✅ 61 — the only red in the parallel run was the documented cycle-023 `__ready` boot flake (2/2 green isolated), not a regression; the new cycle-030-homecoming spec passed parallel + isolated. No hearts change, away digest untouched, boundary intact. Recommend APPROVE.
+
+## 2026-06-03 — cycle 030 — validator — APPROVED
+
+**Cycle 30 — APPROVED. The bowl learned to miss you.** Cycle 29 taught the park to run on while
+you're away; cycle 30 makes your *return* land on someone. Walk back in after a real absence and
+the one dino you're closest to — the most hearts — looks up and throws you a 👋: "You're finally
+back!" if you're tight, a shy "Oh — you're back." if you've barely met. It reads the very number
+the catch-up already computed (how long you were gone) and only fires after a genuinely long
+trip, so a quick reload stages nothing. The dino quietly files the homecoming away as a memory,
+so a later hello can still carry the echo of having been left.
+
+It's deliberately one dino, one gesture — distinctness over surface. The warmth is graded in
+three bands off the heart count, no model required, so a 9-heart favorite is effusive and a
+2-heart acquaintance is muted; persona-written greetings remain a later job (116). And it costs
+the relationship nothing — the beat is a look and a memory, not a points handout, so every heart
+you've earned stays exactly where it was.
+
+Built to the line, as ever: the *who-and-whether* lives in a pure, Node-tested
+`world/homecoming.ts` (max-friendship, alphabetical tie-break, gated at six in-game hours), and
+the scene only does glue — compute on restore and in the catch-up hook, float the bubble through
+the existing `showBubble`, fold the memory through the existing `remember`. The save grew
+nothing; old saves with no timestamp simply never trigger it. 8 new unit + 2 new e2e; full suite
+**185 unit / 61 e2e**, green. One red on the parallel run — the familiar `__ready` boot flake,
+this time on cycle-023 — was 2/2 the moment it ran isolated; the new homecoming spec passed both
+ways. This is the first personal beat on the away spine, and it opens the door to the rest of the
+homecoming cluster: a goodbye glance as you leave (119), a jealous runner-up (120), a dino that
+learns your hour and waits at the glass (121), and a visit streak on the plaque (122). Leave it
+running. Someone will be glad you came back. State → `phase: lore-pending`.
+
+_Artist (cycle 030): deferred this fire — the main chain ran long; the open vector rigs
+(BACKLOG-034 species, 035 player, 033 tiles, 036 dialog frame) remain queued for the next art fire._

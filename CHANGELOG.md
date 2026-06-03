@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 030 — 2026-06-03
+
+- BACKLOG-112: Homecoming nuzzle — APPROVED. After a long real absence, your *closest* dino (highest player-friendship) notices you came back: a heart-graded 👋 "welcome back" bubble floats over it on return, and it keeps a faint "the keeper came home" memory. Reads the BACKLOG-106 catch-up duration; gated at 6 in-game hours so an instant reload stages nothing. Pure `world/homecoming.ts` (max-friendship + alphabetical tie-break, three warmth bands) with WorldScene glue only (restore + `__catchUp` compute, `showBubble`, `remember`); reuses `friendship.heartsFromPoints` + `memory.remember`. No friendship-points change (hearts ACs untouched); additive save, boundary intact. 8 new unit + 2 new e2e; 185 unit / 61 e2e green. First personal beat on the cycle-29 spine; unblocks 119–122.
+
 ## Cycle 029 — 2026-06-02
 
 - BACKLOG-106: Offline catch-up ("while you were away") — APPROVED. On load, reads the real gap since `savedAt` (× the saved scale) and fast-forwards the world cheaply — no per-tick loop, no LLM: bonded companion pairs drift closer (capped), each gets a "kept each other company" memory, and a "While you were away…" digest greets the player. Pure `world/away.ts` (`awayMinutes`, `fastForward`) + a new `advanceTime` clock export; span capped at 7 in-game days so a week away can't hang the load. Additive save (no version bump); old saves no-op the catch-up. 13 new unit + 2 new e2e; 170 unit / 58 e2e green. The payoff of cycle-28 realtime; spine for the 112–116 cluster.
