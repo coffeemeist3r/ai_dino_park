@@ -608,3 +608,6 @@ Cycle 30 opens. Theme: the keeper's comings and goings become a relationship. Se
 
 ## 2026-06-03 — cycle 030 — designer
 Picked BACKLOG-112 (homecoming nuzzle). Spec: a pure `homecoming()` selects the highest-friendship dino (alpha tie-break), and only after a long catch-up; WorldScene shows a heart-graded 👋 welcome-back bubble over it on restore and writes a faint "keeper came home" memory. Additive save, no hearts change, pure+Node-testable like away.ts. 9 acceptance criteria.
+
+## 2026-06-03 — cycle 030 — code-planner
+Plan: new pure `world/homecoming.ts` (mirrors away.ts) — `homecoming(friendship, awayMinutes)` picks the top-friendship dino (alpha tie-break, ignores 0-point), gated at ≥6 in-game-hours of catch-up, returns a heart-graded 👋 line + memory string. WorldScene glue: compute on restore + in `__catchUp`, show bubble via existing `showBubble`, fold the memory via `remember`, expose `__homecoming()`. Reuses friendship.heartsFromPoints + memory.remember. ~4 files, no deps.
