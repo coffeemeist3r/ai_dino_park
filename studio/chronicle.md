@@ -602,3 +602,6 @@ Mossback gracefully falls back. `npm --prefix game run build` ✅ clean; `npm ru
 Chromium download (no browser installable) — so the e2e is unverified here and will be exercised in
 CI on merge; reported honestly rather than claimed green. `artPipelineReady` flipped to `true`.
 The bowl has a face now, and a way to grow the rest of it.
+
+## 2026-06-03 — cycle 030 — lore-smith
+Cycle 30 opens. Theme: the keeper's comings and goings become a relationship. Seeded BACKLOG-119 (goodbye glance), -120 (jealous nuzzle), -121 (keeper-shaped routine), -122 (homecoming streak). Suggested next-up: BACKLOG-112 homecoming nuzzle — the first beat that makes your *closest* dino notice you walk back in, sitting straight on the cycle-29 away spine.
