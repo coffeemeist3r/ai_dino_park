@@ -611,3 +611,6 @@ Picked BACKLOG-112 (homecoming nuzzle). Spec: a pure `homecoming()` selects the 
 
 ## 2026-06-03 — cycle 030 — code-planner
 Plan: new pure `world/homecoming.ts` (mirrors away.ts) — `homecoming(friendship, awayMinutes)` picks the top-friendship dino (alpha tie-break, ignores 0-point), gated at ≥6 in-game-hours of catch-up, returns a heart-graded 👋 line + memory string. WorldScene glue: compute on restore + in `__catchUp`, show bubble via existing `showBubble`, fold the memory via `remember`, expose `__homecoming()`. Reuses friendship.heartsFromPoints + memory.remember. ~4 files, no deps.
+
+## 2026-06-03 — cycle 030 — coder
+Shipped BACKLOG-112. New pure `world/homecoming.ts` (selector + heart-graded 👋 line, gated at 6 in-game hours) + WorldScene glue (restore + `__catchUp` compute, `playHomecoming` bubble, `__homecoming` hook, faint memory). Reused friendship.heartsFromPoints + memory.remember. Build ✅ clean, unit ✅ 185 (+8), dev server HTTP 200. e2e to QA.

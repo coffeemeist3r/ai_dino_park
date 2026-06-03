@@ -83,3 +83,17 @@ none.
 
 ## Estimated touch count
 ~4 files (2 new src/test + 1 e2e + WorldScene). Well within the 6-file limit.
+
+---
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/homecoming.ts` (new) — pure `homecoming(friendship, awayMinutes)`, `HOMECOMING_MIN_MINUTES = 360`, `closest()` selector (max points, alpha tie-break, ignores ≤0), `homecomingLine()` heart-graded 👋 template, `Homecoming` interface.
+- `game/src/scenes/WorldScene.ts` (modified) — import homecoming; `lastHomecoming` field; `playHomecoming()` helper (find dino by name → `showBubble`); compute in the restore `.then` (after friendship assigned) + write memory + play; same in `__catchUp` (now returns `homecoming`); new `__homecoming()` dev hook.
+- `tests/unit/homecoming.test.ts` (new) — 8 tests: selection, alpha tie-break, threshold gate, empty/zero map, ignore-zero, line content + high/low differ, hearts match, memory non-empty.
+- `tests/e2e/cycle-030-homecoming.spec.ts` (new) — long absence → Sunny welcome-back beat; short absence → null.
+
+**Deviations from plan:** none. (Distinct from the pre-existing `cycle-030-art.spec.ts`; untouched.)
+
+**Build + unit-test status:** `npm --prefix game run build` ✅ clean; `npm run test:unit` ✅ **185** (+8). Dev server boot → `curl http://localhost:5173/` → **HTTP 200**. E2E left for the QA stage.

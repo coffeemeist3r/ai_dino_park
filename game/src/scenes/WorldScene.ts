@@ -6,6 +6,7 @@ import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
+import { homecoming, type Homecoming } from '../world/homecoming';
 import { tintFor, dayPhase } from '../world/dayNight';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
@@ -72,6 +73,7 @@ export class WorldScene extends Phaser.Scene {
   private memory: MemoryStore = {};
   private bonds: Bonds = {};
   private lastAwayDigest: string[] = [];
+  private lastHomecoming: Homecoming | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -899,6 +901,14 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /** Float the welcome-back line over the closest dino, if one was chosen (BACKLOG-112). */
+  private playHomecoming(): void {
+    const hc = this.lastHomecoming;
+    if (!hc) return;
+    const dino = this.dinos.find((d) => d.name === hc.name);
+    if (dino) this.showBubble(dino, hc.line);
+  }
+
   private showBubble(d: Dino, text: string): void {
     const bubble = this.add
       .text(d.x, d.y - TILE * 1.4, text, {
@@ -1206,6 +1216,13 @@ export class WorldScene extends Phaser.Scene {
         this.dialogOpen = true;
         this.dialog.show('While you were away…\n' + away.digest.join('\n'));
       }
+      // After a long absence, your closest dino notices you came back (BACKLOG-112).
+      // Friendship is assigned above, so the homecomer reads the restored hearts.
+      this.lastHomecoming = homecoming(this.friendship, away.minutes);
+      if (this.lastHomecoming) {
+        this.memory = remember(this.memory, this.lastHomecoming.name, this.lastHomecoming.memory);
+        this.playHomecoming();
+      }
     });
 
     clock.onHour(() => void this.saveGame());
@@ -1239,9 +1256,22 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = away.bonds;
       this.memory = away.memory;
       this.lastAwayDigest = away.digest;
+      this.lastHomecoming = homecoming(this.friendship, away.minutes);
+      if (this.lastHomecoming) {
+        this.memory = remember(this.memory, this.lastHomecoming.name, this.lastHomecoming.memory);
+        this.playHomecoming();
+      }
       this.refreshHeartsPanel();
-      return { days: away.days, minutes: away.minutes, capped: away.capped, digest: away.digest };
+      return {
+        days: away.days,
+        minutes: away.minutes,
+        capped: away.capped,
+        digest: away.digest,
+        homecoming: this.lastHomecoming,
+      };
     };
+    // any: dev-only Playwright hook — last homecoming beat (or null)
+    (window as any).__homecoming = () => this.lastHomecoming;
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits
