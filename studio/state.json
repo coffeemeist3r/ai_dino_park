@@ -5,7 +5,7 @@
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
-  "artPipelineReady": false,
+  "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-02T20:00:00-05:00",
     "designer": "2026-06-02T20:05:00-05:00",

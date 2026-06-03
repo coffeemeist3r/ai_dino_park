@@ -64,12 +64,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-031 [emergent] Governance — at threshold population, NPCs vote on a simple rule (e.g., quiet hours)
 - [ ] BACKLOG-032 [emergent] Roles persist across cycles — guard NPC keeps guarding even after the triggering event
 
-## Art (Artist routine fires when these populate)
+## Art (procedural vector pipeline — Artist fires per character)
 
-- [ ] BACKLOG-033 [art] Grass tileset — Gen3 palette, 16x16, grass + path + water-edge
-- [ ] BACKLOG-034 [art] Triceratops sprite — 4-dir walk + idle, 32x32
-- [ ] BACKLOG-035 [art] Player avatar — 4-dir walk + idle, 32x32, paleontologist-y
-- [ ] BACKLOG-036 [art] Dialog box frame — Gen3-style border
+> Medium is **code, not an image API** (CHARTER v2 / STYLE-GUIDE): flat-vector rigs in
+> `game/src/art/`, baked to animated Canvas textures, one character per sub-agent. No keys.
+
+- [x] BACKLOG-117 [art] Procedural vector art pipeline — pure shape rigs (`art/dinoArt.ts`) + Phaser bake/animation glue (`art/bake.ts`), `hasArt()` graceful fallback to flat shapes, colour-keyed idempotent bakes; sub-agent-per-character workflow defined in STYLE-GUIDE + routine 7. Unblocks all art after 29 dark cycles.  *(shipped: operator, 2026-06-03)*
+- [x] BACKLOG-118 [art] Proof dino — Rex the triceratops rendered via the pipeline: frill + brow/nose horns silhouette, derived 7-colour palette, 4-frame amble loop. Replaces his rectangle; other species stay on fallback until drawn.  *(shipped: operator, 2026-06-03)*
+- [ ] BACKLOG-034 [art] Remaining dino species rigs — vector walk loops for stegosaurus / brontosaurus / compsognathus / parasaurolophus (one sub-agent each), distinct silhouettes
+- [ ] BACKLOG-035 [art] Player avatar — vector idle + walk loop, paleontologist-y
+- [ ] BACKLOG-033 [art] Grass / path / water tiles — flat-vector, seamless 32×32
+- [ ] BACKLOG-036 [art] Dialog box frame — soft rounded vector border (replace the current flat panel)
 
 ## Infra
 

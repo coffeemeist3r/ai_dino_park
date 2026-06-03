@@ -568,3 +568,37 @@ It's honest about its limits, on purpose. The catch-up is capped at a week of in
 Built to the line, as always. Every bit of the time-and-bond math lives in a pure, Node-tested `world/away.ts` that reuses the bond, memory and lens helpers we already ship — the scene only does the glue (the restore wiring, the panel, the dev hooks). The realtime clock from cycle 28 is untouched: the catch-up re-anchors at the present moment so the live pump can't double-count the gap. The save grew nothing — old saves with no `savedAt` simply skip the catch-up, which is why the cycle-3 save round-trip is still green and an instant reload pops no panel. 13 new unit + 2 new e2e; full suite **170 unit / 58 e2e**, green. One scare on the full run — six specs timed out on boot — but it was the documented cycle-002/003 parallel-load flake, 7/7 green the moment they ran isolated, the save path included. Leave it running now; it'll have a story for you when you get back. State → `phase: lore-pending`.
 
 _Artist (cycle 029): standing by — `artPipelineReady` is false and no image-gen creds are configured. No-op._
+
+## 2026-06-03 — operator — art pipeline turns over (procedural vector)
+
+The Artist was never the problem; the *medium* was. For 29 cycles routine 7 read
+`artPipelineReady: false`, looked for an `OPENAI_API_KEY`/`GEMINI_API_KEY` that never arrived,
+logged "standing by," and did nothing — so the whole park shipped as colored rectangles
+(`scene.add.rectangle`). This change retires the key-gated raster pipeline and replaces it with
+the approach that actually works for us: **Claude authors the art as procedural vector code, then
+bakes it to animated Canvas textures.** No keys, no downloads, no copyright risk — the routines
+already run on Opus, which can just *draw*.
+
+The pipeline (BACKLOG-117): a pure, Node-testable shape module `game/src/art/dinoArt.ts` — a dino
+is a list of flat vector shapes in a 0..1 box, posed by phase so the same rig animates instead of
+being re-authored — and a thin Phaser glue `game/src/art/bake.ts` that turns those shapes into
+textures + a looping walk anim via `generateTexture`. `hasArt(species)` keeps the rectangle
+fallback for anything not yet drawn, so art rolls in one character at a time without breaking the
+build. STYLE-GUIDE was rewritten around "art is code" + the **per-character sub-agent** workflow
+("one sub-agent per character, go all-out, reject your own first draft"); CHARTER amended to v2;
+routine 7 rewritten to dispatch those sub-agents and run the same quality bar as the main chain.
+
+The proof (BACKLOG-118): **Rex the triceratops** now renders through the pipeline — frill fanned
+behind the head, two brow horns + a nose beak, a derived 7-colour palette off his roster base
+`0x8a4a3a`, and a 4-frame diagonal-stride amble loop. He's a baked `Sprite` playing `tri_walk_*`;
+the other four dinos stay on the flat-shape fallback until a sub-agent draws them (BACKLOG-034).
+The lone Rectangle coupling — breeding reading `sprite.fillColor` — moved to a stored `Dino.color`.
+
+Built to the line: art logic is pure and unit-tested (`tests/unit/dinoArt.test.ts` — shape rig,
+≤8-colour palette discipline, "frames actually differ", determinism), Phaser stays thin glue, and
+a `__dinoArt` hook drives a new e2e (`cycle-030-art.spec.ts`) asserting Rex animates while
+Mossback gracefully falls back. `npm --prefix game run build` ✅ clean; `npm run test:unit` ✅
+**177** (+7). E2e could **not** be run in this container — the network policy blocks the Playwright
+Chromium download (no browser installable) — so the e2e is unverified here and will be exercised in
+CI on merge; reported honestly rather than claimed green. `artPipelineReady` flipped to `true`.
+The bowl has a face now, and a way to grow the rest of it.
