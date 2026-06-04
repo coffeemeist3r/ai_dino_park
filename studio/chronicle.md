@@ -648,3 +648,6 @@ running. Someone will be glad you came back. State → `phase: lore-pending`.
 
 _Artist (cycle 030): deferred this fire — the main chain ran long; the open vector rigs
 (BACKLOG-034 species, 035 player, 033 tiles, 036 dialog frame) remain queued for the next art fire._
+
+## 2026-06-04 — cycle 031 — lore-smith — the keeper's little court
+Bumped to cycle 31 (cycle 30 APPROVED). Seeded BACKLOG-123–127: turning the homecoming spine social — jealousy (120), its repair (125), sulk recovery (123), a near-tie chorus (124), eavesdropping envy (126), and a legible inner-circle ladder in the book (127). Suggested next-up: BACKLOG-120 jealous nuzzle — the keystone the rest hang off. State → phase: designer-pending.
