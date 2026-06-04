@@ -654,3 +654,6 @@ Bumped to cycle 31 (cycle 30 APPROVED). Seeded BACKLOG-123–127: turning the ho
 
 ## 2026-06-04 — cycle 031 — designer — BACKLOG-120 jealous nuzzle
 Picked BACKLOG-120 (lore's next-up). Spec: when a homecoming fires, the second-closest dino — if within one heart's worth (≤10 pts) of the closest — sulks (😒) alongside the 👋 and files a "saw the keeper fuss over X" memory. Pure additive field on the Homecoming result; no points change; additive save. 9 ACs. State → phase: codeplan-pending.
+
+## 2026-06-04 — cycle 031 — code-planner — BACKLOG-120 jealous nuzzle
+Plan: extend pure homecoming.ts with JEALOUS_TIE_POINTS=10 + a Jealousy beat (additive field). Generalize the `closest` scan into a skip-aware selector so `runnerUp` shares the alpha tie-break. WorldScene glue: float a 2nd 😒 bubble + fold a "fussed over X" memory (factored into applyHomecomingMemory); add a __bubbleTexts dev hook for the e2e. ~4 files. State → phase: coder-pending.
