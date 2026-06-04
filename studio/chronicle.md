@@ -657,3 +657,6 @@ Picked BACKLOG-120 (lore's next-up). Spec: when a homecoming fires, the second-c
 
 ## 2026-06-04 — cycle 031 — code-planner — BACKLOG-120 jealous nuzzle
 Plan: extend pure homecoming.ts with JEALOUS_TIE_POINTS=10 + a Jealousy beat (additive field). Generalize the `closest` scan into a skip-aware selector so `runnerUp` shares the alpha tie-break. WorldScene glue: float a 2nd 😒 bubble + fold a "fussed over X" memory (factored into applyHomecomingMemory); add a __bubbleTexts dev hook for the e2e. ~4 files. State → phase: coder-pending.
+
+## 2026-06-04 — cycle 031 — coder — BACKLOG-120 jealous nuzzle
+Implemented per plan, 4 files. homecoming.ts: generalized closest→topBy(exclude?), added JEALOUS_TIE_POINTS=10 + Jealousy beat (additive field). WorldScene: 2nd 😒 bubble + applyHomecomingMemory + liveBubbles tracking + __bubbleTexts hook. Build clean; 193 unit green (+8); dev HTTP 200. State → phase: qa-pending.

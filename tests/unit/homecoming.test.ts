@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { homecoming, HOMECOMING_MIN_MINUTES } from '../../game/src/world/homecoming';
+import { homecoming, HOMECOMING_MIN_MINUTES, JEALOUS_TIE_POINTS } from '../../game/src/world/homecoming';
 import { heartsFromPoints } from '../../game/src/social/friendship';
 
 const LONG = HOMECOMING_MIN_MINUTES;
@@ -47,5 +47,53 @@ describe('homecoming (BACKLOG-112)', () => {
     const hc = homecoming({ Sunny: 50 }, LONG);
     expect(hc?.memory).toBeTruthy();
     expect(typeof hc?.memory).toBe('string');
+  });
+});
+
+describe('jealous nuzzle (BACKLOG-120)', () => {
+  it('a near-tied runner-up gets a jealous beat naming them', () => {
+    const hc = homecoming({ Sunny: 60, Glade: 55 }, LONG);
+    expect(hc?.name).toBe('Sunny');
+    expect(hc?.jealous?.name).toBe('Glade');
+  });
+
+  it('breaks runner-up ties alphabetically', () => {
+    const hc = homecoming({ Rex: 60, Glade: 55, Mossback: 55 }, LONG);
+    expect(hc?.name).toBe('Rex');
+    expect(hc?.jealous?.name).toBe('Glade');
+  });
+
+  it('an exact top tie makes the alpha-loser the jealous one (gap 0)', () => {
+    const hc = homecoming({ Sunny: 60, Glade: 60 }, LONG);
+    expect(hc?.name).toBe('Glade'); // alpha-smallest is the homecomer
+    expect(hc?.jealous?.name).toBe('Sunny');
+  });
+
+  it('a clear gap leaves no one jealous', () => {
+    const hc = homecoming({ Sunny: 60, Glade: 40 }, LONG);
+    expect(hc?.jealous).toBeNull();
+  });
+
+  it('threshold boundary: gap === JEALOUS_TIE_POINTS is jealous, one more is not', () => {
+    const tie = homecoming({ Sunny: 60, Glade: 60 - JEALOUS_TIE_POINTS }, LONG);
+    expect(tie?.jealous?.name).toBe('Glade');
+    const apart = homecoming({ Sunny: 60, Glade: 60 - JEALOUS_TIE_POINTS - 1 }, LONG);
+    expect(apart?.jealous).toBeNull();
+  });
+
+  it('a lone befriended dino has no runner-up to be jealous', () => {
+    const hc = homecoming({ Sunny: 90 }, LONG);
+    expect(hc?.jealous).toBeNull();
+  });
+
+  it('the jealous line names the runner-up and shows the 😒, memory names the homecomer', () => {
+    const hc = homecoming({ Sunny: 60, Glade: 55 }, LONG);
+    expect(hc?.jealous?.line).toContain('Glade');
+    expect(hc?.jealous?.line).toContain('😒');
+    expect(hc?.jealous?.memory).toContain('Sunny');
+  });
+
+  it('a short absence stages neither homecoming nor jealousy', () => {
+    expect(homecoming({ Sunny: 60, Glade: 55 }, HOMECOMING_MIN_MINUTES - 1)).toBeNull();
   });
 });

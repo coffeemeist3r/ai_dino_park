@@ -57,3 +57,19 @@ none.
 
 ## Estimated touch count
 ~4 files (homecoming.ts, WorldScene.ts, homecoming.test.ts, new e2e). Within budget.
+
+---
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/homecoming.ts` — added `JEALOUS_TIE_POINTS`, `Jealousy` interface, `jealous` field on `Homecoming`; generalized `closest`→`topBy(friendship, exclude?)` (shared alpha tie-break); `homecoming()` now computes the runner-up and emits a jealous beat when within threshold.
+- `game/src/scenes/WorldScene.ts` — `playHomecoming()` floats a 2nd 😒 bubble for the rival; new `applyHomecomingMemory()` folds both memories (used on restore + `__catchUp`); `showBubble` tracks `liveBubbles`; new `__bubbleTexts` dev hook.
+- `tests/unit/homecoming.test.ts` — new `jealous nuzzle (BACKLOG-120)` describe (8 cases incl. near-tie, alpha tie-break, exact-top-tie, clear gap, threshold boundary, lone dino, line/memory content, short absence).
+- `tests/e2e/cycle-031-jealous.spec.ts` — near-tie sulk (asserts `jealous` + a 😒 bubble rendered) + lone-favorite no-jealousy.
+
+**Deviations from plan:** none. Touched exactly the 4 planned files.
+
+**Build:** ✅ `npm --prefix game run build` clean.
+**Unit tests:** ✅ `npx vitest run` — 193 passed (was 185; +8 jealous cases).
+**Dev smoke:** ✅ dev server returns HTTP 200.

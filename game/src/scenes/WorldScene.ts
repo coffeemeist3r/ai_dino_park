@@ -74,6 +74,7 @@ export class WorldScene extends Phaser.Scene {
   private bonds: Bonds = {};
   private lastAwayDigest: string[] = [];
   private lastHomecoming: Homecoming | null = null;
+  private liveBubbles = new Set<string>();
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -901,12 +902,22 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** Float the welcome-back line over the closest dino, if one was chosen (BACKLOG-112). */
+  /** Fold the homecoming's memories into the store: the homecomer's, plus a near-tied runner-up's sulk (BACKLOG-120). */
+  private applyHomecomingMemory(hc: Homecoming): void {
+    this.memory = remember(this.memory, hc.name, hc.memory);
+    if (hc.jealous) this.memory = remember(this.memory, hc.jealous.name, hc.jealous.memory);
+  }
+
+  /** Float the welcome-back line over the closest dino; if a near-tied rival is jealous, float its sulk too (BACKLOG-112/120). */
   private playHomecoming(): void {
     const hc = this.lastHomecoming;
     if (!hc) return;
     const dino = this.dinos.find((d) => d.name === hc.name);
     if (dino) this.showBubble(dino, hc.line);
+    if (hc.jealous) {
+      const rival = this.dinos.find((d) => d.name === hc.jealous!.name);
+      if (rival) this.showBubble(rival, hc.jealous.line);
+    }
   }
 
   private showBubble(d: Dino, text: string): void {
@@ -922,7 +933,11 @@ export class WorldScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 1)
       .setDepth(12);
-    this.time.delayedCall(3500, () => bubble.destroy());
+    this.liveBubbles.add(text);
+    this.time.delayedCall(3500, () => {
+      bubble.destroy();
+      this.liveBubbles.delete(text);
+    });
   }
 
   private addControlsHint(): void {
@@ -1220,7 +1235,7 @@ export class WorldScene extends Phaser.Scene {
       // Friendship is assigned above, so the homecomer reads the restored hearts.
       this.lastHomecoming = homecoming(this.friendship, away.minutes);
       if (this.lastHomecoming) {
-        this.memory = remember(this.memory, this.lastHomecoming.name, this.lastHomecoming.memory);
+        this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();
       }
     });
@@ -1258,7 +1273,7 @@ export class WorldScene extends Phaser.Scene {
       this.lastAwayDigest = away.digest;
       this.lastHomecoming = homecoming(this.friendship, away.minutes);
       if (this.lastHomecoming) {
-        this.memory = remember(this.memory, this.lastHomecoming.name, this.lastHomecoming.memory);
+        this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();
       }
       this.refreshHeartsPanel();
@@ -1272,6 +1287,8 @@ export class WorldScene extends Phaser.Scene {
     };
     // any: dev-only Playwright hook — last homecoming beat (or null)
     (window as any).__homecoming = () => this.lastHomecoming;
+    // any: dev-only Playwright hook — strings of currently-alive speech bubbles
+    (window as any).__bubbleTexts = () => [...this.liveBubbles];
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits
