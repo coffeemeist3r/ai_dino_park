@@ -660,3 +660,6 @@ Plan: extend pure homecoming.ts with JEALOUS_TIE_POINTS=10 + a Jealousy beat (ad
 
 ## 2026-06-04 — cycle 031 — coder — BACKLOG-120 jealous nuzzle
 Implemented per plan, 4 files. homecoming.ts: generalized closest→topBy(exclude?), added JEALOUS_TIE_POINTS=10 + Jealousy beat (additive field). WorldScene: 2nd 😒 bubble + applyHomecomingMemory + liveBubbles tracking + __bubbleTexts hook. Build clean; 193 unit green (+8); dev HTTP 200. State → phase: qa-pending.
+
+## 2026-06-04 — cycle 031 — qa — 9/9 criteria pass
+Build clean; 193 unit green (+8 jealous); e2e 63/63 once the parallel boot flake is isolated (3 reds this run in cycle-003-save → 5/5 isolated; both new cycle-031-jealous specs passed parallel). web-llm boundary clean. No points change, additive save. Recommendation: APPROVE. State → phase: validator-pending.

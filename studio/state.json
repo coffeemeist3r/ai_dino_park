@@ -1,6 +1,6 @@
 {
   "cycle": 31,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-120: Jealous nuzzle",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
     "designer": "2026-06-04T03:08:00-05:00",
     "code-planner": "2026-06-04T03:12:00-05:00",
     "coder": "2026-06-04T03:18:00-05:00",
-    "qa": "2026-06-03T03:25:00-05:00",
+    "qa": "2026-06-04T03:25:00-05:00",
     "validator": "2026-06-03T03:30:00-05:00",
     "artist": null
   }
