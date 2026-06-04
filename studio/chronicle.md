@@ -651,3 +651,6 @@ _Artist (cycle 030): deferred this fire — the main chain ran long; the open ve
 
 ## 2026-06-04 — cycle 031 — lore-smith — the keeper's little court
 Bumped to cycle 31 (cycle 30 APPROVED). Seeded BACKLOG-123–127: turning the homecoming spine social — jealousy (120), its repair (125), sulk recovery (123), a near-tie chorus (124), eavesdropping envy (126), and a legible inner-circle ladder in the book (127). Suggested next-up: BACKLOG-120 jealous nuzzle — the keystone the rest hang off. State → phase: designer-pending.
+
+## 2026-06-04 — cycle 031 — designer — BACKLOG-120 jealous nuzzle
+Picked BACKLOG-120 (lore's next-up). Spec: when a homecoming fires, the second-closest dino — if within one heart's worth (≤10 pts) of the closest — sulks (😒) alongside the 👋 and files a "saw the keeper fuss over X" memory. Pure additive field on the Homecoming result; no points change; additive save. 9 ACs. State → phase: codeplan-pending.

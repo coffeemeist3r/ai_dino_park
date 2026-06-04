@@ -1,14 +1,14 @@
 {
   "cycle": 31,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-120: Jealous nuzzle",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-04T03:05:00-05:00",
-    "designer": "2026-06-03T03:08:00-05:00",
+    "designer": "2026-06-04T03:08:00-05:00",
     "code-planner": "2026-06-03T03:12:00-05:00",
     "coder": "2026-06-03T03:18:00-05:00",
     "qa": "2026-06-03T03:25:00-05:00",
