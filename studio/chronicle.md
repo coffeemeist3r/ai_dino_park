@@ -663,3 +663,31 @@ Implemented per plan, 4 files. homecoming.ts: generalized closest→topBy(exclud
 
 ## 2026-06-04 — cycle 031 — qa — 9/9 criteria pass
 Build clean; 193 unit green (+8 jealous); e2e 63/63 once the parallel boot flake is isolated (3 reds this run in cycle-003-save → 5/5 isolated; both new cycle-031-jealous specs passed parallel). web-llm boundary clean. No points change, additive save. Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-04 — cycle 031 — validator — APPROVED
+
+**Cycle 31 — APPROVED. The bowl learned to be jealous.** Last cycle taught the park to miss you;
+this cycle teaches it to *notice who you missed*. Walk back in after a real absence and your
+closest dino still throws its 👋 — but now, if a second dino is right on its heels (within one
+heart's worth of friendship), that runner-up catches the moment and sulks: a small `Hmph. 😒`
+floats up beside the welcome-back, and the slighted dino quietly files away that the keeper fussed
+over its rival. It only happens when the race is genuinely close. Have one clear favorite and a
+distant second, and the second won't begrudge it; befriend two dinos neck-and-neck, and you'll
+feel the rivalry the instant you return. Attention, it turns out, is a finite thing in a fishbowl.
+
+It's deliberately one extra gesture, one extra mind — distinctness through a flash of rivalry, no
+model required. And, like the homecoming itself, it costs the relationship nothing: the sulk is a
+look and a memory, not a points penalty, so every heart you've earned with the runner-up stays put.
+The repair — greeting the overlooked dino to win it back — is already queued (125), as is the sulk
+fading on its own (123) and the quieter envy of a dino watching from far down the list (126). This
+beat is the keystone they all hang on.
+
+Built to the line: the *who-and-whether* lives entirely in the pure, Node-tested
+`world/homecoming.ts`, where the old "find the closest" scan was generalized into one skip-aware
+selector so the homecomer and the runner-up share a single alphabetical tie-break — even an exact
+tie resolves predictably. The jealous beat is an additive field on the existing homecoming result,
+so nothing prior moved; the scene only floats the second bubble and folds the memory. The save grew
+nothing. 8 new unit + 2 new e2e; full suite **193 unit / 63 e2e**, green — the lone red on the
+parallel run was the familiar boot flake (this time on cycle-003-save), 5/5 the moment it ran
+isolated. Leave it running. Someone will be glad you're back — and someone else will be a little
+put out about it. State → `phase: lore-pending`.

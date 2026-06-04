@@ -147,7 +147,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 30 lore additions — the keeper's comings and goings (2026-06-03)
 
 - [ ] BACKLOG-119 [emergent] Goodbye glance — the inverse of the homecoming: as the tab leaves (`visibilitychange` → hidden) after a real session, the closest dino throws a brief 👀 toward the keeper before the bowl goes quiet. A living bookend to 112.
-- [~] BACKLOG-120 [social] Jealous nuzzle — when two dinos are nearly tied for closest, the runner-up sulks (😒) the moment the homecoming dino gets its welcome-back beat. Distinctness through a little rivalry. Builds on 112.
+- [x] BACKLOG-120 [social] Jealous nuzzle — when two dinos are nearly tied for closest, the runner-up sulks (😒) the moment the homecoming dino gets its welcome-back beat. Distinctness through a little rivalry. Builds on 112.  *(shipped: cycle 31, 2026-06-04)*
 - [ ] BACKLOG-121 [emergent] Keeper-shaped routine — a very-high-friendship dino learns the real hour you usually come back (from save timestamps) and drifts to the glass front around then, anticipating you. Anticipation as emergence. Builds on 112 + realtime (105).
 - [ ] BACKLOG-122 [pokemon] Homecoming streak — returning on consecutive real days builds a "visit streak" surfaced on the plaque; miss a day and it resets. A gentle Stardew daily pull.
 
@@ -214,6 +214,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ### Cycle 29 — 2026-06-02
 - BACKLOG-106 shipped — Offline catch-up ("while you were away"): pure `world/away.ts` reads the real gap since `savedAt` × scale and fast-forwards cheaply (no per-tick, no LLM) — bonded pairs drift closer + gain a "kept each other company" memory, a "While you were away…" digest greets the player; span capped at 7 in-game days; additive save. 13 unit + 2 e2e; 9/9 AC pass. Spine for 112–116.
+
+### Cycle 31 — 2026-06-04
+- BACKLOG-120 shipped — Jealous nuzzle: when the homecoming 👋 fires, a near-tied runner-up (within 10 pts / one heart of the closest) sulks `Hmph. 😒` and keeps a "the keeper fussed over X" memory; clear gap or lone favorite → no sulk. Pure additive `jealous` field on `homecoming.ts` (generalized `closest`→`topBy(exclude?)`, shared alpha tie-break, exact-top-tie pinned); WorldScene glue floats the 2nd bubble + folds the memory via `applyHomecomingMemory`; no points change; additive save. 8 unit + 2 e2e; 9/9 AC pass. Keystone for 123/125/126.
 
 ### Cycle 30 — 2026-06-03
 - BACKLOG-112 shipped — Homecoming nuzzle: after a long absence, your closest dino (highest player-friendship) gets a heart-graded 👋 "welcome back" bubble on return + a faint "keeper came home" memory. Pure `world/homecoming.ts` (max-friendship, alpha tie-break, gated at 6 in-game hours), WorldScene glue only; reuses heartsFromPoints + remember; no hearts change; additive save. 8 unit + 2 e2e; 9/9 AC pass. First personal beat on the cycle-29 spine; unblocks 119–122.

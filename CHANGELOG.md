@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 031 — 2026-06-04
+- BACKLOG-120: Jealous nuzzle — when a homecoming fires, a near-tied runner-up (within 10 pts / one heart of the closest) sulks `Hmph. 😒` alongside the 👋 and keeps a "the keeper fussed over X" memory. Pure additive `jealous` field on `homecoming.ts` (generalized `closest`→`topBy(exclude?)`, shared alpha tie-break); WorldScene glue only; no friendship-points change; additive save. 8 new unit + 2 new e2e; 9/9 AC pass; 193 unit / 63 e2e green. Keystone for 123/125/126.
+
 ## Cycle 030 — 2026-06-03
 
 - BACKLOG-112: Homecoming nuzzle — APPROVED. After a long real absence, your *closest* dino (highest player-friendship) notices you came back: a heart-graded 👋 "welcome back" bubble floats over it on return, and it keeps a faint "the keeper came home" memory. Reads the BACKLOG-106 catch-up duration; gated at 6 in-game hours so an instant reload stages nothing. Pure `world/homecoming.ts` (max-friendship + alphabetical tie-break, three warmth bands) with WorldScene glue only (restore + `__catchUp` compute, `showBubble`, `remember`); reuses `friendship.heartsFromPoints` + `memory.remember`. No friendship-points change (hearts ACs untouched); additive save, boundary intact. 8 new unit + 2 new e2e; 185 unit / 61 e2e green. First personal beat on the cycle-29 spine; unblocks 119–122.
