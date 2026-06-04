@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { walkFrames, type Shape } from './dinoArt';
+import { walkFrames, SPECIES_ART, type Shape } from './dinoArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -31,14 +31,17 @@ function drawShape(g: Phaser.GameObjects.Graphics, s: Shape): void {
 }
 
 /**
- * Ensure a triceratops walk animation exists for `baseColor`; returns the anim key.
- * Idempotent and colour-keyed, so every dino reuses one bake.
+ * Ensure a walk animation exists for `species` in `baseColor`; returns the anim key,
+ * or null if the species has no rig. Idempotent and colour-keyed, so every dino of a
+ * species+colour reuses one bake.
  */
-export function ensureTriceratops(scene: Phaser.Scene, baseColor: number): string {
-  const animKey = `tri_walk_${baseColor.toString(16)}`;
+export function ensureWalk(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+  const art = SPECIES_ART[species];
+  if (!art) return null;
+  const animKey = `${art.prefix}_walk_${baseColor.toString(16)}`;
   if (scene.anims.exists(animKey)) return animKey;
 
-  const frames = walkFrames(baseColor, FRAMES).map((shapes, i) => {
+  const frames = walkFrames(baseColor, FRAMES, art.pose).map((shapes, i) => {
     const key = `${animKey}_${i}`;
     if (!scene.textures.exists(key)) {
       const g = scene.add.graphics();
@@ -55,7 +58,7 @@ export function ensureTriceratops(scene: Phaser.Scene, baseColor: number): strin
 
 /** Species the procedural pipeline can render today; others fall back to a flat rectangle. */
 export function hasArt(species: string): boolean {
-  return species === 'triceratops';
+  return species in SPECIES_ART;
 }
 
 /** Build the visible game object for a dino — a baked sprite where art exists, else a rectangle. */
@@ -66,8 +69,8 @@ export function makeDinoArt(
   species: string,
   baseColor: number,
 ): { obj: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle; artKey: string | null } {
-  if (hasArt(species)) {
-    const animKey = ensureTriceratops(scene, baseColor);
+  const animKey = ensureWalk(scene, species, baseColor);
+  if (animKey) {
     const sprite = scene.add.sprite(x, y, `${animKey}_0`);
     sprite.play(animKey);
     return { obj: sprite, artKey: animKey };

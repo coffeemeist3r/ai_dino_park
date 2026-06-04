@@ -71,7 +71,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [x] BACKLOG-117 [art] Procedural vector art pipeline — pure shape rigs (`art/dinoArt.ts`) + Phaser bake/animation glue (`art/bake.ts`), `hasArt()` graceful fallback to flat shapes, colour-keyed idempotent bakes; sub-agent-per-character workflow defined in STYLE-GUIDE + routine 7. Unblocks all art after 29 dark cycles.  *(shipped: operator, 2026-06-03)*
 - [x] BACKLOG-118 [art] Proof dino — Rex the triceratops rendered via the pipeline: frill + brow/nose horns silhouette, derived 7-colour palette, 4-frame amble loop. Replaces his rectangle; other species stay on fallback until drawn.  *(shipped: operator, 2026-06-03)*
-- [ ] BACKLOG-034 [art] Remaining dino species rigs — vector walk loops for stegosaurus / brontosaurus / compsognathus / parasaurolophus (one sub-agent each), distinct silhouettes
+- [~] BACKLOG-034 [art] Remaining dino species rigs — vector walk loops for stegosaurus / brontosaurus / compsognathus / parasaurolophus (one sub-agent each), distinct silhouettes  *(in progress: brontosaurus/Sunny shipped cycle 31-art via `SPECIES_ART` registry — long-neck silhouette; stegosaurus/compsognathus/parasaurolophus still on flat fallback)*
 - [ ] BACKLOG-035 [art] Player avatar — vector idle + walk loop, paleontologist-y
 - [ ] BACKLOG-033 [art] Grass / path / water tiles — flat-vector, seamless 32×32
 - [ ] BACKLOG-036 [art] Dialog box frame — soft rounded vector border (replace the current flat panel)

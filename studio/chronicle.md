@@ -691,3 +691,10 @@ nothing. 8 new unit + 2 new e2e; full suite **193 unit / 63 e2e**, green — the
 parallel run was the familiar boot flake (this time on cycle-003-save), 5/5 the moment it ran
 isolated. Leave it running. Someone will be glad you're back — and someone else will be a little
 put out about it. State → `phase: lore-pending`.
+
+## 2026-06-04 — cycle 031-art — artist — brontosaurus (Sunny)
+Drew the second species: Sunny the brontosaurus, the most iconic flat-shape holdout. First draft was a side-on sauropod with a horizontal barrel — rejected: it would clash with the world's 3/4 top-down camera, where every dino faces the viewer from above. Pulled back to Rex's exact framing and let the silhouette carry it: a long neck rising up the box to a tiny head + snout, a fat barrel body with a belly highlight, four stump feet in the same diagonal-pair swing, and a thick tail curling off behind. Reads "brontosaurus" at 40px without breaking the camera language; 5-colour palette (base/belly/leg/outline/eye), well under the 8 budget.
+
+Wiring: generalized the bake path so it's no longer triceratops-hardcoded — `dinoArt.ts` now exports a `SPECIES_ART` registry (species → {anim-key prefix, pose fn}) and `walkFrames` takes an optional pose; `bake.ts` `ensureTriceratops` became `ensureWalk(species,colour)` and `hasArt` reads the registry. Rex keeps his `tri_walk_` prefix (pinned by a test so the cycle-030 e2e stays valid); Sunny bakes under `bro_walk_`. Stegosaurus/compso/parasaur still fall back to flat rectangles by design.
+
+Proof: 4 new unit tests (sauropod shape census, ≤8 palette, stride-frames-differ, registry prefixes) + a new e2e asserting Sunny renders `bro_walk_*` and animates while Rex stays `tri_walk_*` and Mossback stays a rectangle. Full suite **197 unit / 64 e2e green** (clean run, no flake). The local preview browser hung on the WebGPU device probe so the in-editor screenshot couldn't complete — the canonical proof is the passing Playwright e2e under real chromium (Sunny `animating: true`). BACKLOG-034 advanced to in-flight: 1 of 4 species drawn.

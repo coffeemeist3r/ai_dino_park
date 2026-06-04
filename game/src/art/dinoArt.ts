@@ -92,9 +92,73 @@ export function triceratopsPose(baseColor: number, phase: number): Shape[] {
   ];
 }
 
+/**
+ * A brontosaurus seen in the same 3/4 top-down framing as the triceratops — feet
+ * near y=1, head toward the camera near y=0. The silhouette is all sauropod: a
+ * long neck rising up the box to a tiny head, a fat barrel body, and a thick tail
+ * curling off behind. Same diagonal-pair foot swing + body bob drive the amble.
+ */
+export function brontosaurusPose(baseColor: number, phase: number): Shape[] {
+  const belly = shade(baseColor, 0.22);
+  const leg = shade(baseColor, -0.2);
+  const outline = shade(baseColor, -0.5);
+
+  const t = phase * Math.PI * 2;
+  const swing = Math.sin(t) * 0.035;
+  const bob = Math.abs(Math.sin(t)) * 0.02;
+
+  const foot = (x: number, y: number, dir: number): Shape => ({
+    kind: 'ellipse',
+    fill: leg,
+    stroke: outline,
+    x,
+    y: y + dir * swing,
+    rx: 0.07,
+    ry: 0.09,
+  });
+
+  return [
+    // feet first — diagonal pairs, same scheme as the triceratops
+    foot(0.32, 0.8, +1),
+    foot(0.64, 0.92, +1),
+    foot(0.68, 0.8, -1),
+    foot(0.36, 0.92, -1),
+
+    // thick tail curling off behind the body (drawn first so the barrel overlaps its root)
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.66, 0.64], [0.97, 0.86], [0.74, 0.75]] },
+
+    // the long neck rising toward the camera — the whole point of the silhouette
+    { kind: 'poly', fill: baseColor, stroke: outline, points: [[0.42, 0.58 - bob], [0.58, 0.58 - bob], [0.54, 0.19 - bob], [0.46, 0.19 - bob]] },
+
+    // fat barrel body + belly highlight
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.64 - bob, rx: 0.31, ry: 0.24 },
+    { kind: 'ellipse', fill: belly, x: 0.5, y: 0.68 - bob, rx: 0.2, ry: 0.14 },
+
+    // small head + a gentle snout
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.15 - bob, rx: 0.11, ry: 0.09 },
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.1 - bob, rx: 0.06, ry: 0.05 },
+
+    // eyes
+    { kind: 'circle', fill: EYE, x: 0.45, y: 0.14 - bob, r: 0.022 },
+    { kind: 'circle', fill: EYE, x: 0.55, y: 0.14 - bob, r: 0.022 },
+  ];
+}
+
+/** Pose function for one species' walk frame at a phase in [0,1). */
+export type PoseFn = (baseColor: number, phase: number) => Shape[];
+
+/**
+ * The species the procedural pipeline can draw, each with a short anim-key prefix
+ * and its pose rig. Species absent here fall back to a flat rectangle (see bake.ts).
+ */
+export const SPECIES_ART: Record<string, { prefix: string; pose: PoseFn }> = {
+  triceratops: { prefix: 'tri', pose: triceratopsPose },
+  brontosaurus: { prefix: 'bro', pose: brontosaurusPose },
+};
+
 /** Bake `count` evenly-spaced phases of a species pose into a walk-cycle frame list. */
-export function walkFrames(baseColor: number, count: number): Shape[][] {
-  return Array.from({ length: count }, (_, i) => triceratopsPose(baseColor, i / count));
+export function walkFrames(baseColor: number, count: number, pose: PoseFn = triceratopsPose): Shape[][] {
+  return Array.from({ length: count }, (_, i) => pose(baseColor, i / count));
 }
 
 /** Every distinct colour a pose uses — for palette-discipline checks. */
