@@ -704,3 +704,6 @@ Bumped cycle to 32 (last verdict APPROVED). Seeded BACKLOG-128..131 around repai
 
 ## 2026-06-05 — cycle 032 — designer — BACKLOG-125 greet the runner-up
 Picked the lore-smith next-up: the repair half of jealousy (120). Spec: a homecoming jealous runner-up is marked pending-repair (transient); greeting it gives an outsized bump + 😊 "You noticed me!" bubble + a "made it up" memory, then clears (one-shot). Additive save, no homecoming.ts selection change. 9 acceptance criteria. State -> phase: codeplan-pending.
+
+## 2026-06-05 — cycle 032 — code-planner — BACKLOG-125 greet the runner-up
+Plan: new pure world/repair.ts (repairGain=greetGain+REPAIR_BONUS, repairLine 😊, repairMemory) + WorldScene glue (pendingRepair flag set in playHomecoming on jealous, consumed one-shot in recordGreet) + 2 dev hooks (__pendingRepair, __friendshipPoints). Reuse greetGain/bumpPoints/remember/showBubble. ~4 files, no deps, additive save. State -> phase: coder-pending.
