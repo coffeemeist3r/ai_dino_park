@@ -155,7 +155,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-123 [emergent] Sulk shakeoff — a dino left sulking (😒 jealous / 😤 standoff loser) clears its funk after a short while *or* a kind keeper gesture (greet/feed), logging a "got over it" memory; negative moods resolve instead of sticking. Builds on 120 / 062.
 - [ ] BACKLOG-124 [emergent] Homecoming chorus — when several dinos are near-tied at the top of player-friendship, the homecoming beat becomes a small staggered chorus (top 2–3 each throw a 👋), scaling the welcome with how many dinos you've truly befriended. Builds on 112.
-- [ ] BACKLOG-125 [social] Greeting the runner-up — greeting the jealous runner-up right after a homecoming gives an outsized affinity bump and flips 😒 → 😊 ("you noticed me"); jealousy is repairable through attention. Builds on 120.
+- [~] BACKLOG-125 [social] Greeting the runner-up — greeting the jealous runner-up right after a homecoming gives an outsized affinity bump and flips 😒 → 😊 ("you noticed me"); jealousy is repairable through attention. Builds on 120.  *(in flight: cycle 32)*
 - [ ] BACKLOG-126 [emergent] Eavesdropping envy — a low-friendship dino that *witnesses* another get a homecoming/favorite beat files a faint "the keeper likes them more" memory that can wistfully colour its next line; only fires when its own friendship is low. Distinctness through insecurity. Builds on 112 / 120.
 - [ ] BACKLOG-127 [pokemon] Inner-circle ladder — the collection book ranks your top-3 closest dinos ("inner circle"), making the homecoming selection legible to the player and turning friendship into a visible standing. Builds on 112 / 016 / 021.
 

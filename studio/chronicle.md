@@ -701,3 +701,6 @@ Proof: 4 new unit tests (sauropod shape census, ≤8 palette, stride-frames-diff
 
 ## 2026-06-05 — cycle 032 — lore-smith — the attention economy
 Bumped cycle to 32 (last verdict APPROVED). Seeded BACKLOG-128..131 around repair/attention: forgiving heart, festering slight, comforting nuzzle, fondest memory. Suggested next-up BACKLOG-125 (greet the runner-up — the repair half of jealousy 120). State -> phase: designer-pending.
+
+## 2026-06-05 — cycle 032 — designer — BACKLOG-125 greet the runner-up
+Picked the lore-smith next-up: the repair half of jealousy (120). Spec: a homecoming jealous runner-up is marked pending-repair (transient); greeting it gives an outsized bump + 😊 "You noticed me!" bubble + a "made it up" memory, then clears (one-shot). Additive save, no homecoming.ts selection change. 9 acceptance criteria. State -> phase: codeplan-pending.
