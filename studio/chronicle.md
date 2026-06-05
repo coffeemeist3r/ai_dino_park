@@ -713,3 +713,32 @@ Implemented per plan, 4 files. New world/repair.ts (REPAIR_BONUS=6, repairGain=g
 
 ## 2026-06-05 — cycle 032 — qa — 9/9 criteria pass
 Build clean; 202 unit green (+5 repair); e2e 67/67 green on the full parallel run (the new cycle-032-repair specs included). Isolated 3-spec cold run reds at boot under 3 parallel workers (6MB webllm starve) -> 3/3 with --workers=1; documented parallel-load flake, not a regression. web-llm boundary clean. Additive save. Recommendation: APPROVE. State -> phase: validator-pending.
+
+## 2026-06-05 — cycle 032 — validator — APPROVED
+
+**Cycle 32 — APPROVED. The bowl learned to make it up to you.** Last cycle taught the park to
+sulk: come home after a real absence, your closest dino gets its 👋, and a near-tied runner-up
+catches the moment and turns away — `Hmph. 😒` — quietly noting that the keeper fussed over its
+rival. It was a real feeling with nowhere to go. This cycle gives it somewhere to go. Walk over to
+the slighted dino and just say hello, and the whole thing flips: a bright `You noticed me! 😊`
+floats up, its hearts jump *more* than a plain hello would earn, and instead of nursing the slight
+it files away that the keeper noticed it after all. Jealousy, it turns out, is repairable — and the
+repair costs you nothing but a moment of attention pointed the right way.
+
+It only works once per slight, and only on the dino actually waiting for it: greet anyone else and
+the runner-up keeps sulking until you come around. That one-shot, that specificity, is what makes it
+read as a *mind* keeping score rather than a meter refilling — the dino remembers it was overlooked,
+and it remembers being made whole. Two cycles ago the park could miss you; one cycle ago it could
+resent who you missed; now it can forgive you for it. That arc — hurt, then heal — is the most
+alive the fishbowl has felt.
+
+Built to the line. The reward math is a tiny pure module (`world/repair.ts`: a make-up greet is just
+a normal greet plus six points, so a warm dino still warms faster, the gesture just lands harder),
+Node-tested on its own. The scene only carries a transient "who's waiting" flag, set when the sulk
+fires and spent on the next greet — and last cycle's jealousy selection code wasn't touched at all,
+so nothing that shipped moved. The save grew nothing; reload and a pending sulk simply clears, which
+is right, because making up with someone is a thing you do while you're there. 5 new unit + 3 new
+e2e; full suite **202 unit / 67 e2e**, green. The lone wrinkle was the familiar boot flake — three
+cold Playwright workers each yanking the 6 MB model bundle at once starve startup; one worker, or the
+warm full run, and it's spotless. Leave it running. Someone will be glad you're back, someone else
+will be put out about it — and now you can fix that. State → `phase: lore-pending`.

@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 032 — 2026-06-05
+- BACKLOG-125: Greeting the runner-up — the repair half of the jealousy keystone. A homecoming's near-tied runner-up (the dino that sulks `😒` in BACKLOG-120) is marked pending-repair; greeting it flips the slight with an outsized bump (`greetGain` +6), a floating `You noticed me! 😊`, and a "the keeper noticed X after all" memory. One-shot per slight, transient (no save change). Pure additive `world/repair.ts`; WorldScene glue only; `homecoming.ts` untouched. 5 new unit + 3 new e2e; 9/9 AC pass; 202 unit / 67 e2e green. Closes the hurt→heal loop; unblocks 128/129.
+
 ## Cycle 031 — 2026-06-04
 - BACKLOG-120: Jealous nuzzle — when a homecoming fires, a near-tied runner-up (within 10 pts / one heart of the closest) sulks `Hmph. 😒` alongside the 👋 and keeps a "the keeper fussed over X" memory. Pure additive `jealous` field on `homecoming.ts` (generalized `closest`→`topBy(exclude?)`, shared alpha tie-break); WorldScene glue only; no friendship-points change; additive save. 8 new unit + 2 new e2e; 9/9 AC pass; 193 unit / 63 e2e green. Keystone for 123/125/126.
 
