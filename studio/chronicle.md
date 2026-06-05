@@ -710,3 +710,6 @@ Plan: new pure world/repair.ts (repairGain=greetGain+REPAIR_BONUS, repairLine �
 
 ## 2026-06-05 — cycle 032 — coder — BACKLOG-125 greet the runner-up
 Implemented per plan, 4 files. New world/repair.ts (REPAIR_BONUS=6, repairGain=greetGain+bonus, repairLine 😊, repairMemory). WorldScene: pendingRepair flag set in playHomecoming on jealous, consumed one-shot in recordGreet (outsized bump + 😊 bubble + "noticed" memory); __pendingRepair + __friendshipPoints hooks. Build clean; 202 unit green (+5); dev HTTP 200. State -> phase: qa-pending.
+
+## 2026-06-05 — cycle 032 — qa — 9/9 criteria pass
+Build clean; 202 unit green (+5 repair); e2e 67/67 green on the full parallel run (the new cycle-032-repair specs included). Isolated 3-spec cold run reds at boot under 3 parallel workers (6MB webllm starve) -> 3/3 with --workers=1; documented parallel-load flake, not a regression. web-llm boundary clean. Additive save. Recommendation: APPROVE. State -> phase: validator-pending.
