@@ -144,6 +144,59 @@ export function brontosaurusPose(baseColor: number, phase: number): Shape[] {
   ];
 }
 
+/**
+ * A parasaurolophus seen in the same 3/4 top-down framing — feet near y=1, head
+ * toward the camera near y=0. The silhouette signature is the long tube crest
+ * sweeping up-and-back off the head (kept to one side for the 3/4 turn) over a
+ * broad duck-bill snout. Same diagonal-pair foot swing + body bob as the others.
+ */
+export function parasaurolophusPose(baseColor: number, phase: number): Shape[] {
+  const belly = shade(baseColor, 0.22);
+  const crest = shade(baseColor, 0.12);
+  const leg = shade(baseColor, -0.2);
+  const outline = shade(baseColor, -0.5);
+
+  const t = phase * Math.PI * 2;
+  const swing = Math.sin(t) * 0.035;
+  const bob = Math.abs(Math.sin(t)) * 0.02;
+
+  const foot = (x: number, y: number, dir: number): Shape => ({
+    kind: 'ellipse',
+    fill: leg,
+    stroke: outline,
+    x,
+    y: y + dir * swing,
+    rx: 0.07,
+    ry: 0.09,
+  });
+
+  return [
+    // feet first — diagonal pairs, same scheme as the others
+    foot(0.3, 0.78, +1),
+    foot(0.66, 0.92, +1),
+    foot(0.7, 0.78, -1),
+    foot(0.34, 0.92, -1),
+
+    // short tail off behind the barrel (drawn before the body so the barrel overlaps its root)
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.66, 0.62], [0.92, 0.8], [0.72, 0.72]] },
+
+    // the tube crest — the signature — sweeping up and back off the head to one side
+    { kind: 'poly', fill: crest, stroke: outline, points: [[0.5, 0.26 - bob], [0.58, 0.24 - bob], [0.72, 0.05 - bob], [0.63, 0.04 - bob]] },
+
+    // barrel body + belly highlight
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.62 - bob, rx: 0.3, ry: 0.25 },
+    { kind: 'ellipse', fill: belly, x: 0.5, y: 0.66 - bob, rx: 0.19, ry: 0.14 },
+
+    // head + broad duck-bill snout
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.22 - bob, rx: 0.13, ry: 0.12 },
+    { kind: 'ellipse', fill: belly, stroke: outline, x: 0.5, y: 0.1 - bob, rx: 0.13, ry: 0.06 },
+
+    // eyes
+    { kind: 'circle', fill: EYE, x: 0.44, y: 0.22 - bob, r: 0.026 },
+    { kind: 'circle', fill: EYE, x: 0.56, y: 0.22 - bob, r: 0.026 },
+  ];
+}
+
 /** Pose function for one species' walk frame at a phase in [0,1). */
 export type PoseFn = (baseColor: number, phase: number) => Shape[];
 
@@ -154,6 +207,7 @@ export type PoseFn = (baseColor: number, phase: number) => Shape[];
 export const SPECIES_ART: Record<string, { prefix: string; pose: PoseFn }> = {
   triceratops: { prefix: 'tri', pose: triceratopsPose },
   brontosaurus: { prefix: 'bro', pose: brontosaurusPose },
+  parasaurolophus: { prefix: 'para', pose: parasaurolophusPose },
 };
 
 /** Bake `count` evenly-spaced phases of a species pose into a walk-cycle frame list. */

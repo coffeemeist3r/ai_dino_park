@@ -9,3 +9,4 @@ STYLE-GUIDE.
 |---|---|---|---|
 | Triceratops walk loop (Rex) | `game/src/art/dinoArt.ts` → `bake.ts` | Claude-authored procedural vector | 2026-06-03 |
 | Brontosaurus walk loop (Sunny) | `game/src/art/dinoArt.ts` (`brontosaurusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-04 |
+| Parasaurolophus walk loop (Glade) | `game/src/art/dinoArt.ts` (`parasaurolophusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-05 |

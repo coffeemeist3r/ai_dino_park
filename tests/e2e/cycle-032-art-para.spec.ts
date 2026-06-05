@@ -1,0 +1,25 @@
+import { test, expect } from '@playwright/test';
+import { boot } from './helpers';
+
+type W = Record<string, unknown>;
+type Art = { artKey: string | null; animating: boolean } | null;
+
+test('Glade the parasaurolophus renders via the procedural pipeline and ambles (BACKLOG-034)', async ({ page }) => {
+  await boot(page);
+
+  const glade = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Glade'));
+  expect(glade).not.toBeNull();
+  expect(glade!.artKey).toMatch(/^para_walk_/); // baked, colour-keyed parasaurolophus
+  expect(glade!.animating).toBe(true);
+
+  // the earlier-drawn species still bake under their own prefixes — no cross-species collision
+  const rex = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Rex'));
+  expect(rex!.artKey).toMatch(/^tri_walk_/);
+  const sunny = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Sunny'));
+  expect(sunny!.artKey).toMatch(/^bro_walk_/);
+
+  // a still-undrawn species (stegosaurus) keeps the flat-rectangle fallback
+  const moss = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Mossback'));
+  expect(moss!.artKey).toBeNull();
+  expect(moss!.animating).toBe(false);
+});
