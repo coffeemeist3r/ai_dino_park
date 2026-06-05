@@ -55,3 +55,17 @@ none.
 
 ## Estimated touch count
 ~4 files (1 new src, 1 modified src, 2 new tests). Under the 6-file split threshold.
+
+---
+
+## Shipped
+
+**Files touched (4, as planned):**
+- `game/src/world/repair.ts` (new) — `REPAIR_BONUS=6`, `repairGain=greetGain+bonus`, `repairLine` (😊), `repairMemory`. Pure; imports only `friendship.ts` + `Personality` type.
+- `game/src/scenes/WorldScene.ts` — `pendingRepair` field; `playHomecoming` sets it on `hc.jealous`; `recordGreet` one-shot repair branch (outsized gain + 😊 bubble + repair memory + clear); `repair` import; `__pendingRepair` + `__friendshipPoints` dev hooks.
+- `tests/unit/repair.test.ts` (new) — 5 tests.
+- `tests/e2e/cycle-032-repair.spec.ts` (new) — 3 tests (outsized+one-shot, distinct memory, non-target untouched).
+
+**Deviations:** none. No scope creep, no new deps.
+
+**Build + unit-test status:** `npm --prefix game run build` clean; `npx vitest run` **202 passed** (26 files, +5 repair). Dev server smoke: HTTP 200. E2E left for QA.

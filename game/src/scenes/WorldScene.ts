@@ -7,6 +7,7 @@ import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
+import { repairGain, repairLine, repairMemory } from '../world/repair';
 import { tintFor, dayPhase } from '../world/dayNight';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
@@ -75,6 +76,8 @@ export class WorldScene extends Phaser.Scene {
   private lastAwayDigest: string[] = [];
   private lastHomecoming: Homecoming | null = null;
   private liveBubbles = new Set<string>();
+  /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
+  private pendingRepair: string | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -917,6 +920,8 @@ export class WorldScene extends Phaser.Scene {
     if (hc.jealous) {
       const rival = this.dinos.find((d) => d.name === hc.jealous!.name);
       if (rival) this.showBubble(rival, hc.jealous.line);
+      // The slighted dino now waits for a make-up greet (BACKLOG-125).
+      this.pendingRepair = hc.jealous.name;
     }
   }
 
@@ -1073,8 +1078,20 @@ export class WorldScene extends Phaser.Scene {
 
   /** Raise a dino's affinity from a greet, persist, and refresh the panel. */
   private recordGreet(name: string, traits?: Dino['traits']): void {
-    this.friendship = bumpPoints(this.friendship, name, greetGain(traits));
-    this.memory = remember(this.memory, name, 'the human stopped by to say hello');
+    // A make-up greet to the jealous runner-up (BACKLOG-125): outsized bump, 😊, one-shot.
+    const repairing = this.pendingRepair === name;
+    const gain = repairing ? repairGain(traits) : greetGain(traits);
+    this.friendship = bumpPoints(this.friendship, name, gain);
+    this.memory = remember(
+      this.memory,
+      name,
+      repairing ? repairMemory(name) : 'the human stopped by to say hello',
+    );
+    if (repairing) {
+      this.pendingRepair = null;
+      const dino = this.dinos.find((d) => d.name === name);
+      if (dino) this.showBubble(dino, repairLine(name));
+    }
     void this.saveGame();
     this.refreshHeartsPanel();
   }
@@ -1289,6 +1306,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__homecoming = () => this.lastHomecoming;
     // any: dev-only Playwright hook — strings of currently-alive speech bubbles
     (window as any).__bubbleTexts = () => [...this.liveBubbles];
+    // any: dev-only Playwright hook — the jealous runner-up awaiting a make-up greet (or null)
+    (window as any).__pendingRepair = () => this.pendingRepair;
+    // any: dev-only Playwright hook — raw friendship points per dino (finer than hearts)
+    (window as any).__friendshipPoints = () => ({ ...this.friendship });
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits

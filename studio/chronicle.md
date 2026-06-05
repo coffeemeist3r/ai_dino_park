@@ -707,3 +707,6 @@ Picked the lore-smith next-up: the repair half of jealousy (120). Spec: a homeco
 
 ## 2026-06-05 — cycle 032 — code-planner — BACKLOG-125 greet the runner-up
 Plan: new pure world/repair.ts (repairGain=greetGain+REPAIR_BONUS, repairLine 😊, repairMemory) + WorldScene glue (pendingRepair flag set in playHomecoming on jealous, consumed one-shot in recordGreet) + 2 dev hooks (__pendingRepair, __friendshipPoints). Reuse greetGain/bumpPoints/remember/showBubble. ~4 files, no deps, additive save. State -> phase: coder-pending.
+
+## 2026-06-05 — cycle 032 — coder — BACKLOG-125 greet the runner-up
+Implemented per plan, 4 files. New world/repair.ts (REPAIR_BONUS=6, repairGain=greetGain+bonus, repairLine 😊, repairMemory). WorldScene: pendingRepair flag set in playHomecoming on jealous, consumed one-shot in recordGreet (outsized bump + 😊 bubble + "noticed" memory); __pendingRepair + __friendshipPoints hooks. Build clean; 202 unit green (+5); dev HTTP 200. State -> phase: qa-pending.
