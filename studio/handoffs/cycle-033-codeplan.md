@@ -62,3 +62,12 @@ highest-bond peer (≥ floor) crosses over, throws a 🫂, the pair's bond grows
 
 ## Estimated touch count
 ~4 files (1 new module + 2 new tests + 1 scene edit). Well under the 6-file split line.
+
+## Shipped
+Implemented per plan, 4 files, no deviations, no scope creep.
+- **Created** `game/src/world/comfort.ts` — `comforter(sulker,bonds,names)` (highest-bond peer ≥ `COMFORT_BOND_FLOOR=8`, alpha tie-break, excludes sulker, null below floor); `comfortLine` (`X: There there, Y. 🫂`), `comfortMemory`, `COMFORT_BOND=2`. Imports only `social/bonds` — no Phaser, no web-llm.
+- **Modified** `game/src/scenes/WorldScene.ts` — import comfort; new transient `lastComfort` field; in `playHomecoming` jealous branch (after `pendingRepair`): pick comforter, nudge it one `stepToward` the sulker, float `comfortLine`, `strengthen` the pair by `COMFORT_BOND`, `remember` the sulker's `comfortMemory`, set `lastComfort`; `lastComfort` reset at the top of the beat; new `__lastComfort` dev hook.
+- **Created** `tests/unit/comfort.test.ts` (7 tests) + `tests/e2e/cycle-033-comfort.spec.ts` (2 tests: comfort fires with bond bump; no-friend regression keeps 120 sulk + 125 pendingRepair).
+- `homecoming.ts` untouched; keeper-repair seam untouched; additive save (bond bump rides the already-persisted `bonds` map).
+
+**Build:** ✅ `npm --prefix game run build` clean. **Unit:** ✅ 212 passed (+7 comfort). **Dev smoke:** ✅ HTTP 200. E2E left for QA.

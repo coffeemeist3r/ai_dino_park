@@ -8,6 +8,7 @@ import { getWorldClock, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
+import { comforter, comfortLine, comfortMemory, COMFORT_BOND } from '../world/comfort';
 import { tintFor, dayPhase } from '../world/dayNight';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
@@ -78,6 +79,8 @@ export class WorldScene extends Phaser.Scene {
   private liveBubbles = new Set<string>();
   /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
   private pendingRepair: string | null = null;
+  /** The last dino-to-dino comfort beat (BACKLOG-130): who consoled whom, or null. Transient. */
+  private lastComfort: { comforter: string; sulker: string } | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -915,6 +918,7 @@ export class WorldScene extends Phaser.Scene {
   private playHomecoming(): void {
     const hc = this.lastHomecoming;
     if (!hc) return;
+    this.lastComfort = null;
     const dino = this.dinos.find((d) => d.name === hc.name);
     if (dino) this.showBubble(dino, hc.line);
     if (hc.jealous) {
@@ -922,6 +926,20 @@ export class WorldScene extends Phaser.Scene {
       if (rival) this.showBubble(rival, hc.jealous.line);
       // The slighted dino now waits for a make-up greet (BACKLOG-125).
       this.pendingRepair = hc.jealous.name;
+      // ...and its closest friend crosses over to console it (BACKLOG-130).
+      const who = comforter(hc.jealous.name, this.bonds, this.dinos.map((d) => d.name));
+      if (who) {
+        const friend = this.dinos.find((d) => d.name === who);
+        if (friend && rival) {
+          // Nudge the friend a step toward the sulker so the 🫂 reads as consolation.
+          const step = stepToward(this.tileOf(friend), this.tileOf(rival), COLS, ROWS);
+          friend.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+        }
+        if (friend) this.showBubble(friend, comfortLine(who, hc.jealous.name));
+        this.bonds = strengthen(this.bonds, who, hc.jealous.name, COMFORT_BOND);
+        this.memory = remember(this.memory, hc.jealous.name, comfortMemory(who));
+        this.lastComfort = { comforter: who, sulker: hc.jealous.name };
+      }
     }
   }
 
@@ -1308,6 +1326,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__bubbleTexts = () => [...this.liveBubbles];
     // any: dev-only Playwright hook — the jealous runner-up awaiting a make-up greet (or null)
     (window as any).__pendingRepair = () => this.pendingRepair;
+    // any: dev-only Playwright hook — last dino-to-dino comfort beat {comforter, sulker} (or null)
+    (window as any).__lastComfort = () => this.lastComfort;
     // any: dev-only Playwright hook — raw friendship points per dino (finer than hearts)
     (window as any).__friendshipPoints = () => ({ ...this.friendship });
     // any: dev-only Playwright hook — current player position
