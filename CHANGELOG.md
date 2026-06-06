@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 033 — 2026-06-06
+- BACKLOG-130: Comforting nuzzle — the dino-to-dino half of the attention economy. When a homecoming makes a near-tied runner-up sulk `😒` (BACKLOG-120), the sulker's *closest friend* (highest pairwise bond, BACKLOG-013) crosses the bowl and consoles it: a floating `There there, <sulker>. 🫂`, the pair's bond grows by `COMFORT_BOND` (+2), and the slighted dino keeps a "<friend> came over to comfort me" memory. A poorly-integrated dino with no bond above `COMFORT_BOND_FLOOR` (8) gets no one — telling in itself. Pure `world/comfort.ts` (`comforter` w/ floor + alpha tie-break, `comfortLine`, `comfortMemory`); WorldScene glue only; `homecoming.ts` + the keeper-repair seam (125) untouched; reward currency is the dino↔dino bond, not player points; additive save. 7 new unit + 2 new e2e; 9/9 AC pass; 212 unit / 70 e2e green. First beat to read the long-dormant bond graph; unblocks 132/133/136.
+
 ## Cycle 032 — 2026-06-05
 - BACKLOG-125: Greeting the runner-up — the repair half of the jealousy keystone. A homecoming's near-tied runner-up (the dino that sulks `😒` in BACKLOG-120) is marked pending-repair; greeting it flips the slight with an outsized bump (`greetGain` +6), a floating `You noticed me! 😊`, and a "the keeper noticed X after all" memory. One-shot per slight, transient (no save change). Pure additive `world/repair.ts`; WorldScene glue only; `homecoming.ts` untouched. 5 new unit + 3 new e2e; 9/9 AC pass; 202 unit / 67 e2e green. Closes the hurt→heal loop; unblocks 128/129.
 

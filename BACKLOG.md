@@ -163,7 +163,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-128 [emergent] Forgiving heart — a dino repaired before (125) files "the keeper always makes it right"; next time it's the jealous runner-up, its sulk softens (quicker/warmer turn). Repaired bonds learn to trust. Builds on 125.
 - [ ] BACKLOG-129 [emergent] Festering slight — a runner-up left un-repaired across multiple homecomings lets the slight harden into a tiny capped bond-cooling toward the *favored dino* (not the keeper), so chronic neglect curdles into dino-vs-dino rivalry. Builds on 120 / 125 / 113.
-- [~] BACKLOG-130 [social] Comforting nuzzle — when a dino sulks (😒), its closest dino-friend (highest bond) drifts over and throws a 🫂, nudging the funk down; friendship between dinos blunts jealousy. Builds on 120 / 013.
+- [x] BACKLOG-130 [social] Comforting nuzzle — when a dino sulks (😒), its closest dino-friend (highest bond) drifts over and throws a 🫂, nudging the funk down; friendship between dinos blunts jealousy. Builds on 120 / 013.  *(shipped: cycle 33, 2026-06-06)*
 - [ ] BACKLOG-131 [pokemon] Fondest memory — the collection book surfaces each dino's single happiest logged beat (favorite eaten, repaired, homecoming): a "what this dino treasures" line. Builds on 011 / 021.
 
 ## Cycle 33 lore additions — the court consoles itself (2026-06-06)
@@ -185,6 +185,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ---
 
 ## Closed log
+
+### Cycle 33 — 2026-06-06
+- BACKLOG-130 shipped — Comforting nuzzle: the dino-to-dino half of the attention economy. When the homecoming makes a near-tied runner-up sulk `😒` (BACKLOG-120), the sulker's closest friend (highest pairwise bond, BACKLOG-013) crosses the bowl and consoles it — a floating `There there, <sulker>. 🫂`, the pair's bond grows by COMFORT_BOND (+2), and the sulker keeps a "<friend> came over to comfort me" memory. No friend above COMFORT_BOND_FLOOR (8) → no one comes, and the 120 sulk + 125 keeper-repair seam stay byte-for-byte unchanged. Pure `world/comfort.ts` (comforter w/ floor + alpha tie-break, comfortLine, comfortMemory); WorldScene glue only; `homecoming.ts` untouched; reward currency is the dino↔dino bond; additive save. 7 unit + 2 e2e; 9/9 AC pass; 212 unit / 70 e2e green. First beat to read the long-dormant bond graph; unblocks 132/133/136.
 
 ### Cycle 32 — 2026-06-05
 - BACKLOG-125 shipped — Greeting the runner-up: a homecoming's jealous runner-up (BACKLOG-120) is marked pending-repair (transient, one-shot); greeting it gives an outsized affinity bump (`greetGain`+6), floats `You noticed me! 😊`, and files a "the keeper noticed X after all" memory, then clears. Pure `world/repair.ts` (repairGain/repairLine/repairMemory); WorldScene glue only (pendingRepair set in playHomecoming, consumed in recordGreet); homecoming.ts untouched; additive save. 5 unit + 3 e2e; 9/9 AC pass; 202 unit / 67 e2e green. Closes the hurt→heal loop; unblocks 128/129.

@@ -764,3 +764,35 @@ Implemented per plan, 4 files. New world/comfort.ts (comforter w/ floor+alpha ti
 
 ## 2026-06-06 — cycle 033 — qa — 9/9 criteria pass
 Build clean; 212 unit green (+7 comfort); e2e 64 passed + 6 failed on the full parallel run — the 6 were __ready boot timeouts in cycle-002/003 (the documented webllm-bundle parallel-load flake), all 7/7 green on an isolated --workers=1 re-run; the 2 new cycle-033-comfort specs pass in both the full and isolated runs (70/70 effective). web-llm boundary CLEAN. Additive save. Recommendation: APPROVE. State -> phase: validator-pending.
+
+## 2026-06-06 — cycle 033 — validator — APPROVED
+
+**Cycle 33 — APPROVED. The bowl learned to console itself.** For three cycles every feeling in the
+park pointed at you. You'd come home after a real absence and your closest dino would light up (112);
+the runner-up, near-tied for your affection, would catch the moment and turn away — `Hmph. 😒` (120);
+and if you walked over and said hello, you could make it right (125). Hurt, then heal, all of it a
+conversation between the keeper and one dino at a time. This cycle the camera finally turns sideways.
+Now when that runner-up sulks, it isn't left alone with it. The dino it's *closest to* — measured by
+the quiet pairwise bond that's been accruing every time two of them have shared a tile or a den since
+cycle 18 — crosses the bowl on its own and says `There there, <name>. 🫂`. No keeper required. Two
+dinos, a friendship the game has been tracking for fifteen cycles and never once showed you, doing
+something with it.
+
+It's small and it's exactly right. The console only comes from a *real* friend — a dino with no bond
+above the floor gets no one, and watching a poorly-connected loner sulk with nobody coming is its own
+unplanned little tragedy, emergent for free. The comforter can even, now and then, be the very dino
+the runner-up was jealous *of* — the favorite ambling over to reassure the rival it just edged out,
+which nobody wrote and which is the kind of thing this whole project exists to produce. And because
+consolation is itself a friendship beat, the two of them come away a notch closer; jealousy between
+dinos gets blunted by friendship between dinos. The keeper's repair (125) still works, untouched and
+parallel — you can make it up, *or* a friend can. The slight has two roads out of it now.
+
+Built to the line, mirroring last cycle's repair seam: a tiny pure module picks who comes and what
+they say (`world/comfort.ts`, Node-tested on its own), and the scene only floats the bubble, nudges
+the friend a step over, and ticks the bond up. The jealousy code from 120 wasn't touched — this cycle
+just *listens* to it. The save grew nothing; the bond bump rides the map that's persisted it all
+along. 7 new unit + 2 new e2e; full suite **212 unit / 70 e2e**, green — the lone wrinkle again the
+familiar boot flake (three cold Playwright workers each yanking the 6 MB model at once), spotless on
+a single worker. It's surfaced three cycles running now; someone should gate it. Leave the bowl
+running: someone will be glad you're back, someone else will be put out about it — and now, whether
+or not you notice, a friend will go sit with them. State → `phase: lore-pending`.
