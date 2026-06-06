@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shade, triceratopsPose, brontosaurusPose, parasaurolophusPose, walkFrames, paletteOf, SPECIES_ART } from '../../game/src/art/dinoArt';
+import { shade, triceratopsPose, brontosaurusPose, parasaurolophusPose, compsognathusPose, walkFrames, paletteOf, SPECIES_ART } from '../../game/src/art/dinoArt';
 
 describe('shade', () => {
   it('lightens toward white and darkens toward black, clamped', () => {
@@ -85,12 +85,43 @@ describe('parasaurolophusPose', () => {
   });
 });
 
+describe('compsognathusPose', () => {
+  const pose = compsognathusPose(0xc0683a, 0);
+
+  it('renders a biped rig: body + belly + back + head + snout + two feet, two eyes, tail + shins + forelimbs + neck polys', () => {
+    const ellipses = pose.filter((s) => s.kind === 'ellipse');
+    const circles = pose.filter((s) => s.kind === 'circle');
+    const polys = pose.filter((s) => s.kind === 'poly');
+    expect(ellipses.length).toBeGreaterThanOrEqual(6); // 2 feet + body + belly + back + head + snout
+    expect(circles).toHaveLength(2); // eyes
+    expect(polys.length).toBeGreaterThanOrEqual(4); // tail + two shins + forelimbs + neck
+  });
+
+  it('stands on exactly two feet — the cast’s only biped', () => {
+    // feet are the leg-coloured foot ellipses near the bottom of the box (y > 0.85)
+    const feet = pose.filter((s) => s.kind === 'ellipse' && (s.y ?? 0) > 0.85);
+    expect(feet).toHaveLength(2);
+  });
+
+  it('keeps a disciplined, limited palette', () => {
+    expect(paletteOf(pose).length).toBeLessThanOrEqual(8);
+  });
+
+  it('animates — opposite stride frames differ in foot position', () => {
+    const frames = walkFrames(0xc0683a, 4, compsognathusPose);
+    const footY = (frame: typeof frames[number]) =>
+      frame.filter((s) => s.kind === 'ellipse').map((s) => s.y);
+    expect(footY(frames[1])).not.toEqual(footY(frames[3]));
+  });
+});
+
 describe('SPECIES_ART registry', () => {
-  it('registers triceratops, brontosaurus, and parasaurolophus with distinct anim-key prefixes', () => {
+  it('registers triceratops, brontosaurus, parasaurolophus, and compsognathus with distinct anim-key prefixes', () => {
     expect(Object.keys(SPECIES_ART)).toEqual(
-      expect.arrayContaining(['triceratops', 'brontosaurus', 'parasaurolophus']),
+      expect.arrayContaining(['triceratops', 'brontosaurus', 'parasaurolophus', 'compsognathus']),
     );
     expect(SPECIES_ART.triceratops.prefix).toBe('tri'); // pinned: cycle-030 e2e expects /^tri_walk_/
+    expect(SPECIES_ART.compsognathus.prefix).toBe('comp');
     const prefixes = Object.values(SPECIES_ART).map((a) => a.prefix);
     expect(new Set(prefixes).size).toBe(prefixes.length); // all prefixes distinct
   });

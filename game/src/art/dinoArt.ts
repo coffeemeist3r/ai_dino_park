@@ -197,6 +197,67 @@ export function parasaurolophusPose(baseColor: number, phase: number): Shape[] {
   ];
 }
 
+/**
+ * A compsognathus seen in the same 3/4 top-down framing — but the cast's only
+ * biped, which is the whole silhouette. It stands on two striding legs under a
+ * slim, upright (taller-than-wide) body, a long thin neck rising to a small alert
+ * head with two big watchful eyes, tiny grasping forelimbs, and a long tail
+ * counter-balancing off behind. The two feet alternate fore/aft (not diagonal
+ * pairs) for a quick, jittery sprinter's gait — "quick to bolt".
+ */
+export function compsognathusPose(baseColor: number, phase: number): Shape[] {
+  const belly = shade(baseColor, 0.22);
+  const leg = shade(baseColor, -0.2);
+  const outline = shade(baseColor, -0.5);
+  const back = shade(baseColor, -0.32); // dorsal stripe — its watchful two-tone marking
+
+  const t = phase * Math.PI * 2;
+  const swing = Math.sin(t) * 0.05; // a longer stride than the lumbering quadrupeds
+  const bob = Math.abs(Math.sin(t)) * 0.025;
+
+  const foot = (x: number, y: number, dir: number): Shape => ({
+    kind: 'ellipse',
+    fill: leg,
+    stroke: outline,
+    x,
+    y: y + dir * swing,
+    rx: 0.06,
+    ry: 0.07,
+  });
+
+  return [
+    // long tail sweeping low off behind (drawn first so the body overlaps its root)
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.52, 0.66 - bob], [0.96, 0.82], [0.87, 0.9], [0.5, 0.74 - bob]] },
+
+    // two striding shins (biped) — alternate fore/aft with the foot swing
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.4, 0.6 - bob], [0.47, 0.6 - bob], [0.45, 0.93 + swing], [0.38, 0.93 + swing]] },
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.53, 0.6 - bob], [0.6, 0.6 - bob], [0.62, 0.93 - swing], [0.55, 0.93 - swing]] },
+    foot(0.41, 0.94, +1),
+    foot(0.58, 0.94, -1),
+
+    // slim, upright body (taller than wide) + belly highlight
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.55 - bob, rx: 0.16, ry: 0.22 },
+    { kind: 'ellipse', fill: belly, x: 0.5, y: 0.6 - bob, rx: 0.1, ry: 0.14 },
+    // dorsal stripe along the upper back
+    { kind: 'ellipse', fill: back, x: 0.5, y: 0.45 - bob, rx: 0.12, ry: 0.1 },
+
+    // tiny grasping forelimb nubs
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.42, 0.5 - bob], [0.46, 0.52 - bob], [0.37, 0.58 - bob]] },
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.58, 0.5 - bob], [0.54, 0.52 - bob], [0.63, 0.58 - bob]] },
+
+    // long slim neck rising to the small head
+    { kind: 'poly', fill: baseColor, stroke: outline, points: [[0.45, 0.42 - bob], [0.55, 0.42 - bob], [0.54, 0.2 - bob], [0.46, 0.2 - bob]] },
+
+    // small alert head + a pointed snout
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.16 - bob, rx: 0.09, ry: 0.08 },
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.09 - bob, rx: 0.045, ry: 0.035 },
+
+    // two big watchful eyes
+    { kind: 'circle', fill: EYE, x: 0.46, y: 0.15 - bob, r: 0.026 },
+    { kind: 'circle', fill: EYE, x: 0.54, y: 0.15 - bob, r: 0.026 },
+  ];
+}
+
 /** Pose function for one species' walk frame at a phase in [0,1). */
 export type PoseFn = (baseColor: number, phase: number) => Shape[];
 
@@ -208,6 +269,7 @@ export const SPECIES_ART: Record<string, { prefix: string; pose: PoseFn }> = {
   triceratops: { prefix: 'tri', pose: triceratopsPose },
   brontosaurus: { prefix: 'bro', pose: brontosaurusPose },
   parasaurolophus: { prefix: 'para', pose: parasaurolophusPose },
+  compsognathus: { prefix: 'comp', pose: compsognathusPose },
 };
 
 /** Bake `count` evenly-spaced phases of a species pose into a walk-cycle frame list. */
