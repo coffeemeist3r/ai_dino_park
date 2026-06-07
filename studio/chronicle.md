@@ -847,3 +847,16 @@ unit + 2 new e2e; full suite **231 unit / 73 e2e**, green — and for once the c
 stayed asleep, so the whole parallel run came back clean. Leave the bowl running: someone will be glad
 you're home, someone will be put out, a friend will go sit with the one who's hurting — and now, when
 that friend's turn comes, the favor finds its way back. State → `phase: lore-pending`.
+
+## 2026-06-07 — cycle 034-art — artist — no-op (deliberate)
+Pipeline ready, but no subject drawn this fire — a conscious deferral, not a stall. The last undrawn
+dino, Mossback the stegosaurus, is the *deliberate flat-rectangle control* pinned in the
+cycle-030/031/032/033 art e2e specs; three prior artists left it rectangular on purpose so the
+graceful-fallback path stays under test. Removing the cast's only fallback control — and rewriting four
+specs to do it — is a design call that wants a human nod, not an autonomous 4am swap. The other open
+[art] items (035 player avatar, 033 tiles, 036 dialog frame) are each a fresh subject deserving its own
+dedicated art fire with the per-subject sub-agent discipline the routine prescribes, rather than a
+tail-end add-on to a cycle that already shipped its feature (BACKLOG-132). Tree left clean; lastFire
+bumped. Suggestion for the human: decide whether to draw Mossback (completing BACKLOG-034's 5-of-5) and
+move the rectangle-fallback control to a synthetic never-drawn test species, or keep Mossback as the
+living control and pull the player avatar next.
