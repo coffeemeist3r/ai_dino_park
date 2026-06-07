@@ -80,8 +80,9 @@ After 3 REWORKs on the same item → auto-ABANDON. Validator enforces.
 The human can:
 1. **Edit CHARTER.md** — strongest. Next cycle obeys.
 2. **Edit BACKLOG.md** — reorder, add, remove. Routines pick up next cycle.
-3. **Edit code by hand** — discouraged. If you must, write `[HUMAN EDIT]` in the commit so Coder knows not to "fix" it.
-4. **`stop` a routine** — kill the cron job manually.
+3. **Drop an Idea Box nudge** — `studio/IDEABOX.md`. Lowest-influence: a raw seed the Lore-smith may reshape, defer, or decline. Steers attention without skipping the chain.
+4. **Edit code by hand** — discouraged. If you must, write `[HUMAN EDIT]` in the commit so Coder knows not to "fix" it.
+5. **`stop` a routine** — kill the cron job manually.
 
 The human will NOT:
 - Write code for new features (defeats the experiment)
@@ -100,3 +101,4 @@ The human will NOT:
 - 2026-05-25: Charter v0 — bootstrap.
 - 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.
 - 2026-06-03: v2 — **Art pipeline = procedural code, not an image API.** The Artist now authors flat-vector dinos/props as pure shape rigs (`game/src/art/`) baked to animated Canvas textures, via a dedicated sub-agent per character — no API keys, no asset downloads, no copyright risk (the key-gated raster pipeline had stalled for 29 cycles). Gen3-pixel mandate retired in favour of clean flat vector at the same footprint; STYLE-GUIDE rewritten to match. Human-approved. Seeds BACKLOG-117/118; reframes BACKLOG-033–036 as vector.
+- 2026-06-07: v3 — **Idea Box** added as a low-influence human override channel (`studio/IDEABOX.md`). Operator drops raw nudges; the Lore-smith considers them each cycle as seeds it may reshape, defer, or decline, then logs the call in the lore handoff. Never skips the chain. Wired into routine 1. Human-approved.
