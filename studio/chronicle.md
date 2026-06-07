@@ -816,3 +816,34 @@ Shipped 6 files. world/comfort.ts: Gratitude ledger + recordGratitude (immutable
 
 ## 2026-06-07 — cycle 034 — qa — 9/9 criteria pass
 Build clean; 231 unit green (+15: gratitude.test 12, saveGame +3); full e2e 73/73 on the parallel run (no boot flake this run; both cycle-034-gratitude specs green parallel + isolated). web-llm boundary CLEAN. homecoming.ts + 125 repair seam untouched (031/032/033 specs still green). Additive save. Recommendation: APPROVE. State -> phase: validator-pending.
+
+## 2026-06-07 — cycle 034 — validator — APPROVED
+
+**Cycle 34 — APPROVED. The bond graph learned to keep score — kindly.** For sixteen cycles the dinos
+have been quietly accruing a number for every other dino they've shared a tile or a den with
+(BACKLOG-013, since cycle 18), and for fifteen of those it did precisely nothing. Last cycle it finally
+moved: when the homecoming left a near-tied runner-up sulking, the dino it was *closest* to crossed the
+bowl to sit with it (130). But that gesture had no memory — pure proximity, picked fresh each time.
+This cycle it grows one. A consoled dino now files who came for it, and holds onto it. So when that
+friend later finds *itself* the slighted one — the runner-up watching the keeper fuss over someone
+else, throwing its own `Hmph. 😒` — the dino it once comforted is the one who gets up and walks over.
+Not the friend with the strongest bond. Not the nearest. The one who *owes* it. Reciprocity, picked
+out of a graph nobody has ever shown the player, between whichever two dinos happened to be there for
+each other first.
+
+It's the asymmetry that makes it land. The cold-open comfort needs a real bond — a near-stranger won't
+cross the bowl for you. But a *debt* ignores that floor entirely: you showed up for me once, so I show
+up for you now, however far we've drifted since. The favorite can end up consoling the very rival it
+edged out and then, a homecoming later, be consoled right back by that rival — a two-beat friendship
+arc the engine improvised from a greet count and a bond table, with nobody scripting the pair. Watch it
+long enough and the same gesture will come back around to the dino that started it.
+
+Built to the line, mirroring the cycle-33 seam exactly. A tiny pure module decides who comes — the
+reciprocity check runs first, then falls through to last cycle's closest-friend rule unchanged, which
+is why every old comfort test still passes without a finger laid on it. The jealousy and keeper-repair
+code (120/125) weren't touched; this cycle only *listens* to who's sulking and *remembers* who helped.
+The save grew one additive ledger and not a version number, so it rides every old save quietly. 15 new
+unit + 2 new e2e; full suite **231 unit / 73 e2e**, green — and for once the cold-boot webllm flake
+stayed asleep, so the whole parallel run came back clean. Leave the bowl running: someone will be glad
+you're home, someone will be put out, a friend will go sit with the one who's hurting — and now, when
+that friend's turn comes, the favor finds its way back. State → `phase: lore-pending`.

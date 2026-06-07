@@ -1,0 +1,19 @@
+# Cycle 34 — Verdict
+
+**Verdict:** APPROVED
+**Item:** BACKLOG-132 [emergent] Gratitude echo.
+
+## Rationale
+All 9 acceptance criteria PASS. `npm --prefix game run build` is clean; **231 unit** green (+12 in the new `gratitude (BACKLOG-132)` / `recordGratitude` describes, +3 in `saveGame`); the full e2e is **73/73** on the parallel run — and notably the documented cycle-002/003 webllm boot flake did *not* fire this time, so both new `cycle-034-gratitude` specs are green in the full parallel run *and* isolated. This is the cycle the bond graph stops only *receiving* behavior and starts *returning* it: cycle 30/31 taught a dino to notice your homecoming and a near-tied rival to sulk; cycle 33 sent that sulker's closest friend across the bowl to console it (130); **132 makes the console remembered and repaid** — the consoled dino files who came for it, and when that friend later finds *itself* the slighted runner-up, the dino it once comforted crosses over first, past a stronger-bond peer, floor or no floor.
+
+The cut is pure and minimal, mirroring the cycle-33 comfort seam. The whole mechanism lives in Node-tested `world/comfort.ts`: a `Gratitude` ledger (`consoled → comforters it owes`), an immutable+deduped `recordGratitude`, and an optional trailing `gratitude` param on `comforter` whose reciprocity override runs *before* the existing floor-gated closest-friend scan (highest-bond debtor, alpha tie-break, floor ignored), falling through to byte-identical cycle-33 behavior when there's no debt — which is exactly why the 7 existing `comfort.test.ts` cases still pass untouched. `saveGame.ts` gains an additive `gratitude` field parsed like `memory` (defaults `{}`, malformed rejected, **no `SAVE_VERSION` bump**). WorldScene does glue only: feed `this.gratitude` into the `comforter` call inside `playHomecoming`'s existing `hc.jealous` branch, `recordGratitude` after a beat, persist + restore it, expose `__gratitude`. Diff is the 3 planned source files; no scope creep, no new dependencies.
+
+No CHARTER trouble. `homecoming.ts` and the BACKLOG-125 keeper-repair seam are **untouched** (verified in diff) — 120/125/130 ship exactly as before; this cycle only *consumes* `jealous.name` and the bond graph. The `@mlc-ai/web-llm` boundary is intact (grep outside `game/src/ai/` is empty; `comfort.ts` imports only `social/bonds`). The reward currency stays the dino↔dino bond — reciprocity deepens a peer relationship, never the keeper's lever. Save stays additive.
+
+## Notes for the record
+- `reworkCount[BACKLOG-132]` was empty — clean first-pass approval.
+- The override **ignores the floor by design** (criterion 5): you cross the bowl for the friend who crossed it for you regardless of how close you've drifted since — the emotional point of reciprocity, and a deliberate asymmetry with the floor-gated cold-open comfort.
+- Test-staging discipline: greet gain is per-dino (≥3/greet), so the planner's "equal greet counts tie" sketch was wrong; the coder switched to **saturating** the pair to the 100-pt cap (×40) for an exact tie and chose roles by alpha order so saturation composes across two homecomings (Glade homecomes; Rex sulks→consoled by Mossback in round 1; Mossback sulks→echoed by debtor Rex over higher-bond Twitch in round 2). The pure logic was untouched by this — only the spec's setup.
+- The echo can, by design, make the *favorite* the debtor consoling its own former rival — the same un-special-cased poignancy noted in cycle 33, now able to recur in both directions.
+- This unblocks the rest of the reciprocity cluster: 137 (comfort circle — multiple debtors come), 138 (debt cleared — consume the ledger entry on repayment), 139 (thankful line), 140 (owes-one in the book), 141 (pay-it-forward). 123/124/128/129/131/135 attention-economy threads remain open.
+- Boot flake is dormant this run but not fixed — still a worthwhile future infra pickup (serial-boot project or Worker-gated webllm in tests).

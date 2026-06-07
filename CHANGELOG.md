@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 034 — 2026-06-07
+- BACKLOG-132: Gratitude echo — the bond graph (BACKLOG-013) bends back the other way. A dino consoled in a comfort beat (BACKLOG-130) files *who* came for it in a persisted, additive `gratitude` ledger (`consoled → comforters`); on a later homecoming where that comforter is itself the sulking runner-up (BACKLOG-120), the dino it once consoled crosses the bowl **first** — past a stronger-bond peer, ignoring `COMFORT_BOND_FLOOR`. Reciprocity, not just proximity. Pure `world/comfort.ts` (`Gratitude`, immutable+deduped `recordGratitude`, a reciprocity override on `comforter` evaluated before the unchanged closest-friend scan with the same alpha tie-break); WorldScene glue only; `homecoming.ts` + the keeper-repair seam (125) untouched; reward currency stays the dino↔dino bond; additive save (no `SAVE_VERSION` bump). 15 new unit + 2 new e2e; 9/9 AC pass; 231 unit / 73 e2e green. Unblocks 137/138/139/140/141.
+
 ## Cycle 033 — 2026-06-06
 - BACKLOG-130: Comforting nuzzle — the dino-to-dino half of the attention economy. When a homecoming makes a near-tied runner-up sulk `😒` (BACKLOG-120), the sulker's *closest friend* (highest pairwise bond, BACKLOG-013) crosses the bowl and consoles it: a floating `There there, <sulker>. 🫂`, the pair's bond grows by `COMFORT_BOND` (+2), and the slighted dino keeps a "<friend> came over to comfort me" memory. A poorly-integrated dino with no bond above `COMFORT_BOND_FLOOR` (8) gets no one — telling in itself. Pure `world/comfort.ts` (`comforter` w/ floor + alpha tie-break, `comfortLine`, `comfortMemory`); WorldScene glue only; `homecoming.ts` + the keeper-repair seam (125) untouched; reward currency is the dino↔dino bond, not player points; additive save. 7 new unit + 2 new e2e; 9/9 AC pass; 212 unit / 70 e2e green. First beat to read the long-dormant bond graph; unblocks 132/133/136.
 

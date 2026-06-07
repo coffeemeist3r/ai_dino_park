@@ -171,7 +171,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Next-up this cycle is the already-queued **BACKLOG-130** (comforting nuzzle, in the cycle-32 block);
 > these items extend it once it lands.
 
-- [~] BACKLOG-132 [emergent] Gratitude echo — a dino that got consoled (130) files *who* consoled it; when that friend later sulks, the consoled dino is first to drift over. Reciprocity hardens into the bond graph. Builds on 130.
+- [x] BACKLOG-132 [emergent] Gratitude echo — a dino that got consoled (130) files *who* consoled it; when that friend later sulks, the consoled dino is first to drift over. Reciprocity hardens into the bond graph. Builds on 130.  *(shipped: cycle 34, 2026-06-07)*
 - [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
 - [ ] BACKLOG-134 [pokemon] Closest-friend line in the book — the collection book shows each dino's highest-bond peer ("thick as thieves with Mossback"), making the dino↔dino graph legible at last. Builds on 013 / 021.
 - [ ] BACKLOG-135 [emergent] The loner — a dino whose every bond sits below a floor drifts to the edge and mopes (🥀); poor social integration becomes a visible personality tell, and a keeper greet lands extra-hard on it. Builds on 013.
@@ -197,6 +197,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ---
 
 ## Closed log
+
+### Cycle 34 — 2026-06-07
+- BACKLOG-132 shipped — Gratitude echo: the first reciprocal use of the dino↔dino bond graph (BACKLOG-013, dormant since cycle 18). When a dino is consoled (BACKLOG-130), it files *who* came for it in a persisted, additive `gratitude` ledger (`consoled → comforters`); on a later homecoming where that comforter is the sulking runner-up (BACKLOG-120), the dino it once consoled crosses the bowl first — past a stronger-bond peer, ignoring `COMFORT_BOND_FLOOR`. Pure `world/comfort.ts` (`Gratitude`, `recordGratitude` immutable+deduped, reciprocity override on `comforter` evaluated before the unchanged closest-friend scan); WorldScene glue only; `homecoming.ts` + the 125 repair seam untouched; additive save (no `SAVE_VERSION` bump). 15 unit + 2 e2e; 9/9 AC pass; 231 unit / 73 e2e green. Unblocks 137/138/139/140/141.
 
 ### Cycle 33 — 2026-06-06
 - BACKLOG-130 shipped — Comforting nuzzle: the dino-to-dino half of the attention economy. When the homecoming makes a near-tied runner-up sulk `😒` (BACKLOG-120), the sulker's closest friend (highest pairwise bond, BACKLOG-013) crosses the bowl and consoles it — a floating `There there, <sulker>. 🫂`, the pair's bond grows by COMFORT_BOND (+2), and the sulker keeps a "<friend> came over to comfort me" memory. No friend above COMFORT_BOND_FLOOR (8) → no one comes, and the 120 sulk + 125 keeper-repair seam stay byte-for-byte unchanged. Pure `world/comfort.ts` (comforter w/ floor + alpha tie-break, comfortLine, comfortMemory); WorldScene glue only; `homecoming.ts` untouched; reward currency is the dino↔dino bond; additive save. 7 unit + 2 e2e; 9/9 AC pass; 212 unit / 70 e2e green. First beat to read the long-dormant bond graph; unblocks 132/133/136.
