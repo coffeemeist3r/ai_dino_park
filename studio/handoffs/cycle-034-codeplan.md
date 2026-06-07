@@ -66,3 +66,16 @@ none.
 
 ## Estimated touch count
 ~6 files (3 source: comfort.ts, saveGame.ts, WorldScene.ts; 2 new tests; 1 extended test). Within budget; no split needed.
+
+## Shipped
+**Files touched (6, as planned):**
+- `game/src/world/comfort.ts` — added `Gratitude` type, `recordGratitude` (immutable + deduped), and an optional trailing `gratitude` param on `comforter` (reciprocity override evaluated first, ignores the floor, highest-bond debtor with alpha tie-break; falls through to the unchanged cycle-33 closest-friend scan).
+- `game/src/world/saveGame.ts` — `gratitude: Gratitude` added to `SaveData` + parsed in `deserialize` (mirrors the `memory` validation; defaults `{}`; rejects malformed). No `SAVE_VERSION` bump.
+- `game/src/scenes/WorldScene.ts` — `this.gratitude` field; `playHomecoming` passes it into `comforter` and `recordGratitude`s after a beat; persisted in `currentSaveData` + restored on load; `__gratitude` dev hook.
+- `tests/unit/gratitude.test.ts` (new, 12 tests), `tests/e2e/cycle-034-gratitude.spec.ts` (new, 2 tests), `tests/unit/saveGame.test.ts` (extended +3).
+
+**Deviations from plan:**
+- E2E determinism: the plan sketched greeting Sunny/Glade ×25. Greet gain is per-dino (≥3/greet), so equal greet *counts* do not tie — the intended runner-up was wrong. Switched to **saturating** the chosen pair to the 100-point cap (×40 ≥ the 34 needed at min gain 3) for an exact tie, and chose roles by alpha order (homecomer Glade, round-1 sulker Rex consoled by Mossback, round-2 sulker Mossback echoed by debtor Rex over higher-bond peer Twitch). Pure-module logic unchanged; only the test's staging changed.
+- `SaveData.gratitude` is **required** (not optional), matching `memory`/`bonds`; `currentSaveData` always supplies it and `deserialize` always defaults it, so old saves still load. Test SaveData literals updated where they construct full objects (only `saveGame.test.ts` needed it; others aren't type-checked by the build).
+
+**Status:** `npm --prefix game run build` ✅ clean. `npx vitest run` ✅ **231/231**. New e2e ✅ 2/2 on `--workers=1` (parallel run hits the documented cycle-002/003 webllm boot flake — QA to confirm). Dev server ✅ HTTP 200.

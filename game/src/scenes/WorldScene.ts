@@ -8,7 +8,7 @@ import { getWorldClock, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
-import { comforter, comfortLine, comfortMemory, COMFORT_BOND } from '../world/comfort';
+import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase } from '../world/dayNight';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
@@ -81,6 +81,8 @@ export class WorldScene extends Phaser.Scene {
   private pendingRepair: string | null = null;
   /** The last dino-to-dino comfort beat (BACKLOG-130): who consoled whom, or null. Transient. */
   private lastComfort: { comforter: string; sulker: string } | null = null;
+  /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
+  private gratitude: Gratitude = {};
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -926,8 +928,9 @@ export class WorldScene extends Phaser.Scene {
       if (rival) this.showBubble(rival, hc.jealous.line);
       // The slighted dino now waits for a make-up greet (BACKLOG-125).
       this.pendingRepair = hc.jealous.name;
-      // ...and its closest friend crosses over to console it (BACKLOG-130).
-      const who = comforter(hc.jealous.name, this.bonds, this.dinos.map((d) => d.name));
+      // ...and a friend crosses over to console it: a dino it once consoled comes first
+      // (gratitude echo, BACKLOG-132), else its closest friend above the floor (BACKLOG-130).
+      const who = comforter(hc.jealous.name, this.bonds, this.dinos.map((d) => d.name), this.gratitude);
       if (who) {
         const friend = this.dinos.find((d) => d.name === who);
         if (friend && rival) {
@@ -938,6 +941,8 @@ export class WorldScene extends Phaser.Scene {
         if (friend) this.showBubble(friend, comfortLine(who, hc.jealous.name));
         this.bonds = strengthen(this.bonds, who, hc.jealous.name, COMFORT_BOND);
         this.memory = remember(this.memory, hc.jealous.name, comfortMemory(who));
+        // The consoled dino files who came for it, so it can echo the favor later (BACKLOG-132).
+        this.gratitude = recordGratitude(this.gratitude, hc.jealous.name, who);
         this.lastComfort = { comforter: who, sulker: hc.jealous.name };
       }
     }
@@ -1217,6 +1222,7 @@ export class WorldScene extends Phaser.Scene {
       friendship: this.friendship,
       memory: this.memory,
       bonds: this.bonds,
+      gratitude: this.gratitude,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -1253,6 +1259,7 @@ export class WorldScene extends Phaser.Scene {
       this.friendship = save.friendship;
       this.memory = away.memory;
       this.bonds = away.bonds;
+      this.gratitude = save.gratitude ?? {};
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
       this.born = save.born ?? [];
@@ -1328,6 +1335,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__pendingRepair = () => this.pendingRepair;
     // any: dev-only Playwright hook — last dino-to-dino comfort beat {comforter, sulker} (or null)
     (window as any).__lastComfort = () => this.lastComfort;
+    // any: dev-only Playwright hook — gratitude ledger (consoled → comforters it owes), BACKLOG-132
+    (window as any).__gratitude = () => ({ ...this.gratitude });
     // any: dev-only Playwright hook — raw friendship points per dino (finer than hearts)
     (window as any).__friendshipPoints = () => ({ ...this.friendship });
     // any: dev-only Playwright hook — current player position

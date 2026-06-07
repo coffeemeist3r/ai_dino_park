@@ -11,6 +11,7 @@ import type { GameTime } from './clock';
 import type { Friendship } from '../social/friendship';
 import type { MemoryStore } from '../ai/memory';
 import type { Bonds } from '../social/bonds';
+import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
 
 export const SAVE_VERSION = 1;
@@ -22,6 +23,8 @@ export interface SaveData {
   friendship: Friendship;
   memory: MemoryStore;
   bonds: Bonds;
+  /** Who each dino owes a consolation back to (BACKLOG-132). Additive; absent → {}. */
+  gratitude: Gratitude;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -90,6 +93,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // gratitude is additive over v1 — absent in older saves (default {}); shape mirrors memory
+  // (name → string[]); reject only if malformed.
+  let gratitude: Gratitude = {};
+  if (o.gratitude !== undefined) {
+    if (typeof o.gratitude !== 'object' || o.gratitude === null) return null;
+    const entries = o.gratitude as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      const arr = entries[k];
+      if (!Array.isArray(arr) || !arr.every((e) => typeof e === 'string')) return null;
+      gratitude[k] = arr as string[];
+    }
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -151,6 +167,7 @@ export function deserialize(json: string): SaveData | null {
     friendship,
     memory,
     bonds,
+    gratitude,
     eggs,
     born,
     savedAt,

@@ -8,6 +8,7 @@ const sample: SaveData = {
   friendship: { Rex: 30 },
   memory: { Rex: ['said hello'] },
   bonds: { 'Mossback|Rex': 12 },
+  gratitude: { Sunny: ['Twitch'] },
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],
@@ -75,5 +76,26 @@ describe('saveGame', () => {
   it('returns null for a present-but-non-numeric scale', () => {
     const bad = JSON.stringify({ ...sample, scale: 'fast' });
     expect(deserialize(bad)).toBeNull();
+  });
+
+  it('round-trips a gratitude ledger (BACKLOG-132)', () => {
+    const withDebt: SaveData = { ...sample, gratitude: { Sunny: ['Twitch'], Glade: ['Rex', 'Mossback'] } };
+    expect(deserialize(serialize(withDebt))).toEqual(withDebt);
+  });
+
+  it('loads an older save lacking gratitude, defaulting it to {} (BACKLOG-132)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.gratitude).toEqual({});
+  });
+
+  it('returns null for a malformed gratitude value (BACKLOG-132)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, gratitude: { Rex: 5 } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, gratitude: { Rex: [1] } }))).toBeNull();
   });
 });

@@ -810,3 +810,6 @@ Picked the suggested next-up. Spec: extend world/comfort.ts so a consoled dino f
 
 ## 2026-06-07 — cycle 034 — code-planner — BACKLOG-132 gratitude echo
 ~6 files: extend world/comfort.ts (Gratitude ledger + recordGratitude + optional gratitude param on comforter, override ignores floor), additive `gratitude` in saveGame.ts (mirrors memory parse, no SAVE_VERSION bump), WorldScene glue (record/feed/persist + __gratitude hook). New gratitude.test.ts + cycle-034-gratitude.spec.ts (two-homecoming echo), extend saveGame.test.ts. No deps. State -> phase: coder-pending.
+
+## 2026-06-07 — cycle 034 — coder — BACKLOG-132 gratitude echo
+Shipped 6 files. world/comfort.ts: Gratitude ledger + recordGratitude (immutable/deduped) + optional gratitude param on comforter (reciprocity override, ignores floor, highest-bond debtor alpha tie-break). saveGame.ts: additive gratitude field (no SAVE_VERSION bump). WorldScene: record/feed/persist + __gratitude hook. homecoming.ts + 125 repair seam untouched. Build clean; 231/231 unit; new e2e 2/2 single-worker (parallel run hits documented webllm boot flake); dev HTTP 200. State -> phase: qa-pending.
