@@ -14,7 +14,15 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: false,
+    // Pre-transform the entry graph on server start so the first parallel cold
+    // boots hit warm modules instead of racing on-demand transforms (the e2e
+    // cold-start boot flake — cycle-002/003 et al).
+    warmup: { clientFiles: ['./src/main.ts'] },
   },
+  // Pre-bundle Phaser when the dev server starts. Otherwise Vite discovers it as a
+  // new dep on the first page load and re-optimizes mid-flight, stalling every other
+  // browser booting at the same time — the parallel-load boot flake under Playwright.
+  optimizeDeps: { include: ['phaser'] },
   build: {
     target: 'es2022',
     sourcemap: true,
