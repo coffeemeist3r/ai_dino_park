@@ -177,6 +177,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-135 [emergent] The loner — a dino whose every bond sits below a floor drifts to the edge and mopes (🥀); poor social integration becomes a visible personality tell, and a keeper greet lands extra-hard on it. Builds on 013.
 - [ ] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
 
+## Cycle 34 lore additions — the bond graph wakes up (2026-06-07)
+
+> Cycle 33 shipped BACKLOG-130 (comforting nuzzle) and cycle 34 ships **BACKLOG-132**
+> (gratitude echo) — the first time a dino↔dino bond does something *back*. These extend
+> reciprocity once the echo lands.
+
+- [ ] BACKLOG-137 [emergent] Comfort circle — if a sulker has *several* grateful debtors present (132), a small group (top 2) drifts over instead of one; consolation scales with how many friends you've helped. Builds on 130 / 132 / 124.
+- [ ] BACKLOG-138 [emergent] Debt cleared — once a debtor returns the favor (echoes a comfort, 132), the gratitude entry is consumed; kindness is a one-shot ledger, not a permanent claim, so reciprocity keeps cycling rather than locking one pair forever. Builds on 132.
+- [ ] BACKLOG-139 [social] Thankful line — a comforted dino, next time the keeper greets it, may name who was there for it ("Twitch sat with me"); gratitude surfaces in dialogue, not just selection. Builds on 132 / 011 / 051.
+- [ ] BACKLOG-140 [pokemon] Owes-one in the book — the collection book shows each dino's outstanding gratitude debts ("owes Twitch one"), making the reciprocity graph legible alongside the closest-friend line. Builds on 132 / 134 / 021.
+- [ ] BACKLOG-141 [emergent] Pay-it-forward — a dino comforted very recently, if it then witnesses *another* dino sulk, is primed to be that one's comforter even without the usual bond floor; warmth received spreads outward. Builds on 130 / 132 / 136.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
