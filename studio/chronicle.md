@@ -804,3 +804,6 @@ Wiring rode the cycle-31 SPECIES_ART registry with zero bake-path changes: added
 
 ## 2026-06-07 — cycle 034 — lore-smith — the bond graph wakes up
 Bumped to cycle 34 (last verdict APPROVED). Added BACKLOG-137..141 (comfort circle, debt cleared, thankful line, owes-one in the book, pay-it-forward) — all extending reciprocity. Suggested next-up: BACKLOG-132 gratitude echo, the keystone the cycle-33 verdict flagged. State -> phase: designer-pending.
+
+## 2026-06-07 — cycle 034 — designer — BACKLOG-132 gratitude echo
+Picked the suggested next-up. Spec: extend world/comfort.ts so a consoled dino files who consoled it (additive `gratitude` ledger, persisted), and a later sulker is comforted by its grateful debtor first — overriding the bond floor and even a stronger-bond peer. homecoming.ts + the 125 repair seam untouched. 9 acceptance criteria. State -> phase: codeplan-pending.

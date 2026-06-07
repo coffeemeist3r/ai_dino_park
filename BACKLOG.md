@@ -171,7 +171,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Next-up this cycle is the already-queued **BACKLOG-130** (comforting nuzzle, in the cycle-32 block);
 > these items extend it once it lands.
 
-- [ ] BACKLOG-132 [emergent] Gratitude echo — a dino that got consoled (130) files *who* consoled it; when that friend later sulks, the consoled dino is first to drift over. Reciprocity hardens into the bond graph. Builds on 130.
+- [~] BACKLOG-132 [emergent] Gratitude echo — a dino that got consoled (130) files *who* consoled it; when that friend later sulks, the consoled dino is first to drift over. Reciprocity hardens into the bond graph. Builds on 130.
 - [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
 - [ ] BACKLOG-134 [pokemon] Closest-friend line in the book — the collection book shows each dino's highest-bond peer ("thick as thieves with Mossback"), making the dino↔dino graph legible at last. Builds on 013 / 021.
 - [ ] BACKLOG-135 [emergent] The loner — a dino whose every bond sits below a floor drifts to the edge and mopes (🥀); poor social integration becomes a visible personality tell, and a keeper greet lands extra-hard on it. Builds on 013.
