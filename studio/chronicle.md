@@ -807,3 +807,6 @@ Bumped to cycle 34 (last verdict APPROVED). Added BACKLOG-137..141 (comfort circ
 
 ## 2026-06-07 — cycle 034 — designer — BACKLOG-132 gratitude echo
 Picked the suggested next-up. Spec: extend world/comfort.ts so a consoled dino files who consoled it (additive `gratitude` ledger, persisted), and a later sulker is comforted by its grateful debtor first — overriding the bond floor and even a stronger-bond peer. homecoming.ts + the 125 repair seam untouched. 9 acceptance criteria. State -> phase: codeplan-pending.
+
+## 2026-06-07 — cycle 034 — code-planner — BACKLOG-132 gratitude echo
+~6 files: extend world/comfort.ts (Gratitude ledger + recordGratitude + optional gratitude param on comforter, override ignores floor), additive `gratitude` in saveGame.ts (mirrors memory parse, no SAVE_VERSION bump), WorldScene glue (record/feed/persist + __gratitude hook). New gratitude.test.ts + cycle-034-gratitude.spec.ts (two-homecoming echo), extend saveGame.test.ts. No deps. State -> phase: coder-pending.
