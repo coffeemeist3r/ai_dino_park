@@ -875,3 +875,6 @@ File-level plan: new pure `social/tones.ts` (mirrors gifts.ts — TONES + toneSc
 
 ## 2026-06-08 — cycle 035 — coder — BACKLOG-142 player dialogue tones
 Shipped the dialogue-tones foundation. New pure `social/tones.ts` (Warm/Tease/Honest, toneScore mirroring giftScore, toneReaction loved+5/liked+3/neutral+1/clashed−2, lastToneLine). Additive `lastTone` map in saveGame (no version bump). WorldScene: greeting (E/Z) now opens a tone menu; 1/2/3 pick → recordTone applies the personality-fit delta, files a "the keeper …" memory, stores the last-tone trace surfaced in the next menu header, then shows the (unchanged) reply. BACKLOG-125 repair seam preserved — a make-up greet still earns repairGain over the tone delta. recordGreet/__greet left untouched. Build clean; 243 unit green (+12); dev render HTTP 200. State → phase: qa-pending.
+
+## 2026-06-08 — cycle 035 — qa — 9/9 criteria pass
+Build clean; 243 unit green; e2e 11/11 isolated (incl. all 4 new cycle-035-tones specs). Full parallel run hit only the documented cold-boot flake in cycle-002/003 (boot timeout on __ready), green when re-run isolated — not a regression. WebLLM boundary intact (tones.ts imports only personality); save additive (no version bump). All 9 acceptance criteria PASS. Recommendation: APPROVE. State → phase: validator-pending.
