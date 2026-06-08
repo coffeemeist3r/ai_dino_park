@@ -878,3 +878,31 @@ Shipped the dialogue-tones foundation. New pure `social/tones.ts` (Warm/Tease/Ho
 
 ## 2026-06-08 — cycle 035 — qa — 9/9 criteria pass
 Build clean; 243 unit green; e2e 11/11 isolated (incl. all 4 new cycle-035-tones specs). Full parallel run hit only the documented cold-boot flake in cycle-002/003 (boot timeout on __ready), green when re-run isolated — not a regression. WebLLM boundary intact (tones.ts imports only personality); save additive (no version bump). All 9 acceptance criteria PASS. Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-08 — cycle 035 — APPROVED — the keeper finds a voice
+For thirty-four cycles you watched. Tonight you get to *answer*. Walk up to a dino and press E and
+the park no longer just hands you a hello — it asks how you want to give one: **[1] Warm  [2] Tease
+[3] Honest.** Pick warm with Sunny and she glows; try the same on prickly Mossback and it lands
+soft and a little cloying; rib bold Twitch with a tease and he takes it as play, but try teasing
+timid little Glade and you'll feel the room cool. Same three words, five different dinos, five
+different reactions — because each one weighs your tone through the personality it was born with,
+not a script. And it *remembers*: greet Rex honestly today and tomorrow the menu greets you back —
+"Last time you were honest with them." — the first time the bowl has ever held onto how *you*
+treated *it*.
+
+This is the night the Idea Box finally opened, too. Six nudges the operator had been quietly
+stacking up got read and reshaped into foundation beats — a bigger connected world, a sky-wide
+night event the whole cast gathers to watch, a plantable plot, a resource-gathering spine, a HUD
+polish pass — and the dialogue-choices one became tonight's ship. Five of the six wait their turn;
+each is its own arc, not a one-night job.
+
+Built to the line and no further. All the judgment lives in a tiny pure module that scores a tone
+against a personality exactly the way gifts already do; the scene only opens a menu and remembers
+the answer. The reply the dino speaks back is, on purpose, still the same as ever — letting the
+words themselves catch your tone is next cycle's job (BACKLOG-148). The jealousy-and-repair
+machinery from the last few cycles wasn't touched; a make-up greet to a sulking runner-up still
+gets its outsized warmth no matter which tone you pick. Save grew one quiet field, no version
+bump, rides every old save. 9 new unit + 4 new e2e; full suite **243 unit / 77 e2e**, green when
+the cold-boot flake isn't racing the cycle-002/003 specs (it was tonight; isolated, all green).
+Leave the bowl running and start *talking* — kindly, or with a grin, or straight — and watch each
+of them decide for themselves what to make of you. State → `phase: lore-pending`.
