@@ -866,3 +866,6 @@ Chased the long-running Playwright boot flake (specs timing out in boot() on `wi
 
 ## 2026-06-08 — cycle 035 — lore-smith — the keeper finds a voice; Idea Box opens
 First firing of the Idea Box: all six standing operator nudges processed and seeded as foundation beats (142 dialogue tones, 143 connected zone, 144 world-scale night event, 145 plantable plot, 146 resource-gathering spine, 147 HUD polish), plus native follow-ups 148/149 extending the tones arc. Next-up BACKLOG-142 — the first two-way interaction: greet a dino and pick a tone (Warm/Tease/Honest) that it weighs by personality and remembers. State → phase: designer-pending.
+
+## 2026-06-08 — cycle 035 — designer — BACKLOG-142 player dialogue tones
+Spec'd the dialogue-choices foundation: greeting a dino (E/Z) now opens a Warm/Tease/Honest tone menu; the pick applies a personality-fit affinity delta (same tone, different verdict per dino), files a "the keeper …" memory, and persists a last-tone trace surfaced in the menu next time. Deterministic core (delta + memory + trace) is the test target; the LLM reply stays untouched (tone-coloured reply split to 148). Additive save, BACKLOG-125 repair seam preserved. State → phase: codeplan-pending.
