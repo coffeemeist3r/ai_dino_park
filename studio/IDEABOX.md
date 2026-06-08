@@ -19,18 +19,18 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-- `[new]` (2026-06-07) **The UI could be better.** The current bowl/HUD reads as functional-but-plain — labels, plaque, hint bar all flat. Push the whole presentation up a notch: nicer typography, more polished HUD framing, better visual hierarchy between the world and the chrome. Not prescribing specifics — make it feel more finished. (Operator nudge; reshape freely.)
-
-- `[new]` (2026-06-07) **A bigger world — connected maps.** Right now it's one bowl/screen. Think original Game Boy Pokémon: multiple distinct areas (zones/biomes) that connect via edges so you walk from one into the next, forming a larger world rather than a single fixed view. Dinos and the keeper move between areas. Long-horizon — likely a multi-cycle arc, so the studio should think about how to seed it incrementally (e.g. one extra connected zone first) rather than all at once. (Operator nudge; reshape & split freely.)
-
-- `[new]` (2026-06-07) **World-scale events.** Big happenings that affect the whole bowl/world at once — weather/seasonal shifts, migrations, disasters, festivals, discoveries, or other rare beats the cast reacts to collectively. Left deliberately open by the operator. (Operator nudge; reshape & define freely.)
-
-- `[new]` (2026-06-07) **Player dialogue choices that shape relationships over time.** Right now talking to a dino is mostly one-way (greet → reply). Make interactions branching and consequential: the player picks *what to say* or *how to act* in a moment, and that choice nudges the dino's memory/affinity/persona-read so future interactions evolve — a dino remembers you were kind/teasing/honest and reacts differently down the line. Stardew/RPG dialogue-tree flavor, but powered by the LLM brain + the existing memory store (BACKLOG-011) and relationship/affinity systems, so the consequences emerge rather than being hand-scripted. Cross-links the persona work (-103) and dialogue context (-051). Multi-cycle; could start small with one branching moment that leaves a remembered trace. (Operator nudge; reshape, split & sequence freely.)
-
-- `[new]` (2026-06-07) **Farming.** Stardew-flavored growing layer that dovetails with the resources/crafting/civ nudge below: dinos (and/or the keeper) plant, tend, and harvest crops over in-game time — a renewable food/resource source feeding the gathering→crafting→settlement loop. Ties to the existing food/feeding systems (favorites BACKLOG-061, feeding hatch -059) and the realtime clock (-105) for grow cycles. Pairs naturally with seasons (-028). Multi-cycle; start small (one plantable plot/crop) before automation or dino-run farms. (Operator nudge; reshape, split & sequence freely.)
-
-- `[new]` (2026-06-07) **Resources → crafting → building → community/politics.** A whole emergent civilization layer: dinos gather raw resources, craft items from them, and use those to build structures → settlements → expansion. On top of that, light governance: dinos vote for leaders and on ideas/rules for their communities. The exciting part is tying this to the AI collaboration — dinos *deciding together* via their LLM brains, not scripted. Big and Project-Sid-flavored (cross-links the existing emergent backlog: religion/governance BACKLOG-030/031, roles BACKLOG-032, crafting BACKLOG-029, inference governor BACKLOG-107). Definitely a multi-cycle arc — wants a deliberate breakdown into small shippable beats, foundations first (resources/gathering) before the governance payoff. (Operator nudge; reshape, split & sequence freely.)
+_(none — all entries below processed cycle 35, 2026-06-08)_
 
 ## Resolved
 
-_(none yet)_
+- `[seeded BACKLOG-147]` (2026-06-07) **The UI could be better.** Seeded as a focused HUD/chrome polish pass (typography + framing + hierarchy). Lowest of the six against the CHARTER emergence bias (UI polish < dino surprise), so queued but not prioritized; sits alongside the open `[art]` chrome items (036 dialog frame). — processed cycle 35.
+
+- `[seeded BACKLOG-143]` (2026-06-07) **A bigger world — connected maps.** Reshaped to the *foundation beat* only: one adjacent zone reachable by walking off a bowl edge, with the cast/keeper transitioning between the two. The full multi-zone arc stays out of one cycle on purpose; 143 is the spine others build on. — processed cycle 35.
+
+- `[seeded BACKLOG-144]` (2026-06-07) **World-scale events.** Reshaped to one rare *collective* beat the whole cast reacts to at once (a night-sky event — meteor shower / aurora — they gather and gawp at), kept distinct from the existing seasons/weather item (-028) so it's a discrete emergent moment, not a weather system. — processed cycle 35.
+
+- `[seeded BACKLOG-142]` (2026-06-07) **Player dialogue choices that shape relationships over time.** Reshaped to the *first branching moment that leaves a remembered trace*: a greeting **tone** pick (Warm / Tease / Honest) that applies a personality-fit affinity delta and files a remembered tone-trace, read back on the next interaction. The LLM-coloured reply and the longer reputation arc are split off to 148/149 so the foundation ships deterministically (testable without a model). **Suggested next-up this cycle.** — processed cycle 35.
+
+- `[seeded BACKLOG-145]` (2026-06-07) **Farming.** Reshaped to one plantable plot + one crop that grows over realtime-clock days and can be harvested into the existing food set (feeds the hatch/favorites loop). Automation and dino-run farms deferred. — processed cycle 35.
+
+- `[seeded BACKLOG-146]` (2026-06-07) **Resources → crafting → building → community/politics.** Foundations-first, per the operator's own steer: seeded only the *gathering spine* (a raw resource appears in the bowl; a dino picks it up and carries it / banks it). Crafting, building, and governance stay deferred to the existing emergent backlog (029/030/031/032/107) until the gathering spine exists. — processed cycle 35.
