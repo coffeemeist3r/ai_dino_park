@@ -869,3 +869,6 @@ First firing of the Idea Box: all six standing operator nudges processed and see
 
 ## 2026-06-08 — cycle 035 — designer — BACKLOG-142 player dialogue tones
 Spec'd the dialogue-choices foundation: greeting a dino (E/Z) now opens a Warm/Tease/Honest tone menu; the pick applies a personality-fit affinity delta (same tone, different verdict per dino), files a "the keeper …" memory, and persists a last-tone trace surfaced in the menu next time. Deterministic core (delta + memory + trace) is the test target; the LLM reply stays untouched (tone-coloured reply split to 148). Additive save, BACKLOG-125 repair seam preserved. State → phase: codeplan-pending.
+
+## 2026-06-08 — cycle 035 — code-planner — BACKLOG-142 plan
+File-level plan: new pure `social/tones.ts` (mirrors gifts.ts — TONES + toneScore/toneReaction + lastToneLine), additive `lastTone` map in saveGame.ts (no version bump), thin WorldScene glue (tone menu state, 1/2/3 bindings, recordTone twin of recordGreet preserving the 125 repair seam, save wiring, dev hooks incl. new __friendship/__lastTone/__pickTone). Reuse: giftScore math, bumpPoints, remember/recall, DialogBox, repair.ts. ~6 files, at budget. State → phase: coder-pending.
