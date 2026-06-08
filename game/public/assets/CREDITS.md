@@ -11,3 +11,4 @@ STYLE-GUIDE.
 | Brontosaurus walk loop (Sunny) | `game/src/art/dinoArt.ts` (`brontosaurusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-04 |
 | Parasaurolophus walk loop (Glade) | `game/src/art/dinoArt.ts` (`parasaurolophusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-05 |
 | Compsognathus walk loop (Twitch) | `game/src/art/dinoArt.ts` (`compsognathusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-06 |
+| Stegosaurus walk loop (Mossback) | `game/src/art/dinoArt.ts` (`stegosaurusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-08 |

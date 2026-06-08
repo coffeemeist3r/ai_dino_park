@@ -18,8 +18,9 @@ test('Glade the parasaurolophus renders via the procedural pipeline and ambles (
   const sunny = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Sunny'));
   expect(sunny!.artKey).toMatch(/^bro_walk_/);
 
-  // a still-undrawn species (stegosaurus) keeps the flat-rectangle fallback
-  const moss = await page.evaluate(() => ((window as W).__dinoArt as (n: string) => Art)('Mossback'));
-  expect(moss!.artKey).toBeNull();
-  expect(moss!.animating).toBe(false);
+  // stegosaurus is drawn as of cycle 35-art; the rectangle-fallback control now rides a
+  // genuine never-drawn species (CHARTER art-fallback policy).
+  const hasArt = (s: string) => page.evaluate((sp) => ((window as W).__hasArt as (x: string) => boolean)(sp), s);
+  expect(await hasArt('pterodactyl')).toBe(false); // never-drawn → flat-rectangle fallback
+  expect(await hasArt('stegosaurus')).toBe(true);
 });

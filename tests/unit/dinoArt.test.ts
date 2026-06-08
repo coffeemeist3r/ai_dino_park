@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { shade, triceratopsPose, brontosaurusPose, parasaurolophusPose, compsognathusPose, walkFrames, paletteOf, SPECIES_ART } from '../../game/src/art/dinoArt';
+import { shade, triceratopsPose, brontosaurusPose, parasaurolophusPose, compsognathusPose, stegosaurusPose, walkFrames, paletteOf, SPECIES_ART } from '../../game/src/art/dinoArt';
 
 describe('shade', () => {
   it('lightens toward white and darkens toward black, clamped', () => {
@@ -115,13 +115,43 @@ describe('compsognathusPose', () => {
   });
 });
 
+describe('stegosaurusPose', () => {
+  const pose = stegosaurusPose(0x4a7a4a, 0);
+
+  it('renders a stegosaur rig: barrel + belly + head + snout + four feet, two eyes, tail + thagomizer + plate polys', () => {
+    const ellipses = pose.filter((s) => s.kind === 'ellipse');
+    const circles = pose.filter((s) => s.kind === 'circle');
+    const polys = pose.filter((s) => s.kind === 'poly');
+    expect(ellipses.length).toBeGreaterThanOrEqual(6); // 4 feet + body + belly + head + snout
+    expect(circles).toHaveLength(2); // eyes
+    expect(polys.length).toBeGreaterThanOrEqual(6); // tail + 2 thagomizer spikes + ≥4 dorsal plates
+  });
+
+  it('wears its signature double row of dorsal plates (≥4 kite polys up the spine)', () => {
+    const plates = pose.filter((s) => s.kind === 'poly' && (s.points?.length ?? 0) === 4);
+    expect(plates.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it('keeps a disciplined, limited palette', () => {
+    expect(paletteOf(pose).length).toBeLessThanOrEqual(8);
+  });
+
+  it('animates — opposite stride frames differ in foot position', () => {
+    const frames = walkFrames(0x4a7a4a, 4, stegosaurusPose);
+    const footY = (frame: typeof frames[number]) =>
+      frame.filter((s) => s.kind === 'ellipse').map((s) => s.y);
+    expect(footY(frames[1])).not.toEqual(footY(frames[3]));
+  });
+});
+
 describe('SPECIES_ART registry', () => {
-  it('registers triceratops, brontosaurus, parasaurolophus, and compsognathus with distinct anim-key prefixes', () => {
+  it('registers all five cast species with distinct anim-key prefixes', () => {
     expect(Object.keys(SPECIES_ART)).toEqual(
-      expect.arrayContaining(['triceratops', 'brontosaurus', 'parasaurolophus', 'compsognathus']),
+      expect.arrayContaining(['triceratops', 'brontosaurus', 'parasaurolophus', 'compsognathus', 'stegosaurus']),
     );
     expect(SPECIES_ART.triceratops.prefix).toBe('tri'); // pinned: cycle-030 e2e expects /^tri_walk_/
     expect(SPECIES_ART.compsognathus.prefix).toBe('comp');
+    expect(SPECIES_ART.stegosaurus.prefix).toBe('steg');
     const prefixes = Object.values(SPECIES_ART).map((a) => a.prefix);
     expect(new Set(prefixes).size).toBe(prefixes.length); // all prefixes distinct
   });

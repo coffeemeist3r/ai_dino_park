@@ -258,6 +258,81 @@ export function compsognathusPose(baseColor: number, phase: number): Shape[] {
   ];
 }
 
+/**
+ * A stegosaurus seen in the same 3/4 top-down framing — feet near y=1, head toward
+ * the camera near y=0. The whole silhouette is two things: the **staggered double row
+ * of kite-shaped dorsal plates** marching up the spine, and the **thagomizer** — the
+ * cluster of bone tail-spikes off the back. The head is tiny and set low (a stego tell).
+ * Same diagonal-pair foot swing + body bob as the other quadrupeds drive the amble.
+ *
+ * (First draft used plain triangles in a single centred row — it read as a frill, not
+ * plates; reworked to staggered kites in two columns so the double-row silhouette pops.)
+ */
+export function stegosaurusPose(baseColor: number, phase: number): Shape[] {
+  const belly = shade(baseColor, 0.22);
+  const plate = shade(baseColor, 0.12);
+  const leg = shade(baseColor, -0.2);
+  const outline = shade(baseColor, -0.5);
+
+  const t = phase * Math.PI * 2;
+  const swing = Math.sin(t) * 0.035;
+  const bob = Math.abs(Math.sin(t)) * 0.02;
+
+  const foot = (x: number, y: number, dir: number): Shape => ({
+    kind: 'ellipse',
+    fill: leg,
+    stroke: outline,
+    x,
+    y: y + dir * swing,
+    rx: 0.07,
+    ry: 0.09,
+  });
+
+  // a kite-shaped dorsal plate centred at (cx,cy): tall point up, short point down.
+  const kite = (cx: number, cy: number, w: number, h: number): Shape => ({
+    kind: 'poly',
+    fill: plate,
+    stroke: outline,
+    points: [
+      [cx, cy - h],
+      [cx + w, cy],
+      [cx, cy + h * 0.45],
+      [cx - w, cy],
+    ],
+  });
+
+  return [
+    // feet first — diagonal pairs, same scheme as the other quadrupeds
+    foot(0.3, 0.8, +1),
+    foot(0.66, 0.92, +1),
+    foot(0.7, 0.8, -1),
+    foot(0.34, 0.92, -1),
+
+    // thick tail off behind, tipped with the thagomizer bone spikes
+    { kind: 'poly', fill: leg, stroke: outline, points: [[0.64, 0.64], [0.93, 0.84], [0.7, 0.74]] },
+    { kind: 'poly', fill: BONE, stroke: outline, points: [[0.89, 0.83], [0.99, 0.79], [0.92, 0.88]] },
+    { kind: 'poly', fill: BONE, stroke: outline, points: [[0.87, 0.88], [0.97, 0.9], [0.89, 0.93]] },
+
+    // low, broad barrel body + belly highlight
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.64 - bob, rx: 0.3, ry: 0.24 },
+    { kind: 'ellipse', fill: belly, x: 0.5, y: 0.68 - bob, rx: 0.19, ry: 0.14 },
+
+    // the signature — a staggered double row of dorsal plates up the spine
+    kite(0.45, 0.5 - bob, 0.06, 0.12),
+    kite(0.56, 0.46 - bob, 0.06, 0.13),
+    kite(0.46, 0.62 - bob, 0.07, 0.13),
+    kite(0.57, 0.6 - bob, 0.06, 0.12),
+
+    // small head + short snout, set low at the front (tiny-headed stegosaur)
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.28 - bob, rx: 0.1, ry: 0.09 },
+    { kind: 'ellipse', fill: baseColor, stroke: outline, x: 0.5, y: 0.2 - bob, rx: 0.055, ry: 0.045 },
+
+    // eyes
+    { kind: 'circle', fill: EYE, x: 0.46, y: 0.28 - bob, r: 0.024 },
+    { kind: 'circle', fill: EYE, x: 0.54, y: 0.28 - bob, r: 0.024 },
+  ];
+}
+
 /** Pose function for one species' walk frame at a phase in [0,1). */
 export type PoseFn = (baseColor: number, phase: number) => Shape[];
 
@@ -270,6 +345,7 @@ export const SPECIES_ART: Record<string, { prefix: string; pose: PoseFn }> = {
   brontosaurus: { prefix: 'bro', pose: brontosaurusPose },
   parasaurolophus: { prefix: 'para', pose: parasaurolophusPose },
   compsognathus: { prefix: 'comp', pose: compsognathusPose },
+  stegosaurus: { prefix: 'steg', pose: stegosaurusPose },
 };
 
 /** Bake `count` evenly-spaced phases of a species pose into a walk-cycle frame list. */

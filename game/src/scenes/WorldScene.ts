@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { makeBrain, replyPrefix, type NPCBrain } from '../ai/brain';
 import { currentModel } from '../ai/deviceProbe';
 import { Dino } from '../entities/dino';
+import { hasArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -789,6 +790,9 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       return d ? { artKey: d.artKey, animating: d.isAnimating() } : null;
     };
+    // any: dev-only Playwright hook — does a species have a procedural rig? The art e2e use
+    // this for the rectangle-fallback control now that every cast member is drawn (BACKLOG-034).
+    (window as any).__hasArt = (species: string) => hasArt(species);
     (window as any).__meetings = () => ({ ...this.meetings });
     (window as any).__stepWorld = () => {
       this.forceStep();
