@@ -21,6 +21,7 @@ import {
   type Friendship,
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
+import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -83,6 +84,12 @@ export class WorldScene extends Phaser.Scene {
   private lastComfort: { comforter: string; sulker: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
+  /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
+  private toneMenuOpen = false;
+  private toneTarget: Dino | null = null;
+  private toneMenuText = '';
+  /** Each dino's last greeting tone (BACKLOG-142); persisted, surfaced as a remembered trace. */
+  private lastTone: Record<string, ToneId> = {};
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -133,6 +140,11 @@ export class WorldScene extends Phaser.Scene {
     // E is the primary interact key; Z kept as an alias.
     this.interactKey.on('down', () => this.handleInteract());
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z).on('down', () => this.handleInteract());
+
+    // Tone menu (BACKLOG-142): 1/2/3 pick a greeting tone while the menu is open.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ONE).on('down', () => void this.pickTone('warm'));
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.TWO).on('down', () => void this.pickTone('tease'));
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.THREE).on('down', () => void this.pickTone('honest'));
 
     this.addControlsHint();
 
@@ -793,6 +805,25 @@ export class WorldScene extends Phaser.Scene {
     });
 
     (window as any).__memory = () => ({ ...this.memory });
+    // dev-only: tone state (BACKLOG-142) — friendship points, last-tone map, and live menu.
+    (window as any).__friendship = () => ({ ...this.friendship });
+    (window as any).__lastTone = () => ({ ...this.lastTone });
+    (window as any).__toneMenuOpen = () => this.toneMenuOpen;
+    (window as any).__toneMenuText = () => (this.toneMenuOpen ? this.toneMenuText : null);
+    // dev-only: open the tone menu for a named dino, then pick a tone — drives the flow
+    // without positioning the player. Returns the pickTone promise.
+    (window as any).__pickTone = (name: string, id: ToneId) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return Promise.resolve();
+      this.openToneMenu(d);
+      return this.pickTone(id);
+    };
+    // dev-only: just open the menu for a named dino (to read the remembered-trace header)
+    (window as any).__openToneMenu = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (d) this.openToneMenu(d);
+      return this.toneMenuText;
+    };
     // dev-only: spread one piece of gossip speaker→listener, returns the planted rumor
     (window as any).__spreadGossip = (a: string, b: string) => {
       const g = spreadGossip(this.memory, a, b);
@@ -1076,7 +1107,12 @@ export class WorldScene extends Phaser.Scene {
     this.applyIdle();
   }
 
-  private async handleInteract(): Promise<void> {
+  private handleInteract(): void {
+    // While the tone menu is up, E/Z cancels it (1/2/3 choose); a normal dialog closes.
+    if (this.toneMenuOpen) {
+      this.closeToneMenu();
+      return;
+    }
     if (this.dialogOpen) {
       this.dialog.hide();
       this.dialogOpen = false;
@@ -1086,9 +1122,39 @@ export class WorldScene extends Phaser.Scene {
     const target = this.nearestDino();
     if (!target) return;
 
-    this.recordGreet(target.name, target.traits);
+    // Greeting is now a choice (BACKLOG-142): open the tone menu; the reply comes after a pick.
+    this.openToneMenu(target);
+  }
 
+  /** Open the Warm/Tease/Honest menu for a dino, showing the remembered last-tone trace. */
+  private openToneMenu(target: Dino): void {
+    this.toneTarget = target;
+    this.toneMenuOpen = true;
     this.dialogOpen = true;
+    const options = TONES.map((t, i) => `[${i + 1}] ${t.label}`).join('  ');
+    const trace = lastToneLine(this.lastTone[target.name]);
+    this.toneMenuText = `Greet ${target.name} — ${options}` + (trace ? `\n${trace}` : '');
+    this.dialog.show(this.toneMenuText);
+  }
+
+  private closeToneMenu(): void {
+    this.toneMenuOpen = false;
+    this.toneTarget = null;
+    this.toneMenuText = '';
+    this.dialog.hide();
+    this.dialogOpen = false;
+  }
+
+  /** Resolve a tone pick: apply the affinity delta + memory + trace, then show the reply. */
+  private async pickTone(id: ToneId): Promise<void> {
+    if (!this.toneMenuOpen || !this.toneTarget) return;
+    const target = this.toneTarget;
+    this.toneMenuOpen = false;
+    this.toneMenuText = '';
+
+    this.recordTone(target.name, id, target.traits);
+
+    // Reply path is unchanged from the old greet flow (tone-coloured reply is BACKLOG-148).
     this.dialog.show(`${target.name}: ...`);
     const now = getWorldClock().now();
     const reply = await target.greet({
@@ -1097,6 +1163,27 @@ export class WorldScene extends Phaser.Scene {
       recentMemory: recall(this.memory, target.name),
     });
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
+    this.toneTarget = null;
+  }
+
+  /**
+   * Tone-aware twin of recordGreet (BACKLOG-142): applies the personality-fit tone delta, files
+   * a tone memory, and records the last-tone trace. The BACKLOG-125 repair seam wins over the
+   * tone delta — a make-up greet still earns the outsized repair bump and its 😊 beat.
+   */
+  private recordTone(name: string, id: ToneId, traits?: Dino['traits']): void {
+    const repairing = this.pendingRepair === name;
+    const gain = repairing ? repairGain(traits) : toneReaction(toneById(id), traits).delta;
+    this.friendship = bumpPoints(this.friendship, name, gain);
+    this.memory = remember(this.memory, name, repairing ? repairMemory(name) : toneById(id).memory);
+    this.lastTone = { ...this.lastTone, [name]: id };
+    if (repairing) {
+      this.pendingRepair = null;
+      const dino = this.dinos.find((d) => d.name === name);
+      if (dino) this.showBubble(dino, repairLine(name));
+    }
+    void this.saveGame();
+    this.refreshHeartsPanel();
   }
 
   /** Raise a dino's affinity from a greet, persist, and refresh the panel. */
@@ -1223,6 +1310,7 @@ export class WorldScene extends Phaser.Scene {
       memory: this.memory,
       bonds: this.bonds,
       gratitude: this.gratitude,
+      lastTone: this.lastTone,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -1260,6 +1348,7 @@ export class WorldScene extends Phaser.Scene {
       this.memory = away.memory;
       this.bonds = away.bonds;
       this.gratitude = save.gratitude ?? {};
+      this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
       this.born = save.born ?? [];

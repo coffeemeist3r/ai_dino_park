@@ -160,3 +160,22 @@ See Test plan.
 ## Estimated touch count
 **~6 files** (tones.ts NEW, saveGame.ts MOD, WorldScene.ts MOD, tones.test.ts NEW,
 saveGame.test.ts MOD, cycle-035-tones.spec.ts NEW). At budget; no split needed.
+
+---
+
+## Shipped
+
+**Files touched (6, as planned):**
+- `game/src/social/tones.ts` (NEW) — `ToneId`/`Tone`/`TONES` (Warm/Tease/Honest), `toneScore` (mirrors `giftScore`), `toneReaction` (loved+5 / liked+3 / neutral+1 / clashed−2), `toneById`, `toneLabel`, `lastToneLine`.
+- `game/src/world/saveGame.ts` (MOD) — additive `lastTone: Record<string,string>`; parsed like `friendship` but string-valued; default `{}`; **no `SAVE_VERSION` bump**.
+- `game/src/scenes/WorldScene.ts` (MOD) — tone-menu state (`toneMenuOpen`/`toneTarget`/`toneMenuText`/`lastTone`), 1/2/3 key bindings, `handleInteract` now opens the menu, `openToneMenu`/`closeToneMenu`/`pickTone`/`recordTone` (repair-seam-preserving twin of `recordGreet`), save assembly + restore, dev hooks `__friendship`/`__lastTone`/`__toneMenuOpen`/`__toneMenuText`/`__pickTone`/`__openToneMenu`.
+- `tests/unit/tones.test.ts` (NEW) — 9 tests: structure, scoring sign, personality-fit verdicts (warm/tease/honest across opposite dinos), thresholds, `lastToneLine`.
+- `tests/unit/saveGame.test.ts` (MOD) — +3: `lastTone` round-trip, older-save default `{}`, malformed rejection; `sample` gains `lastTone`.
+- `tests/e2e/cycle-035-tones.spec.ts` (NEW) — 4 specs: menu structure + clean boot, digit-key selection + tone memory, affinity delta + trace, save-persist + remembered-trace header.
+
+**Deviations:** none material. Added a second dev hook `__openToneMenu` (read the remembered-trace header without picking) beyond the planned set — still test-only, no production behavior. `recordGreet` + the `__greet` hook left untouched as planned (legacy/repair specs unaffected).
+
+**Build:** ✅ `tsc -b && vite build` clean.
+**Unit:** ✅ 243 passed (was 231; +9 tones, +3 saveGame).
+**Dev render:** ✅ `curl http://localhost:5173/` → HTTP 200.
+**E2E:** deferred to QA stage (full `playwright test`).

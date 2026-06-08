@@ -25,6 +25,8 @@ export interface SaveData {
   bonds: Bonds;
   /** Who each dino owes a consolation back to (BACKLOG-132). Additive; absent → {}. */
   gratitude: Gratitude;
+  /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
+  lastTone: Record<string, string>;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -106,6 +108,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // lastTone is additive over v1 — absent in older saves (default {}); string values only
+  // (a tone id; kept as plain string so saveGame stays free of a tones import and tolerant of
+  // hand-edited ids). Reject only if malformed.
+  let lastTone: Record<string, string> = {};
+  if (o.lastTone !== undefined) {
+    if (typeof o.lastTone !== 'object' || o.lastTone === null) return null;
+    const entries = o.lastTone as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (typeof entries[k] !== 'string') return null;
+      lastTone[k] = entries[k] as string;
+    }
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -168,6 +183,7 @@ export function deserialize(json: string): SaveData | null {
     memory,
     bonds,
     gratitude,
+    lastTone,
     eggs,
     born,
     savedAt,
