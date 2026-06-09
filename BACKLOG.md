@@ -204,6 +204,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-148 [ai] Tone-aware reply — feed the remembered tone (142) into the dino's greeting/reply context so a teased dino ribs back, a warmly-treated one is fonder, an honestly-treated one is franker; the consequence surfaces in *what the dino says*, not just affinity. Behind the NPCBrain boundary, deterministic fallback line per tone. Builds on 142 / 051 / 055.
 - [ ] BACKLOG-149 [emergent] Tone reputation — a dino's accumulated tone-history settles into a read on the keeper (trusts / wary / playful), surfaced in the collection book; how you've *mostly* treated a dino becomes a visible standing. Builds on 142 / 021.
 
+## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
+
+> Cycle 36 ships the queued **BACKLOG-144** (world-scale night event) — the first time the
+> *whole cast* reacts to one thing at once. These extend that collective beat into distinct,
+> personality-shaded reactions and tie it back into the existing loops.
+
+- [ ] BACKLOG-150 [emergent] Stargazer's awe varies by temperament — a curious/bold dino rushes to the night-sky event and lingers right under it; a timid one hangs back at the cluster's edge and only peeks. Same spectacle, a different read per personality (gather radius / lingering shaped by traits). Builds on 144 / 010.
+- [ ] BACKLOG-151 [emergent] Slept through the wonder — a low-energy dino (or one already deep in a huddle) may sleep through the sky event entirely and, next morning, only hear about it secondhand as gossip ("you should have SEEN the sky"). Distinctness through who-missed-it. Builds on 144 / 019 / 109.
+- [ ] BACKLOG-152 [pokemon] Skywatch in the book — the collection book records which dinos witnessed the last sky event together ("watched the meteors with Sunny & Glade"); shared awe becomes legible standing. Builds on 144 / 021.
+- [ ] BACKLOG-153 [emergent] Wish on a falling star — during a meteor shower a dino may make a quiet wish tied to its strongest want (a lonely one wishes for a friend, a long-unfed one for food); surfaces as a wistful line + a remembered "wished on a star" memory that can colour a later greeting. Builds on 144 / 011 / 051.
+- [ ] BACKLOG-154 [social] Star-fragment keepsake — a rare sky event leaves a one-off collectible (a fallen ✨ "star fragment") on the ground the keeper can pick up and later gift; ties the cosmic beat back into the gifting loop as a treasured item every dino loves. Builds on 144 / 015.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
