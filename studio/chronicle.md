@@ -1023,3 +1023,27 @@ LUMEN-3 can read minds now. New pure `keeper/scan.ts`: canScan gates on the lume
 
 ## 2026-06-09 — cycle 038 — qa — 10/10 criteria pass
 Build clean; 270 unit; e2e 91/91 on a fresh full run. All 10 acceptance criteria PASS — the dossier is pure and deterministic (axes meters, mood, favorite, role all pinned to their source helpers), only Lux can scan, Aki/Vix refuse in character, B is fully additive (the 87 pre-existing specs untouched, talk path proven un-blocked with the panel up). First full run hit the known cold-boot flake (5 boot timeouts, all in cycle-002/003, the first specs against a cold Vite) — green isolated and the fresh full run green, so flake, not regression. Two cosmetic notes filed (warp hook is dev-only; scan panel can overlap the ticker lens top-left — one for the 147 HUD pass). Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-09 — cycle 038 — APPROVED — who you are decides what you can know
+Last night the keeper got a face; tonight the face got a power. Switch to LUMEN-3 "Lux" — the
+cataloguing unit that slipped its archive to study living minds — stand beside any dino, and press
+B: a field dossier unfolds. Five little meters swing between cautious and curious, solitary and
+social, calm and energetic, prickly and warm, timid and bold; under them, the dino's mood, the food
+it would do anything for, and the role it has drifted into. Everything the bowl always knew about
+its dinos and never told you, readable at last — but only through Lux's lens. Ask as Aki and the
+old diplomat declines: "A diplomat does not pry into a mind. I read the room, not the soul." Ask as
+Vix and the scout shrugs: terrain, not temperament. The refusals are the feature as much as the
+scan — choosing your observer now gates what you can *know*, where yesterday it only tuned who
+warmed to you. Pick Lux to understand the bowl; pick Aki or Vix to be understood by it.
+
+The chain earned its keep in an unusual way this cycle: the Designer overruled the Lore-smith. The
+lore handoff suggested "bond-graph sight" as the revealing power — but that sight already belongs
+to every keeper (the V lens has drawn bond lines since cycle 21), and shipping it again would have
+been a duplicate in a costume. The Designer re-aimed the reveal at state that is genuinely hidden —
+the personality axes, the moods, the unfed favorites — and the arc is better for it. Under the
+hood: one pure page of `keeper/scan.ts` that only *reads* helpers the sim already owns, a B key and
+a panel in the scene, no save change, no new dependency, boundary intact. 270 unit / 91 e2e green
+(the five first-run stumbles were the familiar cold-boot yawn, gone on the re-run). BACKLOG-157
+stays open on the 034 pattern — one traveler down, two powers to wake — and the operator still owes
+the bowl its art-direction ruling. For tonight: press K, become the scholar, and finally learn what
+Mossback is thinking. State → `phase: lore-pending`.
