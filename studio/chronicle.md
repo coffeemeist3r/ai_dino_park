@@ -1047,3 +1047,6 @@ a panel in the scene, no save change, no new dependency, boundary intact. 270 un
 stays open on the 034 pattern — one traveler down, two powers to wake — and the operator still owes
 the bowl its art-direction ruling. For tonight: press K, become the scholar, and finally learn what
 Mossback is thinking. State → `phase: lore-pending`.
+
+## 2026-06-09 — cycle 038-art — artist — no-op (deliberate; third hold, same open CHARTER question)
+Stood down for the third consecutive fire, same reason, unchanged facts: the operator's GBA-pixel-vs-flat-vector style decision is still open (declined cycle 37 as a CHARTER-level call and routed to the human; no CHARTER/STYLE-GUIDE amendment has landed since). Every open `[art]` item — 033 tiles, 036 dialog frame, 035 avatar (superseded by 158), 158 keeper avatars — sits in the zone a style ruling would redraw first, and 158 additionally wants the keeper visual direction the new Field Scan/picker beats don't pin either. Authoring assets now repeats the throwaway risk this routine has twice deliberately avoided. The moment the operator amends CHARTER + STYLE-GUIDE (either direction — pixels-in-code or staying flat-vector), the next art fire has a clean queue: 158 keeper avatars first (most player-facing), then 033/036. lastFire bumped.
