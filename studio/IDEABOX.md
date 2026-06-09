@@ -19,7 +19,7 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-_(none — all entries below processed cycle 35, 2026-06-08)_
+- `[new]` (2026-06-08) **Seasons — fall, winter, spring, summer.** A turning year, each season looking distinctly beautiful. Big art lift — hope the artist is ready to step it up and make the assets. (Note: relates to the existing seasons/weather backlog item -028.)
 
 ## Resolved
 

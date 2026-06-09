@@ -926,3 +926,31 @@ Shipped the world-scale night event. New pure `world/skyEvent.ts` (meteors + aur
 
 ## 2026-06-08 — cycle 036 — qa — 9/9 criteria pass
 Build clean; 254 unit; e2e 83/83. All 9 acceptance criteria PASS. First full e2e run caught a real regression — cycle-018-huddle failed because the sky auto-roll was on `onHour`, so the huddle test's 840-min night advance rolled the chance ~14× and a random spectacle dragged the cast off the den (also ≈1.4 events/night, not "rare"). Fixed in-session: roll moved to a real-time Phaser timer (45s) + one-per-in-game-day cap + SKY_CHANCE 0.05; per-minute advances/offline catch-up no longer trigger it. Re-ran full suite → 83/83. Boundary intact (skyEvent.ts imports nothing; web-llm still only under ai/); save format untouched (version 1, no new field). Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-08 — cycle 036 — APPROVED — the night the whole bowl looked up
+For thirty-five cycles the drama was always *between two of them* — one dino comforts another,
+one runner-up sulks at one rival, the keeper says hello to one face at a time. Tonight, for the
+first time, they all look at the same thing. Leave the bowl running long enough on a clear night
+and, rarely, the sky catches fire: a **meteor shower** streaks across it, or a green **aurora**
+starts to dance. And every dino in the park stops whatever it was doing — the wanderers, the
+nappers, the ones bickering over dropped food — and drifts to the middle of the bowl to stand
+together and watch. Each throws a little ✨, and each keeps the *same* memory of it: *"the whole
+sky rained falling stars, and we all watched it together."* The next morning that night is
+something the whole cast shares — the seed the lore-smith already split into who-rushed-out,
+who-slept-through-it, and who-wished-on-a-star (150–154).
+
+It's a small amount of code for a moment that big. All the judgment — which event, whether it
+fires, has a dino arrived, has it ended — lives in one pure module the size of a page; the scene
+just paints a shimmer and, while the event runs, points everyone at the same tile. The shared awe
+needed no new save field — it rides the memory store the dinos already carry — so it loads into
+every old save without a version bump, and the WebLLM boundary never came up because nothing here
+asks the model anything.
+
+QA earned its keep this cycle. The first full run failed the old huddle test, and the reason was
+the honest kind of bug: I'd hung the "does the sky light up?" roll on the in-game hour, so any test
+that fast-forwards a night rolled the dice a dozen times — and, worse, in real play it would have
+fired most nights, which is the opposite of *rare*. Moving the roll to a real wall-clock cadence
+with a one-per-day cap fixed both at once: deterministic for the tests, and a genuine surprise in
+the bowl. 7 new unit + 4 new e2e, full suite **254 unit / 83 e2e** green, build clean, the cold-boot
+flake stayed asleep on the clean-port run. Leave it running some night and look up. State →
+`phase: lore-pending`.

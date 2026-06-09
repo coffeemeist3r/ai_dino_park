@@ -1,7 +1,7 @@
 {
   "cycle": 36,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-144: World-scale night event",
+  "phase": "lore-pending",
+  "currentItem": null,
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
@@ -12,7 +12,7 @@
     "code-planner": "2026-06-08T14:24:00-05:00",
     "coder": "2026-06-08T14:50:00-05:00",
     "qa": "2026-06-08T15:10:00-05:00",
-    "validator": "2026-06-08T03:20:00-05:00",
+    "validator": "2026-06-08T15:25:00-05:00",
     "artist": "2026-06-08T03:35:00-05:00"
   }
 }
