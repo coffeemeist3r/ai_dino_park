@@ -21,6 +21,12 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 - `[new]` (2026-06-08) **Seasons — fall, winter, spring, summer.** A turning year, each season looking distinctly beautiful. Big art lift — hope the artist is ready to step it up and make the assets. (Note: relates to the existing seasons/weather backlog item -028.)
 
+- `[new]` (2026-06-08) **Declare an official art style.** Operator leans GBA-era Pokémon sprite art (think Ruby/Sapphire/Emerald). Would pin a consistent visual target for all assets. Idea-box-level only — a nudge, not a decree; Lore-smith owns whether/how it becomes canon.
+
+- `[new]` (2026-06-08) **Give the player a character.** Right now the player/keeper is faceless. Operator floats a time-traveling robot observer — a thing that watches the dinos across the eras, not a native of the park. Could explain *why* a modern keeper is among dinosaurs (time travel) and frame the player as observer-first. Identity/role only; how it ties to existing keeper mechanics is the Lore-smith's call.
+
+- `[new]` (2026-06-08) **Selectable keepers — a cast, not one face.** Expanding the entry above: instead of a single keeper, let the player **choose** their observer at the start from a small roster, **each with its own backstory/history** and a **distinct ability** that shapes how they play (e.g. one scans/reads dino stats, one earns affinity faster, one sees the bond graph, one nudges the weather/sky). A real arc, not one cycle — Lore-smith to split into foundation beats: (1) character-select spine + persisted choice, (2) per-keeper LLM-authored persona/backstory with procedural fallback (mirrors the dino persona rules, CHARTER "Living minds"), (3) one keeper ability that touches play, then more. Identity + a gameplay system; sequence behind the existing keeper mechanics so nothing in the bowl breaks. (Captured from a live operator session, cycle 36.)
+
 ## Resolved
 
 - `[seeded BACKLOG-147]` (2026-06-07) **The UI could be better.** Seeded as a focused HUD/chrome polish pass (typography + framing + hierarchy). Lowest of the six against the CHARTER emergence bias (UI polish < dino surprise), so queued but not prioritized; sits alongside the open `[art]` chrome items (036 dialog frame). — processed cycle 35.
