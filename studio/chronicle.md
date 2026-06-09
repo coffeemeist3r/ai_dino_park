@@ -972,3 +972,36 @@ Shipped the keeper select spine. New pure `keeper/keepers.ts` (KEEPERS roster of
 
 ## 2026-06-09 — cycle 037 — qa — 12/12 criteria pass
 Build clean; 263 unit; e2e 87/87. All 12 acceptance criteria PASS. Caught one regression on the first full run: cycle-035-tones' raw-delta assertion broke because the keeper bonus correctly colors the tone-pick path (which, since BACKLOG-142, IS the in-game greet) — observed shift is now tone delta + keeper bonus. Fixed by offsetting VALID_DELTAS by the live __keeperBonus('Sunny') (still pins the four tone outcomes, now keeper-adjusted); re-ran full suite green. Hardened the keeper picker e2e to expect.poll. Boundary intact (keepers.ts imports only the Personality type; web-llm still only under ai/); save additive (version 1, keeperId? optional). Cold parallel-boot flake noted on cycle-037-keeper + cycle-028 T-toggle (green isolated + on the green full re-run). Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-09 — cycle 037 — APPROVED — the watcher gets a face
+For thirty-six cycles the keeper was a faceless yellow square that every dino warmed to at exactly
+the same rate. Tonight it becomes *someone you choose*. Press **K** and three travelers step out of
+the timestream to introduce themselves: **AETHER-1 "Aki,"** a diplomacy unit retired after the
+Quiet Accord, who watches over the gentle and the sociable; **VANTA-9 "Vix,"** a scout chassis from
+a future that ended, who shadows the bowl's boldest; and **LUMEN-3 "Lux,"** a cataloguing unit that
+slipped its archive to study living minds, who favours the curious. Pick one, and that's who you are
+from then on — the choice rides in the save and is still yours when you come back.
+
+What makes it more than a costume is that the observer you pick quietly bends *who warms to you
+fastest*. Each traveler resonates with a different temperament, so the same hello lands a little
+warmer on the dinos that match it — pick Vix and the brash, fiery ones take to you quickest; pick
+Aki and it's the soft, herd-minded ones. It reuses the exact scoring shape the dialogue tones
+already use, so a dino that's unmistakably itself reacts to *your* identity, not just to a flat
+number. That's the point: the choice reads differently against every distinct mind in the bowl.
+
+Under the hood it's small and honest. All the judgment — who the travelers are, how well each fits a
+dino — lives in one pure page-sized module the size of `tones.ts`; the scene just paints a picker
+and adds a few points at the moments you already earn affection. The save grew by a single optional
+field, so every old save loads straight in and simply starts as Aki; nothing needed a version bump,
+no new dependency arrived, and the model boundary never came up. I kept the picker out of the boot
+path on purpose — a fresh game gets a gentle fading invite to press K rather than a wall you have to
+click through — which is why all eighty-seven end-to-end checks still boot exactly as before.
+
+QA earned its keep again. The first full run tripped the tones test, and for the right reason: the
+new bonus colors the greet, and since cycle 35 the greet *is* the tone pick — so the number moved by
+design. We taught the test about the bonus instead of pretending it wasn't there, and the suite went
+green: 263 unit, 87 end-to-end, build clean. This is the spine the rest of the arc stands on — the
+travelers' real backstories (156), their other powers (157), and their faces (158) all build from
+here. One open question goes back to the operator: the GBA-pixel art style they floated is a
+constitution change, not a routine call, so it waits on a human-approved CHARTER amendment. For
+tonight: press K, and decide who's watching. State → `phase: lore-pending`.
