@@ -216,6 +216,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-153 [emergent] Wish on a falling star — during a meteor shower a dino may make a quiet wish tied to its strongest want (a lonely one wishes for a friend, a long-unfed one for food); surfaces as a wistful line + a remembered "wished on a star" memory that can colour a later greeting. Builds on 144 / 011 / 051.
 - [ ] BACKLOG-154 [social] Star-fragment keepsake — a rare sky event leaves a one-off collectible (a fallen ✨ "star fragment") on the ground the keeper can pick up and later gift; ties the cosmic beat back into the gifting loop as a treasured item every dino loves. Builds on 144 / 015.
 
+## Cycle 37 lore additions — the watcher gets a face (2026-06-09)
+
+> The operator's live-session steer: the player is a **time-traveling robot observer**, chosen from
+> a small roster, each with its own history + a distinct ability. Seeded foundation-first per the
+> operator's own steer. Cycle 37 ships **BACKLOG-155** (the select spine). GBA-pixel-style nudge
+> declined (needs a CHARTER amendment, not a routine flip); seasons seeded foundation-only as 159.
+
+- [ ] BACKLOG-155 [core] Selectable keeper — the player isn't a faceless square but one of a small roster of **time-traveling robot observers**, chosen at the start and persisted. Each has its own designation/era/backstory and a **distinct passive ability that touches play**: the foundation ships the spine + one ability — a personality **affinity-fit** (the chosen observer makes dinos whose temperament matches it warm to you a little faster). Pure `keeper/keepers.ts` (roster + `keeperById` + `keeperBonus`, mirrors tones.ts/gifts.ts scoring); a `K` picker overlay (number-key select, like the tone menu); additive `keeperId` in the save (older saves default to the first observer); a non-blocking first-time prompt to choose (no modal on boot, to keep every existing e2e clean). The richer LLM-authored backstory (156), the other abilities (157), and avatars (158) split off. Idea Box arc, first beat. Builds on 010 / 016 / 142.
+- [ ] BACKLOG-156 [ai] Per-keeper persona authored from lore — give each selectable observer a real **persona/backstory** authored the way dino personas are (CHARTER "Living minds"): LLM-authored-from-lore where the device allows, deterministic procedural fallback otherwise, generate-once/cache/persist. Mirrors BACKLOG-103's pipeline for the keeper. Builds on 155 / 103.
+- [ ] BACKLOG-157 [emergent] More keeper abilities — beyond the affinity-fit of 155, the distinct per-observer powers the operator floated: one scans/reads dino stats, one sees the bond graph, one nudges the weather/sky event. One ability per cycle, each a real read on which observer you chose. Builds on 155 / 144 / 021.
+- [ ] BACKLOG-158 [art] Keeper avatars — vector idle + walk rigs for each selectable observer, robot-observer silhouettes distinct from the dinos; supersedes the single-avatar framing of 035 (which assumed one paleontologist keeper). Builds on 155 / 117.
+- [ ] BACKLOG-159 [social] Season foundation — a turning-year clock layered on the realtime day (105): the in-game date advances through spring/summer/fall/winter, each shifting a per-season palette tint and firing a one-off "the season turned to X" beat. Foundation only — the four-season *art* lift and weather (-028) stay deferred. Idea Box (seasons), first beat. Builds on 007 / 008 / 105.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
