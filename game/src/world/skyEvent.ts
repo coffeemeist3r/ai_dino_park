@@ -45,8 +45,16 @@ export const SKY_EVENTS: ReadonlyArray<SkyEvent> = [
 /** Open tile near the centre of the bowl the cast gathers on — distinct from the den (10,11). */
 export const SKY_GATHER_TILE = { tileX: 10, tileY: 7 };
 
-/** Per-in-game-hour chance a sky event begins on a clear night. Rare enough to feel special. */
-export const SKY_CHANCE = 0.18;
+/**
+ * Chance a sky event begins on each roll. The roll is driven off a *real-time* cadence
+ * (SKY_ROLL_INTERVAL_MS) rather than in-game hours, so offline catch-up and per-minute clock
+ * advances don't retroactively conjure events; combined with the one-per-in-game-day cap in
+ * WorldScene this keeps the spectacle a rare, live surprise.
+ */
+export const SKY_CHANCE = 0.05;
+
+/** How often (real ms) the live game rolls for a sky event. */
+export const SKY_ROLL_INTERVAL_MS = 45_000;
 
 function clamp01(n: number): number {
   return Math.max(0, Math.min(0.999999, n));

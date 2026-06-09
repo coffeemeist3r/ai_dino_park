@@ -123,3 +123,13 @@ store), no new dependency, NPCBrain boundary untouched (skyEvent.ts imports noth
 - `npm run test:unit` — ✅ 254/254 (was 247; +7 skyEvent).
 - New e2e `cycle-036-sky` — ✅ 4/4 (first run hit the known cold-server boot flake; green on a clean
   port). Page boots + renders (e2e boot waits on `__ready`).
+
+**QA-surfaced fix (regression, corrected in-session):** the first full e2e run failed
+`cycle-018-huddle`. Root cause: the auto-roll was wired to `getWorldClock().onHour`, so any test
+that advances the clock per-minute across night hours (huddle/context/egg) rolled the 0.18/hour
+chance many times and a random spectacle yanked the cast off the den. This was *also* a design bug —
+~1.4 events/night is not "rare". Corrected by driving the roll off a **real-time Phaser timer**
+(`SKY_ROLL_INTERVAL_MS` 45s) instead of in-game hours — offline catch-up / `__advanceMinutes` no
+longer trigger it, and a short headless test never waits 45s — plus a **one-per-in-game-day cap**
+(`skyFiredDay`) and a lower `SKY_CHANCE` (0.05). `__triggerSky` (the forced e2e path) is unchanged.
+Re-ran the **full** suite: ✅ 83/83 e2e, 254/254 unit, build clean.

@@ -17,6 +17,7 @@ import {
   skyExpired,
   SKY_GATHER_TILE,
   SKY_EVENTS,
+  SKY_ROLL_INTERVAL_MS,
   type SkyEvent,
   type SkyEventId,
 } from '../world/skyEvent';
@@ -125,6 +126,8 @@ export class WorldScene extends Phaser.Scene {
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
   private skyStartAbsMin = 0;
+  /** In-game day of the last sky event — caps the spectacle at one per day. */
+  private skyFiredDay = -1;
   private skyGazers = new Set<string>();
   private skyOverlay!: Phaser.GameObjects.Rectangle;
   private skyTween?: Phaser.Tweens.Tween;
@@ -448,8 +451,9 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(7)
       .setVisible(false);
 
-    // Rare per-in-game-hour roll on a clear night.
-    getWorldClock().onHour(() => this.maybeStartSky());
+    // Roll on a real-time cadence (NOT in-game hours): offline catch-up and per-minute clock
+    // advances must not retroactively spawn events, and a short headless test never waits this long.
+    this.time.addEvent({ delay: SKY_ROLL_INTERVAL_MS, loop: true, callback: () => this.maybeStartSky() });
 
     // dev-only Playwright hooks
     (window as any).__skyEvent = () => this.activeSky?.id ?? null;
@@ -464,6 +468,7 @@ export class WorldScene extends Phaser.Scene {
 
   private maybeStartSky(): void {
     if (this.activeSky) return;
+    if (getWorldClock().now().day === this.skyFiredDay) return; // at most one spectacle per in-game day
     const ev = rollSkyEvent({
       isClearNight: this.isClearNight(),
       active: false,
@@ -476,6 +481,7 @@ export class WorldScene extends Phaser.Scene {
   private startSky(ev: SkyEvent): void {
     this.activeSky = ev;
     this.skyStartAbsMin = this.absMinNow();
+    this.skyFiredDay = getWorldClock().now().day;
     this.skyGazers.clear();
     this.skyOverlay.setFillStyle(ev.color, 0.18).setVisible(true);
     this.skyTween?.stop();
