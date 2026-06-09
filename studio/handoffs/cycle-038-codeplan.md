@@ -96,3 +96,28 @@ helpers — fresh-save init, `expect.poll` hardening, single-worker-friendly):
 ## Estimated touch count
 
 ~5 files (1 new src, 1 modified src, 2 new tests, BACKLOG annotation). At budget.
+
+## Shipped
+
+**Files touched:**
+- `game/src/keeper/scan.ts` (new) — canScan / ScanSubject / scanLines (10-cell ▮▯ meters off AXES,
+  moodFromTraits, favoriteFood) / scanRefusal (distinct aether + vanta lines, '' for lumen, generic
+  guard for unknown ids).
+- `game/src/scenes/WorldScene.ts` — scanPanel + scanOpen fields, B key → toggleScan (refusal via
+  showBubble, never sets dialogOpen), setupScan() in create(), `B scan` hint, dev hooks
+  __scanOpen/__canScan/__scanLines/__warpTo.
+- `tests/unit/scan.test.ts` (new) — 7 tests per plan.
+- `tests/e2e/cycle-038-scan.spec.ts` (new) — 4 tests per plan (open/close/refusal/talk-path guard).
+
+**Deviations:**
+1. Added `__warpTo(name)` dev hook (not in plan's hook list) — no existing spec walks the player,
+   and the B-press tests need adjacency. Warps the player onto the dino so a wander tick between
+   warp and key press can't break nearest-range.
+2. scanPanel NOT added to `hudElements` — the plan said "match heartsPanel", and heartsPanel is
+   itself not in hudElements (only clockHud/brainHud/giftHud/plaque/lensLabel are). Matched the
+   real heartsPanel behavior.
+3. e2e criterion 3's refusal assertion uses the existing `__bubbleTexts` hook (the refusal rides
+   showBubble), so no `__scanRefusalShown` hook was needed.
+
+**Status:** build clean (vite 49 modules); unit 270/270 (+7); web-llm boundary grep clean (only
+under `ai/`); dev server smoke 200. Full e2e left to QA per the routine.

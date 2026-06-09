@@ -34,6 +34,7 @@ import {
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus } from '../keeper/keepers';
+import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -106,6 +107,9 @@ export class WorldScene extends Phaser.Scene {
   private keeperId: string = DEFAULT_KEEPER_ID;
   /** Keeper picker overlay state (BACKLOG-155): open via K, number keys 1/2/3 choose. */
   private keeperPickerOpen = false;
+  /** Field Scan panel (BACKLOG-157): LUMEN-3's dossier readout. Transient, never persisted. */
+  private scanPanel!: Phaser.GameObjects.Text;
+  private scanOpen = false;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -174,6 +178,9 @@ export class WorldScene extends Phaser.Scene {
     // K opens the keeper picker (BACKLOG-155): choose which time-traveling observer you are.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.K).on('down', () => this.openKeeperPicker());
 
+    // B is LUMEN-3's Field Scan (BACKLOG-157): read the nearest dino's mind — Lux only.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.B).on('down', () => this.toggleScan());
+
     this.addControlsHint();
 
     this.setupClock();
@@ -190,6 +197,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupFeeding();
     this.setupSkyEvent();
     this.setupPlaque();
+    this.setupScan();
     this.setupIdle();
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
@@ -1147,7 +1155,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(11);
 
     const hintText = this.add
-      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · K observer · O export', {
+      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · K observer · B scan · O export', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#ffffff',
@@ -1371,6 +1379,65 @@ export class WorldScene extends Phaser.Scene {
       .setOrigin(0.5, 0)
       .setDepth(12);
     this.tweens.add({ targets: t, alpha: 0, delay: 4000, duration: 2500, onComplete: () => t.destroy() });
+  }
+
+  // --- Field Scan (BACKLOG-157): LUMEN-3's distinct ability -------------------------------
+
+  private scanSubject(d: Dino): ScanSubject {
+    return { name: d.name, species: d.species, traits: d.traits, role: this.roleOf(d.name) };
+  }
+
+  /**
+   * B toggles the dossier. Only LUMEN-3 carries the sensors: other observers get an in-character
+   * refusal as a fading bubble (NOT a dialog — it must never set dialogOpen, or it would eat the
+   * next E press).
+   */
+  private toggleScan(): void {
+    if (this.scanOpen) {
+      this.scanOpen = false;
+      this.scanPanel.setVisible(false);
+      return;
+    }
+    const target = this.nearestDino();
+    if (!target) return;
+    const keeper = keeperById(this.keeperId);
+    if (!canScan(keeper)) {
+      this.showBubble(target, scanRefusal(keeper));
+      return;
+    }
+    this.scanPanel.setText(scanLines(this.scanSubject(target)).join('\n'));
+    this.scanPanel.setVisible(true);
+    this.scanOpen = true;
+  }
+
+  private setupScan(): void {
+    this.scanPanel = this.add
+      .text(6, 22, '', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        align: 'left',
+        backgroundColor: '#000000cc',
+        padding: { x: 6, y: 4 },
+      })
+      .setOrigin(0, 0)
+      .setDepth(11)
+      .setVisible(false);
+
+    // any: dev-only Playwright hooks — Field Scan (BACKLOG-157)
+    (window as any).__scanOpen = () => this.scanOpen;
+    (window as any).__canScan = () => canScan(keeperById(this.keeperId));
+    (window as any).__scanLines = (name?: string) => {
+      const d = name ? this.dinoByName(name) : this.nearestDino();
+      return d ? scanLines(this.scanSubject(d)) : [];
+    };
+    // any: dev-only Playwright hook — stand the player on a named dino (key-press tests; the
+    // overlap keeps it nearest even if a wander tick fires between the warp and the key press)
+    (window as any).__warpTo = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.player.setPosition(d.x, d.y);
+      return !!d;
+    };
   }
 
   /**
