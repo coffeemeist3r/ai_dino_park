@@ -229,6 +229,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-158 [art] Keeper avatars — vector idle + walk rigs for each selectable observer, robot-observer silhouettes distinct from the dinos; supersedes the single-avatar framing of 035 (which assumed one paleontologist keeper). Builds on 155 / 117.
 - [ ] BACKLOG-159 [social] Season foundation — a turning-year clock layered on the realtime day (105): the in-game date advances through spring/summer/fall/winter, each shifting a per-season palette tint and firing a one-off "the season turned to X" beat. Foundation only — the four-season *art* lift and weather (-028) stay deferred. Idea Box (seasons), first beat. Builds on 007 / 008 / 105.
 
+## Cycle 38 lore additions — the observer observed (2026-06-09)
+
+> Cycle 37 gave the watcher a face; these make the *bowl* notice. The dinos have lived under a
+> faceless square for 36 cycles — now that the keeper is someone, the cast should react to *who*.
+> Next-up is the already-queued **BACKLOG-157** (the distinct per-observer abilities, one per
+> cycle) — the operator's arc, and the beat that makes the choice of observer a real lens on play.
+
+- [ ] BACKLOG-160 [ai] Dinos address the observer — the chosen keeper's designation/persona enters the dialogue context, so a high-friendship dino may name you ("strange lights in your chest, Vix") and shade its line by *which* watcher you are; deterministic fallback line per observer, LLM colour where the device allows. The keeper's identity surfaces in what dinos *say*, not just in the affinity math. Builds on 155 / 051 / 148.
+- [ ] BACKLOG-161 [emergent] First-contact inspection — the moment an observer is first picked (or switched), the cast's best personality-fit dino notices the new watcher and drifts to the glass front for a long look (👀 + a "met the new keeper" memory); the bowl visibly *reacts to who you chose*, seconds after you choose. Builds on 155 / 057 / 011.
+- [ ] BACKLOG-162 [emergent] The bowl remembers its watchers — switching observers mid-save isn't free-floating: each dino files a faint "the watcher changed" memory, and a dino with high friendship under the *old* observer may glance around for it in a wistful line. Identity persistence becomes something the cast tracks, not just the save file. Builds on 155 / 011 / 116.
+- [ ] BACKLOG-163 [pokemon] Observer dossier — the collection book gains a keeper page: your designation, era, backstory, ability, and running tallies under this observer (days watched, dinos befriended); the plaque adds "observed by VANTA-9". The chosen identity becomes legible standing, like everything else in the book. Builds on 155 / 021 / 058.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
