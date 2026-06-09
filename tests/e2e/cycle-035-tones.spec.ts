@@ -64,7 +64,10 @@ test('choosing a tone shifts affinity by a valid tone delta and records the trac
   await pickTone(page, 'Sunny', 'tease');
   const after = (await friendship(page)).Sunny ?? 0;
 
-  expect(VALID_DELTAS).toContain(after - before);
+  // The chosen observer (BACKLOG-155) adds a personality-fit bonus on top of the raw tone delta,
+  // so the observed shift is one of the four tone outcomes plus the current keeper's bonus.
+  const bonus = await page.evaluate(() => ((window as W).__keeperBonus as (n: string) => number)('Sunny'));
+  expect(VALID_DELTAS.map((d) => d + bonus)).toContain(after - before);
   expect((await lastTone(page)).Sunny).toBe('tease');
   const mem = (await memory(page)).Sunny ?? [];
   expect(mem[mem.length - 1]).toBe('the keeper teased me');
