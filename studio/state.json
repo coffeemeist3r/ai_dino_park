@@ -1,14 +1,14 @@
 {
   "cycle": 37,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-155: Selectable keeper — character-select spine + persisted choice + affinity-fit ability",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-09T09:00:00-05:00",
-    "designer": "2026-06-08T14:12:00-05:00",
+    "designer": "2026-06-09T09:12:00-05:00",
     "code-planner": "2026-06-08T14:24:00-05:00",
     "coder": "2026-06-08T14:50:00-05:00",
     "qa": "2026-06-08T15:10:00-05:00",
