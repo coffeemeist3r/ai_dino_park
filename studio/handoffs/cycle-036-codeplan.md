@@ -99,3 +99,27 @@ none — greenfield logic over existing utilities.
 ## Estimated touch count
 
 ~4 files (1 new module, 1 WorldScene edit, 2 test files). Under the 6-file ceiling.
+
+---
+
+## Shipped
+
+**Files touched (exactly the plan):**
+- `game/src/world/skyEvent.ts` (new) — `SkyEvent`/`SKY_EVENTS` (meteors + aurora), `SKY_GATHER_TILE`
+  (10,7), `SKY_CHANCE` 0.18, `pickSkyEvent`, `rollSkyEvent`, `atGather`, `skyExpired`. Pure, no imports.
+- `game/src/scenes/WorldScene.ts` (modified) — added the skyEvent import; fields `activeSky`,
+  `skyStartAbsMin`, `skyGazers`, `skyOverlay`, `skyTween`; `setupSkyEvent()` (overlay depth 7 + onHour
+  roll + `__skyEvent`/`__triggerSky`/`__skyGazers` hooks), `maybeStartSky`, `startSky`, `endSky`,
+  `stepSky`, `absMinNow`; a top-priority `stepSky()` branch in `forceStep` that early-returns while an
+  event runs. `create()` calls `setupSkyEvent()` after `setupFeeding()`.
+- `tests/unit/skyEvent.test.ts` (new) — 7 tests.
+- `tests/e2e/cycle-036-sky.spec.ts` (new) — 4 tests.
+
+**Deviations:** none. No save-schema change (the shared memory rides the existing persisted memory
+store), no new dependency, NPCBrain boundary untouched (skyEvent.ts imports nothing).
+
+**Status:**
+- `npm --prefix game run build` — ✅ clean (tsc -b + vite build; only the pre-existing chunk-size warning).
+- `npm run test:unit` — ✅ 254/254 (was 247; +7 skyEvent).
+- New e2e `cycle-036-sky` — ✅ 4/4 (first run hit the known cold-server boot flake; green on a clean
+  port). Page boots + renders (e2e boot waits on `__ready`).

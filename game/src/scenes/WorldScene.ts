@@ -11,6 +11,15 @@ import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
 import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase } from '../world/dayNight';
+import {
+  rollSkyEvent,
+  atGather,
+  skyExpired,
+  SKY_GATHER_TILE,
+  SKY_EVENTS,
+  type SkyEvent,
+  type SkyEventId,
+} from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -113,6 +122,12 @@ export class WorldScene extends Phaser.Scene {
   private foodLanded = false;
   private foodSprite: Phaser.GameObjects.Text | null = null;
   private moveTicks = 0;
+  /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
+  private activeSky: SkyEvent | null = null;
+  private skyStartAbsMin = 0;
+  private skyGazers = new Set<string>();
+  private skyOverlay!: Phaser.GameObjects.Rectangle;
+  private skyTween?: Phaser.Tweens.Tween;
   private convoCooldown = 0;
   private convoInFlight = false;
   private lastConversation: { speaker: string; text: string; source?: string } | null = null;
@@ -161,6 +176,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupGlass();
     this.setupTap();
     this.setupFeeding();
+    this.setupSkyEvent();
     this.setupPlaque();
     this.setupIdle();
 
@@ -412,6 +428,99 @@ export class WorldScene extends Phaser.Scene {
       mark.destroy();
       d.label.setColor('#ffffff');
     });
+  }
+
+  /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
+  private absMinNow(): number {
+    const t = getWorldClock().now();
+    return (t.day - 1) * 24 * 60 + t.hour * 60 + t.minute;
+  }
+
+  /**
+   * World-scale night event (BACKLOG-144): on a rare clear night the sky lights up and the whole
+   * cast gathers to watch. The overlay shimmer lives here; the gather movement + shared memory are
+   * folded into forceStep so the spectacle overrides ordinary wandering.
+   */
+  private setupSkyEvent(): void {
+    // depth 7: above the night tint (5) + bond lines (6), below the glass rim (8) and HUD (10+).
+    this.skyOverlay = this.add
+      .rectangle((TILE * COLS) / 2, (TILE * ROWS) / 2, TILE * COLS, TILE * ROWS, SKY_EVENTS[0].color, 0)
+      .setDepth(7)
+      .setVisible(false);
+
+    // Rare per-in-game-hour roll on a clear night.
+    getWorldClock().onHour(() => this.maybeStartSky());
+
+    // dev-only Playwright hooks
+    (window as any).__skyEvent = () => this.activeSky?.id ?? null;
+    (window as any).__skyGazers = () => [...this.skyGazers];
+    // Force-start an event (default first, or by id), bypassing the roll — drives the e2e flow.
+    (window as any).__triggerSky = (id?: SkyEventId) => {
+      const ev = SKY_EVENTS.find((e) => e.id === id) ?? SKY_EVENTS[0];
+      this.startSky(ev);
+      return this.activeSky?.id ?? null;
+    };
+  }
+
+  private maybeStartSky(): void {
+    if (this.activeSky) return;
+    const ev = rollSkyEvent({
+      isClearNight: this.isClearNight(),
+      active: false,
+      chanceRoll: Math.random(),
+      pickRoll: Math.random(),
+    });
+    if (ev) this.startSky(ev);
+  }
+
+  private startSky(ev: SkyEvent): void {
+    this.activeSky = ev;
+    this.skyStartAbsMin = this.absMinNow();
+    this.skyGazers.clear();
+    this.skyOverlay.setFillStyle(ev.color, 0.18).setVisible(true);
+    this.skyTween?.stop();
+    this.skyTween = this.tweens.add({
+      targets: this.skyOverlay,
+      fillAlpha: 0.34,
+      duration: 1400,
+      ease: 'Sine.easeInOut',
+      yoyo: true,
+      repeat: -1,
+    });
+    this.logEvent(`✨ the sky lit up — ${ev.label} over the bowl`);
+  }
+
+  private endSky(): void {
+    if (!this.activeSky) return;
+    this.activeSky = null;
+    this.skyTween?.stop();
+    this.skyTween = undefined;
+    this.skyOverlay.setVisible(false).setFillStyle(SKY_EVENTS[0].color, 0);
+    // Persist the memories the gazers filed while watching.
+    void this.saveGame();
+  }
+
+  /**
+   * Drive the active sky event one world-step: end it if expired or dawn has come, else pull every
+   * dino toward the shared gather tile and, as each arrives, file the one shared memory + a ✨ bubble.
+   * Returns true while an event is running so forceStep skips ordinary wandering this step.
+   */
+  private stepSky(): boolean {
+    if (!this.activeSky) return false;
+    if (!this.isNight() || skyExpired(this.absMinNow() - this.skyStartAbsMin, this.activeSky)) {
+      this.endSky();
+      return false;
+    }
+    for (const d of this.dinos) {
+      const next = stepToward(this.tileOf(d), SKY_GATHER_TILE, COLS, ROWS);
+      d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+      if (atGather(next) && !this.skyGazers.has(d.name)) {
+        this.skyGazers.add(d.name);
+        this.memory = remember(this.memory, d.name, this.activeSky.memory);
+        this.showBubble(d, this.activeSky.bubble);
+      }
+    }
+    return true;
   }
 
   /** The Glass (BACKLOG-056): draw the vivarium bowl — edge shadow, glass rim, reflections. */
@@ -866,6 +975,13 @@ export class WorldScene extends Phaser.Scene {
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
     if (this.convoCooldown > 0) this.convoCooldown--;
+
+    // A world-scale night event (BACKLOG-144) overrides all wandering: the whole cast gathers to
+    // gawp at the sky. When it ends (duration/dawn) stepSky returns false and ordinary life resumes.
+    if (this.stepSky()) {
+      this.refreshSleepMarks();
+      return;
+    }
 
     const night = this.isNight();
     for (const d of this.dinos) {
