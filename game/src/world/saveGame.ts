@@ -27,6 +27,8 @@ export interface SaveData {
   gratitude: Gratitude;
   /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
   lastTone: Record<string, string>;
+  /** The chosen observer's id (BACKLOG-155). Additive; absent → caller defaults to the first keeper. */
+  keeperId?: string;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -121,6 +123,14 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // keeperId is additive over v1 — absent in older saves (default undefined → caller picks the
+  // first keeper); string only. Reject only if malformed.
+  let keeperId: string | undefined;
+  if (o.keeperId !== undefined) {
+    if (typeof o.keeperId !== 'string') return null;
+    keeperId = o.keeperId;
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -184,6 +194,7 @@ export function deserialize(json: string): SaveData | null {
     bonds,
     gratitude,
     lastTone,
+    keeperId,
     eggs,
     born,
     savedAt,

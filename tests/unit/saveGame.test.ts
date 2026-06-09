@@ -120,4 +120,24 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, lastTone: { Rex: 5 } }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, lastTone: { Rex: ['warm'] } }))).toBeNull();
   });
+
+  it('round-trips a keeperId (BACKLOG-155)', () => {
+    const withKeeper: SaveData = { ...sample, keeperId: 'vanta' };
+    expect(deserialize(serialize(withKeeper))).toEqual(withKeeper);
+  });
+
+  it('loads an older save lacking keeperId, leaving it undefined (BACKLOG-155)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.keeperId).toBeUndefined();
+  });
+
+  it('returns null for a malformed keeperId value (BACKLOG-155)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, keeperId: 7 }))).toBeNull();
+  });
 });

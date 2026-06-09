@@ -33,6 +33,7 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
+import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus } from '../keeper/keepers';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -101,6 +102,10 @@ export class WorldScene extends Phaser.Scene {
   private toneMenuText = '';
   /** Each dino's last greeting tone (BACKLOG-142); persisted, surfaced as a remembered trace. */
   private lastTone: Record<string, ToneId> = {};
+  /** The chosen observer (BACKLOG-155); persisted. Its affinity-fit bonus colours every player gain. */
+  private keeperId: string = DEFAULT_KEEPER_ID;
+  /** Keeper picker overlay state (BACKLOG-155): open via K, number keys 1/2/3 choose. */
+  private keeperPickerOpen = false;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -160,10 +165,14 @@ export class WorldScene extends Phaser.Scene {
     this.interactKey.on('down', () => this.handleInteract());
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z).on('down', () => this.handleInteract());
 
-    // Tone menu (BACKLOG-142): 1/2/3 pick a greeting tone while the menu is open.
-    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ONE).on('down', () => void this.pickTone('warm'));
-    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.TWO).on('down', () => void this.pickTone('tease'));
-    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.THREE).on('down', () => void this.pickTone('honest'));
+    // 1/2/3 pick a greeting tone (BACKLOG-142) — or, while the keeper picker is up (BACKLOG-155),
+    // choose an observer. onNumberKey routes to whichever overlay is open.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ONE).on('down', () => this.onNumberKey(1));
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.TWO).on('down', () => this.onNumberKey(2));
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.THREE).on('down', () => this.onNumberKey(3));
+
+    // K opens the keeper picker (BACKLOG-155): choose which time-traveling observer you are.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.K).on('down', () => this.openKeeperPicker());
 
     this.addControlsHint();
 
@@ -1138,7 +1147,7 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(11);
 
     const hintText = this.add
-      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · O export', {
+      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · K observer · O export', {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#ffffff',
@@ -1234,6 +1243,11 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private handleInteract(): void {
+    // While the keeper picker is up, E/Z dismisses it (1/2/3 choose). BACKLOG-155.
+    if (this.keeperPickerOpen) {
+      this.closeKeeperPicker();
+      return;
+    }
     // While the tone menu is up, E/Z cancels it (1/2/3 choose); a normal dialog closes.
     if (this.toneMenuOpen) {
       this.closeToneMenu();
@@ -1292,6 +1306,73 @@ export class WorldScene extends Phaser.Scene {
     this.toneTarget = null;
   }
 
+  // --- Keeper select (BACKLOG-155) ---------------------------------------------------------
+
+  /** Route 1/2/3: choose an observer while the keeper picker is open, else pick a greeting tone. */
+  private onNumberKey(n: number): void {
+    if (this.keeperPickerOpen) {
+      this.pickKeeperIndex(n - 1);
+      return;
+    }
+    void this.pickTone((['warm', 'tease', 'honest'] as const)[n - 1]);
+  }
+
+  /** The chosen observer's affinity bonus for a dino's temperament — added to normal player gains. */
+  private applyKeeperBonus(traits?: Dino['traits']): number {
+    return keeperBonus(keeperById(this.keeperId), traits);
+  }
+
+  /** Open the "choose your observer" overlay (modeled on the tone menu). */
+  private openKeeperPicker(): void {
+    // The keeper picker and the tone menu are mutually exclusive — close any open greet first.
+    if (this.toneMenuOpen) this.closeToneMenu();
+    this.keeperPickerOpen = true;
+    this.dialogOpen = true;
+    const lines = KEEPERS.map(
+      (k, i) => `[${i + 1}] ${k.name} — ${k.ability.label}: ${k.ability.desc}`,
+    ).join('\n');
+    const current = keeperById(this.keeperId).name;
+    this.dialog.show(`Choose your observer  (now: ${current})\n${lines}`);
+  }
+
+  /** Commit a keeper choice from the picker: persist it and confirm. Out-of-range index is ignored. */
+  private pickKeeperIndex(i: number): void {
+    if (!this.keeperPickerOpen) return;
+    const keeper = KEEPERS[i];
+    if (!keeper) return;
+    this.keeperId = keeper.id;
+    this.keeperPickerOpen = false;
+    this.dialog.show(`You are ${keeper.name}, from ${keeper.era}.\n${keeper.ability.label}: ${keeper.ability.desc}`);
+    this.dialogOpen = true; // a normal dialog the next E/Z closes
+    void this.saveGame();
+  }
+
+  private closeKeeperPicker(): void {
+    this.keeperPickerOpen = false;
+    this.dialog.hide();
+    this.dialogOpen = false;
+  }
+
+  /**
+   * A non-blocking, one-time invite on a brand-new game: a fading line that says "press K to
+   * choose your observer". It captures no input and sets no modal flag, so boot stays clean and
+   * every existing interaction (and e2e spec) is unaffected.
+   */
+  private showKeeperInvite(): void {
+    const t = this.add
+      .text(TILE * COLS * 0.5, 24, 'A traveler arrives to watch the bowl — press K to choose your observer', {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ffffff',
+        align: 'center',
+        backgroundColor: '#000000aa',
+        padding: { x: 6, y: 3 },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(12);
+    this.tweens.add({ targets: t, alpha: 0, delay: 4000, duration: 2500, onComplete: () => t.destroy() });
+  }
+
   /**
    * Tone-aware twin of recordGreet (BACKLOG-142): applies the personality-fit tone delta, files
    * a tone memory, and records the last-tone trace. The BACKLOG-125 repair seam wins over the
@@ -1299,7 +1380,9 @@ export class WorldScene extends Phaser.Scene {
    */
   private recordTone(name: string, id: ToneId, traits?: Dino['traits']): void {
     const repairing = this.pendingRepair === name;
-    const gain = repairing ? repairGain(traits) : toneReaction(toneById(id), traits).delta;
+    const gain = repairing
+      ? repairGain(traits)
+      : toneReaction(toneById(id), traits).delta + this.applyKeeperBonus(traits);
     this.friendship = bumpPoints(this.friendship, name, gain);
     this.memory = remember(this.memory, name, repairing ? repairMemory(name) : toneById(id).memory);
     this.lastTone = { ...this.lastTone, [name]: id };
@@ -1316,7 +1399,7 @@ export class WorldScene extends Phaser.Scene {
   private recordGreet(name: string, traits?: Dino['traits']): void {
     // A make-up greet to the jealous runner-up (BACKLOG-125): outsized bump, 😊, one-shot.
     const repairing = this.pendingRepair === name;
-    const gain = repairing ? repairGain(traits) : greetGain(traits);
+    const gain = repairing ? repairGain(traits) : greetGain(traits) + this.applyKeeperBonus(traits);
     this.friendship = bumpPoints(this.friendship, name, gain);
     this.memory = remember(
       this.memory,
@@ -1437,6 +1520,7 @@ export class WorldScene extends Phaser.Scene {
       bonds: this.bonds,
       gratitude: this.gratitude,
       lastTone: this.lastTone,
+      keeperId: this.keeperId,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -1459,7 +1543,11 @@ export class WorldScene extends Phaser.Scene {
     // Restore on boot. create() has already built the HUD/overlay at the default
     // 08:00 and started the clock; loadFromDb resolves a beat later and overrides.
     void loadFromDb().then((save) => {
-      if (!save) return;
+      if (!save) {
+        // Brand-new game: keep the default observer, but invite a choice (non-blocking).
+        this.showKeeperInvite();
+        return;
+      }
       // Resume at the saved rate, then fast-forward the world over the real gap
       // since the save (BACKLOG-106). clock.set re-anchors at now, so the live
       // pump counts forward from the post-catch-up moment — no double-advance.
@@ -1475,6 +1563,7 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = away.bonds;
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
+      this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
       this.born = save.born ?? [];
@@ -1554,6 +1643,25 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gratitude = () => ({ ...this.gratitude });
     // any: dev-only Playwright hook — raw friendship points per dino (finer than hearts)
     (window as any).__friendshipPoints = () => ({ ...this.friendship });
+    // any: dev-only Playwright hooks — keeper select (BACKLOG-155)
+    (window as any).__keeper = () => this.keeperId;
+    (window as any).__keepers = () =>
+      KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
+    (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
+    (window as any).__openKeeperPicker = () => {
+      this.openKeeperPicker();
+      return this.keeperPickerOpen;
+    };
+    (window as any).__pickKeeper = (id: string) => {
+      const i = KEEPERS.findIndex((k) => k.id === id);
+      if (i < 0) return this.keeperId;
+      this.keeperPickerOpen = true; // pickKeeperIndex guards on the open flag
+      this.pickKeeperIndex(i);
+      return this.keeperId;
+    };
+    // any: the current observer's affinity-fit bonus for a dino (0..+2)
+    (window as any).__keeperBonus = (name: string) =>
+      keeperBonus(keeperById(this.keeperId), this.dinos.find((d) => d.name === name)?.traits);
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits
@@ -1659,7 +1767,7 @@ export class WorldScene extends Phaser.Scene {
   private applyGift(name: string, traits?: Dino['traits']): GiftVerdict {
     const gift = GIFTS[this.heldItemIndex];
     const { verdict, delta } = giftReaction(gift, traits);
-    this.friendship = bumpPoints(this.friendship, name, delta);
+    this.friendship = bumpPoints(this.friendship, name, delta + this.applyKeeperBonus(traits));
     this.memory = remember(this.memory, name, `the human gave you a ${gift.label}, and you ${verdict} it`);
     void this.saveGame();
     this.refreshHeartsPanel();
