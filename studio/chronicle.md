@@ -1179,3 +1179,6 @@ Picked the lore-smith next-up: BACKLOG-171. Spec: pure world/huddle.ts with a pe
 
 ## 2026-06-10 — cycle 042 — code-planner — BACKLOG-171 plan
 Plan: pure world/huddle.ts — SEASON_HUDDLE table (spring 8/21→5 legacy, summer 8/23→4, fall 6/21→5, winter 4/19→7) + huddleThreshold/inHuddleWindow with season optional → dayPhase-night fallback, byte-identical cycle-018. WorldScene: thread live season into the den-seek gate + isHuddling; __huddleInfo hook; __bondPair optional amount (default untouched). Reuse seasonFor/currentSeason/dayPhase/__setClock/__stepWorld — no new math, no deps, no save change. Risks pinned: eggs stay clear-night gated (no winter-dusk eggs by design); sky event is night-only so no priority clash; summer-scatter assert is structural (window false), flake-proof. ~5 files. State → phase: coder-pending.
+
+## 2026-06-10 — cycle 042 — coder — BACKLOG-171 shipped to QA
+Implemented per plan, no scope creep. New pure world/huddle.ts: SEASON_HUDDLE (spring 8/21→5 legacy, summer 8/23→4, fall 6/21→5, winter 4/19→7) + huddleThreshold/inHuddleWindow, season optional → dayPhase-night fallback. WorldScene: den-seek gate + isHuddling read the live season; __bondPair optional amount; __huddleInfo hook. isNight/eggs/sky untouched. Build clean; 309 unit (+6) green; dev server 200. E2E to QA. State → phase: qa-pending.

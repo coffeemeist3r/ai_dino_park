@@ -37,6 +37,7 @@ import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit } from '
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
+import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -67,8 +68,8 @@ const COLS = 20;
 const ROWS = 15;
 
 // Night sleeping huddle (BACKLOG-041): bonded dinos gather at the den after dark.
+// The bond bar + window are season-conditional since BACKLOG-171 (see world/huddle.ts).
 const HUDDLE_TILE = { tileX: 10, tileY: 11 };
-const HUDDLE_THRESHOLD = 8; // min strongest-bond to seek the den
 const BOND_PER_MEET = 4;
 
 export class WorldScene extends Phaser.Scene {
@@ -640,11 +641,20 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks
     (window as any).__bonds = () => ({ ...this.bonds });
-    (window as any).__bondPair = (a: string, b: string) => {
-      this.bonds = strengthen(this.bonds, a, b, HUDDLE_THRESHOLD);
+    (window as any).__bondPair = (a: string, b: string, amount?: number) => {
+      this.bonds = strengthen(this.bonds, a, b, amount ?? HUDDLE_THRESHOLD);
       return bondPoints(this.bonds, a, b);
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
+    // dev-only: the live huddle verdict (BACKLOG-171) — season, bond bar, and window state now.
+    (window as any).__huddleInfo = () => {
+      const season = this.currentSeason();
+      return {
+        season,
+        threshold: huddleThreshold(season),
+        inWindow: inHuddleWindow(getWorldClock().now().hour, season),
+      };
+    };
 
     // egg-phase hooks (BACKLOG-042)
     (window as any).__eggs = () => this.eggs.map((e) => ({ ...e }));
@@ -776,7 +786,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private isHuddling(d: Dino): boolean {
-    return this.isNight() && this.nearDen(d);
+    return inHuddleWindow(getWorldClock().now().hour, this.currentSeason()) && this.nearDen(d);
   }
 
   private refreshSleepMarks(): void {
@@ -1021,7 +1031,8 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    const night = this.isNight();
+    const season = this.currentSeason();
+    const denTime = inHuddleWindow(getWorldClock().now().hour, season);
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
 
@@ -1047,8 +1058,9 @@ export class WorldScene extends Phaser.Scene {
 
       const other = this.nearestOther(d);
       let next;
-      if (night && this.maxBond(d.name) >= HUDDLE_THRESHOLD) {
-        // Night: bonded dinos head for the den to sleep together.
+      if (denTime && this.maxBond(d.name) >= huddleThreshold(season)) {
+        // Huddle hours: bonded-enough dinos head for the den to sleep together.
+        // Winter opens the window at dusk and lowers the bar; summer waits until late.
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS);
       } else if (other && Math.random() < 0.45) {
         // Day: ~45% of the time drift toward the nearest dino so the park clusters and converses.

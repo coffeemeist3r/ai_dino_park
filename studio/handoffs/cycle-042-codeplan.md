@@ -65,3 +65,18 @@ none.
 ## Estimated touch count
 
 ~5 files (1 new module, 1 scene glue, 2 test files, + studio bookkeeping). Well under the split bar.
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/huddle.ts` (new) — `HUDDLE_THRESHOLD`, `SEASON_HUDDLE`, `huddleThreshold(season?)`, `inHuddleWindow(hour, season?)`; pure, no Phaser; legacy fallback via `dayPhase`
+- `game/src/scenes/WorldScene.ts` — local `HUDDLE_THRESHOLD` const removed in favour of the import; den-seek gate reads `inHuddleWindow(hour, season)` + `huddleThreshold(season)` (season/hour hoisted once per `forceStep`); `isHuddling` window-aware; `__bondPair` grew optional `amount` (default exactly `HUDDLE_THRESHOLD`); new `__huddleInfo` hook
+- `tests/unit/huddle.test.ts` (new) — 6 tests
+- `tests/e2e/cycle-042-winter-huddle.spec.ts` (new) — 4 tests
+
+**Deviations from plan:** none. `const night` was only read by the huddle gate, so it's gone; `isNight()` itself stays (sky event + clear-night breeding still use it, untouched per design).
+
+**Build:** ✅ clean (`tsc -b && vite build`).
+**Unit:** ✅ 309/309 green (+6 new).
+**Dev server:** ✅ HTTP 200 on 5173.
+E2E left to QA per routine.
