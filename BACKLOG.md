@@ -241,6 +241,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-162 [emergent] The bowl remembers its watchers — switching observers mid-save isn't free-floating: each dino files a faint "the watcher changed" memory, and a dino with high friendship under the *old* observer may glance around for it in a wistful line. Identity persistence becomes something the cast tracks, not just the save file. Builds on 155 / 011 / 116.
 - [ ] BACKLOG-163 [pokemon] Observer dossier — the collection book gains a keeper page: your designation, era, backstory, ability, and running tallies under this observer (days watched, dinos befriended); the plaque adds "observed by VANTA-9". The chosen identity becomes legible standing, like everything else in the book. Builds on 155 / 021 / 058.
 
+## Cycle 39 lore additions — the glass looks back (2026-06-09)
+
+> Cycle 38 gave the keeper a power over the bowl (Lux reads minds); the bowl should answer.
+> Next-up is the already-queued **BACKLOG-161** (first-contact inspection) — the first time the
+> cast *reacts to who you chose*, seconds after you choose. These extend that returned gaze.
+
+- [ ] BACKLOG-164 [emergent] Being scanned is a moment — a dino notices Lux's Field Scan and answers it in character: a bold one squares up and poses, a timid one skitters a step and eyes you sideways, and either way it files a "the watcher read me" memory that can colour a later line. The scan stops being free; knowledge has a social cost. Builds on 157 / 010 / 011.
+- [ ] BACKLOG-165 [emergent] Gossip about the watcher — a dino that witnessed a watcher beat (the first-contact inspection, a scan, a switch) can pass it on through the existing gossip spine ("the new one has a glass eye"), so news of *you* travels the bowl the same way dino news does. Builds on 019 / 161 / 162.
+- [ ] BACKLOG-166 [pokemon] Deep dossier — Lux's scan readout grows two relational lines: the dino's last remembered keeper-tone and any outstanding gratitude debt ("owes Twitch one"), making the scan the place where the social ledgers surface. Builds on 157 / 142 / 132.
+- [ ] BACKLOG-167 [emergent] The unimpressed — the cast's *worst* personality-fit dino greets a freshly-picked observer with a flat, unimpressed beat (😐 + a "didn't see the fuss" memory) a moment after the best-fit one inspects; the same choice that delights one dino bores another, legibly. Builds on 161 / 155 / 010.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
