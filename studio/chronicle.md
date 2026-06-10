@@ -1173,3 +1173,6 @@ The pixel restyle arc rolls forward to its second character. Mossback the stegos
 
 ## 2026-06-10 — cycle 042 — lore-smith — the year reaches the night
 Cycle 42 opens (41 APPROVED). The season changed a verdict (170); now it should change behaviour you can watch. Seeded BACKLOG-179 (cold-night shiver), 180 (odd bedfellows), 181 (sleep murmurs), 182 (night ledger). Suggested next-up BACKLOG-171 (winter huddle pull) — the queued spine the new items lean on, the den packing at dusk in winter. Idea Box empty. State → phase: designer-pending.
+
+## 2026-06-10 — cycle 042 — designer — BACKLOG-171 winter huddle pull
+Picked the lore-smith next-up: BACKLOG-171. Spec: pure world/huddle.ts with a per-season huddle config — spring 8 pts / 21→5 (byte-identical legacy), summer 8 / 23→4 (warm nights scattered), fall 6 / 21→5, winter 4 / 19→7 (the den packs from dusk past dawn, near-strangers admitted). Season optional everywhere (omit = exact cycle-018 behavior); WorldScene threads the live clock season into the den-seek gate + isHuddling; __huddleInfo hook; __bondPair grows an optional amount. Eggs/clear-night untouched. 9 acceptance criteria. State → phase: codeplan-pending.
