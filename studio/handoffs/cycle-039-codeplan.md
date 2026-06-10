@@ -101,3 +101,29 @@ none.
 ## Estimated touch count
 
 ~4 files (1 new src, 1 modified src, 2 new tests). At budget.
+
+## Shipped
+
+**Files touched:**
+- `game/src/keeper/firstContact.ts` (new) — INSPECT_TTL=24 / CastMember / inspector (strictly
+  positive argmax over keeperFit, alpha tie-break) / inspectLine / inspectMemory.
+- `game/src/scenes/WorldScene.ts` — pendingInspect + lastInspection transients; `changed` guard +
+  `armInspection()` in pickKeeperIndex; one-dino beeline override at the top of the forceStep
+  per-dino loop (`continue`s past food/huddle/drift); `stepInspection()` after the movement loop
+  (arrival beat + memory + one-shot disarm, ttl once per step); `playerTile()` helper; hooks
+  __inspection/__lastInspection/__keeperFit.
+- `tests/unit/firstContact.test.ts` (new) — 6 tests per plan (incl. ttl ≥ 19 cross-bowl guard).
+- `tests/e2e/cycle-039-inspect.spec.ts` (new) — 4 tests per plan.
+
+**Deviations:**
+1. e2e test 4 (plan's sky-interference guard) became the design's own AC-8 (same-observer re-pick
+   arms nothing) — closer to the acceptance list; the sky interplay is covered by the unchanged
+   early-return ordering (inspector override sits inside the per-dino loop the sky path skips).
+2. No `__warpTo` needed in the spec — the inspector reaches a stationary keeper well inside
+   TTL 24 from any spawn (verified: 4/4 in ≤ ~10 steps).
+3. Pre-verified roster fits (scratch vitest, then deleted): vanta→Glade 0.71, lumen→Rex 0.29,
+   aether→Sunny 0.51 — every observer has a positive-fit inspector on the fixed roster, so the
+   specs' positive-fit assumption holds.
+
+**Status:** build clean; unit 276/276 (+6); new e2e 4/4 first try; web-llm boundary grep clean;
+dev server smoke 200. Full e2e to QA.

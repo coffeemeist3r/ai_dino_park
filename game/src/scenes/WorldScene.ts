@@ -33,8 +33,9 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
-import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus } from '../keeper/keepers';
+import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
+import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -110,6 +111,9 @@ export class WorldScene extends Phaser.Scene {
   /** Field Scan panel (BACKLOG-157): LUMEN-3's dossier readout. Transient, never persisted. */
   private scanPanel!: Phaser.GameObjects.Text;
   private scanOpen = false;
+  /** First-contact inspection (BACKLOG-161): armed by a real keeper change. Transient, one-shot. */
+  private pendingInspect: { name: string; ttl: number } | null = null;
+  private lastInspection: { name: string; keeperId: string } | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -1010,6 +1014,14 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
 
+      // First contact (BACKLOG-161): the armed inspector beelines for the new watcher,
+      // ignoring food and friends until it gets its look (or loses interest — ttl below).
+      if (this.pendingInspect?.name === d.name) {
+        const step = stepToward(cur, this.playerTile(), COLS, ROWS);
+        d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+        continue;
+      }
+
       // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
@@ -1049,10 +1061,40 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
+    this.stepInspection();
+
     this.refreshSleepMarks();
     this.checkFeeding();
     this.maybeLayEggs();
     this.checkHatch();
+  }
+
+  private playerTile(): { tileX: number; tileY: number } {
+    return { tileX: Math.floor(this.player.x / TILE), tileY: Math.floor(this.player.y / TILE) };
+  }
+
+  /**
+   * Resolve the armed first contact once per world step: arrival lands the 👀 beat + memory,
+   * the ttl running out means the player outran a dino's curiosity. Runs after the movement
+   * loop so the arrival check sees the inspector's new position.
+   */
+  private stepInspection(): void {
+    if (!this.pendingInspect) return;
+    const d = this.dinoByName(this.pendingInspect.name);
+    if (!d) {
+      this.pendingInspect = null;
+      return;
+    }
+    if (Math.abs(d.x - this.player.x) <= TILE * 1.01 && Math.abs(d.y - this.player.y) <= TILE * 1.01) {
+      const keeper = keeperById(this.keeperId);
+      this.showBubble(d, inspectLine(d.name));
+      this.memory = remember(this.memory, d.name, inspectMemory(keeper.name));
+      this.lastInspection = { name: d.name, keeperId: keeper.id };
+      this.pendingInspect = null;
+      return;
+    }
+    this.pendingInspect = { ...this.pendingInspect, ttl: this.pendingInspect.ttl - 1 };
+    if (this.pendingInspect.ttl <= 0) this.pendingInspect = null;
   }
 
   /** One dino remarks on meeting another — a floating speech bubble via the shared brain. */
@@ -1348,11 +1390,21 @@ export class WorldScene extends Phaser.Scene {
     if (!this.keeperPickerOpen) return;
     const keeper = KEEPERS[i];
     if (!keeper) return;
+    const changed = keeper.id !== this.keeperId;
     this.keeperId = keeper.id;
     this.keeperPickerOpen = false;
     this.dialog.show(`You are ${keeper.name}, from ${keeper.era}.\n${keeper.ability.label}: ${keeper.ability.desc}`);
     this.dialogOpen = true; // a normal dialog the next E/Z closes
     void this.saveGame();
+    // A real change of watcher draws first contact (BACKLOG-161); a re-pick or the save-restore
+    // path (which assigns keeperId directly) never arms it.
+    if (changed) this.armInspection();
+  }
+
+  /** Arm the first-contact beat: the best-fitting dino comes to size up the new observer. */
+  private armInspection(): void {
+    const name = inspector(keeperById(this.keeperId), this.dinos);
+    this.pendingInspect = name ? { name, ttl: INSPECT_TTL } : null;
   }
 
   private closeKeeperPicker(): void {
@@ -1729,6 +1781,14 @@ export class WorldScene extends Phaser.Scene {
     // any: the current observer's affinity-fit bonus for a dino (0..+2)
     (window as any).__keeperBonus = (name: string) =>
       keeperBonus(keeperById(this.keeperId), this.dinos.find((d) => d.name === name)?.traits);
+    // any: dev-only Playwright hooks — first-contact inspection (BACKLOG-161)
+    (window as any).__inspection = () => (this.pendingInspect ? { ...this.pendingInspect } : null);
+    (window as any).__lastInspection = () => (this.lastInspection ? { ...this.lastInspection } : null);
+    // any: the current observer's raw personality fit for a named dino
+    (window as any).__keeperFit = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? keeperFit(keeperById(this.keeperId), d.traits) : 0;
+    };
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
     // any: dev-only Playwright hook — first dino's seeded personality traits
