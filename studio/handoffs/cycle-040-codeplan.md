@@ -102,3 +102,26 @@ none.
 ## Estimated touch count
 
 ~5 files (1 new src, 1 modified src, 2 new tests, BACKLOG by validator). At budget.
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/seasons.ts` (new) — SEASONS/SEASON_LENGTH_DAYS/seasonFor/seasonTurned/
+  SEASON_TINT (alphas .08–.12)/turnLine (per-season record)/turnMemory.
+- `game/src/scenes/WorldScene.ts` — seasonOverlay (depth 4) + lastSeasonDay + seasonTurns;
+  setupSeasons() with onHour → checkSeasonTurn (O(1) when no turn); syncSeason() for the
+  restore path (+ called in the load handler); season appended in fmtClock (both HUD callers
+  free); hooks __season/__seasonTint/__seasonTurns/__setClock.
+- `tests/unit/seasons.test.ts` (new) — 7 tests per plan.
+- `tests/e2e/cycle-040-seasons.spec.ts` (new) — 4 tests per plan.
+
+**Deviations / notes:**
+1. Live long-gap catch-up (the MAX_CATCHUP `set()` jump in a backgrounded tab) leaves
+   `lastSeasonDay` stale, so the **next** hour tick lands one turn beat if a boundary was
+   crossed while the tab slept. Judged in-spirit (a live tab observing "the season turned
+   while I was away") rather than a violation; restore/boot/away stay silent as specced.
+2. cycle-028's HUD assertion uses `toContain('60×')` — survives the season suffix unchanged;
+   no old-spec edits needed.
+
+**Status:** build clean; unit 283/283 (+7); new e2e 4/4 first try; no save change; boundary
+untouched. Full e2e to QA.

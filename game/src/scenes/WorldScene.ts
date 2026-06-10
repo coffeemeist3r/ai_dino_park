@@ -36,6 +36,7 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
+import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory } from '../world/seasons';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -114,6 +115,10 @@ export class WorldScene extends Phaser.Scene {
   /** First-contact inspection (BACKLOG-161): armed by a real keeper change. Transient, one-shot. */
   private pendingInspect: { name: string; ttl: number } | null = null;
   private lastInspection: { name: string; keeperId: string } | null = null;
+  /** Seasons (BACKLOG-159): derived from the clock day — only the live-turn tracker is state. */
+  private seasonOverlay!: Phaser.GameObjects.Rectangle;
+  private lastSeasonDay = 1;
+  private seasonTurns = 0;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -189,6 +194,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.setupClock();
     this.setupDayNight();
+    this.setupSeasons();
     this.setupSave();
     this.setupHearts();
     this.setupGifts();
@@ -1549,7 +1555,71 @@ export class WorldScene extends Phaser.Scene {
 
   private fmtClock(t: GameTime): string {
     const scale = getWorldClock().getScale();
-    return `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')} ·${scale}×`;
+    return `Day ${t.day} — ${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')} ·${scale}× · ${seasonFor(t.day)}`;
+  }
+
+  // --- Seasons (BACKLOG-159): the turning year ---------------------------------------------
+
+  private setupSeasons(): void {
+    const clock = getWorldClock();
+    const tint = SEASON_TINT[seasonFor(clock.now().day)];
+    // Depth 4: above the grass, below the day/night overlay (5) — the sun still owns the light.
+    this.seasonOverlay = this.add
+      .rectangle((TILE * COLS) / 2, (TILE * ROWS) / 2, TILE * COLS, TILE * ROWS, tint.color, tint.alpha)
+      .setDepth(4);
+    this.lastSeasonDay = clock.now().day;
+
+    clock.onHour((t) => this.checkSeasonTurn(t));
+
+    // any: dev-only Playwright hooks — seasons (BACKLOG-159)
+    (window as any).__season = () => seasonFor(getWorldClock().now().day);
+    (window as any).__seasonTint = () => ({
+      color: this.seasonOverlay.fillColor,
+      alpha: this.seasonOverlay.fillAlpha,
+    });
+    (window as any).__seasonTurns = () => this.seasonTurns;
+    // any: dev-only Playwright hook — stage the clock like a restore (sync, repaint, NO beat)
+    (window as any).__setClock = (day: number, hour: number, minute: number) => {
+      getWorldClock().set({ day, hour, minute });
+      this.syncSeason();
+      this.applyTint(getWorldClock().now());
+      this.clockHud.setText(this.fmtClock(getWorldClock().now()));
+      return getWorldClock().now();
+    };
+  }
+
+  /** Re-derive the season from the clock without a beat — restore/away/jump paths. */
+  private syncSeason(): void {
+    const day = getWorldClock().now().day;
+    this.lastSeasonDay = day;
+    const tint = SEASON_TINT[seasonFor(day)];
+    this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
+  }
+
+  /** Live-observed turn only: a day boundary the clock actually ticked across. */
+  private checkSeasonTurn(t: GameTime): void {
+    const turned = seasonTurned(this.lastSeasonDay, t.day);
+    this.lastSeasonDay = t.day;
+    if (!turned) return;
+    const tint = SEASON_TINT[turned];
+    this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
+    this.clockHud.setText(this.fmtClock(t));
+    this.logEvent(`🍂 ${turnLine(turned)}`);
+    for (const d of this.dinos) this.memory = remember(this.memory, d.name, turnMemory(turned));
+    this.seasonTurns++;
+    const banner = this.add
+      .text(TILE * COLS * 0.5, 24, turnLine(turned), {
+        fontFamily: 'monospace',
+        fontSize: '11px',
+        color: '#ffffff',
+        align: 'center',
+        backgroundColor: '#000000aa',
+        padding: { x: 6, y: 3 },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(12);
+    this.tweens.add({ targets: banner, alpha: 0, delay: 4000, duration: 2500, onComplete: () => banner.destroy() });
+    void this.saveGame();
   }
 
   /** Cycle the realtime multiplier: 1× (24 real-hour day) ⇄ 60× (active watching). */
@@ -1691,6 +1761,7 @@ export class WorldScene extends Phaser.Scene {
       for (const e of this.eggs) this.drawEgg(e);
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
+      this.syncSeason(); // restore re-derives the season; never a turn beat (BACKLOG-159)
       this.refreshHeartsPanel();
       if (away.minutes > 0) {
         this.dialogOpen = true;
