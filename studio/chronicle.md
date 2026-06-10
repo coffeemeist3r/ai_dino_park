@@ -1182,3 +1182,6 @@ Plan: pure world/huddle.ts — SEASON_HUDDLE table (spring 8/21→5 legacy, summ
 
 ## 2026-06-10 — cycle 042 — coder — BACKLOG-171 shipped to QA
 Implemented per plan, no scope creep. New pure world/huddle.ts: SEASON_HUDDLE (spring 8/21→5 legacy, summer 8/23→4, fall 6/21→5, winter 4/19→7) + huddleThreshold/inHuddleWindow, season optional → dayPhase-night fallback. WorldScene: den-seek gate + isHuddling read the live season; __bondPair optional amount; __huddleInfo hook. isNight/eggs/sky untouched. Build clean; 309 unit (+6) green; dev server 200. E2E to QA. State → phase: qa-pending.
+
+## 2026-06-10 — cycle 042 — qa — 9/9 criteria pass
+Build clean; 309 unit green; 111 e2e (110 first run + the cycle-003-save cold-boot flake, green isolated in 3.4s — boot path untouched by this diff, not a regression). All 4 cycle-042 specs green in the full parallel run; cycle-018 huddle, cycle-040 seasons, cycle-041 palates all green untouched; bare __bondPair callers unaffected. 9/9 acceptance criteria PASS; no save change, no deps, no new pageerror. Recommend APPROVE. State → phase: validator-pending.
