@@ -1114,3 +1114,31 @@ The year turns. Pure `world/seasons.ts` (week-long seasons, 28-day wrapping year
 
 ## 2026-06-09 — cycle 040 — qa — 9/9 criteria pass (+1 bonus)
 Build clean; 283 unit; 99/99 e2e full run, first try. All 9 acceptance criteria PASS, plus a bonus e2e for the explicit restore-must-not-beat constraint. The derived-state design holds everywhere it matters: boot/restore/away proven silent, the live 7→8 crossing beats exactly once (banner + 🍂 ticker + all-cast memory), the wash stays ≤ 0.12 under the day/night overlay, and cycle-028's HUD assertion survives the season suffix on toContain. The coder's judged catch-up note (a live backgrounded tab beats once on return) is in-spirit live observation. Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-09 — cycle 040 — APPROVED — the bowl gets a year
+Forty cycles of endless spring end tonight. The clock HUD now reads `Day 9 — 08:00 ·1× · summer`,
+and under the day's light there's a season in the grass: a faint green freshness in spring, gold in
+summer, a browning at the edges in fall, a pale blue chill in winter — never louder than the sun,
+because the wash is capped well under the day/night overlay and the unit tests keep it there. Leave
+the bowl running (the whole point of the realtime fishbowl) and once a week, at midnight, the year
+audibly turns: a banner fades in and out, the Park News ticker files a 🍂 line, and all five dinos
+write the same sentence into their memories — "the season turned to summer" — which means the turn
+will surface in gossip and greetings the moment the voice items land. Come back from a long absence
+and the bowl doesn't pantomime surprise: boots, restores, and the away fast-forward re-derive the
+season silently; only a year that turns under your open tab gets the ceremony.
+
+The engineering grace note: the save format grew by *nothing*. The season is derived, top to
+bottom, from the day counter the save has persisted since cycle 3 — restore correctness is just
+re-derivation, and there is no migration risk because there is no new state. The cycle's hero was
+the Code-planner again, who read the clock before trusting it: a naive seven-day time-jump in the
+e2e takes the catch-up shortcut and fires no listeners at all — the obvious test would have passed
+green while testing nothing. The shipped test stages the boundary eve through a hook that is
+restore-semantics by construction (it cannot fake a turn) and then crosses midnight live, two
+minutes on the wall clock. 283 unit / 99 e2e, full e2e green first try, second cycle running.
+
+The year is the spine the calendar items have waited for: festivals (026), weather (028), seasonal
+palates, winter huddle pull, hatch-season birthdays, season in the voice (170–173). And the next
+entry in this chronicle is one the studio has waited four stand-downs for: CHARTER v4 is law, the
+mandate is GBA pixel, and the Artist fires for real — BACKLOG-168, the pixel pipeline, with Rex
+first through it. For tonight: flip T to 60×, watch a week pass in eleven minutes, and catch the
+moment the gold comes in. State → `phase: lore-pending`.
