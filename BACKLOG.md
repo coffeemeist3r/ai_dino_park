@@ -270,6 +270,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-168 [art] Pixel pipeline foundation + proof dino — `art/pixelArt.ts` (string-grid frame format, palette map, ≤15-color GBA discipline, frame builders) + a pixel path in `bake.ts` (per-pixel fillRect at integer scale), proven by **restyling Rex** to a 20×20 Gen3-style triceratops with the stand/step-L/step-R walk convention. Mirrors the 117/118 foundation+proof pattern. Unblocks all pixel art.  *(shipped: cycle 40-art, 2026-06-09 — pure `art/pixelArt.ts` (PixelRig: string-grid frames, char→palette ≤15 colors, stand/step-L/step-R + [0,1,0,2] amble); `ensurePixelWalk` in bake.ts (per-pixel fillRect ×2 scale, same `tri_walk_<color>`/`_0` key contracts so every consumer + old spec survived); Rex restyled 20×20 — frill disc, brow + nose horns, high tail point, belly band; first draft rejected for a flat-edged rear. 8 unit + 2 e2e; 291 unit / 101 e2e green.)*
 - [ ] BACKLOG-169 [art] Pixel restyle of the remaining cast — Mossback / Sunny / Twitch / Glade as Gen3-style pixel rigs (one sub-agent each, distinct silhouettes preserved: plates+thagomizer, the long neck, the tiny biped, the tube crest); each species' vector entry replaced as its pixel rig lands, art e2e re-pointed in the same fire. Builds on 168.
 
+## Cycle 41 lore additions — the year keeps turning (2026-06-10)
+
+> Cycle 40 hung the calendar; cycle 41 makes the season change what the cast *does*. Next-up is
+> the already-queued **BACKLOG-170** (seasonal palates) — the year's first reach into the daily
+> feeding loop. These extend the turning year into gossip, gifting, plaque, and the wander.
+
+- [ ] BACKLOG-174 [pokemon] Year wheel on the plaque — the plaque/HUD spells the season legibly ("Spring · day 3 of 7") with a tiny 4-arc year wheel marking where in the year the bowl sits. Builds on 058 / 159.
+- [ ] BACKLOG-175 [emergent] Turning-year gossip — the season-turn memory every dino files (159) becomes gossip: a dino can let the change of season slip to the next it meets ("smell that? fall's here"), so the year travels the bowl the way dino news does. Builds on 019 / 159.
+- [ ] BACKLOG-176 [social] Seasonal gift cravings — the mirror of 170 for the gift loop: the same seasonal-craving nudge shifts which *gift* lands best, so generosity reads the calendar too (a flower means more in spring). Builds on 015 / 170.
+- [ ] BACKLOG-177 [emergent] Equinox restlessness — on the single day a season turns, the whole cast wanders a touch wider for that one day, a quiet collective "something's changed" jitter — distinct from the sky-event gather (144). Builds on 159 / 018.
+- [ ] BACKLOG-178 [emergent] Migrating warmth — winter raises the cluster-drift bias (the cast seeks company in the cold and the den fills earlier) while summer lowers it (they spread out and laze); the bowl's social density breathes with the year. Builds on 159 / 018 / 041.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
