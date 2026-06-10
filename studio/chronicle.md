@@ -1154,3 +1154,6 @@ Picked the lore-smith next-up: BACKLOG-170. Spec: a small per-season craving bon
 
 ## 2026-06-10 — cycle 041 — code-planner — BACKLOG-170 plan
 Plan: SEASON_CRAVING table + 0.4 bonus inside favoriteFood (season optional → byte-identical cycle-061 fallback); thread live season through foodReaction, the rush, the eat, scan, and the __favoriteFood hook; new __seasonCraving hook. Reuse giftScore/favoriteFood/seasonFor/getWorldClock/__setClock — no new math, no deps, no save change. ~5 files + 1 e2e. Risk pinned: cycle-027 favorites stays green because hook + eat read the SAME live season. State → phase: coder-pending.
+
+## 2026-06-10 — cycle 041 — coder — BACKLOG-170 shipped to QA
+Implemented per plan, no scope creep. foods.ts: SEASON_CRAVING + 0.4 bonus inside favoriteFood (season optional, season-less = byte-identical cycle-061); foodReaction threads season. scan.ts: scanLines(subject, season?). WorldScene: currentSeason() off the live clock, threaded into the rush/eat/scan/__favoriteFood; new __seasonCraving hook. Build clean; 298 unit (+7) green; dev server 200. E2E to QA. State → phase: qa-pending.

@@ -92,3 +92,23 @@ none.
 
 ## Estimated touch count
 ~5 files (foods.ts, scan.ts, WorldScene.ts, foods.test.ts, scan.test.ts) + 1 new e2e = within budget.
+
+## Shipped
+**Files touched (exactly the plan, no scope creep):**
+- `game/src/world/foods.ts` — `SEASON_CRAVING` table, `SEASON_CRAVING_BONUS = 0.4`, `seasonCraving()`;
+  `favoriteFood(traits, season?)` adds the bonus to the craved food's score inside the argmax;
+  `foodReaction(food, traits?, season?)` threads the season. Season-less calls are byte-identical to cycle-061.
+- `game/src/keeper/scan.ts` — `scanLines(subject, season?)` passes the season to `favoriteFood`.
+- `game/src/scenes/WorldScene.ts` — `currentSeason()` helper (off the live clock day); season threaded
+  into the `__favoriteFood` hook (with optional override), the eat path (`foodReaction`), the feeding
+  rush (`favoriteFood`), and both scan call sites; new `__seasonCraving` dev hook.
+- `tests/unit/foods.test.ts` — `describe('seasonal palates')`: craving table, season-less regression
+  pin, Rex sways (meat↔berries), Twitch loyal (greens ×4), promote-only invariant, foodReaction by season.
+- `tests/unit/scan.test.ts` — scan favorite line follows the live season.
+- `tests/e2e/cycle-041-seasonal-palates.spec.ts` — sways / loyal / craving table / live-season eat path.
+
+**Deviations:** none.
+
+**Build:** ✅ clean (`npm --prefix game run build`).
+**Unit:** ✅ 298 passed (was 291; +7). Dev server smoke: ✅ HTTP 200 then port freed.
+**E2E:** deferred to QA (full `npx playwright test`).

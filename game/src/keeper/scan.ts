@@ -10,6 +10,7 @@
 import { AXES, type Personality } from '../ai/personality';
 import { moodFromTraits } from '../ai/brain';
 import { favoriteFood } from '../world/foods';
+import type { Season } from '../world/seasons';
 import type { Role } from '../ai/roles';
 import type { Keeper } from './keepers';
 
@@ -32,8 +33,11 @@ function meter(v: number): string {
   return '▮'.repeat(filled) + '▯'.repeat(METER_CELLS - filled);
 }
 
-/** The dossier LUMEN-3 reads off a dino. Deterministic: pure formatting over the subject. */
-export function scanLines(subject: ScanSubject): string[] {
+/**
+ * The dossier LUMEN-3 reads off a dino. Deterministic: pure formatting over the subject.
+ * With `season` given, the favorite-food line reflects that season's craving (BACKLOG-170).
+ */
+export function scanLines(subject: ScanSubject, season?: Season): string[] {
   const lines = [
     `— Field Scan: ${subject.name} —`,
     `${subject.species} · [${subject.role}]`,
@@ -42,7 +46,7 @@ export function scanLines(subject: ScanSubject): string[] {
     lines.push(`${axis.low.padStart(8)} ${meter(subject.traits[axis.key])} ${axis.high}`);
   }
   lines.push(`mood: ${moodFromTraits(subject.traits)}`);
-  const fav = favoriteFood(subject.traits);
+  const fav = favoriteFood(subject.traits, season);
   lines.push(`loves ${fav.emoji} ${fav.label}`);
   return lines;
 }

@@ -45,6 +45,13 @@ describe('field scan (BACKLOG-157)', () => {
     expect(text).toContain(fav.label);
   });
 
+  it('the favorite-food line follows the live season (BACKLOG-170)', () => {
+    expect(scanLines(rex, 'winter').join('\n')).toContain(favoriteFood(rex.traits, 'winter').label);
+    expect(scanLines(rex, 'summer').join('\n')).toContain(favoriteFood(rex.traits, 'summer').label);
+    // Rex sways, so the two readouts differ.
+    expect(scanLines(rex, 'winter')).not.toEqual(scanLines(rex, 'summer'));
+  });
+
   it('the mood line matches moodFromTraits for the same traits', () => {
     expect(scanLines(rex).join('\n')).toContain(`mood: ${moodFromTraits(rex.traits)}`);
   });

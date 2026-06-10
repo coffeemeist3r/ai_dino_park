@@ -36,7 +36,7 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
-import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory } from '../world/seasons';
+import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -46,7 +46,7 @@ import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
-import { FOODS, favoriteFood, foodReaction, type Food } from '../world/foods';
+import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { hudAlpha, isIdle } from '../world/idle';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
@@ -385,10 +385,15 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__food = () =>
       this.food ? { ...this.food, foodId: this.foodKind?.id ?? null } : null;
-    (window as any).__favoriteFood = (name: string) => {
+    (window as any).__favoriteFood = (name: string, season?: Season) => {
       const d = this.dinos.find((x) => x.name === name);
-      return d ? { ...favoriteFood(d.traits) } : null;
+      return d ? { ...favoriteFood(d.traits, season ?? this.currentSeason()) } : null;
     };
+  }
+
+  /** The season the bowl is living in right now, off the live clock day (BACKLOG-170). */
+  private currentSeason(): Season {
+    return seasonFor(getWorldClock().now().day);
   }
 
   /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
@@ -426,7 +431,7 @@ export class WorldScene extends Phaser.Scene {
 
   private eatFood(d: Dino): void {
     const kind = this.foodKind;
-    const r = foodReaction(kind!, d.traits);
+    const r = foodReaction(kind!, d.traits, this.currentSeason());
     this.foodSprite?.destroy();
     this.foodSprite = null;
     this.food = null;
@@ -1032,7 +1037,7 @@ export class WorldScene extends Phaser.Scene {
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
         const dist = Math.hypot(cur.tileX - this.food.tileX, cur.tileY - this.food.tileY);
-        const isFav = !!this.foodKind && this.foodKind.id === favoriteFood(d.traits).id;
+        const isFav = !!this.foodKind && this.foodKind.id === favoriteFood(d.traits, this.currentSeason()).id;
         if (reactionToFood(d.traits.energy, dist, isFav) === 'rush') {
           const step = feedStep(cur, this.food, COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
@@ -1463,7 +1468,7 @@ export class WorldScene extends Phaser.Scene {
       this.showBubble(target, scanRefusal(keeper));
       return;
     }
-    this.scanPanel.setText(scanLines(this.scanSubject(target)).join('\n'));
+    this.scanPanel.setText(scanLines(this.scanSubject(target), this.currentSeason()).join('\n'));
     this.scanPanel.setVisible(true);
     this.scanOpen = true;
   }
@@ -1487,7 +1492,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__canScan = () => canScan(keeperById(this.keeperId));
     (window as any).__scanLines = (name?: string) => {
       const d = name ? this.dinoByName(name) : this.nearestDino();
-      return d ? scanLines(this.scanSubject(d)) : [];
+      return d ? scanLines(this.scanSubject(d), this.currentSeason()) : [];
     };
     // any: dev-only Playwright hook — stand the player on a named dino (key-press tests; the
     // overlap keeps it nearest even if a wander tick fires between the warp and the key press)
@@ -1573,6 +1578,7 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks — seasons (BACKLOG-159)
     (window as any).__season = () => seasonFor(getWorldClock().now().day);
+    (window as any).__seasonCraving = (s: Season) => seasonCraving(s).id;
     (window as any).__seasonTint = () => ({
       color: this.seasonOverlay.fillColor,
       alpha: this.seasonOverlay.fillAlpha,

@@ -12,6 +12,7 @@
 import type { Personality } from '../ai/personality';
 import { giftScore, type Gift } from '../social/gifts';
 import { FEED_GAIN, FEED_GAIN_FAV } from './feeding';
+import type { Season } from './seasons';
 
 export interface Food {
   id: string;
@@ -27,12 +28,37 @@ export const FOODS: ReadonlyArray<Food> = [
   { id: 'berries', emoji: '🍓', label: 'sweet berries', appeal: { sociability: 1, agreeableness: 0.5 } },
 ];
 
-/** The single food that best fits a personality. Stable: first max wins on FOODS order. */
-export function favoriteFood(traits: Personality): Food {
+/**
+ * Seasonal palates (BACKLOG-170) — each season nudges which food the bowl craves. The bonus is
+ * small (0.4) so it only ever flips a dino whose top-two foods are near-tied: a strong-fit dino
+ * stays loyal all year, an ambivalent one sways with the season. A craved food only ever *gains*
+ * score, so it can promote itself but never reorder the rest.
+ */
+export const SEASON_CRAVING: Record<Season, string> = {
+  spring: 'greens',
+  summer: 'berries',
+  fall: 'fish',
+  winter: 'meat',
+};
+
+export const SEASON_CRAVING_BONUS = 0.4;
+
+/** The food the bowl craves in `season`. */
+export function seasonCraving(season: Season): Food {
+  return FOODS.find((f) => f.id === SEASON_CRAVING[season]) ?? FOODS[0];
+}
+
+/**
+ * The single food that best fits a personality. Stable: first max wins on FOODS order.
+ * With `season` given, that season's craved food gets a small bonus (BACKLOG-170); omitting
+ * `season` reproduces the cycle-061 verdict exactly.
+ */
+export function favoriteFood(traits: Personality, season?: Season): Food {
   let best = FOODS[0];
   let bestScore = -Infinity;
   for (const food of FOODS) {
-    const score = giftScore(food as Gift, traits); // Food is structurally a Gift (both expose `appeal`)
+    let score = giftScore(food as Gift, traits); // Food is structurally a Gift (both expose `appeal`)
+    if (season && food.id === SEASON_CRAVING[season]) score += SEASON_CRAVING_BONUS;
     if (score > bestScore) {
       bestScore = score;
       best = food;
@@ -48,8 +74,8 @@ export interface FoodReaction {
 }
 
 /** How a dino feels about eating `food`: its favorite delights it, anything else is plain feed. */
-export function foodReaction(food: Food, traits?: Personality): FoodReaction {
-  const favorite = !!traits && food.id === favoriteFood(traits).id;
+export function foodReaction(food: Food, traits?: Personality, season?: Season): FoodReaction {
+  const favorite = !!traits && food.id === favoriteFood(traits, season).id;
   return {
     favorite,
     gain: favorite ? FEED_GAIN_FAV : FEED_GAIN,
