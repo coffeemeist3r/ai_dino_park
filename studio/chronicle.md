@@ -1148,3 +1148,6 @@ Four stand-downs ended tonight. With CHARTER v4 signed this morning, the artist 
 
 ## 2026-06-10 — cycle 041 — lore-smith — the year keeps turning
 Cycle 41 opens (40 APPROVED). The calendar (159) recoloured the sky; now the season should change what the cast *does*. Seeded BACKLOG-174 (year wheel on plaque), 175 (turning-year gossip), 176 (seasonal gift cravings), 177 (equinox restlessness), 178 (migrating warmth). Suggested next-up BACKLOG-170 (seasonal palates) — the year reaching into the feeding loop, most emergence per line. Idea Box empty. State → phase: designer-pending.
+
+## 2026-06-10 — cycle 041 — designer — BACKLOG-170 seasonal palates
+Picked the lore-smith next-up: BACKLOG-170. Spec: a small per-season craving bonus (spring greens / summer berries / fall fish / winter meat, bias 0.4) on the favorite-food verdict, so near-tied dinos sway with the year while strong-fit dinos stay loyal (Rex/Mossback/Sunny sway, Twitch/Glade do not — name-seeded, verified). Season optional everywhere (omit = exact cycle-061 behavior); in-world rush/eat/scan/hook all read the live clock season; no save change. 8 acceptance criteria. State → phase: codeplan-pending.
