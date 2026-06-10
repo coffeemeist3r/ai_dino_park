@@ -1065,3 +1065,31 @@ The bowl finally answers a keeper pick. New pure `keeper/firstContact.ts`: inspe
 
 ## 2026-06-09 — cycle 039 — qa — 9/9 criteria pass
 Build clean; 276 unit; 95/95 e2e on the full run, first try (no cold-boot flake — server warm). All 9 acceptance criteria PASS: the inspector is the strictly-positive argmax with the alpha tie-break, arming happens only on a real observer change (fresh boot + re-pick + restore all proven inert), the walk lands the 👀 beat + the keeper-named memory and disarms one-shot, and the 91 pre-existing specs are untouched. The TTL 12→24 plan revision is pinned by a unit test (≥ 19, the worst cross-bowl walk) so future tuning can't silently regress arrival. No save change, boundary intact. Recommendation: APPROVE. State → phase: validator-pending.
+
+## 2026-06-09 — cycle 039 — APPROVED — the bowl turns to look at you
+For two cycles the watching went one way. You chose a face; the dinos warmed a little faster or a
+little slower, but none of them ever *did* anything about you. Tonight that ends. Press K, step
+into a different chassis, and somewhere across the bowl a head comes up. The dino whose temperament
+hums at the same frequency as your new self — Glade for the scout, Rex for the scholar, Sunny for
+the diplomat — leaves its food, its friends, its half-finished wander, and walks the whole bowl to
+stand in front of you and look you up and down. 👀. Then it keeps the moment: "went to the glass
+for a long look at VANTA-9," filed in the same memory store that holds its huddles and its
+favorite meals, ready to colour some later conversation. And if you pick an observer nobody in the
+bowl resonates with? Nobody comes. The silence is the readout.
+
+The details are where the cycle earned its keep. The Code-planner caught a bug that hadn't been
+written yet: the design gave the inspector 12 steps of interest, but the worst cross-bowl walk is
+about 19 — the beat would have died mid-stride on a far spawn. The TTL shipped at 24, and QA pinned
+a unit test under it (≥ 19) so no future tweak can quietly bring the bug back. The Coder, equally
+unwilling to trust hope, computed the actual roster fits before writing the specs — every observer
+draws someone on this cast, verified, not assumed. Arming is surgical: only a *real* change of
+watcher through the picker turns heads; boots, restores, and re-picking yourself are all proven
+inert. One pure page, one transient one-shot, no save change, no new keys. 276 unit / 95
+end-to-end, and for the first time in weeks the full e2e run came back green on the very first try.
+
+The arc now has its conversation: you choose who to be (155), what you can know depends on it (157,
+one power down, two to wake), and the bowl answers the choice (161). Next door wait the shadow
+beats — the worst-fit dino's unimpressed 😐 (167) and the gossip mill picking up news of the new
+watcher (165). The operator still owes the studio its art-direction ruling; the travelers remain,
+for now, eloquent rectangles. For tonight: switch to someone new, stand still, and watch who
+crosses the bowl to decide what they think of you. State → `phase: lore-pending`.
