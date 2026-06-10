@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { walkFrames, SPECIES_ART, type Shape } from './dinoArt';
+import { PIXEL_SPECIES } from './pixelArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -31,11 +32,53 @@ function drawShape(g: Phaser.GameObjects.Graphics, s: Shape): void {
 }
 
 /**
+ * Bake a pixel-grid rig (CHARTER v4): one fillRect per pixel at an integer scale, hard edges.
+ * Texture keys follow the same `${animKey}_${i}` convention the vector path uses, so the
+ * factory's `_0` base-texture contract holds for both pipelines.
+ */
+function ensurePixelWalk(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+  const rig = PIXEL_SPECIES[species];
+  if (!rig) return null;
+  const animKey = `${rig.prefix}_walk_${baseColor.toString(16)}`;
+  if (scene.anims.exists(animKey)) return animKey;
+
+  const scale = Math.max(1, Math.floor(SIZE / rig.size));
+  const pal = rig.palette(baseColor);
+  const texKeys = rig.frames.map((grid, i) => {
+    const key = `${animKey}_${i}`;
+    if (!scene.textures.exists(key)) {
+      const g = scene.add.graphics();
+      grid.forEach((row, y) => {
+        for (let x = 0; x < row.length; x++) {
+          const ch = row[x];
+          if (ch === '.') continue;
+          g.fillStyle(pal[ch], 1);
+          g.fillRect(x * scale, y * scale, scale, scale);
+        }
+      });
+      g.generateTexture(key, rig.size * scale, rig.size * scale);
+      g.destroy();
+    }
+    return key;
+  });
+
+  scene.anims.create({
+    key: animKey,
+    frames: rig.sequence.map((i) => ({ key: texKeys[i] })),
+    frameRate: 6,
+    repeat: -1,
+  });
+  return animKey;
+}
+
+/**
  * Ensure a walk animation exists for `species` in `baseColor`; returns the anim key,
  * or null if the species has no rig. Idempotent and colour-keyed, so every dino of a
- * species+colour reuses one bake.
+ * species+colour reuses one bake. A pixel rig (CHARTER v4) overrides the legacy vector rig.
  */
 export function ensureWalk(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+  const pixel = ensurePixelWalk(scene, species, baseColor);
+  if (pixel) return pixel;
   const art = SPECIES_ART[species];
   if (!art) return null;
   const animKey = `${art.prefix}_walk_${baseColor.toString(16)}`;
@@ -58,7 +101,7 @@ export function ensureWalk(scene: Phaser.Scene, species: string, baseColor: numb
 
 /** Species the procedural pipeline can render today; others fall back to a flat rectangle. */
 export function hasArt(species: string): boolean {
-  return species in SPECIES_ART;
+  return species in PIXEL_SPECIES || species in SPECIES_ART;
 }
 
 /** Build the visible game object for a dino — a baked sprite where art exists, else a rectangle. */
