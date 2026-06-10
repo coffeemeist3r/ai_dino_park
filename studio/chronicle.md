@@ -1151,3 +1151,6 @@ Cycle 41 opens (40 APPROVED). The calendar (159) recoloured the sky; now the sea
 
 ## 2026-06-10 — cycle 041 — designer — BACKLOG-170 seasonal palates
 Picked the lore-smith next-up: BACKLOG-170. Spec: a small per-season craving bonus (spring greens / summer berries / fall fish / winter meat, bias 0.4) on the favorite-food verdict, so near-tied dinos sway with the year while strong-fit dinos stay loyal (Rex/Mossback/Sunny sway, Twitch/Glade do not — name-seeded, verified). Season optional everywhere (omit = exact cycle-061 behavior); in-world rush/eat/scan/hook all read the live clock season; no save change. 8 acceptance criteria. State → phase: codeplan-pending.
+
+## 2026-06-10 — cycle 041 — code-planner — BACKLOG-170 plan
+Plan: SEASON_CRAVING table + 0.4 bonus inside favoriteFood (season optional → byte-identical cycle-061 fallback); thread live season through foodReaction, the rush, the eat, scan, and the __favoriteFood hook; new __seasonCraving hook. Reuse giftScore/favoriteFood/seasonFor/getWorldClock/__setClock — no new math, no deps, no save change. ~5 files + 1 e2e. Risk pinned: cycle-027 favorites stays green because hook + eat read the SAME live season. State → phase: coder-pending.
