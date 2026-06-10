@@ -155,10 +155,78 @@ export const MOSS_RIG: PixelRig = {
   palette: mossPalette,
 };
 
+// ── Sunny — the brontosaurus, third through the pixel pipeline (BACKLOG-169) ────────────────
+// 20×20, side view facing left: the cast's only long neck — a small head held high at the top
+// left, a two-pixel neck sloping down into a deep round body, a raised tail tapering up-right
+// to a high tip, and columnar sauropod legs set wide apart. Keeps the 'bro' prefix so the
+// cycle-31 colour-keyed bake + e2e contract is unchanged.
+
+const SUNNY_STAND: ReadonlyArray<string> = [
+  '..ooo...............',
+  '.obbbo..............',
+  '.obebbo.............',
+  '..obbbo.............',
+  '...obbo.............',
+  '...obbo.............',
+  '....obbo..........oo',
+  '....obbbo........obo',
+  '....obbbbbo.....obo.',
+  '...obbbbbbboo..obbo.',
+  '...obbbbbbbbbbobbo..',
+  '..obbbbbbbbbbbbbbo..',
+  '..obbllllllllllbbo..',
+  '...oblllllllllbo....',
+  '....ddoooooooodd....',
+  '....dd........dd....',
+  '....dd........dd....',
+  '...ooo.......ooo....',
+  '....................',
+  '....................',
+];
+
+const SUNNY_STEP_L: ReadonlyArray<string> = [
+  ...SUNNY_STAND.slice(0, 14),
+  '...dd.oooooooo.dd...',
+  '...dd..........dd...',
+  '..odd..........ddo..',
+  '..ooo..........ooo..',
+  '....................',
+  '....................',
+];
+
+const SUNNY_STEP_R: ReadonlyArray<string> = [
+  ...SUNNY_STAND.slice(0, 14),
+  '.....ddoooooodd.....',
+  '.....dd......dd.....',
+  '....odd......ddo....',
+  '....ooo......ooo....',
+  '....................',
+  '....................',
+];
+
+function sunnyPalette(base: number): Record<string, number> {
+  return {
+    o: shade(base, -0.75), // near-black warm outline (never pure black)
+    b: base,
+    l: shade(base, 0.35), // belly
+    d: shade(base, -0.3), // legs
+    e: 0x1a0e0a, // eye
+  };
+}
+
+export const SUNNY_RIG: PixelRig = {
+  prefix: 'bro',
+  size: 20,
+  frames: [SUNNY_STAND, SUNNY_STEP_L, SUNNY_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: sunnyPalette,
+};
+
 /** Species drawn in pixel; these override their legacy vector rigs in bake.ts. */
 export const PIXEL_SPECIES: Record<string, PixelRig> = {
   triceratops: REX_RIG,
   stegosaurus: MOSS_RIG,
+  brontosaurus: SUNNY_RIG,
 };
 
 /** Distinct non-transparent chars used by a frame — test helper for palette discipline. */

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, charsUsed } from '../../game/src/art/pixelArt';
+import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, SUNNY_RIG, charsUsed } from '../../game/src/art/pixelArt';
 
 describe('pixel pipeline (BACKLOG-168, CHARTER v4)', () => {
   it('every frame is a full square grid', () => {
@@ -88,5 +88,49 @@ describe('Mossback the stegosaurus pixel rig (BACKLOG-169)', () => {
   it('keeps the steg prefix so the cycle-35 colour-keyed bake + e2e contract holds', () => {
     expect(MOSS_RIG.prefix).toBe('steg');
     expect(PIXEL_SPECIES.stegosaurus).toBe(MOSS_RIG);
+  });
+});
+
+describe('Sunny the brontosaurus pixel rig (BACKLOG-169)', () => {
+  it('is a full 20×20 grid in every frame', () => {
+    for (const frame of SUNNY_RIG.frames) {
+      expect(frame).toHaveLength(SUNNY_RIG.size);
+      for (const row of frame) expect(row).toHaveLength(SUNNY_RIG.size);
+    }
+  });
+
+  it('every painted char resolves and keeps GBA palette discipline (≤ 15 distinct)', () => {
+    const pal = SUNNY_RIG.palette(0xd8b84a);
+    for (const frame of SUNNY_RIG.frames) {
+      for (const ch of charsUsed(frame)) expect(pal[ch], `char '${ch}'`).toBeTypeOf('number');
+    }
+    const colors = Object.values(pal);
+    expect(colors.length).toBeLessThanOrEqual(15);
+    expect(new Set(colors).size).toBe(colors.length);
+  });
+
+  it('carries the long neck — paint in the top rows ahead of the body, the sauropod read', () => {
+    const stand = SUNNY_RIG.frames[0];
+    // Head + neck occupy the upper-left quarter: painted pixels in rows 0..5, all left of col 8.
+    for (let y = 0; y <= 5; y++) {
+      const painted = [...stand[y]].map((ch, x) => (ch !== '.' ? x : -1)).filter((x) => x >= 0);
+      expect(painted.length, `row ${y}`).toBeGreaterThan(0);
+      expect(Math.max(...painted), `row ${y}`).toBeLessThan(8);
+    }
+    expect(charsUsed(stand).has('e')).toBe(true); // eye up in the head
+    expect(charsUsed(stand).has('o')).toBe(true); // dark outline
+  });
+
+  it('ambles: three distinct frames, the Gen3 stand-between-steps sequence', () => {
+    const [stand, stepL, stepR] = SUNNY_RIG.frames;
+    expect(stand).not.toEqual(stepL);
+    expect(stand).not.toEqual(stepR);
+    expect(stepL).not.toEqual(stepR);
+    expect(SUNNY_RIG.sequence).toEqual([0, 1, 0, 2]);
+  });
+
+  it('keeps the bro prefix so the cycle-31 colour-keyed bake + e2e contract holds', () => {
+    expect(SUNNY_RIG.prefix).toBe('bro');
+    expect(PIXEL_SPECIES.brontosaurus).toBe(SUNNY_RIG);
   });
 });
