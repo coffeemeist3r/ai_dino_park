@@ -1,6 +1,6 @@
 {
   "cycle": 41,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-170: Seasonal palates",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
     "designer": "2026-06-10T08:12:00-05:00",
     "code-planner": "2026-06-10T08:20:00-05:00",
     "coder": "2026-06-10T08:35:00-05:00",
-    "qa": "2026-06-09T21:40:00-05:00",
+    "qa": "2026-06-10T08:45:00-05:00",
     "validator": "2026-06-09T21:50:00-05:00",
     "artist": "2026-06-09T22:05:00-05:00"
   }

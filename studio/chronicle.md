@@ -1157,3 +1157,6 @@ Plan: SEASON_CRAVING table + 0.4 bonus inside favoriteFood (season optional → 
 
 ## 2026-06-10 — cycle 041 — coder — BACKLOG-170 shipped to QA
 Implemented per plan, no scope creep. foods.ts: SEASON_CRAVING + 0.4 bonus inside favoriteFood (season optional, season-less = byte-identical cycle-061); foodReaction threads season. scan.ts: scanLines(subject, season?). WorldScene: currentSeason() off the live clock, threaded into the rush/eat/scan/__favoriteFood; new __seasonCraving hook. Build clean; 298 unit (+7) green; dev server 200. E2E to QA. State → phase: qa-pending.
+
+## 2026-06-10 — cycle 041 — qa — 8/8 criteria pass
+Build clean; 298 unit green; 105 e2e (104 first run + the cycle-002-daynight cold-boot flake, green isolated in 939ms — not a regression). All four cycle-041 specs green in the full run. cycle-027 favorites stays green (hook + eat read the same live season). 8/8 acceptance criteria PASS; no new pageerror, no save change, no deps. Recommend APPROVE. State → phase: validator-pending.
