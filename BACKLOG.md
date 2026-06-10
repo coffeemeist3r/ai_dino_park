@@ -252,6 +252,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-166 [pokemon] Deep dossier — Lux's scan readout grows two relational lines: the dino's last remembered keeper-tone and any outstanding gratitude debt ("owes Twitch one"), making the scan the place where the social ledgers surface. Builds on 157 / 142 / 132.
 - [ ] BACKLOG-167 [emergent] The unimpressed — the cast's *worst* personality-fit dino greets a freshly-picked observer with a flat, unimpressed beat (😐 + a "didn't see the fuss" memory) a moment after the best-fit one inspects; the same choice that delights one dino bores another, legibly. Builds on 161 / 155 / 010.
 
+## Cycle 40 lore additions — the turning year (2026-06-09)
+
+> Next-up is the operator-seeded **BACKLOG-159** (season foundation) — three keeper cycles in a
+> row is enough inward gaze; give the bowl a year. These extend the seasons once the clock turns.
+
+- [ ] BACKLOG-170 [emergent] Seasonal palates — each season nudges which foods the bowl craves (berries sweeter in summer, meat prized in winter): the favorite-food verdict gains a small season modifier, so the same dino begs differently in March and in December. Builds on 061 / 159.
+- [ ] BACKLOG-171 [emergent] Winter huddle pull — cold seasons lower the night-huddle bond threshold and lengthen the huddle window, so winter visibly packs the den while summer nights stay scattered. Who sleeps alone in winter becomes a sharper read. Builds on 041 / 159.
+- [ ] BACKLOG-172 [pokemon] Season of hatching — every dino (and every future egg) gets a recorded hatch season shown in the collection book ("hatched in spring"); lineages start carrying birthdays the turning year makes meaningful. Builds on 042 / 021 / 159.
+- [ ] BACKLOG-173 [ai] Season in the voice — the current season joins the dialogue context (like time-of-day in 051), so a dino can grumble about winter or savour spring without being asked. Deterministic fallback line per season. Builds on 051 / 159.
+
 ## Operator art mandate (2026-06-09 — CHARTER v4: GBA pixel)
 
 > The operator ruled: **Gen3 pixel**, authored as code (no rips, no downloads). Restyle rolls
