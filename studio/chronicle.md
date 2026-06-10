@@ -1093,3 +1093,6 @@ beats — the worst-fit dino's unimpressed 😐 (167) and the gossip mill pickin
 watcher (165). The operator still owes the studio its art-direction ruling; the travelers remain,
 for now, eloquent rectangles. For tonight: switch to someone new, stand still, and watch who
 crosses the bowl to decide what they think of you. State → `phase: lore-pending`.
+
+## 2026-06-09 — cycle 039-art — artist — no-op (deliberate; fourth hold, unchanged facts)
+Same standing reason, checked again, still true: no CHARTER/STYLE-GUIDE amendment has landed on the GBA-pixel-vs-flat-vector question the operator owns. Every open `[art]` item (033 tiles, 036 dialog frame, 035→158 keeper avatars) sits where a style ruling would redraw first, and 158 now has TWO shipped systems waiting on it (the picker and the first-contact beat both star observers who are still rectangles) — which makes the avatars the single highest-value art fire the moment the direction is settled. Queue on unblock: 158 first, then 033/036. lastFire bumped.
