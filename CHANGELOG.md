@@ -1,4 +1,4 @@
-# Changelog
+﻿# Changelog
 
 Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
@@ -8,6 +8,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 ```
 
 ---
+
+## Cycle 042 — 2026-06-10
+- BACKLOG-171: Winter huddle pull — season-conditional den rules (winter 4 pts / 19→7 packs the den from dusk; summer 8 / 23→4 scatters warm nights; spring byte-identical legacy); pure world/huddle.ts, zero save change.
 
 ## Cycle 041 — 2026-06-10
 - BACKLOG-170: Seasonal palates — the turning year (159) finally reaches into the loop the player drives daily: feeding. Each season craves one food (spring → 🌿 greens, summer → 🍓 berries, fall → 🐟 fish, winter → 🍖 meat) and lends it a small **+0.4** nudge inside the favorite-food verdict. The bonus is deliberately tiny — it only ever flips a dino whose top-two foods are near-tied, and it can *only* promote the craved food, never reorder the rest. Sized against the actual name-seeds, the cast splits itself into character: **Rex, Mossback, and Sunny each sway with the year** (and each toward a different food), while **Twitch the herbivore (a 1.57 fit gap) and Glade the carnivore never budge** — "who follows the season and who's loyal" becomes a free new read on personality. The same hatch drop now reads the calendar back to you: drop meat in winter and a meat-craver comes running and eats it as its *favorite* (😋 + a "favorite" memory); drop the same meat in summer and it's plain feed to that same dino. The whole thing is **derived state** — `season` is an optional argument on `favoriteFood` / `foodReaction` / `scanLines`, so omitting it is byte-identical to cycle-061 and every prior food/scan test stayed green untouched; the save format grew by **nothing**. The feeding rush, the eat reaction, the `__favoriteFood` hook, and LUMEN-3's Field Scan all read the *same* live clock season, which is exactly why the cycle-027 favorites e2e still passes — the food dropped and the food eaten are judged in one season by construction. Pure `world/foods.ts` (the craving table + the bonus); WorldScene only passes the live season in (`currentSeason()`); new `__seasonCraving` dev hook. No new keys or deps; NPCBrain boundary intact; day/night + season-tint rendering untouched. 7 new unit + 4 new e2e; 8/8 AC pass; 298 unit / 105 e2e green (the lone red was the documented cold-boot parallel flake, green isolated in 939ms). Unblocks 176 (seasonal gift cravings) and the rest of the cycle-41 lore set (174/175/177/178).
