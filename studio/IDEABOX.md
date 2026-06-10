@@ -25,7 +25,7 @@ _(empty — all standing nudges processed cycle 37)_
 
 - `[seeded BACKLOG-159]` (2026-06-08) **Seasons — fall, winter, spring, summer.** Seeded as the *foundation beat only* — a turning-year clock + per-season palette tint + a "season turned" beat — matching how every other arc was seeded foundation-first. The big four-season art lift + weather stay deferred to the existing -028. — processed cycle 37.
 
-- `[declined: needs a CHARTER amendment, not a routine flip]` (2026-06-08) **Declare an official GBA-era pixel art style.** CHARTER v2 (2026-06-03) deliberately *retired* the Gen3-pixel mandate in favour of procedural flat-vector; re-instating a pixel mandate is a constitution change. Routed back to the operator: amend CHARTER.md + STYLE-GUIDE.md (human-approved) and the next cycle obeys. The art *medium* stays code either way. — processed cycle 37.
+- `[declined: needs a CHARTER amendment, not a routine flip]` (2026-06-08) **Declare an official GBA-era pixel art style.** CHARTER v2 (2026-06-03) deliberately *retired* the Gen3-pixel mandate in favour of procedural flat-vector; re-instating a pixel mandate is a constitution change. Routed back to the operator: amend CHARTER.md + STYLE-GUIDE.md (human-approved) and the next cycle obeys. The art *medium* stays code either way. — processed cycle 37. **RESOLVED 2026-06-09: the operator ruled GBA pixel — CHARTER v4 + STYLE-GUIDE rewrite landed; restyle arc seeded as BACKLOG-168/169; art pipeline unblocked.**
 
 - `[seeded BACKLOG-155]` (2026-06-08) **Give the player a character (time-traveling robot observer).** Folded into the selectable-keeper spine: the roster *is* a cast of time-traveling robot observers, so the identity nudge ships as BACKLOG-155. — processed cycle 37.
 
