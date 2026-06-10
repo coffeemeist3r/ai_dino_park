@@ -282,6 +282,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-177 [emergent] Equinox restlessness — on the single day a season turns, the whole cast wanders a touch wider for that one day, a quiet collective "something's changed" jitter — distinct from the sky-event gather (144). Builds on 159 / 018.
 - [ ] BACKLOG-178 [emergent] Migrating warmth — winter raises the cluster-drift bias (the cast seeks company in the cold and the den fills earlier) while summer lowers it (they spread out and laze); the bowl's social density breathes with the year. Builds on 159 / 018 / 041.
 
+## Cycle 42 lore additions — the year reaches the night (2026-06-10)
+
+> Cycle 41 let the season change a verdict (which food wins); cycle 42 should let it change
+> behaviour you can watch — the den packing at dusk in winter. Next-up is the already-queued
+> **BACKLOG-171** (winter huddle pull); these extend the seasonal night once it lands.
+
+- [ ] BACKLOG-179 [emergent] Cold-night shiver — a dino that spends a winter night outside the den (never huddled) visibly shivers (🥶 bubble) and files a "cold night, slept alone" memory that can colour its next-morning greeting; being left out becomes legible. Builds on 171 / 041 / 011.
+- [ ] BACKLOG-180 [emergent] Odd bedfellows — when the winter den packs, two *low-bond* dinos who end up huddled the same cold night gain a small extra bond bump beyond the normal meet gain ("we kept each other warm"); the cold manufactures unlikely friendships the summer never would. Builds on 171 / 041 / 013.
+- [ ] BACKLOG-181 [ai] Sleep murmurs — a huddled dino may murmur a quiet 💭 sleep-line drawn from its strongest memory of the day (deterministic template fallback; LLM colour where the device allows, behind NPCBrain); the day echoes in the night. Builds on 041 / 011.
+- [ ] BACKLOG-182 [pokemon] Night ledger — the collection book counts shared den nights per dino ("most nights kept warm with Sunny"), the sleeping pile's history made legible alongside the closest-friend line. Builds on 041 / 021 / 134.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
