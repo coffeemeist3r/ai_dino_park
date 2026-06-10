@@ -1,6 +1,6 @@
 {
   "cycle": 42,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-171: winter huddle pull — season-conditional huddle threshold + window",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-06-10T18:02:00-05:00",
     "designer": "2026-06-10T18:10:00-05:00",
-    "code-planner": "2026-06-10T08:20:00-05:00",
+    "code-planner": "2026-06-10T18:18:00-05:00",
     "coder": "2026-06-10T08:35:00-05:00",
     "qa": "2026-06-10T08:45:00-05:00",
     "validator": "2026-06-10T08:55:00-05:00",
