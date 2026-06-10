@@ -87,9 +87,78 @@ export const REX_RIG: PixelRig = {
   palette: rexPalette,
 };
 
+// ── Mossback — the stegosaurus, second through the pixel pipeline (BACKLOG-169) ─────────────
+// 20×20, side view facing left: a small head bump up front (eye in it), a long low-slung body,
+// the signature STAGGERED double-row plate ridge, and a thagomizer (bone spikes) off the tail
+// tip. Keeps the 'steg' prefix so the cycle-35 colour-keyed bake + e2e contract is unchanged.
+
+const MOSS_STAND: ReadonlyArray<string> = [
+  '....................',
+  '....p..p..p..p......',
+  '...ppp.pp.pp.pp.....',
+  '..p.pp.pp.pp.ppp....',
+  '..ooppppppppppppo.hh',
+  '..obbbbbbbbbbbbboohh',
+  '.obbbbbbbbbbbbbbbboh',
+  'oebbbbbbbbbbbbbbbbbo',
+  'obbbbblllllllllbbbbo',
+  'obbblllllllllllllbbo',
+  '.obboooooooooooobbo.',
+  '..oo..........oo....',
+  '...o..........o.....',
+  '...o..........o.....',
+  '....bb......bb......',
+  '....dd......dd......',
+  '...odd......ddo.....',
+  '...ooo......ooo.....',
+  '....................',
+  '....................',
+];
+
+const MOSS_STEP_L: ReadonlyArray<string> = [
+  ...MOSS_STAND.slice(0, 14),
+  '...bb........bb.....',
+  '...dd........dd.....',
+  '..odd........ddo....',
+  '..ooo........ooo....',
+  '....................',
+  '....................',
+];
+
+const MOSS_STEP_R: ReadonlyArray<string> = [
+  ...MOSS_STAND.slice(0, 14),
+  '.....bb....bb.......',
+  '.....dd....dd.......',
+  '....odd....ddo......',
+  '....ooo....ooo......',
+  '....................',
+  '....................',
+];
+
+function mossPalette(base: number): Record<string, number> {
+  return {
+    o: shade(base, -0.75), // near-black cool outline (never pure black)
+    b: base,
+    l: shade(base, 0.35), // belly
+    d: shade(base, -0.3), // legs
+    p: 0xc89048, // plates — contrasting warm ochre (the classic stego read)
+    h: 0xe8dcc0, // bone — thagomizer spikes, shared with the cast's horns
+    e: 0x1a0e0a, // eye
+  };
+}
+
+export const MOSS_RIG: PixelRig = {
+  prefix: 'steg',
+  size: 20,
+  frames: [MOSS_STAND, MOSS_STEP_L, MOSS_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: mossPalette,
+};
+
 /** Species drawn in pixel; these override their legacy vector rigs in bake.ts. */
 export const PIXEL_SPECIES: Record<string, PixelRig> = {
   triceratops: REX_RIG,
+  stegosaurus: MOSS_RIG,
 };
 
 /** Distinct non-transparent chars used by a frame — test helper for palette discipline. */

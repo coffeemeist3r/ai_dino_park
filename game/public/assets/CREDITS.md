@@ -13,3 +13,4 @@ STYLE-GUIDE.
 | Compsognathus walk loop (Twitch) | `game/src/art/dinoArt.ts` (`compsognathusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-06 |
 | Stegosaurus walk loop (Mossback) | `game/src/art/dinoArt.ts` (`stegosaurusPose`) → `bake.ts` | Claude-authored procedural vector | 2026-06-08 |
 | Triceratops pixel walk (Rex, GBA restyle) | `game/src/art/pixelArt.ts` (`REX_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-09 |
+| Stegosaurus pixel walk (Mossback, GBA restyle) | `game/src/art/pixelArt.ts` (`MOSS_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-10 |

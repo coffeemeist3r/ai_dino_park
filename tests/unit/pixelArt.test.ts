@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PIXEL_SPECIES, REX_RIG, charsUsed } from '../../game/src/art/pixelArt';
+import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, charsUsed } from '../../game/src/art/pixelArt';
 
 describe('pixel pipeline (BACKLOG-168, CHARTER v4)', () => {
   it('every frame is a full square grid', () => {
@@ -49,5 +49,44 @@ describe('pixel pipeline (BACKLOG-168, CHARTER v4)', () => {
     const b = REX_RIG.palette(0x4a8a3a);
     expect(a.b).not.toBe(b.b);
     expect(a.h).toBe(b.h); // shared bone tone is base-independent
+  });
+});
+
+describe('Mossback the stegosaurus pixel rig (BACKLOG-169)', () => {
+  it('is a full 20×20 grid in every frame', () => {
+    for (const frame of MOSS_RIG.frames) {
+      expect(frame).toHaveLength(MOSS_RIG.size);
+      for (const row of frame) expect(row).toHaveLength(MOSS_RIG.size);
+    }
+  });
+
+  it('every painted char resolves and keeps GBA palette discipline (≤ 15 distinct)', () => {
+    const pal = MOSS_RIG.palette(0x4a7a4a);
+    for (const frame of MOSS_RIG.frames) {
+      for (const ch of charsUsed(frame)) expect(pal[ch], `char '${ch}'`).toBeTypeOf('number');
+    }
+    const colors = Object.values(pal);
+    expect(colors.length).toBeLessThanOrEqual(15);
+    expect(new Set(colors).size).toBe(colors.length);
+  });
+
+  it('carries the plates and the thagomizer — the stegosaurus silhouette read', () => {
+    const stand = MOSS_RIG.frames[0];
+    expect(charsUsed(stand).has('p')).toBe(true); // dorsal plates
+    expect(charsUsed(stand).has('h')).toBe(true); // bone tail spikes
+    expect(charsUsed(stand).has('o')).toBe(true); // dark outline
+  });
+
+  it('ambles: three distinct frames, the Gen3 stand-between-steps sequence', () => {
+    const [stand, stepL, stepR] = MOSS_RIG.frames;
+    expect(stand).not.toEqual(stepL);
+    expect(stand).not.toEqual(stepR);
+    expect(stepL).not.toEqual(stepR);
+    expect(MOSS_RIG.sequence).toEqual([0, 1, 0, 2]);
+  });
+
+  it('keeps the steg prefix so the cycle-35 colour-keyed bake + e2e contract holds', () => {
+    expect(MOSS_RIG.prefix).toBe('steg');
+    expect(PIXEL_SPECIES.stegosaurus).toBe(MOSS_RIG);
   });
 });
