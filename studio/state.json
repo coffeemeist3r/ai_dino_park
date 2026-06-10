@@ -1,6 +1,6 @@
 {
   "cycle": 39,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-161: first-contact inspection - the bowl reacts to who you chose",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-06-09T19:44:21-05:00",
     "designer": "2026-06-09T19:52:00-05:00",
-    "code-planner": "2026-06-09T18:20:00-05:00",
+    "code-planner": "2026-06-09T20:00:00-05:00",
     "coder": "2026-06-09T18:45:00-05:00",
     "qa": "2026-06-09T19:05:00-05:00",
     "validator": "2026-06-09T19:15:00-05:00",
