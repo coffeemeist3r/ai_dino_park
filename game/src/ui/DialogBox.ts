@@ -2,6 +2,9 @@ import Phaser from 'phaser';
 
 const PAD = 12;
 const HEIGHT = 88;
+// Above every HUD layer (plaque/holding/hints top out at 13), below the touch
+// control chips (20). Without this the bottom chrome painted over the dialog text.
+const DEPTH = 15;
 
 export class DialogBox {
   private readonly bg: Phaser.GameObjects.Rectangle;
@@ -29,6 +32,11 @@ export class DialogBox {
       color: '#555555',
     });
     this.hint.setOrigin(1, 1);
+    // Screen-space chrome: pin above the HUD and exempt from ambient camera drift.
+    for (const o of [this.border, this.bg, this.text, this.hint]) {
+      o.setDepth(DEPTH);
+      o.setScrollFactor(0);
+    }
     this.setVisible(false);
   }
 
