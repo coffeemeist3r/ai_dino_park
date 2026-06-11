@@ -288,7 +288,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > behaviour you can watch — the den packing at dusk in winter. Next-up is the already-queued
 > **BACKLOG-171** (winter huddle pull); these extend the seasonal night once it lands.
 
-- [ ] BACKLOG-179 [emergent] Cold-night shiver — a dino that spends a winter night outside the den (never huddled) visibly shivers (🥶 bubble) and files a "cold night, slept alone" memory that can colour its next-morning greeting; being left out becomes legible. Builds on 171 / 041 / 011.
+- [~] BACKLOG-179 [emergent] Cold-night shiver — a dino that spends a winter night outside the den (never huddled) visibly shivers (🥶 bubble) and files a "cold night, slept alone" memory that can colour its next-morning greeting; being left out becomes legible. Builds on 171 / 041 / 011.
 - [ ] BACKLOG-180 [emergent] Odd bedfellows — when the winter den packs, two *low-bond* dinos who end up huddled the same cold night gain a small extra bond bump beyond the normal meet gain ("we kept each other warm"); the cold manufactures unlikely friendships the summer never would. Builds on 171 / 041 / 013.
 - [ ] BACKLOG-181 [ai] Sleep murmurs — a huddled dino may murmur a quiet 💭 sleep-line drawn from its strongest memory of the day (deterministic template fallback; LLM colour where the device allows, behind NPCBrain); the day echoes in the night. Builds on 041 / 011.
 - [ ] BACKLOG-182 [pokemon] Night ledger — the collection book counts shared den nights per dino ("most nights kept warm with Sunny"), the sleeping pile's history made legible alongside the closest-friend line. Builds on 041 / 021 / 134.
