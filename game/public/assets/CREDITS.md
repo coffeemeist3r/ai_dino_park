@@ -15,3 +15,4 @@ STYLE-GUIDE.
 | Triceratops pixel walk (Rex, GBA restyle) | `game/src/art/pixelArt.ts` (`REX_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-09 |
 | Stegosaurus pixel walk (Mossback, GBA restyle) | `game/src/art/pixelArt.ts` (`MOSS_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-10 |
 | Brontosaurus pixel walk (Sunny, GBA restyle) | `game/src/art/pixelArt.ts` (`SUNNY_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-10 |
+| Compsognathus pixel walk (Twitch, GBA restyle) | `game/src/art/pixelArt.ts` (`COMP_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-11 |

@@ -222,11 +222,81 @@ export const SUNNY_RIG: PixelRig = {
   palette: sunnyPalette,
 };
 
+// ── Twitch — the compsognathus, fourth through the pixel pipeline (BACKLOG-169) ──────────────
+// 20×20, side view facing left: the cast's ONLY biped, which is the whole silhouette. A small
+// alert head with a pointed snout and a forward eye, a short neck into a deep upright chest
+// (taller than wide), a dorsal two-tone stripe down the back, a tail tapering off behind, and
+// two long centred legs that scissor fore/aft for a quick, jittery sprinter's skitter — unlike
+// the quadrupeds' splayed corner pairs. Keeps the 'comp' prefix so the cycle-33 bake + e2e hold.
+
+const COMP_STAND: ReadonlyArray<string> = [
+  '....................',
+  '..oooo..............',
+  '.obbbbo.............',
+  'obebbbo.............',
+  'obbbbbo.............',
+  '..obbo..............',
+  '..okbo..............',
+  '..okbbo.............',
+  '.obkbbbo............',
+  '.obkbbbbo...........',
+  '.obbbbbbbbbbbbbbo...',
+  '.obbllbbbbbbbo......',
+  '..obbllbbbo.........',
+  '..obbbbbo...........',
+  '...dd.dd............',
+  '...dd.dd............',
+  '...dd.dd............',
+  '..odd.ddo...........',
+  '....................',
+  '....................',
+];
+
+const COMP_STEP_L: ReadonlyArray<string> = [
+  ...COMP_STAND.slice(0, 14),
+  '..dd.....dd.........',
+  '..dd.....dd.........',
+  '..dd.....dd.........',
+  '.odd.....ddo........',
+  '....................',
+  '....................',
+];
+
+const COMP_STEP_R: ReadonlyArray<string> = [
+  ...COMP_STAND.slice(0, 14),
+  '....dd.dd...........',
+  '....dd.dd...........',
+  '....dd.dd...........',
+  '...odd.ddo..........',
+  '....................',
+  '....................',
+];
+
+function compPalette(base: number): Record<string, number> {
+  return {
+    o: shade(base, -0.75), // near-black warm outline (never pure black)
+    b: base,
+    l: shade(base, 0.35), // belly
+    d: shade(base, -0.3), // legs
+    k: shade(base, -0.5), // dorsal stripe — the watchful two-tone marking
+    e: 0x1a0e0a, // eye
+  };
+}
+
+export const COMP_RIG: PixelRig = {
+  prefix: 'comp',
+  size: 20,
+  frames: [COMP_STAND, COMP_STEP_L, COMP_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: compPalette,
+};
+
 /** Species drawn in pixel; these override their legacy vector rigs in bake.ts. */
 export const PIXEL_SPECIES: Record<string, PixelRig> = {
   triceratops: REX_RIG,
   stegosaurus: MOSS_RIG,
   brontosaurus: SUNNY_RIG,
+  compsognathus: COMP_RIG,
 };
 
 /** Distinct non-transparent chars used by a frame — test helper for palette discipline. */

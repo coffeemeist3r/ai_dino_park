@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, SUNNY_RIG, charsUsed } from '../../game/src/art/pixelArt';
+import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, SUNNY_RIG, COMP_RIG, charsUsed } from '../../game/src/art/pixelArt';
+
+/** Count contiguous runs of painted (non-'.') pixels in a row — used to read leg groups. */
+function paintedRuns(row: string): number {
+  return (row.match(/[^.]+/g) ?? []).length;
+}
 
 describe('pixel pipeline (BACKLOG-168, CHARTER v4)', () => {
   it('every frame is a full square grid', () => {
@@ -132,5 +137,50 @@ describe('Sunny the brontosaurus pixel rig (BACKLOG-169)', () => {
   it('keeps the bro prefix so the cycle-31 colour-keyed bake + e2e contract holds', () => {
     expect(SUNNY_RIG.prefix).toBe('bro');
     expect(PIXEL_SPECIES.brontosaurus).toBe(SUNNY_RIG);
+  });
+});
+
+describe('Twitch the compsognathus pixel rig (BACKLOG-169)', () => {
+  it('is a full 20×20 grid in every frame', () => {
+    for (const frame of COMP_RIG.frames) {
+      expect(frame).toHaveLength(COMP_RIG.size);
+      for (const row of frame) expect(row).toHaveLength(COMP_RIG.size);
+    }
+  });
+
+  it('every painted char resolves and keeps GBA palette discipline (≤ 15 distinct)', () => {
+    const pal = COMP_RIG.palette(0x6a8a4a);
+    for (const frame of COMP_RIG.frames) {
+      for (const ch of charsUsed(frame)) expect(pal[ch], `char '${ch}'`).toBeTypeOf('number');
+    }
+    const colors = Object.values(pal);
+    expect(colors.length).toBeLessThanOrEqual(15);
+    expect(new Set(colors).size).toBe(colors.length);
+  });
+
+  it('stands on exactly two legs — the cast\'s only biped read', () => {
+    const stand = COMP_RIG.frames[0];
+    // The feet row (17) shows two separate leg groups, not a quadruped's four/splayed pairs.
+    expect(paintedRuns(stand[17])).toBe(2);
+    expect(charsUsed(stand).has('d')).toBe(true); // legs
+    expect(charsUsed(stand).has('e')).toBe(true); // the forward alert eye
+    expect(charsUsed(stand).has('k')).toBe(true); // the dorsal two-tone stripe
+    expect(charsUsed(stand).has('o')).toBe(true); // dark outline
+  });
+
+  it('skitters: the legs scissor — three distinct frames, the Gen3 stand-between-steps sequence', () => {
+    const [stand, stepL, stepR] = COMP_RIG.frames;
+    expect(stand).not.toEqual(stepL);
+    expect(stand).not.toEqual(stepR);
+    expect(stepL).not.toEqual(stepR);
+    // the upper body (rows 0..13) is identical across frames — only the legs move
+    expect(stand.slice(0, 14)).toEqual(stepL.slice(0, 14));
+    expect(stand.slice(0, 14)).toEqual(stepR.slice(0, 14));
+    expect(COMP_RIG.sequence).toEqual([0, 1, 0, 2]);
+  });
+
+  it('keeps the comp prefix so the cycle-33 colour-keyed bake + e2e contract holds', () => {
+    expect(COMP_RIG.prefix).toBe('comp');
+    expect(PIXEL_SPECIES.compsognathus).toBe(COMP_RIG);
   });
 });
