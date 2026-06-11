@@ -1,0 +1,83 @@
+import { test, expect, devices, type Page } from '@playwright/test';
+import { boot } from './helpers';
+
+/**
+ * Mobile minds policy + inference governor (BACKLOG-107 / operator, 2026-06-11).
+ * Runs under Pixel 5 emulation: `pointer: coarse` is real here, so this spec also
+ * proves the touch layer auto-detects without the `__setTouch` hook.
+ */
+test.use({ ...devices['Pixel 5'] });
+
+type W = Window & Record<string, any>;
+
+async function toPage(page: Page, lx: number, ly: number): Promise<{ x: number; y: number }> {
+  const box = (await page.locator('canvas').boundingBox())!;
+  return { x: box.x + (lx / 640) * box.width, y: box.y + (ly / 480) * box.height };
+}
+
+async function tapId(page: Page, group: 'buttons' | 'sheet' | 'chips', id: string): Promise<void> {
+  const layout = await page.evaluate(() => (window as W).__touchLayout());
+  const target = layout[group].find((b: any) => b.id === id);
+  const at = await toPage(page, target.x, target.y);
+  await page.mouse.click(at.x, at.y);
+}
+
+test('a phone boots on the stub brain with the touch layer auto-detected', async ({ page }) => {
+  await boot(page);
+  expect(await page.evaluate(() => (window as W).__touchEnabled())).toBe(true); // no __setTouch — real coarse pointer
+  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('stub');
+  const gov = await page.evaluate(() => (window as W).__governor());
+  expect(gov.coarse).toBe(true);
+  expect(gov.consent).toBe(null);
+  expect(gov.cooldownSteps).toBe(24); // a third the desktop chatter rate
+  // The stub still talks — greeting falls back to the canned voice, never silence.
+  await page.evaluate(() => (window as W).__warpTo('Rex'));
+  const hearts = await page.evaluate(() => (window as W).__greet('Rex'));
+  expect(hearts).toBeGreaterThanOrEqual(0);
+});
+
+test('the minds opt-in: consent dialog → [1] enables + persists → toggle off', async ({ page }) => {
+  await boot(page);
+
+  // ⋯ → 🧠 row opens the consent dialog (model + size quoted), chips up.
+  await tapId(page, 'buttons', 'more');
+  await tapId(page, 'sheet', 'minds');
+  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
+
+  // [1] = download & enable: brain swaps to webllm, consent lands in storage.
+  await tapId(page, 'chips', 'pick1');
+  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(false);
+  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('webllm');
+  expect(await page.evaluate(() => localStorage.getItem('dino.minds'))).toBe('on');
+
+  // Consent survives a relaunch — the phone boots straight onto the model path.
+  await boot(page);
+  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('webllm');
+
+  // The same row now toggles off immediately (no dialog) and persists that too.
+  await tapId(page, 'buttons', 'more');
+  await tapId(page, 'sheet', 'minds');
+  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('stub');
+  expect(await page.evaluate(() => localStorage.getItem('dino.minds'))).toBe('off');
+});
+
+test('declining the consent dialog leaves the stub and stores nothing', async ({ page }) => {
+  await boot(page);
+  await tapId(page, 'buttons', 'more');
+  await tapId(page, 'sheet', 'minds');
+  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
+
+  await tapId(page, 'chips', 'close');
+  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(false);
+  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('stub');
+  expect(await page.evaluate(() => localStorage.getItem('dino.minds'))).toBe(null);
+});
+
+test('the governor pauses ambient chatter for a hidden tab or a dying battery', async ({ page }) => {
+  await boot(page);
+  const gov = await page.evaluate(() => (window as W).__governor());
+  expect(gov.ambientAllowed).toBe(true); // visible tab, battery unknown-or-fine
+  // The decision logic itself (hidden/battery cutoffs) is pinned by unit tests;
+  // here we prove the live wiring exposes the same verdict shape.
+  expect(typeof gov.hidden).toBe('boolean');
+});

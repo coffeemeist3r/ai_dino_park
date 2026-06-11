@@ -62,7 +62,7 @@ describe('layout', () => {
   it('the sheet covers the whole remaining keyboard surface, rows on canvas and disjoint', () => {
     const rows = sheetRows(W);
     expect(rows.map((r) => r.id)).toEqual([
-      'gift', 'item', 'lens', 'hearts', 'keeper', 'scan', 'time', 'export',
+      'minds', 'gift', 'item', 'lens', 'hearts', 'keeper', 'scan', 'time', 'export',
     ]);
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];

@@ -108,19 +108,31 @@ export function cleanReply(raw: string, maxSentences = 2): string {
   return kept.join(' ').slice(0, MAX_REPLY).trim(); // '' if nothing survived → caller falls back
 }
 
+/** Model download/load progress 0..1 while status is 'loading' (for the brain HUD). */
+let loadProgressValue = 0;
+export function loadProgress(): number {
+  return loadProgressValue;
+}
+
 async function defaultLoader(): Promise<ChatEngine> {
   // No WebGPU → no point spawning a worker that can't run the model; fail fast to the fallback.
   if (typeof navigator === 'undefined' || !('gpu' in navigator)) {
     throw new Error('WebGPU unavailable');
   }
-  // Pick a model sized to the device (cycle 16), surface the choice.
+  // Pick a model sized to the device (cycle 16; coarse devices clamped to tiny — governor).
   const model = await currentModel();
   (globalThis as unknown as { __modelLabel?: string }).__modelLabel = model.label;
   // Dynamic import keeps web-llm out of the entry bundle and out of Node tests.
   const webllm = await import('@mlc-ai/web-llm');
   // Run the engine in a dedicated worker so model load + inference don't block the render loop.
   const worker = new Worker(new URL('./webllm.worker.ts', import.meta.url), { type: 'module' });
-  return (await webllm.CreateWebWorkerMLCEngine(worker, model.id)) as unknown as ChatEngine;
+  loadProgressValue = 0;
+  return (await webllm.CreateWebWorkerMLCEngine(worker, model.id, {
+    // A GB-class pull must not look like a frozen 🧠 — surface fetch progress to the HUD.
+    initProgressCallback: (p: { progress?: number }) => {
+      if (typeof p.progress === 'number') loadProgressValue = p.progress;
+    },
+  })) as unknown as ChatEngine;
 }
 
 export class WebLLMBrain implements NPCBrain {

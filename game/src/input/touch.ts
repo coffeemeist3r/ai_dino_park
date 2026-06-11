@@ -70,6 +70,7 @@ export function sheetRows(width: number): RectButton[] {
   const h = 30;
   const x = width - 12 - w / 2;
   const ids: Array<[string, string]> = [
+    ['minds', '🧠 dino minds'],
     ['gift', '🎁 give gift'],
     ['item', '↻ next item'],
     ['lens', '👁 lens'],

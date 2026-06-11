@@ -6,6 +6,8 @@
  * adapter's max storage-buffer size. Conservative: default to the tiny model.
  */
 
+import { clampTier } from './governor';
+
 export type ModelTier = 'tiny' | 'small' | 'medium';
 
 export interface DeviceCaps {
@@ -54,6 +56,18 @@ export async function probeDevice(): Promise<DeviceCaps> {
   return caps;
 }
 
+/** Primary pointer is a finger — the signal the touch layer and the minds policy share. */
+export function isCoarsePointer(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: coarse)').matches
+  );
+}
+
 export async function currentModel(): Promise<ModelInfo> {
-  return pickModel(await probeDevice());
+  const tier = pickTier(await probeDevice());
+  // Phones are clamped to the smallest model (governor policy) — deviceMemory
+  // reports 8GB on phones that thermal-throttle a 3B model into the ground.
+  return MODELS[clampTier(tier, isCoarsePointer())];
 }

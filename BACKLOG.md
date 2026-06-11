@@ -129,7 +129,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [x] BACKLOG-105 [core] Wall-clock-anchored time + configurable scale — *(shipped: cycle 28 — see closed log, 2026-06-01)*
 - [x] BACKLOG-106 [emergent] Offline catch-up ("while you were away") — *(shipped: cycle 29, 2026-06-02)*
-- [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary.
+- [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary. *(progress: the governor SPINE shipped as operator work 2026-06-11 with the mobile minds policy (BACKLOG-190): pure `ai/governor.ts` — ambient dino↔dino chatter pauses on `visibilitychange`-hidden and battery <20%, convo cooldown 8→24 steps on coarse-pointer devices, player interaction never gated. Remaining 107 scope — per-beat budgeting, on-screen-only inference — lands when the 104 action layer exists to budget.)*
 
 ## Cycle 28 lore additions — realtime rituals (2026-06-01)
 
@@ -311,6 +311,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
 - [ ] BACKLOG-101 [infra] Native LLM plugin swap on mobile
+- [x] BACKLOG-190 [ai] Mobile minds policy — phones (`pointer: coarse`) boot on the canned StubBrain; the model is strictly OPT-IN via a "🧠 dino minds" row in the touch More sheet → consent dialog quoting the exact model + download size (+ Data Saver warning), [1] to enable. Consent persists per device in localStorage (`dino.minds`) — a device choice, not world state, so no save change. Opted-in phones are clamped to the smallest model tier whatever `deviceMemory` claims; model fetch progress shows in the brain HUD (`🧠 downloading N%`, via WebLLM's initProgressCallback); the 🧠 HUD reads `off` while on the stub. Pure `ai/governor.ts`; desktop behavior byte-identical (cycle-007 spec is the pin). Operator request + design, 2026-06-11.  *(shipped: operator, 2026-06-11 — with the BACKLOG-107 governor spine; 10 unit + 4 e2e under Pixel 5 emulation (which also proves the BACKLOG-189 touch auto-detect); 345 unit / 124 e2e green, full run, no flake.)*
 
 ---
 

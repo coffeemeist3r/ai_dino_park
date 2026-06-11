@@ -1,6 +1,15 @@
 import Phaser from 'phaser';
-import { makeBrain, replyPrefix, type NPCBrain } from '../ai/brain';
-import { currentModel } from '../ai/deviceProbe';
+import { makeBrain, replyPrefix, type BrainKind, type NPCBrain } from '../ai/brain';
+import { currentModel, isCoarsePointer, MODELS } from '../ai/deviceProbe';
+import {
+  MINDS_CONSENT_KEY,
+  brainKind,
+  allowAmbient,
+  convoCooldownSteps,
+  consentLines,
+  mindsLabel,
+} from '../ai/governor';
+import { loadProgress } from '../ai/webllmBrain';
 import { Dino } from '../entities/dino';
 import { hasArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
@@ -180,6 +189,12 @@ export class WorldScene extends Phaser.Scene {
   private sheetGroup: Phaser.GameObjects.GameObject[] = [];
   private chipGroups: Array<{ id: string; objs: Phaser.GameObjects.GameObject[] }> = [];
   private sheetOpen = false;
+  /** Minds policy + inference governor (BACKLOG-107): which brain runs, and when ambient may think. */
+  private coarsePointer = false;
+  private brainKindNow: BrainKind = 'webllm';
+  private mindsConfirmOpen = false;
+  private tabHidden = false;
+  private batteryLevel: number | undefined;
 
   constructor() {
     super('World');
@@ -193,7 +208,12 @@ export class WorldScene extends Phaser.Scene {
     this.player.setStrokeStyle(2, 0x6a4020);
 
     // One shared brain across all dinos — five WebLLM engines would mean five model downloads.
-    this.npcBrain = makeBrain('webllm');
+    // Phones boot on the canned stub unless the keeper opted in (governor policy): a GB-class
+    // model download never starts itself on a phone.
+    this.coarsePointer = isCoarsePointer();
+    this.brainKindNow = brainKind({ coarse: this.coarsePointer, consent: this.readMindsConsent() });
+    this.npcBrain = makeBrain(this.brainKindNow);
+    this.setupGovernor();
     for (const spawn of ROSTER) this.spawnDino(spawn);
 
     this.cursors = this.input.keyboard!.createCursorKeys();
@@ -1113,7 +1133,13 @@ export class WorldScene extends Phaser.Scene {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
           this.bonds = strengthen(this.bonds, a.name, b.name, BOND_PER_MEET); // meeting (and huddling) deepens the bond
           this.flashMeet(a, b);
-          if (this.convoCooldown <= 0 && !this.convoInFlight) void this.converse(a, b);
+          // Governor (BACKLOG-107): ambient chatter yields when nobody watches or power is low.
+          if (
+            this.convoCooldown <= 0 &&
+            !this.convoInFlight &&
+            allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })
+          )
+            void this.converse(a, b);
         }
       }
     }
@@ -1184,7 +1210,8 @@ export class WorldScene extends Phaser.Scene {
   private async converse(a: Dino, b: Dino): Promise<void> {
     if (this.convoInFlight) return;
     this.convoInFlight = true;
-    this.convoCooldown = 8; // protect the single shared engine; space out NPC chatter
+    // Protect the single shared engine; phones chatter at a third the rate (governor).
+    this.convoCooldown = convoCooldownSteps(this.coarsePointer);
     try {
       const now = getWorldClock().now();
       const reply = await this.npcBrain.respond(
@@ -1320,7 +1347,19 @@ export class WorldScene extends Phaser.Scene {
       ready: '🧠 ready',
       fallback: '🧠 offline',
     };
-    const refresh = () => this.brainHud.setText(label[this.npcBrain.status?.() ?? ''] ?? '🧠 —');
+    const refresh = () => {
+      if (this.brainKindNow === 'stub') {
+        this.brainHud.setText('🧠 off'); // minds not enabled on this device (governor)
+        return;
+      }
+      const s = this.npcBrain.status?.() ?? '';
+      // A GB-class download must not read as a frozen "thinking…" — show the fetch %.
+      const text =
+        s === 'loading' && loadProgress() > 0
+          ? `🧠 downloading ${Math.round(loadProgress() * 100)}%`
+          : (label[s] ?? '🧠 —');
+      this.brainHud.setText(text);
+    };
     refresh();
     getWorldClock().onTick(refresh);
 
@@ -1348,6 +1387,90 @@ export class WorldScene extends Phaser.Scene {
       );
       return msgs[0].content;
     };
+  }
+
+  // ────────────── Minds policy + inference governor (BACKLOG-107) ──────────────
+
+  private readMindsConsent(): boolean | null {
+    try {
+      const v = localStorage.getItem(MINDS_CONSENT_KEY);
+      return v === 'on' ? true : v === 'off' ? false : null;
+    } catch {
+      return null; // storage denied — treat as never-asked
+    }
+  }
+
+  /** Visibility + battery listeners feeding the ambient gate, plus the dev hooks. */
+  private setupGovernor(): void {
+    document.addEventListener('visibilitychange', () => {
+      this.tabHidden = document.hidden;
+    });
+    const nav = navigator as unknown as {
+      getBattery?: () => Promise<{ level: number; addEventListener(ev: string, fn: () => void): void }>;
+    };
+    void nav.getBattery?.().then((b) => {
+      this.batteryLevel = b.level;
+      b.addEventListener('levelchange', () => (this.batteryLevel = b.level));
+    });
+
+    // any: dev-only Playwright hooks — which brain runs, and the live ambient verdict
+    (window as any).__brainKind = () => this.brainKindNow;
+    (window as any).__mindsConfirmOpen = () => this.mindsConfirmOpen;
+    (window as any).__governor = () => ({
+      coarse: this.coarsePointer,
+      consent: this.readMindsConsent(),
+      hidden: this.tabHidden,
+      battery: this.batteryLevel,
+      ambientAllowed: allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel }),
+      cooldownSteps: convoCooldownSteps(this.coarsePointer),
+    });
+  }
+
+  /** Swap the shared brain in place; every dino picks it up on its next line. */
+  private setBrain(kind: BrainKind): void {
+    if (kind === this.brainKindNow) return;
+    this.brainKindNow = kind;
+    this.npcBrain = makeBrain(kind);
+    if (kind === 'webllm') {
+      // Start the download now, while the keeper is looking at the progress HUD —
+      // not on the first greet minutes later. init is WebLLM-specific, hence optional.
+      void (this.npcBrain as { init?: () => Promise<void> }).init?.();
+    }
+  }
+
+  /** The 🧠 row in the More sheet: off → consent dialog; on → straight off (no re-download). */
+  private onMindsButton(): void {
+    this.sheetOpen = false;
+    if (this.brainKindNow === 'webllm') {
+      try {
+        localStorage.setItem(MINDS_CONSENT_KEY, 'off');
+      } catch { /* storage denied — the swap still applies this session */ }
+      this.setBrain('stub');
+      this.dialog.show(`${mindsLabel(false)} — the dinos speak from memory now.`);
+      this.dialogOpen = true;
+      return;
+    }
+    const saveData = (navigator as unknown as { connection?: { saveData?: boolean } }).connection?.saveData;
+    this.mindsConfirmOpen = true;
+    this.dialogOpen = true;
+    // Phones are clamped to the smallest model, so the consent dialog quotes exactly it.
+    this.dialog.show(consentLines(MODELS.tiny.label, 'tiny', saveData));
+  }
+
+  private confirmMinds(): void {
+    this.mindsConfirmOpen = false;
+    try {
+      localStorage.setItem(MINDS_CONSENT_KEY, 'on');
+    } catch { /* storage denied — enable for this session anyway */ }
+    this.setBrain('webllm');
+    this.dialog.show(`${mindsLabel(true)} — downloading. The 🧠 up top shows progress; lines upgrade when it lands.`);
+    this.dialogOpen = true;
+  }
+
+  private closeMindsConfirm(): void {
+    this.mindsConfirmOpen = false;
+    this.dialog.hide();
+    this.dialogOpen = false;
   }
 
   // ─────────────────── Touch controls (BACKLOG-189) ───────────────────
@@ -1483,6 +1606,7 @@ export class WorldScene extends Phaser.Scene {
       case 'talk': this.handleInteract(); break;
       case 'feed': this.dropFood(); break;
       case 'more': this.sheetOpen = !this.sheetOpen; this.syncTouchUi(); break;
+      case 'minds': this.onMindsButton(); break;
       case 'gift': this.giveGift(); break;
       case 'item': this.cycleItem(1); break;
       case 'lens': this.cycleLens(); break;
@@ -1508,7 +1632,7 @@ export class WorldScene extends Phaser.Scene {
     const dialogUp = this.dialogOpen;
     for (const o of [...this.stickGroup, ...this.actionGroup]) vis(o).setVisible(!dialogUp);
     for (const o of this.sheetGroup) vis(o).setVisible(!dialogUp && this.sheetOpen);
-    const numbered = this.toneMenuOpen || this.keeperPickerOpen;
+    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirmOpen;
     for (const { id, objs } of this.chipGroups) {
       const show = dialogUp && (id === 'close' || numbered);
       for (const o of objs) vis(o).setVisible(show);
@@ -1525,7 +1649,7 @@ export class WorldScene extends Phaser.Scene {
   private touchUiOwns(px: number, py: number): boolean {
     if (!this.touchEnabled) return false;
     if (this.dialogOpen) {
-      const numbered = this.toneMenuOpen || this.keeperPickerOpen;
+      const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirmOpen;
       return menuChips(this.scale.width, this.scale.height, true).some(
         (c) => (c.id === 'close' || numbered) && inRect(c, px, py),
       );
@@ -1569,6 +1693,11 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private handleInteract(): void {
+    // While the minds consent dialog is up, E/Z declines it (1 confirms).
+    if (this.mindsConfirmOpen) {
+      this.closeMindsConfirm();
+      return;
+    }
     // While the keeper picker is up, E/Z dismisses it (1/2/3 choose). BACKLOG-155.
     if (this.keeperPickerOpen) {
       this.closeKeeperPicker();
@@ -1636,6 +1765,10 @@ export class WorldScene extends Phaser.Scene {
 
   /** Route 1/2/3: choose an observer while the keeper picker is open, else pick a greeting tone. */
   private onNumberKey(n: number): void {
+    if (this.mindsConfirmOpen) {
+      if (n === 1) this.confirmMinds();
+      return; // 2/3 mean nothing to a yes/no dialog
+    }
     if (this.keeperPickerOpen) {
       this.pickKeeperIndex(n - 1);
       return;
