@@ -11,6 +11,7 @@ import {
   consentLines,
   mindsOffLines,
   mindsLabel,
+  mindsStatusLine,
 } from '../../game/src/ai/governor';
 
 describe('brainKind — the minds opt-in policy', () => {
@@ -88,6 +89,14 @@ describe('consent dialog copy', () => {
     expect(s).toContain('[2]');
     expect(s).toContain('delete');
     expect(s).toContain('[✕]');
+  });
+
+  it('the status line answers "is it really on?" for every brain state', () => {
+    expect(mindsStatusLine('ready', 0)).toContain('🧠');
+    expect(mindsStatusLine('loading', 0.42)).toContain('42%');
+    expect(mindsStatusLine('loading', 0)).toContain('warming up');
+    expect(mindsStatusLine('fallback', 0)).toContain('could not load');
+    expect(mindsStatusLine(undefined, 0)).toContain('idle');
   });
 
   it('label and storage key are stable contracts', () => {

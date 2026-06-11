@@ -9,6 +9,7 @@ import {
   consentLines,
   mindsOffLines,
   mindsLabel,
+  mindsStatusLine,
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { Dino } from '../entities/dino';
@@ -1451,14 +1452,17 @@ export class WorldScene extends Phaser.Scene {
   private async onMindsButton(): Promise<void> {
     this.sheetOpen = false;
     if (this.brainKindNow === 'webllm') {
+      const status = mindsStatusLine(this.npcBrain.status?.(), loadProgress());
       if (await hasCachedModel()) {
         this.mindsConfirm = 'disable';
         this.dialogOpen = true;
-        this.dialog.show(mindsOffLines('tiny'));
+        this.dialog.show(`${status}\n${mindsOffLines('tiny')}`);
         return;
       }
+      // Consent is on but nothing is cached — the load failed or never ran.
+      // Show what happened rather than silently flipping off (operator: "is it really on?").
       this.turnMindsOff();
-      this.dialog.show(`${mindsLabel(false)} — the dinos speak from memory now.`);
+      this.dialog.show(`${status}\n${mindsLabel(false)} — the dinos speak from memory now.`);
       this.dialogOpen = true;
       return;
     }
@@ -1529,6 +1533,7 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hooks — force the layer on/off, read the drag vector/layout
     (window as any).__setTouch = (on: boolean) => (on ? this.enableTouch() : this.disableTouch());
     (window as any).__touchEnabled = () => this.touchEnabled;
+    (window as any).__touchOwns = (x: number, y: number) => this.touchUiOwns(x, y);
     (window as any).__touchVec = () => ({ ...this.touchVec });
     (window as any).__touchLayout = () => ({
       stick: { ...STICK },
@@ -1692,12 +1697,10 @@ export class WorldScene extends Phaser.Scene {
   /** Does a pointer at canvas (px,py) land on the control layer? Guards the glass tap. */
   private touchUiOwns(px: number, py: number): boolean {
     if (!this.touchEnabled) return false;
-    if (this.dialogOpen) {
-      const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
-      return menuChips(this.scale.width, this.scale.height, true).some(
-        (c) => (c.id === 'close' || numbered) && inRect(c, px, py),
-      );
-    }
+    // A dialog is modal on touch: EVERY tap belongs to the UI while one is up.
+    // Taps on the dialog text (e.g. "[1] Warm") were falling through to the glass,
+    // startling nearby dinos on every menu pick (operator phone session).
+    if (this.dialogOpen) return true;
     if (inCircle(STICK.x, STICK.y, STICK.grab, px, py)) return true;
     if (actionButtons(this.scale.width, this.scale.height).some((b) => inCircle(b.x, b.y, b.r, px, py))) return true;
     return this.sheetOpen && sheetRows(this.scale.width).some((r) => inRect(r, px, py));

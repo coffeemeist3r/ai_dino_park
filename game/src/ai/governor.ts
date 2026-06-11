@@ -102,3 +102,23 @@ export function mindsOffLines(tier: ModelTier): string {
 export function mindsLabel(on: boolean): string {
   return on ? '🧠 minds: on' : '🧠 minds: off';
 }
+
+/**
+ * One plain line on what the model is ACTUALLY doing right now, shown in the
+ * minds dialog — "is it really on?" must be answerable without reading a HUD
+ * badge (operator phone session, 2026-06-11).
+ */
+export function mindsStatusLine(status: string | undefined, progress: number): string {
+  switch (status) {
+    case 'ready':
+      return 'Status: ready — model lines start with 🧠.';
+    case 'loading':
+      return progress > 0
+        ? `Status: downloading ${Math.round(progress * 100)}% — canned lines until it finishes.`
+        : 'Status: warming up — canned lines until ready (can take a minute on a phone).';
+    case 'fallback':
+      return 'Status: offline — this device could not load the model (WebGPU missing or out of GPU memory). Lines are canned.';
+    default:
+      return 'Status: idle — the model loads on the first greeting.';
+  }
+}

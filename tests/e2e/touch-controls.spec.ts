@@ -71,6 +71,25 @@ test('Talk opens the tone menu and a chip picks the tone — no keyboard involve
   if (tones !== undefined) expect(typeof tones === 'string' ? tones : tones.Rex).toBe('warm');
 });
 
+test('a dialog is modal on touch — taps anywhere stop reaching the glass', async ({ page }) => {
+  const layout = await bootTouch(page);
+  // Closed dialog: open ground is the glass, the stick zone is the UI's.
+  expect(await page.evaluate(() => (window as W).__touchOwns(320, 240))).toBe(false);
+  expect(
+    await page.evaluate((s: any) => (window as W).__touchOwns(s.x, s.y), layout.stick),
+  ).toBe(true);
+
+  // Open the tone menu: now EVERY point belongs to the UI — a tap on the dialog
+  // text ("[1] Warm") must not rap the glass and startle the cast.
+  await page.evaluate(() => (window as W).__warpTo('Rex'));
+  const talk = layout.buttons.find((b: any) => b.id === 'talk');
+  const at = await toPage(page, talk.x, talk.y);
+  await page.mouse.click(at.x, at.y);
+  expect(await page.evaluate(() => (window as W).__toneMenuOpen())).toBe(true);
+  expect(await page.evaluate(() => (window as W).__touchOwns(320, 430))).toBe(true); // dialog strip
+  expect(await page.evaluate(() => (window as W).__touchOwns(320, 240))).toBe(true); // even open ground
+});
+
 test('the More sheet reaches a buried action (hearts panel) in two taps', async ({ page }) => {
   const layout = await bootTouch(page);
 
