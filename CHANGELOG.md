@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 044 — 2026-06-11
+- BACKLOG-191: Audio spine — after 44 silent cycles the bowl speaks: every dino has a synthesized voice derived from its own traits (solitary+timid squeaks high, social+brave rumbles low — founders spread 148→797 Hz untouched by hand), chirping on every greet and dino↔dino line; the glass rap thunks; M / 🔊 mutes, persisted. Pure WebAudio synthesis, no assets, autoplay-safe, zero save change. The operator's Idea-Box nudge, shipped the same day it was dropped.
+
 ## Cycle 043 — 2026-06-11
 - BACKLOG-179: Cold-night shiver — a dino too loosely bonded for the winter den shivers 🥶 at morning and files a "slept cold, alone" memory that colours its next greeting; winter only, the warm seasons inert. The other half of cycle-42's packing den: who sleeps alone in winter is now a beat, not a still picture.
 
