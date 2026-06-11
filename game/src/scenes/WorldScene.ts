@@ -38,6 +38,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
+import { sleptCold, coldShiver, coldMemory } from '../world/cold';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -124,6 +125,11 @@ export class WorldScene extends Phaser.Scene {
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
   private sleepMarks: Phaser.GameObjects.Text[] = [];
+  /** Cold-night shiver (BACKLOG-179): the night's season, the morning-edge window tracker, and
+   *  the last morning's cold sleepers (the dinos too loosely bonded for the den, for the hook). */
+  private wasInHuddleWindow = false;
+  private nightSeason: Season = 'spring';
+  private lastColdSleepers: string[] = [];
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
@@ -655,6 +661,8 @@ export class WorldScene extends Phaser.Scene {
         inWindow: inHuddleWindow(getWorldClock().now().hour, season),
       };
     };
+    // dev-only: cold-night shiver (BACKLOG-179) — who slept cold at the last morning resolution.
+    (window as any).__coldSleepers = () => [...this.lastColdSleepers];
 
     // egg-phase hooks (BACKLOG-042)
     (window as any).__eggs = () => this.eggs.map((e) => ({ ...e }));
@@ -1086,10 +1094,36 @@ export class WorldScene extends Phaser.Scene {
 
     this.stepInspection();
 
+    // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
+    // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
+    if (denTime) this.nightSeason = season;
+    else if (this.wasInHuddleWindow) this.resolveColdMorning();
+    this.wasInHuddleWindow = denTime;
+
     this.refreshSleepMarks();
     this.checkFeeding();
     this.maybeLayEggs();
     this.checkHatch();
+  }
+
+  /**
+   * The morning a night window closes: every dino too loosely bonded for the den — its strongest
+   * bond below the season's huddle bar, the same gate cycle-171 used to *seek* the den — slept
+   * cold (winter only; `sleptCold` is inert in the warm seasons). It shivers where it stands and
+   * files a memory that rides the existing store into its next greeting. Once per night, on the edge.
+   */
+  private resolveColdMorning(): void {
+    const bar = huddleThreshold(this.nightSeason);
+    const cold: string[] = [];
+    for (const d of this.dinos) {
+      const huddled = this.maxBond(d.name) >= bar;
+      if (!sleptCold(huddled, this.nightSeason)) continue;
+      this.showBubble(d, coldShiver());
+      this.memory = remember(this.memory, d.name, coldMemory());
+      cold.push(d.name);
+    }
+    this.lastColdSleepers = cold;
+    if (cold.length) void this.saveGame();
   }
 
   private playerTile(): { tileX: number; tileY: number } {

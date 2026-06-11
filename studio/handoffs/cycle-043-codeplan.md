@@ -119,3 +119,30 @@ within ~45 steps as that spec already proves.)
 
 ~5 files (1 new module + 1 modified scene + 2 new tests + BACKLOG/state/chronicle housekeeping).
 Under the 6-file ceiling. No split needed.
+
+---
+
+## Shipped (Coder)
+
+**Files touched**
+- `game/src/world/cold.ts` (new) — `COLD_SEASON`, `sleptCold`, `coldShiver`, `coldMemory`. Pure, no Phaser.
+- `game/src/scenes/WorldScene.ts` — import; fields `wasInHuddleWindow` / `nightSeason` / `lastColdSleepers`; window-edge bookkeeping + `resolveColdMorning()` in `forceStep`; `__coldSleepers` hook.
+- `tests/unit/cold.test.ts` (new) — 6 tests.
+- `tests/e2e/cycle-043-cold-shiver.spec.ts` (new) — 3 tests.
+
+**Deviation from plan (one, deliberate):** The plan tracked a positional `huddledTonight` Set
+(accumulating `isHuddling` dinos across the night) and judged cold by absence from it. In the
+bowl that proved wrong: the den sits central, so *every* dino drifts near it, and `isHuddling`
+is purely positional (proximity, no bond gate) — so all five registered as "huddled" and nobody
+ever slept cold. Worse, `BOND_PER_MEET === 4` equals the winter bar, so a single meet would warm
+a loner anyway. **Resolved by reading the bond graph at morning instead:** a dino "huddled" iff
+its strongest bond clears the season's huddle bar (`maxBond(d) >= huddleThreshold(nightSeason)`)
+— the *exact* gate cycle-171 used to *seek* the den. So "slept cold" = "too loosely bonded to be
+welcome in the winter den" = the cycle-042 verdict's own "who sleeps alone in winter," now made a
+beat. This dropped the `huddledTonight` Set and the `__huddledTonight` hook; `sleptCold`'s
+signature is unchanged (the boolean is now bond-eligibility, not positional presence). `nightSeason`
+is still captured while the window is open; the once-per-night morning edge is unchanged.
+
+**Build:** ✅ clean (`npm --prefix game run build`).
+**Unit:** ✅ 320 passed (incl. new `cold.test.ts`, +6).
+**E2E (new spec, isolated):** ✅ 3/3 (`cycle-043-cold-shiver`). Full suite is QA's run.
