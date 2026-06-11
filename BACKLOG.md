@@ -86,6 +86,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
 - [ ] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook
 - [x] BACKLOG-046 [infra] Vite host bind — `host: true` so Playwright reaches `127.0.0.1` (was IPv6-only)  *(shipped: cycle 2, 2026-05-29)*
+- [ ] BACKLOG-188 [infra] Mobile viewport scaling — the game now ships as a PWA (GitHub Pages, 2026-06-11) and the operator's first phone session found the canvas doesn't fit the screen: `main.ts` creates a fixed 640×480 canvas with no Scale Manager. Add Phaser scale config (`scale: { mode: Phaser.Scale.FIT, autoCenter: CENTER_BOTH }`) so the bowl letterboxes to any viewport, and verify the glass/HUD overlays and tap-glass pointer→world coordinates still land under a scaled canvas. Display-fit only — touch *controls* (virtual stick / tap-to-interact for the keyboard-only bindings) are a separate, larger item. Operator feedback, 2026-06-11.
 
 ## Cycle 1 lore additions (2026-05-25)
 
