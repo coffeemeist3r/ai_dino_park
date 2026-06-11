@@ -307,6 +307,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-186 [pokemon] Hardy in the book — the collection book counts cold nights each dino has toughed out ("weathered 3 cold nights alone"), the flip side of the night ledger (182): not who slept warm, but who slept hard. Builds on 179 / 021.
 - [ ] BACKLOG-187 [emergent] Toughened hide — a dino that endures many cold nights slowly hardens (a tiny capped nudge toward higher resilience / lower sociability), so being repeatedly left out leaves a mark on temperament, not just memory. Very slow, capped. Builds on 179 / 043.
 
+## Cycle 44 lore additions — the bowl finds its voice (2026-06-11)
+
+> The operator spent a day giving the bowl a phone home, then dropped one nudge in the box:
+> **sound**. The bowl has been silent for 44 cycles. Seeded foundation-first, and — per the
+> Living-minds bias — the very first sounds are *per-dino voices*, not UI bleeps: a dino you
+> can recognize with your eyes closed is distinctness in a register we've never used.
+
+- [ ] BACKLOG-191 [core] Audio spine — pure WebAudio synthesis, authored as code like the art (CHARTER: no asset downloads, no keys): a tiny `audio/` module that can voice a short synthesized dino chirp from parameters (pitch, length, wobble), plus the two first beats — a chirp when a dino speaks/greets, and a soft *thunk* on tap-the-glass. Autoplay-safe (audio context resumes on first interaction), master mute toggle persisted per device (localStorage, like the minds consent), default ON at low volume. The chirp parameters come from the dino's traits via a pure function — Sunny rumbles low and slow, Twitch squeaks high and fast — so the very first sound in the bowl is already a personality tell. Idea Box (sound), first beat. Builds on 010 / 057.
+- [ ] BACKLOG-192 [emergent] Dawn chorus — at the dawn boundary the cast greets the day each in its own voice (191's trait-pitched chirps), staggered by energy: early risers first, night-owls last and grudging. The bowl's day becomes audible, and *who sings when* is a personality read. Builds on 191 / 108 / 109.
+- [ ] BACKLOG-193 [social] Call and answer — greeting a high-bond dino gets an answering chirp before the text reply; the latency and eagerness of the answer scale with hearts, so you can *hear* how much a dino likes you before you read it. Builds on 191 / 016.
+- [ ] BACKLOG-194 [emergent] Distress call — a shivering (179) or startled (057) dino calls out in its own voice, and its closest friend (013) turns toward the sound from across the bowl; the bond graph gains an audible edge. Builds on 191 / 130 / 179.
+- [ ] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.

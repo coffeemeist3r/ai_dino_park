@@ -19,9 +19,11 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-- `[new]` (2026-06-11, operator) **Sound.** The bowl is silent — there is no audio at all. Operator floated it during the mobile sessions: dino chirps/calls, ambient park noise, a tap-the-glass *thunk*, maybe quiet night crickets for the huddle hours. Whatever fits the CHARTER's authored-as-code bias (WebAudio synthesis would match how the art is made — no downloaded assets). Mobile note: must respect autoplay policies (sound after first interaction) and stay subtle — the bowl is a desk companion, not a noise box.
+_(empty — sound nudge processed cycle 44)_
 
 ## Resolved
+
+- `[seeded BACKLOG-191]` (2026-06-11) **Sound.** Seeded foundation-first as the **audio spine** (191): pure WebAudio synthesis authored as code (the art pipeline's philosophy in a new register — no assets, no keys), autoplay-safe, persisted mute. Reshaped per the Living-minds bias: the first sounds are **per-dino trait-pitched voices**, not UI bleeps — distinctness you can hear. The wider soundscape (ambient park noise, night crickets) stays deferred until the voices exist; follow-ups seeded as 192 (dawn chorus) / 193 (call and answer) / 194 (distress call) / 195 (cry in the book). — processed cycle 44.
 
 - `[seeded BACKLOG-159]` (2026-06-08) **Seasons — fall, winter, spring, summer.** Seeded as the *foundation beat only* — a turning-year clock + per-season palette tint + a "season turned" beat — matching how every other arc was seeded foundation-first. The big four-season art lift + weather stay deferred to the existing -028. — processed cycle 37.
 
