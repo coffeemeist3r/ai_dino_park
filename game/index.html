@@ -15,7 +15,10 @@
         overflow: hidden;
       }
       #app {
+        /* dvh tracks the *visible* viewport on mobile (URL bar in/out, rotation);
+           100vh overshoots in landscape and cut the bowl off (BACKLOG-188). */
         height: 100vh;
+        height: 100dvh;
       }
       /* Fill the viewport so Phaser Scale.FIT has a box to letterbox into
          (BACKLOG-188); the Scale Manager centers the canvas itself. */

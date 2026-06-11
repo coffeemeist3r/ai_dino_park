@@ -14,7 +14,7 @@ const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   width: TILE * COLS,
@@ -34,3 +34,10 @@ new Phaser.Game({
     arcade: { debug: false },
   },
 });
+
+// Phone rotation: the browser can report stale dimensions at the moment the
+// resize/orientationchange event fires, leaving FIT sized for the old
+// orientation (BACKLOG-188 follow-up). Refresh after layout settles.
+const refit = () => requestAnimationFrame(() => game.scale.refresh());
+window.addEventListener('resize', refit);
+window.addEventListener('orientationchange', () => setTimeout(refit, 100));
