@@ -40,9 +40,11 @@ test('the minds opt-in: consent dialog → [1] enables + persists → toggle off
   await boot(page);
 
   // ⋯ → 🧠 row opens the consent dialog (model + size quoted), chips up.
+  // The open is async (a cache probe decides the dialog copy) — poll for it.
   await tapId(page, 'buttons', 'more');
   await tapId(page, 'sheet', 'minds');
-  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
+  expect(await page.evaluate(() => (window as W).__mindsConfirmMode())).toBe('enable');
 
   // [1] = download & enable: brain swaps to webllm, consent lands in storage.
   await tapId(page, 'chips', 'pick1');
@@ -54,10 +56,11 @@ test('the minds opt-in: consent dialog → [1] enables + persists → toggle off
   await boot(page);
   expect(await page.evaluate(() => (window as W).__brainKind())).toBe('webllm');
 
-  // The same row now toggles off immediately (no dialog) and persists that too.
+  // The same row toggles off (nothing is actually cached in headless — no WebGPU,
+  // no download — so this takes the straight-off path, no keep/delete dialog).
   await tapId(page, 'buttons', 'more');
   await tapId(page, 'sheet', 'minds');
-  expect(await page.evaluate(() => (window as W).__brainKind())).toBe('stub');
+  await expect.poll(() => page.evaluate(() => (window as W).__brainKind())).toBe('stub');
   expect(await page.evaluate(() => localStorage.getItem('dino.minds'))).toBe('off');
 });
 
@@ -65,7 +68,7 @@ test('declining the consent dialog leaves the stub and stores nothing', async ({
   await boot(page);
   await tapId(page, 'buttons', 'more');
   await tapId(page, 'sheet', 'minds');
-  expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
+  await expect.poll(() => page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(true);
 
   await tapId(page, 'chips', 'close');
   expect(await page.evaluate(() => (window as W).__mindsConfirmOpen())).toBe(false);

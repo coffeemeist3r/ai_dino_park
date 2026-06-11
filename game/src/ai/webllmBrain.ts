@@ -114,6 +114,34 @@ export function loadProgress(): number {
   return loadProgressValue;
 }
 
+/**
+ * Cache management (operator, 2026-06-11): phone storage is small, so the keeper
+ * can see and delete the cached weights. Dynamic imports keep web-llm out of the
+ * entry bundle and out of Node tests; both helpers never throw.
+ */
+export async function hasCachedModel(): Promise<boolean> {
+  try {
+    const model = await currentModel();
+    const webllm = await import('@mlc-ai/web-llm');
+    return await webllm.hasModelInCache(model.id);
+  } catch {
+    return false;
+  }
+}
+
+/** Delete this device's model from browser cache storage. True = gone (or never there). */
+export async function deleteCachedModel(): Promise<boolean> {
+  try {
+    const model = await currentModel();
+    const webllm = await import('@mlc-ai/web-llm');
+    await webllm.deleteModelAllInfoInCache(model.id);
+    return true;
+  } catch (err) {
+    console.error('[webllm] cache delete failed', err);
+    return false;
+  }
+}
+
 async function defaultLoader(): Promise<ChatEngine> {
   // No WebGPU → no point spawning a worker that can't run the model; fail fast to the fallback.
   if (typeof navigator === 'undefined' || !('gpu' in navigator)) {

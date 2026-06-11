@@ -70,12 +70,31 @@ const TIER_SIZE: Record<ModelTier, string> = {
 };
 
 /** The consent dialog body. Pure so the wording is pinned by unit tests. */
-export function consentLines(modelLabel: string, tier: ModelTier, saveData?: boolean): string {
+export function consentLines(modelLabel: string, tier: ModelTier, saveData?: boolean, cached?: boolean): string {
+  if (cached) {
+    return (
+      `Give the dinos real minds?\n` +
+      `${modelLabel} is already downloaded — enables instantly, no data used.\n` +
+      `[1] enable    [✕] not now`
+    );
+  }
   const warn = saveData ? '\n⚠ Data Saver is on — best to wait for Wi-Fi.' : '';
   return (
     `Give the dinos real minds?\n` +
     `Downloads ${modelLabel} (${TIER_SIZE[tier]}) once; cached after that. Wi-Fi recommended.${warn}\n` +
     `[1] download & enable    [✕] not now`
+  );
+}
+
+/**
+ * Turning minds off while the weights are cached: keeping them makes re-enabling
+ * instant; deleting frees the storage. Pure so the wording is pinned by tests.
+ */
+export function mindsOffLines(tier: ModelTier): string {
+  return (
+    `Turn the dino minds off?\n` +
+    `The downloaded model (${TIER_SIZE[tier]}) can stay cached for an instant re-enable, or go to free the space.\n` +
+    `[1] off, keep download    [2] off + delete download    [✕] cancel`
   );
 }
 

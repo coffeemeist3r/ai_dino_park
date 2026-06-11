@@ -9,6 +9,7 @@ import {
   convoCooldownSteps,
   clampTier,
   consentLines,
+  mindsOffLines,
   mindsLabel,
 } from '../../game/src/ai/governor';
 
@@ -70,6 +71,23 @@ describe('consent dialog copy', () => {
 
   it('warns when Data Saver is on', () => {
     expect(consentLines('Qwen2.5 0.5B', 'tiny', true)).toContain('Data Saver');
+  });
+
+  it('a cached model skips the download warning — enable is instant and free', () => {
+    const s = consentLines('Qwen2.5 0.5B', 'tiny', true, true);
+    expect(s).toContain('already downloaded');
+    expect(s).not.toContain('GB');
+    expect(s).not.toContain('Data Saver'); // no download → no data concern
+    expect(s).toContain('[1]');
+  });
+
+  it('the off dialog offers keep vs delete with the size on the line', () => {
+    const s = mindsOffLines('tiny');
+    expect(s).toContain('0.4 GB');
+    expect(s).toContain('[1]');
+    expect(s).toContain('[2]');
+    expect(s).toContain('delete');
+    expect(s).toContain('[✕]');
   });
 
   it('label and storage key are stable contracts', () => {

@@ -7,9 +7,10 @@ import {
   allowAmbient,
   convoCooldownSteps,
   consentLines,
+  mindsOffLines,
   mindsLabel,
 } from '../ai/governor';
-import { loadProgress } from '../ai/webllmBrain';
+import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { Dino } from '../entities/dino';
 import { hasArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
@@ -192,9 +193,11 @@ export class WorldScene extends Phaser.Scene {
   /** Minds policy + inference governor (BACKLOG-107): which brain runs, and when ambient may think. */
   private coarsePointer = false;
   private brainKindNow: BrainKind = 'webllm';
-  private mindsConfirmOpen = false;
+  /** Which minds dialog is up: enable-consent, the off/keep/delete choice, or none. */
+  private mindsConfirm: 'enable' | 'disable' | null = null;
   private tabHidden = false;
   private batteryLevel: number | undefined;
+  private lastCacheAction: 'deleted' | 'error' | null = null;
 
   constructor() {
     super('World');
@@ -1415,7 +1418,9 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks — which brain runs, and the live ambient verdict
     (window as any).__brainKind = () => this.brainKindNow;
-    (window as any).__mindsConfirmOpen = () => this.mindsConfirmOpen;
+    (window as any).__mindsConfirmOpen = () => this.mindsConfirm !== null;
+    (window as any).__mindsConfirmMode = () => this.mindsConfirm;
+    (window as any).__mindsCache = () => this.lastCacheAction;
     (window as any).__governor = () => ({
       coarse: this.coarsePointer,
       consent: this.readMindsConsent(),
@@ -1438,27 +1443,42 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** The 🧠 row in the More sheet: off → consent dialog; on → straight off (no re-download). */
-  private onMindsButton(): void {
+  /**
+   * The 🧠 row in the More sheet. Off → consent dialog (notes when the weights are
+   * already cached). On → if weights are cached, the off/keep/delete choice
+   * (phone storage is small — operator, 2026-06-11); nothing cached → straight off.
+   */
+  private async onMindsButton(): Promise<void> {
     this.sheetOpen = false;
     if (this.brainKindNow === 'webllm') {
-      try {
-        localStorage.setItem(MINDS_CONSENT_KEY, 'off');
-      } catch { /* storage denied — the swap still applies this session */ }
-      this.setBrain('stub');
+      if (await hasCachedModel()) {
+        this.mindsConfirm = 'disable';
+        this.dialogOpen = true;
+        this.dialog.show(mindsOffLines('tiny'));
+        return;
+      }
+      this.turnMindsOff();
       this.dialog.show(`${mindsLabel(false)} — the dinos speak from memory now.`);
       this.dialogOpen = true;
       return;
     }
     const saveData = (navigator as unknown as { connection?: { saveData?: boolean } }).connection?.saveData;
-    this.mindsConfirmOpen = true;
+    const cached = await hasCachedModel();
+    this.mindsConfirm = 'enable';
     this.dialogOpen = true;
     // Phones are clamped to the smallest model, so the consent dialog quotes exactly it.
-    this.dialog.show(consentLines(MODELS.tiny.label, 'tiny', saveData));
+    this.dialog.show(consentLines(MODELS.tiny.label, 'tiny', saveData, cached));
+  }
+
+  private turnMindsOff(): void {
+    try {
+      localStorage.setItem(MINDS_CONSENT_KEY, 'off');
+    } catch { /* storage denied — the swap still applies this session */ }
+    this.setBrain('stub');
   }
 
   private confirmMinds(): void {
-    this.mindsConfirmOpen = false;
+    this.mindsConfirm = null;
     try {
       localStorage.setItem(MINDS_CONSENT_KEY, 'on');
     } catch { /* storage denied — enable for this session anyway */ }
@@ -1467,8 +1487,32 @@ export class WorldScene extends Phaser.Scene {
     this.dialogOpen = true;
   }
 
+  /** The off/keep/delete choice: [1] keep the cache, [2] free the storage. */
+  private confirmMindsOff(deleteCache: boolean): void {
+    this.mindsConfirm = null;
+    this.turnMindsOff();
+    if (!deleteCache) {
+      this.dialog.show(`${mindsLabel(false)} — download kept, re-enable is instant.`);
+      this.dialogOpen = true;
+      return;
+    }
+    this.dialog.show(`${mindsLabel(false)} — deleting the download…`);
+    this.dialogOpen = true;
+    void deleteCachedModel().then((ok) => {
+      this.lastCacheAction = ok ? 'deleted' : 'error';
+      // Update the line only if the keeper is still looking at this dialog.
+      if (this.dialogOpen && !this.mindsConfirm) {
+        this.dialog.show(
+          ok
+            ? `${mindsLabel(false)} — download deleted, storage freed. (Fully unloads from memory on next launch.)`
+            : `${mindsLabel(false)} — minds are off, but the delete failed. Clearing site data also removes it.`,
+        );
+      }
+    });
+  }
+
   private closeMindsConfirm(): void {
-    this.mindsConfirmOpen = false;
+    this.mindsConfirm = null;
     this.dialog.hide();
     this.dialogOpen = false;
   }
@@ -1606,7 +1650,7 @@ export class WorldScene extends Phaser.Scene {
       case 'talk': this.handleInteract(); break;
       case 'feed': this.dropFood(); break;
       case 'more': this.sheetOpen = !this.sheetOpen; this.syncTouchUi(); break;
-      case 'minds': this.onMindsButton(); break;
+      case 'minds': void this.onMindsButton(); break;
       case 'gift': this.giveGift(); break;
       case 'item': this.cycleItem(1); break;
       case 'lens': this.cycleLens(); break;
@@ -1632,7 +1676,7 @@ export class WorldScene extends Phaser.Scene {
     const dialogUp = this.dialogOpen;
     for (const o of [...this.stickGroup, ...this.actionGroup]) vis(o).setVisible(!dialogUp);
     for (const o of this.sheetGroup) vis(o).setVisible(!dialogUp && this.sheetOpen);
-    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirmOpen;
+    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
     for (const { id, objs } of this.chipGroups) {
       const show = dialogUp && (id === 'close' || numbered);
       for (const o of objs) vis(o).setVisible(show);
@@ -1649,7 +1693,7 @@ export class WorldScene extends Phaser.Scene {
   private touchUiOwns(px: number, py: number): boolean {
     if (!this.touchEnabled) return false;
     if (this.dialogOpen) {
-      const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirmOpen;
+      const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
       return menuChips(this.scale.width, this.scale.height, true).some(
         (c) => (c.id === 'close' || numbered) && inRect(c, px, py),
       );
@@ -1693,8 +1737,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private handleInteract(): void {
-    // While the minds consent dialog is up, E/Z declines it (1 confirms).
-    if (this.mindsConfirmOpen) {
+    // While a minds dialog is up, E/Z declines/cancels it (numbers choose).
+    if (this.mindsConfirm) {
       this.closeMindsConfirm();
       return;
     }
@@ -1765,9 +1809,14 @@ export class WorldScene extends Phaser.Scene {
 
   /** Route 1/2/3: choose an observer while the keeper picker is open, else pick a greeting tone. */
   private onNumberKey(n: number): void {
-    if (this.mindsConfirmOpen) {
+    if (this.mindsConfirm === 'enable') {
       if (n === 1) this.confirmMinds();
       return; // 2/3 mean nothing to a yes/no dialog
+    }
+    if (this.mindsConfirm === 'disable') {
+      if (n === 1) this.confirmMindsOff(false);
+      if (n === 2) this.confirmMindsOff(true);
+      return; // 3 means nothing here
     }
     if (this.keeperPickerOpen) {
       this.pickKeeperIndex(n - 1);
