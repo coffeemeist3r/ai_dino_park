@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // Stamped when vite (dev or build) starts — changes every restart so you can
 // confirm the running build is current (see console + the on-screen label).
@@ -8,6 +9,31 @@ export default defineConfig({
   define: {
     __BUILD_TIME__: JSON.stringify(BUILD_TIME),
   },
+  plugins: [
+    VitePWA({
+      // 'prompt' keeps control in src/pwa/update.ts: silent reload right after
+      // launch, in-game toast if an update lands mid-session.
+      registerType: 'prompt',
+      manifest: {
+        name: 'AI Dino Park',
+        short_name: 'Dino Park',
+        description: 'Autonomous AI-built dino park simulator.',
+        theme_color: '#1a3a1a',
+        background_color: '#0a0a0a',
+        display: 'standalone',
+        orientation: 'landscape',
+        icons: [
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
+        // The Phaser bundle is over Workbox's 2 MiB precache default.
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+      },
+    }),
+  ],
   server: {
     // host:true binds 0.0.0.0 so Playwright's 127.0.0.1 baseURL resolves.
     // Without it vite binds IPv6 [::1] only and e2e times out (BUG-001).

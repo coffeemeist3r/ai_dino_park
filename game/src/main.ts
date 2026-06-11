@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene';
 import { WorldScene } from './scenes/WorldScene';
+import { setupPwaUpdates } from './pwa/update';
+
+setupPwaUpdates();
 
 // Build stamp — confirm a restart took (this changes each time vite (re)starts).
 // eslint-disable-next-line no-console
