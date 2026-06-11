@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 043 — 2026-06-11
+- BACKLOG-179: Cold-night shiver — a dino too loosely bonded for the winter den shivers 🥶 at morning and files a "slept cold, alone" memory that colours its next greeting; winter only, the warm seasons inert. The other half of cycle-42's packing den: who sleeps alone in winter is now a beat, not a still picture.
+
 ## Cycle 042 — 2026-06-10
 - BACKLOG-171: Winter huddle pull — season-conditional den rules (winter 4 pts / 19→7 packs the den from dusk; summer 8 / 23→4 scatters warm nights; spring byte-identical legacy); pure world/huddle.ts, zero save change.
 
