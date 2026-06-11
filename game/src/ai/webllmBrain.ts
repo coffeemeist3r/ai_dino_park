@@ -33,6 +33,8 @@ export interface ChatEngine {
         messages: { role: string; content: string }[];
         max_tokens?: number;
         temperature?: number;
+        /** WebLLM extension: enable_thinking=false suppresses Qwen3+ thinking tokens. */
+        extra_body?: { enable_thinking?: boolean | null };
       }): Promise<{ choices: { message: { content: string | null } }[] }>;
     };
   };
@@ -91,9 +93,13 @@ const LEADING_FILLER = /^(sure|of course|certainly|absolutely|well|okay|ok)[,!.]
 const ASSISTANT_TELL =
   /\b(as an ai|i'?m an ai|i am an ai|how (can|may) i (assist|help)|here to (assist|help)|assist you today|happy to help|how can i help you)\b/i;
 
+// Qwen3+ thinking block. enable_thinking:false makes WebLLM prepend an EMPTY one
+// to the response; a model may also emit a populated one — drop either entirely.
+const THINK_BLOCK = /^\s*<think>[\s\S]*?<\/think>\s*/i;
+
 /** Strip assistant boilerplate + quotes; return up to the first two in-character sentences (≤200). */
 export function cleanReply(raw: string, maxSentences = 2): string {
-  let s = (raw ?? '').replace(/\s+/g, ' ').trim();
+  let s = (raw ?? '').replace(THINK_BLOCK, '').replace(/\s+/g, ' ').trim();
   if (!s) return '';
   s = s.replace(WRAP_QUOTES, '');
   s = s.replace(LEADING_FILLER, '').trim();
@@ -215,6 +221,9 @@ export class WebLLMBrain implements NPCBrain {
       messages: buildMessages(ctx, obs),
       max_tokens: 100,
       temperature: 0.9,
+      // Qwen3.5 thinks by default; dialog is chitchat, so spend no tokens on it.
+      // Thinking mode is reserved for big decisions once the action layer (104) lands.
+      extra_body: { enable_thinking: false },
     });
     const cleaned = cleanReply(res.choices[0]?.message?.content ?? '');
     // Empty after cleaning means it was all assistant-speak — fall back rather than show it.

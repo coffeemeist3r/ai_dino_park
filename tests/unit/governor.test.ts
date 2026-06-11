@@ -61,20 +61,20 @@ describe('cadence + tier', () => {
 
 describe('consent dialog copy', () => {
   it('quotes the model, its size, and the choices', () => {
-    const s = consentLines('Qwen2.5 0.5B', 'tiny');
-    expect(s).toContain('Qwen2.5 0.5B');
-    expect(s).toContain('0.4 GB');
+    const s = consentLines('Qwen3.5 0.8B', 'tiny');
+    expect(s).toContain('Qwen3.5 0.8B');
+    expect(s).toContain('0.6 GB');
     expect(s).toContain('[1]');
     expect(s).toContain('[✕]');
     expect(s).not.toContain('Data Saver');
   });
 
   it('warns when Data Saver is on', () => {
-    expect(consentLines('Qwen2.5 0.5B', 'tiny', true)).toContain('Data Saver');
+    expect(consentLines('Qwen3.5 0.8B', 'tiny', true)).toContain('Data Saver');
   });
 
   it('a cached model skips the download warning — enable is instant and free', () => {
-    const s = consentLines('Qwen2.5 0.5B', 'tiny', true, true);
+    const s = consentLines('Qwen3.5 0.8B', 'tiny', true, true);
     expect(s).toContain('already downloaded');
     expect(s).not.toContain('GB');
     expect(s).not.toContain('Data Saver'); // no download → no data concern
@@ -83,7 +83,7 @@ describe('consent dialog copy', () => {
 
   it('the off dialog offers keep vs delete with the size on the line', () => {
     const s = mindsOffLines('tiny');
-    expect(s).toContain('0.4 GB');
+    expect(s).toContain('0.6 GB');
     expect(s).toContain('[1]');
     expect(s).toContain('[2]');
     expect(s).toContain('delete');

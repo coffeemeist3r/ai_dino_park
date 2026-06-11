@@ -62,11 +62,11 @@ export function clampTier(tier: ModelTier, coarse: boolean): ModelTier {
   return coarse ? 'tiny' : tier;
 }
 
-/** Rough one-time download size per tier, for the consent dialog. */
+/** Rough one-time download size per tier (Qwen3.5 q4 weights), for the consent dialog. */
 const TIER_SIZE: Record<ModelTier, string> = {
-  tiny: '~0.4 GB',
-  small: '~1 GB',
-  medium: '~1.9 GB',
+  tiny: '~0.6 GB',
+  small: '~1.2 GB',
+  medium: '~2.3 GB',
 };
 
 /** The consent dialog body. Pure so the wording is pinned by unit tests. */

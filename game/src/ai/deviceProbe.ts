@@ -21,18 +21,23 @@ export interface ModelInfo {
   label: string;
 }
 
+// Qwen3.5 ladder (BACKLOG-102; gate passed 2026-06-11 — web-llm 0.2.84 ships all
+// three prebuilt AND exposes extra_body.enable_thinking). 0.8B is MLC-flagged
+// low_resource — the phone tier. Qwen3.5-9B stays reserved for native/desktop.
 export const MODELS: Record<ModelTier, ModelInfo> = {
-  tiny: { tier: 'tiny', id: 'Qwen2.5-0.5B-Instruct-q4f16_1-MLC', label: 'Qwen2.5 0.5B' },
-  small: { tier: 'small', id: 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC', label: 'Qwen2.5 1.5B' },
-  medium: { tier: 'medium', id: 'Qwen2.5-3B-Instruct-q4f16_1-MLC', label: 'Qwen2.5 3B' },
+  tiny: { tier: 'tiny', id: 'Qwen3.5-0.8B-q4f16_1-MLC', label: 'Qwen3.5 0.8B' },
+  small: { tier: 'small', id: 'Qwen3.5-2B-q4f16_1-MLC', label: 'Qwen3.5 2B' },
+  medium: { tier: 'medium', id: 'Qwen3.5-4B-q4f16_1-MLC', label: 'Qwen3.5 4B' },
 };
 
 export function pickTier(caps: DeviceCaps): ModelTier {
   const mem = caps.deviceMemory ?? 0;
   const buf = caps.maxBufferBytes ?? 0;
-  const score = (mem >= 8 ? 2 : mem >= 4 ? 1 : 0) + (buf >= 1_000_000_000 ? 1 : 0);
-  if (score >= 3) return 'medium';
-  if (score === 2) return 'small';
+  // The 3.5 ladder is heavier per tier than 2.5 (0.8/2/4B vs 0.5/1.5/3B), so the
+  // top tier now also demands a 2GB storage-buffer bind — an 8GB machine with a
+  // modest GPU gets the 2B, not a 4B OOM (BACKLOG-102 re-tune).
+  if (mem >= 8 && buf >= 2_000_000_000) return 'medium';
+  if (mem >= 8 || (mem >= 4 && buf >= 1_000_000_000)) return 'small';
   return 'tiny';
 }
 

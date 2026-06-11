@@ -144,4 +144,12 @@ describe('cleanReply', () => {
   it('leaves a clean in-character line unchanged', () => {
     expect(cleanReply('Hi, I am Rex.')).toBe('Hi, I am Rex.');
   });
+
+  it('drops a Qwen3+ thinking block, empty or populated (BACKLOG-102)', () => {
+    // enable_thinking:false makes WebLLM prepend an empty block to the response.
+    expect(cleanReply('<think>\n\n</think>\n\nOh, you brought snacks!')).toBe('Oh, you brought snacks!');
+    expect(cleanReply('<think>The visitor seems friendly. I should mention rocks.</think>My rock is warmer than you.')).toBe(
+      'My rock is warmer than you.',
+    );
+  });
 });
