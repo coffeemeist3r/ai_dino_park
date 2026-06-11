@@ -291,12 +291,83 @@ export const COMP_RIG: PixelRig = {
   palette: compPalette,
 };
 
+// ── Glade — the parasaurolophus, fifth and last through the pixel pipeline (BACKLOG-169) ─────
+// 20×20, side view facing left: the whole silhouette is the TUBE CREST — a bone-toned sweep
+// rising up and back off the skull for three rows (a stub reads as a horn; the length is the
+// species). Below it a wide duckbill snout, a short neck into a deep hadrosaur body, the tail
+// rising to a high tip at the opposite corner, and the tail merged into the body's widest row
+// (an outline column at that join was exactly Sunny's rejected "floating hump"). Keeps the
+// 'para' prefix so the cycle-32 colour-keyed bake + e2e contract is unchanged.
+
+const GLADE_STAND: ReadonlyArray<string> = [
+  '....................',
+  '.........hh.........',
+  '.......hhhh.........',
+  '..oooo.hhh..........',
+  '.obbbbohh...........',
+  'obebbbbo............',
+  'obbbbbbo............',
+  '.obbbbo.............',
+  '..obbo..............',
+  '..obbbo.........oo..',
+  '..obbbbo.......obo..',
+  '..obbbbbbo....obbo..',
+  '.obbbbbbbbbbbbbbbo..',
+  '.obblllllllllbbbo...',
+  '...ddoooooooodd.....',
+  '...dd........dd.....',
+  '...dd........dd.....',
+  '..ooo.......ooo.....',
+  '....................',
+  '....................',
+];
+
+const GLADE_STEP_L: ReadonlyArray<string> = [
+  ...GLADE_STAND.slice(0, 14),
+  '..dd.oooooooo.dd....',
+  '..dd..........dd....',
+  '.odd..........ddo...',
+  '.ooo..........ooo...',
+  '....................',
+  '....................',
+];
+
+const GLADE_STEP_R: ReadonlyArray<string> = [
+  ...GLADE_STAND.slice(0, 14),
+  '....ddoooooodd......',
+  '....dd......dd......',
+  '...odd......ddo.....',
+  '...ooo......ooo.....',
+  '....................',
+  '....................',
+];
+
+function gladePalette(base: number): Record<string, number> {
+  return {
+    o: shade(base, -0.75), // near-black warm outline (never pure black)
+    b: base,
+    l: shade(base, 0.35), // belly
+    d: shade(base, -0.3), // legs
+    h: 0xe8dcc0, // bone — the tube crest, shared with the cast's horns and spikes
+    e: 0x1a0e0a, // eye
+  };
+}
+
+export const GLADE_RIG: PixelRig = {
+  prefix: 'para',
+  size: 20,
+  frames: [GLADE_STAND, GLADE_STEP_L, GLADE_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: gladePalette,
+};
+
 /** Species drawn in pixel; these override their legacy vector rigs in bake.ts. */
 export const PIXEL_SPECIES: Record<string, PixelRig> = {
   triceratops: REX_RIG,
   stegosaurus: MOSS_RIG,
   brontosaurus: SUNNY_RIG,
   compsognathus: COMP_RIG,
+  parasaurolophus: GLADE_RIG,
 };
 
 /** Distinct non-transparent chars used by a frame — test helper for palette discipline. */

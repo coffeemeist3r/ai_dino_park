@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, SUNNY_RIG, COMP_RIG, charsUsed } from '../../game/src/art/pixelArt';
+import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, SUNNY_RIG, COMP_RIG, GLADE_RIG, charsUsed } from '../../game/src/art/pixelArt';
 
 /** Count contiguous runs of painted (non-'.') pixels in a row — used to read leg groups. */
 function paintedRuns(row: string): number {
@@ -182,5 +182,49 @@ describe('Twitch the compsognathus pixel rig (BACKLOG-169)', () => {
   it('keeps the comp prefix so the cycle-33 colour-keyed bake + e2e contract holds', () => {
     expect(COMP_RIG.prefix).toBe('comp');
     expect(PIXEL_SPECIES.compsognathus).toBe(COMP_RIG);
+  });
+});
+
+describe('Glade the parasaurolophus pixel rig (BACKLOG-169 — the cast is 5/5 pixel)', () => {
+  it('is a full 20×20 grid in every frame', () => {
+    for (const frame of GLADE_RIG.frames) {
+      expect(frame).toHaveLength(GLADE_RIG.size);
+      for (const row of frame) expect(row).toHaveLength(GLADE_RIG.size);
+    }
+  });
+
+  it('every painted char resolves and keeps GBA palette discipline (≤ 15 distinct)', () => {
+    const pal = GLADE_RIG.palette(0x6a8a4a);
+    for (const frame of GLADE_RIG.frames) {
+      for (const ch of charsUsed(frame)) expect(pal[ch], `char '${ch}'`).toBeTypeOf('number');
+    }
+    const colors = Object.values(pal);
+    expect(colors.length).toBeLessThanOrEqual(15);
+    expect(new Set(colors).size).toBe(colors.length);
+  });
+
+  it('the tube crest is the silhouette: bone tone sweeps the top rows, longer than a horn stub', () => {
+    const stand = GLADE_RIG.frames[0];
+    const crestRows = stand.slice(1, 5).filter((row) => row.includes('h'));
+    expect(crestRows.length).toBeGreaterThanOrEqual(3); // a 3-row sweep, not a stub
+    expect(stand[1].indexOf('h')).toBeGreaterThan(stand[4].indexOf('h')); // rises up AND back
+  });
+
+  it('the tail merges into the body row — no outline column splitting the join', () => {
+    const widest = GLADE_RIG.frames[0][12];
+    expect(widest).toMatch(/^\.ob+o\.+$/); // one unbroken body run, Sunny's rejected hump bug pinned out
+  });
+
+  it('walk frames differ and play the Gen3 amble', () => {
+    const [stand, stepL, stepR] = GLADE_RIG.frames;
+    expect(stand).not.toEqual(stepL);
+    expect(stand).not.toEqual(stepR);
+    expect(stepL).not.toEqual(stepR);
+    expect(GLADE_RIG.sequence).toEqual([0, 1, 0, 2]);
+  });
+
+  it('keeps the para prefix so the cycle-32 colour-keyed bake and e2e contract hold', () => {
+    expect(GLADE_RIG.prefix).toBe('para');
+    expect(PIXEL_SPECIES.parasaurolophus).toBe(GLADE_RIG);
   });
 });

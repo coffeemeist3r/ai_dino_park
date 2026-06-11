@@ -16,3 +16,5 @@ STYLE-GUIDE.
 | Stegosaurus pixel walk (Mossback, GBA restyle) | `game/src/art/pixelArt.ts` (`MOSS_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-10 |
 | Brontosaurus pixel walk (Sunny, GBA restyle) | `game/src/art/pixelArt.ts` (`SUNNY_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-10 |
 | Compsognathus pixel walk (Twitch, GBA restyle) | `game/src/art/pixelArt.ts` (`COMP_RIG`) → `bake.ts` | Claude-authored procedural pixel (CHARTER v4) | 2026-06-11 |
+
+- **Glade the parasaurolophus (pixel)** — `game/src/art/pixelArt.ts` `GLADE_RIG`, cycle 044-art, 2026-06-11. Claude-authored procedural pixel (Gen3 style, original pixels). The cast's fifth and final pixel restyle — the tube crest in shared bone tone.
