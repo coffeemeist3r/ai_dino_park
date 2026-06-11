@@ -51,6 +51,16 @@ import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/fee
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { hudAlpha, isIdle } from '../world/idle';
+import {
+  STICK,
+  stickVector,
+  inCircle,
+  inRect,
+  actionButtons,
+  sheetRows,
+  menuChips,
+  type Vec2,
+} from '../input/touch';
 import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import {
   shouldLay,
@@ -159,6 +169,17 @@ export class WorldScene extends Phaser.Scene {
   private convoCooldown = 0;
   private convoInFlight = false;
   private lastConversation: { speaker: string; text: string; source?: string } | null = null;
+  /** Touch controls (BACKLOG-189): live drag vector, the dragging pointer, and the UI layer. */
+  private touchEnabled = false;
+  private touchVec: Vec2 = { x: 0, y: 0 };
+  private stickPointerId = -1;
+  private touchObjects: Phaser.GameObjects.GameObject[] = [];
+  private stickThumb: Phaser.GameObjects.Arc | null = null;
+  private stickGroup: Phaser.GameObjects.GameObject[] = [];
+  private actionGroup: Phaser.GameObjects.GameObject[] = [];
+  private sheetGroup: Phaser.GameObjects.GameObject[] = [];
+  private chipGroups: Array<{ id: string; objs: Phaser.GameObjects.GameObject[] }> = [];
+  private sheetOpen = false;
 
   constructor() {
     super('World');
@@ -216,6 +237,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupPlaque();
     this.setupScan();
     this.setupIdle();
+    this.setupTouchControls();
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
     // avoid the parallel-load flake of reading a hook before create() finishes.
@@ -318,7 +340,11 @@ export class WorldScene extends Phaser.Scene {
 
   /** Tap the glass (BACKLOG-057): a click raps the bowl; nearby dinos react by temperament. */
   private setupTap(): void {
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => this.tapGlass(p.worldX, p.worldY));
+    // Touches that land on the control layer (stick/buttons/chips) are input, not raps.
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      if (this.touchUiOwns(p.x, p.y)) return;
+      this.tapGlass(p.worldX, p.worldY);
+    });
     // dev-only Playwright hook — tap at a pixel, returns each dino's reaction
     (window as any).__tapGlass = (px: number, py: number) => this.tapGlass(px, py);
   }
@@ -1324,7 +1350,194 @@ export class WorldScene extends Phaser.Scene {
     };
   }
 
+  // ─────────────────── Touch controls (BACKLOG-189) ───────────────────
+
+  /** Build the control layer on coarse-pointer devices; `__setTouch` lets e2e force it. */
+  private setupTouchControls(): void {
+    // pointer:coarse = the PRIMARY input is a finger (phone/tablet). Deliberately not
+    // maxTouchPoints — a touch-capable laptop with a mouse keeps the desktop view.
+    const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+    if (coarse) this.enableTouch();
+
+    // any: dev-only Playwright hooks — force the layer on/off, read the drag vector/layout
+    (window as any).__setTouch = (on: boolean) => (on ? this.enableTouch() : this.disableTouch());
+    (window as any).__touchEnabled = () => this.touchEnabled;
+    (window as any).__touchVec = () => ({ ...this.touchVec });
+    (window as any).__touchLayout = () => ({
+      stick: { ...STICK },
+      buttons: actionButtons(this.scale.width, this.scale.height),
+      sheet: sheetRows(this.scale.width),
+      chips: menuChips(this.scale.width, this.scale.height, true),
+    });
+  }
+
+  private enableTouch(): void {
+    if (this.touchEnabled) return;
+    this.touchEnabled = true;
+    this.input.addPointer(2); // stick + a button in the same moment
+
+    const W = this.scale.width;
+    const H = this.scale.height;
+    const vis = (o: Phaser.GameObjects.GameObject) => o as unknown as { setVisible(v: boolean): void };
+
+    // Stick: an oversized invisible grab ring so thumbs land easily, base + thumb visuals.
+    const grab = this.add.circle(STICK.x, STICK.y, STICK.grab, 0xffffff, 0.001).setInteractive();
+    const base = this.add.circle(STICK.x, STICK.y, STICK.r, 0x10241c, 0.4).setStrokeStyle(2, 0x8fd14f, 0.5);
+    this.stickThumb = this.add.circle(STICK.x, STICK.y, STICK.thumb, 0x8fd14f, 0.55);
+    this.stickGroup = [grab, base, this.stickThumb];
+
+    grab.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      this.stickPointerId = p.id;
+      this.dragStick(p.x, p.y);
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (this.touchEnabled && p.id === this.stickPointerId) this.dragStick(p.x, p.y);
+    });
+    const release = (p: Phaser.Input.Pointer) => {
+      if (p.id !== this.stickPointerId) return;
+      this.stickPointerId = -1;
+      this.touchVec = { x: 0, y: 0 };
+      this.stickThumb?.setPosition(STICK.x, STICK.y);
+    };
+    this.input.on('pointerup', release);
+    this.input.on('pointerupoutside', release);
+
+    this.actionGroup = [];
+    for (const b of actionButtons(W, H)) {
+      const c = this.add
+        .circle(b.x, b.y, b.r, 0x10241c, 0.5)
+        .setStrokeStyle(2, 0x8fd14f, 0.6)
+        .setInteractive();
+      const t = this.add
+        .text(b.x, b.y, b.label, { fontFamily: 'monospace', fontSize: '18px', color: '#e8e8d6' })
+        .setOrigin(0.5);
+      c.on('pointerdown', () => this.onTouchButton(b.id));
+      this.actionGroup.push(c, t);
+    }
+
+    this.sheetGroup = [];
+    for (const r of sheetRows(W)) {
+      const rect = this.add
+        .rectangle(r.x, r.y, r.w, r.h, 0x10241c, 0.85)
+        .setStrokeStyle(1, 0x8fd14f, 0.5)
+        .setInteractive();
+      const t = this.add
+        .text(r.x - r.w / 2 + 8, r.y, r.label, { fontFamily: 'monospace', fontSize: '13px', color: '#e8e8d6' })
+        .setOrigin(0, 0.5);
+      rect.on('pointerdown', () => this.onTouchButton(r.id));
+      this.sheetGroup.push(rect, t);
+    }
+
+    this.chipGroups = [];
+    for (const chip of menuChips(W, H, true)) {
+      const rect = this.add
+        .rectangle(chip.x, chip.y, chip.w, chip.h, 0x10241c, 0.85)
+        .setStrokeStyle(2, 0x8fd14f, 0.7)
+        .setInteractive();
+      const t = this.add
+        .text(chip.x, chip.y, chip.label, { fontFamily: 'monospace', fontSize: '16px', color: '#e8e8d6' })
+        .setOrigin(0.5);
+      rect.on('pointerdown', () => this.onTouchButton(chip.id));
+      this.chipGroups.push({ id: chip.id, objs: [rect, t] });
+    }
+
+    this.touchObjects = [
+      ...this.stickGroup,
+      ...this.actionGroup,
+      ...this.sheetGroup,
+      ...this.chipGroups.flatMap((c) => c.objs),
+    ];
+    for (const o of this.touchObjects) {
+      (o as unknown as { setScrollFactor(n: number): void }).setScrollFactor(0);
+      (o as unknown as { setDepth(n: number): void }).setDepth(20);
+    }
+    for (const o of this.sheetGroup) vis(o).setVisible(false);
+    this.syncTouchUi();
+  }
+
+  private disableTouch(): void {
+    if (!this.touchEnabled) return;
+    this.touchEnabled = false;
+    this.stickPointerId = -1;
+    this.touchVec = { x: 0, y: 0 };
+    this.sheetOpen = false;
+    for (const o of this.touchObjects) o.destroy();
+    this.touchObjects = [];
+    this.stickGroup = [];
+    this.actionGroup = [];
+    this.sheetGroup = [];
+    this.chipGroups = [];
+    this.stickThumb = null;
+  }
+
+  private dragStick(px: number, py: number): void {
+    this.touchVec = stickVector(px, py);
+    this.stickThumb?.setPosition(
+      STICK.x + this.touchVec.x * (STICK.r - 8),
+      STICK.y + this.touchVec.y * (STICK.r - 8),
+    );
+  }
+
+  private onTouchButton(id: string): void {
+    switch (id) {
+      case 'talk': this.handleInteract(); break;
+      case 'feed': this.dropFood(); break;
+      case 'more': this.sheetOpen = !this.sheetOpen; this.syncTouchUi(); break;
+      case 'gift': this.giveGift(); break;
+      case 'item': this.cycleItem(1); break;
+      case 'lens': this.cycleLens(); break;
+      case 'hearts': this.toggleHearts(); break;
+      case 'keeper': this.sheetOpen = false; this.openKeeperPicker(); break;
+      case 'scan': this.toggleScan(); break;
+      case 'time': this.toggleScale(); break;
+      case 'export': this.sheetOpen = false; this.exportSave(); break;
+      case 'pick1': this.onNumberKey(1); break;
+      case 'pick2': this.onNumberKey(2); break;
+      case 'pick3': this.onNumberKey(3); break;
+      case 'close': this.handleInteract(); break;
+    }
+  }
+
+  /**
+   * Swap the layer with dialog state: stick + buttons while playing, [1][2][3][✕]
+   * chips while a dialog is up (numbers only when a 1/2/3 menu is actually open).
+   */
+  private syncTouchUi(): void {
+    if (!this.touchEnabled) return;
+    const vis = (o: Phaser.GameObjects.GameObject) => o as unknown as { setVisible(v: boolean): void };
+    const dialogUp = this.dialogOpen;
+    for (const o of [...this.stickGroup, ...this.actionGroup]) vis(o).setVisible(!dialogUp);
+    for (const o of this.sheetGroup) vis(o).setVisible(!dialogUp && this.sheetOpen);
+    const numbered = this.toneMenuOpen || this.keeperPickerOpen;
+    for (const { id, objs } of this.chipGroups) {
+      const show = dialogUp && (id === 'close' || numbered);
+      for (const o of objs) vis(o).setVisible(show);
+    }
+    // A dialog opening mid-drag releases the stick — update() stops moving the player anyway.
+    if (dialogUp && this.stickPointerId !== -1) {
+      this.stickPointerId = -1;
+      this.touchVec = { x: 0, y: 0 };
+      this.stickThumb?.setPosition(STICK.x, STICK.y);
+    }
+  }
+
+  /** Does a pointer at canvas (px,py) land on the control layer? Guards the glass tap. */
+  private touchUiOwns(px: number, py: number): boolean {
+    if (!this.touchEnabled) return false;
+    if (this.dialogOpen) {
+      const numbered = this.toneMenuOpen || this.keeperPickerOpen;
+      return menuChips(this.scale.width, this.scale.height, true).some(
+        (c) => (c.id === 'close' || numbered) && inRect(c, px, py),
+      );
+    }
+    if (inCircle(STICK.x, STICK.y, STICK.grab, px, py)) return true;
+    if (actionButtons(this.scale.width, this.scale.height).some((b) => inCircle(b.x, b.y, b.r, px, py))) return true;
+    return this.sheetOpen && sheetRows(this.scale.width).some((r) => inRect(r, px, py));
+  }
+
   update(): void {
+    // Runs before the dialog early-return: the chips/stick swap tracks dialog state.
+    this.syncTouchUi();
     if (this.dialogOpen) return;
 
     const speed = 2;
@@ -1337,8 +1550,14 @@ export class WorldScene extends Phaser.Scene {
     if (up) this.player.y -= speed;
     if (down) this.player.y += speed;
 
+    const touching = this.touchVec.x !== 0 || this.touchVec.y !== 0;
+    if (touching) {
+      this.player.x += this.touchVec.x * speed;
+      this.player.y += this.touchVec.y * speed;
+    }
+
     // Held movement keys don't refire keydown events, so count them as activity here.
-    if (left || right || up || down) {
+    if (left || right || up || down || touching) {
       this.lastInputAt = this.time.now;
       if (this.ambientActive) this.exitAmbient();
     }
@@ -1939,10 +2158,7 @@ export class WorldScene extends Phaser.Scene {
       .setVisible(false);
     this.refreshHeartsPanel();
 
-    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.C).on('down', () => {
-      this.heartsPanel.setVisible(!this.heartsPanel.visible);
-      if (this.heartsPanel.visible) this.refreshHeartsPanel();
-    });
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.C).on('down', () => this.toggleHearts());
 
     // any: dev-only Playwright hook — name → heart count for every dino
     (window as any).__hearts = () => {
@@ -1958,6 +2174,11 @@ export class WorldScene extends Phaser.Scene {
     };
     // any: dev-only Playwright hook — is the hearts panel showing
     (window as any).__heartsPanelVisible = () => this.heartsPanel.visible;
+  }
+
+  private toggleHearts(): void {
+    this.heartsPanel.setVisible(!this.heartsPanel.visible);
+    if (this.heartsPanel.visible) this.refreshHeartsPanel();
   }
 
   private refreshHeartsPanel(): void {
