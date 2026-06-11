@@ -94,6 +94,14 @@ test('long dialogs page GBA-style: E forward, ◀ back, ✕ closes from any page
   await page.keyboard.press('ArrowLeft');
   expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(0);
 
+  // The touch path itself (operator bug: the ◀ chip's prev() was undone by the
+  // scene handler's body-tap next()): tap the dialog body forward, the chip back.
+  const body = await toPage(page, 320, 430);
+  await page.mouse.click(body.x, body.y);
+  expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(1);
+  await tapId(page, 'chips', 'back');
+  expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(0);
+
   // ✕ closes immediately, pages remaining or not.
   await tapId(page, 'chips', 'close');
   expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(false);

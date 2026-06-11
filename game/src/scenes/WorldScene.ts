@@ -373,9 +373,7 @@ export class WorldScene extends Phaser.Scene {
     // Touches that land on the control layer (stick/buttons/chips) are input, not raps.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       if (this.touchUiOwns(p.x, p.y)) {
-        // A tap on the dialog body (not on a chip — those have their own handlers)
-        // is the GBA A-button: turn the page if there is one.
-        if (this.dialogOpen && !this.chipHit(p.x, p.y)) this.dialog.next();
+        this.dispatchTouchTap(p.x, p.y);
         return;
       }
       this.tapGlass(p.worldX, p.worldY);
@@ -1585,29 +1583,26 @@ export class WorldScene extends Phaser.Scene {
     this.input.on('pointerup', release);
     this.input.on('pointerupoutside', release);
 
+    // Buttons/sheet/chips carry NO per-object handlers: a per-object pointerdown
+    // and the scene-level pointerdown both fire for one tap, and a handler that
+    // mutates dialog state mid-tap makes the second dispatch misread the target
+    // (the ◀ chip's prev() was instantly undone by a body-tap next()). All taps
+    // resolve once, from pre-tap state, in dispatchTouchTap().
     this.actionGroup = [];
     for (const b of actionButtons(W, H)) {
-      const c = this.add
-        .circle(b.x, b.y, b.r, 0x10241c, 0.5)
-        .setStrokeStyle(2, 0x8fd14f, 0.6)
-        .setInteractive();
+      const c = this.add.circle(b.x, b.y, b.r, 0x10241c, 0.5).setStrokeStyle(2, 0x8fd14f, 0.6);
       const t = this.add
         .text(b.x, b.y, b.label, { fontFamily: 'monospace', fontSize: '18px', color: '#e8e8d6' })
         .setOrigin(0.5);
-      c.on('pointerdown', () => this.onTouchButton(b.id));
       this.actionGroup.push(c, t);
     }
 
     this.sheetGroup = [];
     for (const r of sheetRows(W)) {
-      const rect = this.add
-        .rectangle(r.x, r.y, r.w, r.h, 0x10241c, 0.85)
-        .setStrokeStyle(1, 0x8fd14f, 0.5)
-        .setInteractive();
+      const rect = this.add.rectangle(r.x, r.y, r.w, r.h, 0x10241c, 0.85).setStrokeStyle(1, 0x8fd14f, 0.5);
       const t = this.add
         .text(r.x - r.w / 2 + 8, r.y, r.label, { fontFamily: 'monospace', fontSize: '13px', color: '#e8e8d6' })
         .setOrigin(0, 0.5);
-      rect.on('pointerdown', () => this.onTouchButton(r.id));
       this.sheetGroup.push(rect, t);
     }
 
@@ -1615,12 +1610,10 @@ export class WorldScene extends Phaser.Scene {
     for (const chip of menuChips(W, H, true)) {
       const rect = this.add
         .rectangle(chip.x, chip.y, chip.w, chip.h, 0x10241c, 0.85)
-        .setStrokeStyle(2, 0x8fd14f, 0.7)
-        .setInteractive();
+        .setStrokeStyle(2, 0x8fd14f, 0.7);
       const t = this.add
         .text(chip.x, chip.y, chip.label, { fontFamily: 'monospace', fontSize: '16px', color: '#e8e8d6' })
         .setOrigin(0.5);
-      rect.on('pointerdown', () => this.onTouchButton(chip.id));
       this.chipGroups.push({ id: chip.id, objs: [rect, t] });
     }
 
@@ -1707,14 +1700,37 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** Is (px,py) on a currently-visible chip? Chips run their own handlers. */
-  private chipHit(px: number, py: number): boolean {
-    if (!this.touchEnabled || !this.dialogOpen) return false;
+  /** The currently-visible chip at (px,py), if any. */
+  private chipIdAt(px: number, py: number): string | null {
+    if (!this.touchEnabled || !this.dialogOpen) return null;
     const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
     const paged = this.dialog.pageInfo().page > 0;
-    return menuChips(this.scale.width, this.scale.height, true).some(
+    const hit = menuChips(this.scale.width, this.scale.height, true).find(
       (c) => (c.id === 'close' || (c.id === 'back' ? paged : numbered)) && inRect(c, px, py),
     );
+    return hit?.id ?? null;
+  }
+
+  /** Resolve a UI-owned tap to its action — ONCE, from pre-tap state. */
+  private dispatchTouchTap(px: number, py: number): void {
+    if (this.dialogOpen) {
+      const chip = this.chipIdAt(px, py);
+      if (chip) this.onTouchButton(chip);
+      else this.dialog.next(); // a tap on the dialog body is the GBA A-button
+      return;
+    }
+    const button = actionButtons(this.scale.width, this.scale.height).find((b) =>
+      inCircle(b.x, b.y, b.r, px, py),
+    );
+    if (button) {
+      this.onTouchButton(button.id);
+      return;
+    }
+    if (this.sheetOpen) {
+      const row = sheetRows(this.scale.width).find((r) => inRect(r, px, py));
+      if (row) this.onTouchButton(row.id);
+    }
+    // Anything else owned (the stick grab ring) is handled by the stick's own listener.
   }
 
   /** Does a pointer at canvas (px,py) land on the control layer? Guards the glass tap. */
