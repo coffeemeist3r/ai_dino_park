@@ -76,6 +76,36 @@ test('declining the consent dialog leaves the stub and stores nothing', async ({
   expect(await page.evaluate(() => localStorage.getItem('dino.minds'))).toBe(null);
 });
 
+test('long dialogs page GBA-style: E forward, ◀ back, ✕ closes from any page', async ({ page }) => {
+  await boot(page);
+  // The keeper picker is reliably longer than one 3-line page (3 observers with
+  // ability blurbs) — the same overflow that cut off the minds dialog text.
+  await page.keyboard.press('KeyK');
+  const info = await page.evaluate(() => (window as W).__dialogPage());
+  expect(info.pages).toBeGreaterThan(1);
+  expect(info.page).toBe(0);
+
+  // E turns the page instead of dismissing the picker.
+  await page.keyboard.press('KeyE');
+  expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(1);
+  expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(true);
+
+  // ArrowLeft (the ◀ chip's keyboard twin) turns back.
+  await page.keyboard.press('ArrowLeft');
+  expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(0);
+
+  // ✕ closes immediately, pages remaining or not.
+  await tapId(page, 'chips', 'close');
+  expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(false);
+
+  // And a number pick still works from a later page: reopen, page forward, pick.
+  await page.keyboard.press('KeyK');
+  await page.keyboard.press('KeyE');
+  await tapId(page, 'chips', 'pick2');
+  expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(false);
+  expect(await page.evaluate(() => (window as W).__keeper())).not.toBe('aether');
+});
+
 test('the governor pauses ambient chatter for a hidden tab or a dying battery', async ({ page }) => {
   await boot(page);
   const gov = await page.evaluate(() => (window as W).__governor());

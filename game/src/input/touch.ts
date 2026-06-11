@@ -84,17 +84,18 @@ export function sheetRows(width: number): RectButton[] {
 }
 
 /**
- * Chips shown while a dialog is up: [1][2][3] when a numbered menu (tone/keeper)
- * is open, always a [✕] to close. Centered above the dialog box strip.
+ * Chips shown while a dialog is up: [◀] turns a paged dialog back, [1][2][3] when
+ * a numbered menu (tone/keeper/minds) is open, always a [✕] to close. Centered
+ * above the dialog box strip. (Forward paging is a tap on the dialog itself.)
  */
 export function menuChips(width: number, height: number, numbered: boolean): RectButton[] {
   const w = 48;
   const h = 36;
   const y = height - 88 - 12 - h / 2 - 6; // just above the DialogBox (HEIGHT 88, PAD 12)
-  const labels = numbered ? ['1', '2', '3', '✕'] : ['✕'];
+  const labels = numbered ? ['◀', '1', '2', '3', '✕'] : ['◀', '✕'];
   const total = labels.length * w + (labels.length - 1) * 10;
   return labels.map((label, i) => ({
-    id: label === '✕' ? 'close' : `pick${label}`,
+    id: label === '✕' ? 'close' : label === '◀' ? 'back' : `pick${label}`,
     label,
     x: width / 2 - total / 2 + w / 2 + i * (w + 10),
     y,

@@ -5,6 +5,9 @@ const HEIGHT = 88;
 // Above every HUD layer (plaque/holding/hints top out at 13), below the touch
 // control chips (20). Without this the bottom chrome painted over the dialog text.
 const DEPTH = 15;
+// 14px monospace lines render ~19px tall; three fit the 64px inner box. A fourth
+// would collide with the hint — anything longer pages instead (GBA-style).
+const LINES_PER_PAGE = 3;
 
 export class DialogBox {
   private readonly bg: Phaser.GameObjects.Rectangle;
@@ -12,6 +15,9 @@ export class DialogBox {
   private readonly text: Phaser.GameObjects.Text;
   private readonly hint: Phaser.GameObjects.Text;
   private visible = false;
+  /** GBA-style paging (operator, 2026-06-11): long messages chunk into pages. */
+  private pages: string[] = [];
+  private page = 0;
 
   constructor(scene: Phaser.Scene) {
     const w = scene.scale.width - PAD * 2;
@@ -41,8 +47,43 @@ export class DialogBox {
   }
 
   show(message: string): void {
-    this.text.setText(message);
+    // Let Phaser's own word-wrap decide the line breaks, then chunk into pages —
+    // long text used to overflow the box and read as cut off (operator phone session).
+    const lines = this.text.getWrappedText(message);
+    this.pages = [];
+    for (let i = 0; i < lines.length; i += LINES_PER_PAGE) {
+      this.pages.push(lines.slice(i, i + LINES_PER_PAGE).join('\n'));
+    }
+    if (this.pages.length === 0) this.pages = [message];
+    this.page = 0;
+    this.renderPage();
     this.setVisible(true);
+  }
+
+  /** Turn forward. False when already on the last page (callers close instead). */
+  next(): boolean {
+    if (!this.visible || this.page >= this.pages.length - 1) return false;
+    this.page++;
+    this.renderPage();
+    return true;
+  }
+
+  /** Turn back. False when already on the first page. */
+  prev(): boolean {
+    if (!this.visible || this.page <= 0) return false;
+    this.page--;
+    this.renderPage();
+    return true;
+  }
+
+  pageInfo(): { page: number; pages: number; text: string } {
+    return { page: this.page, pages: this.pages.length, text: this.pages[this.page] ?? '' };
+  }
+
+  private renderPage(): void {
+    this.text.setText(this.pages[this.page]);
+    const more = this.page < this.pages.length - 1;
+    this.hint.setText(more ? `▼ ${this.page + 1}/${this.pages.length} (E)` : '[Z to close]');
   }
 
   hide(): void {

@@ -19,7 +19,7 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-_(empty — all standing nudges processed cycle 37)_
+- `[new]` (2026-06-11, operator) **Sound.** The bowl is silent — there is no audio at all. Operator floated it during the mobile sessions: dino chirps/calls, ambient park noise, a tap-the-glass *thunk*, maybe quiet night crickets for the huddle hours. Whatever fits the CHARTER's authored-as-code bias (WebAudio synthesis would match how the art is made — no downloaded assets). Mobile note: must respect autoplay policies (sound after first interaction) and stay subtle — the bowl is a desk companion, not a noise box.
 
 ## Resolved
 

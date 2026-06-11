@@ -72,11 +72,11 @@ describe('layout', () => {
     }
   });
 
-  it('menu chips are 1/2/3/✕ above the dialog strip, ✕ alone for a plain dialog', () => {
+  it('menu chips are ◀/1/2/3/✕ above the dialog strip, ◀/✕ for a plain dialog', () => {
     const numbered = menuChips(W, H, true);
-    expect(numbered.map((c) => c.id)).toEqual(['pick1', 'pick2', 'pick3', 'close']);
+    expect(numbered.map((c) => c.id)).toEqual(['back', 'pick1', 'pick2', 'pick3', 'close']);
     for (const c of numbered) expect(c.y + c.h / 2).toBeLessThanOrEqual(H - 88 - 12); // DialogBox top
-    expect(menuChips(W, H, false).map((c) => c.id)).toEqual(['close']);
+    expect(menuChips(W, H, false).map((c) => c.id)).toEqual(['back', 'close']);
   });
 });
 

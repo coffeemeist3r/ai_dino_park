@@ -230,6 +230,12 @@ export class WorldScene extends Phaser.Scene {
     this.interactKey.on('down', () => this.handleInteract());
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.Z).on('down', () => this.handleInteract());
 
+    // Arrow keys page an open dialog (movement is frozen while one is up anyway).
+    this.cursors.right.on('down', () => { if (this.dialogOpen) this.dialog.next(); });
+    this.cursors.left.on('down', () => { if (this.dialogOpen) this.dialog.prev(); });
+    // any: dev-only Playwright hook — current dialog page/pages/text
+    (window as any).__dialogPage = () => this.dialog.pageInfo();
+
     // 1/2/3 pick a greeting tone (BACKLOG-142) — or, while the keeper picker is up (BACKLOG-155),
     // choose an observer. onNumberKey routes to whichever overlay is open.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ONE).on('down', () => this.onNumberKey(1));
@@ -366,7 +372,12 @@ export class WorldScene extends Phaser.Scene {
   private setupTap(): void {
     // Touches that land on the control layer (stick/buttons/chips) are input, not raps.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
-      if (this.touchUiOwns(p.x, p.y)) return;
+      if (this.touchUiOwns(p.x, p.y)) {
+        // A tap on the dialog body (not on a chip — those have their own handlers)
+        // is the GBA A-button: turn the page if there is one.
+        if (this.dialogOpen && !this.chipHit(p.x, p.y)) this.dialog.next();
+        return;
+      }
       this.tapGlass(p.worldX, p.worldY);
     });
     // dev-only Playwright hook — tap at a pixel, returns each dino's reaction
@@ -1667,7 +1678,8 @@ export class WorldScene extends Phaser.Scene {
       case 'pick1': this.onNumberKey(1); break;
       case 'pick2': this.onNumberKey(2); break;
       case 'pick3': this.onNumberKey(3); break;
-      case 'close': this.handleInteract(); break;
+      case 'back': this.dialog.prev(); break;
+      case 'close': this.dismissDialog(); break; // ✕ always closes, even mid-pages
     }
   }
 
@@ -1682,8 +1694,9 @@ export class WorldScene extends Phaser.Scene {
     for (const o of [...this.stickGroup, ...this.actionGroup]) vis(o).setVisible(!dialogUp);
     for (const o of this.sheetGroup) vis(o).setVisible(!dialogUp && this.sheetOpen);
     const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
+    const paged = dialogUp && this.dialog.pageInfo().page > 0;
     for (const { id, objs } of this.chipGroups) {
-      const show = dialogUp && (id === 'close' || numbered);
+      const show = dialogUp && (id === 'close' || (id === 'back' ? paged : numbered));
       for (const o of objs) vis(o).setVisible(show);
     }
     // A dialog opening mid-drag releases the stick — update() stops moving the player anyway.
@@ -1692,6 +1705,16 @@ export class WorldScene extends Phaser.Scene {
       this.touchVec = { x: 0, y: 0 };
       this.stickThumb?.setPosition(STICK.x, STICK.y);
     }
+  }
+
+  /** Is (px,py) on a currently-visible chip? Chips run their own handlers. */
+  private chipHit(px: number, py: number): boolean {
+    if (!this.touchEnabled || !this.dialogOpen) return false;
+    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
+    const paged = this.dialog.pageInfo().page > 0;
+    return menuChips(this.scale.width, this.scale.height, true).some(
+      (c) => (c.id === 'close' || (c.id === 'back' ? paged : numbered)) && inRect(c, px, py),
+    );
   }
 
   /** Does a pointer at canvas (px,py) land on the control layer? Guards the glass tap. */
@@ -1740,24 +1763,11 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private handleInteract(): void {
-    // While a minds dialog is up, E/Z declines/cancels it (numbers choose).
-    if (this.mindsConfirm) {
-      this.closeMindsConfirm();
-      return;
-    }
-    // While the keeper picker is up, E/Z dismisses it (1/2/3 choose). BACKLOG-155.
-    if (this.keeperPickerOpen) {
-      this.closeKeeperPicker();
-      return;
-    }
-    // While the tone menu is up, E/Z cancels it (1/2/3 choose); a normal dialog closes.
-    if (this.toneMenuOpen) {
-      this.closeToneMenu();
-      return;
-    }
+    // GBA-style paging: with more text to read, E/Z turns the page first; the
+    // dismiss/cancel below only fires from the last page. (The ✕ chip skips this.)
+    if (this.dialogOpen && this.dialog.next()) return;
     if (this.dialogOpen) {
-      this.dialog.hide();
-      this.dialogOpen = false;
+      this.dismissDialog();
       return;
     }
 
@@ -1811,6 +1821,26 @@ export class WorldScene extends Phaser.Scene {
   // --- Keeper select (BACKLOG-155) ---------------------------------------------------------
 
   /** Route 1/2/3: choose an observer while the keeper picker is open, else pick a greeting tone. */
+  /** Close/cancel whatever dialog is up, regardless of remaining pages (✕ semantics). */
+  private dismissDialog(): void {
+    if (this.mindsConfirm) {
+      this.closeMindsConfirm();
+      return;
+    }
+    // While the keeper picker is up, this dismisses it (1/2/3 choose). BACKLOG-155.
+    if (this.keeperPickerOpen) {
+      this.closeKeeperPicker();
+      return;
+    }
+    // While the tone menu is up, this cancels it (1/2/3 choose); a normal dialog closes.
+    if (this.toneMenuOpen) {
+      this.closeToneMenu();
+      return;
+    }
+    this.dialog.hide();
+    this.dialogOpen = false;
+  }
+
   private onNumberKey(n: number): void {
     if (this.mindsConfirm === 'enable') {
       if (n === 1) this.confirmMinds();
