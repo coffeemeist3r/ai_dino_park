@@ -21,6 +21,13 @@ new Phaser.Game({
   height: TILE * ROWS,
   backgroundColor: '#1a3a1a',
   pixelArt: true,
+  // BACKLOG-188: letterbox the fixed 640×480 world to whatever screen holds it
+  // (phone PWA included). Pointer worldX/Y stay correct — Phaser's input manager
+  // untransforms through the Scale Manager.
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+  },
   scene: [BootScene, WorldScene],
   physics: {
     default: 'arcade',

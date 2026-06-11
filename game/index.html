@@ -15,12 +15,13 @@
         overflow: hidden;
       }
       #app {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         height: 100vh;
       }
+      /* Fill the viewport so Phaser Scale.FIT has a box to letterbox into
+         (BACKLOG-188); the Scale Manager centers the canvas itself. */
       #game {
+        width: 100%;
+        height: 100%;
         image-rendering: pixelated;
         image-rendering: crisp-edges;
       }
