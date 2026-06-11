@@ -12,6 +12,8 @@ import {
   mindsStatusLine,
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
+import { chirpParams, type ChirpParams } from '../audio/chirp';
+import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
 import { hasArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
@@ -199,6 +201,8 @@ export class WorldScene extends Phaser.Scene {
   private tabHidden = false;
   private batteryLevel: number | undefined;
   private lastCacheAction: 'deleted' | 'error' | null = null;
+  /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
+  private lastSound: { kind: 'chirp' | 'thunk'; name?: string; params?: ChirpParams } | null = null;
 
   constructor() {
     super('World');
@@ -248,6 +252,9 @@ export class WorldScene extends Phaser.Scene {
     // B is LUMEN-3's Field Scan (BACKLOG-157): read the nearest dino's mind — Lux only.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.B).on('down', () => this.toggleScan());
 
+    // M toggles the bowl's sound (BACKLOG-191); the touch sheet has the same switch.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.M).on('down', () => setSoundMuted(!soundMuted()));
+
     this.addControlsHint();
 
     this.setupClock();
@@ -283,6 +290,9 @@ export class WorldScene extends Phaser.Scene {
     const markActive = () => {
       this.lastInputAt = this.time.now;
       if (this.ambientActive) this.exitAmbient();
+      // Every keydown/pointerdown lands here — the one true first-gesture seam,
+      // so this is where the AudioContext is allowed to exist (BACKLOG-191).
+      unlockAudio();
     };
     this.input.keyboard!.on('keydown', markActive);
     this.input.on('pointerdown', markActive);
@@ -384,6 +394,10 @@ export class WorldScene extends Phaser.Scene {
 
   /** Rap the glass at a pixel; ripple, then every dino flees/approaches/ignores by bravery. */
   private tapGlass(px: number, py: number): Array<{ name: string; reaction: StartleReaction }> {
+    if (!soundMuted()) {
+      this.lastSound = { kind: 'thunk' };
+      playThunk(); // the knock you'd hear from outside the bowl (BACKLOG-191)
+    }
     this.spawnRipple(px, py);
     const tap = {
       tileX: Math.max(0, Math.min(COLS - 1, Math.round((px - TILE / 2) / TILE))),
@@ -1243,6 +1257,7 @@ export class WorldScene extends Phaser.Scene {
       const gossip = spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
       if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
+      this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
     } finally {
       this.convoInFlight = false;
@@ -1426,6 +1441,13 @@ export class WorldScene extends Phaser.Scene {
       b.addEventListener('levelchange', () => (this.batteryLevel = b.level));
     });
 
+    // The bowl's voicebox (BACKLOG-191): a dino calls in its own trait-derived voice.
+    // Intent is recorded here (not in voice.ts) so headless tests never depend on playback.
+    // any: dev-only Playwright hooks for the audio spine
+    (window as any).__lastSound = () => this.lastSound;
+    (window as any).__soundMuted = () => soundMuted();
+    (window as any).__audioState = () => audioState();
+
     // any: dev-only Playwright hooks — which brain runs, and the live ambient verdict
     (window as any).__brainKind = () => this.brainKindNow;
     (window as any).__mindsConfirmOpen = () => this.mindsConfirm !== null;
@@ -1439,6 +1461,14 @@ export class WorldScene extends Phaser.Scene {
       ambientAllowed: allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel }),
       cooldownSteps: convoCooldownSteps(this.coarsePointer),
     });
+  }
+
+  /** A dino speaks in its own voice — chirp params derived from its traits (BACKLOG-191). */
+  private chirpFor(d: Dino): void {
+    if (soundMuted()) return;
+    const params = chirpParams(d.traits);
+    this.lastSound = { kind: 'chirp', name: d.name, params };
+    playChirp(params);
   }
 
   /** Swap the shared brain in place; every dino picks it up on its next line. */
@@ -1660,6 +1690,7 @@ export class WorldScene extends Phaser.Scene {
       case 'feed': this.dropFood(); break;
       case 'more': this.sheetOpen = !this.sheetOpen; this.syncTouchUi(); break;
       case 'minds': void this.onMindsButton(); break;
+      case 'sound': setSoundMuted(!soundMuted()); break;
       case 'gift': this.giveGift(); break;
       case 'item': this.cycleItem(1); break;
       case 'lens': this.cycleLens(); break;
@@ -1830,6 +1861,7 @@ export class WorldScene extends Phaser.Scene {
       affection: heartsFromPoints(this.friendship[target.name] ?? 0),
       recentMemory: recall(this.memory, target.name),
     });
+    this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
     this.toneTarget = null;
   }

@@ -71,6 +71,7 @@ export function sheetRows(width: number): RectButton[] {
   const x = width - 12 - w / 2;
   const ids: Array<[string, string]> = [
     ['minds', '🧠 dino minds'],
+    ['sound', '🔊 sound'],
     ['gift', '🎁 give gift'],
     ['item', '↻ next item'],
     ['lens', '👁 lens'],
@@ -80,7 +81,8 @@ export function sheetRows(width: number): RectButton[] {
     ['time', '⏱ time ×'],
     ['export', '💾 export save'],
   ];
-  return ids.map(([id, label], i) => ({ id, label, x, y: 96 + i * (h + 6), w, h }));
+  // Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+).
+  return ids.map(([id, label], i) => ({ id, label, x, y: 64 + i * (h + 6), w, h }));
 }
 
 /**

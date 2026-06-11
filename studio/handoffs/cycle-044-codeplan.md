@@ -90,3 +90,15 @@ none — WebAudio is a browser built-in. (Adding an audio library would need a C
 ## Estimated touch count
 
 ~5 files (2 new, 2 modified, 2 test files — one new, one edited). Within budget.
+
+## Shipped (coder, 2026-06-11)
+
+Implemented exactly per plan, zero deviations. `audio/chirp.ts` pure (pitch = 0.6·(1−sociability)
++ 0.4·(1−bravery) over 120–900Hz — founder spread: Mossback 148 / Rex 343 / Glade 513 /
+Sunny 521 / Twitch 797, Twitch−Sunny = 276Hz ≥ 100 ✓). `audio/voice.ts` browser-only,
+context strictly inside `unlockAudio()` (called from markActive), triangle pips at gain 0.12,
+sine thunk; mute cached + persisted under `dino.sound`. Seams: chirpFor beside the greet reply
+(1842) and the convo bubble (1251); thunk in tapGlass; M key; `sound` sheet row (sheet base
+y 96→64 so the 10th row clears the ⋯ button). Hooks record intent in the scene. 7 unit
+(chirp.test.ts) + 5 e2e (cycle-044-sound) all new-green; full run 361 unit / 131 e2e green,
+no flake. Build (tsc) clean. Boundary check: web-llm imports still only under game/src/ai/.
