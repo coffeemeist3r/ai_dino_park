@@ -111,7 +111,20 @@ export function cleanReply(raw: string, maxSentences = 2): string {
     kept.push(t);
     if (kept.length >= maxSentences) break;
   }
-  return kept.join(' ').slice(0, MAX_REPLY).trim(); // '' if nothing survived → caller falls back
+  // The token cap can stop generation mid-sentence, leaving a dangling fragment
+  // ("…it sometimes j"). With a complete sentence already in hand, drop the stump;
+  // a lone fragment is kept below but marked as trailing off.
+  if (kept.length > 1 && !/[.!?]$/.test(kept[kept.length - 1])) kept.pop();
+  let out = kept.join(' ').trim();
+  if (out.length > MAX_REPLY) {
+    // Cut at a word boundary, never mid-word.
+    const head = out.slice(0, MAX_REPLY - 1);
+    const space = head.lastIndexOf(' ');
+    out = (space > 40 ? head.slice(0, space) : head).trimEnd() + '…';
+  } else if (out && !/[.!?…]$/.test(out)) {
+    out += '…'; // an unfinished thought reads as the dino trailing off, not a glitch
+  }
+  return out; // '' if nothing survived → caller falls back
 }
 
 /** Model download/load progress 0..1 while status is 'loading' (for the brain HUD). */

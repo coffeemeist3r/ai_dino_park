@@ -145,6 +145,26 @@ describe('cleanReply', () => {
     expect(cleanReply('Hi, I am Rex.')).toBe('Hi, I am Rex.');
   });
 
+  it('drops a token-capped dangling fragment when a complete sentence precedes it', () => {
+    expect(cleanReply('My rock is the warmest rock. And when I sit on it I sometimes j')).toBe(
+      'My rock is the warmest rock.',
+    );
+  });
+
+  it('a lone unfinished thought trails off instead of cutting mid-word', () => {
+    expect(cleanReply('I am basically nothing unless someone talks to me and even then I')).toBe(
+      'I am basically nothing unless someone talks to me and even then I…',
+    );
+  });
+
+  it('over-long replies cut at a word boundary with an ellipsis, never mid-word', () => {
+    const long = `${'word '.repeat(50)}ending.`; // ~256 chars
+    const out = cleanReply(long, 1);
+    expect(out.length).toBeLessThanOrEqual(200);
+    expect(out.endsWith('…')).toBe(true);
+    expect(out).not.toMatch(/\swor…$/); // no mid-word stump
+  });
+
   it('drops a Qwen3+ thinking block, empty or populated (BACKLOG-102)', () => {
     // enable_thinking:false makes WebLLM prepend an empty block to the response.
     expect(cleanReply('<think>\n\n</think>\n\nOh, you brought snacks!')).toBe('Oh, you brought snacks!');
