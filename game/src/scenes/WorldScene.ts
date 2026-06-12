@@ -64,6 +64,7 @@ import { reactionFor, startleStep, type StartleReaction } from '../world/startle
 import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
+import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
   STICK,
@@ -114,6 +115,9 @@ export class WorldScene extends Phaser.Scene {
   private npcBrain!: NPCBrain;
   private giftHud!: Phaser.GameObjects.Text;
   private heldItemIndex = 0;
+  /** Controls help (HUD overhaul): the [?] chip and the panel it toggles. */
+  private helpChip!: Phaser.GameObjects.Text;
+  private helpPanel!: Phaser.GameObjects.Text;
   private brainHud!: Phaser.GameObjects.Text;
   private meetings: Meetings = {};
   private memory: MemoryStore = {};
@@ -388,6 +392,11 @@ export class WorldScene extends Phaser.Scene {
   private setupTap(): void {
     // Touches that land on the control layer (stick/buttons/chips) are input, not raps.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      // The [?] chip / open help panel eats its tap: toggling help is not a rap.
+      if (this.helpUiOwns(p.x, p.y)) {
+        this.toggleHelp();
+        return;
+      }
       if (this.touchUiOwns(p.x, p.y)) {
         this.dispatchTouchTap(p.x, p.y);
         return;
@@ -1340,20 +1349,51 @@ export class WorldScene extends Phaser.Scene {
       })
       .setDepth(11);
 
-    const hintText = this.add
-      .text(TILE * COLS - 6, TILE * ROWS - 6, 'WASD move · E talk · F give · H feed · [ ] item · C friends · V lens · K observer · B scan · O export', {
+    // The full key reference lives in a toggled panel: the old one-line hint was
+    // wider than the canvas itself and ran under the gift HUD and the plaque.
+    this.helpPanel = this.add
+      .text((TILE * COLS) / 2, (TILE * ROWS) / 2, helpLines().join('\n'), {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        align: 'left',
+        backgroundColor: '#000000e6',
+        padding: { x: 12, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setDepth(14)
+      .setVisible(false);
+
+    this.helpChip = this.add
+      .text(TILE * COLS - 6, TILE * ROWS - 6, HELP_CHIP, {
         fontFamily: 'monospace',
         fontSize: '10px',
         color: '#ffffff',
-        align: 'right',
         backgroundColor: '#000000aa',
         padding: { x: 4, y: 2 },
       })
       .setOrigin(1, 1)
       .setDepth(11);
 
+    // ? and / share a physical key on most layouts; 191 is that key's code.
+    this.input.keyboard!.addKey(191).on('down', () => this.toggleHelp());
+
     // Fade these with the rest of the HUD in ambient mode.
-    this.hudElements.push(buildText, hintText);
+    this.hudElements.push(buildText, this.helpChip);
+
+    // any: dev-only Playwright hook — is the help panel up?
+    (window as any).__helpOpen = () => this.helpPanel.visible;
+  }
+
+  private toggleHelp(): void {
+    this.helpPanel.setVisible(!this.helpPanel.visible);
+  }
+
+  /** True when a screen point lands on the [?] chip or the open help panel. */
+  private helpUiOwns(px: number, py: number): boolean {
+    if (this.helpChip?.visible && this.helpChip.getBounds().contains(px, py)) return true;
+    if (this.helpPanel?.visible && this.helpPanel.getBounds().contains(px, py)) return true;
+    return false;
   }
 
   private flashMeet(a: Dino, b: Dino): void {
@@ -1664,6 +1704,13 @@ export class WorldScene extends Phaser.Scene {
       (o as unknown as { setDepth(n: number): void }).setDepth(20);
     }
     for (const o of this.sheetGroup) vis(o).setVisible(false);
+
+    // Keyboard chrome makes no sense under a thumb: hide the [?] chip + panel,
+    // and move the held-item line out of the stick's bottom-left corner.
+    this.helpChip?.setVisible(false);
+    this.helpPanel?.setVisible(false);
+    this.layoutGiftHud();
+
     this.syncTouchUi();
   }
 
@@ -1680,6 +1727,8 @@ export class WorldScene extends Phaser.Scene {
     this.sheetGroup = [];
     this.chipGroups = [];
     this.stickThumb = null;
+    this.helpChip?.setVisible(true);
+    this.layoutGiftHud();
   }
 
   private dragStick(px: number, py: number): void {
@@ -2550,7 +2599,14 @@ export class WorldScene extends Phaser.Scene {
 
   private refreshGiftHud(): void {
     if (!this.giftHud) return;
-    this.giftHud.setText(`Holding: ${GIFTS[this.heldItemIndex].label}  ([ ] to switch, G to give)`);
+    this.giftHud.setText(holdingLine(GIFTS[this.heldItemIndex].label));
+  }
+
+  /** Bottom-left on desktop; tucked under the build stamp on touch (the stick owns bottom-left). */
+  private layoutGiftHud(): void {
+    if (!this.giftHud) return;
+    if (this.touchEnabled) this.giftHud.setPosition(6, 34).setOrigin(0, 0);
+    else this.giftHud.setPosition(6, TILE * ROWS - 6).setOrigin(0, 1);
   }
 
   /** Apply the held gift's reaction to a dino's affinity; returns the verdict. */
