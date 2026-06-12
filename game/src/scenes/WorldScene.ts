@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -165,6 +165,10 @@ export class WorldScene extends Phaser.Scene {
   private wasInHuddleWindow = false;
   private nightSeason: Season = 'spring';
   private lastColdSleepers: string[] = [];
+  /** Keeper's warmth (BACKLOG-184): who still carries the cold funk (transient day-state,
+   *  never persisted — like pendingRepair) and its 🥶 marks, index-aligned like sleepMarks. */
+  private coldPending = new Set<string>();
+  private coldMarks: Phaser.GameObjects.Text[] = [];
   /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
    *  responder mid-walk toward the caller. Both transient, never persisted. */
   private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
@@ -545,7 +549,9 @@ export class WorldScene extends Phaser.Scene {
     this.food = null;
     this.foodKind = null;
     this.foodLanded = false;
-    this.friendship = bumpPoints(this.friendship, d.name, r.gain);
+    // A meal mends a cold funk too (BACKLOG-184): the food's gain plus the warm bonus.
+    const warming = this.coldPending.has(d.name);
+    this.friendship = bumpPoints(this.friendship, d.name, r.gain + (warming ? WARM_BONUS : 0));
     this.memory = remember(
       this.memory,
       d.name,
@@ -553,6 +559,10 @@ export class WorldScene extends Phaser.Scene {
         ? `you snapped up the food at the hatch — your favorite ${kind!.label}!`
         : 'you scrambled to the hatch and snapped up the food',
     );
+    if (warming) {
+      this.memory = remember(this.memory, d.name, warmMemory());
+      this.clearColdFunk(d.name, true);
+    }
     this.flashFeed(d, r.emoji);
     this.logEvent(
       `🍖 ${d.name} snapped up the food at the hatch${r.favorite ? ` — its favorite ${kind!.label}!` : ''}`,
@@ -725,6 +735,9 @@ export class WorldScene extends Phaser.Scene {
     this.sleepMarks.push(
       this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    this.coldMarks.push(
+      this.add.text(0, 0, '🥶', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
     this.roleTags.push(
       this.add
         .text(0, 0, '', { fontFamily: 'monospace', fontSize: '9px', color: '#ffe0a0', backgroundColor: '#000000aa', padding: { x: 2, y: 1 } })
@@ -764,6 +777,8 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only: cold-night shiver (BACKLOG-179) — who slept cold at the last morning resolution.
     (window as any).__coldSleepers = () => [...this.lastColdSleepers];
+    // dev-only: keeper's warmth (BACKLOG-184) — who still carries the cold funk.
+    (window as any).__coldPending = () => [...this.coldPending];
     // dev-only: distress call (BACKLOG-194) — the last cry, the responder mid-walk, and a
     // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
     (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
@@ -912,6 +927,16 @@ export class WorldScene extends Phaser.Scene {
       const mark = this.sleepMarks[i];
       if (!mark) return;
       mark.setVisible(this.isHuddling(d)).setPosition(d.x, d.y - TILE);
+    });
+    this.refreshColdMarks();
+  }
+
+  /** The cold funk's 🥶 (BACKLOG-184) — above the 💤 slot so a dusk overlap can't stack glyphs. */
+  private refreshColdMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.coldMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.coldPending.has(d.name)).setPosition(d.x, d.y - TILE * 1.4);
     });
   }
 
@@ -1224,8 +1249,15 @@ export class WorldScene extends Phaser.Scene {
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
-    if (denTime) this.nightSeason = season;
-    else if (this.wasInHuddleWindow) this.resolveColdMorning();
+    if (denTime) {
+      // Dusk thaws any funk the keeper never mended (BACKLOG-184) — silently, no memory;
+      // the "nobody came" note is 208's. Fires once, on the window's opening edge.
+      if (!this.wasInHuddleWindow && this.coldPending.size) {
+        this.coldPending.clear();
+        this.refreshColdMarks();
+      }
+      this.nightSeason = season;
+    } else if (this.wasInHuddleWindow) this.resolveColdMorning();
     this.wasInHuddleWindow = denTime;
 
     this.refreshSleepMarks();
@@ -1254,6 +1286,9 @@ export class WorldScene extends Phaser.Scene {
       lonely.push({ name: d.name, level: best });
     }
     this.lastColdSleepers = cold;
+    // Every cold sleeper carries the funk until the keeper mends it or dusk thaws it (BACKLOG-184).
+    this.coldPending = new Set(cold);
+    this.refreshColdMarks();
     // The loneliest shiver finds a voice (BACKLOG-194): one cold cry per morning.
     const crier = mostDistressed(lonely);
     if (crier) {
@@ -2196,17 +2231,26 @@ export class WorldScene extends Phaser.Scene {
    */
   private recordTone(name: string, id: ToneId, traits?: Dino['traits']): void {
     const repairing = this.pendingRepair === name;
+    // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
+    const warming = !repairing && this.coldPending.has(name);
     const gain = repairing
       ? repairGain(traits)
-      : toneReaction(toneById(id), traits).delta + this.applyKeeperBonus(traits);
+      : warming
+        ? warmGain(traits)
+        : toneReaction(toneById(id), traits).delta + this.applyKeeperBonus(traits);
     this.friendship = bumpPoints(this.friendship, name, gain);
-    this.memory = remember(this.memory, name, repairing ? repairMemory(name) : toneById(id).memory);
+    this.memory = remember(
+      this.memory,
+      name,
+      repairing ? repairMemory(name) : warming ? warmMemory() : toneById(id).memory,
+    );
     this.lastTone = { ...this.lastTone, [name]: id };
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
       if (dino) this.showBubble(dino, repairLine(name));
     }
+    if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
     this.refreshHeartsPanel();
   }
@@ -2215,20 +2259,37 @@ export class WorldScene extends Phaser.Scene {
   private recordGreet(name: string, traits?: Dino['traits']): void {
     // A make-up greet to the jealous runner-up (BACKLOG-125): outsized bump, 😊, one-shot.
     const repairing = this.pendingRepair === name;
-    const gain = repairing ? repairGain(traits) : greetGain(traits) + this.applyKeeperBonus(traits);
+    // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
+    const warming = !repairing && this.coldPending.has(name);
+    const gain = repairing
+      ? repairGain(traits)
+      : warming
+        ? warmGain(traits)
+        : greetGain(traits) + this.applyKeeperBonus(traits);
     this.friendship = bumpPoints(this.friendship, name, gain);
     this.memory = remember(
       this.memory,
       name,
-      repairing ? repairMemory(name) : 'the human stopped by to say hello',
+      repairing ? repairMemory(name) : warming ? warmMemory() : 'the human stopped by to say hello',
     );
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
       if (dino) this.showBubble(dino, repairLine(name));
     }
+    if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
     this.refreshHeartsPanel();
+  }
+
+  /** One-shot thaw (BACKLOG-184): drop the funk; a true warming also gets its 😊 beat. */
+  private clearColdFunk(name: string, withBeat: boolean): void {
+    if (!this.coldPending.delete(name)) return;
+    this.refreshColdMarks();
+    if (withBeat) {
+      const dino = this.dinoByName(name);
+      if (dino) this.showBubble(dino, warmLine(name));
+    }
   }
 
   private nearestDino(): Dino | null {

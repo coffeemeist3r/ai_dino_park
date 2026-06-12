@@ -8,6 +8,8 @@
  */
 
 import type { Season } from './seasons';
+import type { Personality } from '../ai/personality';
+import { greetGain } from '../social/friendship';
 
 /** The only season cold enough to leave a dino shivering. */
 export const COLD_SEASON: Season = 'winter';
@@ -25,4 +27,26 @@ export function coldShiver(): string {
 /** The memory a cold-slept dino files — woven into its next-morning greeting context. */
 export function coldMemory(): string {
   return 'shivered through a cold night, slept alone 🥶';
+}
+
+// ── Keeper's warmth (BACKLOG-184) — the mend. The 125 repair shape brought to winter: a
+// greet or a meal from the keeper thaws a cold funk early, with an outsized gain and a
+// memory that warms the next hello. The trio mirrors repair.ts exactly.
+
+/** Extra points a warming greet/meal earns — deliberately the repair-bonus magnitude. */
+export const WARM_BONUS = 6;
+
+/** A warming greet's gain: a normal greet (warmth/sociability still scale) plus the bonus. */
+export function warmGain(traits?: Personality): number {
+  return greetGain(traits) + WARM_BONUS;
+}
+
+/** The floating line over a dino the keeper just warmed. */
+export function warmLine(name: string): string {
+  return `${name} stops shivering 😊`;
+}
+
+/** The memory a warmed dino keeps; WorldScene folds this into the store. */
+export function warmMemory(): string {
+  return 'the keeper warmed me after a cold night';
 }

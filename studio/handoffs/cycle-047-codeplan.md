@@ -69,3 +69,16 @@ Sentries (unmodified): cycle-006 hearts, 027 favorites, 032 repair, 035 tones, 0
 ## Estimated touch count
 
 ~4 files (2 modified src + 1 extended unit + 1 new e2e). Within budget.
+
+## Shipped
+
+**Files touched (4, exactly as planned):**
+- `game/src/world/cold.ts` — +WARM_BONUS / warmGain / warmLine / warmMemory (pure; mirrors repair.ts)
+- `game/src/scenes/WorldScene.ts` — coldPending set + 🥶 coldMarks (spawnDino-created, index-aligned), refreshColdMarks folded into refreshSleepMarks (covers both call sites — minor simplification over the plan's "beside both"), funk fill in resolveColdMorning, dusk thaw on the window-open edge, three-way gain in recordGreet/recordTone with a shared one-shot clearColdFunk (repair wins and clears both flags), WARM_BONUS on top of the food gain in eatFood, __coldPending hook
+- `tests/unit/cold.test.ts` — +4 (warm trio + bonus parity with REPAIR_BONUS)
+- `tests/e2e/cycle-047-warmth.spec.ts` — 5 new
+
+**Deviations:** none of substance. refreshColdMarks is invoked from inside refreshSleepMarks rather than at each call site (equivalent coverage, fewer edits). The feed e2e uses a drop-and-race retry loop (≤6 drops) reading the eater from memory, per the plan's own risk note.
+
+**Build:** clean. **Unit:** 410/410 (+4). **New e2e:** 5/5 first try. **Dev render:** HTTP 200.
+Full Playwright run is QA's fire.
