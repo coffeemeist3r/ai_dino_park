@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { walkFrames, SPECIES_ART, type Shape } from './dinoArt';
 import { PIXEL_SPECIES } from './pixelArt';
+import { KEEPER_RIGS } from './keeperArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -102,6 +103,69 @@ export function ensureWalk(scene: Phaser.Scene, species: string, baseColor: numb
 /** Species the procedural pipeline can render today; others fall back to a flat rectangle. */
 export function hasArt(species: string): boolean {
   return species in PIXEL_SPECIES || species in SPECIES_ART;
+}
+
+const KEEPER_SCALE = 2; // 16×20 grid → 32×40, same integer-scale nearest-neighbour bake as dinos
+
+/**
+ * Bake a keeper avatar's idle+walk anim (BACKLOG-158). Non-square grid (width≠height), keyed by
+ * keeper id rather than a roster colour — robots carry a fixed palette, not a colour-keyed ramp.
+ */
+function ensureKeeperWalk(scene: Phaser.Scene, id: string): string | null {
+  const rig = KEEPER_RIGS[id];
+  if (!rig) return null;
+  const animKey = `keeper_${id}_walk`;
+  if (scene.anims.exists(animKey)) return animKey;
+
+  const texKeys = rig.frames.map((grid, i) => {
+    const key = `${animKey}_${i}`;
+    if (!scene.textures.exists(key)) {
+      const g = scene.add.graphics();
+      grid.forEach((row, y) => {
+        for (let x = 0; x < row.length; x++) {
+          const ch = row[x];
+          if (ch === '.') continue;
+          g.fillStyle(rig.palette[ch], 1);
+          g.fillRect(x * KEEPER_SCALE, y * KEEPER_SCALE, KEEPER_SCALE, KEEPER_SCALE);
+        }
+      });
+      g.generateTexture(key, rig.width * KEEPER_SCALE, rig.height * KEEPER_SCALE);
+      g.destroy();
+    }
+    return key;
+  });
+
+  scene.anims.create({
+    key: animKey,
+    frames: rig.sequence.map((i) => ({ key: texKeys[i] })),
+    frameRate: 6,
+    repeat: -1,
+  });
+  return animKey;
+}
+
+/** Observers the procedural pipeline can render today; others fall back to the amber square. */
+export function hasKeeperArt(id: string): boolean {
+  return id in KEEPER_RIGS;
+}
+
+/** Build the player avatar — a baked observer sprite where art exists, else the original square. */
+export function makeKeeperArt(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  id: string,
+): { obj: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle; artKey: string | null } {
+  const animKey = ensureKeeperWalk(scene, id);
+  if (animKey) {
+    const sprite = scene.add.sprite(x, y, `${animKey}_0`);
+    sprite.play(animKey);
+    return { obj: sprite, artKey: animKey };
+  }
+  const TILE = 32;
+  const rect = scene.add.rectangle(x, y, TILE - 4, TILE - 4, 0xe8c878);
+  rect.setStrokeStyle(2, 0x6a4020);
+  return { obj: rect, artKey: null };
 }
 
 /** Build the visible game object for a dino — a baked sprite where art exists, else a rectangle. */

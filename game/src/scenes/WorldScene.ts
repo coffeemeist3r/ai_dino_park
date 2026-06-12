@@ -16,7 +16,7 @@ import { chirpParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt } from '../art/bake';
+import { hasArt, makeKeeperArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -98,7 +98,9 @@ const HUDDLE_TILE = { tileX: 10, tileY: 11 };
 const BOND_PER_MEET = 4;
 
 export class WorldScene extends Phaser.Scene {
-  private player!: Phaser.GameObjects.Rectangle;
+  private player!: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
+  /** Anim key of the current keeper avatar, or null when the observer is still the amber square. */
+  private keeperArtKey: string | null = null;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
   private interactKey!: Phaser.Input.Keyboard.Key;
@@ -217,8 +219,7 @@ export class WorldScene extends Phaser.Scene {
     this.drawGrassMap();
     this.drawDen(); // drawn before dinos so they nap on top of it
 
-    this.player = this.add.rectangle(TILE * 3 + TILE / 2, TILE * 3 + TILE / 2, TILE - 4, TILE - 4, 0xe8c878);
-    this.player.setStrokeStyle(2, 0x6a4020);
+    this.renderKeeperAvatar(); // the chosen observer's pixel rig, or the amber square if undrawn
 
     // One shared brain across all dinos — five WebLLM engines would mean five model downloads.
     // Phones boot on the canned stub unless the keeper opted in (governor policy): a GB-class
@@ -1936,6 +1937,7 @@ export class WorldScene extends Phaser.Scene {
     if (!keeper) return;
     const changed = keeper.id !== this.keeperId;
     this.keeperId = keeper.id;
+    if (changed) this.renderKeeperAvatar(); // swap to the new observer's face in place
     this.keeperPickerOpen = false;
     this.dialog.show(`You are ${keeper.name}, from ${keeper.era}.\n${keeper.ability.label}: ${keeper.ability.desc}`);
     this.dialogOpen = true; // a normal dialog the next E/Z closes
@@ -1943,6 +1945,22 @@ export class WorldScene extends Phaser.Scene {
     // A real change of watcher draws first contact (BACKLOG-161); a re-pick or the save-restore
     // path (which assigns keeperId directly) never arms it.
     if (changed) this.armInspection();
+  }
+
+  /**
+   * (Re)build the player avatar for the current observer (BACKLOG-158). Destroys the old object
+   * and rebuilds in place — preserving position + depth — so a keeper switch or a save restore
+   * swaps the sprite without disturbing movement. An undrawn observer renders the amber square.
+   */
+  private renderKeeperAvatar(): void {
+    const x = this.player ? this.player.x : TILE * 3 + TILE / 2;
+    const y = this.player ? this.player.y : TILE * 3 + TILE / 2;
+    const depth = this.player ? this.player.depth : 0;
+    if (this.player) this.player.destroy();
+    const { obj, artKey } = makeKeeperArt(this, x, y, this.keeperId);
+    this.player = obj;
+    this.player.setDepth(depth);
+    this.keeperArtKey = artKey;
   }
 
   /** Arm the first-contact beat: the best-fitting dino comes to size up the new observer. */
@@ -2322,6 +2340,7 @@ export class WorldScene extends Phaser.Scene {
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
+      this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
       this.born = save.born ?? [];
@@ -2404,6 +2423,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__friendshipPoints = () => ({ ...this.friendship });
     // any: dev-only Playwright hooks — keeper select (BACKLOG-155)
     (window as any).__keeper = () => this.keeperId;
+    // any: dev-only — the baked anim key of the current observer avatar, or null (amber square)
+    (window as any).__keeperArt = () => this.keeperArtKey;
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
