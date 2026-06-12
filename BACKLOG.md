@@ -302,7 +302,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > spine these extend: a shiver you can see, a memory that follows the dino into the morning.
 
 - [ ] BACKLOG-183 [emergent] Warmed-by-the-memory — a dino that shivered alone last winter night (179) drifts to the den *earlier* the next cold dusk, the cold teaching it to seek the pile sooner. Builds on 179 / 171.
-- [ ] BACKLOG-184 [social] Keeper's warmth — greeting or feeding a shivering dino (179) clears the 🥶 early and files a "the keeper warmed me" memory, so the cold night becomes a thing the keeper can mend (the greet-repair shape, like 125). Builds on 179 / 125.
+- [~] BACKLOG-184 [social] Keeper's warmth — greeting or feeding a shivering dino (179) clears the 🥶 early and files a "the keeper warmed me" memory, so the cold night becomes a thing the keeper can mend (the greet-repair shape, like 125). Builds on 179 / 125.
 - [ ] BACKLOG-185 [emergent] Word of the cold — a dino that slept cold lets it slip to the next it meets ("frost in my bones, you should've seen it"), so the night's hardship travels the bowl through the gossip spine. Builds on 179 / 019.
 - [ ] BACKLOG-186 [pokemon] Hardy in the book — the collection book counts cold nights each dino has toughed out ("weathered 3 cold nights alone"), the flip side of the night ledger (182): not who slept warm, but who slept hard. Builds on 179 / 021.
 - [ ] BACKLOG-187 [emergent] Toughened hide — a dino that endures many cold nights slowly hardens (a tiny capped nudge toward higher resilience / lower sociability), so being repeatedly left out leaves a mark on temperament, not just memory. Very slow, capped. Builds on 179 / 043.
