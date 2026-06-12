@@ -345,6 +345,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-205 [pokemon] Peep in the shell — an egg on its final day faintly peeps, its parameters blended from its parents' chirps the way its traits will be; you can hear who's coming before the hatch. Foreshadows the book cry (195). Builds on 042 / 191 / 195.
 - [ ] BACKLOG-206 [emergent] Sound has a place — chirp volume attenuates with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint; the bowl gains acoustic space. Builds on 191 / 194.
 
+## Cycle 47 lore additions — kindness has a temperature (2026-06-12)
+
+> Cycle 43 made the cold visible, cycle 46 made it audible; in both the keeper could only watch.
+> Next-up is the already-queued **BACKLOG-184** (keeper's warmth) — the 125 repair shape brought
+> to winter: a shiver you can mend with your own hands. These extend the mended morning.
+
+- [ ] BACKLOG-207 [emergent] Hopeful shiver — when the keeper warms one cold dino (184), another still-shivering dino that witnessed it drifts toward the keeper at the glass, hoping it's next; mended kindness creates a queue. Builds on 184 / 063 / 126.
+- [ ] BACKLOG-208 [emergent] Nobody came — a shiverer the keeper never warmed before its funk thaws files the colder memory ("shivered all morning; nobody came") that tinges its next greeting harder than the plain cold note; neglect becomes as legible as care. Builds on 184 / 179 / 126.
+- [ ] BACKLOG-209 [pokemon] Mended in the book — the collection book counts how often the keeper has warmed each dino ("warmed through 3 cold mornings"), care made standing alongside the hardy-nights tally (186). Builds on 184 / 021 / 186.
+- [ ] BACKLOG-210 [ai] Gratitude in the voice — a just-warmed dino's next reply leans grateful (deterministic thankful line per the 148 shape; LLM colour where the device allows, behind NPCBrain); the warmth surfaces in *what it says*, not just the affinity math. Builds on 184 / 148 / 139.
+- [ ] BACKLOG-211 [emergent] Pass the warmth — a keeper-warmed dino is primed, for a while, to be the one who comforts the next sulker or shiverer it witnesses — even below the usual bond floor (the 141 pay-it-forward shape, now seeded by keeper care); kindness cascades from the keeper into the bond graph. Builds on 184 / 141 / 130.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
