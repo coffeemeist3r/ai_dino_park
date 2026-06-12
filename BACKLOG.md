@@ -320,6 +320,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-194 [emergent] Distress call — a shivering (179) or startled (057) dino calls out in its own voice, and its closest friend (013) turns toward the sound from across the bowl; the bond graph gains an audible edge. Builds on 191 / 130 / 179.
 - [ ] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
 
+## Cycle 45 lore additions — the voice learns the day (2026-06-12)
+
+> Cycle 44 gave each dino a voice; cycle 45 gives the bowl a *time* it uses them. Next-up is
+> the already-queued **BACKLOG-192** (dawn chorus) — the first soundscape with a clock in it.
+> These extend the audible day once the chorus lands: its closing bookend, the keeper joining
+> in, the loner left out of it, and what a friendship sounds like.
+
+- [ ] BACKLOG-196 [emergent] Night hush — the inverse bookend of the dawn chorus: at the night boundary the cast falls quiet, the last night-owl's chirp trailing off into the dark, so the day has a closing sound as well as an opening one. Builds on 192 / 109.
+- [ ] BACKLOG-197 [social] Chorus you can join — tapping the glass (057) during the dawn chorus makes the nearest waking dino chirp back at the keeper, folding you into the morning call-and-answer. Builds on 192 / 057 / 193.
+- [ ] BACKLOG-198 [emergent] Off-key loner — a dino with no bond above the loner floor (135) chirps a beat *after* the rest of the chorus, a lone voice hanging in the quiet; social isolation made audible. Builds on 192 / 013 / 135.
+- [ ] BACKLOG-199 [pokemon] Chorus lead in the book — the collection book names which dino "leads the dawn chorus" (the earliest riser by energy) as a small standing. Builds on 192 / 021.
+- [ ] BACKLOG-200 [emergent] Harmonized pair — two high-bond dinos that wake near each other chirp in near-unison (pips interleaved), so a strong friendship literally *sounds* different from two strangers. Builds on 192 / 013.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
