@@ -21,3 +21,4 @@ STYLE-GUIDE.
 
 - **AETHER-1 "Aki" keeper avatar (pixel)** — `game/src/art/keeperArt.ts` `AKI_RIG` → `bake.ts` (`makeKeeperArt`), cycle 045-art, 2026-06-12. Claude-authored procedural pixel (Gen3 style, original pixels). First of the robot-observer roster (BACKLOG-158): a 16×20 front-facing brass diplomacy bot — cyan optic visor, antenna + chest glow, stepping legs. VANTA-9 / LUMEN-3 stay on the amber-square fallback until drawn.
 - VANTA-9 "Vix" keeper avatar (pixel, 16×20 ×2) — `game/src/art/keeperArt.ts` (`VIX_RIG`) — cycle 046-art, 2026-06-12 — Claude-authored procedural pixel rig.
+- LUMEN-3 "Lux" keeper avatar (pixel, 16×20 ×2) — `game/src/art/keeperArt.ts` (`LUX_RIG`) — cycle 047-art, 2026-06-12 — Claude-authored procedural pixel rig. Completes the observer roster (BACKLOG-158 3/3); keeper fallback control re-pointed to a genuine no-art id.

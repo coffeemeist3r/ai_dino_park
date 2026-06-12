@@ -158,8 +158,75 @@ export const VIX_RIG: KeeperRig = {
   },
 };
 
+// ── LUMEN-3 "Lux" — the deep-future cataloguer, last of the roster ───────────────────────────
+// The head IS the instrument: a full circular archive lens fills the skull — ivory bezel, amber
+// glass, a glowing core with one sparkle pixel set upper-left — under a small lamp on a stem.
+// Where Aki wears a visor *band* and Vix a hostile *slit*, Lux is one great round eye. The body
+// is a squat ivory cabinet with two shadowed drawer slots: a filing machine on legs, warmer and
+// rounder than the scout, paler and more instrument-like than the diplomat.
+
+const LUX_BODY: ReadonlyArray<string> = [
+  '.......gg.......',
+  '.......oo.......',
+  '.....oooooo.....',
+  '....obbbbbbo....',
+  '...obbllllbbo...',
+  '...oblwggllbo...',
+  '...oblgggglbo...',
+  '...obllllllbo...',
+  '....obbbbbbo....',
+  '.....oooooo.....',
+  '......obbo......',
+  '....obbbbbbo....',
+  '....obddddbo....',
+  '....obbbbbbo....',
+  '....obddddbo....',
+  '....oobbbboo....',
+];
+
+const LUX_STAND: ReadonlyArray<string> = [
+  ...LUX_BODY,
+  '.....dd..dd.....',
+  '.....dd..dd.....',
+  '....odd..ddo....',
+  '....ooo..ooo....',
+];
+
+const LUX_STEP_L: ReadonlyArray<string> = [
+  ...LUX_BODY,
+  '....dd....dd....',
+  '....dd....dd....',
+  '...odd....ddo...',
+  '...ooo....ooo...',
+];
+
+const LUX_STEP_R: ReadonlyArray<string> = [
+  ...LUX_BODY,
+  '......dd..dd....',
+  '......dd..dd....',
+  '.....odd..ddo...',
+  '.....ooo..ooo...',
+];
+
+export const LUX_RIG: KeeperRig = {
+  id: 'lumen',
+  width: 16,
+  height: 20,
+  frames: [LUX_STAND, LUX_STEP_L, LUX_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: {
+    o: 0x242028, // warm near-black outline
+    b: 0xd8d0bc, // archive ivory chassis
+    d: 0x9a9280, // ivory shadow — drawer slots + legs
+    l: 0xc89a40, // lens glass, amber
+    g: 0xffd870, // lens core + the lamp — the lumen
+    w: 0xfff8e8, // single sparkle, upper-left of the core
+  },
+};
+
 /** Observers drawn in pixel; bake.ts renders these, others fall back to the amber square. */
 export const KEEPER_RIGS: Record<string, KeeperRig> = {
   aether: AKI_RIG,
   vanta: VIX_RIG,
+  lumen: LUX_RIG,
 };

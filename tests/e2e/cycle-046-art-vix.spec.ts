@@ -20,17 +20,18 @@ test('VANTA-9 renders as a baked, playing pixel sprite after a pick', async ({ p
   expect(errors).toEqual([]);
 });
 
-test('two drawn observers swap sprite↔sprite; the undrawn third still squares', async ({ page }) => {
+test('drawn observers swap sprite↔sprite, never a square between', async ({ page }) => {
   await boot(page);
 
-  // aether (drawn, default) → vanta (drawn): sprite to sprite, never a square between
+  // aether (drawn, default) → vanta (drawn): sprite to sprite
   expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_aether_walk');
   await page.evaluate(() => (window as W).__pickKeeper('vanta'));
   expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_vanta_walk');
 
-  // lumen remains the live fallback — then back to vanta, the sprite returns
+  // lumen drawn in cycle 047-art — the fallback control moved to a no-art id ('vex-0',
+  // pinned in cycle-045-art-keeper.spec.ts); the round trip stays sprite-backed
   await page.evaluate(() => (window as W).__pickKeeper('lumen'));
-  expect(await page.evaluate(() => (window as W).__keeperArt())).toBeNull();
+  expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_lumen_walk');
   await page.evaluate(() => (window as W).__pickKeeper('vanta'));
   expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_vanta_walk');
 });

@@ -21,16 +21,15 @@ test('the default observer renders as a baked, playing pixel sprite (boot is cle
   expect(errors).toEqual([]);
 });
 
-test('an undrawn observer falls back to the amber square (rectangle-fallback control)', async ({ page }) => {
+test('the rectangle-fallback control: a no-art id routes to the amber square', async ({ page }) => {
   await boot(page);
 
-  // switch to LUMEN-3, which has no rig yet → fallback
-  // (control re-pointed from VANTA-9 in cycle 046-art when Vix was drawn — the 2026-06-07 policy)
-  await page.evaluate(() => (window as W).__pickKeeper('lumen'));
-  expect(await page.evaluate(() => (window as W).__keeper())).toBe('lumen');
-  expect(await page.evaluate(() => (window as W).__keeperArt())).toBeNull();
+  // The whole roster is drawn (cycle 047-art), so the undrawn-subject guarantee is pinned on a
+  // genuine no-art id — the pterodactyl convention (control re-pointed vanta→lumen→'vex-0').
+  expect(await page.evaluate(() => (window as W).__hasKeeperArt('vex-0'))).toBe(false);
+  expect(await page.evaluate(() => (window as W).__hasKeeperArt('aether'))).toBe(true);
 
-  // back to the drawn default → the sprite returns
+  // observer switches stay sprite-backed
   await page.evaluate(() => (window as W).__pickKeeper('aether'));
   expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_aether_walk');
 });

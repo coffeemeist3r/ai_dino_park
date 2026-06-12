@@ -16,7 +16,7 @@ import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, makeKeeperArt } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -2621,6 +2621,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__keeper = () => this.keeperId;
     // any: dev-only — the baked anim key of the current observer avatar, or null (amber square)
     (window as any).__keeperArt = () => this.keeperArtKey;
+    // dev-only: the keeper rectangle-fallback control (cycle 047-art) — with the whole roster
+    // drawn, the undrawn-subject guarantee is pinned on a genuine no-art id (the pterodactyl
+    // convention): hasKeeperArt(false) is what routes makeKeeperArt to the amber square.
+    (window as any).__hasKeeperArt = (id: string) => hasKeeperArt(id);
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;

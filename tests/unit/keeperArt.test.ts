@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { AKI_RIG, VIX_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
+import { AKI_RIG, VIX_RIG, LUX_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
+import { KEEPERS } from '../../game/src/keeper/keepers';
 import { charsUsed } from '../../game/src/art/pixelArt';
 
 const rigs: KeeperRig[] = Object.values(KEEPER_RIGS);
@@ -11,6 +12,38 @@ describe('keeper rigs (BACKLOG-158)', () => {
 
   it('VANTA-9 is drawn (cycle 046-art)', () => {
     expect(KEEPER_RIGS.vanta).toBe(VIX_RIG);
+  });
+
+  it('LUMEN-3 is drawn — the whole roster renders pixel (cycle 047-art)', () => {
+    expect(KEEPER_RIGS.lumen).toBe(LUX_RIG);
+    for (const k of KEEPERS) expect(KEEPER_RIGS[k.id]).toBeDefined();
+  });
+
+  it('the rectangle-fallback control stands on a genuine no-art id (the pterodactyl convention)', () => {
+    expect(KEEPER_RIGS['vex-0']).toBeUndefined();
+  });
+
+  describe('Lux reads as the cataloguer — one great round eye', () => {
+    it('the lens fills the head: glass on four consecutive head rows, widest mid-circle', () => {
+      const head = LUX_RIG.frames[0].slice(0, 10);
+      const lensRows = head.filter((row) => row.includes('l'));
+      expect(lensRows.length).toBeGreaterThanOrEqual(4);
+      const width = (row: string) => row.replace(/\./g, '').length;
+      expect(width(head[5])).toBeGreaterThan(width(head[2])); // circle taper, not a band
+    });
+
+    it('carries the core glow, the lamp, and a single sparkle pixel', () => {
+      const flat = LUX_RIG.frames[0].join('');
+      expect(LUX_RIG.frames[0][0]).toContain('g'); // the lamp on its stem
+      expect([...flat].filter((ch) => ch === 'w')).toHaveLength(1); // one sparkle, upper-left
+    });
+
+    it('shares no chassis tone with Aki or Vix (ivory vs brass vs gunmetal)', () => {
+      const others = new Set([...Object.values(AKI_RIG.palette), ...Object.values(VIX_RIG.palette)]);
+      for (const tone of [LUX_RIG.palette.b, LUX_RIG.palette.d]) {
+        expect(others.has(tone)).toBe(false);
+      }
+    });
   });
 
   describe('Vix reads as the scout, not a recolored Aki', () => {
