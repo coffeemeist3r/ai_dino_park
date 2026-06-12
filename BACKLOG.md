@@ -333,6 +333,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-199 [pokemon] Chorus lead in the book — the collection book names which dino "leads the dawn chorus" (the earliest riser by energy) as a small standing. Builds on 192 / 021.
 - [ ] BACKLOG-200 [emergent] Harmonized pair — two high-bond dinos that wake near each other chirp in near-unison (pips interleaved), so a strong friendship literally *sounds* different from two strangers. Builds on 192 / 013.
 
+## Cycle 46 lore additions — sound becomes signal (2026-06-12)
+
+> Cycles 44–45 gave the bowl voices and a morning; cycle 46 makes a voice *do* something —
+> next-up is the already-queued **BACKLOG-194** (distress call), the first time sound moves a
+> dino: a cry crosses the bowl and the bond graph answers. These extend the call once it lands.
+
+- [ ] BACKLOG-202 [emergent] Answered across the bowl — the friend who turns toward a distress call (194) chirps back in its own voice before it moves: reassurance at distance, the bond audible in both directions. Builds on 194 / 191 / 013.
+- [ ] BACKLOG-203 [emergent] Cry wolf — a dino that distress-calls constantly (very timid, startles at everything) slowly loses credibility: friends turn toward its calls less often (capped habituation), but a genuine cold-night cry always lands. Personality becomes social credibility. Builds on 194 / 010 / 057.
+- [ ] BACKLOG-204 [social] Keeper hears trouble — a distress call posts a faint 📢 ticker line naming the caller, so a keeper out of view can find the dino in trouble; greeting/feeding it then rides the keeper-warmth repair shape (184). Builds on 194 / 184.
+- [ ] BACKLOG-205 [pokemon] Peep in the shell — an egg on its final day faintly peeps, its parameters blended from its parents' chirps the way its traits will be; you can hear who's coming before the hatch. Foreshadows the book cry (195). Builds on 042 / 191 / 195.
+- [ ] BACKLOG-206 [emergent] Sound has a place — chirp volume attenuates with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint; the bowl gains acoustic space. Builds on 191 / 194.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
