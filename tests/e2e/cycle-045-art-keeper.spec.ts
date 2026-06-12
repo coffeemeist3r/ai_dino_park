@@ -24,9 +24,10 @@ test('the default observer renders as a baked, playing pixel sprite (boot is cle
 test('an undrawn observer falls back to the amber square (rectangle-fallback control)', async ({ page }) => {
   await boot(page);
 
-  // switch to VANTA-9, which has no rig yet → fallback
-  await page.evaluate(() => (window as W).__pickKeeper('vanta'));
-  expect(await page.evaluate(() => (window as W).__keeper())).toBe('vanta');
+  // switch to LUMEN-3, which has no rig yet → fallback
+  // (control re-pointed from VANTA-9 in cycle 046-art when Vix was drawn — the 2026-06-07 policy)
+  await page.evaluate(() => (window as W).__pickKeeper('lumen'));
+  expect(await page.evaluate(() => (window as W).__keeper())).toBe('lumen');
   expect(await page.evaluate(() => (window as W).__keeperArt())).toBeNull();
 
   // back to the drawn default → the sprite returns

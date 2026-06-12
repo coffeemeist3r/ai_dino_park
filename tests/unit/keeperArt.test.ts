@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AKI_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
+import { AKI_RIG, VIX_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
 import { charsUsed } from '../../game/src/art/pixelArt';
 
 const rigs: KeeperRig[] = Object.values(KEEPER_RIGS);
@@ -7,6 +7,37 @@ const rigs: KeeperRig[] = Object.values(KEEPER_RIGS);
 describe('keeper rigs (BACKLOG-158)', () => {
   it('the default observer AETHER-1 is drawn', () => {
     expect(KEEPER_RIGS.aether).toBe(AKI_RIG);
+  });
+
+  it('VANTA-9 is drawn (cycle 046-art)', () => {
+    expect(KEEPER_RIGS.vanta).toBe(VIX_RIG);
+  });
+
+  describe('Vix reads as the scout, not a recolored Aki', () => {
+    const coverage = (rig: KeeperRig) =>
+      Math.max(...rig.frames[0].map((row) => row.replace(/\./g, '').length));
+
+    it('wears the hostile red optic slit on a single head row', () => {
+      const headRows = VIX_RIG.frames[0].slice(0, 6);
+      const redRows = headRows.filter((row) => row.includes('r'));
+      expect(redRows).toHaveLength(1); // a slit, not Aki's two-row visor
+      expect(VIX_RIG.palette.r).toBe(0xe03c4c);
+    });
+
+    it('is leaner than Aki — narrower widest row', () => {
+      expect(coverage(VIX_RIG)).toBeLessThan(coverage(AKI_RIG));
+    });
+
+    it('carries the twin sensor fins on the crown', () => {
+      expect([...VIX_RIG.frames[0][0]].filter((ch) => ch === 'f')).toHaveLength(2);
+    });
+
+    it('shares no chassis tone with Aki (gunmetal vs brass)', () => {
+      const aki = new Set(Object.values(AKI_RIG.palette));
+      for (const tone of [VIX_RIG.palette.c, VIX_RIG.palette.h, VIX_RIG.palette.s]) {
+        expect(aki.has(tone)).toBe(false);
+      }
+    });
   });
 
   for (const rig of rigs) {

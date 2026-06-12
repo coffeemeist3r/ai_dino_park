@@ -91,7 +91,75 @@ export const AKI_RIG: KeeperRig = {
   },
 };
 
+// ── VANTA-9 "Vix" — the scout from a collapsed timeline ──────────────────────────────────────
+// Everything Aki is not: lean where Aki is round, gunmetal-dark where Aki is warm brass, and a
+// narrow HOSTILE red optic slit where Aki wears a wide calm visor. Twin sensor fins crown a
+// wedge head over a pencil neck and a narrow chassis (8px torso vs Aki's 14) — a machine built
+// to move and watch, not to greet. The chest carries a small red scan-core, the optic's echo.
+// Legs stand tight together (a scout's poise) and scissor wide on the step.
+
+const VIX_BODY: ReadonlyArray<string> = [
+  '....f......f....',
+  '....o......o....',
+  '...oooooooooo...',
+  '...ochhhhhhco...',
+  '...ocerrrreco...',
+  '...oooooooooo...',
+  '......occo......',
+  '....occcccco....',
+  '....ochrrhco....',
+  '....occrrcco....',
+  '....occcccco....',
+  '....osccccso....',
+  '.....occcco.....',
+  '.....osccso.....',
+  '.....osssso.....',
+  '.....oooooo.....',
+];
+
+const VIX_STAND: ReadonlyArray<string> = [
+  ...VIX_BODY,
+  '.....cc..cc.....',
+  '.....cc..cc.....',
+  '....occ..cco....',
+  '....ooo..ooo....',
+];
+
+const VIX_STEP_L: ReadonlyArray<string> = [
+  ...VIX_BODY,
+  '....cc....cc....',
+  '....cc....cc....',
+  '...occ....cco...',
+  '...ooo....ooo...',
+];
+
+const VIX_STEP_R: ReadonlyArray<string> = [
+  ...VIX_BODY,
+  '......cc..cc....',
+  '......cc..cc....',
+  '.....occ..cco...',
+  '.....ooo..ooo...',
+];
+
+export const VIX_RIG: KeeperRig = {
+  id: 'vanta',
+  width: 16,
+  height: 20,
+  frames: [VIX_STAND, VIX_STEP_L, VIX_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: {
+    o: 0x1c1c26, // cool near-black outline
+    c: 0x44444f, // gunmetal chassis — the vanta dark
+    h: 0x6a6a78, // chassis highlight (light upper-left)
+    s: 0x2e2e38, // chassis shadow (hip underside)
+    r: 0xe03c4c, // hostile red — optic slit + chest scan-core
+    e: 0x381018, // optic interior, red-black
+    f: 0x8a3a44, // sensor-fin tips, the optic's dull echo
+  },
+};
+
 /** Observers drawn in pixel; bake.ts renders these, others fall back to the amber square. */
 export const KEEPER_RIGS: Record<string, KeeperRig> = {
   aether: AKI_RIG,
+  vanta: VIX_RIG,
 };

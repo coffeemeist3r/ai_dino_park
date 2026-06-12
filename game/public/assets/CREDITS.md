@@ -20,3 +20,4 @@ STYLE-GUIDE.
 - **Glade the parasaurolophus (pixel)** — `game/src/art/pixelArt.ts` `GLADE_RIG`, cycle 044-art, 2026-06-11. Claude-authored procedural pixel (Gen3 style, original pixels). The cast's fifth and final pixel restyle — the tube crest in shared bone tone.
 
 - **AETHER-1 "Aki" keeper avatar (pixel)** — `game/src/art/keeperArt.ts` `AKI_RIG` → `bake.ts` (`makeKeeperArt`), cycle 045-art, 2026-06-12. Claude-authored procedural pixel (Gen3 style, original pixels). First of the robot-observer roster (BACKLOG-158): a 16×20 front-facing brass diplomacy bot — cyan optic visor, antenna + chest glow, stepping legs. VANTA-9 / LUMEN-3 stay on the amber-square fallback until drawn.
+- VANTA-9 "Vix" keeper avatar (pixel, 16×20 ×2) — `game/src/art/keeperArt.ts` (`VIX_RIG`) — cycle 046-art, 2026-06-12 — Claude-authored procedural pixel rig.
