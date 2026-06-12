@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 046 — 2026-06-12
+- BACKLOG-194: Distress call — the first time sound moves a dino: a startled bolter or the loneliest cold sleeper cries out in its own voice raised to a distress register, and its closest friend (the cycle-33/34 consolation rules, reused verbatim) turns 👂, remembers, and walks toward the cry; a friendless cry hangs unanswered. Diegetic — mute silences playback, never the bowl. No save change. 10/10 AC; 395 unit / 149 e2e green.
+
 ## Cycle 045 — 2026-06-12
 - BACKLOG-192: Dawn chorus — at the live dawn boundary the cast greets the day each in its own cycle-44 voice, staggered by energy (eager risers first, night-owls last); pure `audio/chorus.ts` + a live-only `onHour` seam, once per in-game day, mute-safe, no save change. 10/10 AC; 375 unit / 137 e2e green.
 
