@@ -87,3 +87,17 @@ None. WebAudio is built-in and already wrapped; everything else is arithmetic.
 ## Estimated touch count
 
 ~5 files (1 new module + 2 modified + 2 test files). Within budget.
+
+## Shipped
+
+**Files touched (5, exactly as planned):**
+- `game/src/world/distress.ts` (new) — DISTRESS_STEPS=6, mostDistressed, hearLine, heardMemory
+- `game/src/audio/chirp.ts` — +distressParams (params-only distress register)
+- `game/src/scenes/WorldScene.ts` — cryDistress, bolter pick in tapGlass, lonely pick in resolveColdMorning, responder override in forceStep (after inspect, before food, live caller tile), stepResponder beside stepInspection, hooks __lastDistress/__distressResponder/__cryDistress
+- `tests/unit/distress.test.ts` (new) — 8 tests
+- `tests/e2e/cycle-046-distress.spec.ts` (new) — 6 tests
+
+**Deviations:** none of substance. Two counts ran over plan, both upward: 8 unit tests (plan ~7 — the corner-clamp check became its own test) and 6 e2e (plan ~5 — the no-bolt tap got its own spec instead of riding the first). The no-cry tap test picks the corner farthest from the live cast rather than a fixed corner, to stay deterministic against spawn spread.
+
+**Build:** clean (tsc + vite + PWA). **Unit:** 395/395 green (+8). **Dev render:** HTTP 200.
+E2E left to QA per the chain (the 6 new specs are written and type-check; full Playwright run is QA's fire).

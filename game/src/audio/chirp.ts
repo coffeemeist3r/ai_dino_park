@@ -41,3 +41,20 @@ export function chirpParams(t: Personality): ChirpParams {
 
 /** The glass rap: one low, short, plain knock — the bowl itself, not a dino. */
 export const THUNK: ChirpParams = { pitchHz: 90, lengthMs: 120, wobble: 0, notes: 1 };
+
+/**
+ * The distress register (BACKLOG-194): the same voice, frightened. Pitch rises,
+ * the call clips short, the bend sharpens, and it comes out as a two-pip yelp.
+ * Strictly higher and strictly shorter than the base call for every legal trait
+ * vector (base pitch caps at 900 < 1100, base length floors at 80 > 60), and
+ * monotone below the pitch cap — so Twitch's yelp stays above Mossback's.
+ */
+export function distressParams(t: Personality): ChirpParams {
+  const base = chirpParams(t);
+  return {
+    pitchHz: Math.min(1100, Math.round(base.pitchHz * 1.35)),
+    lengthMs: Math.max(60, Math.round(base.lengthMs * 0.55)),
+    wobble: Math.min(1, base.wobble + 0.3),
+    notes: 2,
+  };
+}

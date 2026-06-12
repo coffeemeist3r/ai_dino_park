@@ -12,7 +12,7 @@ import {
   mindsStatusLine,
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
-import { chirpParams, type ChirpParams } from '../audio/chirp';
+import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
@@ -53,6 +53,7 @@ import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/fi
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory } from '../world/cold';
+import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
@@ -164,6 +165,10 @@ export class WorldScene extends Phaser.Scene {
   private wasInHuddleWindow = false;
   private nightSeason: Season = 'spring';
   private lastColdSleepers: string[] = [];
+  /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
+   *  responder mid-walk toward the caller. Both transient, never persisted. */
+  private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
+  private pendingRespond: { name: string; caller: string; steps: number } | null = null;
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
@@ -420,12 +425,14 @@ export class WorldScene extends Phaser.Scene {
     };
 
     const out: Array<{ name: string; reaction: StartleReaction }> = [];
+    const bolters: Array<{ name: string; level: number }> = [];
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
       const dist = Math.hypot(cur.tileX - tap.tileX, cur.tileY - tap.tileY);
       const reaction = reactionFor(d.traits.bravery, dist);
       out.push({ name: d.name, reaction });
       if (reaction === 'ignore') continue;
+      if (reaction === 'bolt') bolters.push({ name: d.name, level: d.traits.bravery });
 
       // a startled dino jumps two tiles in its chosen direction
       let next = cur;
@@ -438,6 +445,12 @@ export class WorldScene extends Phaser.Scene {
         d.name,
         reaction === 'bolt' ? 'the glass shook and you bolted in fright' : 'the glass shook and you crept closer to look',
       );
+    }
+    // One tap, one cry (BACKLOG-194): the most frightened bolter calls out in distress.
+    const crier = mostDistressed(bolters);
+    if (crier) {
+      const d = this.dinoByName(crier);
+      if (d) this.cryDistress(d, 'startle');
     }
     return out;
   }
@@ -751,6 +764,15 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only: cold-night shiver (BACKLOG-179) — who slept cold at the last morning resolution.
     (window as any).__coldSleepers = () => [...this.lastColdSleepers];
+    // dev-only: distress call (BACKLOG-194) — the last cry, the responder mid-walk, and a
+    // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
+    (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
+    (window as any).__distressResponder = () => (this.pendingRespond ? { ...this.pendingRespond } : null);
+    (window as any).__cryDistress = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.cryDistress(d, 'startle');
+      return this.lastDistress ? { ...this.lastDistress } : null;
+    };
 
     // egg-phase hooks (BACKLOG-042)
     (window as any).__eggs = () => this.eggs.map((e) => ({ ...e }));
@@ -1140,6 +1162,17 @@ export class WorldScene extends Phaser.Scene {
         continue;
       }
 
+      // Distress response (BACKLOG-194): the friend that heard the cry walks toward the
+      // caller's LIVE tile (it may have bolted as it cried). Below inspection in priority.
+      if (this.pendingRespond?.name === d.name) {
+        const caller = this.dinoByName(this.pendingRespond.caller);
+        if (caller) {
+          const step = stepToward(cur, this.tileOf(caller), COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          continue;
+        }
+      }
+
       // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
@@ -1187,6 +1220,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.stepInspection();
+    this.stepResponder();
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
@@ -1209,14 +1243,23 @@ export class WorldScene extends Phaser.Scene {
   private resolveColdMorning(): void {
     const bar = huddleThreshold(this.nightSeason);
     const cold: string[] = [];
+    const lonely: Array<{ name: string; level: number }> = [];
     for (const d of this.dinos) {
-      const huddled = this.maxBond(d.name) >= bar;
+      const best = this.maxBond(d.name);
+      const huddled = best >= bar;
       if (!sleptCold(huddled, this.nightSeason)) continue;
       this.showBubble(d, coldShiver());
       this.memory = remember(this.memory, d.name, coldMemory());
       cold.push(d.name);
+      lonely.push({ name: d.name, level: best });
     }
     this.lastColdSleepers = cold;
+    // The loneliest shiver finds a voice (BACKLOG-194): one cold cry per morning.
+    const crier = mostDistressed(lonely);
+    if (crier) {
+      const d = this.dinoByName(crier);
+      if (d) this.cryDistress(d, 'cold');
+    }
     if (cold.length) void this.saveGame();
   }
 
@@ -1246,6 +1289,27 @@ export class WorldScene extends Phaser.Scene {
     }
     this.pendingInspect = { ...this.pendingInspect, ttl: this.pendingInspect.ttl - 1 };
     if (this.pendingInspect.ttl <= 0) this.pendingInspect = null;
+  }
+
+  /**
+   * Resolve the distress response once per world step (BACKLOG-194): adjacency to the
+   * caller ends the walk; otherwise the step budget drains and the responder gives up.
+   * Sits beside stepInspection, so a sky event freezes it the same way.
+   */
+  private stepResponder(): void {
+    if (!this.pendingRespond) return;
+    const friend = this.dinoByName(this.pendingRespond.name);
+    const caller = this.dinoByName(this.pendingRespond.caller);
+    if (!friend || !caller) {
+      this.pendingRespond = null;
+      return;
+    }
+    if (Math.abs(friend.x - caller.x) <= TILE * 1.01 && Math.abs(friend.y - caller.y) <= TILE * 1.01) {
+      this.pendingRespond = null;
+      return;
+    }
+    this.pendingRespond = { ...this.pendingRespond, steps: this.pendingRespond.steps - 1 };
+    if (this.pendingRespond.steps <= 0) this.pendingRespond = null;
   }
 
   /** One dino remarks on meeting another — a floating speech bubble via the shared brain. */
@@ -1515,6 +1579,28 @@ export class WorldScene extends Phaser.Scene {
     const params = chirpParams(d.traits);
     this.lastSound = { kind: 'chirp', name: d.name, params };
     playChirp(params);
+  }
+
+  /**
+   * A dino cries out in distress (BACKLOG-194) and its closest friend — picked by the
+   * exact cycle-33/34 consolation rules — turns toward the sound. The cry is diegetic:
+   * the dinos hear it whether or not the keeper's device is muted, so the social beat
+   * (responder, bubble, memory, walk) always fires; mute gates only playback intent.
+   */
+  private cryDistress(d: Dino, trigger: 'startle' | 'cold'): void {
+    const params = distressParams(d.traits);
+    this.lastDistress = { name: d.name, trigger, params };
+    if (!soundMuted()) {
+      this.lastSound = { kind: 'chirp', name: d.name, params };
+      playChirp(params);
+    }
+    const who = comforter(d.name, this.bonds, this.dinos.map((x) => x.name), this.gratitude);
+    if (!who) return; // no friend over the floor — the cry hangs unanswered
+    const friend = this.dinoByName(who);
+    if (!friend) return;
+    this.pendingRespond = { name: who, caller: d.name, steps: DISTRESS_STEPS };
+    this.showBubble(friend, hearLine(d.name));
+    this.memory = remember(this.memory, who, heardMemory(d.name));
   }
 
   /** Swap the shared brain in place; every dino picks it up on its next line. */
