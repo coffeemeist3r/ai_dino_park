@@ -1,6 +1,6 @@
 {
   "cycle": 46,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-194: distress call — a cry crosses the bowl and the bond graph answers",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-06-12T11:16:00-05:00",
     "designer": "2026-06-12T11:30:00-05:00",
-    "code-planner": "2026-06-12T10:24:00-05:00",
+    "code-planner": "2026-06-12T11:42:00-05:00",
     "coder": "2026-06-12T10:50:00-05:00",
     "qa": "2026-06-12T11:05:00-05:00",
     "validator": "2026-06-12T11:20:00-05:00",
