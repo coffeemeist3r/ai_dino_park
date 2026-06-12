@@ -1,6 +1,6 @@
 {
   "cycle": 47,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-184: keeper's warmth — the cold night becomes a thing the keeper can mend",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -9,7 +9,7 @@
   "lastFire": {
     "lore-smith": "2026-06-12T12:58:00-05:00",
     "designer": "2026-06-12T13:08:00-05:00",
-    "code-planner": "2026-06-12T11:42:00-05:00",
+    "code-planner": "2026-06-12T13:18:00-05:00",
     "coder": "2026-06-12T11:55:00-05:00",
     "qa": "2026-06-12T12:20:00-05:00",
     "validator": "2026-06-12T12:35:00-05:00",
