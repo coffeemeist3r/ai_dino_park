@@ -108,3 +108,20 @@ none — WebAudio + Phaser scheduler are built-in; the order math is plain TS.
 ## Estimated touch count
 ~4 files (1 new module, 1 new unit spec, 1 new e2e spec, 1 modified scene). Well within one
 Coder fire.
+
+---
+
+## Shipped
+
+**Files touched (exactly the plan, zero deviations):**
+- `game/src/audio/chorus.ts` *(new)* — pure `chorusOrder` + `DAWN_HOUR`/`CHORUS_SPREAD_MS`/`ChorusEntry`.
+- `game/src/scenes/WorldScene.ts` *(modified)* — import; `lastDawnDay`/`dawnCount`/`lastChorus` fields; a second live-only `clock.onHour(checkDawnChorus)` registration beside the season turn; `checkDawnChorus(t)` (hour-7 + once-per-day guard → record order, 🌅 logEvent, staggered `delayedCall`→`chirpFor`); four dev hooks (`__lastChorus`/`__dawnCount`/`__dawnHour`/`__chorusOrder`).
+- `tests/unit/chorus.test.ts` *(new)* — 8 tests.
+- `tests/e2e/cycle-045-chorus.spec.ts` *(new)* — 4 tests.
+
+**Status:**
+- `npm --prefix game run build` — ✅ clean (tsc + vite, 9.1s).
+- `npm run test:unit` — ✅ 375 passed (41 files), incl. the 8 new chorus tests.
+- `npx playwright test cycle-045-chorus` — ✅ 4/4 green (single-worker warm run; the first cold parallel run boot-timed-out on all four = the catalogued cold-boot/optimizeDeps flake, green on the warm re-run).
+- Dev server render — ✅ HTTP 200 at `/`.
+- Boundary — ✅ chorus.ts is pure (no Phaser/WebAudio); voice.ts still the only WebAudio file; web-llm untouched. No save-format change.

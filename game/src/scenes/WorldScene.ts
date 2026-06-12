@@ -13,6 +13,7 @@ import {
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { chirpParams, type ChirpParams } from '../audio/chirp';
+import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
 import { hasArt } from '../art/bake';
@@ -144,6 +145,10 @@ export class WorldScene extends Phaser.Scene {
   private seasonOverlay!: Phaser.GameObjects.Rectangle;
   private lastSeasonDay = 1;
   private seasonTurns = 0;
+  /** Dawn chorus (BACKLOG-192): transient — the last in-game day a dawn fired (0 = none yet). */
+  private lastDawnDay = 0;
+  private dawnCount = 0;
+  private lastChorus: ChorusEntry[] | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
@@ -2103,6 +2108,9 @@ export class WorldScene extends Phaser.Scene {
     this.lastSeasonDay = clock.now().day;
 
     clock.onHour((t) => this.checkSeasonTurn(t));
+    // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
+    // turn and the hour-6 reflection so neither is disturbed. onHour never fires on clock.set().
+    clock.onHour((t) => this.checkDawnChorus(t));
 
     // any: dev-only Playwright hooks — seasons (BACKLOG-159)
     (window as any).__season = () => seasonFor(getWorldClock().now().day);
@@ -2112,6 +2120,11 @@ export class WorldScene extends Phaser.Scene {
       alpha: this.seasonOverlay.fillAlpha,
     });
     (window as any).__seasonTurns = () => this.seasonTurns;
+    // any: dev-only Playwright hooks — dawn chorus (BACKLOG-192)
+    (window as any).__lastChorus = () => this.lastChorus;
+    (window as any).__dawnCount = () => this.dawnCount;
+    (window as any).__dawnHour = () => DAWN_HOUR;
+    (window as any).__chorusOrder = () => chorusOrder(this.dinos);
     // any: dev-only Playwright hook — stage the clock like a restore (sync, repaint, NO beat)
     (window as any).__setClock = (day: number, hour: number, minute: number) => {
       getWorldClock().set({ day, hour, minute });
@@ -2154,6 +2167,28 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(12);
     this.tweens.add({ targets: banner, alpha: 0, delay: 4000, duration: 2500, onComplete: () => banner.destroy() });
     void this.saveGame();
+  }
+
+  /**
+   * Dawn chorus (BACKLOG-192) — the cast greets the day each in its own voice, staggered by
+   * energy. Live-only (onHour never fires on a restore/away clock.set) and at most once per
+   * in-game day. Playback rides chirpFor, which self-guards mute + the unlocked context, so a
+   * muted bowl still computes the order but stays silent.
+   */
+  private checkDawnChorus(t: GameTime): void {
+    if (t.hour !== DAWN_HOUR) return;
+    if (t.day === this.lastDawnDay) return; // once per day; a fresh day re-arms
+    this.lastDawnDay = t.day;
+    const order = chorusOrder(this.dinos);
+    this.lastChorus = order;
+    this.dawnCount++;
+    this.logEvent('🌅 dawn');
+    for (const { name, delayMs } of order) {
+      this.time.delayedCall(delayMs, () => {
+        const d = this.dinoByName(name);
+        if (d) this.chirpFor(d);
+      });
+    }
   }
 
   /** Cycle the realtime multiplier: 1× (24 real-hour day) ⇄ 60× (active watching). */
