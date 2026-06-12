@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 047 — 2026-06-12
+- BACKLOG-184: Keeper's warmth — the cold night becomes mendable: cold sleepers carry a visible 🥶 funk until the keeper greets or feeds them warm (an outsized repair-shaped gain + a "the keeper warmed me" memory that colours tomorrow's hello), or dusk thaws it silently. No save change. 10/10 AC; 410 unit / 156 e2e green.
+
 ## Cycle 046 — 2026-06-12
 - BACKLOG-194: Distress call — the first time sound moves a dino: a startled bolter or the loneliest cold sleeper cries out in its own voice raised to a distress register, and its closest friend (the cycle-33/34 consolation rules, reused verbatim) turns 👂, remembers, and walks toward the cry; a friendless cry hangs unanswered. Diegetic — mute silences playback, never the bowl. No save change. 10/10 AC; 395 unit / 149 e2e green.
 
