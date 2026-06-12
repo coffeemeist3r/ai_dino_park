@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 045 — 2026-06-12
+- BACKLOG-192: Dawn chorus — at the live dawn boundary the cast greets the day each in its own cycle-44 voice, staggered by energy (eager risers first, night-owls last); pure `audio/chorus.ts` + a live-only `onHour` seam, once per in-game day, mute-safe, no save change. 10/10 AC; 375 unit / 137 e2e green.
+
 ## Cycle 044 — 2026-06-11
 - BACKLOG-191: Audio spine — after 44 silent cycles the bowl speaks: every dino has a synthesized voice derived from its own traits (solitary+timid squeaks high, social+brave rumbles low — founders spread 148→797 Hz untouched by hand), chirping on every greet and dino↔dino line; the glass rap thunks; M / 🔊 mutes, persisted. Pure WebAudio synthesis, no assets, autoplay-safe, zero save change. The operator's Idea-Box nudge, shipped the same day it was dropped.
 
