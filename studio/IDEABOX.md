@@ -19,7 +19,7 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-_(empty — sound nudge processed cycle 44)_
+- `[new]` (2026-06-12) **More character types for the player to choose from than just time-traveling robots.** Operator nudge, dropped the day the robot-observer roster finished its pixel avatars (158 complete). Raw idea: the keeper roster shouldn't be limited to one archetype — other kinds of watchers/characters to pick at the start.
 
 ## Resolved
 
