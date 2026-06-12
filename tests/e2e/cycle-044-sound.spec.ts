@@ -49,8 +49,30 @@ test('a dino↔dino conversation chirps in the speaker’s voice', async ({ page
 
 test('rapping the glass thunks', async ({ page }) => {
   await boot(page);
+  // Rap a spot with no dino in startle range: since BACKLOG-194 a tap that makes a dino
+  // bolt also raises a distress cry AFTER the thunk, and __lastSound keeps only the last
+  // intent. An empty stretch of glass isolates the original contract: rap → thunk.
+  const spot = await page.evaluate(() => {
+    const w = window as W;
+    const positions = w.__dinoPositions() as Array<{ name: string; x: number; y: number }>;
+    const corners = [
+      { x: 40, y: 40 },
+      { x: 600, y: 40 },
+      { x: 40, y: 440 },
+    ];
+    let best = corners[0];
+    let bestMin = -1;
+    for (const c of corners) {
+      const min = Math.min(...positions.map((p) => Math.hypot(p.x - c.x, p.y - c.y)));
+      if (min > bestMin) {
+        bestMin = min;
+        best = c;
+      }
+    }
+    return best;
+  });
   const box = (await page.locator('canvas').boundingBox())!;
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 3);
+  await page.mouse.click(box.x + (spot.x / 640) * box.width, box.y + (spot.y / 480) * box.height);
   expect(await page.evaluate(() => (window as W).__lastSound())).toMatchObject({ kind: 'thunk' });
 });
 
