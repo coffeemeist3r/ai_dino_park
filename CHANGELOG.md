@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 048 — 2026-06-13
+- BACKLOG-208: Nobody came — the silent dusk thaw cycle 47 left open now leaves a mark: a cold-funked dino the keeper never warmed files a colder "shivered all morning; nobody came 😞" memory before the funk clears, compounding with the morning's cold note and tinging its next greeting harder. A warmed dino is spared it. Neglect made as legible as care, in six lines on one existing branch — no new listeners, no save change. 10/10 AC; 424 unit / 160 e2e green.
+
 ## Cycle 047 — 2026-06-12
 - BACKLOG-184: Keeper's warmth — the cold night becomes mendable: cold sleepers carry a visible 🥶 funk until the keeper greets or feeds them warm (an outsized repair-shaped gain + a "the keeper warmed me" memory that colours tomorrow's hello), or dusk thaws it silently. No save change. 10/10 AC; 410 unit / 156 e2e green.
 
