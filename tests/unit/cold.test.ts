@@ -8,6 +8,7 @@ import {
   warmGain,
   warmLine,
   warmMemory,
+  neglectMemory,
 } from '../../game/src/world/cold';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
 import { greetGain } from '../../game/src/social/friendship';
@@ -78,5 +79,22 @@ describe("keeper's warmth (BACKLOG-184)", () => {
     expect(warmLine('Glade')).not.toContain('🥶');
     expect(warmMemory()).not.toContain('🥶');
     expect(warmMemory()).not.toBe(coldMemory());
+  });
+});
+
+describe('nobody came (BACKLOG-208)', () => {
+  it('the neglect memory names the hurt — shivered, and nobody came', () => {
+    expect(neglectMemory().length).toBeGreaterThan(0);
+    expect(neglectMemory()).toContain('nobody came');
+  });
+
+  it('the three cold memories are pairwise distinct — cold, warmed, neglected', () => {
+    expect(neglectMemory()).not.toBe(coldMemory());
+    expect(neglectMemory()).not.toBe(warmMemory());
+    expect(coldMemory()).not.toBe(warmMemory());
+  });
+
+  it('neglect is the morning after, not the night — it carries no freeze of its own', () => {
+    expect(neglectMemory()).not.toContain('🥶');
   });
 });

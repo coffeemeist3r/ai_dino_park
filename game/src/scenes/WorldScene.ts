@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1250,11 +1250,15 @@ export class WorldScene extends Phaser.Scene {
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
     if (denTime) {
-      // Dusk thaws any funk the keeper never mended (BACKLOG-184) — silently, no memory;
-      // the "nobody came" note is 208's. Fires once, on the window's opening edge.
+      // Dusk thaws any funk the keeper never mended (BACKLOG-184). Fires once, on the window's
+      // opening edge. Nobody came (BACKLOG-208): each still-funked dino files the colder note
+      // *before* the funk clears — neglect as legible as care; it compounds with the morning's
+      // cold memory and tinges the next greeting. Silent in-world: a memory, not a beat.
       if (!this.wasInHuddleWindow && this.coldPending.size) {
+        for (const name of this.coldPending) this.memory = remember(this.memory, name, neglectMemory());
         this.coldPending.clear();
         this.refreshColdMarks();
+        void this.saveGame();
       }
       this.nightSeason = season;
     } else if (this.wasInHuddleWindow) this.resolveColdMorning();

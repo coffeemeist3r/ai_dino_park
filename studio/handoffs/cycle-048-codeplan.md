@@ -47,3 +47,17 @@ The cycle-047 "dusk thaws an unmended funk silently" test asserts `anyWarm === f
 
 ## Estimated touch count
 ~4 files (cold.ts, WorldScene.ts, cold.test.ts, new e2e). Logic change is a 3-line loop + a save in one existing branch; everything else is a pure string + tests. Well under the 6-file ceiling.
+
+---
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/cold.ts` — added `neglectMemory()` ("shivered all morning; nobody came 😞"), pure, mirroring `coldMemory`/`warmMemory`.
+- `game/src/scenes/WorldScene.ts` — imported `neglectMemory`; the dusk-thaw branch now files the neglect note for each still-funked dino via the already-imported `remember()` before `coldPending.clear()`, then `void this.saveGame()`. No other lines touched.
+- `tests/unit/cold.test.ts` — added the BACKLOG-208 describe (3 tests: contains "nobody came"; the three cold memories pairwise distinct; carries no 🥶).
+- `tests/e2e/cycle-048-nobody-came.spec.ts` — new (2 tests: unmended funk → neglect note + compounds + tinges greet prompt; warmed dino spared, only the un-warmed carry it).
+
+**Deviations from plan:** none. Exactly the planned 4-file touch; the cycle-047 warmth spec was left untouched as predicted (its silent-thaw assertion is warm-memory-specific).
+
+**Build + unit-test status:** `npm --prefix game run build` clean; `npm run test:unit` → 424 unit green (+3). Dev server booted, `curl http://localhost:5173/` → HTTP 200. Playwright deferred to QA.

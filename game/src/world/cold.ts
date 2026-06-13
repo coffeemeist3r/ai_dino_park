@@ -50,3 +50,15 @@ export function warmLine(name: string): string {
 export function warmMemory(): string {
   return 'the keeper warmed me after a cold night';
 }
+
+// ── Nobody came (BACKLOG-208) — the inverse of the mend. A funk the keeper never warmed
+// thaws silently at dusk, but it leaves the colder note: neglect made as legible as care.
+
+/**
+ * The memory a shiverer the keeper never came for files at the silent dusk thaw — harder than
+ * the plain cold note, it compounds with it and tinges the next greeting. No 🥶 of its own:
+ * this is the morning *after* the cold, the hurt of having been left, not the cold itself.
+ */
+export function neglectMemory(): string {
+  return 'shivered all morning; nobody came 😞';
+}
