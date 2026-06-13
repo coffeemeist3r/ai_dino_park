@@ -16,7 +16,7 @@ import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, hasKeeperArt, makeKeeperArt } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -2629,6 +2629,15 @@ export class WorldScene extends Phaser.Scene {
     // drawn, the undrawn-subject guarantee is pinned on a genuine no-art id (the pterodactyl
     // convention): hasKeeperArt(false) is what routes makeKeeperArt to the amber square.
     (window as any).__hasKeeperArt = (id: string) => hasKeeperArt(id);
+    // any: dev-only — the Gen3 grass floor (BACKLOG-033). True once the ground texture is baked;
+    // the size hook proves it spans the whole bowl (COLS×ROWS world tiles).
+    (window as any).__groundReady = () =>
+      this.textures.exists(`tilemap_grass_${COLS}x${ROWS}`);
+    (window as any).__groundSize = () => {
+      const t = this.textures.get(`tilemap_grass_${COLS}x${ROWS}`);
+      const img = t.getSourceImage() as { width: number; height: number };
+      return [img.width, img.height];
+    };
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
@@ -2796,6 +2805,13 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private drawGrassMap(): void {
+    // Gen3 pixel grass baked to one static ground texture (BACKLOG-033). Falls back to the flat
+    // two-green checker if the tile rig is ever missing (STYLE-GUIDE: undrawn → flat).
+    const key = bakeTileMap(this, 'grass', COLS, ROWS, TILE);
+    if (key) {
+      this.add.image(0, 0, key).setOrigin(0).setDepth(0);
+      return;
+    }
     const g = this.add.graphics();
     for (let y = 0; y < ROWS; y++) {
       for (let x = 0; x < COLS; x++) {

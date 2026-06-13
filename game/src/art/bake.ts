@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { walkFrames, SPECIES_ART, type Shape } from './dinoArt';
 import { PIXEL_SPECIES } from './pixelArt';
 import { KEEPER_RIGS } from './keeperArt';
+import { TILE_RIGS } from './tileArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -166,6 +167,49 @@ export function makeKeeperArt(
   const rect = scene.add.rectangle(x, y, TILE - 4, TILE - 4, 0xe8c878);
   rect.setStrokeStyle(2, 0x6a4020);
   return { obj: rect, artKey: null };
+}
+
+/** Ground tiles the pixel pipeline can render today; others fall back to the flat checker. */
+export function hasTileArt(name: string): boolean {
+  return name in TILE_RIGS;
+}
+
+/**
+ * Bake a full `cols × rows` ground from a tile rig (BACKLOG-033) into ONE static texture — the
+ * variants alternate like the classic checker. Per-pixel `fillRect` at an integer scale, then
+ * `generateTexture` once, so the floor is a single static image with zero per-frame cost (the
+ * old flat checker was a live Graphics re-rendered every frame). Idempotent; returns the texture
+ * key, or null if the rig is unknown (WorldScene then keeps the flat fallback).
+ */
+export function bakeTileMap(
+  scene: Phaser.Scene,
+  name: string,
+  cols: number,
+  rows: number,
+  tile: number,
+): string | null {
+  const rig = TILE_RIGS[name];
+  if (!rig) return null;
+  const key = `tilemap_${name}_${cols}x${rows}`;
+  if (scene.textures.exists(key)) return key;
+
+  const scale = Math.max(1, Math.floor(tile / rig.size));
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  for (let cy = 0; cy < rows; cy++) {
+    for (let cx = 0; cx < cols; cx++) {
+      const grid = rig.variants[(cx + cy) % rig.variants.length];
+      for (let py = 0; py < rig.size; py++) {
+        const row = grid[py];
+        for (let px = 0; px < row.length; px++) {
+          g.fillStyle(rig.palette[row[px]], 1);
+          g.fillRect(cx * tile + px * scale, cy * tile + py * scale, scale, scale);
+        }
+      }
+    }
+  }
+  g.generateTexture(key, cols * tile, rows * tile);
+  g.destroy();
+  return key;
 }
 
 /** Build the visible game object for a dino — a baked sprite where art exists, else a rectangle. */
