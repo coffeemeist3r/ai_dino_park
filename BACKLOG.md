@@ -357,6 +357,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-210 [ai] Gratitude in the voice — a just-warmed dino's next reply leans grateful (deterministic thankful line per the 148 shape; LLM colour where the device allows, behind NPCBrain); the warmth surfaces in *what it says*, not just the affinity math. Builds on 184 / 148 / 139.
 - [ ] BACKLOG-211 [emergent] Pass the warmth — a keeper-warmed dino is primed, for a while, to be the one who comforts the next sulker or shiverer it witnesses — even below the usual bond floor (the 141 pay-it-forward shape, now seeded by keeper care); kindness cascades from the keeper into the bond graph. Builds on 184 / 141 / 130.
 
+## Cycle 48 lore additions — care made legible (2026-06-13)
+
+> Cycle 47 gave the keeper hands to mend a shivering dino and deliberately left the dino
+> *nobody* warmed standing in silence. Next-up is the already-queued **BACKLOG-208** (nobody
+> came) — that silence given a memory: neglect as legible as care. These extend the geography
+> of warmth, and answer the operator's drop-zone nudge for keepers who aren't all robots.
+
+- [ ] BACKLOG-212 [core] Non-robot keeper archetype — the selectable roster gains its first watcher that *isn't* a time-traveling robot observer (Idea Box, 2026-06-12). One new `keepers.ts` entry with its own era/backstory + affinity-fit profile, picked at the `K` overlay and persisted like the rest; renders on the existing no-art fallback until an [art] fire draws it (exactly how the robot roster started at cycle 37). Foundation-first — one new archetype, the roster gains a *category* beyond robots; not a roster rewrite. Builds on 155 / 156.
+- [ ] BACKLOG-213 [emergent] The warm spot — a dino warmed by the keeper on a cold morning (184) remembers the *tile* it was warmed on and drifts back to it on later cold dawns, a private comfort-place; the bowl grows little remembered geographies. Builds on 184 / 011.
+- [ ] BACKLOG-214 [emergent] Imprint on the keeper — a dino warmed across several cold mornings (the 209 tally) forms an outsized keeper-bond and, for a while after each warming, trails the keeper avatar around the bowl like a duckling. Builds on 184 / 209.
+- [ ] BACKLOG-215 [social] Spring thaw relief — when the season turns *out* of winter (159), any dino that toughed out cold nights (186) gets a one-off "made it through the winter" lift + a relieved line; the cruel season ending becomes its own small celebration. Builds on 159 / 179 / 186.
+- [ ] BACKLOG-216 [pokemon] Coldest morning in the book — the collection book records the single loneliest morning each dino endured (the cold night it slept with the lowest bond present), a "darkest hour" line beside the hardy-nights tally. Builds on 179 / 186 / 021.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*

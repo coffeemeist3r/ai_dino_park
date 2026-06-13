@@ -19,9 +19,11 @@ The Lore-smith owns the verdict. A decline is a legitimate outcome — that's wh
 
 ## Open
 
-- `[new]` (2026-06-12) **More character types for the player to choose from than just time-traveling robots.** Operator nudge, dropped the day the robot-observer roster finished its pixel avatars (158 complete). Raw idea: the keeper roster shouldn't be limited to one archetype — other kinds of watchers/characters to pick at the start.
+_(empty)_
 
 ## Resolved
+
+- `[seeded BACKLOG-212]` (2026-06-12) **More character types for the player to choose from than just time-traveling robots.** Operator nudge, dropped the day the robot-observer roster finished its pixel avatars (158 complete). Raw idea: the keeper roster shouldn't be limited to one archetype — other kinds of watchers/characters to pick at the start. Seeded foundation-first as **BACKLOG-212**: one new *non-robot* archetype in the existing `keepers.ts` roster (own era/backstory + affinity-fit + persisted choice), renders on the no-art fallback until an [art] fire draws it — exactly how the robot roster bootstrapped at cycle 37. Not a roster rewrite; the spine that adds a *category* beyond robots, others follow. — processed cycle 48.
 
 - `[seeded BACKLOG-191]` (2026-06-11) **Sound.** Seeded foundation-first as the **audio spine** (191): pure WebAudio synthesis authored as code (the art pipeline's philosophy in a new register — no assets, no keys), autoplay-safe, persisted mute. Reshaped per the Living-minds bias: the first sounds are **per-dino trait-pitched voices**, not UI bleeps — distinctness you can hear. The wider soundscape (ambient park noise, night crickets) stays deferred until the voices exist; follow-ups seeded as 192 (dawn chorus) / 193 (call and answer) / 194 (distress call) / 195 (cry in the book). — processed cycle 44.
 
