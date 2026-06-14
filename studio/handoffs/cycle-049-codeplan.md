@@ -69,3 +69,18 @@ none.
 ## Estimated touch count
 
 ~4 files (cold.ts, WorldScene.ts, cold.test.ts, new e2e). Under the 6-file ceiling.
+
+## Shipped
+
+**Files touched (4, exactly as planned):**
+- `game/src/world/cold.ts` — added `COLD_NEWS_TOKEN`, `coldWordLine(speaker)`, `spreadColdWord(store, a, b)`; imported `RUMOR_MARK`/`isShareable` from gossip and `recall`/`remember`/`MemoryStore` from memory.
+- `game/src/scenes/WorldScene.ts` — `converse` now tries `spreadColdWord` first, falls back to `spreadGossip`, logs a distinct 🥶 line; added `__spreadColdWord`, `__coldWord`, and the planned `__rememberCold` dev hooks; extended the cold import.
+- `tests/unit/cold.test.ts` — added a `word of the cold (BACKLOG-185)` describe block (7 tests: token-substring pin, rumor-mark + 1-hop, distinctness vs every memory + generic retell, plant, no-cold→null, one-hop, no-self-gossip).
+- `tests/e2e/cycle-049-cold-word.spec.ts` — 2 specs: cold word spreads + is one-hop + lands the distinct line; no-cold→null with the generic gossip spine still carrying first-hand news.
+
+**Deviations:** none. The `__rememberCold` hook flagged as optional in Risks was added (it kept the e2e clean — no faked winter night).
+
+**Build:** ✅ clean (`npm --prefix game run build`).
+**Unit tests:** ✅ 438 passed (45 files), +7 from the new block.
+**Dev render:** ✅ HTTP 200 from `http://localhost:5173/`.
+**E2E:** deferred to QA (full Playwright run).

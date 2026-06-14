@@ -10,6 +10,8 @@
 import type { Season } from './seasons';
 import type { Personality } from '../ai/personality';
 import { greetGain } from '../social/friendship';
+import { RUMOR_MARK, isShareable } from '../social/gossip';
+import { recall, remember, type MemoryStore } from '../ai/memory';
 
 /** The only season cold enough to leave a dino shivering. */
 export const COLD_SEASON: Season = 'winter';
@@ -61,4 +63,36 @@ export function warmMemory(): string {
  */
 export function neglectMemory(): string {
   return 'shivered all morning; nobody came 😞';
+}
+
+// ── Word of the cold (BACKLOG-185) — the night's hardship travels. A dino that slept cold
+// leads with the news when it next meets another: a distinct rumor planted on the gossip spine.
+
+/** A stable substring of `coldMemory()` — the tell that a remembered event is about a cold night. */
+export const COLD_NEWS_TOKEN = 'cold night';
+
+/**
+ * The distinct "word of the cold" a listener remembers when a cold-slept dino lets it slip.
+ * Carries `RUMOR_MARK` so it reads as heard-not-witnessed and can't re-spread (1 hop), and so it
+ * stays visibly distinct from the speaker's own first-hand `coldMemory()`.
+ */
+export function coldWordLine(speaker: string): string {
+  return `${speaker} ${RUMOR_MARK} the frost got into their bones — slept the whole night alone`;
+}
+
+/**
+ * One cold-slept dino lets the news slip to another. If `speaker` carries a *first-hand* cold
+ * memory (shareable, not itself a rumor), plant the word-of-the-cold line on `listener` and
+ * return it; otherwise return null so the caller falls back to generic gossip.
+ */
+export function spreadColdWord(
+  store: MemoryStore,
+  speaker: string,
+  listener: string,
+): { store: MemoryStore; rumor: string | null } {
+  if (speaker === listener) return { store, rumor: null };
+  const hasColdNews = recall(store, speaker).some((e) => isShareable(e) && e.includes(COLD_NEWS_TOKEN));
+  if (!hasColdNews) return { store, rumor: null };
+  const rumor = coldWordLine(speaker);
+  return { store: remember(store, listener, rumor), rumor };
 }

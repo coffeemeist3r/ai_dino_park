@@ -9,8 +9,13 @@ import {
   warmLine,
   warmMemory,
   neglectMemory,
+  COLD_NEWS_TOKEN,
+  coldWordLine,
+  spreadColdWord,
 } from '../../game/src/world/cold';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
+import { RUMOR_MARK, isShareable, makeRumor } from '../../game/src/social/gossip';
+import { remember, type MemoryStore } from '../../game/src/ai/memory';
 import { greetGain } from '../../game/src/social/friendship';
 import { SEASONS, type Season } from '../../game/src/world/seasons';
 import type { Personality } from '../../game/src/ai/personality';
@@ -96,5 +101,52 @@ describe('nobody came (BACKLOG-208)', () => {
 
   it('neglect is the morning after, not the night — it carries no freeze of its own', () => {
     expect(neglectMemory()).not.toContain('🥶');
+  });
+});
+
+describe('word of the cold (BACKLOG-185)', () => {
+  it('the cold-news token is a real substring of the cold memory — detector and memory cannot drift', () => {
+    expect(coldMemory()).toContain(COLD_NEWS_TOKEN);
+  });
+
+  it('the cold word names the speaker, carries the rumor mark, and cannot re-spread (1 hop)', () => {
+    const line = coldWordLine('Mossback');
+    expect(line).toContain('Mossback');
+    expect(line).toContain(RUMOR_MARK);
+    expect(isShareable(line)).toBe(false);
+  });
+
+  it('the cold word is distinct from every first-hand cold memory and from the generic retell', () => {
+    const line = coldWordLine('Mossback');
+    expect(line).not.toBe(coldMemory());
+    expect(line).not.toBe(neglectMemory());
+    expect(line).not.toBe(warmMemory());
+    expect(line).not.toBe(makeRumor('Mossback', coldMemory()));
+  });
+
+  it('a cold-slept speaker plants the word on the listener and returns it', () => {
+    const store: MemoryStore = remember({}, 'Mossback', coldMemory());
+    const { store: next, rumor } = spreadColdWord(store, 'Mossback', 'Sunny');
+    expect(rumor).toBe(coldWordLine('Mossback'));
+    expect(next.Sunny).toContain(coldWordLine('Mossback'));
+  });
+
+  it('a speaker with no cold memory passes nothing — the caller falls back to generic gossip', () => {
+    const store: MemoryStore = remember({}, 'Rex', 'you greeted me');
+    const { store: next, rumor } = spreadColdWord(store, 'Rex', 'Sunny');
+    expect(rumor).toBeNull();
+    expect(next).toBe(store);
+  });
+
+  it('the heard word is one hop — a listener cannot re-tell it as fresh cold news', () => {
+    const seeded: MemoryStore = remember({}, 'Mossback', coldMemory());
+    const { store: afterFirst } = spreadColdWord(seeded, 'Mossback', 'Sunny');
+    const { rumor: second } = spreadColdWord(afterFirst, 'Sunny', 'Glade');
+    expect(second).toBeNull();
+  });
+
+  it('a dino never gossips to itself', () => {
+    const store: MemoryStore = remember({}, 'Mossback', coldMemory());
+    expect(spreadColdWord(store, 'Mossback', 'Mossback').rumor).toBeNull();
   });
 });

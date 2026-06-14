@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1134,6 +1134,17 @@ export class WorldScene extends Phaser.Scene {
       this.memory = g.store;
       return g.rumor;
     };
+    // dev-only: word of the cold (BACKLOG-185) — a cold-slept speaker leads with the cold news.
+    (window as any).__spreadColdWord = (a: string, b: string) => {
+      const g = spreadColdWord(this.memory, a, b);
+      this.memory = g.store;
+      return g.rumor;
+    };
+    (window as any).__coldWord = (speaker: string) => coldWordLine(speaker);
+    // dev-only: plant a first-hand cold memory without staging a winter night.
+    (window as any).__rememberCold = (name: string) => {
+      this.memory = remember(this.memory, name, coldMemory());
+    };
     (window as any).__lastConversation = () => this.lastConversation;
     (window as any).__forceConverse = async () => {
       if (this.dinos.length >= 2) {
@@ -1371,10 +1382,13 @@ export class WorldScene extends Phaser.Scene {
       );
       this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
       this.memory = remember(this.memory, a.name, `you ran into ${b.name} the ${b.species}`);
-      // Gossip: the speaker passes a recent first-hand memory to the listener as news (BACKLOG-019).
-      const gossip = spreadGossip(this.memory, a.name, b.name);
+      // Gossip: the speaker passes news to the listener (BACKLOG-019). A dino that slept cold
+      // leads with the word of the cold (BACKLOG-185), else the generic most-recent retelling.
+      const cold = spreadColdWord(this.memory, a.name, b.name);
+      const gossip = cold.rumor ? cold : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
-      if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
+      if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
+      else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
     } finally {
