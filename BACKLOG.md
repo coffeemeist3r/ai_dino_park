@@ -370,6 +370,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-215 [social] Spring thaw relief — when the season turns *out* of winter (159), any dino that toughed out cold nights (186) gets a one-off "made it through the winter" lift + a relieved line; the cruel season ending becomes its own small celebration. Builds on 159 / 179 / 186.
 - [ ] BACKLOG-216 [pokemon] Coldest morning in the book — the collection book records the single loneliest morning each dino endured (the cold night it slept with the lowest bond present), a "darkest hour" line beside the hardy-nights tally. Builds on 179 / 186 / 021.
 
+## Cycle 49 lore additions — the bowl starts talking (2026-06-14)
+
+> Cycle 48 finished the cold arc's *private* half — care and neglect both leave a memory.
+> Cycle 49 lets that memory off the leash: a dino that slept cold carries the word to the next
+> it meets (the already-queued **BACKLOG-185**, next-up), so hardship becomes the bowl's first
+> piece of travelling news. These extend the gossip channel into a living rumor mill — news that
+> grows in the telling, lands differently in different hearts, reaches the keeper, and goes stale.
+
+- [ ] BACKLOG-217 [emergent] Secondhand sympathy spurs a visit — a dino that *heard* about another's cold night (185) is primed, next time it meets that sufferer, to drift over and keep it company (a small bond bump + a "came to find you after I heard" memory), even below the usual comfort bond-floor; news of hardship sparks firsthand kindness. Builds on 185 / 130 / 141.
+- [ ] BACKLOG-218 [emergent] Grows in the telling — a rumor passed hop to hop drifts from the truth: each retelling nudges the wording a notch (the cold gets colder, "slept alone" → "nearly froze"), so a multi-hop rumor visibly diverges from what happened and the bowl plays telephone. Capped drift. Builds on 019 / 185.
+- [ ] BACKLOG-219 [pokemon] Rumor mill in the book — the collection book shows the rumors each dino is currently carrying and from whom ("heard from Twitch: Mossback slept cold"), making the gossip graph legible the way the bond graph is. Builds on 019 / 021 / 185.
+- [ ] BACKLOG-220 [emergent] Same news, different heart — a warm/high-agreeableness dino that hears cold news feels for the sufferer (files a "felt for <name>" memory, warms a touch toward it); a prickly one shrugs it off. The listener's temperament, not the news, decides what the news does. Builds on 185 / 010 / 013.
+- [ ] BACKLOG-221 [social] Word reaches the keeper — once cold news has spread to most of the cast, a faint 📢 ticker surfaces it to the keeper ("the bowl's all talking about Mossback's cold night"), turning gossip into a care signal that nudges a warming gesture (184). Builds on 185 / 204 / 184.
+- [ ] BACKLOG-222 [emergent] Old news goes quiet — a rumor more than a couple in-game days old stops being worth retelling (a freshness gate on what gossip will pick up), so the bowl's talk stays current instead of echoing one ancient cold night forever. Builds on 019 / 185.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
