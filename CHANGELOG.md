@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 049 — 2026-06-14
+- BACKLOG-185: Word of the cold — the bowl's first travelling news. A dino that slept cold now leads with the news when it next meets another, planting a distinct "the frost got into their bones — slept the whole night alone" rumor (a 🥶 log line, not the generic 🗣️) instead of whatever it remembered most recently. Reuses the whole cycle-20 gossip spine — the cold word carries `RUMOR_MARK`, so it's one hop and non-re-shareable for free; generic gossip byte-unchanged. No save change, no deps. 8/8 AC; 438 unit / 164 e2e green.
+
 ## Cycle 048 — 2026-06-13
 - BACKLOG-208: Nobody came — the silent dusk thaw cycle 47 left open now leaves a mark: a cold-funked dino the keeper never warmed files a colder "shivered all morning; nobody came 😞" memory before the funk clears, compounding with the morning's cold note and tinging its next greeting harder. A warmed dino is spared it. Neglect made as legible as care, in six lines on one existing branch — no new listeners, no save change. 10/10 AC; 424 unit / 160 e2e green.
 
