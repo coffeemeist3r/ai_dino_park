@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { bakeDialogFrame, DIALOG_FRAME_SLICE } from '../art/bake';
 
 const PAD = 12;
 const HEIGHT = 88;
@@ -10,8 +11,8 @@ const DEPTH = 15;
 const LINES_PER_PAGE = 3;
 
 export class DialogBox {
-  private readonly bg: Phaser.GameObjects.Rectangle;
-  private readonly border: Phaser.GameObjects.Rectangle;
+  /** The Gen3 pixel frame (BACKLOG-036) where it bakes, else the two flat rects (graceful fallback). */
+  private readonly chrome: Array<Phaser.GameObjects.NineSlice | Phaser.GameObjects.Rectangle> = [];
   private readonly text: Phaser.GameObjects.Text;
   private readonly hint: Phaser.GameObjects.Text;
   private visible = false;
@@ -24,8 +25,17 @@ export class DialogBox {
     const x = scene.scale.width / 2;
     const y = scene.scale.height - HEIGHT / 2 - PAD;
 
-    this.border = scene.add.rectangle(x, y, w, HEIGHT, 0x222244);
-    this.bg = scene.add.rectangle(x, y, w - 4, HEIGHT - 4, 0xf0e8c8);
+    // Gen3 pixel message box (BACKLOG-036): a baked 9-slice stretched to the box, corners crisp.
+    // If the bake ever fails, fall back to the legacy flat dark-border + cream-fill rectangles so
+    // the dialog always renders (the STYLE-GUIDE fallback contract).
+    const frameKey = bakeDialogFrame(scene);
+    if (scene.textures.exists(frameKey)) {
+      const s = DIALOG_FRAME_SLICE;
+      this.chrome.push(scene.add.nineslice(x, y, frameKey, undefined, w, HEIGHT, s, s, s, s));
+    } else {
+      this.chrome.push(scene.add.rectangle(x, y, w, HEIGHT, 0x222244));
+      this.chrome.push(scene.add.rectangle(x, y, w - 4, HEIGHT - 4, 0xf0e8c8));
+    }
     this.text = scene.add.text(x - w / 2 + PAD, y - HEIGHT / 2 + PAD, '', {
       fontFamily: 'monospace',
       fontSize: '14px',
@@ -39,7 +49,7 @@ export class DialogBox {
     });
     this.hint.setOrigin(1, 1);
     // Screen-space chrome: pin above the HUD and exempt from ambient camera drift.
-    for (const o of [this.border, this.bg, this.text, this.hint]) {
+    for (const o of [...this.chrome, this.text, this.hint]) {
       o.setDepth(DEPTH);
       o.setScrollFactor(0);
     }
@@ -96,8 +106,7 @@ export class DialogBox {
 
   private setVisible(v: boolean): void {
     this.visible = v;
-    this.border.setVisible(v);
-    this.bg.setVisible(v);
+    for (const o of this.chrome) o.setVisible(v);
     this.text.setVisible(v);
     this.hint.setVisible(v);
   }

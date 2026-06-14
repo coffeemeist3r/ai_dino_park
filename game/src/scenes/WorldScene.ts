@@ -258,6 +258,8 @@ export class WorldScene extends Phaser.Scene {
     this.cursors.left.on('down', () => { if (this.dialogOpen) this.dialog.prev(); });
     // any: dev-only Playwright hook — current dialog page/pages/text
     (window as any).__dialogPage = () => this.dialog.pageInfo();
+    // dev-only: did the Gen3 pixel dialog frame bake? (BACKLOG-036)
+    (window as any).__dialogFrameBaked = () => this.textures.exists('dialog_frame');
 
     // 1/2/3 pick a greeting tone (BACKLOG-142) — or, while the keeper picker is up (BACKLOG-155),
     // choose an observer. onNumberKey routes to whichever overlay is open.

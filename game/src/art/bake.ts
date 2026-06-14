@@ -3,6 +3,7 @@ import { walkFrames, SPECIES_ART, type Shape } from './dinoArt';
 import { PIXEL_SPECIES } from './pixelArt';
 import { KEEPER_RIGS } from './keeperArt';
 import { TILE_RIGS } from './tileArt';
+import { DIALOG_FRAME } from './frameArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -208,6 +209,34 @@ export function bakeTileMap(
     }
   }
   g.generateTexture(key, cols * tile, rows * tile);
+  g.destroy();
+  return key;
+}
+
+/** The baked 9-slice corner inset in display px — the fixed corner size NineSlice must use. */
+export const DIALOG_FRAME_SLICE = DIALOG_FRAME.inset * 2;
+
+/**
+ * Bake the Gen3 dialog frame (BACKLOG-036) into one 9-slice source texture — per-pixel `fillRect`
+ * at ×2 (transparent cells skipped, so the rounded corners read), then `generateTexture` once.
+ * Idempotent; returns the texture key. DialogBox stretches it with a Phaser NineSlice.
+ */
+export function bakeDialogFrame(scene: Phaser.Scene): string {
+  const key = 'dialog_frame';
+  if (scene.textures.exists(key)) return key;
+  const rig = DIALOG_FRAME;
+  const scale = 2;
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  for (let py = 0; py < rig.size; py++) {
+    const row = rig.grid[py];
+    for (let px = 0; px < row.length; px++) {
+      const color = rig.palette[row[px]];
+      if (color === undefined) continue; // '.' → transparent (the rounded step)
+      g.fillStyle(color, 1);
+      g.fillRect(px * scale, py * scale, scale, scale);
+    }
+  }
+  g.generateTexture(key, rig.size * scale, rig.size * scale);
   g.destroy();
   return key;
 }
