@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 052 — 2026-06-15
+- BACKLOG-234: The bowl self-corrects — recovery un-tells the rumor. A dino carrying word that a friend slept cold, meeting that friend and finding it recovered (it now carries a first-hand warm memory, 184), drops the now-false worry with relief ("Oh — you're alright now! 😌") instead of pitying it: it forgets the stale `coldWordLine(sufferer)`, files a relief memory, logs a 😌 line, and the cycle-217 sympathy visit is suppressed (bond untouched). A `selfCorrect` detector mirrors `sympathyVisit`; `recovered` reuses the exact `spreadWarmWord` predicate; the one new primitive is a four-line pure `forget` in `ai/memory.ts`. The seam checks self-correct first; the sympathy block is byte-unchanged in the else, so a non-recovered sufferer matches cycle 50. No save change, no deps. 9/9 AC; 471 unit / 172 e2e green, no flake.
+
 ## Cycle 051 — 2026-06-15
 - BACKLOG-223: Word of the warmth — the gossip channel learns to carry good news. A dino the keeper warmed (184) now leads with that when it next meets another — "the keeper came for them, warmed them right out of the cold" — a 1-hop rumor on the same spine as the cold word (185), with a distinct 😊 log register. A warm-word trio (`WARM_NEWS_TOKEN`/`warmWordLine`/`spreadWarmWord`) mirrors the cold-word trio symbol-for-symbol; the converse seam becomes a three-tier fallback (warm → cold → generic) with warm checked first, because `warmMemory()` contains "cold night" and a rescued dino should talk about the rescue, not the cold. Byte-identical when no warm memory is present, so the cold-word + gossip + sympathy pins stayed green. No save change, no deps. 9/9 AC; 462 unit / 170 e2e green, no flake.
 
