@@ -12,6 +12,7 @@ import type { Personality } from '../ai/personality';
 import { greetGain } from '../social/friendship';
 import { RUMOR_MARK, isShareable } from '../social/gossip';
 import { recall, remember, type MemoryStore } from '../ai/memory';
+import { COMFORT_BOND } from './comfort';
 
 /** The only season cold enough to leave a dino shivering. */
 export const COLD_SEASON: Season = 'winter';
@@ -95,4 +96,56 @@ export function spreadColdWord(
   if (!hasColdNews) return { store, rumor: null };
   const rumor = coldWordLine(speaker);
   return { store: remember(store, listener, rumor), rumor };
+}
+
+// ── Secondhand sympathy spurs a visit (BACKLOG-217) — the cold word becomes a deed. A dino that
+// carries word of another's cold night, the next time it meets that sufferer, crosses the bowl to
+// keep it company: a small bond bump (pinned to the 130 console magnitude) and a memory the
+// sufferer keeps. It ignores the comfort bond-floor — hardship sparks a visit no matter how weak
+// the prior bond — because the news, not closeness, is what moved the visitor.
+
+/** The sympathy visit's bond bump — pinned to the 130 console so the two gestures can't drift. */
+export const SYMPATHY_BOND = COMFORT_BOND;
+
+/** Does `hearer` carry the word of `sufferer`'s cold night (planted by `coldWordLine`)? */
+export function heardColdWordAbout(store: MemoryStore, hearer: string, sufferer: string): boolean {
+  return recall(store, hearer).includes(coldWordLine(sufferer));
+}
+
+/** The memory the visited sufferer keeps — first-hand (no RUMOR_MARK), distinct from the 130 console's. */
+export function cameToFindMemory(visitor: string): string {
+  return `${visitor} came to find me after hearing`;
+}
+
+/** The line the visitor floats as it crosses over (contains both names + 🫂). */
+export function sympathyLine(visitor: string, sufferer: string): string {
+  return `${visitor}: Heard you had a rough night, ${sufferer}. 🫂`;
+}
+
+/**
+ * Who, if anyone, came to find whom. If either conversing dino carries the other's cold word, that
+ * carrier is the visitor and the named one is the sufferer; otherwise null. Pure detector — the
+ * caller applies the bond bump (`SYMPATHY_BOND`) and files `memory` on the sufferer, so the converse
+ * seam can read a pre-meeting snapshot here and apply the effect to live state.
+ *
+ * ponytail: fires on every later meeting while the rumor is still carried; the once-per-sorrow
+ * freshness gate is BACKLOG-226.
+ */
+export function sympathyVisit(
+  store: MemoryStore,
+  a: string,
+  b: string,
+): { visitor: string; sufferer: string; memory: string } | null {
+  if (a === b) return null;
+  let visitor: string | null = null;
+  let sufferer: string | null = null;
+  if (heardColdWordAbout(store, a, b)) {
+    visitor = a;
+    sufferer = b;
+  } else if (heardColdWordAbout(store, b, a)) {
+    visitor = b;
+    sufferer = a;
+  }
+  if (!visitor || !sufferer) return null;
+  return { visitor, sufferer, memory: cameToFindMemory(visitor) };
 }

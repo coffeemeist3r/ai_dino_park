@@ -12,7 +12,13 @@ import {
   COLD_NEWS_TOKEN,
   coldWordLine,
   spreadColdWord,
+  SYMPATHY_BOND,
+  heardColdWordAbout,
+  cameToFindMemory,
+  sympathyLine,
+  sympathyVisit,
 } from '../../game/src/world/cold';
+import { COMFORT_BOND, comfortMemory } from '../../game/src/world/comfort';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
 import { RUMOR_MARK, isShareable, makeRumor } from '../../game/src/social/gossip';
 import { remember, type MemoryStore } from '../../game/src/ai/memory';
@@ -148,5 +154,56 @@ describe('word of the cold (BACKLOG-185)', () => {
   it('a dino never gossips to itself', () => {
     const store: MemoryStore = remember({}, 'Mossback', coldMemory());
     expect(spreadColdWord(store, 'Mossback', 'Mossback').rumor).toBeNull();
+  });
+});
+
+describe('secondhand sympathy spurs a visit (BACKLOG-217)', () => {
+  // A store where Sunny carries word of Mossback's cold night (the cycle-185 plant).
+  function carriedWord(): MemoryStore {
+    const seeded: MemoryStore = remember({}, 'Mossback', coldMemory());
+    return spreadColdWord(seeded, 'Mossback', 'Sunny').store;
+  }
+
+  it('heardColdWordAbout is exact — true for the carried sufferer, false otherwise', () => {
+    const store = carriedWord();
+    expect(heardColdWordAbout(store, 'Sunny', 'Mossback')).toBe(true);
+    expect(heardColdWordAbout(store, 'Sunny', 'Glade')).toBe(false); // word about a different dino
+    expect(heardColdWordAbout(store, 'Mossback', 'Sunny')).toBe(false); // the sufferer carries nothing
+    expect(heardColdWordAbout({}, 'Sunny', 'Mossback')).toBe(false); // empty store
+  });
+
+  it('the carrier is the visitor and the named one is the sufferer', () => {
+    const v = sympathyVisit(carriedWord(), 'Sunny', 'Mossback');
+    expect(v).toEqual({ visitor: 'Sunny', sufferer: 'Mossback', memory: cameToFindMemory('Sunny') });
+  });
+
+  it('is direction-agnostic — call order does not decide who visited whom', () => {
+    const v = sympathyVisit(carriedWord(), 'Mossback', 'Sunny');
+    expect(v).toEqual({ visitor: 'Sunny', sufferer: 'Mossback', memory: cameToFindMemory('Sunny') });
+  });
+
+  it('returns null when neither carries the other’s cold word, and when a === b', () => {
+    expect(sympathyVisit(remember({}, 'Rex', 'you greeted me'), 'Rex', 'Glade')).toBeNull();
+    expect(sympathyVisit(carriedWord(), 'Sunny', 'Sunny')).toBeNull();
+  });
+
+  it('the came-to-find memory is first-hand and distinct from every neighbouring memory', () => {
+    const m = cameToFindMemory('Sunny');
+    expect(isShareable(m)).toBe(true); // no RUMOR_MARK — a deed, not hearsay
+    expect(m).not.toBe(comfortMemory('Sunny'));
+    expect(m).not.toBe(coldMemory());
+    expect(m).not.toBe(warmMemory());
+    expect(m).not.toBe(neglectMemory());
+  });
+
+  it('the bump magnitude is pinned to the 130 console bond', () => {
+    expect(SYMPATHY_BOND).toBe(COMFORT_BOND);
+  });
+
+  it('the sympathy line carries both names and the 🫂', () => {
+    const line = sympathyLine('Sunny', 'Mossback');
+    expect(line).toContain('Sunny');
+    expect(line).toContain('Mossback');
+    expect(line).toContain('🫂');
   });
 });

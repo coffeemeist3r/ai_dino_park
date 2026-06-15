@@ -74,3 +74,18 @@
 ## Estimated touch count
 
 `~4 files` (cold.ts, WorldScene.ts, cold.test.ts, one new e2e). Under the 6-file ceiling.
+
+## Shipped
+
+**Files touched (4):**
+- `game/src/world/cold.ts` — added `SYMPATHY_BOND` (= `COMFORT_BOND`, imported from `./comfort`), `heardColdWordAbout`, `cameToFindMemory`, `sympathyLine`, `sympathyVisit` (pure detector → `{visitor,sufferer,memory}|null`). A `ponytail:` comment names BACKLOG-226 as the once-per-sorrow gate.
+- `game/src/scenes/WorldScene.ts` — imported the three live symbols; `converse` captures `snapshot = this.memory` before any plant and appends the sympathy-visit step (reads the snapshot → no self-trigger; applies `remember` + `strengthen(SYMPATHY_BOND)`, steps the visitor toward the sufferer, floats `sympathyLine`, logs a 🫂 line). Added `__sympathyVisit`/`__bond` hooks beside `__spreadColdWord`. Gossip plant + 🥶/🗣️ lines byte-unchanged.
+- `tests/unit/cold.test.ts` — `describe('secondhand sympathy spurs a visit (BACKLOG-217)')`, 7 tests.
+- `tests/e2e/cycle-050-sympathy-visit.spec.ts` — 3 e2e (visit fires + bond 0→2 + memory; direction-agnostic; no-word → null/no change).
+
+**No deviations from plan.** No new deps. No save-format change.
+
+**Build:** ✅ `npm --prefix game run build` clean.
+**Unit:** ✅ 453 passed (46 files; +7 sympathy).
+**Dev server:** ✅ HTTP 200 on `http://localhost:5173/`.
+**E2E:** handed to QA for the full run.

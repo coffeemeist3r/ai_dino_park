@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1143,6 +1143,17 @@ export class WorldScene extends Phaser.Scene {
       return g.rumor;
     };
     (window as any).__coldWord = (speaker: string) => coldWordLine(speaker);
+    // dev-only: secondhand sympathy visit (BACKLOG-217) — the carrier of a cold word comes to find
+    // the sufferer; applies the bump + memory and returns {visitor, sufferer, memory} or null.
+    (window as any).__sympathyVisit = (a: string, b: string) => {
+      const v = sympathyVisit(this.memory, a, b);
+      if (v) {
+        this.memory = remember(this.memory, v.sufferer, v.memory);
+        this.bonds = strengthen(this.bonds, v.visitor, v.sufferer, SYMPATHY_BOND);
+      }
+      return v;
+    };
+    (window as any).__bond = (a: string, b: string) => bondPoints(this.bonds, a, b);
     // dev-only: plant a first-hand cold memory without staging a winter night.
     (window as any).__rememberCold = (name: string) => {
       this.memory = remember(this.memory, name, coldMemory());
@@ -1372,6 +1383,9 @@ export class WorldScene extends Phaser.Scene {
     this.convoCooldown = convoCooldownSteps(this.coarsePointer);
     try {
       const now = getWorldClock().now();
+      // Snapshot before this meeting plants anything: the sympathy visit (BACKLOG-217) keys off
+      // word carried in from a PRIOR meeting, so this meeting's fresh cold word can't self-trigger.
+      const snapshot = this.memory;
       const reply = await this.npcBrain.respond(
         {
           name: a.name,
@@ -1393,6 +1407,21 @@ export class WorldScene extends Phaser.Scene {
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
+      // Secondhand sympathy (BACKLOG-217): if either dino already carried the other's cold word,
+      // the carrier crosses over to keep it company — a sub-floor bond bump + a memory it keeps.
+      const visit = sympathyVisit(snapshot, a.name, b.name);
+      if (visit) {
+        this.memory = remember(this.memory, visit.sufferer, visit.memory);
+        this.bonds = strengthen(this.bonds, visit.visitor, visit.sufferer, SYMPATHY_BOND);
+        const vDino = this.dinos.find((d) => d.name === visit.visitor);
+        const sDino = this.dinos.find((d) => d.name === visit.sufferer);
+        if (vDino && sDino) {
+          const step = stepToward(this.tileOf(vDino), this.tileOf(sDino), COLS, ROWS);
+          vDino.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.showBubble(vDino, sympathyLine(visit.visitor, visit.sufferer));
+        }
+        this.logEvent(`🫂 ${visit.visitor} came to find ${visit.sufferer} after hearing`);
+      }
     } finally {
       this.convoInFlight = false;
     }
