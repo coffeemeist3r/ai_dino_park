@@ -394,6 +394,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-227 [pokemon] Kindness tally in the book — the collection book counts the comfort-visits each dino has *made* ("crossed the bowl for 4 friends in need"), the giving side of care standing beside the keeper-warmed tally (209). Builds on 217 / 130 / 209.
 - [ ] BACKLOG-228 [emergent] The bowl overheard — the keeper standing close to two gossiping dinos catches the rumor itself on a faint 💬 ticker ("you overhear: Mossback slept cold"), eavesdropping made a mechanic that turns the player into one more node on the gossip graph. Builds on 019 / 204 / 221.
 
+## Cycle 51 lore additions — the bowl gossips both ways (2026-06-15)
+
+> Cycle 49 taught the bowl to carry the cold; cycle 50 turned the heard word into a deed (the
+> sympathy visit). Cycle 51's next-up is the already-queued **BACKLOG-223** (word of the warmth):
+> the *bright* mirror of the cold word — a dino the keeper warmed lets the good news slip on the
+> same gossip spine, so kindness travels by talk the way hardship does. These extend the channel
+> once it carries two kinds of news — what a dino chooses to pass on, where good news leads, and
+> how the bowl keeps its talk honest.
+
+- [ ] BACKLOG-229 [emergent] Which word to lead with — a dino carrying both a warm rumor and a cold rumor leads with the one about the friend it's *closest* to (highest bond), so what a dino chooses to gossip becomes a read on who it cares about, not just what it last heard. Builds on 185 / 223 / 013.
+- [ ] BACKLOG-230 [emergent] Hearing kindness spreads it — a dino that hears warm-word (223) is primed, for a while, to be the one who comforts the next shiverer or sulker it witnesses, even below the usual bond floor; kindness witnessed *by rumor* cascades the way keeper-warmth does (211). Builds on 223 / 211 / 141.
+- [ ] BACKLOG-231 [social] Word of a kind keeper — as warm-word saturates the cast, a faint capped "they say the keeper's kind" colour lifts the next first-greeting of dinos who never saw a warming firsthand; a generous keeper's reputation precedes them. Builds on 223 / 184 / 221.
+- [ ] BACKLOG-232 [pokemon] Warm word, cold word in the book — the rumor-mill book page (219) tags each carried rumor warm or cold, so the bowl's mood is legible at a glance by what it's passing around. Builds on 219 / 223.
+- [ ] BACKLOG-233 [emergent] Both kinds of news age out — extend the freshness gate (222) to warm-word too, so a stale kindness stops being retold the same way a stale cold night does; the bowl's talk, good or bad, stays current. Builds on 222 / 223.
+- [ ] BACKLOG-234 [emergent] The bowl self-corrects — once a cold-night sufferer is warmed by the keeper (184) or otherwise recovers, a carrier that next meets it drops the now-false cold word ("oh — you're alright now") instead of passing it on; recovery un-tells the rumor. Builds on 222 / 184 / 223.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
