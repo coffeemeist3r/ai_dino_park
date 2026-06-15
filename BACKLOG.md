@@ -408,7 +408,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-231 [social] Word of a kind keeper — as warm-word saturates the cast, a faint capped "they say the keeper's kind" colour lifts the next first-greeting of dinos who never saw a warming firsthand; a generous keeper's reputation precedes them. Builds on 223 / 184 / 221.
 - [ ] BACKLOG-232 [pokemon] Warm word, cold word in the book — the rumor-mill book page (219) tags each carried rumor warm or cold, so the bowl's mood is legible at a glance by what it's passing around. Builds on 219 / 223.
 - [ ] BACKLOG-233 [emergent] Both kinds of news age out — extend the freshness gate (222) to warm-word too, so a stale kindness stops being retold the same way a stale cold night does; the bowl's talk, good or bad, stays current. Builds on 222 / 223.
-- [ ] BACKLOG-234 [emergent] The bowl self-corrects — once a cold-night sufferer is warmed by the keeper (184) or otherwise recovers, a carrier that next meets it drops the now-false cold word ("oh — you're alright now") instead of passing it on; recovery un-tells the rumor. Builds on 222 / 184 / 223.
+- [~] BACKLOG-234 [emergent] The bowl self-corrects — once a cold-night sufferer is warmed by the keeper (184) or otherwise recovers, a carrier that next meets it drops the now-false cold word ("oh — you're alright now") instead of passing it on; recovery un-tells the rumor. Builds on 222 / 184 / 223.
 
 ## Cycle 52 lore additions — the bowl keeps its talk honest (2026-06-15)
 
