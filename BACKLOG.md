@@ -410,6 +410,23 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-233 [emergent] Both kinds of news age out — extend the freshness gate (222) to warm-word too, so a stale kindness stops being retold the same way a stale cold night does; the bowl's talk, good or bad, stays current. Builds on 222 / 223.
 - [ ] BACKLOG-234 [emergent] The bowl self-corrects — once a cold-night sufferer is warmed by the keeper (184) or otherwise recovers, a carrier that next meets it drops the now-false cold word ("oh — you're alright now") instead of passing it on; recovery un-tells the rumor. Builds on 222 / 184 / 223.
 
+## Cycle 52 lore additions — the bowl keeps its talk honest (2026-06-15)
+
+> Cycle 49 taught the bowl to carry the cold, 50 turned the word into a deed, 51 let the good
+> news travel too. Cycle 52's next-up is the already-queued **BACKLOG-234** (the bowl self-corrects):
+> when a carrier of a dino's cold word meets that dino and finds it warmed/recovered, it drops the
+> now-false rumor with relief ("oh — you're alright now") instead of pitying it — and the stale
+> sympathy visit (217) gives way to the all-clear. News that ends is as emergent as news that spreads.
+> These extend the correction: relief that travels, the trust cost of a false rumor, and the two ways
+> a rumor dies — by sight and by time.
+
+- [ ] BACKLOG-235 [emergent] Relief travels too — when a dino drops a corrected cold rumor (234), the relief becomes a brief bright note it can pass on ("heard Mossback's fine now"), so a correction spreads the way the original worry did — the bowl actively un-tells a thing that's no longer true. Builds on 234 / 223 / 019.
+- [ ] BACKLOG-236 [emergent] The doubter — a prickly (low-agreeableness) dino that meets a cold-rumor's subject looking perfectly fine starts discounting *that carrier's* news (a small capped credibility ding, like cry-wolf 203), so a bowl that spread a false alarm pays a quiet trust cost. Builds on 234 / 203 / 220.
+- [ ] BACKLOG-237 [pokemon] Set the record straight in the book — the collection book marks a dino's cold night "since put right" once it's been warmed/recovered, so the rumor page (219) shows corrections, not only live worries. Builds on 234 / 219 / 186.
+- [ ] BACKLOG-238 [emergent] Stubborn rumor — a rumor about a recovered dino whose carrier never meets it again can't be corrected by sight, so it goes stale on its own (the time-gate half, 222); correction-by-sight (234) and correction-by-time are the two ways a rumor dies. Builds on 234 / 222.
+- [ ] BACKLOG-239 [social] The all-clear at the glass — once most carriers have dropped a sufferer's cold word, a faint 😌 ticker tells the keeper "the bowl's stopped worrying about Mossback," the calm counterpart to 221's alarm. Builds on 234 / 221.
+- [ ] BACKLOG-240 [emergent] Premature all-clear — a dino corrected once ("you're fine now") that then sleeps cold *again* the next winter night surprises its carriers: the dropped rumor returns sharper ("I thought you were past this"), so recovery isn't always permanent. Builds on 234 / 179.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
