@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { remember, recall, reflect } from '../../game/src/ai/memory';
+import { remember, recall, reflect, forget } from '../../game/src/ai/memory';
 import { serialize, deserialize, SAVE_VERSION } from '../../game/src/world/saveGame';
 
 describe('memory', () => {
@@ -20,6 +20,23 @@ describe('memory', () => {
   it('reflect summarizes a day (empty vs not)', () => {
     expect(reflect([])).toMatch(/quiet/i);
     expect(reflect(['the human gave you a rock'])).toMatch(/rock/);
+  });
+
+  it('forget removes exactly the named entry, leaves siblings + other dinos, and does not mutate', () => {
+    let m = remember({}, 'Rex', 'a');
+    m = remember(m, 'Rex', 'b');
+    m = remember(m, 'Rex', 'a'); // a duplicate, to prove every occurrence goes
+    m = remember(m, 'Sunny', 'a');
+    const after = forget(m, 'Rex', 'a');
+    expect(recall(after, 'Rex')).toEqual(['b']); // both 'a' gone, 'b' kept
+    expect(recall(after, 'Sunny')).toEqual(['a']); // other dino untouched
+    expect(recall(m, 'Rex')).toEqual(['a', 'b', 'a']); // input not mutated
+  });
+
+  it('forget is a no-op for an unknown dino or a missing entry', () => {
+    const m = remember({}, 'Rex', 'a');
+    expect(forget(m, 'Nobody', 'a')).toBe(m); // unknown name → same store
+    expect(recall(forget(m, 'Rex', 'z'), 'Rex')).toEqual(['a']); // entry absent → unchanged list
   });
 });
 

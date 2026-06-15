@@ -184,3 +184,48 @@ export function sympathyVisit(
   if (!visitor || !sufferer) return null;
   return { visitor, sufferer, memory: cameToFindMemory(visitor) };
 }
+
+// ── The bowl self-corrects (BACKLOG-234) — recovery un-tells the rumor. A carrier of another's
+// cold word, meeting that dino and finding it warmed/recovered (it now carries a first-hand warm
+// memory, 184), drops the now-false worry with relief instead of pitying it. Takes precedence over
+// the sympathy visit (217): a recovered sufferer gets the all-clear, not a stale pity beat.
+
+/** Has `name` recovered — does it carry a first-hand warm memory (the keeper warmed it, 184)? */
+export function recovered(store: MemoryStore, name: string): boolean {
+  return recall(store, name).some((e) => isShareable(e) && e.includes(WARM_NEWS_TOKEN));
+}
+
+/** The relieved line the corrector floats on seeing the sufferer is fine (both names + 😌). */
+export function reliefLine(corrector: string, sufferer: string): string {
+  return `${corrector}: Oh — you're alright now, ${sufferer}! 😌`;
+}
+
+/** The first-hand memory the corrector keeps — distinct from the came-to-find / cold / warm notes. */
+export function reliefMemory(sufferer: string): string {
+  return `saw ${sufferer} came through it fine`;
+}
+
+/**
+ * Who, if anyone, should drop a stale cold rumor about whom. If a conversing dino carries the
+ * other's cold word AND that other has recovered, the carrier is the `corrector`, the named one the
+ * `sufferer`, and `dropped` is the exact `coldWordLine(sufferer)` to forget; otherwise null. Pure
+ * detector mirroring `sympathyVisit` — the caller forgets `dropped` + files `memory` on live state.
+ */
+export function selfCorrect(
+  store: MemoryStore,
+  a: string,
+  b: string,
+): { corrector: string; sufferer: string; dropped: string; memory: string } | null {
+  if (a === b) return null;
+  let corrector: string | null = null;
+  let sufferer: string | null = null;
+  if (heardColdWordAbout(store, a, b) && recovered(store, b)) {
+    corrector = a;
+    sufferer = b;
+  } else if (heardColdWordAbout(store, b, a) && recovered(store, a)) {
+    corrector = b;
+    sufferer = a;
+  }
+  if (!corrector || !sufferer) return null;
+  return { corrector, sufferer, dropped: coldWordLine(sufferer), memory: reliefMemory(sufferer) };
+}

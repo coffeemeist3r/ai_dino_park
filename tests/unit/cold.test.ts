@@ -20,6 +20,10 @@ import {
   cameToFindMemory,
   sympathyLine,
   sympathyVisit,
+  recovered,
+  reliefLine,
+  reliefMemory,
+  selfCorrect,
 } from '../../game/src/world/cold';
 import { COMFORT_BOND, comfortMemory } from '../../game/src/world/comfort';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
@@ -268,5 +272,66 @@ describe('secondhand sympathy spurs a visit (BACKLOG-217)', () => {
     expect(line).toContain('Sunny');
     expect(line).toContain('Mossback');
     expect(line).toContain('🫂');
+  });
+});
+
+describe('the bowl self-corrects (BACKLOG-234)', () => {
+  // Sunny carries word of Mossback's cold night (the cycle-185 plant).
+  function carriedWord(): MemoryStore {
+    const seeded: MemoryStore = remember({}, 'Mossback', coldMemory());
+    return spreadColdWord(seeded, 'Mossback', 'Sunny').store;
+  }
+  // ...and Mossback was since warmed by the keeper (BACKLOG-184): it has recovered.
+  function carriedWordRecovered(): MemoryStore {
+    return remember(carriedWord(), 'Mossback', warmMemory());
+  }
+
+  it('recovered is true only for a dino carrying a first-hand warm memory', () => {
+    expect(recovered(remember({}, 'Mossback', warmMemory()), 'Mossback')).toBe(true);
+    expect(recovered(remember({}, 'Mossback', coldMemory()), 'Mossback')).toBe(false);
+    expect(recovered({}, 'Mossback')).toBe(false);
+  });
+
+  it('the relief line carries both names and 😌; the relief memory is first-hand and distinct', () => {
+    const line = reliefLine('Sunny', 'Mossback');
+    expect(line).toContain('Sunny');
+    expect(line).toContain('Mossback');
+    expect(line).toContain('😌');
+    const m = reliefMemory('Mossback');
+    expect(isShareable(m)).toBe(true); // a thing seen, not hearsay
+    expect(m).not.toBe(cameToFindMemory('Mossback'));
+    expect(m).not.toBe(coldMemory());
+    expect(m).not.toBe(warmMemory());
+    expect(m).not.toBe(neglectMemory());
+  });
+
+  it('fires when the carrier holds the cold word AND the sufferer recovered', () => {
+    const c = selfCorrect(carriedWordRecovered(), 'Sunny', 'Mossback');
+    expect(c).toEqual({
+      corrector: 'Sunny',
+      sufferer: 'Mossback',
+      dropped: coldWordLine('Mossback'),
+      memory: reliefMemory('Mossback'),
+    });
+  });
+
+  it('is direction-agnostic — call order does not decide who corrects', () => {
+    const c = selfCorrect(carriedWordRecovered(), 'Mossback', 'Sunny');
+    expect(c?.corrector).toBe('Sunny');
+    expect(c?.sufferer).toBe('Mossback');
+  });
+
+  it('does NOT fire while the sufferer has not recovered — that stays a sympathy visit', () => {
+    expect(selfCorrect(carriedWord(), 'Sunny', 'Mossback')).toBeNull();
+  });
+
+  it('returns null when neither carries the other’s cold word, and when a === b', () => {
+    expect(selfCorrect(remember({}, 'Rex', 'you greeted me'), 'Rex', 'Glade')).toBeNull();
+    expect(selfCorrect(carriedWordRecovered(), 'Sunny', 'Sunny')).toBeNull();
+  });
+
+  it('the dropped string is exactly the planted cold word — a precise forget, no substring', () => {
+    const c = selfCorrect(carriedWordRecovered(), 'Sunny', 'Mossback');
+    expect(c?.dropped).toBe(coldWordLine('Mossback'));
   });
 });

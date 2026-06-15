@@ -52,11 +52,11 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
-import { remember, recall, reflect, type MemoryStore } from '../ai/memory';
+import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
@@ -1161,6 +1161,16 @@ export class WorldScene extends Phaser.Scene {
       return v;
     };
     (window as any).__bond = (a: string, b: string) => bondPoints(this.bonds, a, b);
+    // dev-only: the bowl self-corrects (BACKLOG-234) — a carrier drops a recovered sufferer's
+    // cold word with relief; applies the forget + relief memory and returns the correction or null.
+    (window as any).__selfCorrect = (a: string, b: string) => {
+      const c = selfCorrect(this.memory, a, b);
+      if (c) {
+        this.memory = forget(this.memory, c.corrector, c.dropped);
+        this.memory = remember(this.memory, c.corrector, c.memory);
+      }
+      return c;
+    };
     // dev-only: plant a first-hand cold memory without staging a winter night.
     (window as any).__rememberCold = (name: string) => {
       this.memory = remember(this.memory, name, coldMemory());
@@ -1422,20 +1432,32 @@ export class WorldScene extends Phaser.Scene {
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
-      // Secondhand sympathy (BACKLOG-217): if either dino already carried the other's cold word,
-      // the carrier crosses over to keep it company — a sub-floor bond bump + a memory it keeps.
-      const visit = sympathyVisit(snapshot, a.name, b.name);
-      if (visit) {
-        this.memory = remember(this.memory, visit.sufferer, visit.memory);
-        this.bonds = strengthen(this.bonds, visit.visitor, visit.sufferer, SYMPATHY_BOND);
-        const vDino = this.dinos.find((d) => d.name === visit.visitor);
-        const sDino = this.dinos.find((d) => d.name === visit.sufferer);
-        if (vDino && sDino) {
-          const step = stepToward(this.tileOf(vDino), this.tileOf(sDino), COLS, ROWS);
-          vDino.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
-          this.showBubble(vDino, sympathyLine(visit.visitor, visit.sufferer));
+      // The bowl self-corrects (BACKLOG-234): if a carrier meets the dino it heard slept cold and
+      // finds it recovered, it drops the now-false worry with relief — and the stale pity visit is
+      // suppressed. Higher precedence than the sympathy visit, same pre-meeting snapshot.
+      const correction = selfCorrect(snapshot, a.name, b.name);
+      if (correction) {
+        this.memory = forget(this.memory, correction.corrector, correction.dropped);
+        this.memory = remember(this.memory, correction.corrector, correction.memory);
+        const cDino = this.dinos.find((d) => d.name === correction.corrector);
+        if (cDino) this.showBubble(cDino, reliefLine(correction.corrector, correction.sufferer));
+        this.logEvent(`😌 ${correction.corrector} sees ${correction.sufferer} came through it fine`);
+      } else {
+        // Secondhand sympathy (BACKLOG-217): if either dino already carried the other's cold word,
+        // the carrier crosses over to keep it company — a sub-floor bond bump + a memory it keeps.
+        const visit = sympathyVisit(snapshot, a.name, b.name);
+        if (visit) {
+          this.memory = remember(this.memory, visit.sufferer, visit.memory);
+          this.bonds = strengthen(this.bonds, visit.visitor, visit.sufferer, SYMPATHY_BOND);
+          const vDino = this.dinos.find((d) => d.name === visit.visitor);
+          const sDino = this.dinos.find((d) => d.name === visit.sufferer);
+          if (vDino && sDino) {
+            const step = stepToward(this.tileOf(vDino), this.tileOf(sDino), COLS, ROWS);
+            vDino.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+            this.showBubble(vDino, sympathyLine(visit.visitor, visit.sufferer));
+          }
+          this.logEvent(`🫂 ${visit.visitor} came to find ${visit.sufferer} after hearing`);
         }
-        this.logEvent(`🫂 ${visit.visitor} came to find ${visit.sufferer} after hearing`);
       }
     } finally {
       this.convoInFlight = false;

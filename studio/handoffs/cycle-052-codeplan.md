@@ -84,3 +84,19 @@ none.
 ## Estimated touch count
 
 6 files (memory.ts, cold.ts, WorldScene.ts, cold.test.ts, memory.test.ts, new e2e). At the 6-file ceiling — no split needed.
+
+---
+
+## Shipped
+
+**Files touched (6, exactly as planned):**
+- `game/src/ai/memory.ts` — added pure `forget(store, name, entry)` (filter sibling of `remember`, returns new store, no-op on unknown name).
+- `game/src/world/cold.ts` — added the self-correct block: `recovered(store,name)` (reuses the exact `spreadWarmWord` predicate — `isShareable && includes(WARM_NEWS_TOKEN)`), `reliefLine`/`reliefMemory`, and `selfCorrect(store,a,b)` (a structural twin of `sympathyVisit`).
+- `game/src/scenes/WorldScene.ts` — imports `selfCorrect`/`reliefLine` + `forget`; the converse seam now checks `selfCorrect(snapshot,...)` FIRST and, on a hit, forgets the stale cold word + files the relief memory + floats the 😌 line/log; the existing `sympathyVisit` block is unchanged inside the `else`. Hook `__selfCorrect` beside `__sympathyVisit`.
+- `tests/unit/cold.test.ts` — `describe('the bowl self-corrects (BACKLOG-234)')`: recovered true/false, relief line+memory distinctness, selfCorrect fire/direction/not-recovered/null/`a===b`, exact dropped string.
+- `tests/unit/memory.test.ts` — `forget` removes every occurrence + leaves siblings/other dinos, no mutation, no-op on unknown.
+- `tests/e2e/cycle-052-self-correct.spec.ts` — recovered → drop + 😌 + unchanged bond; control non-recovered → sympathy visit fires (bond bumps, 🫂), no drop.
+
+**Deviations:** none. The sympathy block moved verbatim into the `else` branch, so it stays byte-identical for non-recovered sufferers.
+
+**Build:** ✅ clean. **Unit:** ✅ 471 passed (46 files, +9). **Dev smoke:** ✅ HTTP 200. E2E to QA.
