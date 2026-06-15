@@ -387,7 +387,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 50 lore additions — the bowl acts on what it hears (2026-06-15)
 
-- [ ] BACKLOG-223 [emergent] Word of the warmth — the *good* news travels too: a dino the keeper warmed (184) lets that slip to the next it meets ("the keeper came for them"), a bright rumor on the same gossip spine as the cold word (185), so kindness spreads through talk the way hardship does. Builds on 184 / 185 / 019.
+- [~] BACKLOG-223 [emergent] Word of the warmth — the *good* news travels too: a dino the keeper warmed (184) lets that slip to the next it meets ("the keeper came for them"), a bright rumor on the same gossip spine as the cold word (185), so kindness spreads through talk the way hardship does. Builds on 184 / 185 / 019.
 - [ ] BACKLOG-224 [emergent] It came back to me — when a rumor about a dino's *own* cold night returns to it (it meets someone carrying word of its hardship), it reacts to being talked about: a wry/embarrassed 💬 line + a "so the whole bowl knows" memory, the sufferer learning its night became news. Builds on 185 / 219.
 - [ ] BACKLOG-225 [social] Carrying sad news weighs on you — a dino currently holding fresh cold-word about a friend greets the keeper a touch subdued (a quieter colour on the hour-line, 110), the rumor it carries leaking into its own mood. Builds on 185 / 110 / 220.
 - [ ] BACKLOG-226 [emergent] One visit per sorrow — the secondhand-sympathy visit (217) fires once per sufferer per cold spell: a dino won't keep "coming to find you" on every later meeting, so sympathy reads as a gesture, not a tic (a freshness gate like 222). Builds on 217 / 222.
