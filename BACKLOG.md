@@ -385,6 +385,15 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-221 [social] Word reaches the keeper — once cold news has spread to most of the cast, a faint 📢 ticker surfaces it to the keeper ("the bowl's all talking about Mossback's cold night"), turning gossip into a care signal that nudges a warming gesture (184). Builds on 185 / 204 / 184.
 - [ ] BACKLOG-222 [emergent] Old news goes quiet — a rumor more than a couple in-game days old stops being worth retelling (a freshness gate on what gossip will pick up), so the bowl's talk stays current instead of echoing one ancient cold night forever. Builds on 019 / 185.
 
+## Cycle 50 lore additions — the bowl acts on what it hears (2026-06-15)
+
+- [ ] BACKLOG-223 [emergent] Word of the warmth — the *good* news travels too: a dino the keeper warmed (184) lets that slip to the next it meets ("the keeper came for them"), a bright rumor on the same gossip spine as the cold word (185), so kindness spreads through talk the way hardship does. Builds on 184 / 185 / 019.
+- [ ] BACKLOG-224 [emergent] It came back to me — when a rumor about a dino's *own* cold night returns to it (it meets someone carrying word of its hardship), it reacts to being talked about: a wry/embarrassed 💬 line + a "so the whole bowl knows" memory, the sufferer learning its night became news. Builds on 185 / 219.
+- [ ] BACKLOG-225 [social] Carrying sad news weighs on you — a dino currently holding fresh cold-word about a friend greets the keeper a touch subdued (a quieter colour on the hour-line, 110), the rumor it carries leaking into its own mood. Builds on 185 / 110 / 220.
+- [ ] BACKLOG-226 [emergent] One visit per sorrow — the secondhand-sympathy visit (217) fires once per sufferer per cold spell: a dino won't keep "coming to find you" on every later meeting, so sympathy reads as a gesture, not a tic (a freshness gate like 222). Builds on 217 / 222.
+- [ ] BACKLOG-227 [pokemon] Kindness tally in the book — the collection book counts the comfort-visits each dino has *made* ("crossed the bowl for 4 friends in need"), the giving side of care standing beside the keeper-warmed tally (209). Builds on 217 / 130 / 209.
+- [ ] BACKLOG-228 [emergent] The bowl overheard — the keeper standing close to two gossiping dinos catches the rumor itself on a faint 💬 ticker ("you overhear: Mossback slept cold"), eavesdropping made a mechanic that turns the player into one more node on the gossip graph. Builds on 019 / 204 / 221.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
