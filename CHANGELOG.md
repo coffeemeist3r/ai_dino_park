@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 051 — 2026-06-15
+- BACKLOG-223: Word of the warmth — the gossip channel learns to carry good news. A dino the keeper warmed (184) now leads with that when it next meets another — "the keeper came for them, warmed them right out of the cold" — a 1-hop rumor on the same spine as the cold word (185), with a distinct 😊 log register. A warm-word trio (`WARM_NEWS_TOKEN`/`warmWordLine`/`spreadWarmWord`) mirrors the cold-word trio symbol-for-symbol; the converse seam becomes a three-tier fallback (warm → cold → generic) with warm checked first, because `warmMemory()` contains "cold night" and a rescued dino should talk about the rescue, not the cold. Byte-identical when no warm memory is present, so the cold-word + gossip + sympathy pins stayed green. No save change, no deps. 9/9 AC; 462 unit / 170 e2e green, no flake.
+
 ## Cycle 050 — 2026-06-15
 - BACKLOG-217: Secondhand sympathy spurs a visit — the rumor mill's first feedback loop into behavior. When two dinos meet and one already carries the other's cold word from a prior meeting, the carrier crosses the bowl to keep the sufferer company: a sub-floor bond bump (`SYMPATHY_BOND` = `COMFORT_BOND`, the 130 console magnitude) + a distinct "came to find me after hearing" memory on the sufferer + a 🫂 step/line/log. Ignores the comfort bond-floor — hardship news, not closeness, moves the visitor. Detection reads a pre-meeting memory snapshot so this meeting's fresh word can't self-trigger; gossip plant byte-unchanged (cycle-020/049 pins green). Once-per-sorrow re-fire deferred to 226. No save change, no deps. 9/9 AC; 453 unit / 168 e2e green, no flake.
 
