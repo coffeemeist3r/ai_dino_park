@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 050 — 2026-06-15
+- BACKLOG-217: Secondhand sympathy spurs a visit — the rumor mill's first feedback loop into behavior. When two dinos meet and one already carries the other's cold word from a prior meeting, the carrier crosses the bowl to keep the sufferer company: a sub-floor bond bump (`SYMPATHY_BOND` = `COMFORT_BOND`, the 130 console magnitude) + a distinct "came to find me after hearing" memory on the sufferer + a 🫂 step/line/log. Ignores the comfort bond-floor — hardship news, not closeness, moves the visitor. Detection reads a pre-meeting memory snapshot so this meeting's fresh word can't self-trigger; gossip plant byte-unchanged (cycle-020/049 pins green). Once-per-sorrow re-fire deferred to 226. No save change, no deps. 9/9 AC; 453 unit / 168 e2e green, no flake.
+
 ## Cycle 049 — 2026-06-14
 - BACKLOG-185: Word of the cold — the bowl's first travelling news. A dino that slept cold now leads with the news when it next meets another, planting a distinct "the frost got into their bones — slept the whole night alone" rumor (a 🥶 log line, not the generic 🗣️) instead of whatever it remembered most recently. Reuses the whole cycle-20 gossip spine — the cold word carries `RUMOR_MARK`, so it's one hop and non-re-shareable for free; generic gossip byte-unchanged. No save change, no deps. 8/8 AC; 438 unit / 164 e2e green.
 
