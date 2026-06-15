@@ -72,3 +72,17 @@ none.
 ## Estimated touch count
 
 ~4 files (cold.ts, WorldScene.ts, cold.test.ts, new e2e). Under the 6-file ceiling.
+
+---
+
+## Shipped
+
+**Files touched (4, exactly as planned):**
+- `game/src/world/cold.ts` — added the warm-word trio under the cold-word block: `WARM_NEWS_TOKEN = 'the keeper warmed'` (a substring of `warmMemory()`, not of `coldMemory()`/`neglectMemory()`), `warmWordLine(speaker)` (carries `RUMOR_MARK` → 1 hop, distinct from `warmMemory()`/`coldWordLine()`), and `spreadWarmWord(store,speaker,listener)` (a structural copy of `spreadColdWord`).
+- `game/src/scenes/WorldScene.ts` — import of `spreadWarmWord`/`warmWordLine`; converse seam now three-tier (warm → cold → generic), with the 😊 log register; hooks `__spreadWarmWord`/`__warmWord`/`__rememberWarm` beside the cold ones.
+- `tests/unit/cold.test.ts` — `describe('word of the warmth (BACKLOG-223)')`: token membership/exclusion, line shape + distinctness, plant/null/self/1-hop, and the both-memory precedence pin (warm detector fires though the cold word also matches).
+- `tests/e2e/cycle-051-warm-word.spec.ts` — new: warm word spreads one hop + lands in `__memory`; warm-over-cold precedence through `__forceConverse` + the 😊 log line.
+
+**Deviations:** none. The converse change stays byte-identical whenever no warm memory is present, so `spreadColdWord`/`spreadGossip` and every existing spec are untouched.
+
+**Build:** ✅ `npm run build` clean (type-check passes). **Unit:** ✅ `npm run test:unit` 462 passed (46 files, +9 warm-word). **Dev smoke:** ✅ HTTP 200. E2E handed to QA.

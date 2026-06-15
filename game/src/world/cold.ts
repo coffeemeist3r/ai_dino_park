@@ -98,6 +98,41 @@ export function spreadColdWord(
   return { store: remember(store, listener, rumor), rumor };
 }
 
+// ── Word of the warmth (BACKLOG-223) — the good news travels too. The bright mirror of the cold
+// word: a dino the keeper warmed (184) lets that slip to the next it meets, a 1-hop rumor on the
+// same gossip spine. Note `warmMemory()` contains "cold night", so a warmed dino also matches the
+// cold token — the converse seam checks the warm word FIRST so a rescued dino talks about the
+// rescue, not the cold.
+
+/** A stable substring of `warmMemory()` — the tell that a remembered event is the keeper's warmth. */
+export const WARM_NEWS_TOKEN = 'the keeper warmed';
+
+/**
+ * The distinct "word of the warmth" a listener remembers when a warmed dino lets it slip.
+ * Carries `RUMOR_MARK` so it reads as heard-not-witnessed and can't re-spread (1 hop), and so it
+ * stays visibly distinct from the speaker's own first-hand `warmMemory()`.
+ */
+export function warmWordLine(speaker: string): string {
+  return `${speaker} ${RUMOR_MARK} the keeper came for them, warmed them right out of the cold`;
+}
+
+/**
+ * One warmed dino lets the good news slip to another. If `speaker` carries a *first-hand* warm
+ * memory (shareable, not itself a rumor), plant the word-of-the-warmth line on `listener` and
+ * return it; otherwise return null so the caller falls back to the cold word / generic gossip.
+ */
+export function spreadWarmWord(
+  store: MemoryStore,
+  speaker: string,
+  listener: string,
+): { store: MemoryStore; rumor: string | null } {
+  if (speaker === listener) return { store, rumor: null };
+  const hasWarmNews = recall(store, speaker).some((e) => isShareable(e) && e.includes(WARM_NEWS_TOKEN));
+  if (!hasWarmNews) return { store, rumor: null };
+  const rumor = warmWordLine(speaker);
+  return { store: remember(store, listener, rumor), rumor };
+}
+
 // ── Secondhand sympathy spurs a visit (BACKLOG-217) — the cold word becomes a deed. A dino that
 // carries word of another's cold night, the next time it meets that sufferer, crosses the bowl to
 // keep it company: a small bond bump (pinned to the 130 console magnitude) and a memory the

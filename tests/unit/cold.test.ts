@@ -12,6 +12,9 @@ import {
   COLD_NEWS_TOKEN,
   coldWordLine,
   spreadColdWord,
+  WARM_NEWS_TOKEN,
+  warmWordLine,
+  spreadWarmWord,
   SYMPATHY_BOND,
   heardColdWordAbout,
   cameToFindMemory,
@@ -154,6 +157,66 @@ describe('word of the cold (BACKLOG-185)', () => {
   it('a dino never gossips to itself', () => {
     const store: MemoryStore = remember({}, 'Mossback', coldMemory());
     expect(spreadColdWord(store, 'Mossback', 'Mossback').rumor).toBeNull();
+  });
+});
+
+describe('word of the warmth (BACKLOG-223)', () => {
+  it('the warm-news token is a real substring of the warm memory — detector and memory cannot drift', () => {
+    expect(warmMemory()).toContain(WARM_NEWS_TOKEN);
+  });
+
+  it('the warm token never matches the cold or neglect memory — cold news never reads as warm', () => {
+    expect(coldMemory()).not.toContain(WARM_NEWS_TOKEN);
+    expect(neglectMemory()).not.toContain(WARM_NEWS_TOKEN);
+  });
+
+  it('the warm word names the speaker, carries the rumor mark, and cannot re-spread (1 hop)', () => {
+    const line = warmWordLine('Rex');
+    expect(line).toContain('Rex');
+    expect(line).toContain(RUMOR_MARK);
+    expect(isShareable(line)).toBe(false);
+  });
+
+  it('the warm word is distinct from the first-hand warm memory and from the cold word', () => {
+    const line = warmWordLine('Rex');
+    expect(line).not.toBe(warmMemory());
+    expect(line).not.toBe(coldWordLine('Rex'));
+    expect(line).not.toContain('🥶');
+  });
+
+  it('a warmed speaker plants the warm word on the listener and returns it', () => {
+    const store: MemoryStore = remember({}, 'Rex', warmMemory());
+    const { store: next, rumor } = spreadWarmWord(store, 'Rex', 'Mossback');
+    expect(rumor).toBe(warmWordLine('Rex'));
+    expect(next.Mossback).toContain(warmWordLine('Rex'));
+  });
+
+  it('a speaker with no warm memory passes nothing — the caller falls back to the cold word / gossip', () => {
+    const store: MemoryStore = remember({}, 'Rex', 'you greeted me');
+    const { store: next, rumor } = spreadWarmWord(store, 'Rex', 'Mossback');
+    expect(rumor).toBeNull();
+    expect(next).toBe(store);
+  });
+
+  it('the heard warm word is one hop — a listener cannot re-tell it as fresh warm news', () => {
+    const seeded: MemoryStore = remember({}, 'Rex', warmMemory());
+    const { store: afterFirst } = spreadWarmWord(seeded, 'Rex', 'Mossback');
+    const { rumor: second } = spreadWarmWord(afterFirst, 'Mossback', 'Sunny');
+    expect(second).toBeNull();
+  });
+
+  it('a dino never gossips warmth to itself', () => {
+    const store: MemoryStore = remember({}, 'Rex', warmMemory());
+    expect(spreadWarmWord(store, 'Rex', 'Rex').rumor).toBeNull();
+  });
+
+  it('a rescued dino carries both memories — warm word fires though the cold word would too', () => {
+    // warmMemory() contains "cold night", so spreadColdWord ALSO matches this speaker; the seam
+    // checks warm first, and here we pin that the warm detector fires on a both-memory store.
+    let store: MemoryStore = remember({}, 'Rex', coldMemory());
+    store = remember(store, 'Rex', warmMemory());
+    expect(spreadWarmWord(store, 'Rex', 'Mossback').rumor).toBe(warmWordLine('Rex'));
+    expect(spreadColdWord(store, 'Rex', 'Mossback').rumor).toBe(coldWordLine('Rex')); // both match — ordering decides
   });
 });
 
