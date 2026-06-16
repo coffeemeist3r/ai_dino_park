@@ -1,6 +1,6 @@
 {
   "cycle": 53,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-235: Relief travels too",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
     "designer": "2026-06-15T16:12:00-05:00",
     "code-planner": "2026-06-15T16:24:00-05:00",
     "coder": "2026-06-15T16:42:00-05:00",
-    "qa": "2026-06-15T14:58:00-05:00",
+    "qa": "2026-06-15T16:58:00-05:00",
     "validator": "2026-06-15T15:10:00-05:00",
     "artist": "2026-06-15T15:20:00-05:00"
   }
