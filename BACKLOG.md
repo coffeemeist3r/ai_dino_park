@@ -420,7 +420,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > These extend the correction: relief that travels, the trust cost of a false rumor, and the two ways
 > a rumor dies — by sight and by time.
 
-- [ ] BACKLOG-235 [emergent] Relief travels too — when a dino drops a corrected cold rumor (234), the relief becomes a brief bright note it can pass on ("heard Mossback's fine now"), so a correction spreads the way the original worry did — the bowl actively un-tells a thing that's no longer true. Builds on 234 / 223 / 019.
+- [~] BACKLOG-235 [emergent] Relief travels too — when a dino drops a corrected cold rumor (234), the relief becomes a brief bright note it can pass on ("heard Mossback's fine now"), so a correction spreads the way the original worry did — the bowl actively un-tells a thing that's no longer true. Builds on 234 / 223 / 019.
 - [ ] BACKLOG-236 [emergent] The doubter — a prickly (low-agreeableness) dino that meets a cold-rumor's subject looking perfectly fine starts discounting *that carrier's* news (a small capped credibility ding, like cry-wolf 203), so a bowl that spread a false alarm pays a quiet trust cost. Builds on 234 / 203 / 220.
 - [ ] BACKLOG-237 [pokemon] Set the record straight in the book — the collection book marks a dino's cold night "since put right" once it's been warmed/recovered, so the rumor page (219) shows corrections, not only live worries. Builds on 234 / 219 / 186.
 - [ ] BACKLOG-238 [emergent] Stubborn rumor — a rumor about a recovered dino whose carrier never meets it again can't be corrected by sight, so it goes stale on its own (the time-gate half, 222); correction-by-sight (234) and correction-by-time are the two ways a rumor dies. Builds on 234 / 222.
