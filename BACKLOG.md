@@ -443,6 +443,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-244 [emergent] Relief saturates — an all-clear the whole bowl already carries stops being retold (the freshness gate of 222/233 extended to relief), so good news goes quiet once everyone knows, the same way a stale worry does. Builds on 235 / 233 / 222.
 - [ ] BACKLOG-245 [pokemon] The all-clear in the book — the rumor-mill book page (219/232) marks a sufferer's worry "cleared — and the word's gone round" once the relief has spread, closing the loop the page opened. Builds on 235 / 237 / 219.
 
+## Cycle 54 lore additions — the debt of a cleared name (2026-06-16)
+
+> Cycle 49 taught the bowl to carry the cold, 50 turned the word into a deed, 51 let the good news
+> travel, 52 let a carrier retract a false alarm on sight, 53 let the retraction itself travel.
+> Cycle 54's next-up is the already-queued **BACKLOG-243** (grateful to the one who cleared your
+> name): the giving side of the relief arc — a recovered dino, meeting whoever carried its all-clear,
+> warms to it a notch, the symmetric counterpart to the worry-visit (217). These extend the debt of
+> a cleared name: a reciprocity ledger, gratitude in the voice, the good-news bearer's standing, the
+> book's record of it, and what happens when the thanks was premature.
+
+- [ ] BACKLOG-246 [emergent] A debt for the clearing — a cleared dino files *who* spread its all-clear (like the gratitude ledger, 132); later, when that clearer itself sleeps cold, the cleared dino is primed to be first to carry *its* relief forward. Reciprocity in the rumor register. Builds on 243 / 132 / 235.
+- [ ] BACKLOG-247 [social] Thanks in the voice — a just-cleared dino's next keeper greeting may name who cleared its name ("Twitch told everyone I was alright"), gratitude surfacing in dialogue, not just the bond. Deterministic fallback line; LLM colour behind NPCBrain. Builds on 243 / 139 / 235.
+- [ ] BACKLOG-248 [emergent] The town crier — a dino that has spread several all-clears (cleared many names) emerges with a small "good-news bearer" standing, the relief counterpart to the hoarder/gossip role tags derived from tallies. Builds on 235 / 020 / 064.
+- [ ] BACKLOG-249 [pokemon] Who cleared my name in the book — the collection book shows, per dino, who set its record straight ("Twitch cleared my name"), the relief counterpart to the rumor-mill page. Builds on 243 / 219 / 021.
+- [ ] BACKLOG-250 [emergent] Premature thanks — if a dino it thanked for clearing its name (243) spread the all-clear too early and the dino then sleeps cold *again* (240), the grateful bond cools a touch — the thanks didn't hold. Builds on 243 / 240 / 235.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
