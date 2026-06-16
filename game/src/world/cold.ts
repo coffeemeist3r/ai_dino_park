@@ -264,3 +264,59 @@ export function spreadReliefWord(
   const rumor = reliefWordLine(speaker, mem);
   return { store: remember(store, listener, rumor), rumor };
 }
+
+// ── Grateful to the one who cleared your name (BACKLOG-243) — the giving side of the relief arc,
+// the symmetric twin of the sympathy visit (217). Where 217 turns a *worry* into a deed (a carrier
+// crosses to comfort), this turns the *all-clear* into a bond: a recovered sufferer, meeting the
+// dino carrying its first-hand relief memory (the one `spreadReliefWord` spreads), warms to it.
+
+/** The grateful bump — pinned to the 130 console magnitude, exactly as `SYMPATHY_BOND` is, so the two gestures can't drift. */
+export const GRATEFUL_BOND = COMFORT_BOND;
+
+/**
+ * Does `clearer` hold the *first-hand* relief memory about `sufferer` — `saw <sufferer> came through
+ * it fine`? Exact match (mirrors `heardColdWordAbout`); `isShareable` excludes a downstream hearer of
+ * the relief *rumor* (`<x> told me: <sufferer> came through it fine`), so only the one who actually
+ * cleared the name counts.
+ */
+export function clearedMyName(store: MemoryStore, clearer: string, sufferer: string): boolean {
+  return recall(store, clearer).some((e) => isShareable(e) && e === reliefMemory(sufferer));
+}
+
+/** The first-hand memory the recovered sufferer keeps — distinct from cold/warm/relief/came-to-find. */
+export function gratefulMemory(clearer: string): string {
+  return `${clearer} cleared my name`;
+}
+
+/** The line the grateful sufferer floats (both names + 💛, a register distinct from 🫂/😌/😊/🥶). */
+export function gratefulLine(sufferer: string, clearer: string): string {
+  return `${sufferer}: Thanks for setting them straight, ${clearer}. 💛`;
+}
+
+/**
+ * Who, if anyone, should thank whom. If a conversing dino carries the *other's* first-hand relief
+ * memory, that other is the `clearer` and the carrier's subject is the `sufferer` — the recovered
+ * dino warms to the one spreading its all-clear. Pure detector mirroring `sympathyVisit`/`selfCorrect`
+ * — the caller applies the `GRATEFUL_BOND` bump and files `memory` on the sufferer.
+ *
+ * ponytail: fires on every later meeting while the relief memory persists, like the sympathy visit;
+ * the once-per-clearing freshness gate is BACKLOG-244/250 territory.
+ */
+export function clearedName(
+  store: MemoryStore,
+  a: string,
+  b: string,
+): { sufferer: string; clearer: string; memory: string } | null {
+  if (a === b) return null;
+  let clearer: string | null = null;
+  let sufferer: string | null = null;
+  if (clearedMyName(store, a, b)) {
+    clearer = a;
+    sufferer = b;
+  } else if (clearedMyName(store, b, a)) {
+    clearer = b;
+    sufferer = a;
+  }
+  if (!clearer || !sufferer) return null;
+  return { sufferer, clearer, memory: gratefulMemory(clearer) };
+}

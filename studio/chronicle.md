@@ -1523,3 +1523,11 @@ isShareable — no new primitive (forget not needed). Plan: cold.ts gains cleare
 trio; WorldScene adds one converse rung (precedence 234 > 243 > 217, nested in selfCorrect's else)
 + __clearedName/__rememberRelief hooks; unit block in cold.test.ts; new cycle-054-grateful e2e.
 No save change, no deps. phase → coder-pending.
+
+## 2026-06-16 — cycle 054 — coder — BACKLOG-243 built
+world/cold.ts: GRATEFUL_BOND (=COMFORT_BOND), clearedMyName, gratefulMemory, gratefulLine, and the
+pure clearedName detector (mirrors sympathyVisit/selfCorrect). WorldScene: a grateful rung in
+converse as `else if (clearedName(snapshot,…))` above the sympathy block (precedence 234 > 243 >
+217), on the pre-meeting snapshot; + __clearedName/__rememberRelief hooks. Unit block (8 tests) in
+cold.test.ts; new cycle-054-grateful e2e (2 specs). Build clean; 485 unit green (+8); render smoke
+200; web-llm boundary clean. No save change, no deps. phase → qa-pending.

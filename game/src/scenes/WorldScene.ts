@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1185,6 +1185,20 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__rememberWarm = (name: string) => {
       this.memory = remember(this.memory, name, warmMemory());
     };
+    // dev-only: grateful to the one who cleared your name (BACKLOG-243) — a recovered sufferer warms
+    // to the carrier of its first-hand all-clear; applies the bump + memory, returns the result or null.
+    (window as any).__clearedName = (a: string, b: string) => {
+      const t = clearedName(this.memory, a, b);
+      if (t) {
+        this.memory = remember(this.memory, t.sufferer, t.memory);
+        this.bonds = strengthen(this.bonds, t.sufferer, t.clearer, GRATEFUL_BOND);
+      }
+      return t;
+    };
+    // dev-only: plant a first-hand relief memory (`saw <sufferer> came through it fine`) on the clearer.
+    (window as any).__rememberRelief = (name: string, sufferer: string) => {
+      this.memory = remember(this.memory, name, reliefMemory(sufferer));
+    };
     (window as any).__lastConversation = () => this.lastConversation;
     (window as any).__forceConverse = async () => {
       if (this.dinos.length >= 2) {
@@ -1453,6 +1467,17 @@ export class WorldScene extends Phaser.Scene {
         const cDino = this.dinos.find((d) => d.name === correction.corrector);
         if (cDino) this.showBubble(cDino, reliefLine(correction.corrector, correction.sufferer));
         this.logEvent(`😌 ${correction.corrector} sees ${correction.sufferer} came through it fine`);
+      } else if (clearedName(snapshot, a.name, b.name)) {
+        // Grateful to the one who cleared your name (BACKLOG-243): a recovered sufferer meets the
+        // dino carrying its first-hand all-clear and warms to it — the giving side of relief, the
+        // symmetric twin of the sympathy visit below. Outranks the visit; reads the pre-meeting
+        // snapshot so a relief filed THIS meeting can't grant gratitude until a later one.
+        const thanks = clearedName(snapshot, a.name, b.name)!;
+        this.memory = remember(this.memory, thanks.sufferer, thanks.memory);
+        this.bonds = strengthen(this.bonds, thanks.sufferer, thanks.clearer, GRATEFUL_BOND);
+        const sDino = this.dinos.find((d) => d.name === thanks.sufferer);
+        if (sDino) this.showBubble(sDino, gratefulLine(thanks.sufferer, thanks.clearer));
+        this.logEvent(`💛 ${thanks.sufferer} thanks ${thanks.clearer} for clearing their name`);
       } else {
         // Secondhand sympathy (BACKLOG-217): if either dino already carried the other's cold word,
         // the carrier crosses over to keep it company — a sub-floor bond bump + a memory it keeps.

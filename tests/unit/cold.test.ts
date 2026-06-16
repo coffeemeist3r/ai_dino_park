@@ -27,6 +27,11 @@ import {
   RELIEF_NEWS_TOKEN,
   reliefWordLine,
   spreadReliefWord,
+  GRATEFUL_BOND,
+  clearedMyName,
+  gratefulMemory,
+  gratefulLine,
+  clearedName,
 } from '../../game/src/world/cold';
 import { COMFORT_BOND, comfortMemory } from '../../game/src/world/comfort';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
@@ -377,5 +382,71 @@ describe('relief travels too (BACKLOG-235)', () => {
   it('relief leads — a corrector that also carries a warm memory still spreads the all-clear', () => {
     const both = remember(carriesRelief(), 'Sunny', warmMemory());
     expect(spreadReliefWord(both, 'Sunny', 'Glade').rumor).toContain('came through it fine');
+  });
+});
+
+describe('grateful to the one who cleared your name (BACKLOG-243)', () => {
+  // Sunny cleared Mossback's name (BACKLOG-234/235), so Sunny carries the first-hand relief memory
+  // about Mossback. Mossback is the recovered sufferer who will warm to Sunny.
+  function clearerCarries(): MemoryStore {
+    return remember({}, 'Sunny', reliefMemory('Mossback'));
+  }
+
+  it('GRATEFUL_BOND is pinned to the console magnitude, like SYMPATHY_BOND — they cannot drift', () => {
+    expect(GRATEFUL_BOND).toBe(COMFORT_BOND);
+    expect(GRATEFUL_BOND).toBe(SYMPATHY_BOND);
+  });
+
+  it('the grateful memory is first-hand and distinct from every other cold-arc note', () => {
+    const m = gratefulMemory('Sunny');
+    expect(isShareable(m)).toBe(true); // a thing felt, not hearsay
+    expect(m).not.toBe(reliefMemory('Sunny'));
+    expect(m).not.toBe(cameToFindMemory('Sunny'));
+    expect(m).not.toBe(coldMemory());
+    expect(m).not.toBe(warmMemory());
+    expect(m).not.toBe(neglectMemory());
+  });
+
+  it('the grateful line names both dinos and carries the 💛 register, distinct from 🫂/😌/😊/🥶', () => {
+    const line = gratefulLine('Mossback', 'Sunny');
+    expect(line).toContain('Mossback');
+    expect(line).toContain('Sunny');
+    expect(line).toContain('💛');
+    expect(line).not.toContain('🫂');
+    expect(line).not.toContain('😌');
+    expect(line).not.toContain('😊');
+    expect(line).not.toContain('🥶');
+  });
+
+  it('clearedMyName is true only for the holder of the first-hand relief memory', () => {
+    expect(clearedMyName(clearerCarries(), 'Sunny', 'Mossback')).toBe(true);
+    expect(clearedMyName(clearerCarries(), 'Mossback', 'Sunny')).toBe(false);
+    expect(clearedMyName({}, 'Sunny', 'Mossback')).toBe(false);
+  });
+
+  it('a dino that merely HEARD the relief rumor is not the clearer (the isShareable guard)', () => {
+    // Glade only heard "Sunny told me: Mossback came through it fine" — a 1-hop rumor, not first-hand.
+    const heard = remember({}, 'Glade', reliefWordLine('Sunny', reliefMemory('Mossback')));
+    expect(clearedMyName(heard, 'Glade', 'Mossback')).toBe(false);
+    expect(clearedName(heard, 'Glade', 'Mossback')).toBeNull();
+  });
+
+  it('clearedName names the clearer and the recovered sufferer, with the grateful memory', () => {
+    expect(clearedName(clearerCarries(), 'Sunny', 'Mossback')).toEqual({
+      clearer: 'Sunny',
+      sufferer: 'Mossback',
+      memory: gratefulMemory('Sunny'),
+    });
+  });
+
+  it('is direction-agnostic — call order does not decide who is the clearer', () => {
+    const c = clearedName(clearerCarries(), 'Mossback', 'Sunny');
+    expect(c?.clearer).toBe('Sunny');
+    expect(c?.sufferer).toBe('Mossback');
+  });
+
+  it('returns null when neither carries the other’s relief, and when a === b', () => {
+    expect(clearedName(remember({}, 'Rex', 'you greeted me'), 'Rex', 'Glade')).toBeNull();
+    expect(clearedName(clearerCarries(), 'Sunny', 'Sunny')).toBeNull();
   });
 });

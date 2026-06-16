@@ -97,3 +97,22 @@ Free the port before e2e (`npx --yes kill-port 5173`); a lone cold-boot timeout 
 ## Estimated touch count
 
 ~4 files (cold.ts, WorldScene.ts, cold.test.ts, cycle-054-grateful.spec.ts). Well within one fire.
+
+---
+
+## Shipped
+
+**Files touched (exactly as planned, ~4):**
+- `game/src/world/cold.ts` — added `GRATEFUL_BOND` (= `COMFORT_BOND`), `clearedMyName`, `gratefulMemory`, `gratefulLine`, `clearedName` (pure detector mirroring `sympathyVisit`/`selfCorrect`, with a `ponytail:` note on the re-fire / freshness-gate deferral).
+- `game/src/scenes/WorldScene.ts` — extended the `cold.ts` import; inserted the grateful rung into `converse` as `else if (clearedName(snapshot, …))` *above* the sympathy block (precedence 234 > 243 > 217), reading the pre-meeting snapshot; added `__clearedName` + `__rememberRelief` dev hooks.
+- `tests/unit/cold.test.ts` — new `describe('grateful to the one who cleared your name (BACKLOG-243)')` block, 8 tests.
+- `tests/e2e/cycle-054-grateful.spec.ts` — created, 2 specs (the seam fires the 💛 beat + bond/memory; control: a mere hearer of the relief rumor is not the clearer).
+
+**Deviations from plan:** none.
+
+**Build + unit-test status:**
+- `npm --prefix game run build` — ✅ clean (built in 8.8s).
+- `npm run test:unit` — ✅ 485 passed (46 files), up from 477 (+8 new cold tests).
+- Dev-server render smoke — ✅ `curl http://localhost:5173/` → HTTP 200.
+- web-llm boundary grep — ✅ clean (only under `game/src/ai/`).
+- E2E deferred to QA (full `playwright` run).
