@@ -1507,3 +1507,11 @@ arc into its giving side — a reciprocity ledger (246), thanks in the voice (24
 bearer's standing (248), the book's record (249), and premature thanks souring (250). Next-up:
 BACKLOG-243 (grateful to the one who cleared your name) — the symmetric twin of the shipped sympathy
 visit (217), a recovered dino warming to whoever carried its all-clear. phase → designer-pending.
+
+## 2026-06-16 — cycle 054 — designer — BACKLOG-243 picked, spec written
+Chose the lore-suggested next-up: BACKLOG-243 (grateful to the one who cleared your name), the
+symmetric twin of the shipped sympathy visit (217) on the relief spine (235). Spec: a pure
+`clearedName` detector in world/cold.ts (mirrors sympathyVisit/selfCorrect) — when a recovered
+sufferer meets a dino carrying its first-hand relief memory, it warms to it (GRATEFUL_BOND ===
+COMFORT_BOND) + files a "<clearer> cleared my name" memory. Precedence 234 > 243 > 217; snapshot
+discipline; no save change. Marked 243 [~]. phase → codeplan-pending.

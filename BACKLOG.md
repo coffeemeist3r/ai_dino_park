@@ -439,7 +439,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-241 [emergent] The bowl's weather of feeling — distill the live warm/relief vs cold rumor counts into one faint park-mood read at the glass ("the bowl feels easy today" / "a worried hush"), the whole gossip graph boiled down to a single barometer. Builds on 235 / 221 / 239.
 - [ ] BACKLOG-242 [emergent] Sheepish at your own rumor — a recovered dino that overhears its own cold word still circulating ducks its head ("oh — they're still on about that?"), a 😅 beat: being the subject of stale gossip you've already outlived. Builds on 234 / 185 / 220.
-- [ ] BACKLOG-243 [social] Grateful to the one who cleared your name — a recovered sufferer, meeting the dino that spread its all-clear (235), warms to it a notch: clearing a friend's name earns a bond, the giving side of relief beside the worry of 217. Builds on 235 / 217 / 130.
+- [~] BACKLOG-243 [social] Grateful to the one who cleared your name — a recovered sufferer, meeting the dino that spread its all-clear (235), warms to it a notch: clearing a friend's name earns a bond, the giving side of relief beside the worry of 217. Builds on 235 / 217 / 130.
 - [ ] BACKLOG-244 [emergent] Relief saturates — an all-clear the whole bowl already carries stops being retold (the freshness gate of 222/233 extended to relief), so good news goes quiet once everyone knows, the same way a stale worry does. Builds on 235 / 233 / 222.
 - [ ] BACKLOG-245 [pokemon] The all-clear in the book — the rumor-mill book page (219/232) marks a sufferer's worry "cleared — and the word's gone round" once the relief has spread, closing the loop the page opened. Builds on 235 / 237 / 219.
 
