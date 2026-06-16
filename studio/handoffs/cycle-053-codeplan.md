@@ -92,3 +92,15 @@ Build the speaker's relief memory the real way: `remember(store, corrector, reli
 ## Estimated touch count
 
 ~4 files (cold.ts, WorldScene.ts, cold.test.ts, new e2e). Well under the 6 ceiling, no split.
+
+## Shipped
+
+**Files touched (4, as planned):**
+- `game/src/world/cold.ts` — added `RELIEF_NEWS_TOKEN`, `reliefWordLine(speaker, reliefMem)`, and `spreadReliefWord(store, speaker, listener)` — a structural twin of `spreadWarmWord` (find the shareable memory carrying the relief token, plant a `RUMOR_MARK`ed line on the listener).
+- `game/src/scenes/WorldScene.ts` — imported `spreadReliefWord`; prepended the relief rung to the converse gossip cascade (`relief ? : warm ? : cold ? : gossip`) with a distinct `😌` all-clear log as the first `if`; added the `__spreadReliefWord` hook beside `__spreadWarmWord`.
+- `tests/unit/cold.test.ts` — new `describe('relief travels too (BACKLOG-235)')`, 6 tests (token uniqueness, line shape + non-shareable, spread, 1-hop ceiling, null cases, relief-leads).
+- `tests/e2e/cycle-053-relief-travels.spec.ts` — new: the all-clear travels to a third dino + 1-hop + 😌 log; a no-relief control.
+
+**Deviations:** none. No new memory primitive (the plan's reuse held — `remember`/`recall`/`isShareable` only).
+
+**Build:** ✅ `npm --prefix game run build` clean. **Unit:** ✅ `npm run test:unit` — 477 passed (+6). **Dev server:** ✅ HTTP 200. No save-format change, no deps. E2E handed to QA.

@@ -229,3 +229,38 @@ export function selfCorrect(
   if (!corrector || !sufferer) return null;
   return { corrector, sufferer, dropped: coldWordLine(sufferer), memory: reliefMemory(sufferer) };
 }
+
+// ── Relief travels too (BACKLOG-235) — the retraction becomes news. The bright twin of the cold
+// word: a dino that dropped a stale cold rumor (234) now carries a first-hand relief memory, and
+// leads with that all-clear when it next meets another — a 1-hop rumor on the same gossip spine, so
+// a third dino never near the sufferer learns the worry is over. The bowl actively un-tells it.
+
+/** A stable substring of `reliefMemory()` — the tell that a remembered event is a recovery all-clear. */
+export const RELIEF_NEWS_TOKEN = 'came through it fine';
+
+/**
+ * The distinct "word of the relief" a listener remembers when a corrector lets the all-clear slip.
+ * Built from the corrector's first-hand `reliefMemory` (`saw <X> came through it fine`): the leading
+ * `saw ` is dropped so the retelling reads as news, and `RUMOR_MARK` is prefixed so it reads as
+ * heard-not-witnessed and can't re-spread (1 hop) — distinct from the corrector's own memory.
+ */
+export function reliefWordLine(speaker: string, reliefMem: string): string {
+  return `${speaker} ${RUMOR_MARK} ${reliefMem.replace(/^saw /, '')}`;
+}
+
+/**
+ * One corrector lets the all-clear slip to another. If `speaker` carries a *first-hand* relief
+ * memory (shareable, not itself a rumor), plant the word-of-the-relief line on `listener` and return
+ * it; otherwise return null so the caller falls back to the warm word / cold word / generic gossip.
+ */
+export function spreadReliefWord(
+  store: MemoryStore,
+  speaker: string,
+  listener: string,
+): { store: MemoryStore; rumor: string | null } {
+  if (speaker === listener) return { store, rumor: null };
+  const mem = recall(store, speaker).find((e) => isShareable(e) && e.includes(RELIEF_NEWS_TOKEN));
+  if (!mem) return { store, rumor: null };
+  const rumor = reliefWordLine(speaker, mem);
+  return { store: remember(store, listener, rumor), rumor };
+}

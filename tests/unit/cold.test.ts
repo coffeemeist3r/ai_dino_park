@@ -24,6 +24,9 @@ import {
   reliefLine,
   reliefMemory,
   selfCorrect,
+  RELIEF_NEWS_TOKEN,
+  reliefWordLine,
+  spreadReliefWord,
 } from '../../game/src/world/cold';
 import { COMFORT_BOND, comfortMemory } from '../../game/src/world/comfort';
 import { REPAIR_BONUS } from '../../game/src/world/repair';
@@ -333,5 +336,46 @@ describe('the bowl self-corrects (BACKLOG-234)', () => {
   it('the dropped string is exactly the planted cold word — a precise forget, no substring', () => {
     const c = selfCorrect(carriedWordRecovered(), 'Sunny', 'Mossback');
     expect(c?.dropped).toBe(coldWordLine('Mossback'));
+  });
+});
+
+describe('relief travels too (BACKLOG-235)', () => {
+  // Sunny corrected itself about Mossback (BACKLOG-234), so it now carries the first-hand relief memory.
+  function carriesRelief(): MemoryStore {
+    return remember({}, 'Sunny', reliefMemory('Mossback'));
+  }
+
+  it('the relief token is the tell, and is unique — absent from the cold and warm memories', () => {
+    expect(reliefMemory('Mossback')).toContain(RELIEF_NEWS_TOKEN);
+    expect(coldMemory()).not.toContain(RELIEF_NEWS_TOKEN);
+    expect(warmMemory()).not.toContain(RELIEF_NEWS_TOKEN);
+  });
+
+  it('reliefWordLine strips the leading "saw", names the sufferer, and reads as a 1-hop rumor', () => {
+    const line = reliefWordLine('Sunny', reliefMemory('Mossback'));
+    expect(line).toBe(`Sunny ${RUMOR_MARK} Mossback came through it fine`);
+    expect(line).toContain(RUMOR_MARK);
+    expect(isShareable(line)).toBe(false); // heard, not witnessed — can't re-spread
+  });
+
+  it('spreads the all-clear when the speaker holds a first-hand relief memory', () => {
+    const { store: next, rumor } = spreadReliefWord(carriesRelief(), 'Sunny', 'Glade');
+    expect(rumor).toBe(reliefWordLine('Sunny', reliefMemory('Mossback')));
+    expect(next['Glade']).toContain(rumor);
+  });
+
+  it('the planted relief rumor cannot re-spread — the 1-hop ceiling holds', () => {
+    const { store: afterFirst } = spreadReliefWord(carriesRelief(), 'Sunny', 'Glade');
+    expect(spreadReliefWord(afterFirst, 'Glade', 'Rex').rumor).toBeNull();
+  });
+
+  it('returns null when the speaker has no first-hand relief memory, and when speaker === listener', () => {
+    expect(spreadReliefWord(remember({}, 'Sunny', 'you greeted me'), 'Sunny', 'Glade').rumor).toBeNull();
+    expect(spreadReliefWord(carriesRelief(), 'Sunny', 'Sunny').rumor).toBeNull();
+  });
+
+  it('relief leads — a corrector that also carries a warm memory still spreads the all-clear', () => {
+    const both = remember(carriesRelief(), 'Sunny', warmMemory());
+    expect(spreadReliefWord(both, 'Sunny', 'Glade').rumor).toContain('came through it fine');
   });
 });

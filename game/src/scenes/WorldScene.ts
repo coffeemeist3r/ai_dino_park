@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1150,6 +1150,12 @@ export class WorldScene extends Phaser.Scene {
       return g.rumor;
     };
     (window as any).__warmWord = (speaker: string) => warmWordLine(speaker);
+    // dev-only: word of the relief (BACKLOG-235) — a corrector leads with the all-clear it carries.
+    (window as any).__spreadReliefWord = (a: string, b: string) => {
+      const g = spreadReliefWord(this.memory, a, b);
+      this.memory = g.store;
+      return g.rumor;
+    };
     // dev-only: secondhand sympathy visit (BACKLOG-217) — the carrier of a cold word comes to find
     // the sufferer; applies the bump + memory and returns {visitor, sufferer, memory} or null.
     (window as any).__sympathyVisit = (a: string, b: string) => {
@@ -1419,15 +1425,20 @@ export class WorldScene extends Phaser.Scene {
       );
       this.lastConversation = { speaker: a.name, text: reply.text, source: reply.source };
       this.memory = remember(this.memory, a.name, `you ran into ${b.name} the ${b.species}`);
-      // Gossip: the speaker passes news to the listener (BACKLOG-019). A dino the keeper warmed
-      // leads with the word of the warmth (BACKLOG-223), else a cold-slept dino leads with the word
-      // of the cold (BACKLOG-185), else the generic most-recent retelling. Warm is checked first so
-      // a rescued dino talks about the rescue (its warm memory also matches the cold token).
-      const warm = spreadWarmWord(this.memory, a.name, b.name);
+      // Gossip: the speaker passes news to the listener (BACKLOG-019). A dino that just dropped a
+      // false alarm leads with the all-clear (BACKLOG-235), else a dino the keeper warmed leads with
+      // the word of the warmth (BACKLOG-223), else a cold-slept dino leads with the word of the cold
+      // (BACKLOG-185), else the generic most-recent retelling. Relief is checked first so the bowl
+      // un-tells a stale worry the way it once told it; warm before cold because a warm memory also
+      // matches the cold token. Each `?:` only fires when an earlier rung didn't, so the log else-if
+      // order tracks the cascade order.
+      const relief = spreadReliefWord(this.memory, a.name, b.name);
+      const warm = relief.rumor ? relief : spreadWarmWord(this.memory, a.name, b.name);
       const cold = warm.rumor ? warm : spreadColdWord(this.memory, a.name, b.name);
       const gossip = cold.rumor ? cold : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
-      if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
+      if (relief.rumor) this.logEvent(`😌 ${b.name} heard the all-clear from ${a.name}`);
+      else if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
