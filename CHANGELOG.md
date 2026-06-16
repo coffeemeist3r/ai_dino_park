@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 053 — 2026-06-15
+- BACKLOG-235: Relief travels too — the retraction becomes news. A dino that dropped a stale cold rumor (234) files a first-hand relief memory (`saw <X> came through it fine`) and now leads with that all-clear the next time it speaks — a 1-hop rumor on the gossip spine, so a third dino never near the sufferer learns the worry is over. `world/cold.ts` gains the bright twin of the cold/warm word: `RELIEF_NEWS_TOKEN`, `reliefWordLine` (strips the `saw `, prefixes `RUMOR_MARK` so it can't re-spread), and `spreadReliefWord` (a structural twin of `spreadWarmWord`). The converse seam prepends a relief rung to the cascade (`relief ? : warm ? : cold ? : gossip`) with a distinct 😌 all-clear log; warm/cold/generic become `else if`, byte-equivalent when no relief memory exists, so the cycle-051/050/049 pins stay green. No new memory primitive (reuse held); same-meeting self-spread impossible by construction (relief filed after the cascade). No save change, no deps. 9/9 AC; 477 unit / 174 e2e green, no flake.
+
 ## Cycle 052 — 2026-06-15
 - BACKLOG-234: The bowl self-corrects — recovery un-tells the rumor. A dino carrying word that a friend slept cold, meeting that friend and finding it recovered (it now carries a first-hand warm memory, 184), drops the now-false worry with relief ("Oh — you're alright now! 😌") instead of pitying it: it forgets the stale `coldWordLine(sufferer)`, files a relief memory, logs a 😌 line, and the cycle-217 sympathy visit is suppressed (bond untouched). A `selfCorrect` detector mirrors `sympathyVisit`; `recovered` reuses the exact `spreadWarmWord` predicate; the one new primitive is a four-line pure `forget` in `ai/memory.ts`. The seam checks self-correct first; the sympathy block is byte-unchanged in the else, so a non-recovered sufferer matches cycle 50. No save change, no deps. 9/9 AC; 471 unit / 172 e2e green, no flake.
 
