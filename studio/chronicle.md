@@ -1515,3 +1515,11 @@ symmetric twin of the shipped sympathy visit (217) on the relief spine (235). Sp
 sufferer meets a dino carrying its first-hand relief memory, it warms to it (GRATEFUL_BOND ===
 COMFORT_BOND) + files a "<clearer> cleared my name" memory. Precedence 234 > 243 > 217; snapshot
 discipline; no save change. Marked 243 [~]. phase → codeplan-pending.
+
+## 2026-06-16 — cycle 054 — code-planner — BACKLOG-243 plan, ~4 files
+Reuse audit: the detector mirrors sympathyVisit/selfCorrect in world/cold.ts; bond bump reuses
+strengthen (GRATEFUL_BOND === COMFORT_BOND, like SYMPATHY_BOND); memory reuses remember/recall/
+isShareable — no new primitive (forget not needed). Plan: cold.ts gains clearedName + grateful
+trio; WorldScene adds one converse rung (precedence 234 > 243 > 217, nested in selfCorrect's else)
++ __clearedName/__rememberRelief hooks; unit block in cold.test.ts; new cycle-054-grateful e2e.
+No save change, no deps. phase → coder-pending.
