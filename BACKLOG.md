@@ -459,6 +459,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-249 [pokemon] Who cleared my name in the book — the collection book shows, per dino, who set its record straight ("Twitch cleared my name"), the relief counterpart to the rumor-mill page. Builds on 243 / 219 / 021.
 - [ ] BACKLOG-250 [emergent] Premature thanks — if a dino it thanked for clearing its name (243) spread the all-clear too early and the dino then sleeps cold *again* (240), the grateful bond cools a touch — the thanks didn't hold. Builds on 243 / 240 / 235.
 
+## Cycle 55 lore additions — gratitude finds a voice (2026-06-17)
+
+> Cycle 54 made the all-clear *earn* a friend (243); cycle 55's next-up is the already-queued
+> **BACKLOG-247** (thanks in the voice) — that gratitude pulled up out of the bond math and into
+> dialogue the player hears. These extend the spoken thanks: when it fades, who it's said to,
+> how temperament colours it, what being thanked aloud does to the clearer, and how it can misfire.
+
+- [ ] BACKLOG-251 [emergent] Gratitude fades — the 247 thanks-line surfaces only while the cleared-name memory is fresh, then quiets, so gratitude reads as a passing feeling, not a permanent script. Builds on 247 / 222.
+- [ ] BACKLOG-252 [social] Thanks to their face — a just-cleared dino that next *meets its clearer* says a spoken 💛 thanks dino-to-dino, gratitude surfacing between dinos, not only to the keeper. Builds on 243 / 247.
+- [ ] BACKLOG-253 [emergent] Grudging thanks — a prickly (low-agreeableness) dino gives a gruff version of the thanks ("…yeah. thanks, I guess"); temperament colours even gratitude. Builds on 247 / 010.
+- [ ] BACKLOG-254 [emergent] The named savior swells — when a dino names its clearer aloud in the clearer's earshot (252), the clearer gets a small pride beat (😌) + a tiny mutual bond nudge; being publicly thanked feels good. Builds on 252 / 243.
+- [ ] BACKLOG-255 [emergent] Misremembered savior — a dino whose all-clear was spread by *two* carriers may thank the more recent/closer one, a small fallibility in gratitude; the bowl's memory isn't perfect. Builds on 247 / 243.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*

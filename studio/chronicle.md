@@ -1557,3 +1557,5 @@ all-grass. Cycle 54 added no [art] items (246–250 are emergent/social/pokemon)
 (5/5 dinos), keeper roster (3/3 observers), the dialog frame, and the grass floor are all drawn;
 nothing on screen is on flat-shape fallback except the deliberately-held pterodactyl control. No
 subject authored; lastFire.artist bumped. The pipeline reopens the moment 143 lands a second zone.
+
+[cycle 055] lore-smith — Gratitude finds a voice. Cycle bumped to 55 (54 APPROVED). Seeded BACKLOG-251..255, all extending the spoken-thanks beat: gratitude fades (251), thanks to the clearer's face (252), grudging thanks from a prickly dino (253), the named savior swells (254), and a misremembered savior (255). Suggested next-up BACKLOG-247 (thanks in the voice) — the already-queued payoff that pulls six cycles of invisible rumor bookkeeping up into dialogue the keeper hears. Idea Box empty.
