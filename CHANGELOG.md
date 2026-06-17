@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 055 — 2026-06-17
+- BACKLOG-247: Thanks in the voice — a just-cleared dino names who cleared its name in its next keeper greeting (deterministic canned line + LLM-colour prompt weave, off the grateful memory cycle 54 already files). Pure `whoClearedMyName` parser + one `NPCContext.gratitude` field; no save change, no deps. 494 unit / 178 e2e green.
+
 ## Cycle 054 — 2026-06-16
 - BACKLOG-243: Grateful to the one who cleared your name — the giving side of relief. Where the sympathy visit (217) turned a *worry* into a deed, this turns the *all-clear* into a bond: a recovered sufferer, meeting the dino carrying its first-hand relief memory (`saw <X> came through it fine`), warms to that clearer — a `GRATEFUL_BOND` bump (pinned `=== COMFORT_BOND`, as `SYMPATHY_BOND` is), a 💛 beat, and a "<clearer> cleared my name" memory. `world/cold.ts` gains the grateful trio + `clearedName`, a pure detector mirroring `sympathyVisit`/`selfCorrect`; its `isShareable` guard means only the holder of the *witnessed* relief counts — a downstream hearer of the 1-hop relief rumor does not. The converse seam adds one `else if` rung above the sympathy block (precedence 234 > 243 > 217), on the pre-meeting snapshot so a relief filed this meeting can't grant gratitude until a later one; byte-equivalent when it doesn't fire, so the cycle-049/050/051/052/053 seam pins stayed green. No new memory primitive (reuse held), no save change, no deps, boundary clean. 9/9 AC; 485 unit / 176 e2e green, no flake.
 
