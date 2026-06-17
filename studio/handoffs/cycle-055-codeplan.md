@@ -77,3 +77,24 @@ none.
 
 ## Estimated touch count
 ~6 files (2 new tests + cold.ts + brain.ts + webllmBrain.ts + WorldScene.ts). Within budget.
+
+## Shipped
+Files touched (exactly the plan, 6):
+- `game/src/world/cold.ts` — `CLEARED_NAME_SUFFIX` + pure `whoClearedMyName(store, name)` (read-back
+  twin of `clearedMyName`; reverse scan, `isShareable` guard, exact-suffix parse, non-empty clearer).
+- `game/src/ai/brain.ts` — `NPCContext.gratitude?` field + `thanksLine(clearer)`; `cannedReply`
+  returns the thanks line (mood happy) when `gratitude` is set, normal greeting otherwise.
+- `game/src/ai/webllmBrain.ts` — `buildMessages` weaves a one-clause gratitude lead into `system`
+  (`${lately}${grateful}`); byte-identical when `gratitude` is unset.
+- `game/src/scenes/WorldScene.ts` — import `gratefulMemory`/`whoClearedMyName`; `pickTone` greet ctx
+  and the `__greetPrompt` ctx both pass `gratitude: whoClearedMyName(...) ?? undefined`; new
+  `__rememberGrateful(sufferer, clearer)` dev hook beside `__rememberWarm`.
+- `tests/unit/cycle-055-thanks-voice.test.ts` — 9 unit assertions (parser + canned + prompt).
+- `tests/e2e/cycle-055-thanks-voice.spec.ts` — 2 e2e (names clearer on greet; control names none).
+
+No deviations from the plan. No `ai → world` import (dialogue text lives in `brain.ts`; `cold.ts`
+only parses). No save-format change, no new dependency.
+
+**Build:** ✅ clean (`npm --prefix game run build`).
+**Unit:** ✅ 494 passed (was 485; +9 new).
+**New e2e smoke:** ✅ cycle-055-thanks-voice 2/2 (full suite is QA's run).

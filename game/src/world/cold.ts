@@ -320,3 +320,29 @@ export function clearedName(
   if (!clearer || !sufferer) return null;
   return { sufferer, clearer, memory: gratefulMemory(clearer) };
 }
+
+// ── Thanks in the voice (BACKLOG-247) — gratitude pulled up out of the bond math and into dialogue.
+// The grateful memory `<clearer> cleared my name` (filed by `clearedName`, 243) is read back so a
+// recovered dino names its clearer in its next keeper greeting. Pure parser only — the spoken line
+// itself lives in the brain layer (`ai/`), so `world` stays free of dialogue text and there is no
+// `ai → world` import.
+
+/** The stable suffix `gratefulMemory` ends with — the tell that a memory names who cleared a dino. */
+export const CLEARED_NAME_SUFFIX = ' cleared my name';
+
+/**
+ * Who, if anyone, cleared `name`'s name — read back from its first-hand `<clearer> cleared my name`
+ * memory (`gratefulMemory`, 243). Returns the most-recent clearer, or null. `isShareable` excludes
+ * any rumor-marked hearsay so only a first-hand grateful memory counts.
+ */
+export function whoClearedMyName(store: MemoryStore, name: string): string | null {
+  const mems = recall(store, name);
+  for (let i = mems.length - 1; i >= 0; i--) {
+    const e = mems[i];
+    if (isShareable(e) && e.endsWith(CLEARED_NAME_SUFFIX)) {
+      const clearer = e.slice(0, -CLEARED_NAME_SUFFIX.length);
+      if (clearer) return clearer;
+    }
+  }
+  return null;
+}

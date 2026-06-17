@@ -52,7 +52,7 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -1185,6 +1185,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__rememberWarm = (name: string) => {
       this.memory = remember(this.memory, name, warmMemory());
     };
+    // dev-only: plant a "<clearer> cleared my name" memory (BACKLOG-247) without staging the gossip arc.
+    (window as any).__rememberGrateful = (sufferer: string, clearer: string) => {
+      this.memory = remember(this.memory, sufferer, gratefulMemory(clearer));
+    };
     // dev-only: grateful to the one who cleared your name (BACKLOG-243) — a recovered sufferer warms
     // to the carrier of its first-hand all-clear; applies the bump + memory, returns the result or null.
     (window as any).__clearedName = (a: string, b: string) => {
@@ -1677,6 +1681,7 @@ export class WorldScene extends Phaser.Scene {
           timeOfDay: dayPhase(now.hour),
           affection: heartsFromPoints(this.friendship[d.name] ?? 0),
           recentMemory: recall(this.memory, d.name),
+          gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
         },
         { kind: 'player_greet' },
       );
@@ -2158,6 +2163,8 @@ export class WorldScene extends Phaser.Scene {
       timeOfDay: dayPhase(now.hour),
       affection: heartsFromPoints(this.friendship[target.name] ?? 0),
       recentMemory: recall(this.memory, target.name),
+      // A just-cleared dino names who set its record straight (BACKLOG-247).
+      gratitude: whoClearedMyName(this.memory, target.name) ?? undefined,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);

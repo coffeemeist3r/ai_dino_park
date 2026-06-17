@@ -22,6 +22,8 @@ export interface NPCContext {
   timeOfDay?: string;
   /** Player friendship level with this dino, 0–10 hearts. */
   affection?: number;
+  /** If set, the name of whoever just cleared this dino's name — surfaces as spoken gratitude (BACKLOG-247). */
+  gratitude?: string;
 }
 
 export interface Observation {
@@ -63,8 +65,18 @@ export function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
   return 'neutral';
 }
 
+/** A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). */
+export function thanksLine(clearer: string): string {
+  return `${clearer} told everyone I was alright — I owe them one.`;
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
+  // A just-cleared dino leads with gratitude, naming its clearer (BACKLOG-247) — the deterministic
+  // half of "thanks in the voice"; the LLM path colours the same fact via buildMessages.
+  if (ctx.gratitude) {
+    return { text: thanksLine(ctx.gratitude), mood: 'happy', source: 'canned' };
+  }
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
   return { text, mood: moodFromTraits(ctx.traits), source: 'canned' };

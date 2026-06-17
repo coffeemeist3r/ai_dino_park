@@ -61,13 +61,17 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const mood = moodFromTraits(ctx.traits) ?? 'neutral';
   const rel = relationshipLabel(ctx.affection);
   const lately = ctx.recentMemory?.length ? `Lately: ${ctx.recentMemory.slice(-3).join('; ')}. ` : '';
+  // BACKLOG-247: a just-cleared dino is grateful and wants to name who set its record straight.
+  const grateful = ctx.gratitude
+    ? `You're quietly grateful: ${ctx.gratitude} cleared your name around the park after a rough spell, and you want to say so. `
+    : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}` +
+    `${lately}${grateful}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).
