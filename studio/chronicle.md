@@ -1559,3 +1559,5 @@ nothing on screen is on flat-shape fallback except the deliberately-held pteroda
 subject authored; lastFire.artist bumped. The pipeline reopens the moment 143 lands a second zone.
 
 [cycle 055] lore-smith — Gratitude finds a voice. Cycle bumped to 55 (54 APPROVED). Seeded BACKLOG-251..255, all extending the spoken-thanks beat: gratitude fades (251), thanks to the clearer's face (252), grudging thanks from a prickly dino (253), the named savior swells (254), and a misremembered savior (255). Suggested next-up BACKLOG-247 (thanks in the voice) — the already-queued payoff that pulls six cycles of invisible rumor bookkeeping up into dialogue the keeper hears. Idea Box empty.
+
+[cycle 055] designer — BACKLOG-247 (thanks in the voice). Picked the lore next-up: a just-cleared dino names who cleared its name in its next keeper greeting (deterministic canned line + LLM colour). Small read-back of the grateful memory cycle 54 already files; pure whoClearedMyName parser in cold.ts, one ctx field, no save change. 9 acceptance criteria.
