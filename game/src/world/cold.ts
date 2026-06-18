@@ -331,13 +331,25 @@ export function clearedName(
 export const CLEARED_NAME_SUFFIX = ' cleared my name';
 
 /**
+ * How many of a dino's most-recent memories the cleared-name thanks stays "fresh" within (BACKLOG-251).
+ * Gratitude is a passing feeling: the spoken thanks (247) surfaces only while the clearing is among the
+ * dino's freshest thoughts; once this many newer memories pile on top, it quiets even though the memory
+ * may still ride the ring. Ring position is the only deterministic age signal the plain memory store
+ * carries (no per-entry timestamp, no save change). Keep ≤ the ring's DEFAULT_MAX (6).
+ */
+export const GRATITUDE_FRESH_WINDOW = 3;
+
+/**
  * Who, if anyone, cleared `name`'s name — read back from its first-hand `<clearer> cleared my name`
- * memory (`gratefulMemory`, 243). Returns the most-recent clearer, or null. `isShareable` excludes
- * any rumor-marked hearsay so only a first-hand grateful memory counts.
+ * memory (`gratefulMemory`, 243). Returns the most-recent clearer, or null. `isShareable` excludes any
+ * rumor-marked hearsay so only a first-hand grateful memory counts. The scan is bounded to the freshest
+ * `GRATITUDE_FRESH_WINDOW` entries (BACKLOG-251): once that many newer memories sit on top, the thanks
+ * has faded and this returns null, so gratitude reads as a feeling that passes, not a permanent script.
  */
 export function whoClearedMyName(store: MemoryStore, name: string): string | null {
   const mems = recall(store, name);
-  for (let i = mems.length - 1; i >= 0; i--) {
+  const fresh = Math.max(0, mems.length - GRATITUDE_FRESH_WINDOW);
+  for (let i = mems.length - 1; i >= fresh; i--) {
     const e = mems[i];
     if (isShareable(e) && e.endsWith(CLEARED_NAME_SUFFIX)) {
       const clearer = e.slice(0, -CLEARED_NAME_SUFFIX.length);

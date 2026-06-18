@@ -78,3 +78,23 @@ none.
 
 ## Estimated touch count
 ~3 files (`cold.ts` + 2 new tests). Well within budget.
+
+## Shipped
+Files touched (exactly the plan, 3):
+- `game/src/world/cold.ts` — added `export const GRATITUDE_FRESH_WINDOW = 3` (doc tied to BACKLOG-251)
+  and bounded `whoClearedMyName`'s reverse scan to the freshest window (`fresh = max(0, len - WINDOW)`);
+  doc comment updated to describe the freshness gate. No other symbol added.
+- `tests/unit/cycle-056-gratitude-fades.test.ts` — 6 assertions: const sanity, fresh/in-window names
+  the clearer (247 regression), faded-but-still-present returns null, buried-deep null, fresh-clearer
+  beats a faded older one.
+- `tests/e2e/cycle-056-gratitude-fades.spec.ts` — 1 spec, the full transition: fresh greet names the
+  clearer (canned line + `__greetPrompt`), bury under `FRESH_WINDOW` cold memories, greet again names
+  none (both paths quiet), no console errors.
+
+No deviations from the plan. No WorldScene/brain edit — both `whoClearedMyName` call sites inherit the
+gate. No `ai → world` import. No save-format change, no new dependency, NPCBrain boundary untouched.
+
+**Build:** ✅ clean (`npm --prefix game run build`, built in 9.01s).
+**Unit:** ✅ 500 passed (was 494; +6 new). Full suite, 48 files.
+**Dev server:** ✅ `http://localhost:5173/` → HTTP 200 (started, curled, killed).
+**Full e2e:** deferred to QA's run.
