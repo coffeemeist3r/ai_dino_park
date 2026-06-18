@@ -466,7 +466,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > dialogue the player hears. These extend the spoken thanks: when it fades, who it's said to,
 > how temperament colours it, what being thanked aloud does to the clearer, and how it can misfire.
 
-- [ ] BACKLOG-251 [emergent] Gratitude fades — the 247 thanks-line surfaces only while the cleared-name memory is fresh, then quiets, so gratitude reads as a passing feeling, not a permanent script. Builds on 247 / 222.
+- [~] BACKLOG-251 [emergent] Gratitude fades — the 247 thanks-line surfaces only while the cleared-name memory is fresh, then quiets, so gratitude reads as a passing feeling, not a permanent script. Builds on 247 / 222.
 - [ ] BACKLOG-252 [social] Thanks to their face — a just-cleared dino that next *meets its clearer* says a spoken 💛 thanks dino-to-dino, gratitude surfacing between dinos, not only to the keeper. Builds on 243 / 247.
 - [ ] BACKLOG-253 [emergent] Grudging thanks — a prickly (low-agreeableness) dino gives a gruff version of the thanks ("…yeah. thanks, I guess"); temperament colours even gratitude. Builds on 247 / 010.
 - [ ] BACKLOG-254 [emergent] The named savior swells — when a dino names its clearer aloud in the clearer's earshot (252), the clearer gets a small pride beat (😌) + a tiny mutual bond nudge; being publicly thanked feels good. Builds on 252 / 243.
