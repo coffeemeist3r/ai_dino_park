@@ -472,6 +472,23 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-254 [emergent] The named savior swells — when a dino names its clearer aloud in the clearer's earshot (252), the clearer gets a small pride beat (😌) + a tiny mutual bond nudge; being publicly thanked feels good. Builds on 252 / 243.
 - [ ] BACKLOG-255 [emergent] Misremembered savior — a dino whose all-clear was spread by *two* carriers may thank the more recent/closer one, a small fallibility in gratitude; the bowl's memory isn't perfect. Builds on 247 / 243.
 
+## Cycle 56 lore additions — gratitude finds its register (2026-06-18)
+
+> Cycle 55 pulled gratitude up into a spoken line the keeper hears (247), but it shipped with a
+> known wart flagged in its own verdict: the thanks surfaces on *every* greet for as long as the
+> cleared-name memory rides the 6-entry ring — gratitude as a permanent script, not a passing
+> feeling. Cycle 56's next-up is the already-queued **BACKLOG-251** (gratitude fades): close that
+> deferred freshness gate before stacking more gratitude beats (252/254) on an ungated line. These
+> new items extend the spoken-gratitude register once it reads as a feeling that comes and goes —
+> the keeper catching it secondhand, regard that outlasts the words, thanks shaded by closeness,
+> spoken pride priming more kindness, and the bowl's quiet hero made legible.
+
+- [ ] BACKLOG-256 [emergent] Thanks overheard at the glass — when a dino says its dino-to-dino thanks (252) close to the keeper avatar, the keeper catches it on a faint 💬 ticker ("you overhear: Mossback thanks Twitch"), the eavesdrop mechanic (228) extended from cold gossip to gratitude. Builds on 252 / 228.
+- [ ] BACKLOG-257 [emergent] Regard outlasts the thanks — after the spoken thanks-line quiets (251), a dino still carries a lasting "owes Twitch" regard that warms how it *gossips about* its clearer (leads with warm-word of that friend, 229), so gratitude becomes durable standing in the bond graph even once the line itself fades. Builds on 251 / 246 / 229.
+- [ ] BACKLOG-258 [emergent] Thanks scales with closeness — a dino cleared by a near-stranger gives a clipped, formal thanks while one cleared by a close friend gushes; the warmth of the spoken line (and the bond it earns) reads the *prior* bond, so the same gesture lands differently depending on the relationship. Builds on 247 / 253 / 013.
+- [ ] BACKLOG-259 [emergent] Pay the gratitude forward — a dino freshly thanked aloud in its earshot (254) is, for a while, quicker to carry the *next* dino's all-clear it could spread, the spoken pride priming generosity in the relief register the way keeper-warmth primes comfort (211/230). Builds on 254 / 246 / 230.
+- [ ] BACKLOG-260 [pokemon] The bowl's quiet hero — the dino thanked aloud by the most others earns a "quiet hero" standing surfaced in the collection book/plaque, the spoken counterpart to the good-news bearer / town-crier tally (248) and a read on who the bowl is most grateful to. Builds on 254 / 248 / 020.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
