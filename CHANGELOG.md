@@ -9,6 +9,9 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 056 — 2026-06-18
+- BACKLOG-251: Gratitude fades — the spoken thanks (247) becomes a passing feeling, not a permanent script. `whoClearedMyName` (which drives both the canned thanks line and the LLM prompt weave) now scans only the freshest `GRATITUDE_FRESH_WINDOW` (3) entries of the memory ring instead of the whole ring, so once a just-cleared dino has lived on and filed that many newer memories, the clearing falls out of its freshest thoughts and the greet returns to a normal hello — the bond 243 earned stands, the memory may still ride the ring, the dino just stops bringing it up. One exported const + one loop-bound change on the existing parser; both spoken paths quiet together with zero WorldScene/brain edits (the gate is inherited at both call sites). Freshness from ring position, not a clock — no per-entry timestamp, no save change. The first freshness gate the cold/relief arc has shipped (222/233/244 still open can copy it). 9/9 AC; 500 unit / 179 e2e green, no flake. Unblocks 252/254/256-260.
+
 ## Cycle 055 — 2026-06-17
 - BACKLOG-247: Thanks in the voice — a just-cleared dino names who cleared its name in its next keeper greeting (deterministic canned line + LLM-colour prompt weave, off the grateful memory cycle 54 already files). Pure `whoClearedMyName` parser + one `NPCContext.gratitude` field; no save change, no deps. 494 unit / 178 e2e green.
 
