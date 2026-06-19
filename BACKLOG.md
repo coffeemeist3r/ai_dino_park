@@ -489,6 +489,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-259 [emergent] Pay the gratitude forward — a dino freshly thanked aloud in its earshot (254) is, for a while, quicker to carry the *next* dino's all-clear it could spread, the spoken pride priming generosity in the relief register the way keeper-warmth primes comfort (211/230). Builds on 254 / 246 / 230.
 - [ ] BACKLOG-260 [pokemon] The bowl's quiet hero — the dino thanked aloud by the most others earns a "quiet hero" standing surfaced in the collection book/plaque, the spoken counterpart to the good-news bearer / town-crier tally (248) and a read on who the bowl is most grateful to. Builds on 254 / 248 / 020.
 
+## Cycle 57 lore additions — gratitude in each dino's own voice (2026-06-18)
+
+> Cycle 56 made the spoken thanks (247) a passing feeling instead of a permanent script (251). The
+> register is now stable enough to *split by temperament* — the CHARTER's first-class "distinct
+> minds" goal applied to gratitude itself. Cycle 57's next-up is the already-queued **BACKLOG-253**
+> (grudging thanks): the same debt, said in five different voices. These extend that split — the
+> effusive twin, proof the gruffness is only skin-deep, manners that wear smooth, and the manner
+> made legible in the book and the scan.
+
+- [ ] BACKLOG-261 [emergent] Effusive thanks — the warm twin of 253: a high-agreeableness dino over-thanks, gushing ("you're the BEST — I'll never forget what you did for me!"); warmth colours gratitude as much as prickliness does, so the same favour lands loud from Twitch and gruff from Rex. Builds on 253 / 010.
+- [ ] BACKLOG-262 [emergent] The debt is the same — a gruff thanks (253) files the *identical* grateful bond a warm one does: temperament colours the words, never the debt. A prickly dino means it under the grumbling — the bond bump (243) is unchanged whatever voice carries it. A pin against gratitude manner ever leaking into the bond math. Builds on 253 / 243.
+- [ ] BACKLOG-263 [emergent] Grudging gratitude wears smooth — a prickly dino it has to thank the *same* clearer enough times softens a touch toward that one dino over time (a tiny capped warmth nudge in how it speaks to them, not a trait rewrite); even a gruff heart wears smooth against a friend who keeps showing up. Builds on 253 / 043.
+- [ ] BACKLOG-264 [pokemon] Gratitude manner in the book — once you've heard a dino thank someone, the collection book notes *how* it thanks ("thanks through gritted teeth" / "thanks effusively" / "a quiet nod of thanks"), reading its agreeableness; the manner becomes legible standing beside hearts and role. Builds on 253 / 261 / 021.
+- [ ] BACKLOG-265 [social] The scan reads the manner — LUMEN-3's Field Scan (157) dossier gains a "gratitude: gruff / warm / even" line off the same agreeableness read, so the observer who scans can tell a grudging thanker from an effusive one before ever hearing it. Builds on 253 / 157 / 038.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
