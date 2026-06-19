@@ -1,7 +1,7 @@
 {
   "cycle": 60,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-272: Fond greeting from a close dino",
   "structureItem": "BACKLOG-032: Roles persist across cycles",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-19T22:00:00-05:00",
     "structure-smith": "2026-06-19T22:05:00-05:00",
-    "designer": "2026-06-19T21:10:00-05:00",
+    "designer": "2026-06-19T22:10:00-05:00",
     "code-planner": "2026-06-19T21:15:00-05:00",
     "coder": "2026-06-19T21:25:00-05:00",
     "qa": "2026-06-19T21:30:00-05:00",
