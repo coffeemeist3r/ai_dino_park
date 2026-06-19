@@ -553,6 +553,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-272 [social] Fond greeting from a close dino — the warm pole of 271: a high-friendship dino (≥8 hearts) opens with a familiar, fond line ("there you are! I was hoping you'd swing by"), so the *first words* of a greeting read the relationship the way the thanks register reads temperament. Builds on 271 / 016 / 051.
 - [ ] BACKLOG-273 [emergent] The visit remembered — a dino greeted while neglected (271) files a faint "the keeper finally came by" memory, so its *next* greeting softens from wistful toward warming; attention received changes the next hello. The affection mirror of the gratitude-wears-smooth beats. Builds on 271 / 011 / 116.
 
+## Cycle 60 lore additions — the relationship in the first words (2026-06-19)
+
+> Cycle 59 gave the neglected pole a wistful hello (271). Cycle 60's next-up is the already-queued
+> **BACKLOG-272** (fond greeting) — the warm twin, so a greeting's *first words* read the relationship
+> the way the thanks register reads temperament. These extend the greeting-by-relationship arc.
+
+- [ ] BACKLOG-275 [emergent] Snubbed and resigned — a dino greeted wistfully (271) yet still left at ≤1 heart across several visits hardens from wistful to a cooler, resigned opener ("oh. it's you."); hope curdles to indifference when attention never follows. Builds on 271 / 273 / 011.
+- [ ] BACKLOG-276 [social] The keeper has a name — a fond ≥8-heart dino (272) drops the chosen observer's designation into its hello ("there you are, AETHER-1"), so deep friendship is the thing that earns your name in its mouth. Builds on 272 / 155 / 160.
+- [ ] BACKLOG-277 [emergent] Greeting remembers the last gift — a dino opens by referencing the last thing you fed/gifted it ("still thinking about that fish"), pulled from its memory, when the memory is fresh. The gift loop surfacing in the greeting. Builds on 015 / 061 / 011.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
