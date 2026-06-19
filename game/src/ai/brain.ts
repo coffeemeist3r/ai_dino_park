@@ -89,6 +89,17 @@ export function wistfulGreeting(name: string): string {
 }
 
 /**
+ * The friendship floor (in hearts) at or above which a dino reads as a close friend — it opens fondly
+ * (BACKLOG-272) instead of with the generic hello. The warm pole of WISTFUL_MAX. Inclusive.
+ */
+export const FOND_MIN = 8;
+
+/** A close dino's opening line — warm, familiar, glad you came (BACKLOG-272). */
+export function fondGreeting(name: string): string {
+  return `There you are, friend! ${name}'s been hoping you'd come round.`;
+}
+
+/**
  * A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). Temperament
  * colours it: a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles it (BACKLOG-253), a warm one
  * (`agreeableness > EFFUSIVE_MIN`) gushes (BACKLOG-261), and an even-tempered one says it plain. No
@@ -115,6 +126,10 @@ export function cannedReply(ctx: NPCContext): Reply {
   // — the affection-pole counterpart of the gratitude register. Gratitude above always wins.
   if (ctx.affection !== undefined && ctx.affection <= WISTFUL_MAX) {
     return { text: wistfulGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
+  }
+  // A close dino (high friendship) opens warmly (BACKLOG-272) — the warm pole of the wistful greeting.
+  if (ctx.affection !== undefined && ctx.affection >= FOND_MIN) {
+    return { text: fondGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);

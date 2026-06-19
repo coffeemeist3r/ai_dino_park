@@ -60,7 +60,7 @@ import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
-import { deriveRole, ROLE_ICON, type Role } from '../ai/roles';
+import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
@@ -110,6 +110,8 @@ export class WorldScene extends Phaser.Scene {
   private dinos: Dino[] = [];
   /** The keeper's current zone (BACKLOG-143). Persisted; the grove starts empty (population is -274). */
   private zoneId: string = BOWL_ID;
+  /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
+  private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
   private dialogOpen = false;
   private clockHud!: Phaser.GameObjects.Text;
@@ -976,9 +978,16 @@ export class WorldScene extends Phaser.Scene {
     return recall(this.memory, name).filter((e) => e.includes(RUMOR_MARK)).length;
   }
 
-  /** A dino's emergent role, derived from how it has actually behaved. */
+  /**
+   * A dino's role: derived from how it has actually behaved, then *settled* so an emerged role is
+   * durable (BACKLOG-032) — once found it never reverts to wanderer. The settled role is the single
+   * source for the lens, the book, and `__roles`, and is persisted in the save.
+   */
   private roleOf(name: string): Role {
-    return deriveRole({ meetings: this.meetingsOf(name), rumorsHeard: this.rumorsOf(name), topBond: this.maxBond(name) });
+    const derived = deriveRole({ meetings: this.meetingsOf(name), rumorsHeard: this.rumorsOf(name), topBond: this.maxBond(name) });
+    const settled = settleRole(this.roles[name], derived);
+    this.roles[name] = settled;
+    return settled;
   }
 
   private bookRows(): BookRow[] {
@@ -1046,6 +1055,8 @@ export class WorldScene extends Phaser.Scene {
       return out;
     };
     (window as any).__bookRows = () => this.bookRows();
+    // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
+    (window as any).__roleStore = () => ({ ...this.roles });
 
     this.refreshLens();
   }
@@ -2654,6 +2665,7 @@ export class WorldScene extends Phaser.Scene {
       lastTone: this.lastTone,
       keeperId: this.keeperId,
       zoneId: this.zoneId,
+      roles: this.roles,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2698,6 +2710,7 @@ export class WorldScene extends Phaser.Scene {
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
+      this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.

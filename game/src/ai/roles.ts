@@ -31,3 +31,14 @@ export function deriveRole(s: BehaviorStats): Role {
   if (s.meetings >= 8) return 'socialite';
   return 'wanderer';
 }
+
+/**
+ * Make an emerged role durable (BACKLOG-032). A dino that has found a non-wanderer role keeps it even
+ * if the behavior that earned it fades — it only changes when a *different* non-wanderer role emerges,
+ * and never falls back to 'wanderer'. While still a wanderer, it tracks the live derivation. So a role,
+ * once found, is a job that sticks rather than a readout that evaporates.
+ */
+export function settleRole(prev: Role | undefined, derived: Role): Role {
+  if (!prev || prev === 'wanderer') return derived;
+  return derived === 'wanderer' ? prev : derived;
+}

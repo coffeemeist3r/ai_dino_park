@@ -31,6 +31,8 @@ export interface SaveData {
   keeperId?: string;
   /** The keeper's current zone (BACKLOG-143). Additive; absent → defaults to the bowl on load. */
   zoneId?: string;
+  /** Each dino's settled (durable) role (BACKLOG-032). Additive; absent → {}. Stored as plain strings. */
+  roles?: Record<string, string>;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -141,6 +143,18 @@ export function deserialize(json: string): SaveData | null {
     zoneId = o.zoneId;
   }
 
+  // roles is additive over v1 — absent in older saves (default {}); string values only (a role id, kept
+  // as plain string so saveGame stays free of a roles import). Reject only if malformed.
+  let roles: Record<string, string> = {};
+  if (o.roles !== undefined) {
+    if (typeof o.roles !== 'object' || o.roles === null) return null;
+    const entries = o.roles as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (typeof entries[k] !== 'string') return null;
+      roles[k] = entries[k] as string;
+    }
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -206,6 +220,7 @@ export function deserialize(json: string): SaveData | null {
     lastTone,
     keeperId,
     zoneId,
+    roles,
     eggs,
     born,
     savedAt,

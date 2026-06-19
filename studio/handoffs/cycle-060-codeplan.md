@@ -67,3 +67,25 @@ Two tracks, no shared files.
 ### Risk
 - `roleOf` now mutates `this.roles` on read — idempotent (settle is stable once set), called in render;
   fine. Keep the additive save string-typed so an old/hand-edited save can't crash deserialize.
+
+---
+
+## Shipped (Coder)
+
+### Lore track — BACKLOG-272
+- `game/src/ai/brain.ts` — `FOND_MIN = 8`, `fondGreeting(name)`, cannedReply branch (gratitude→wistful→fond→generic).
+- `game/src/ai/webllmBrain.ts` — `fond` clause in buildMessages (≥8 hearts, no gratitude; mutually exclusive with wistful).
+- `tests/unit/cycle-060-fond-greeting.test.ts`, `tests/e2e/cycle-060-fond-greeting.spec.ts`.
+
+### Structure track — BACKLOG-032
+- `game/src/ai/roles.ts` — `settleRole(prev, derived)` (held non-wanderer never reverts; a different non-wanderer takes).
+- `game/src/world/saveGame.ts` — additive `roles?: Record<string,string>` (default {} on load, string-validated like lastTone).
+- `game/src/scenes/WorldScene.ts` — `roles` store, `roleOf` routed through settleRole, `__roleStore` hook, save round-trip + restore.
+- `tests/unit/cycle-060-roles-persist.test.ts`, `tests/e2e/cycle-060-roles-persist.spec.ts`.
+
+### Deviations / fixes
+- Fond e2e: drove **Twitch** (warm founder) + Warm tone instead of Rex — a Warm tone on prickly Rex is a negative personality fit that docked a heart below FOND_MIN (caught in test, fixed). Twitch+Warm holds affection at the cap.
+- `tests/unit/saveGame.test.ts` `sample` fixture gained `roles: {}` (additive field now in every round-trip output, as `zoneId` was last cycle).
+
+### Status
+- `npm run build` ✅ clean. `npm run test:unit` ✅ 556 passed. `npx playwright test` ✅ 190 passed (one full run; cycle-060 also green under --repeat-each=2). Both tracks green together.

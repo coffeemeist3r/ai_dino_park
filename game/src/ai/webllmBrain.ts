@@ -79,13 +79,19 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     !ctx.gratitude && ctx.affection !== undefined && ctx.affection <= 1
       ? `The keeper almost never visits you and you barely know them — greet them wistfully, hoping to be noticed, unsure they even remember you. `
       : '';
+  // BACKLOG-272: a close dino opens warmly — the warm pole of the wistful greeting. Mutually exclusive
+  // with `wistful` (≤1 vs ≥8 hearts can't overlap).
+  const fond =
+    !ctx.gratitude && ctx.affection !== undefined && ctx.affection >= 8
+      ? `This keeper is a dear, familiar friend — greet them warmly and gladly, like someone you've missed. `
+      : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}` +
+    `${lately}${grateful}${wistful}${fond}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

@@ -11,6 +11,7 @@ const sample: SaveData = {
   gratitude: { Sunny: ['Twitch'] },
   lastTone: { Rex: 'warm' },
   zoneId: 'bowl',
+  roles: {},
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],

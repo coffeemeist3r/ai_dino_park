@@ -1,6 +1,6 @@
 {
   "cycle": 60,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-272: Fond greeting from a close dino",
   "structureItem": "BACKLOG-032: Roles persist across cycles",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-06-19T22:05:00-05:00",
     "designer": "2026-06-19T22:10:00-05:00",
     "code-planner": "2026-06-19T22:15:00-05:00",
-    "coder": "2026-06-19T21:25:00-05:00",
+    "coder": "2026-06-19T22:25:00-05:00",
     "qa": "2026-06-19T21:30:00-05:00",
     "validator": "2026-06-19T21:35:00-05:00",
     "artist": "2026-06-19T21:40:00-05:00"
