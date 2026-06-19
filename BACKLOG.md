@@ -21,7 +21,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [x] BACKLOG-143 [core] Connected zone — one adjacent zone via edge-walk handoff (also unblocks benched path/water art -033)  *(shipped: cycle 59 structure track — grove walkable + persisted; populate it = -274)*
-- [~] BACKLOG-032 [emergent] Roles persist across cycles — a guard keeps guarding after the triggering event (makes jobs durable)  *(in flight: cycle 60 structure track)*
+- [x] BACKLOG-032 [emergent] Roles persist across cycles — a guard keeps guarding after the triggering event (makes jobs durable)  *(shipped: cycle 60 structure track — settleRole + persisted role store; role-driven behavior = 104)*
 - [ ] BACKLOG-146 [emergent] Resource gathering spine — raw resource appears, a dino picks it up / banks it (first beat of the build arc)
 - [ ] BACKLOG-145 [emergent] Plantable plot — one plot, one crop growing over realtime days, harvested into the food set
 - [ ] BACKLOG-274 [core] Populate the grove — assign dinos a home zone, migrate them, filter cross-zone rendering + interaction (builds on 143's occupancy API + walkable grove)
@@ -81,7 +81,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-029 [emergent] Inventory + crafting — NPCs gather, trade, craft simple items
 - [ ] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread
 - [ ] BACKLOG-031 [emergent] Governance — at threshold population, NPCs vote on a simple rule (e.g., quiet hours)
-- [~] BACKLOG-032 [emergent] Roles persist across cycles — guard NPC keeps guarding even after the triggering event  *(in flight: cycle 60 structure track)*
+- [x] BACKLOG-032 [emergent] Roles persist across cycles — guard NPC keeps guarding even after the triggering event  *(shipped: cycle 60 — pure `settleRole` (a held non-wanderer role never reverts to wanderer; a different non-wanderer still takes); per-dino settled roles in an additive `roles` save (old saves → {}); `roleOf` routed through it so the lens, book, and `__roles` all read the durable role. Role-*identity* only — role-driven behavior is the 104 action layer.)*
 
 ## Art (procedural vector pipeline — Artist fires per character)
 
@@ -550,7 +550,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > 143). Next-up is **BACKLOG-271** (wistful greeting), the affection-pole opener these extend.
 
 - [x] BACKLOG-271 [social] Wistful greeting from a neglected dino — a dino at rock-bottom player-friendship (≤1 heart) opens a keeper greeting with a wistful, hoping-to-be-noticed line ("oh… you came to see *me*?") instead of the generic hello, keyed on `ctx.affection`. Pure `cannedReply` branch + the matching LLM clause in `buildMessages`; deterministic fallback testable with no model. The ache of being passed over, in the dino's own voice. Builds on 016 / 051 / 142.  *(shipped: cycle 59, 2026-06-19)*
-- [ ] BACKLOG-272 [social] Fond greeting from a close dino — the warm pole of 271: a high-friendship dino (≥8 hearts) opens with a familiar, fond line ("there you are! I was hoping you'd swing by"), so the *first words* of a greeting read the relationship the way the thanks register reads temperament. Builds on 271 / 016 / 051.
+- [x] BACKLOG-272 [social] Fond greeting from a close dino — the warm pole of 271: a high-friendship dino (≥8 hearts) opens with a familiar, fond line ("there you are! I was hoping you'd swing by"), so the *first words* of a greeting read the relationship the way the thanks register reads temperament. Builds on 271 / 016 / 051.  *(shipped: cycle 60, 2026-06-19)*
 - [ ] BACKLOG-273 [emergent] The visit remembered — a dino greeted while neglected (271) files a faint "the keeper finally came by" memory, so its *next* greeting softens from wistful toward warming; attention received changes the next hello. The affection mirror of the gratitude-wears-smooth beats. Builds on 271 / 011 / 116.
 
 ## Cycle 60 lore additions — the relationship in the first words (2026-06-19)

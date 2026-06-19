@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 060 — 2026-06-19
+- BACKLOG-272: Fond greeting from a close dino — a ≥8-heart dino opens warmly; completes the greeting-by-relationship spectrum (wistful ≤1 / generic / fond ≥8). (lore track)
+- BACKLOG-032: Roles persist across cycles — `settleRole` makes an emerged role durable (never reverts to wanderer), persisted; jobs that stick. (structure track)
+
 ## Cycle 059 — 2026-06-19
 - BACKLOG-271: Wistful greeting from a neglected dino — a ≤1-heart dino opens wistfully ("you came to see *me*?") instead of the generic hello; pure cannedReply branch + LLM clause keyed on affection, gratitude still wins. (lore track)
 - BACKLOG-143: Connected zone — a walkable, persisted second zone (the grove) via edge-walk crossing; pure world/zones.ts + thin glue; grove starts empty (populate = -274); unblocks path/water art -033. (structure track — first parallel structure-track ship under CHARTER v5)
