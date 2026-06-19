@@ -1,7 +1,7 @@
 {
   "cycle": 59,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-271: Wistful greeting from a neglected dino",
   "structureItem": "BACKLOG-143: Connected zone (spine)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-19T21:00:00-05:00",
     "structure-smith": "2026-06-19T21:05:00-05:00",
-    "designer": "2026-06-19T20:10:00-05:00",
+    "designer": "2026-06-19T21:10:00-05:00",
     "code-planner": "2026-06-19T20:15:00-05:00",
     "coder": "2026-06-19T20:20:00-05:00",
     "qa": "2026-06-19T20:25:00-05:00",
