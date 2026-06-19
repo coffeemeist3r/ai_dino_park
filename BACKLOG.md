@@ -21,7 +21,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [x] BACKLOG-143 [core] Connected zone — one adjacent zone via edge-walk handoff (also unblocks benched path/water art -033)  *(shipped: cycle 59 structure track — grove walkable + persisted; populate it = -274)*
-- [ ] BACKLOG-032 [emergent] Roles persist across cycles — a guard keeps guarding after the triggering event (makes jobs durable)
+- [~] BACKLOG-032 [emergent] Roles persist across cycles — a guard keeps guarding after the triggering event (makes jobs durable)  *(in flight: cycle 60 structure track)*
 - [ ] BACKLOG-146 [emergent] Resource gathering spine — raw resource appears, a dino picks it up / banks it (first beat of the build arc)
 - [ ] BACKLOG-145 [emergent] Plantable plot — one plot, one crop growing over realtime days, harvested into the food set
 - [ ] BACKLOG-274 [core] Populate the grove — assign dinos a home zone, migrate them, filter cross-zone rendering + interaction (builds on 143's occupancy API + walkable grove)
@@ -81,7 +81,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-029 [emergent] Inventory + crafting — NPCs gather, trade, craft simple items
 - [ ] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread
 - [ ] BACKLOG-031 [emergent] Governance — at threshold population, NPCs vote on a simple rule (e.g., quiet hours)
-- [ ] BACKLOG-032 [emergent] Roles persist across cycles — guard NPC keeps guarding even after the triggering event
+- [~] BACKLOG-032 [emergent] Roles persist across cycles — guard NPC keeps guarding even after the triggering event  *(in flight: cycle 60 structure track)*
 
 ## Art (procedural vector pipeline — Artist fires per character)
 
