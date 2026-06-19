@@ -120,3 +120,26 @@ Lore: ~3 files. Structure: ~4 files. Combined ~7, but cleanly split per track (e
 - **BACKLOG-274** [core] Populate the grove — migrate/assign dinos per zone and filter cross-zone
   rendering + interaction, building on 143's occupancy API (`setZone`/`zoneOf`) and the walkable second
   zone. Added to the Structure Track queue for a later structure-track cycle.
+
+---
+
+## Shipped (Coder)
+
+### Lore track — BACKLOG-271
+- `game/src/ai/brain.ts` — `WISTFUL_MAX = 1`, `wistfulGreeting(name)`, and the `cannedReply` branch (after gratitude, before generic).
+- `game/src/ai/webllmBrain.ts` — the `wistful` clause woven into the `buildMessages` system prompt (fires only when no gratitude + affection ≤ 1).
+- `tests/unit/cycle-059-wistful-greeting.test.ts`, `tests/e2e/cycle-059-wistful-greeting.spec.ts`.
+
+### Structure track — BACKLOG-143
+- `game/src/world/zones.ts` (new) — bowl+grove registry, `crossing`, `linkedZone`, `setZone`/`zoneOf`, `zoneById`.
+- `game/src/world/saveGame.ts` — additive `zoneId?` (defaults `'bowl'` on load).
+- `game/src/scenes/WorldScene.ts` — `zoneId` field, the edge-crossing check before the clamp, `enterZone()`, zone name on the plaque (+ `__plaque.zone`), `__zone`/`__setZone` hooks, save round-trip + restore.
+- `game/src/ui/plaque.ts` — optional `zone` on `PlaqueStats` (back-compat; absent → Pocket Cretaceous).
+- `tests/unit/cycle-059-zones.test.ts`, `tests/e2e/cycle-059-connected-zone.spec.ts`.
+
+### Deviations from plan
+- `crossing(px, cols, tile)` — dropped the unused `py`/`rows` params the plan sketched (tsconfig `noUnusedParameters`); only the x-axis is needed for the east/west spine.
+- Updated `tests/unit/saveGame.test.ts` `sample` fixture with `zoneId: 'bowl'` — the additive field now appears in every round-trip output, exactly as `keeperId`/`scale` additions were absorbed. Legitimate, not a regression.
+
+### Status
+- `npm run build` ✅ clean. `npm run test:unit` ✅ 537 passed. `npx playwright test` ✅ 187 passed (one fresh full run, no flake). Both tracks green together.

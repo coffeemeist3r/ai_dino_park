@@ -73,13 +73,19 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const grateful = ctx.gratitude
     ? `You're grateful: ${ctx.gratitude} cleared your name around the park after a rough spell, and you want to say so. ${manner}`
     : '';
+  // BACKLOG-271: a neglected dino (rock-bottom friendship, nothing to be grateful for) opens wistfully —
+  // the affection-pole counterpart of the gratitude register. Never fires when there's gratitude to give.
+  const wistful =
+    !ctx.gratitude && ctx.affection !== undefined && ctx.affection <= 1
+      ? `The keeper almost never visits you and you barely know them — greet them wistfully, hoping to be noticed, unsure they even remember you. `
+      : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}` +
+    `${lately}${grateful}${wistful}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

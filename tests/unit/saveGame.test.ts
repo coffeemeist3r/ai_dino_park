@@ -10,6 +10,7 @@ const sample: SaveData = {
   bonds: { 'Mossback|Rex': 12 },
   gratitude: { Sunny: ['Twitch'] },
   lastTone: { Rex: 'warm' },
+  zoneId: 'bowl',
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],

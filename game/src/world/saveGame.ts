@@ -29,6 +29,8 @@ export interface SaveData {
   lastTone: Record<string, string>;
   /** The chosen observer's id (BACKLOG-155). Additive; absent → caller defaults to the first keeper. */
   keeperId?: string;
+  /** The keeper's current zone (BACKLOG-143). Additive; absent → defaults to the bowl on load. */
+  zoneId?: string;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -131,6 +133,14 @@ export function deserialize(json: string): SaveData | null {
     keeperId = o.keeperId;
   }
 
+  // zoneId is additive over v1 — absent in older saves (default 'bowl' so they load into the original
+  // enclosure); string only. Reject only if malformed.
+  let zoneId = 'bowl';
+  if (o.zoneId !== undefined) {
+    if (typeof o.zoneId !== 'string') return null;
+    zoneId = o.zoneId;
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -195,6 +205,7 @@ export function deserialize(json: string): SaveData | null {
     gratitude,
     lastTone,
     keeperId,
+    zoneId,
     eggs,
     born,
     savedAt,

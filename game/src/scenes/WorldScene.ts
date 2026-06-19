@@ -37,6 +37,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
+import { BOWL_ID, crossing, linkedZone, zoneById } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -107,6 +108,8 @@ export class WorldScene extends Phaser.Scene {
   private wasd!: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>;
   private interactKey!: Phaser.Input.Keyboard.Key;
   private dinos: Dino[] = [];
+  /** The keeper's current zone (BACKLOG-143). Persisted; the grove starts empty (population is -274). */
+  private zoneId: string = BOWL_ID;
   private dialog!: DialogBox;
   private dialogOpen = false;
   private clockHud!: Phaser.GameObjects.Text;
@@ -385,7 +388,14 @@ export class WorldScene extends Phaser.Scene {
       population: this.dinos.length,
       day: getWorldClock().now().day,
       generations: maxGeneration(this.born),
+      zone: zoneById(this.zoneId).name,
     });
+    // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
+    (window as any).__zone = () => this.zoneId;
+    (window as any).__setZone = (id: string) => {
+      this.zoneId = id;
+      this.refreshPlaque();
+    };
   }
 
   private refreshPlaque(): void {
@@ -395,6 +405,7 @@ export class WorldScene extends Phaser.Scene {
         population: this.dinos.length,
         day: getWorldClock().now().day,
         generations: maxGeneration(this.born),
+        zone: zoneById(this.zoneId).name,
       }).join('\n'),
     );
   }
@@ -2106,10 +2117,26 @@ export class WorldScene extends Phaser.Scene {
       if (this.ambientActive) this.exitAmbient();
     }
 
+    // BACKLOG-143: walking off a linked edge crosses to the adjacent zone instead of clamping there.
+    const edge = crossing(this.player.x, COLS, TILE);
+    const link = edge ? linkedZone(this.zoneId, edge, this.player.y, COLS, TILE) : null;
+    if (link) {
+      this.enterZone(link.zoneId, link.entry.x, link.entry.y);
+      this.applyIdle();
+      return;
+    }
+
     this.player.x = Phaser.Math.Clamp(this.player.x, TILE / 2, TILE * COLS - TILE / 2);
     this.player.y = Phaser.Math.Clamp(this.player.y, TILE / 2, TILE * ROWS - TILE / 2);
 
     this.applyIdle();
+  }
+
+  /** Move the keeper into another zone at a given entry pixel (BACKLOG-143). */
+  private enterZone(zoneId: string, x: number, y: number): void {
+    this.zoneId = zoneId;
+    this.player.setPosition(x, y);
+    this.refreshPlaque();
   }
 
   private handleInteract(): void {
@@ -2622,6 +2649,7 @@ export class WorldScene extends Phaser.Scene {
       gratitude: this.gratitude,
       lastTone: this.lastTone,
       keeperId: this.keeperId,
+      zoneId: this.zoneId,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2665,6 +2693,7 @@ export class WorldScene extends Phaser.Scene {
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
+      this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.

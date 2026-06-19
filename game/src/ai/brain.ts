@@ -78,6 +78,17 @@ export const PRICKLY_MAX = 0.4;
 export const EFFUSIVE_MIN = 0.6;
 
 /**
+ * The friendship ceiling (in hearts) at or below which a dino reads as "neglected" — the keeper has
+ * barely visited it, so it greets wistfully (BACKLOG-271) rather than with the generic hello. Inclusive.
+ */
+export const WISTFUL_MAX = 1;
+
+/** A neglected dino's opening line — wistful, hoping to be noticed, naming itself (BACKLOG-271). */
+export function wistfulGreeting(name: string): string {
+  return `Oh… you came to see *me*, ${name}? I wasn't sure you still knew I was here.`;
+}
+
+/**
  * A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). Temperament
  * colours it: a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles it (BACKLOG-253), a warm one
  * (`agreeableness > EFFUSIVE_MIN`) gushes (BACKLOG-261), and an even-tempered one says it plain. No
@@ -99,6 +110,11 @@ export function cannedReply(ctx: NPCContext): Reply {
   // half of "thanks in the voice"; the LLM path colours the same fact via buildMessages.
   if (ctx.gratitude) {
     return { text: thanksLine(ctx.gratitude, ctx.traits), mood: 'happy', source: 'canned' };
+  }
+  // A neglected dino (rock-bottom friendship, nothing to be grateful for) opens wistfully (BACKLOG-271)
+  // — the affection-pole counterpart of the gratitude register. Gratitude above always wins.
+  if (ctx.affection !== undefined && ctx.affection <= WISTFUL_MAX) {
+    return { text: wistfulGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);

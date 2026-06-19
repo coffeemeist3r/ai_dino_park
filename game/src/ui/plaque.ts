@@ -44,11 +44,14 @@ export interface PlaqueStats {
   population: number;
   day: number;
   generations: number;
+  /** Current zone display name (BACKLOG-143). Absent → the bowl, so old callers read unchanged. */
+  zone?: string;
 }
 
 /** The two engraved lines of the plaque. */
 export function plaqueLines(s: PlaqueStats): string[] {
+  const place = s.zone ?? 'Pocket Cretaceous';
   const specimens = `${s.population} specimen${s.population === 1 ? '' : 's'}`;
   const gens = `${s.generations} generation${s.generations === 1 ? '' : 's'}`;
-  return ['VIVARIUM · Pocket Cretaceous', `Day ${s.day} · ${specimens} · ${gens}`];
+  return [`VIVARIUM · ${place}`, `Day ${s.day} · ${specimens} · ${gens}`];
 }
