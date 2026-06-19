@@ -65,8 +65,21 @@ export function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
   return 'neutral';
 }
 
-/** A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). */
-export function thanksLine(clearer: string): string {
+/**
+ * The agreeableness ceiling below which a dino reads as "prickly" — pinned to the `low`-pole cutoff
+ * `describePersonality` uses in `personality.ts`, so "prickly" means the same thing everywhere.
+ */
+export const PRICKLY_MAX = 0.4;
+
+/**
+ * A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). Temperament
+ * colours it (BACKLOG-253): a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles its thanks where
+ * a warm or even-tempered one says it plain. No traits → the plain warm line (back-compat default).
+ */
+export function thanksLine(clearer: string, traits?: Personality): string {
+  if (traits && traits.agreeableness < PRICKLY_MAX) {
+    return `…yeah. thanks, I guess. ${clearer} set the record straight.`;
+  }
   return `${clearer} told everyone I was alright — I owe them one.`;
 }
 
@@ -75,7 +88,7 @@ export function cannedReply(ctx: NPCContext): Reply {
   // A just-cleared dino leads with gratitude, naming its clearer (BACKLOG-247) — the deterministic
   // half of "thanks in the voice"; the LLM path colours the same fact via buildMessages.
   if (ctx.gratitude) {
-    return { text: thanksLine(ctx.gratitude), mood: 'happy', source: 'canned' };
+    return { text: thanksLine(ctx.gratitude, ctx.traits), mood: 'happy', source: 'canned' };
   }
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);

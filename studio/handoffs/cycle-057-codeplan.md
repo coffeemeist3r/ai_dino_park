@@ -79,3 +79,15 @@ None.
 
 ## Estimated touch count
 ~4 files (2 src, 2 test). Well under the 6-file split threshold.
+
+## Shipped
+
+**Files touched (exactly as planned, 4):**
+- `game/src/ai/brain.ts` — `PRICKLY_MAX = 0.4`; `thanksLine(clearer, traits?)` gruff branch; `cannedReply` passes `ctx.traits`.
+- `game/src/ai/webllmBrain.ts` — `buildMessages` grateful clause appends a grudging instruction for prickly dinos (imports `PRICKLY_MAX`).
+- `tests/unit/cycle-057-grudging-thanks.test.ts` — 8 unit assertions (gruff/warm/default/edge, canned path, buildMessages colour).
+- `tests/e2e/cycle-057-grudging-thanks.spec.ts` — 3 specs (prickly Rex gruff, warm Twitch plain, non-grateful control).
+
+**Deviations:** none.
+
+**Build + unit:** `npm --prefix game run build` clean; `npm run test:unit` → 508 passed (49 files, +8 from 500). web-llm import boundary clean (only under `game/src/ai/`). Dev server HTTP 200. No new deps, no save-format change.
