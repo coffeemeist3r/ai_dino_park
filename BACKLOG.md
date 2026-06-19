@@ -504,6 +504,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-264 [pokemon] Gratitude manner in the book — once you've heard a dino thank someone, the collection book notes *how* it thanks ("thanks through gritted teeth" / "thanks effusively" / "a quiet nod of thanks"), reading its agreeableness; the manner becomes legible standing beside hearts and role. Builds on 253 / 261 / 021.
 - [ ] BACKLOG-265 [social] The scan reads the manner — LUMEN-3's Field Scan (157) dossier gains a "gratitude: gruff / warm / even" line off the same agreeableness read, so the observer who scans can tell a grudging thanker from an effusive one before ever hearing it. Builds on 253 / 157 / 038.
 
+## Cycle 58 lore additions — gratitude in full voice (2026-06-19)
+
+> Cycle 57 gave the prickly half of the cast a gruff thanks (253); cycle 58's next-up is the
+> already-queued **BACKLOG-261** (effusive thanks) — the warm twin, so the same favour now lands
+> *loud* from Sunny and Twitch and *gruff* from Rex. With both poles voiced, the manner axis is
+> finally a real spectrum. These extend it: the measured middle, the gush overheard by who earned
+> it, manner colouring the gossip a dino carries, warmth that grates on a cold heart, and the
+> warmth a gush pulls toward the keeper.
+
+- [ ] BACKLOG-266 [emergent] Even-keeled thanks — the middle agreeableness band (neither prickly nor warm) gets a measured register of its own ("a quiet nod — thanks, Twitch"), distinct from both the gush (261) and the grumble (253), so the manner is a three-way read rather than a binary. Completes the spectrum the founders skip but every blended hatchling can land in. Builds on 261 / 253 / 042.
+- [ ] BACKLOG-267 [emergent] Caught mid-gush — when an effusive dino gushes its thanks (261) within earshot of the very clearer it names, that clearer gets a bashful pride beat (😊 + a small mutual bond nudge); being gushed about to your face feels good, the spoken-to-keeper twin of 254's named-savior swell. Builds on 261 / 254 / 252.
+- [ ] BACKLOG-268 [emergent] Gossip in your own voice — a dino's agreeableness colours *how* it retells warm-word / relief (223 / 235): an effusive carrier embellishes the good news, a gruff one clips it to the bare fact, so the same rumor sounds like whoever's passing it. Builds on 261 / 223 / 235.
+- [ ] BACKLOG-269 [emergent] Tired of the fuss — a prickly dino gushed at (261) by the *same* effusive thanker enough times quietly wearies of it (a tiny capped cooling in how it reads that gusher — "yes, yes, you said"); too much warmth grates on a cold heart, the sour mirror of grudging-gratitude-wears-smooth (263). Builds on 261 / 263 / 010.
+- [ ] BACKLOG-270 [social] A gush you can feel — an effusive thanks spoken to the keeper lands a touch of extra warmth on *the keeper-bond* (gushing is bonding) where a gruff thanks holds it flat; the manner that colours the words also colours how close the gesture pulls the dino to you. Distinct from 262's pin (that's the dino↔dino grateful debt — this is the player-friendship ledger). Builds on 261 / 016 / 262.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
