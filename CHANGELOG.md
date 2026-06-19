@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 059 — 2026-06-19
+- BACKLOG-271: Wistful greeting from a neglected dino — a ≤1-heart dino opens wistfully ("you came to see *me*?") instead of the generic hello; pure cannedReply branch + LLM clause keyed on affection, gratitude still wins. (lore track)
+- BACKLOG-143: Connected zone — a walkable, persisted second zone (the grove) via edge-walk crossing; pure world/zones.ts + thin glue; grove starts empty (populate = -274); unblocks path/water art -033. (structure track — first parallel structure-track ship under CHARTER v5)
+
 ## Cycle 058 — 2026-06-19
 - BACKLOG-261: Effusive thanks — the warm twin of grudging thanks (253). Cycle 57 voiced only the prickly pole of the cleared-name thanks (247); now warmth gets its own register too, so the same favour lands gruff from Rex, plain from the middle band, and gushing from a warm dino (`agreeableness > EFFUSIVE_MIN`): "<clearer> told the whole park I was alright — best friend a dino could ask for, I'll never forget it!" One branch in `thanksLine` between the gruff branch and the plain return, gated on a new `EFFUSIVE_MIN = 0.6` const pinned to `describePersonality`'s `> 0.6` high cutoff (the warm mirror of `PRICKLY_MAX = 0.4`, so the branches can't overlap); `buildMessages` folds the old `grudging` const into a three-way `manner` so the LLM path gushes too; "quietly" dropped from the grateful lead-in so it doesn't fight the gush (the `cleared your name` fact untouched). No WorldScene/world/save change — both greet sites already fed `gratitude` + `traits`; `cannedReply` already threaded traits, so the gush is free. Plain + gruff lines byte-identical, effusive branch fires only under `gratitude`, so cycle-055/056 regression specs stayed green; cycle-057's "warm = plain" assertions softened in-fire to "warm ≠ gruff". NPCBrain boundary clean, no deps, no save bump. 6 files (2 src, 2 new tests, 2 fixups); 9/9 AC; 518 unit / 183 e2e green, no flake (the one blip was the catalogued cycle-002 daynight parallel flake, green isolated). The gratitude manner is now a real three-way spectrum; heads 266–270 + 262/264/265.
 
