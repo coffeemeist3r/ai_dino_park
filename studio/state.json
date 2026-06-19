@@ -1,14 +1,14 @@
 {
   "cycle": 57,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-253: Grudging thanks — temperament colours the cleared-name thanks",
   "lastVerdict": "APPROVED",
   "reworkCount": {},
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-18T20:05:00-05:00",
-    "designer": "2026-06-18T03:12:00-05:00",
+    "designer": "2026-06-18T20:10:00-05:00",
     "code-planner": "2026-06-18T03:18:00-05:00",
     "coder": "2026-06-18T03:33:00-05:00",
     "qa": "2026-06-18T03:48:00-05:00",
