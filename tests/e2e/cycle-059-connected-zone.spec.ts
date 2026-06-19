@@ -12,6 +12,13 @@ const zone = (page: import('@playwright/test').Page) =>
   page.evaluate(() => (window as W).__zone() as string);
 const playerX = (page: import('@playwright/test').Page) =>
   page.evaluate(() => ((window as W).__playerPos() as { x: number }).x);
+// Place the keeper past an edge, then run the real crossing check once. Deterministic — no reliance on
+// rAF frame-count, which throttles to a crawl under the parallel load a 2-core CI runner sees.
+const placeAndCross = (page: import('@playwright/test').Page, x: number) =>
+  page.evaluate((x) => {
+    (window as W).__setPlayer(x, 240);
+    (window as W).__tryCross();
+  }, x);
 
 test('the keeper walks east into the grove and back into the bowl', async ({ page }) => {
   const errors: string[] = [];
@@ -20,19 +27,24 @@ test('the keeper walks east into the grove and back into the bowl', async ({ pag
 
   expect(await zone(page)).toBe('bowl');
 
-  // Walk east until the edge crossing flips the zone.
-  await page.keyboard.down('ArrowRight');
-  await expect.poll(() => zone(page), { timeout: 9000 }).toBe('grove');
-  await page.keyboard.up('ArrowRight');
-  expect(await playerX(page)).toBeLessThan(320); // arrived on the west side of the grove
+  // Step off the east edge (past 624 = COLS*TILE - TILE/2) → cross into the grove, repositioned west.
+  await placeAndCross(page, 630);
+  expect(await zone(page)).toBe('grove');
+  expect(await playerX(page)).toBeLessThan(320);
 
-  // Walk back west into the bowl.
-  await page.keyboard.down('ArrowLeft');
-  await expect.poll(() => zone(page), { timeout: 9000 }).toBe('bowl');
-  await page.keyboard.up('ArrowLeft');
-  expect(await playerX(page)).toBeGreaterThan(320); // arrived on the east side of the bowl
+  // Step off the grove's west edge (past 16 = TILE/2) → back into the bowl, repositioned east.
+  await placeAndCross(page, 10);
+  expect(await zone(page)).toBe('bowl');
+  expect(await playerX(page)).toBeGreaterThan(320);
 
   expect(errors).toEqual([]);
+});
+
+test('the crossing is a no-op off an unlinked edge — the keeper stays put', async ({ page }) => {
+  await boot(page);
+  // The bowl's west edge has no link; crossing must not fire (the keeper clamps normally instead).
+  await placeAndCross(page, 5);
+  expect(await zone(page)).toBe('bowl');
 });
 
 test('a zone jump updates the plaque place name', async ({ page }) => {

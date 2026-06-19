@@ -2118,10 +2118,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     // BACKLOG-143: walking off a linked edge crosses to the adjacent zone instead of clamping there.
-    const edge = crossing(this.player.x, COLS, TILE);
-    const link = edge ? linkedZone(this.zoneId, edge, this.player.y, COLS, TILE) : null;
-    if (link) {
-      this.enterZone(link.zoneId, link.entry.x, link.entry.y);
+    if (this.tryCrossZone()) {
       this.applyIdle();
       return;
     }
@@ -2132,11 +2129,18 @@ export class WorldScene extends Phaser.Scene {
     this.applyIdle();
   }
 
-  /** Move the keeper into another zone at a given entry pixel (BACKLOG-143). */
-  private enterZone(zoneId: string, x: number, y: number): void {
-    this.zoneId = zoneId;
-    this.player.setPosition(x, y);
+  /**
+   * If the keeper has stepped off a linked edge, cross into the neighbour zone (repositioned to the
+   * far side) and return true; otherwise false so the caller clamps normally. (BACKLOG-143)
+   */
+  private tryCrossZone(): boolean {
+    const edge = crossing(this.player.x, COLS, TILE);
+    const link = edge ? linkedZone(this.zoneId, edge, this.player.y, COLS, TILE) : null;
+    if (!link) return false;
+    this.zoneId = link.zoneId;
+    this.player.setPosition(link.entry.x, link.entry.y);
     this.refreshPlaque();
+    return true;
   }
 
   private handleInteract(): void {
@@ -2819,6 +2823,10 @@ export class WorldScene extends Phaser.Scene {
     };
     // any: dev-only Playwright hook — current player position
     (window as any).__playerPos = () => ({ x: this.player.x, y: this.player.y });
+    // dev-only Playwright hooks — place the keeper + run the zone-crossing check once, deterministically
+    // (no dependence on rAF frame-count, which throttles under parallel CI load). (BACKLOG-143)
+    (window as any).__setPlayer = (x: number, y: number) => this.player.setPosition(x, y);
+    (window as any).__tryCross = () => this.tryCrossZone();
     // any: dev-only Playwright hook — first dino's seeded personality traits
     (window as any).__dinoTraits = () => this.dinos[0]?.traits;
     // any: dev-only Playwright hook — roster size + names
