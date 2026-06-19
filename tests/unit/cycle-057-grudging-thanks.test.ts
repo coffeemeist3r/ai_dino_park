@@ -22,19 +22,21 @@ describe('thanksLine — temperament colours the thanks (BACKLOG-253)', () => {
     expect(line).not.toContain(WARM);
   });
 
-  it('returns the existing warm line for a warm dino', () => {
-    expect(thanksLine('Twitch', warm)).toBe(thanksLine('Twitch'));
-    expect(thanksLine('Twitch', warm)).toContain(WARM);
+  // A non-prickly dino never grumbles. (Whether it gushes or says it plain is BACKLOG-261's split,
+  // pinned in cycle-058-effusive-thanks.test.ts — here we only guard that the gruff register is its own.)
+  it('does not return the gruff variant for a warm dino', () => {
+    expect(thanksLine('Twitch', warm)).not.toContain(GRUFF);
+    expect(thanksLine('Twitch', warm)).toContain('Twitch');
   });
 
-  it('defaults to the warm line with no traits (back-compat)', () => {
+  it('defaults to the plain warm line with no traits (back-compat)', () => {
     expect(thanksLine('Twitch')).toContain(WARM);
     expect(thanksLine('Twitch')).not.toContain(GRUFF);
   });
 
   it('the prickly cutoff is exclusive — exactly PRICKLY_MAX is not prickly', () => {
     const edge: Personality = { ...warm, agreeableness: PRICKLY_MAX };
-    expect(thanksLine('Twitch', edge)).toContain(WARM);
+    expect(thanksLine('Twitch', edge)).not.toContain(GRUFF);
   });
 });
 
@@ -46,10 +48,11 @@ describe('cannedReply — grudging thanks through the canned path (BACKLOG-253)'
     expect(reply.source).toBe('canned');
   });
 
-  it('a warm grateful dino keeps the warm thanks', () => {
+  it('a warm grateful dino does not grumble its thanks', () => {
     const reply = cannedReply({ name: 'Sunny', species: 'parasaurolophus', personality: 'warm', traits: warm, gratitude: 'Twitch' });
-    expect(reply.text).toBe(thanksLine('Twitch'));
-    expect(reply.text).toContain(WARM);
+    expect(reply.text).toBe(thanksLine('Twitch', warm));
+    expect(reply.text).not.toContain(GRUFF);
+    expect(reply.text).toContain('Twitch');
   });
 });
 

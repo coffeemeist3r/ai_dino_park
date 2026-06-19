@@ -34,7 +34,9 @@ test('a prickly cleared dino grumbles its thanks', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('a warm cleared dino keeps the plain warm thanks', async ({ page }) => {
+// A warm cleared dino never grumbles. (That it gushes — BACKLOG-261 — is pinned in
+// cycle-058-effusive-thanks.spec.ts; here we only guard that the gruff register stays prickly-only.)
+test('a warm cleared dino does not grumble its thanks', async ({ page }) => {
   await boot(page);
 
   await rememberGrateful(page, 'Twitch', 'Sunny');
@@ -42,7 +44,7 @@ test('a warm cleared dino keeps the plain warm thanks', async ({ page }) => {
   await page.waitForTimeout(150);
 
   const reply = await dialogText(page);
-  expect(reply).toContain(WARM); // unchanged cycle-55 line
+  expect(reply).toContain('Sunny'); // still names the clearer
   expect(reply).not.toContain(GRUFF);
 });
 

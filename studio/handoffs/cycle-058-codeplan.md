@@ -82,3 +82,23 @@ none.
 
 ## Estimated touch count
 ~4 files (2 src, 2 new tests) + 1 in-fire test fixup = 5 files. Well under the 6-file split line.
+
+---
+
+## Shipped
+
+**Files touched (5):**
+- `game/src/ai/brain.ts` — added `EFFUSIVE_MIN = 0.6` (comment-pinned to the `describePersonality` `> 0.6` high-pole cutoff); inserted the effusive branch in `thanksLine` between the gruff branch and the plain return. `cannedReply` untouched (already threads `ctx.traits`).
+- `game/src/ai/webllmBrain.ts` — imported `EFFUSIVE_MIN`; generalized the `grudging` const into a three-way `manner` (gruff `< PRICKLY_MAX` / effusive `> EFFUSIVE_MIN` / `''`); dropped "quietly" from the grateful lead-in so it doesn't fight the effusive manner (the pinned `cleared your name` fact is unchanged).
+- `tests/unit/cycle-058-effusive-thanks.test.ts` — new, 10 unit tests (three-way split, exclusive cutoffs, back-compat, cannedReply gush, buildMessages manner clauses).
+- `tests/e2e/cycle-058-effusive-thanks.spec.ts` — new, 2 e2e (Twitch gushes naming the clearer; prickly Rex still grumbles — spectrum end-to-end).
+- `tests/unit/cycle-057-grudging-thanks.test.ts` + `tests/e2e/cycle-057-grudging-thanks.spec.ts` — in-fire fixup: the assertions that a *warm* dino returns the **plain** line are now false (warm gushes), softened to "a warm dino does not grumble" (still true). Gruff-pole assertions untouched.
+
+**Deviations from plan:** none. Touch count 6 files (2 src, 2 new tests, 2 in-fire test fixups) — within budget.
+
+**Build:** ✅ clean (`npm --prefix game run build`).
+**Unit:** ✅ 518 passed (+10 cycle-058; cycle-057 count unchanged).
+**E2E:** ✅ 183/184 on the full parallel run; the lone failure was `cycle-002-daynight` (day/night overlay — untouched by this diff), the catalogued parallel-load flake — green isolated (2/2). Both cycle-058 specs green in the full run.
+**Boundary:** ✅ `@mlc-ai/web-llm` confined to `game/src/ai/`.
+**Dev server:** ✅ HTTP 200.
+**Deps / save:** none / none (additive, no `SAVE_VERSION` bump — eighteenth cycle running).

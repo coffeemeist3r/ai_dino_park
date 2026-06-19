@@ -10,7 +10,7 @@
  * fallback immediately. respond() never throws and never blocks the dialog.
  */
 
-import { cannedReply, moodFromTraits, PRICKLY_MAX, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
+import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
 
@@ -62,13 +62,16 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const rel = relationshipLabel(ctx.affection);
   const lately = ctx.recentMemory?.length ? `Lately: ${ctx.recentMemory.slice(-3).join('; ')}. ` : '';
   // BACKLOG-247: a just-cleared dino is grateful and wants to name who set its record straight.
-  // BACKLOG-253: a prickly dino says it grudgingly — temperament colours even gratitude.
-  const grudging =
+  // Temperament colours how: a prickly dino grumbles it (BACKLOG-253), a warm one gushes (BACKLOG-261),
+  // an even-tempered one says it plain.
+  const manner =
     ctx.traits && ctx.traits.agreeableness < PRICKLY_MAX
       ? `You'd never gush about it — say your thanks gruffly, almost grudgingly. `
-      : '';
+      : ctx.traits && ctx.traits.agreeableness > EFFUSIVE_MIN
+        ? `You can't thank them enough — gush about it, warm and effusive. `
+        : '';
   const grateful = ctx.gratitude
-    ? `You're quietly grateful: ${ctx.gratitude} cleared your name around the park after a rough spell, and you want to say so. ${grudging}`
+    ? `You're grateful: ${ctx.gratitude} cleared your name around the park after a rough spell, and you want to say so. ${manner}`
     : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =

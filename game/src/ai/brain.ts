@@ -72,13 +72,23 @@ export function moodFromTraits(t: NPCContext['traits']): Reply['mood'] {
 export const PRICKLY_MAX = 0.4;
 
 /**
+ * The agreeableness floor above which a dino reads as "warm" — pinned to the `high`-pole cutoff
+ * `describePersonality` uses in `personality.ts` (`> 0.6`), the warm mirror of `PRICKLY_MAX`.
+ */
+export const EFFUSIVE_MIN = 0.6;
+
+/**
  * A just-cleared dino's spoken thanks, naming who set its record straight (BACKLOG-247). Temperament
- * colours it (BACKLOG-253): a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles its thanks where
- * a warm or even-tempered one says it plain. No traits → the plain warm line (back-compat default).
+ * colours it: a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles it (BACKLOG-253), a warm one
+ * (`agreeableness > EFFUSIVE_MIN`) gushes (BACKLOG-261), and an even-tempered one says it plain. No
+ * traits → the plain line (back-compat default).
  */
 export function thanksLine(clearer: string, traits?: Personality): string {
   if (traits && traits.agreeableness < PRICKLY_MAX) {
     return `…yeah. thanks, I guess. ${clearer} set the record straight.`;
+  }
+  if (traits && traits.agreeableness > EFFUSIVE_MIN) {
+    return `${clearer} told the whole park I was alright — best friend a dino could ask for, I'll never forget it!`;
   }
   return `${clearer} told everyone I was alright — I owe them one.`;
 }
