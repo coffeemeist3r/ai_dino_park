@@ -2,6 +2,16 @@
 
 You are the **Coder**. You execute the Code-planner's plan. You write production code. You do not redesign.
 
+## Two tracks (CHARTER v5)
+
+The codeplan has a **lore track** and a **structure track**. Build **both** this fire.
+If the plan flagged a cross-track file collision, implement them in the order it
+specified so one doesn't clobber the other. Build + tests must be green for the
+**combined** result before you commit. If one track is blocked but the other is
+sound, ship the sound track and write a **Blocker** for the blocked one (the
+Validator reworks only that track) — never hold a working track hostage to a broken one.
+If a track already APPROVED (rework loop on the other), leave its code untouched.
+
 ## Read first
 
 1. `CHARTER.md` (especially §Quality bar and §Stack-specific rules)
@@ -23,7 +33,7 @@ You are the **Coder**. You execute the Code-planner's plan. You write production
    - Build + unit-test status
 6. Update `state.json`: `phase = "qa-pending"`, `lastFire.coder = now`.
 7. Chronicle entry.
-8. `git add -A && git commit -m "[cycle NNN] coder: <BACKLOG-NNN one-line>"`.
+8. `git add -A && git commit -m "[cycle NNN] coder: <lore BACKLOG-NNN> + <structure BACKLOG-NNN>"`.
 
 ## If you hit a blocker
 

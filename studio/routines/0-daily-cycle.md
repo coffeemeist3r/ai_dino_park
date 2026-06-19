@@ -20,12 +20,18 @@ bias): items that let dinos surprise the player beat UI polish.
 Execute each routine file **in numeric order**:
 
 1. `1-lore-smith.md`
-2. `2-designer.md`
-3. `3-code-planner.md`
-4. `4-coder.md`
-5. `5-qa.md`
-6. `6-validator.md`
-7. `7-artist.md` (conditional — no-ops unless `artPipelineReady` + image-gen creds)
+2. `1.5-structure-smith.md`
+3. `2-designer.md`
+4. `3-code-planner.md`
+5. `4-coder.md`
+6. `5-qa.md`
+7. `6-validator.md`
+8. `7-artist.md` (conditional — no-ops unless `artPipelineReady` + image-gen creds)
+
+**Two tracks per cycle.** The Lore-smith picks a lore-track item (`state.currentItem`)
+and the Structure-smith picks a structure-track item (`state.structureItem`). Routines
+2–6 build **both** in the same fire (two sections per handoff: `## Lore track` /
+`## Structure track`). The Validator judges each track independently.
 
 If new routine files exist (e.g. `8-*.md`, or an inserted `3.5-*.md`), **include them in
 numeric order automatically** — the pipeline is meant to be self-extending. A cycle may even
@@ -56,9 +62,12 @@ the history still reads stage-by-stage and a future split run could resume clean
 
 ## REWORK handling (stay in this session)
 
-If the Validator verdict is REWORK, loop back to the Designer step for the **same item** and
-re-attempt — up to **2 rework loops**. If still failing after that, write an ABANDON verdict
-(so the cycle closes cleanly) and move on. Never leave the cycle half-open.
+Verdicts are **per track**. If either track's verdict is REWORK, loop back to the
+Designer step and re-attempt **only the failing track(s)** for the **same item(s)** —
+up to **2 rework loops**. A track that already APPROVED is done; do not redo it. If a
+track still fails after 2 loops, write an ABANDON verdict for that track (so it closes
+cleanly) and move on. Never leave a track half-open. The cycle closes only when **both**
+tracks have resolved (APPROVED or ABANDON).
 
 ## Finish
 

@@ -53,19 +53,32 @@ The `NPCBrain` interface (in `game/src/ai/brain.ts`) is a hard boundary. WebLLM-
 
 ## Routine contract (the chain)
 
-One full cycle = one BACKLOG item shipped (or REWORK'd or ABANDON'd).
+One full cycle = **two** BACKLOG items advanced in parallel: one **lore-track**
+item (social/emergent/distinctness, chosen by the Lore-smith) and one
+**structure-track** item (world systems / map / jobs / build arc / infra, chosen
+by the Structure-smith). Each is shipped (or REWORK'd or ABANDON'd) on its own
+verdict; the two tracks are independent.
 
 | # | Routine | Reads | Writes | Model | Verb |
 |---|---|---|---|---|---|
 | 1 | Lore-smith | CHARTER, BACKLOG, last verdict | `studio/handoffs/cycle-NNN-lore.md`, appends to BACKLOG | Opus | brainstorm |
-| 2 | Designer | CHARTER, BACKLOG, lore | `cycle-NNN-design.md` (chosen item, spec, acceptance criteria) | Opus | spec |
+| 1.5 | Structure-smith | CHARTER, BACKLOG (Structure Track), lore | `cycle-NNN-structure.md` (chosen structure item), maintains Structure Track | Opus | brainstorm |
+| 2 | Designer | CHARTER, BACKLOG, lore, structure | `cycle-NNN-design.md` (**both tracks**, spec + acceptance criteria per track) | Opus | spec |
 | 3 | Code-planner | design, existing code | `cycle-NNN-codeplan.md` (files, fns, reuse list, test plan) | Sonnet | plan |
 | 4 | Coder | codeplan | code commit, updates codeplan with "shipped" | Sonnet | build |
 | 5 | QA | design (acceptance), changes | `cycle-NNN-qa.md` (pass/fail per criterion), runs tests | Sonnet | verify |
 | 6 | Validator | everything in cycle | `cycle-NNN-verdict.md` (APPROVED / REWORK / ABANDON), updates CHANGELOG + BACKLOG + chronicle | Opus | judge |
 | 7 | Artist (async) | BACKLOG art tasks, STYLE-GUIDE | pixel rig modules (`game/src/art/`) + tests + chronicle | Opus (procedural, sub-agents) | draw |
 
-**Cycle number is monotonic.** Lore-smith bumps it. State lives in `studio/state.json`.
+Routines 2–6 each handle **both tracks** in their fire (two sections per handoff:
+`## Lore track` and `## Structure track`). The Validator issues a **verdict per
+track**; a track may APPROVE while the other REWORKs, and rework re-attempts only
+the failing track.
+
+**Cycle number is monotonic.** Lore-smith bumps it (and only when **both** tracks
+of the prior cycle resolved APPROVED/ABANDON — if either was REWORK, do not bump).
+The Structure-smith never touches the cycle number. State lives in `studio/state.json`
+(`currentItem` = lore track, `structureItem` = structure track).
 
 ## Verdict semantics
 
@@ -102,4 +115,5 @@ The human will NOT:
 - 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.
 - 2026-06-03: v2 — **Art pipeline = procedural code, not an image API.** The Artist now authors flat-vector dinos/props as pure shape rigs (`game/src/art/`) baked to animated Canvas textures, via a dedicated sub-agent per character — no API keys, no asset downloads, no copyright risk (the key-gated raster pipeline had stalled for 29 cycles). Gen3-pixel mandate retired in favour of clean flat vector at the same footprint; STYLE-GUIDE rewritten to match. Human-approved. Seeds BACKLOG-117/118; reframes BACKLOG-033–036 as vector.
 - 2026-06-07: v3 — **Idea Box** added as a low-influence human override channel (`studio/IDEABOX.md`). Operator drops raw nudges; the Lore-smith considers them each cycle as seeds it may reshape, defer, or decline, then logs the call in the lore handoff. Never skips the chain. Wired into routine 1. Human-approved.
+- 2026-06-19: v5 — **Structure track added (operator ruling).** A new routine **1.5 Structure-smith** fires right after the Lore-smith every cycle and picks one *structural* item (world systems, the bigger map, persistent jobs/roles, the resources→crafting→building→governance arc, save/versioning, load-bearing infra) from a new `## Structure Track` queue in BACKLOG.md. Routines 2–6 now build **both** tracks in parallel (two sections per handoff), and the Validator issues an independent verdict per track. This is the operator's counterweight to the Lore-smith's emergence-over-foundation bias, which had starved the structural backlog (zones/jobs/build arc seeded but never chosen). Cap rule: the Structure-smith only invents new structural items when fewer than X=4 remain queued (drain before invent). `state.json` gains `structureItem` + `structureVerdict`. Human-approved. Reframes BACKLOG-143/032/146/145/040 as the seed Structure Track.
 - 2026-06-09: v4 — **GBA-era pixel style reinstated (operator ruling).** The visual mandate returns to Pokemon Gen3 (Ruby/Sapphire/Emerald) pixel art: limited palettes, dark outlines, chunky readable overworld sprites. The **medium stays code** — pixels are authored as procedural pixel-grid rigs in `game/src/art/` baked to crisp nearest-neighbour textures; still no image APIs, no asset downloads, no keys, and **no sprite rips** (original pixels in the Gen3 *style*, never copied Nintendo assets). The cycle-37 decline of the GBA nudge was correct procedure (it needed this amendment); the operator has now made the call. STYLE-GUIDE rewritten to match; the flat-vector cast restyles one character per Artist fire (vector rigs keep rendering until each pixel rig replaces them — the build never breaks). Seeds BACKLOG-168/169; reframes 033/036/158 as pixel. Human-approved.

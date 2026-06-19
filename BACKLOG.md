@@ -10,6 +10,24 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ---
 
+## Structure Track
+
+> **Owned by the Structure-smith (routine 1.5), not the Lore-smith.** This is the
+> structural spine queue: world systems, the bigger map, persistent jobs/roles, the
+> resources→crafting→building→governance arc, save/versioning, load-bearing infra.
+> Each cycle the Structure-smith picks the **top unblocked** item here to build
+> *alongside* the Lore-smith's social pick. Cap rule: it only brainstorms new
+> structural items when fewer than **X=4** open items remain here (drain before invent).
+> Ordered top = next. Full item text lives in the main body below; these are pointers.
+
+- [ ] BACKLOG-143 [core] Connected zone — one adjacent zone via edge-walk handoff (also unblocks benched path/water art -033)
+- [ ] BACKLOG-032 [emergent] Roles persist across cycles — a guard keeps guarding after the triggering event (makes jobs durable)
+- [ ] BACKLOG-146 [emergent] Resource gathering spine — raw resource appears, a dino picks it up / banks it (first beat of the build arc)
+- [ ] BACKLOG-145 [emergent] Plantable plot — one plot, one crop growing over realtime days, harvested into the food set
+- [ ] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook (protects every future structural change)
+
+---
+
 ## Core loop (shipped first)
 
 - [x] BACKLOG-001 [core] One walkable tile map — 20x15 grass map, player sprite, arrow-key movement, collision on edges  *(shipped: bootstrap, cycle 0)*
