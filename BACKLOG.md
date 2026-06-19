@@ -537,6 +537,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-269 [emergent] Tired of the fuss — a prickly dino gushed at (261) by the *same* effusive thanker enough times quietly wearies of it (a tiny capped cooling in how it reads that gusher — "yes, yes, you said"); too much warmth grates on a cold heart, the sour mirror of grudging-gratitude-wears-smooth (263). Builds on 261 / 263 / 010.
 - [ ] BACKLOG-270 [social] A gush you can feel — an effusive thanks spoken to the keeper lands a touch of extra warmth on *the keeper-bond* (gushing is bonding) where a gruff thanks holds it flat; the manner that colours the words also colours how close the gesture pulls the dino to you. Distinct from 262's pin (that's the dino↔dino grateful debt — this is the player-friendship ledger). Builds on 261 / 016 / 262.
 
+## Cycle 59 lore additions — the keeper's absence is felt (2026-06-19)
+
+> Gratitude has had its full voice (253/261/266). Cycle 59 turns to the keeper's *neglect*: a dino
+> you never visit shouldn't greet you like a stranger off the street — it should show the ache of
+> being passed over. The first cycle to run alongside the new **structure track** (the bigger world,
+> 143). Next-up is **BACKLOG-271** (wistful greeting), the affection-pole opener these extend.
+
+- [ ] BACKLOG-271 [social] Wistful greeting from a neglected dino — a dino at rock-bottom player-friendship (≤1 heart) opens a keeper greeting with a wistful, hoping-to-be-noticed line ("oh… you came to see *me*?") instead of the generic hello, keyed on `ctx.affection`. Pure `cannedReply` branch + the matching LLM clause in `buildMessages`; deterministic fallback testable with no model. The ache of being passed over, in the dino's own voice. Builds on 016 / 051 / 142.
+- [ ] BACKLOG-272 [social] Fond greeting from a close dino — the warm pole of 271: a high-friendship dino (≥8 hearts) opens with a familiar, fond line ("there you are! I was hoping you'd swing by"), so the *first words* of a greeting read the relationship the way the thanks register reads temperament. Builds on 271 / 016 / 051.
+- [ ] BACKLOG-273 [emergent] The visit remembered — a dino greeted while neglected (271) files a faint "the keeper finally came by" memory, so its *next* greeting softens from wistful toward warming; attention received changes the next hello. The affection mirror of the gratitude-wears-smooth beats. Builds on 271 / 011 / 116.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
