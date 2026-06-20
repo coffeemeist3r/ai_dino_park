@@ -575,6 +575,15 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-281 [social] Mentioned in the same breath — a fond dino with a strong dino-friend nearby greets you and names them too ("Twitch and I were just saying hi"), so the greeting reads the bond graph, not only your hearts. Builds on 272 / 013.
 - [ ] BACKLOG-282 [pokemon] The first-words ladder in the book — the collection book shows each dino's current opening register (stranger / wistful / plain / fond / by-name), making the greeting ladder the arc has built legible at a glance. Builds on 271 / 272 / 276 / 021.
 
+## Cycle 62 lore additions — the name shrinks to a nickname (2026-06-20)
+
+> Cycle 61 shipped 276 (a fond dino names the observer by designation). Cycle 62's next-up is the
+> already-queued **BACKLOG-278** — the deepest friendship drops the designation for the nickname. These
+> extend the address arc once the nickname lands.
+
+- [ ] BACKLOG-283 [social] Nickname only once it's earned aloud — a dino graduates to the nickname (278) only after it has first named you by designation (276) at least once, so the address visibly climbs designation→nickname over a friendship rather than jumping straight to intimate. Builds on 276 / 278.
+- [ ] BACKLOG-284 [pokemon] Address shown in the book — the collection book shows how each dino currently addresses you (unnamed / by designation / by nickname), making the 276→278 escalation legible beside the first-words ladder (282). Builds on 276 / 278 / 282.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
