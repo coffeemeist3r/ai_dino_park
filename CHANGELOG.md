@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 061 — 2026-06-20
+- BACKLOG-276: The keeper has a name — a fond ≥8-heart dino names the chosen observer by designation ("There you are, AETHER-1!"); deep friendship earns your name in its mouth. (lore track)
+- BACKLOG-040: Save format versioning + migration hook — `SAVE_VERSION=2` + a pure `migrate` chain so an older save is upgraded on load instead of discarded; the spine before 146/145/274 add more state. (structure track)
+
 ## Cycle 060 — 2026-06-19
 - BACKLOG-272: Fond greeting from a close dino — a ≥8-heart dino opens warmly; completes the greeting-by-relationship spectrum (wistful ≤1 / generic / fond ≥8). (lore track)
 - BACKLOG-032: Roles persist across cycles — `settleRole` makes an emerged role durable (never reverts to wanderer), persisted; jobs that stick. (structure track)
