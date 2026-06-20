@@ -2,7 +2,7 @@
   "cycle": 62,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-278: Earned the nickname",
-  "structureItem": null,
+  "structureItem": "BACKLOG-146: Resource gathering spine",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-20T12:00:00-05:00",
-    "structure-smith": "2026-06-20T03:08:00-05:00",
+    "structure-smith": "2026-06-20T12:06:00-05:00",
     "designer": "2026-06-20T03:12:00-05:00",
     "code-planner": "2026-06-20T03:18:00-05:00",
     "coder": "2026-06-20T03:30:00-05:00",
