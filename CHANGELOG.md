@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 062 — 2026-06-20
+- BACKLOG-278: Earned the nickname — at the heart cap (10) the closest dino drops the keeper's designation for its nickname ("There you are, Aki!"); 8–9 hearts still use the designation. The top rung of the greeting-by-relationship ladder. (lore track)
+- BACKLOG-146: Resource gathering spine — a raw resource (🪵/🪨) appears in the bowl and a curious dino walks over and picks it up (per-dino tally, persisted). First beat of the resources→crafting→building arc; ranks below food + huddle. (structure track)
+
 ## Cycle 061 — 2026-06-20
 - BACKLOG-276: The keeper has a name — a fond ≥8-heart dino names the chosen observer by designation ("There you are, AETHER-1!"); deep friendship earns your name in its mouth. (lore track)
 - BACKLOG-040: Save format versioning + migration hook — `SAVE_VERSION=2` + a pure `migrate` chain so an older save is upgraded on load instead of discarded; the spine before 146/145/274 add more state. (structure track)
