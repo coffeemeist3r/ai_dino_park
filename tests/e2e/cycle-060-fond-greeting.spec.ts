@@ -21,14 +21,10 @@ test('a close dino greets the keeper fondly', async ({ page }) => {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // Befriend Twitch (the warmest founder) up to the heart cap. Twitch + a Warm tone is a positive
-  // personality fit, so the tone delta on the greet keeps affection at the top — well above FOND_MIN.
-  const hearts = await page.evaluate(() => {
-    let h = 0;
-    for (let i = 0; i < 40; i++) h = (window as W).__greet('Twitch') as number;
-    return h;
-  });
-  expect(hearts).toBeGreaterThanOrEqual(8);
+  // Befriend Twitch into the fond band at 8 hearts — fond fires and names by designation (276). The
+  // cap (10) escalates to the nickname (278, cycle-062), so we pin to 8 to keep testing the fond pole.
+  const hearts = await page.evaluate(() => (window as W).__setHearts('Twitch', 8) as number);
+  expect(hearts).toBe(8);
 
   await pickTone(page, 'Twitch', 'warm');
   await page.waitForTimeout(150);

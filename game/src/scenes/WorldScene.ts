@@ -1357,22 +1357,18 @@ export class WorldScene extends Phaser.Scene {
         }
       }
 
-      // A raw resource pulls a curious dino toward it (BACKLOG-146) — below food, above idle wandering.
-      if (this.resource) {
-        const dist = Math.hypot(cur.tileX - this.resource.tileX, cur.tileY - this.resource.tileY);
-        if (noticeResource(d.traits.curiosity, dist) === 'fetch') {
-          const step = stepToward(cur, this.resource, COLS, ROWS);
-          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
-          continue;
-        }
-      }
-
       const other = this.nearestOther(d);
+      const resDist = this.resource
+        ? Math.hypot(cur.tileX - this.resource.tileX, cur.tileY - this.resource.tileY)
+        : Infinity;
       let next;
       if (denTime && this.maxBond(d.name) >= huddleThreshold(season)) {
-        // Huddle hours: bonded-enough dinos head for the den to sleep together.
+        // Huddle hours: bonded-enough dinos head for the den to sleep together. Sleep beats gathering.
         // Winter opens the window at dusk and lowers the bar; summer waits until late.
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS);
+      } else if (this.resource && noticeResource(d.traits.curiosity, resDist) === 'fetch') {
+        // A curious dino fetches a raw resource (BACKLOG-146) — below food + sleep, above idle drift.
+        next = stepToward(cur, this.resource, COLS, ROWS);
       } else if (other && Math.random() < 0.45) {
         // Day: ~45% of the time drift toward the nearest dino so the park clusters and converses.
         next = stepToward(cur, this.tileOf(other), COLS, ROWS);
