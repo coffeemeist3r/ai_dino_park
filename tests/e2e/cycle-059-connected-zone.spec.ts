@@ -47,6 +47,23 @@ test('the crossing is a no-op off an unlinked edge — the keeper stays put', as
   expect(await zone(page)).toBe('bowl');
 });
 
+test('dinos draw only in their own zone — the grove is empty (BACKLOG-143)', async ({ page }) => {
+  await boot(page);
+  const visible = (p: import('@playwright/test').Page) =>
+    p.evaluate(() => (window as W).__visibleDinos() as string[]);
+
+  // The whole roster lives in the bowl, so it's all drawn here.
+  expect((await visible(page)).length).toBeGreaterThan(0);
+
+  // Cross into the (empty) grove — no dino should be drawn there.
+  await page.evaluate(() => (window as W).__setZone('grove'));
+  expect(await visible(page)).toEqual([]);
+
+  // Back in the bowl, the roster is drawn again.
+  await page.evaluate(() => (window as W).__setZone('bowl'));
+  expect((await visible(page)).length).toBeGreaterThan(0);
+});
+
 test('a zone jump updates the plaque place name', async ({ page }) => {
   await boot(page);
   const place = (p: import('@playwright/test').Page) =>

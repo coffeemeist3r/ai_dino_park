@@ -37,7 +37,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, crossing, linkedZone, zoneById } from '../world/zones';
+import { BOWL_ID, crossing, linkedZone, zoneById, zoneOf } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -110,6 +110,8 @@ export class WorldScene extends Phaser.Scene {
   private dinos: Dino[] = [];
   /** The keeper's current zone (BACKLOG-143). Persisted; the grove starts empty (population is -274). */
   private zoneId: string = BOWL_ID;
+  /** Which zone each dino lives in (BACKLOG-143 occupancy API). Defaults to the bowl; -274 migrates. */
+  private dinoZones: Record<string, string> = {};
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -397,6 +399,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__setZone = (id: string) => {
       this.zoneId = id;
       this.refreshPlaque();
+      this.applyZoneVisibility();
     };
   }
 
@@ -747,6 +750,9 @@ export class WorldScene extends Phaser.Scene {
       brain: this.npcBrain,
     });
     this.dinos.push(dino);
+    this.dinoZones[cfg.name] ??= BOWL_ID;
+    dino.sprite.setVisible(this.inView(dino));
+    dino.label.setVisible(this.inView(dino));
     this.sleepMarks.push(
       this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -941,7 +947,7 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.forEach((d, i) => {
       const mark = this.sleepMarks[i];
       if (!mark) return;
-      mark.setVisible(this.isHuddling(d)).setPosition(d.x, d.y - TILE);
+      mark.setVisible(this.isHuddling(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
     });
     this.refreshColdMarks();
   }
@@ -951,7 +957,7 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.forEach((d, i) => {
       const mark = this.coldMarks[i];
       if (!mark) return;
-      mark.setVisible(this.coldPending.has(d.name)).setPosition(d.x, d.y - TILE * 1.4);
+      mark.setVisible(this.coldPending.has(d.name) && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
     });
   }
 
@@ -1076,7 +1082,7 @@ export class WorldScene extends Phaser.Scene {
     // role tags float over each dino only in the roles lens
     this.roleTags.forEach((tag, i) => {
       const d = this.dinos[i];
-      const show = L === 'roles' && !!d;
+      const show = L === 'roles' && !!d && this.inView(d);
       tag.setVisible(show);
       if (show) {
         const r = this.roleOf(d.name);
@@ -1094,7 +1100,7 @@ export class WorldScene extends Phaser.Scene {
       for (const p of bondedPairs(this.bonds, HUDDLE_THRESHOLD)) {
         const a = this.dinoByName(p.a);
         const b = this.dinoByName(p.b);
-        if (!a || !b) continue;
+        if (!a || !b || !this.inView(a) || !this.inView(b)) continue;
         this.bondGfx.lineStyle(Math.max(1, Math.round(p.points / 18)), 0xff6fae, 0.6);
         this.bondGfx.lineBetween(a.x, a.y, b.x, b.y);
       }
@@ -1565,6 +1571,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private showBubble(d: Dino, text: string): void {
+    if (!this.inView(d)) return; // a dino in another zone speaks off-screen, not into this one
     const bubble = this.add
       .text(d.x, d.y - TILE * 1.4, text, {
         fontFamily: 'monospace',
@@ -2152,7 +2159,22 @@ export class WorldScene extends Phaser.Scene {
     this.zoneId = link.zoneId;
     this.player.setPosition(link.entry.x, link.entry.y);
     this.refreshPlaque();
+    this.applyZoneVisibility();
     return true;
+  }
+
+  /** True when a dino lives in the keeper's current zone (and so should be drawn). */
+  private inView(d: Dino): boolean {
+    return zoneOf(this.dinoZones, d.name, BOWL_ID) === this.zoneId;
+  }
+
+  /** Show only the current zone's dinos; their marks/tags AND-gate on inView each tick. */
+  private applyZoneVisibility(): void {
+    for (const d of this.dinos) {
+      const v = this.inView(d);
+      d.sprite.setVisible(v);
+      d.label.setVisible(v);
+    }
   }
 
   private handleInteract(): void {
@@ -2721,6 +2743,7 @@ export class WorldScene extends Phaser.Scene {
       for (const b of this.born) this.spawnDino(b);
       this.eggs = save.eggs ?? [];
       for (const e of this.eggs) this.drawEgg(e);
+      this.applyZoneVisibility(); // a save restored into the grove must not show the bowl's dinos
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.syncSeason(); // restore re-derives the season; never a turn beat (BACKLOG-159)
@@ -2849,6 +2872,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__dinoCount = () => this.dinos.length;
     // any: dev-only Playwright hook — every dino's name
     (window as any).__dinoNames = () => this.dinos.map((d) => d.name);
+    // any: dev-only Playwright hook — names of dinos currently drawn (in the keeper's zone) (BACKLOG-143)
+    (window as any).__visibleDinos = () =>
+      this.dinos.filter((d) => d.sprite.visible).map((d) => d.name);
     // any: dev-only Playwright hook — shared NPC brain load status
     (window as any).__brainStatus = () => this.npcBrain.status?.() ?? 'n/a';
   }
