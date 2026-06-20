@@ -560,7 +560,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > the way the thanks register reads temperament. These extend the greeting-by-relationship arc.
 
 - [ ] BACKLOG-275 [emergent] Snubbed and resigned — a dino greeted wistfully (271) yet still left at ≤1 heart across several visits hardens from wistful to a cooler, resigned opener ("oh. it's you."); hope curdles to indifference when attention never follows. Builds on 271 / 273 / 011.
-- [ ] BACKLOG-276 [social] The keeper has a name — a fond ≥8-heart dino (272) drops the chosen observer's designation into its hello ("there you are, AETHER-1"), so deep friendship is the thing that earns your name in its mouth. Builds on 272 / 155 / 160.
+- [~] BACKLOG-276 [social] The keeper has a name — a fond ≥8-heart dino (272) drops the chosen observer's designation into its hello ("there you are, AETHER-1"), so deep friendship is the thing that earns your name in its mouth. Builds on 272 / 155 / 160.  *(in flight: cycle 61 lore track)*
 - [ ] BACKLOG-277 [emergent] Greeting remembers the last gift — a dino opens by referencing the last thing you fed/gifted it ("still thinking about that fish"), pulled from its memory, when the memory is fresh. The gift loop surfacing in the greeting. Builds on 015 / 061 / 011.
 
 ## Cycle 61 lore additions — friendship earns your name (2026-06-20)
