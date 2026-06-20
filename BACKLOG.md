@@ -580,7 +580,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > already-queued **BACKLOG-276** (a fond dino names the observer) — the rung where deep friendship earns
 > *your* name in the dino's mouth. These extend the greeting-by-relationship arc further.
 
-- [ ] BACKLOG-278 [social] Earned the nickname — once a ≥8-heart dino names you by designation (276), a near-max-bond dino graduates to the keeper's *nickname* ("there you are, Aki") instead of the formal designation; intimacy escalates the address. Builds on 276.
+- [~] BACKLOG-278 [social] Earned the nickname — once a ≥8-heart dino names you by designation (276), a near-max-bond dino graduates to the keeper's *nickname* ("there you are, Aki") instead of the formal designation; intimacy escalates the address. Builds on 276. *(in flight: cycle 62 lore track)*
 - [ ] BACKLOG-279 [emergent] Greeting carries the hour — a fond dino's named hello leans on the time of day ("up early too, AETHER-1?"), layering 110's hour-aware idea onto the 272/276 greeting. Builds on 272 / 276 / 051.
 - [ ] BACKLOG-280 [emergent] Who are you again? — switching observers (a real keeperId change) makes even a fond dino hesitate at the greeting ("…AETHER-1? you seem different") before warming, since the body it knew just changed; ties the keeper-swap into the first words. Builds on 276 / 161.
 - [ ] BACKLOG-281 [social] Mentioned in the same breath — a fond dino with a strong dino-friend nearby greets you and names them too ("Twitch and I were just saying hi"), so the greeting reads the bond graph, not only your hearts. Builds on 272 / 013.
