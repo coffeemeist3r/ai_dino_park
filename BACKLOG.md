@@ -563,6 +563,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-276 [social] The keeper has a name — a fond ≥8-heart dino (272) drops the chosen observer's designation into its hello ("there you are, AETHER-1"), so deep friendship is the thing that earns your name in its mouth. Builds on 272 / 155 / 160.
 - [ ] BACKLOG-277 [emergent] Greeting remembers the last gift — a dino opens by referencing the last thing you fed/gifted it ("still thinking about that fish"), pulled from its memory, when the memory is fresh. The gift loop surfacing in the greeting. Builds on 015 / 061 / 011.
 
+## Cycle 61 lore additions — friendship earns your name (2026-06-20)
+
+> Cycle 59/60 built the greeting ladder's two poles (271 wistful, 272 fond). Cycle 61's next-up is the
+> already-queued **BACKLOG-276** (a fond dino names the observer) — the rung where deep friendship earns
+> *your* name in the dino's mouth. These extend the greeting-by-relationship arc further.
+
+- [ ] BACKLOG-278 [social] Earned the nickname — once a ≥8-heart dino names you by designation (276), a near-max-bond dino graduates to the keeper's *nickname* ("there you are, Aki") instead of the formal designation; intimacy escalates the address. Builds on 276.
+- [ ] BACKLOG-279 [emergent] Greeting carries the hour — a fond dino's named hello leans on the time of day ("up early too, AETHER-1?"), layering 110's hour-aware idea onto the 272/276 greeting. Builds on 272 / 276 / 051.
+- [ ] BACKLOG-280 [emergent] Who are you again? — switching observers (a real keeperId change) makes even a fond dino hesitate at the greeting ("…AETHER-1? you seem different") before warming, since the body it knew just changed; ties the keeper-swap into the first words. Builds on 276 / 161.
+- [ ] BACKLOG-281 [social] Mentioned in the same breath — a fond dino with a strong dino-friend nearby greets you and names them too ("Twitch and I were just saying hi"), so the greeting reads the bond graph, not only your hearts. Builds on 272 / 013.
+- [ ] BACKLOG-282 [pokemon] The first-words ladder in the book — the collection book shows each dino's current opening register (stranger / wistful / plain / fond / by-name), making the greeting ladder the arc has built legible at a glance. Builds on 271 / 272 / 276 / 021.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
