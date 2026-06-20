@@ -110,7 +110,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 59 structure additions — the bigger world (2026-06-19)
 
-- [ ] BACKLOG-274 [core] Populate the grove — the follow-up to 143's spine: assign each dino a home zone, migrate dinos between bowl and grove, and filter cross-zone rendering + proximity interaction so a dino in the grove isn't drawn or talkable from the bowl. Builds on 143 (occupancy API `setZone`/`zoneOf` + the walkable second zone). Structure track.
+- [ ] BACKLOG-274 [core] Populate the grove — the follow-up to 143's spine: assign each dino a home zone, migrate dinos between bowl and grove, and filter cross-zone rendering + proximity interaction so a dino in the grove isn't drawn or talkable from the bowl. Builds on 143 (occupancy API `setZone`/`zoneOf` + the walkable second zone). Structure track. *(progress: operator 2026-06-20 — cross-zone **render** filter shipped: `dinoZones` (home zone per dino, default bowl) + an `inView` gate on WorldScene sprite/label/sleep+cold marks/role-tags/bond-lines/bubbles, so the grove draws empty per 143's intent; `__visibleDinos` e2e hook. **Remaining: assign non-bowl home zones + migrate dinos + proximity-interaction filter.**)*
 
 ## Cycle 1 lore additions (2026-05-25)
 
