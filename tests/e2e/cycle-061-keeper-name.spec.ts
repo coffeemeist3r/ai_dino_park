@@ -2,27 +2,27 @@ import { test, expect } from '@playwright/test';
 import { boot } from './helpers';
 
 /**
- * Fond greeting (BACKLOG-272). A close dino (≥8 hearts) opens warmly instead of with the generic hello.
- * Headless has no WebGPU → canned fallback (the deterministic half). Hearts are driven up via __greet
- * (BASE_GAIN 3/greet; 8 hearts = 80 points).
+ * The keeper has a name (BACKLOG-276). A fond (≥8 hearts) dino names the chosen observer by designation
+ * in its hello. Headless has no WebGPU → the canned fallback (the deterministic half). The default
+ * observer is AETHER-1, so the fond line should name "AETHER-1".
  */
 
 type W = Record<string, any>;
 const FOND = 'There you are';
 const WISTFUL = 'came to see';
+const AKI = 'AETHER-1';
 
 const pickTone = (page: import('@playwright/test').Page, name: string, id: string) =>
   page.evaluate(({ name, id }) => (window as W).__pickTone(name, id) as Promise<void>, { name, id });
 const dialogText = (page: import('@playwright/test').Page) =>
   page.evaluate(() => ((window as W).__dialogPage() as { text: string }).text);
 
-test('a close dino greets the keeper fondly', async ({ page }) => {
+test('a close dino greets the keeper by designation', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // Befriend Twitch (the warmest founder) up to the heart cap. Twitch + a Warm tone is a positive
-  // personality fit, so the tone delta on the greet keeps affection at the top — well above FOND_MIN.
+  // Befriend Twitch (the warmest founder) up to the heart cap — a Warm tone on Twitch is a positive fit.
   const hearts = await page.evaluate(() => {
     let h = 0;
     for (let i = 0; i < 40; i++) h = (window as W).__greet('Twitch') as number;
@@ -35,9 +35,7 @@ test('a close dino greets the keeper fondly', async ({ page }) => {
 
   const reply = await dialogText(page);
   expect(reply).toContain(FOND);
-  // In-fire fixup (BACKLOG-276): the fond in-game line now names the chosen observer (default AETHER-1),
-  // not the dino — deep friendship earns the keeper's name. Was `toContain('Twitch')` at cycle 60.
-  expect(reply).toContain('AETHER-1');
+  expect(reply).toContain(AKI); // names the default observer, not the dino
   expect(reply).not.toContain(WISTFUL);
   expect(reply).not.toContain('cleared');
   expect(errors).toEqual([]);

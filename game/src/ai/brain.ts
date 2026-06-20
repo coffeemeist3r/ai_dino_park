@@ -24,6 +24,8 @@ export interface NPCContext {
   affection?: number;
   /** If set, the name of whoever just cleared this dino's name — surfaces as spoken gratitude (BACKLOG-247). */
   gratitude?: string;
+  /** The chosen observer's designation — a fond dino drops it into its hello (BACKLOG-276). */
+  keeperName?: string;
 }
 
 export interface Observation {
@@ -94,8 +96,13 @@ export function wistfulGreeting(name: string): string {
  */
 export const FOND_MIN = 8;
 
-/** A close dino's opening line — warm, familiar, glad you came (BACKLOG-272). */
-export function fondGreeting(name: string): string {
+/**
+ * A close dino's opening line — warm, familiar, glad you came (BACKLOG-272). When the chosen observer's
+ * designation is known, the dino names *you* instead of itself (BACKLOG-276) — deep friendship earns
+ * your name in its mouth. No designation → the original self-naming line, byte-for-byte (back-compat).
+ */
+export function fondGreeting(name: string, keeperName?: string): string {
+  if (keeperName) return `There you are, ${keeperName}! Good to see you back, friend.`;
   return `There you are, friend! ${name}'s been hoping you'd come round.`;
 }
 
@@ -129,7 +136,7 @@ export function cannedReply(ctx: NPCContext): Reply {
   }
   // A close dino (high friendship) opens warmly (BACKLOG-272) — the warm pole of the wistful greeting.
   if (ctx.affection !== undefined && ctx.affection >= FOND_MIN) {
-    return { text: fondGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
+    return { text: fondGreeting(ctx.name, ctx.keeperName), mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
   const idx = Math.floor(Math.random() * cannedGreetings.length);
   const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);

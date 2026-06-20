@@ -72,6 +72,11 @@ export function keeperById(id: string | undefined): Keeper {
   return KEEPERS.find((k) => k.id === id) ?? KEEPERS[0];
 }
 
+/** The unit designation alone (the code before the nickname): `'AETHER-1 "Aki"'` → `'AETHER-1'`. */
+export function designationOf(keeper: Keeper): string {
+  return keeper.name.split('"')[0].trim();
+}
+
 /** Fit of an observer for a dino's personality: Σ weight · (trait centered to [-1,1]). No traits → 0. */
 export function keeperFit(keeper: Keeper, traits?: Personality): number {
   if (!traits) return 0;

@@ -1,6 +1,6 @@
 {
   "cycle": 61,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-276: the keeper has a name",
   "structureItem": "BACKLOG-040: save format versioning + migration hook",
   "lastVerdict": "APPROVED",
@@ -13,6 +13,7 @@
     "structure-smith": "2026-06-20T03:08:00-05:00",
     "designer": "2026-06-20T03:12:00-05:00",
     "code-planner": "2026-06-20T03:18:00-05:00",
+    "coder": "2026-06-20T03:30:00-05:00",
     "code-planner": "2026-06-19T22:15:00-05:00",
     "coder": "2026-06-19T22:25:00-05:00",
     "qa": "2026-06-19T22:30:00-05:00",

@@ -48,7 +48,7 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
-import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit } from '../keeper/keepers';
+import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, designationOf } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
@@ -1704,6 +1704,7 @@ export class WorldScene extends Phaser.Scene {
           affection: heartsFromPoints(this.friendship[d.name] ?? 0),
           recentMemory: recall(this.memory, d.name),
           gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
+          keeperName: designationOf(keeperById(this.keeperId)),
         },
         { kind: 'player_greet' },
       );
@@ -2207,6 +2208,8 @@ export class WorldScene extends Phaser.Scene {
       recentMemory: recall(this.memory, target.name),
       // A just-cleared dino names who set its record straight (BACKLOG-247).
       gratitude: whoClearedMyName(this.memory, target.name) ?? undefined,
+      // A fond dino names the chosen observer (BACKLOG-276).
+      keeperName: designationOf(keeperById(this.keeperId)),
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);

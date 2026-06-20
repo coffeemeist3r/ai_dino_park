@@ -83,7 +83,9 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   // with `wistful` (≤1 vs ≥8 hearts can't overlap).
   const fond =
     !ctx.gratitude && ctx.affection !== undefined && ctx.affection >= 8
-      ? `This keeper is a dear, familiar friend — greet them warmly and gladly, like someone you've missed. `
+      ? `This keeper is a dear, familiar friend — greet them warmly and gladly, like someone you've missed. ` +
+        // BACKLOG-276: deep friendship earns the keeper's name — a fond dino greets the observer by designation.
+        (ctx.keeperName ? `Greet them by name — call them ${ctx.keeperName}. ` : '')
       : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =

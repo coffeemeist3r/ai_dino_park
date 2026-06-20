@@ -2,9 +2,10 @@
  * Save payload + (de)serialization.
  *
  * Pure TypeScript: no Phaser, no IndexedDB — runs in Node for tests.
- * The IndexedDB I/O lives in saveStore.ts. Migration across versions
- * is out of scope here (BACKLOG-040); this only gates on an exact
- * version match so an incompatible save is ignored rather than crashing.
+ * The IndexedDB I/O lives in saveStore.ts. Versioning + migration (BACKLOG-040):
+ * an older-version save is *upgraded* to the current shape on load via the
+ * `migrate` chain rather than discarded; an unknown/newer/missing version is
+ * still rejected (null) so an incompatible save is ignored rather than crashing.
  */
 
 import type { GameTime } from './clock';
@@ -14,7 +15,35 @@ import type { Bonds } from '../social/bonds';
 import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
+
+type Migration = (o: Record<string, unknown>) => Record<string, unknown>;
+
+/**
+ * Step migrations, keyed by the version they upgrade FROM (N → N+1). The chain runs them in order to
+ * lift an old save to SAVE_VERSION. A future non-additive change registers its own step here.
+ */
+const MIGRATIONS: Record<number, Migration> = {
+  // v1 → v2: every field added since v1 was additive-optional, so a v1 payload is already
+  // shape-compatible — the step just stamps the new version (the worked example proving the hook).
+  1: (o) => ({ ...o, version: 2 }),
+};
+
+/**
+ * Lift a parsed save of any supported version up to SAVE_VERSION, returning the upgraded object — or
+ * null for a missing/non-integer/newer version or a gap in the migration chain. Pure: never mutates `raw`.
+ */
+export function migrate(raw: Record<string, unknown>): Record<string, unknown> | null {
+  const v = raw.version;
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 1 || v > SAVE_VERSION) return null;
+  let o = raw;
+  for (let from = v; from < SAVE_VERSION; from++) {
+    const step = MIGRATIONS[from];
+    if (!step) return null; // gap in the chain — refuse rather than guess
+    o = step(o);
+  }
+  return o;
+}
 
 export interface SaveData {
   version: number;
@@ -58,8 +87,9 @@ export function deserialize(json: string): SaveData | null {
     return null;
   }
   if (typeof raw !== 'object' || raw === null) return null;
-  const o = raw as Record<string, unknown>;
-  if (o.version !== SAVE_VERSION) return null;
+  // Upgrade an older save to the current shape before validating; reject unknown/newer/missing versions.
+  const o = migrate(raw as Record<string, unknown>);
+  if (!o) return null;
 
   const time = o.time as Record<string, unknown> | undefined;
   if (!time || !isNum(time.day) || !isNum(time.hour) || !isNum(time.minute)) return null;

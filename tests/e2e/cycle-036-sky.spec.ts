@@ -62,9 +62,10 @@ test('the whole cast gathers and files one shared memory that persists in the sa
   const mem = await memory(page);
   expect(mem.Rex ?? []).toContain(METEOR_MEMORY);
 
-  // …and it persists into the exported save (no version bump — additive memory only).
+  // …and it persists into the exported save. (Save format is v2 since BACKLOG-040 added the
+  // version + migration hook; this feature itself is still additive memory only.)
   const save = JSON.parse(await exportSave(page));
-  expect(save.version).toBe(1);
+  expect(save.version).toBe(2);
   expect(save.memory.Rex ?? []).toContain(METEOR_MEMORY);
 });
 

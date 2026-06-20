@@ -104,3 +104,24 @@
 ## Cross-track collision
 None. Lore: `ai/brain.ts`, `ai/webllmBrain.ts`, `keeper/keepers.ts`, `scenes/WorldScene.ts` (+ tests). Structure:
 `world/saveGame.ts` (+ tests). No shared file. Build + full suite must be green for the combined result.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- Lore 276:
+  - `game/src/keeper/keepers.ts` — `designationOf(keeper)` (split off the nickname).
+  - `game/src/ai/brain.ts` — `NPCContext.keeperName?`; two-arm `fondGreeting(name, keeperName?)`; `cannedReply` fond branch passes `ctx.keeperName`.
+  - `game/src/ai/webllmBrain.ts` — fond clause appends the "call them <designation>" instruction only when `keeperName` set (byte-identical otherwise).
+  - `game/src/scenes/WorldScene.ts` — import `designationOf`; pass `keeperName: designationOf(keeperById(this.keeperId))` at the `pickTone` greet + the `__greetPrompt` hook.
+  - `tests/unit/cycle-061-keeper-name.test.ts` (new, 10 tests); `tests/e2e/cycle-061-keeper-name.spec.ts` (new, 1).
+  - `tests/e2e/cycle-060-fond-greeting.spec.ts` — in-fire fixup: fond in-game line names the keeper now (`'Twitch'` → `'AETHER-1'`).
+- Structure 040:
+  - `game/src/world/saveGame.ts` — `SAVE_VERSION = 2`; `MIGRATIONS` registry + pure exported `migrate(raw)`; `deserialize` swaps the exact-match gate for migrate-then-validate.
+  - `tests/unit/cycle-061-save-version.test.ts` (new, 10 tests).
+  - `tests/e2e/cycle-036-sky.spec.ts` — fixup: `save.version` `toBe(1)` → `toBe(2)`.
+
+**Deviations from plan:** none. `dino.ts` untouched as predicted (greet spreads `...extra`).
+
+**Build + tests:** `npm --prefix game run build` clean. `npm run test:unit` → 576 unit green (+20). `npx playwright test` → 190 passed, 1 cold-boot flake (`cycle-005-roster`, untouched by the diff; 4/4 green isolated on re-run). New cycle-061 specs + both in-fire fixups green. NPCBrain boundary verified (no web-llm outside `ai/`, no `ai → keeper` import).
