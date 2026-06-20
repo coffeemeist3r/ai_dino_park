@@ -77,6 +77,23 @@ export function designationOf(keeper: Keeper): string {
   return keeper.name.split('"')[0].trim();
 }
 
+/** The quoted nickname alone: `'AETHER-1 "Aki"'` → `'Aki'`. No quoted part → the designation (safety). */
+export function nicknameOf(keeper: Keeper): string {
+  return keeper.name.match(/"([^"]+)"/)?.[1] ?? designationOf(keeper);
+}
+
+/** Hearts at/above which a dino is close enough to use the keeper's nickname, not its designation (BACKLOG-278). */
+export const NICKNAME_MIN = 10;
+
+/**
+ * How a dino of `hearts` friendship addresses the keeper in its fond hello (BACKLOG-276/278): the
+ * intimate nickname at the very top of the scale, the formal designation below it. The greeting register
+ * (ai/) only ever renders the string this returns — the escalation lives here, in keeper space.
+ */
+export function keeperAddress(keeper: Keeper, hearts: number): string {
+  return hearts >= NICKNAME_MIN ? nicknameOf(keeper) : designationOf(keeper);
+}
+
 /** Fit of an observer for a dino's personality: Σ weight · (trait centered to [-1,1]). No traits → 0. */
 export function keeperFit(keeper: Keeper, traits?: Personality): number {
   if (!traits) return 0;

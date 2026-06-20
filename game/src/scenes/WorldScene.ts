@@ -48,7 +48,7 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
-import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, designationOf } from '../keeper/keepers';
+import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
@@ -64,6 +64,14 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
+import {
+  noticeResource,
+  resourceLanding,
+  rollResource,
+  pickKind,
+  RESOURCE_GLYPH,
+  type ResourceKind,
+} from '../world/resource';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -197,6 +205,11 @@ export class WorldScene extends Phaser.Scene {
   private foodKind: Food | null = null;
   private foodLanded = false;
   private foodSprite: Phaser.GameObjects.Text | null = null;
+  /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. */
+  private resource: { kind: ResourceKind; tileX: number; tileY: number } | null = null;
+  private resourceSprite: Phaser.GameObjects.Text | null = null;
+  /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
+  private gathered: Record<string, number> = {};
   private moveTicks = 0;
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
@@ -515,6 +528,11 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__food = () =>
       this.food ? { ...this.food, foodId: this.foodKind?.id ?? null } : null;
+    // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
+    (window as any).__resource = () => (this.resource ? { ...this.resource } : null);
+    (window as any).__gathered = () => ({ ...this.gathered });
+    (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number) =>
+      this.spawnResource(kind, tileX, tileY);
     (window as any).__favoriteFood = (name: string, season?: Season) => {
       const d = this.dinos.find((x) => x.name === name);
       return d ? { ...favoriteFood(d.traits, season ?? this.currentSeason()) } : null;
@@ -599,6 +617,38 @@ export class WorldScene extends Phaser.Scene {
       mark.destroy();
       d.label.setColor('#ffffff');
     });
+  }
+
+  /** A raw resource appears now and then (BACKLOG-146) — one at a time, like food. */
+  private maybeSpawnResource(): void {
+    if (this.resource || !rollResource()) return;
+    const landing = resourceLanding(COLS, ROWS);
+    this.spawnResource(pickKind(), landing.tileX, landing.tileY);
+  }
+
+  /** Place a resource at a tile and draw its glyph. Shared by the roll + the dev hook (deterministic). */
+  private spawnResource(kind: ResourceKind, tileX: number, tileY: number): void {
+    this.resource = { kind, tileX, tileY };
+    this.resourceSprite?.destroy();
+    this.resourceSprite = this.add
+      .text(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2, RESOURCE_GLYPH[kind], { fontSize: '16px' })
+      .setOrigin(0.5)
+      .setDepth(2);
+  }
+
+  /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
+  private checkGather(): void {
+    if (!this.resource) return;
+    const taker = this.dinos.find((d) => reachedFood(this.tileOf(d), this.resource!));
+    if (!taker) return;
+    const kind = this.resource.kind;
+    this.resourceSprite?.destroy();
+    this.resourceSprite = null;
+    this.resource = null;
+    this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
+    this.flashFeed(taker, RESOURCE_GLYPH[kind]);
+    this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
+    void this.saveGame();
   }
 
   /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
@@ -1307,6 +1357,16 @@ export class WorldScene extends Phaser.Scene {
         }
       }
 
+      // A raw resource pulls a curious dino toward it (BACKLOG-146) — below food, above idle wandering.
+      if (this.resource) {
+        const dist = Math.hypot(cur.tileX - this.resource.tileX, cur.tileY - this.resource.tileY);
+        if (noticeResource(d.traits.curiosity, dist) === 'fetch') {
+          const step = stepToward(cur, this.resource, COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          continue;
+        }
+      }
+
       const other = this.nearestOther(d);
       let next;
       if (denTime && this.maxBond(d.name) >= huddleThreshold(season)) {
@@ -1363,6 +1423,8 @@ export class WorldScene extends Phaser.Scene {
 
     this.refreshSleepMarks();
     this.checkFeeding();
+    this.maybeSpawnResource();
+    this.checkGather();
     this.maybeLayEggs();
     this.checkHatch();
   }
@@ -1711,7 +1773,7 @@ export class WorldScene extends Phaser.Scene {
           affection: heartsFromPoints(this.friendship[d.name] ?? 0),
           recentMemory: recall(this.memory, d.name),
           gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
-          keeperName: designationOf(keeperById(this.keeperId)),
+          keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[d.name] ?? 0)),
         },
         { kind: 'player_greet' },
       );
@@ -2230,8 +2292,8 @@ export class WorldScene extends Phaser.Scene {
       recentMemory: recall(this.memory, target.name),
       // A just-cleared dino names who set its record straight (BACKLOG-247).
       gratitude: whoClearedMyName(this.memory, target.name) ?? undefined,
-      // A fond dino names the chosen observer (BACKLOG-276).
-      keeperName: designationOf(keeperById(this.keeperId)),
+      // A fond dino names the chosen observer (BACKLOG-276); the closest of all uses the nickname (BACKLOG-278).
+      keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[target.name] ?? 0)),
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
@@ -2691,6 +2753,7 @@ export class WorldScene extends Phaser.Scene {
       keeperId: this.keeperId,
       zoneId: this.zoneId,
       roles: this.roles,
+      gathered: this.gathered,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2736,6 +2799,7 @@ export class WorldScene extends Phaser.Scene {
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
+      this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
@@ -2906,6 +2970,12 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__greet = (name: string) => {
       const dino = this.dinos.find((d) => d.name === name);
       this.recordGreet(name, dino?.traits);
+      return heartsFromPoints(this.friendship[name] ?? 0);
+    };
+    // any: dev-only Playwright hook — set a dino's hearts exactly (points = hearts×10) for deterministic tests
+    (window as any).__setHearts = (name: string, hearts: number) => {
+      this.friendship = { ...this.friendship, [name]: hearts * 10 };
+      this.refreshHeartsPanel();
       return heartsFromPoints(this.friendship[name] ?? 0);
     };
     // any: dev-only Playwright hook — is the hearts panel showing

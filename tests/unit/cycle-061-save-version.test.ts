@@ -18,6 +18,7 @@ const validV2: SaveData = {
   lastTone: {},
   zoneId: 'bowl',
   roles: {},
+  gathered: {},
   eggs: [],
   born: [],
   scale: 1,

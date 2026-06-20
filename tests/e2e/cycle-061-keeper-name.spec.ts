@@ -12,6 +12,8 @@ const FOND = 'There you are';
 const WISTFUL = 'came to see';
 const AKI = 'AETHER-1';
 
+const setHearts = (page: import('@playwright/test').Page, name: string, h: number) =>
+  page.evaluate(({ name, h }) => (window as W).__setHearts(name, h) as number, { name, h });
 const pickTone = (page: import('@playwright/test').Page, name: string, id: string) =>
   page.evaluate(({ name, id }) => (window as W).__pickTone(name, id) as Promise<void>, { name, id });
 const dialogText = (page: import('@playwright/test').Page) =>
@@ -22,13 +24,10 @@ test('a close dino greets the keeper by designation', async ({ page }) => {
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // Befriend Twitch (the warmest founder) up to the heart cap — a Warm tone on Twitch is a positive fit.
-  const hearts = await page.evaluate(() => {
-    let h = 0;
-    for (let i = 0; i < 40; i++) h = (window as W).__greet('Twitch') as number;
-    return h;
-  });
-  expect(hearts).toBeGreaterThanOrEqual(8);
+  // Befriend Twitch into the fond band but NOT to the cap: 8 hearts names by designation (276);
+  // the nickname only arrives at the cap (278, covered in cycle-062-nickname).
+  const hearts = await setHearts(page, 'Twitch', 8);
+  expect(hearts).toBe(8);
 
   await pickTone(page, 'Twitch', 'warm');
   await page.waitForTimeout(150);

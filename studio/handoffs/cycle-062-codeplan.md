@@ -84,3 +84,15 @@
 - e2e determinism: spawn via `__spawnResource` (not the random roll) so the test never flakes on `rollResource`.
 
 **Estimated touch count:** ~6 files (3 src, 3 test). At the cap; no split needed.
+
+---
+
+## Shipped (Coder)
+
+**Lore 278 — files touched:** `game/src/keeper/keepers.ts` (+`nicknameOf`, `NICKNAME_MIN=10`, `keeperAddress`); `game/src/scenes/WorldScene.ts` (import `keeperAddress` for `designationOf`; both greet sites pass `keeperAddress(keeper, heartsFromPoints(...))`; new `__setHearts` dev hook). Tests: `tests/unit/cycle-062-nickname.test.ts`, `tests/e2e/cycle-062-nickname.spec.ts`. In-fire fixup: `tests/e2e/cycle-061-keeper-name.spec.ts` pinned to 8 hearts via `__setHearts` (40 greets now caps at 10 → nickname; the cycle-61 spec tests the designation rung).
+
+**Structure 146 — files touched:** `game/src/world/resource.ts` (new, pure — `noticeResource`/`resourceLanding`/`rollResource`/`pickKind`/`RESOURCE_GLYPH`/`RESOURCE_RANGE`); `game/src/world/saveGame.ts` (additive `gathered` field + validate/default block mirroring `friendship`); `game/src/scenes/WorldScene.ts` (`resource`/`resourceSprite`/`gathered` fields, `maybeSpawnResource`+`spawnResource`+`checkGather`, fetch step after the food block in `forceStep`, tick calls beside `checkFeeding`, save+load, `__resource`/`__gathered`/`__spawnResource` hooks). Tests: `tests/unit/cycle-062-resource.test.ts`, `tests/e2e/cycle-062-resource.spec.ts`. In-fire fixup: `gathered: {}` added to the `sample`/`validV2` baselines in `tests/unit/saveGame.test.ts` + `cycle-061-save-version.test.ts` (additive field now always present in deserialize output).
+
+**Deviations:** reused `reachedFood` (feeding) for arrival from WorldScene rather than re-exporting it through `resource.ts` (avoids a feeding→resource coupling), as the plan's risk note preferred. No other deviations.
+
+**Build:** ✅ clean (10s). **Unit:** ✅ 588 passed (+12). **Render/e2e spot-check:** ✅ cycle-062 (4) + cycle-061-keeper (1) green, 5/5.

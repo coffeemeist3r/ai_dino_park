@@ -12,6 +12,7 @@ const sample: SaveData = {
   lastTone: { Rex: 'warm' },
   zoneId: 'bowl',
   roles: {},
+  gathered: {},
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],

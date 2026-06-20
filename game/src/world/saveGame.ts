@@ -62,6 +62,8 @@ export interface SaveData {
   zoneId?: string;
   /** Each dino's settled (durable) role (BACKLOG-032). Additive; absent → {}. Stored as plain strings. */
   roles?: Record<string, string>;
+  /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
+  gathered?: Record<string, number>;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -185,6 +187,17 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // gathered is additive over v1 — absent in older saves (default {}); name→count, mirrors friendship.
+  let gathered: Record<string, number> = {};
+  if (o.gathered !== undefined) {
+    if (typeof o.gathered !== 'object' || o.gathered === null) return null;
+    const entries = o.gathered as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      gathered[k] = entries[k] as number;
+    }
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -251,6 +264,7 @@ export function deserialize(json: string): SaveData | null {
     keeperId,
     zoneId,
     roles,
+    gathered,
     eggs,
     born,
     savedAt,
