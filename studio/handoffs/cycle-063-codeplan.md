@@ -57,3 +57,23 @@
 **Cross-track collision:** both tracks edit `WorldScene.ts`. Disjoint methods — `stepSky` (lore) vs. `checkGather`/`refreshPlaque`/`currentSaveData`/save-restore (structure). No shared lines; either order is safe.
 
 **Estimated touch count:** ~6 files (3 src + 1 shared WorldScene, 2 new tests + 2 extended). Within budget.
+
+---
+
+## Shipped (Coder)
+
+**Lore track — BACKLOG-150.** Files touched:
+- `game/src/world/skyEvent.ts` — added pure `gazeRing({bravery,curiosity}) → 0|1|2` (boldness avg; ≥0.6→0, ≥0.35→1, else 2) + `GAZE_MAX_RING`.
+- `game/src/scenes/WorldScene.ts` — `stepSky` now halts each dino at its own ring via `atGather(cur, SKY_GATHER_TILE, ring)` (reuses the existing radius arg); gazer registration uses the per-dino ring. Added `__skyRings` dev hook.
+- `tests/unit/cycle-063-stargazer.test.ts` (5) + `tests/e2e/cycle-063-stargazer.spec.ts` (2).
+
+**Structure track — BACKLOG-285.** Files touched:
+- `game/src/world/resource.ts` — `Stockpile` type + pure `bankResource`/`stockpileLine`.
+- `game/src/world/saveGame.ts` — additive `stockpile?` field, validated like `gathered` (no `SAVE_VERSION` bump).
+- `game/src/ui/plaque.ts` — optional `stockpile` → third `Stores · …` line (two lines unchanged when absent).
+- `game/src/scenes/WorldScene.ts` — `stockpile` field; `checkGather` banks + `refreshPlaque`; plaque hook/refresh pass `stockpileLine`; save serialize + restore; `__stockpile` dev hook.
+- `tests/unit/cycle-063-stockpile.test.ts` (6); extended `tests/unit/plaque.test.ts` (+2) + `tests/unit/saveGame.test.ts` (+3); `tests/e2e/cycle-063-stockpile.spec.ts` (1).
+
+**Deviations:** none — built to plan. Updated the `cycle-061-save-version` + `saveGame` round-trip fixtures to carry `stockpile: {}` (the additive field is always present in deserialize output, exactly as `gathered` required last cycle).
+
+**Build + tests:** `npm run build` clean; `npm run test:unit` 604/604; dev server HTTP 200; full `npx playwright test` 199/199 (warm). Cold-boot flake observed on the first isolated run of the new specs (`__ready` timeout), green on the warm full run — the catalogued Vite/Phaser cold-start flake, not a regression. No new deps, no framework, no `web-llm` outside `ai/`.

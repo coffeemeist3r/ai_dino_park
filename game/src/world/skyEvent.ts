@@ -98,3 +98,20 @@ export function atGather(
 export function skyExpired(elapsedMin: number, event: SkyEvent): boolean {
   return elapsedMin >= event.durationMin;
 }
+
+/** Outermost ring a dino will settle on to watch (edge of the cluster). */
+export const GAZE_MAX_RING = 2;
+
+/**
+ * How close a dino presses in to watch a sky event (BACKLOG-150). The collective beat (144) used to pull
+ * every dino onto the same gather tile; here each gets a personal ring shaped by temperament, so a bold,
+ * curious dino crowds right under the spectacle (ring 0) while a timid, incurious one hangs back at the
+ * edge of the cluster (ring 2). Same event, a different read per personality. Used as the per-dino radius
+ * for `atGather` in WorldScene's gather loop. Structural trait param — keeps this module free of an ai/ import.
+ */
+export function gazeRing(traits: { bravery: number; curiosity: number }): 0 | 1 | 2 {
+  const boldness = (traits.bravery + traits.curiosity) / 2;
+  if (boldness >= 0.6) return 0;
+  if (boldness >= 0.35) return 1;
+  return GAZE_MAX_RING;
+}

@@ -19,6 +19,7 @@ const validV2: SaveData = {
   zoneId: 'bowl',
   roles: {},
   gathered: {},
+  stockpile: {},
   eggs: [],
   born: [],
   scale: 1,

@@ -13,6 +13,7 @@ const sample: SaveData = {
   zoneId: 'bowl',
   roles: {},
   gathered: {},
+  stockpile: {},
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],
@@ -142,5 +143,25 @@ describe('saveGame', () => {
 
   it('returns null for a malformed keeperId value (BACKLOG-155)', () => {
     expect(deserialize(JSON.stringify({ ...sample, keeperId: 7 }))).toBeNull();
+  });
+
+  it('round-trips a park stockpile (BACKLOG-285)', () => {
+    const withStock: SaveData = { ...sample, stockpile: { branch: 3, stone: 1 } };
+    expect(deserialize(serialize(withStock))).toEqual(withStock);
+  });
+
+  it('loads an older save lacking stockpile, defaulting it to {} (BACKLOG-285)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.stockpile).toEqual({});
+  });
+
+  it('returns null for a malformed stockpile value (BACKLOG-285)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, stockpile: { branch: 'lots' } }))).toBeNull();
   });
 });

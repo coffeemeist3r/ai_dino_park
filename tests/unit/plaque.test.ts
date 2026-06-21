@@ -36,4 +36,15 @@ describe('plaqueLines', () => {
     ]);
     expect(plaqueLines({ population: 1, day: 1, generations: 1 })[1]).toBe('Day 1 · 1 specimen · 1 generation');
   });
+
+  it('omits the stores line when no stockpile is banked (BACKLOG-285 — backward compatible)', () => {
+    expect(plaqueLines({ population: 6, day: 3, generations: 2 })).toHaveLength(2);
+    expect(plaqueLines({ population: 6, day: 3, generations: 2, stockpile: '' })).toHaveLength(2);
+  });
+
+  it('appends a third stores line once something is banked (BACKLOG-285)', () => {
+    const lines = plaqueLines({ population: 6, day: 3, generations: 2, stockpile: '🪵 3 · 🪨 1' });
+    expect(lines).toHaveLength(3);
+    expect(lines[2]).toBe('Stores · 🪵 3 · 🪨 1');
+  });
 });

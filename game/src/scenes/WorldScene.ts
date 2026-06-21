@@ -29,6 +29,7 @@ import {
   rollSkyEvent,
   atGather,
   skyExpired,
+  gazeRing,
   SKY_GATHER_TILE,
   SKY_EVENTS,
   SKY_ROLL_INTERVAL_MS,
@@ -69,8 +70,11 @@ import {
   resourceLanding,
   rollResource,
   pickKind,
+  bankResource,
+  stockpileLine,
   RESOURCE_GLYPH,
   type ResourceKind,
+  type Stockpile,
 } from '../world/resource';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
@@ -210,6 +214,8 @@ export class WorldScene extends Phaser.Scene {
   private resourceSprite: Phaser.GameObjects.Text | null = null;
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
   private gathered: Record<string, number> = {};
+  /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
+  private stockpile: Stockpile = {};
   private moveTicks = 0;
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
@@ -406,6 +412,7 @@ export class WorldScene extends Phaser.Scene {
       day: getWorldClock().now().day,
       generations: maxGeneration(this.born),
       zone: zoneById(this.zoneId).name,
+      stockpile: stockpileLine(this.stockpile),
     });
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
     (window as any).__zone = () => this.zoneId;
@@ -424,6 +431,7 @@ export class WorldScene extends Phaser.Scene {
         day: getWorldClock().now().day,
         generations: maxGeneration(this.born),
         zone: zoneById(this.zoneId).name,
+        stockpile: stockpileLine(this.stockpile),
       }).join('\n'),
     );
   }
@@ -531,6 +539,7 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     (window as any).__resource = () => (this.resource ? { ...this.resource } : null);
     (window as any).__gathered = () => ({ ...this.gathered });
+    (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
     (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number) =>
       this.spawnResource(kind, tileX, tileY);
     (window as any).__favoriteFood = (name: string, season?: Season) => {
@@ -646,6 +655,8 @@ export class WorldScene extends Phaser.Scene {
     this.resourceSprite = null;
     this.resource = null;
     this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
+    this.stockpile = bankResource(this.stockpile, kind); // BACKLOG-285: bank into the shared park total
+    this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
     void this.saveGame();
@@ -676,6 +687,9 @@ export class WorldScene extends Phaser.Scene {
     // dev-only Playwright hooks
     (window as any).__skyEvent = () => this.activeSky?.id ?? null;
     (window as any).__skyGazers = () => [...this.skyGazers];
+    // BACKLOG-150: each dino's gaze ring + its current tile, so the e2e can assert it halts at its ring.
+    (window as any).__skyRings = () =>
+      this.dinos.map((d) => ({ name: d.name, ring: gazeRing(d.traits), ...this.tileOf(d) }));
     // Force-start an event (default first, or by id), bypassing the roll — drives the e2e flow.
     (window as any).__triggerSky = (id?: SkyEventId) => {
       const ev = SKY_EVENTS.find((e) => e.id === id) ?? SKY_EVENTS[0];
@@ -736,9 +750,13 @@ export class WorldScene extends Phaser.Scene {
       return false;
     }
     for (const d of this.dinos) {
-      const next = stepToward(this.tileOf(d), SKY_GATHER_TILE, COLS, ROWS);
+      // BACKLOG-150: each dino presses in only to its own ring — bold/curious crowd under the spectacle
+      // (ring 0), timid ones halt at the cluster's edge (ring 2). Same event, a different read per dino.
+      const ring = gazeRing(d.traits);
+      const cur = this.tileOf(d);
+      const next = atGather(cur, SKY_GATHER_TILE, ring) ? cur : stepToward(cur, SKY_GATHER_TILE, COLS, ROWS);
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
-      if (atGather(next) && !this.skyGazers.has(d.name)) {
+      if (atGather(next, SKY_GATHER_TILE, ring) && !this.skyGazers.has(d.name)) {
         this.skyGazers.add(d.name);
         this.memory = remember(this.memory, d.name, this.activeSky.memory);
         this.showBubble(d, this.activeSky.bubble);
@@ -2750,6 +2768,7 @@ export class WorldScene extends Phaser.Scene {
       zoneId: this.zoneId,
       roles: this.roles,
       gathered: this.gathered,
+      stockpile: this.stockpile,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2796,6 +2815,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
+      this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.

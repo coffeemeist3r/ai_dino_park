@@ -45,3 +45,22 @@ export function rollResource(rand: () => number = Math.random): boolean {
 export function pickKind(rand: () => number = Math.random): ResourceKind {
   return rand() < 0.5 ? 'branch' : 'stone';
 }
+
+/**
+ * Shared per-kind park stockpile (BACKLOG-285) — where gathered resources bank. 146 raised a per-dino
+ * tally that nothing read; this is the park-level total the rest of the build arc (286 craft, 029) spends.
+ */
+export type Stockpile = Partial<Record<ResourceKind, number>>;
+
+/** Bank one gathered resource into the shared stockpile. Pure — returns a new map, never mutates `pile`. */
+export function bankResource(pile: Stockpile, kind: ResourceKind): Stockpile {
+  return { ...pile, [kind]: (pile[kind] ?? 0) + 1 };
+}
+
+/** One-line glyph readout for the plaque (`🪵 3 · 🪨 1`); lists only kinds banked, '' when empty. */
+export function stockpileLine(pile: Stockpile): string {
+  return (Object.keys(RESOURCE_GLYPH) as ResourceKind[])
+    .filter((k) => (pile[k] ?? 0) > 0)
+    .map((k) => `${RESOURCE_GLYPH[k]} ${pile[k]}`)
+    .join(' · ');
+}

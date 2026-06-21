@@ -46,12 +46,16 @@ export interface PlaqueStats {
   generations: number;
   /** Current zone display name (BACKLOG-143). Absent → the bowl, so old callers read unchanged. */
   zone?: string;
+  /** Park stockpile readout line content (BACKLOG-285), e.g. '🪵 3 · 🪨 1'. Absent/empty → no line. */
+  stockpile?: string;
 }
 
-/** The two engraved lines of the plaque. */
+/** The engraved lines of the plaque — two stats lines, plus a third stores line once anything is banked. */
 export function plaqueLines(s: PlaqueStats): string[] {
   const place = s.zone ?? 'Pocket Cretaceous';
   const specimens = `${s.population} specimen${s.population === 1 ? '' : 's'}`;
   const gens = `${s.generations} generation${s.generations === 1 ? '' : 's'}`;
-  return [`VIVARIUM · ${place}`, `Day ${s.day} · ${specimens} · ${gens}`];
+  const lines = [`VIVARIUM · ${place}`, `Day ${s.day} · ${specimens} · ${gens}`];
+  if (s.stockpile) lines.push(`Stores · ${s.stockpile}`);
+  return lines;
 }
