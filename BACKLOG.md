@@ -26,7 +26,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-145 [emergent] Plantable plot — one plot, one crop growing over realtime days, harvested into the food set
 - [ ] BACKLOG-274 [core] Populate the grove — assign dinos a home zone, migrate them, filter cross-zone rendering + interaction (builds on 143's occupancy API + walkable grove)
 - [x] BACKLOG-285 [emergent] Resource stockpile — gathered resources (146) bank into a shared per-kind park stockpile (persisted, with a readout); the count the rest of the build arc draws on  *(shipped: cycle 63 structure track — every 146 pickup banks into a shared per-kind park stockpile (`bankResource`, pure), shown as a third `Stores · 🪵 N · 🪨 N` plaque line (`stockpileLine`), persisted additively (validated like `gathered`, no version bump, old saves → {}). The count 286/029 spend.)*
-- [ ] BACKLOG-286 [emergent] First craft — at a stockpile threshold a dino turns banked resources into one simple crafted object (a cairn/marker), the first resources→craft step (builds on 146/285/029)
+- [~] BACKLOG-286 [emergent] First craft — at a stockpile threshold a dino turns banked resources into one simple crafted object (a cairn/marker), the first resources→craft step (builds on 146/285/029)  *(in flight: cycle 64 structure track)*
+- [ ] BACKLOG-293 [emergent] Crafted-object persistence — crafted objects (the cairn from 286) persist in the save + re-render on load, so built history accrues across sessions (builds on 286/040)
+- [ ] BACKLOG-294 [core] Grove terrain — give the grove its own ground region (distinct floor + defined path/water sub-regions in zones.ts) so the benched path/water art (033) finally has a home (builds on 143/274)
 - [x] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook (protects every future structural change)  *(shipped: cycle 61 structure track — `SAVE_VERSION=2` + a pure `migrate` chain; an older save is upgraded on load instead of discarded, old saves still load, unknown/newer/missing → null. The spine under 146/145/274.)*
 
 ---
@@ -238,7 +240,15 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > resources→crafting arc the gathering spine opens.
 
 - [x] BACKLOG-285 [emergent] Resource stockpile — the gathered resources from 146 bank into a shared, per-kind **park stockpile** (e.g. `{ branch: 3, stone: 1 }`), persisted in the save with a readout (HUD/book), so gathering accrues a visible park-level total instead of a per-dino tally that goes nowhere. The count the rest of the build arc (286/029) draws on. Builds on 146.  *(shipped: cycle 63 structure track — see Structure Track pointer.)*
-- [ ] BACKLOG-286 [emergent] First craft — once the stockpile (285) clears a threshold of the right resources, a dino combines them into one simple crafted object placed in the bowl (a cairn / marker), the first resources→**craft** step of the civilization arc. One recipe, one output; multi-recipe crafting and building stay deferred to 029. Builds on 146 / 285 / 029.
+- [~] BACKLOG-286 [emergent] First craft — once the stockpile (285) clears a threshold of the right resources, a dino combines them into one simple crafted object placed in the bowl (a cairn / marker), the first resources→**craft** step of the civilization arc. One recipe, one output; multi-recipe crafting and building stay deferred to 029. Builds on 146 / 285 / 029.  *(in flight: cycle 64 structure track)*
+
+## Cycle 64 structure additions — the build arc gets its payoff queue (2026-06-21)
+
+> Structure Track had fallen to 3 open (145/274/286) below cap X=4, so the Structure-smith refilled
+> with 2 beats — both the natural follow-ons to 286 (first craft), the item picked this cycle.
+
+- [ ] BACKLOG-293 [emergent] Crafted-object persistence — the crafted object 286 places (the cairn / marker) is recorded in the save and re-rendered on load, so a bowl you leave running accrues *built* history, not just remembered history. One persisted list of placed objects; old saves load with none. Builds on 286 / 040.
+- [ ] BACKLOG-294 [core] Grove terrain — the grove is walkable (143) but renders as cloned bowl grass; give it its own ground — a distinct floor tint plus defined path/water sub-regions in `zones.ts` — so the long-benched path/water art (033) finally has a place to land and the second zone reads as a different *place*. Terrain definition only; the pixel art itself stays the Artist's. Builds on 143 / 274.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
 

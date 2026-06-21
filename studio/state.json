@@ -2,7 +2,7 @@
   "cycle": 64,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-288: stargazing companions",
-  "structureItem": null,
+  "structureItem": "BACKLOG-286: first craft",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-21T11:30:00-05:00",
-    "structure-smith": "2026-06-21T10:06:00-05:00",
+    "structure-smith": "2026-06-21T11:36:00-05:00",
     "designer": "2026-06-21T10:12:00-05:00",
     "code-planner": "2026-06-21T10:18:00-05:00",
     "coder": "2026-06-21T10:30:00-05:00",
