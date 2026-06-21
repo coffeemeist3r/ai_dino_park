@@ -232,7 +232,10 @@ export class WebLLMBrain implements NPCBrain {
       this._status = 'ready';
     } catch (err) {
       // No silent failures (CHARTER §Quality bar) — the game keeps working on the fallback path.
-      console.error('[webllm] model load failed; using canned fallback', err);
+      // A missing/incompatible GPU is an expected environment limit (headless CI, GPU-less phone),
+      // not a load failure: warn rather than error so it doesn't trip "error-free boot" e2e checks.
+      const noGpu = /webgpu|compatible gpu/i.test(String(err));
+      (noGpu ? console.warn : console.error)('[webllm] model load failed; using canned fallback', err);
       this._status = 'fallback';
     }
   }

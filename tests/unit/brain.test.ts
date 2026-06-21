@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { makeBrain, cannedReply, replyPrefix } from '../../game/src/ai/brain';
 import {
   WebLLMBrain,
@@ -57,6 +57,16 @@ describe('WebLLMBrain', () => {
     expect(brain.status()).toBe('fallback');
     const reply = await brain.respond(ctx, { kind: 'player_greet' });
     expect(reply.text.length).toBeGreaterThan(0);
+  });
+
+  it('treats a missing GPU as a warning, not a console error (keeps "error-free boot" e2e green)', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await new WebLLMBrain().init(() => Promise.reject(new Error('Unable to find a compatible GPU')));
+    expect(warn).toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+    warn.mockRestore();
+    error.mockRestore();
   });
 
   it('uses the engine when ready and trims the reply to 200 chars', async () => {
