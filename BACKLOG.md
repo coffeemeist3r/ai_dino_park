@@ -595,6 +595,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-283 [social] Nickname only once it's earned aloud — a dino graduates to the nickname (278) only after it has first named you by designation (276) at least once, so the address visibly climbs designation→nickname over a friendship rather than jumping straight to intimate. Builds on 276 / 278.
 - [ ] BACKLOG-284 [pokemon] Address shown in the book — the collection book shows how each dino currently addresses you (unnamed / by designation / by nickname), making the 276→278 escalation legible beside the first-words ladder (282). Builds on 276 / 278 / 282.
 
+## Cycle 63 lore additions — same sky, five ways of looking up (2026-06-21)
+
+> Cycle 63's next-up is the queued **BACKLOG-150** — the temperament-shaped reading of the cycle-36
+> sky event (144). These extend that per-dino read once it lands: how a dino watches becomes how it
+> leaves, who it watched beside, and a line in the book.
+
+- [ ] BACKLOG-287 [emergent] Lingering gazer — when a sky event ends, the boldest gazer (the one that pressed right under it) hangs a beat under the fading sky before drifting back, filing a "couldn't look away" memory; the edge-watchers have already wandered off. Watching-style becomes leaving-style. Builds on 150 / 144.
+- [ ] BACKLOG-288 [social] Stargazing companions — two dinos who watched the same sky event from adjacent spots that night gain a small shared-wonder bond bump and a "watched the sky together" memory, so a collective awe also knits specific pairs. Builds on 150 / 144 / 013.
+- [ ] BACKLOG-289 [pokemon] Skywatcher in the book — the collection book notes how each dino takes in the sky (crowds under it / watches from the edge), surfacing the temperament read that 150 makes visible in-world. Builds on 150 / 021.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
