@@ -1,6 +1,6 @@
 {
   "cycle": 64,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-288: stargazing companions",
   "structureItem": "BACKLOG-286: first craft",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-06-21T11:30:00-05:00",
     "structure-smith": "2026-06-21T11:36:00-05:00",
     "designer": "2026-06-21T11:42:00-05:00",
-    "code-planner": "2026-06-21T10:18:00-05:00",
+    "code-planner": "2026-06-21T11:48:00-05:00",
     "coder": "2026-06-21T10:30:00-05:00",
     "qa": "2026-06-21T10:40:00-05:00",
     "validator": "2026-06-21T10:48:00-05:00",
