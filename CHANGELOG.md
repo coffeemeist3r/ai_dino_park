@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 065 — 2026-06-21
+- BACKLOG-295: Dino activity readout — each dino carries a glyph for what it's doing now (✨ gazing / 👀 inspecting / 🆘 responding / 🍖 feeding / 💤 huddling / 🪵 gathering / 💬 socializing / 🚶 wandering), read off the same intent ladder `forceStep` uses, so the bowl reads as five busy individuals. Pure `dinoActivity`; live-derived, no save. (lore track)
+- BACKLOG-297: Legible gathering — a freshly fallen resource lingers a grace window before any dino fetches it, a spawn note ("🪵 a branch fell") fires, and the spawn rate is bumped (0.05→0.12), so gathering is something the player actually catches instead of a sub-second blink. No save change. (structure track)
+
 ## Cycle 064 — 2026-06-21
 - BACKLOG-288: Stargazing companions — when a sky event ends, every pair of dinos that watched it from adjacent spots (Chebyshev ≤ 1) gains a shared-wonder bond bump + a "watched the sky together" memory naming each other; a lone edge-watcher gets nothing. The collective awe (144/150) now also knits specific pairs. No save change. (lore track)
 - BACKLOG-286: First craft — once the shared stockpile (285) covers the recipe (3 🪵 + 2 🪨), the dino that just banked stacks a cairn 🗿 in the bowl and the stockpile is spent by exactly that cost; cairns persist additively (no version bump) and re-render on load. The first resources→craft step of the civilization arc. (structure track)
