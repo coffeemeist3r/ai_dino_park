@@ -25,7 +25,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-146 [emergent] Resource gathering spine — raw resource appears, a dino picks it up / banks it (first beat of the build arc)  *(shipped: cycle 62 structure track — pure `world/resource.ts` + WorldScene glue; a resource spawns one-at-a-time, a curious dino fetches it (below food + huddle), first to reach picks it up → additive `gathered` tally. Bank/stockpile = 285, craft = 286.)*
 - [ ] BACKLOG-145 [emergent] Plantable plot — one plot, one crop growing over realtime days, harvested into the food set
 - [ ] BACKLOG-274 [core] Populate the grove — assign dinos a home zone, migrate them, filter cross-zone rendering + interaction (builds on 143's occupancy API + walkable grove)
-- [ ] BACKLOG-285 [emergent] Resource stockpile — gathered resources (146) bank into a shared per-kind park stockpile (persisted, with a readout); the count the rest of the build arc draws on
+- [~] BACKLOG-285 [emergent] Resource stockpile — gathered resources (146) bank into a shared per-kind park stockpile (persisted, with a readout); the count the rest of the build arc draws on  *(cycle 63 structure track — in flight)*
 - [ ] BACKLOG-286 [emergent] First craft — at a stockpile threshold a dino turns banked resources into one simple crafted object (a cairn/marker), the first resources→craft step (builds on 146/285/029)
 - [x] BACKLOG-040 [infra] Save format versioning — `save.version` field + migration hook (protects every future structural change)  *(shipped: cycle 61 structure track — `SAVE_VERSION=2` + a pure `migrate` chain; an older save is upgraded on load instead of discarded, old saves still load, unknown/newer/missing → null. The spine under 146/145/274.)*
 
@@ -237,7 +237,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > picking 146 (the gathering spine) this cycle. These are the next two beats of the
 > resources→crafting arc the gathering spine opens.
 
-- [ ] BACKLOG-285 [emergent] Resource stockpile — the gathered resources from 146 bank into a shared, per-kind **park stockpile** (e.g. `{ branch: 3, stone: 1 }`), persisted in the save with a readout (HUD/book), so gathering accrues a visible park-level total instead of a per-dino tally that goes nowhere. The count the rest of the build arc (286/029) draws on. Builds on 146.
+- [~] BACKLOG-285 [emergent] Resource stockpile — the gathered resources from 146 bank into a shared, per-kind **park stockpile** (e.g. `{ branch: 3, stone: 1 }`), persisted in the save with a readout (HUD/book), so gathering accrues a visible park-level total instead of a per-dino tally that goes nowhere. The count the rest of the build arc (286/029) draws on. Builds on 146.
 - [ ] BACKLOG-286 [emergent] First craft — once the stockpile (285) clears a threshold of the right resources, a dino combines them into one simple crafted object placed in the bowl (a cairn / marker), the first resources→**craft** step of the civilization arc. One recipe, one output; multi-recipe crafting and building stay deferred to 029. Builds on 146 / 285 / 029.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
