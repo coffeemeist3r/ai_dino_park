@@ -635,6 +635,15 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-296 [art] Resource + cairn pixel props — draw the gathered resources (branch 🪵, stone 🪨) and the crafted cairn (🗿) as Gen3-pixel props (CHARTER v4), baked like the dino/keeper rigs, replacing the emoji glyphs. Renders immediately where they spawn/stack — no terrain dependency, unlike the benched path/water (033) — so the gathering→craft arc finally has a face. Builds on 146 / 285 / 286 / 117.
 - [ ] BACKLOG-297 [core] Legible gathering — make a resource appearing something the player actually catches: a resource lingers a beat longer before a dino fetches it (and/or a brief "🪵 a branch fell" HUD/log note on spawn), plus a modest spawn-rate bump, so gathering isn't a sub-second blink (especially at high time-scale). Tuning + a spawn beat, no new system. Builds on 146 / 285.
 
+## Cycle 65 lore additions — the bowl, legible (2026-06-21)
+
+> Cycle 65's next-up is the operator-seeded **BACKLOG-295** (dino activity readout) — surface what each
+> dino is *doing now*. These extend that legibility into character and the book once the readout lands.
+
+- [ ] BACKLOG-298 [emergent] Idle fidgets — a dino with no current goal (the readout's 🚶 wandering state) plays a small temperament-shaped idle quirk: a bold one paces, a timid one glances around, a curious one pokes at the glass. Even "doing nothing" reads as character. Builds on 295 / 010.
+- [ ] BACKLOG-299 [pokemon] Activity in the book — the collection book shows each dino's most-frequent activity ("usually gathering", "mostly naps"), a behavioural fingerprint accreted from running activity tallies. Builds on 295 / 021.
+- [ ] BACKLOG-300 [social] Caught in the act — interacting (E) with a dino names what it was just doing in its greeting ("caught me mid-snack!", "you pulled me off the pile"), tying the live activity read into dialogue. Builds on 295 / 051.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
