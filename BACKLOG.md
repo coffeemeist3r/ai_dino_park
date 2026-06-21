@@ -612,7 +612,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > leaves, who it watched beside, and a line in the book.
 
 - [ ] BACKLOG-287 [emergent] Lingering gazer — when a sky event ends, the boldest gazer (the one that pressed right under it) hangs a beat under the fading sky before drifting back, filing a "couldn't look away" memory; the edge-watchers have already wandered off. Watching-style becomes leaving-style. Builds on 150 / 144.
-- [ ] BACKLOG-288 [social] Stargazing companions — two dinos who watched the same sky event from adjacent spots that night gain a small shared-wonder bond bump and a "watched the sky together" memory, so a collective awe also knits specific pairs. Builds on 150 / 144 / 013.
+- [~] BACKLOG-288 [social] Stargazing companions — two dinos who watched the same sky event from adjacent spots that night gain a small shared-wonder bond bump and a "watched the sky together" memory, so a collective awe also knits specific pairs. Builds on 150 / 144 / 013.  *(in flight: cycle 64 lore track)*
 - [ ] BACKLOG-289 [pokemon] Skywatcher in the book — the collection book notes how each dino takes in the sky (crowds under it / watches from the edge), surfacing the temperament read that 150 makes visible in-world. Builds on 150 / 021.
 
 ## Cycle 64 lore additions — what the sky leaves behind (2026-06-21)
