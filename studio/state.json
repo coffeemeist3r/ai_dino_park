@@ -1,6 +1,6 @@
 {
   "cycle": 65,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-295: dino activity readout",
   "structureItem": "BACKLOG-297: legible gathering",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-06-21T13:12:00-05:00",
     "code-planner": "2026-06-21T13:18:00-05:00",
     "coder": "2026-06-21T13:40:00-05:00",
-    "qa": "2026-06-21T12:18:00-05:00",
+    "qa": "2026-06-21T13:46:00-05:00",
     "validator": "2026-06-21T12:26:00-05:00",
     "artist": "2026-06-21T12:30:00-05:00"
   }
