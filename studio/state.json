@@ -1,8 +1,8 @@
 {
   "cycle": 63,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-150: Stargazer's awe varies by temperament",
-  "structureItem": "BACKLOG-285: Resource stockpile",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-21T10:18:00-05:00",
     "coder": "2026-06-21T10:30:00-05:00",
     "qa": "2026-06-21T10:40:00-05:00",
-    "validator": "2026-06-20T12:48:00-05:00",
+    "validator": "2026-06-21T10:48:00-05:00",
     "artist": "2026-06-20T12:52:00-05:00"
   }
 }

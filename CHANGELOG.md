@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 063 — 2026-06-21
+- BACKLOG-150: Stargazer's awe varies by temperament — during a sky event each dino presses in only to its own gaze ring (bold/curious crowd the gather tile, timid hang back at the cluster edge), so one collective beat reads five ways; all still file the shared memory. No save change. (lore track)
+- BACKLOG-285: Resource stockpile — every 146 pickup banks into a shared per-kind park stockpile (`🪵 N · 🪨 N`), shown on the plaque and persisted additively (no version bump); the count 286/029 will spend. (structure track)
+
 ## Cycle 062 — 2026-06-20
 - BACKLOG-278: Earned the nickname — at the heart cap (10) the closest dino drops the keeper's designation for its nickname ("There you are, Aki!"); 8–9 hearts still use the designation. The top rung of the greeting-by-relationship ladder. (lore track)
 - BACKLOG-146: Resource gathering spine — a raw resource (🪵/🪨) appears in the bowl and a curious dino walks over and picks it up (per-dino tally, persisted). First beat of the resources→crafting→building arc; ranks below food + huddle. (structure track)
