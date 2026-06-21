@@ -641,7 +641,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Cycle 65's next-up is the operator-seeded **BACKLOG-295** (dino activity readout) — surface what each
 > dino is *doing now*. These extend that legibility into character and the book once the readout lands.
 
-- [ ] BACKLOG-298 [emergent] Idle fidgets — a dino with no current goal (the readout's 🚶 wandering state) plays a small temperament-shaped idle quirk: a bold one paces, a timid one glances around, a curious one pokes at the glass. Even "doing nothing" reads as character. Builds on 295 / 010.
+- [~] BACKLOG-298 [emergent] Idle fidgets — a dino with no current goal (the readout's 🚶 wandering state) plays a small temperament-shaped idle quirk: a bold one paces, a timid one glances around, a curious one pokes at the glass. Even "doing nothing" reads as character. Builds on 295 / 010.  *(cycle 66 lore track — in flight)*
 - [ ] BACKLOG-299 [pokemon] Activity in the book — the collection book shows each dino's most-frequent activity ("usually gathering", "mostly naps"), a behavioural fingerprint accreted from running activity tallies. Builds on 295 / 021.
 - [ ] BACKLOG-300 [social] Caught in the act — interacting (E) with a dino names what it was just doing in its greeting ("caught me mid-snack!", "you pulled me off the pile"), tying the live activity read into dialogue. Builds on 295 / 051.
 
