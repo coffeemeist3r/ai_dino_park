@@ -1,8 +1,8 @@
 {
   "cycle": 66,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-298: Idle fidgets",
-  "structureItem": "BACKLOG-145: Plantable plot",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-21T20:18:00-05:00",
     "coder": "2026-06-21T20:40:00-05:00",
     "qa": "2026-06-21T20:46:00-05:00",
-    "validator": "2026-06-21T13:52:00-05:00",
+    "validator": "2026-06-21T20:52:00-05:00",
     "artist": "2026-06-21T13:54:00-05:00"
   }
 }

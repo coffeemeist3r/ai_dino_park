@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 066 — 2026-06-21
+- BACKLOG-298: Idle fidgets — a goalless (wandering) dino shows its trait-derived signature quirk above its head instead of the generic 🚶 (bold→🐾 paces, timid→🫣 peeks, curious→👆 pokes the glass, …), keyed to its most-pronounced personality axis, so five idle dinos read as five individuals. Pure `world/fidget.ts`; the 295 `__activity` state is untouched, only the rendered glyph changes. No save. (lore track)
+- BACKLOG-145: Plantable plot — one fixed plot the keeper plants with **P**; a 🍓 crop grows seed→sprout→ripe over realtime-clock days (read off the clock, no second timer); harvesting releases the crop as a food drop at the plot (reusing the feeding hatch, so the swarm + favorites loop apply) and bumps a persisted harvest tally. Plot + tally persist additively (no version bump). The build arc's growing half, beside its gathering half. (structure track)
+
 ## Cycle 065 — 2026-06-21
 - BACKLOG-295: Dino activity readout — each dino carries a glyph for what it's doing now (✨ gazing / 👀 inspecting / 🆘 responding / 🍖 feeding / 💤 huddling / 🪵 gathering / 💬 socializing / 🚶 wandering), read off the same intent ladder `forceStep` uses, so the bowl reads as five busy individuals. Pure `dinoActivity`; live-derived, no save. (lore track)
 - BACKLOG-297: Legible gathering — a freshly fallen resource lingers a grace window before any dino fetches it, a spawn note ("🪵 a branch fell") fires, and the spawn rate is bumped (0.05→0.12), so gathering is something the player actually catches instead of a sub-second blink. No save change. (structure track)
