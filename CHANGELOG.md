@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 064 — 2026-06-21
+- BACKLOG-288: Stargazing companions — when a sky event ends, every pair of dinos that watched it from adjacent spots (Chebyshev ≤ 1) gains a shared-wonder bond bump + a "watched the sky together" memory naming each other; a lone edge-watcher gets nothing. The collective awe (144/150) now also knits specific pairs. No save change. (lore track)
+- BACKLOG-286: First craft — once the shared stockpile (285) covers the recipe (3 🪵 + 2 🪨), the dino that just banked stacks a cairn 🗿 in the bowl and the stockpile is spent by exactly that cost; cairns persist additively (no version bump) and re-render on load. The first resources→craft step of the civilization arc. (structure track)
+
 ## Cycle 063 — 2026-06-21
 - BACKLOG-150: Stargazer's awe varies by temperament — during a sky event each dino presses in only to its own gaze ring (bold/curious crowd the gather tile, timid hang back at the cluster edge), so one collective beat reads five ways; all still file the shared memory. No save change. (lore track)
 - BACKLOG-285: Resource stockpile — every 146 pickup banks into a shared per-kind park stockpile (`🪵 N · 🪨 N`), shown on the plaque and persisted additively (no version bump); the count 286/029 will spend. (structure track)

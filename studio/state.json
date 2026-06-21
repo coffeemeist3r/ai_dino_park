@@ -1,8 +1,8 @@
 {
   "cycle": 64,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-288: stargazing companions",
-  "structureItem": "BACKLOG-286: first craft",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-21T11:48:00-05:00",
     "coder": "2026-06-21T12:10:00-05:00",
     "qa": "2026-06-21T12:18:00-05:00",
-    "validator": "2026-06-21T10:48:00-05:00",
+    "validator": "2026-06-21T12:26:00-05:00",
     "artist": "2026-06-21T10:52:00-05:00"
   }
 }
