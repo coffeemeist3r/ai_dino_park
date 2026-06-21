@@ -2,7 +2,7 @@
   "cycle": 65,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-297: legible gathering",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-21T13:00:00-05:00",
-    "structure-smith": "2026-06-21T11:36:00-05:00",
+    "structure-smith": "2026-06-21T13:06:00-05:00",
     "designer": "2026-06-21T11:42:00-05:00",
     "code-planner": "2026-06-21T11:48:00-05:00",
     "coder": "2026-06-21T12:10:00-05:00",
