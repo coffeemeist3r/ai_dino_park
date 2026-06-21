@@ -77,10 +77,13 @@ import {
   canCraft,
   craft,
   CAIRN_GLYPH,
+  resourceFetchable,
+  RESOURCE_GRACE_STEPS,
   RESOURCE_GLYPH,
   type ResourceKind,
   type Stockpile,
 } from '../world/resource';
+import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -184,6 +187,9 @@ export class WorldScene extends Phaser.Scene {
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text>();
   private sleepMarks: Phaser.GameObjects.Text[] = [];
+  /** Per-dino current-activity glyph (BACKLOG-295), index-aligned with `dinos`; live-derived, not saved. */
+  private activityMarks: Phaser.GameObjects.Text[] = [];
+  private activityById: Record<string, Activity> = {};
   /** Cold-night shiver (BACKLOG-179): the night's season, the morning-edge window tracker, and
    *  the last morning's cold sleepers (the dinos too loosely bonded for the den, for the hook). */
   private wasInHuddleWindow = false;
@@ -217,6 +223,8 @@ export class WorldScene extends Phaser.Scene {
   /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. */
   private resource: { kind: ResourceKind; tileX: number; tileY: number } | null = null;
   private resourceSprite: Phaser.GameObjects.Text | null = null;
+  /** World steps since the current resource spawned (BACKLOG-297) — gates the fetch grace. */
+  private resourceAge = 0;
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
   private gathered: Record<string, number> = {};
   /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
@@ -552,8 +560,12 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
-    (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number) =>
+    (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number, fresh = false) => {
+      // fresh=true starts the BACKLOG-297 grace at 0 (to test the linger); default → already fetchable,
+      // so the existing gather/craft/stockpile e2e keep their immediate single-step pickup.
       this.spawnResource(kind, tileX, tileY);
+      this.resourceAge = fresh ? 0 : RESOURCE_GRACE_STEPS;
+    };
     (window as any).__favoriteFood = (name: string, season?: Season) => {
       const d = this.dinos.find((x) => x.name === name);
       return d ? { ...favoriteFood(d.traits, season ?? this.currentSeason()) } : null;
@@ -643,8 +655,12 @@ export class WorldScene extends Phaser.Scene {
   /** A raw resource appears now and then (BACKLOG-146) — one at a time, like food. */
   private maybeSpawnResource(): void {
     if (this.resource || !rollResource()) return;
+    // BACKLOG-297: a natural spawn starts the fetch-grace clock and announces itself.
     const landing = resourceLanding(COLS, ROWS);
-    this.spawnResource(pickKind(), landing.tileX, landing.tileY);
+    const kind = pickKind();
+    this.spawnResource(kind, landing.tileX, landing.tileY);
+    this.resourceAge = 0;
+    this.logEvent(`${RESOURCE_GLYPH[kind]} a ${kind} fell into the bowl`);
   }
 
   /** Place a resource at a tile and draw its glyph. Shared by the roll + the dev hook (deterministic). */
@@ -659,7 +675,7 @@ export class WorldScene extends Phaser.Scene {
 
   /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
   private checkGather(): void {
-    if (!this.resource) return;
+    if (!this.resource || !resourceFetchable(this.resourceAge)) return; // BACKLOG-297: respect the grace
     const taker = this.dinos.find((d) => reachedFood(this.tileOf(d), this.resource!));
     if (!taker) return;
     const kind = this.resource.kind;
@@ -883,6 +899,9 @@ export class WorldScene extends Phaser.Scene {
     this.sleepMarks.push(
       this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    this.activityMarks.push(
+      this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
     this.coldMarks.push(
       this.add.text(0, 0, '🥶', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -914,6 +933,7 @@ export class WorldScene extends Phaser.Scene {
       return bondPoints(this.bonds, a, b);
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
+    (window as any).__activity = (name: string) => this.activityById[name] ?? null; // BACKLOG-295
     // dev-only: the live huddle verdict (BACKLOG-171) — season, bond bar, and window state now.
     (window as any).__huddleInfo = () => {
       const season = this.currentSeason();
@@ -1394,9 +1414,13 @@ export class WorldScene extends Phaser.Scene {
     // A world-scale night event (BACKLOG-144) overrides all wandering: the whole cast gathers to
     // gawp at the sky. When it ends (duration/dawn) stepSky returns false and ordinary life resumes.
     if (this.stepSky()) {
+      for (const d of this.dinos) this.activityById[d.name] = 'gazing'; // BACKLOG-295
       this.refreshSleepMarks();
+      this.refreshActivityMarks();
       return;
     }
+
+    if (this.resource) this.resourceAge++; // BACKLOG-297: age the resource so the fetch grace can elapse
 
     const season = this.currentSeason();
     const denTime = inHuddleWindow(getWorldClock().now().hour, season);
@@ -1408,6 +1432,7 @@ export class WorldScene extends Phaser.Scene {
       if (this.pendingInspect?.name === d.name) {
         const step = stepToward(cur, this.playerTile(), COLS, ROWS);
         d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+        this.activityById[d.name] = 'inspecting'; // BACKLOG-295
         continue;
       }
 
@@ -1418,6 +1443,7 @@ export class WorldScene extends Phaser.Scene {
         if (caller) {
           const step = stepToward(cur, this.tileOf(caller), COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'responding'; // BACKLOG-295
           continue;
         }
       }
@@ -1430,6 +1456,7 @@ export class WorldScene extends Phaser.Scene {
         if (reactionToFood(d.traits.energy, dist, isFav) === 'rush') {
           const step = feedStep(cur, this.food, COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'feeding'; // BACKLOG-295
           continue;
         }
       }
@@ -1438,21 +1465,36 @@ export class WorldScene extends Phaser.Scene {
       const resDist = this.resource
         ? Math.hypot(cur.tileX - this.resource.tileX, cur.tileY - this.resource.tileY)
         : Infinity;
+      // Decide the branch once (mutually exclusive), then both move and label off the same flags so the
+      // glyph the player sees can never disagree with what the dino actually did this step (BACKLOG-295).
+      // Winter opens the huddle window at dusk and lowers the bar; summer waits until late.
+      const huddling = denTime && this.maxBond(d.name) >= huddleThreshold(season);
+      const gathering =
+        !huddling &&
+        !!this.resource &&
+        resourceFetchable(this.resourceAge) && // BACKLOG-297: ignore it until the grace elapses
+        noticeResource(d.traits.curiosity, resDist) === 'fetch';
+      const socializing = !huddling && !gathering && !!other && Math.random() < 0.45;
       let next;
-      if (denTime && this.maxBond(d.name) >= huddleThreshold(season)) {
-        // Huddle hours: bonded-enough dinos head for the den to sleep together. Sleep beats gathering.
-        // Winter opens the window at dusk and lowers the bar; summer waits until late.
-        next = stepToward(cur, HUDDLE_TILE, COLS, ROWS);
-      } else if (this.resource && noticeResource(d.traits.curiosity, resDist) === 'fetch') {
-        // A curious dino fetches a raw resource (BACKLOG-146) — below food + sleep, above idle drift.
-        next = stepToward(cur, this.resource, COLS, ROWS);
-      } else if (other && Math.random() < 0.45) {
-        // Day: ~45% of the time drift toward the nearest dino so the park clusters and converses.
-        next = stepToward(cur, this.tileOf(other), COLS, ROWS);
+      if (huddling) {
+        next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
+      } else if (gathering) {
+        next = stepToward(cur, this.resource!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
+      } else if (socializing) {
+        next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else {
         next = wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
       }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+      this.activityById[d.name] = dinoActivity({
+        gazing: false,
+        inspecting: false,
+        responding: false,
+        feeding: false,
+        huddling,
+        gathering,
+        socializing,
+      });
     }
 
     for (let i = 0; i < this.dinos.length; i++) {
@@ -1495,11 +1537,23 @@ export class WorldScene extends Phaser.Scene {
     this.wasInHuddleWindow = denTime;
 
     this.refreshSleepMarks();
+    this.refreshActivityMarks();
     this.checkFeeding();
     this.maybeSpawnResource();
     this.checkGather();
     this.maybeLayEggs();
     this.checkHatch();
+  }
+
+  /** Show each awake dino's current-activity glyph (BACKLOG-295). The 💤 sleep mark owns the sleeping state. */
+  private refreshActivityMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.activityMarks[i];
+      if (!mark) return;
+      const show = !this.isHuddling(d) && this.inView(d);
+      mark.setVisible(show).setPosition(d.x, d.y - TILE);
+      if (show) mark.setText(ACTIVITY_GLYPH[this.activityById[d.name] ?? 'wandering']);
+    });
   }
 
   /**

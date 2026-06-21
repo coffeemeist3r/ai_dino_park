@@ -20,7 +20,19 @@ export const RESOURCE_GLYPH: Record<ResourceKind, string> = { branch: '🪵', st
 
 export const RESOURCE_RANGE = 6; // tiles — beyond this a resource goes unnoticed
 const CURIOUS = 0.35; // curiosity at/above which a dino bothers to fetch
-export const RESOURCE_SPAWN_CHANCE = 0.05; // per spawn-roll (only rolled when none is present)
+export const RESOURCE_SPAWN_CHANCE = 0.12; // per spawn-roll (only rolled when none is present)
+
+/**
+ * Legible gathering (BACKLOG-297): a freshly fallen resource sits for a grace window before any dino
+ * fetches it, so the player actually catches it appearing instead of it vanishing the same tick a
+ * curious dino reaches it. WorldScene ages the resource one step per `forceStep`.
+ */
+export const RESOURCE_GRACE_STEPS = 3;
+
+/** Has a resource sat long enough (in world steps) to be fetched? */
+export function resourceFetchable(ageSteps: number): boolean {
+  return ageSteps >= RESOURCE_GRACE_STEPS;
+}
 
 export type GatherReaction = 'fetch' | 'ignore';
 

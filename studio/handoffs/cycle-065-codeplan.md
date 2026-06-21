@@ -78,3 +78,17 @@
 - **Cross-track collision:** both tracks edit `WorldScene.ts`. Disjoint methods — lore: `spawnDino`/`forceStep` activity capture + `refreshActivityMarks` + `__activity`; structure: `forceStep` top increment + the fetch-branch gate + `checkGather` + `maybeSpawnResource` + `__spawnResource`. Both touch `forceStep` but different lines (structure: the top increment + the `else if` fetch condition; lore: the activity capture in each branch + the trailing refresh). Apply structure first (the fetch-gate condition), then lore (wrap each branch with the activity capture), build once.
 
 **Estimated touch count:** ~2 source (`resource.ts`, `WorldScene.ts`) + 2 test. Combined cycle: `activity.ts`, `resource.ts`, `WorldScene.ts` = 3 source + 4 test.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/activity.ts` (new) — pure `Activity` union + `ACTIVITY_GLYPH` + `dinoActivity(flags)` (295).
+- `game/src/world/resource.ts` — `RESOURCE_SPAWN_CHANCE` 0.05→0.12, `RESOURCE_GRACE_STEPS=3`, pure `resourceFetchable(age)` (297).
+- `game/src/scenes/WorldScene.ts` — 295: `activityMarks`/`activityById`, mark created in `spawnDino`, activity captured per branch in `forceStep` (incl. gazing in the sky branch), `refreshActivityMarks()` (suppressed while huddling so 💤 isn't doubled), `__activity` hook. 297: `resourceAge` (incremented at `forceStep` top, reset on natural spawn), fetch-branch + `checkGather` gated on `resourceFetchable`, "a branch fell" log on natural spawn, `__spawnResource(...,fresh=false)` (default already past grace → older specs unaffected).
+- Tests: unit `cycle-065-activity.test.ts`, `cycle-065-gather-grace.test.ts`; e2e `cycle-065-activity.spec.ts`, `cycle-065-gather-grace.spec.ts`.
+
+**Deviations from plan:** none material. The `forceStep` else-chain computes the `huddling`/`gathering`/`socializing` booleans once and feeds them to both movement and `dinoActivity` (single source — the glyph can't disagree with the move).
+
+**Build + test status:** `npm run build` clean; **629 unit** green; **206 e2e** green (full run; cycle-065 specs hit the catalogued cold-boot flake on the first cold parallel run, green warm + stable ×3 repeats); dev HTTP 200. No new dependencies; `@mlc-ai/web-llm` boundary untouched (`activity.ts`/`resource.ts` are pure, no ai/ import).
