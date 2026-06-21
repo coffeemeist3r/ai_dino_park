@@ -4,6 +4,7 @@ import { PIXEL_SPECIES } from './pixelArt';
 import { KEEPER_RIGS } from './keeperArt';
 import { TILE_RIGS } from './tileArt';
 import { DIALOG_FRAME } from './frameArt';
+import { PROP_RIGS } from './propArt';
 
 /**
  * The "convert to procedural Canvas" half of the art pipeline: take the pure vector
@@ -237,6 +238,38 @@ export function bakeDialogFrame(scene: Phaser.Scene): string {
     }
   }
   g.generateTexture(key, rig.size * scale, rig.size * scale);
+  g.destroy();
+  return key;
+}
+
+const PROP_SCALE = 2; // 16×16 grid → 32×32, the tile footprint, same nearest-neighbour bake
+
+/** Props the pixel pipeline can render today (BACKLOG-296); others keep their emoji glyph. */
+export function hasPropArt(name: string): boolean {
+  return name in PROP_RIGS;
+}
+
+/**
+ * Bake a static prop (resource / cairn) into one texture — per-pixel `fillRect` at ×2 (transparent
+ * cells skipped), then `generateTexture` once. Idempotent; returns the texture key, or null if the
+ * prop has no rig (WorldScene then keeps the emoji text fallback). Mirrors bakeDialogFrame.
+ */
+export function bakePropArt(scene: Phaser.Scene, name: string): string | null {
+  const rig = PROP_RIGS[name];
+  if (!rig) return null;
+  const key = `prop_${name}`;
+  if (scene.textures.exists(key)) return key;
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  for (let py = 0; py < rig.size; py++) {
+    const row = rig.grid[py];
+    for (let px = 0; px < row.length; px++) {
+      const color = rig.palette[row[px]];
+      if (color === undefined) continue; // '.' → transparent
+      g.fillStyle(color, 1);
+      g.fillRect(px * PROP_SCALE, py * PROP_SCALE, PROP_SCALE, PROP_SCALE);
+    }
+  }
+  g.generateTexture(key, rig.size * PROP_SCALE, rig.size * PROP_SCALE);
   g.destroy();
   return key;
 }

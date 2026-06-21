@@ -16,7 +16,7 @@ import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakePropArt, hasPropArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -224,7 +224,7 @@ export class WorldScene extends Phaser.Scene {
   private foodSprite: Phaser.GameObjects.Text | null = null;
   /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. */
   private resource: { kind: ResourceKind; tileX: number; tileY: number } | null = null;
-  private resourceSprite: Phaser.GameObjects.Text | null = null;
+  private resourceSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** World steps since the current resource spawned (BACKLOG-297) — gates the fetch grace. */
   private resourceAge = 0;
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
@@ -233,7 +233,7 @@ export class WorldScene extends Phaser.Scene {
   private stockpile: Stockpile = {};
   /** Crafted cairns placed in the bowl (BACKLOG-286). Persisted; absent → []. */
   private cairns: { tileX: number; tileY: number }[] = [];
-  private cairnSprites: Phaser.GameObjects.Text[] = [];
+  private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
   private plot: { plantedDay: number } | null = null;
   private plotSprite: Phaser.GameObjects.Text | null = null;
@@ -580,6 +580,12 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       return d ? { ...favoriteFood(d.traits, season ?? this.currentSeason()) } : null;
     };
+    // BACKLOG-296: pixel props. __hasPropArt = a rig exists; __resourceIsArt/__cairnIsArt = the live
+    // sprite is the baked image (not the emoji fallback) — lets the e2e prove the swap without pixels.
+    (window as any).__hasPropArt = (name: string) => hasPropArt(name);
+    (window as any).__resourceIsArt = () => this.resourceSprite instanceof Phaser.GameObjects.Image;
+    (window as any).__cairnIsArt = () =>
+      this.cairnSprites.length > 0 && this.cairnSprites[0] instanceof Phaser.GameObjects.Image;
   }
 
   /**
@@ -760,10 +766,13 @@ export class WorldScene extends Phaser.Scene {
   private spawnResource(kind: ResourceKind, tileX: number, tileY: number): void {
     this.resource = { kind, tileX, tileY };
     this.resourceSprite?.destroy();
-    this.resourceSprite = this.add
-      .text(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2, RESOURCE_GLYPH[kind], { fontSize: '16px' })
-      .setOrigin(0.5)
-      .setDepth(2);
+    const px = tileX * TILE + TILE / 2;
+    const py = tileY * TILE + TILE / 2;
+    // BACKLOG-296: a baked pixel prop where one exists, else the emoji glyph (graceful fallback).
+    const tex = bakePropArt(this, kind);
+    this.resourceSprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, RESOURCE_GLYPH[kind], { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
   }
 
   /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
@@ -792,10 +801,13 @@ export class WorldScene extends Phaser.Scene {
 
   /** Draw a cairn glyph at a tile (BACKLOG-286). Same depth/shape as a resource glyph. */
   private drawCairn(c: { tileX: number; tileY: number }): void {
-    const sprite = this.add
-      .text(c.tileX * TILE + TILE / 2, c.tileY * TILE + TILE / 2, CAIRN_GLYPH, { fontSize: '16px' })
-      .setOrigin(0.5)
-      .setDepth(2);
+    const px = c.tileX * TILE + TILE / 2;
+    const py = c.tileY * TILE + TILE / 2;
+    // BACKLOG-296: a baked pixel cairn where one exists, else the 🗿 glyph (graceful fallback).
+    const tex = bakePropArt(this, 'cairn');
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, CAIRN_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
     this.cairnSprites.push(sprite);
   }
 
