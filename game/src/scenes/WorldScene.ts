@@ -30,6 +30,8 @@ import {
   atGather,
   skyExpired,
   gazeRing,
+  stargazingPairs,
+  SHARED_WONDER_BOND,
   SKY_GATHER_TILE,
   SKY_EVENTS,
   SKY_ROLL_INTERVAL_MS,
@@ -72,6 +74,9 @@ import {
   pickKind,
   bankResource,
   stockpileLine,
+  canCraft,
+  craft,
+  CAIRN_GLYPH,
   RESOURCE_GLYPH,
   type ResourceKind,
   type Stockpile,
@@ -216,6 +221,9 @@ export class WorldScene extends Phaser.Scene {
   private gathered: Record<string, number> = {};
   /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
   private stockpile: Stockpile = {};
+  /** Crafted cairns placed in the bowl (BACKLOG-286). Persisted; absent → []. */
+  private cairns: { tileX: number; tileY: number }[] = [];
+  private cairnSprites: Phaser.GameObjects.Text[] = [];
   private moveTicks = 0;
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
@@ -223,6 +231,8 @@ export class WorldScene extends Phaser.Scene {
   /** In-game day of the last sky event — caps the spectacle at one per day. */
   private skyFiredDay = -1;
   private skyGazers = new Set<string>();
+  /** Where each gazer settled to watch (BACKLOG-288) — pairs of adjacent watchers bond when the event ends. */
+  private skyGazerTiles = new Map<string, { tileX: number; tileY: number }>();
   private skyOverlay!: Phaser.GameObjects.Rectangle;
   private skyTween?: Phaser.Tweens.Tween;
   private convoCooldown = 0;
@@ -540,6 +550,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__resource = () => (this.resource ? { ...this.resource } : null);
     (window as any).__gathered = () => ({ ...this.gathered });
     (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
+    (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
+    (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
     (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number) =>
       this.spawnResource(kind, tileX, tileY);
     (window as any).__favoriteFood = (name: string, season?: Season) => {
@@ -659,7 +671,32 @@ export class WorldScene extends Phaser.Scene {
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
+    // BACKLOG-286: once the stockpile covers the recipe, the dino that just banked stacks a cairn.
+    const spent = craft(this.stockpile);
+    if (spent) {
+      this.stockpile = spent;
+      this.placeCairn(this.tileOf(taker), taker);
+      this.refreshPlaque();
+    }
     void this.saveGame();
+  }
+
+  /** Draw a cairn glyph at a tile (BACKLOG-286). Same depth/shape as a resource glyph. */
+  private drawCairn(c: { tileX: number; tileY: number }): void {
+    const sprite = this.add
+      .text(c.tileX * TILE + TILE / 2, c.tileY * TILE + TILE / 2, CAIRN_GLYPH, { fontSize: '16px' })
+      .setOrigin(0.5)
+      .setDepth(2);
+    this.cairnSprites.push(sprite);
+  }
+
+  /** Record + render a freshly crafted cairn and mark the moment on the crafter (BACKLOG-286). */
+  private placeCairn(tile: { tileX: number; tileY: number }, crafter: Dino): void {
+    this.cairns.push(tile);
+    this.drawCairn(tile);
+    this.flashFeed(crafter, CAIRN_GLYPH);
+    this.memory = remember(this.memory, crafter.name, 'stacked the first cairn from gathered branches and stones');
+    this.logEvent(`${CAIRN_GLYPH} ${crafter.name} stacked a cairn`);
   }
 
   /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
@@ -690,6 +727,9 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-150: each dino's gaze ring + its current tile, so the e2e can assert it halts at its ring.
     (window as any).__skyRings = () =>
       this.dinos.map((d) => ({ name: d.name, ring: gazeRing(d.traits), ...this.tileOf(d) }));
+    // BACKLOG-288: which gazers settled side by side (read before the event ends, when tiles are still held).
+    (window as any).__skyCompanions = () =>
+      stargazingPairs([...this.skyGazerTiles].map(([name, t]) => ({ name, ...t })));
     // Force-start an event (default first, or by id), bypassing the roll — drives the e2e flow.
     (window as any).__triggerSky = (id?: SkyEventId) => {
       const ev = SKY_EVENTS.find((e) => e.id === id) ?? SKY_EVENTS[0];
@@ -715,6 +755,7 @@ export class WorldScene extends Phaser.Scene {
     this.skyStartAbsMin = this.absMinNow();
     this.skyFiredDay = getWorldClock().now().day;
     this.skyGazers.clear();
+    this.skyGazerTiles.clear();
     this.skyOverlay.setFillStyle(ev.color, 0.18).setVisible(true);
     this.skyTween?.stop();
     this.skyTween = this.tweens.add({
@@ -734,8 +775,25 @@ export class WorldScene extends Phaser.Scene {
     this.skyTween?.stop();
     this.skyTween = undefined;
     this.skyOverlay.setVisible(false).setFillStyle(SKY_EVENTS[0].color, 0);
-    // Persist the memories the gazers filed while watching.
+    this.knitStargazers(); // BACKLOG-288: adjacent watchers come away a little closer
+    // Persist the memories the gazers filed while watching + the companion bonds just knit.
     void this.saveGame();
+  }
+
+  /**
+   * BACKLOG-288: when a sky event ends, every pair of gazers that settled side by side (Chebyshev ≤ 1)
+   * gains a one-time shared-wonder bond bump and each files a "watched the sky together" memory naming
+   * the other. A lone edge-watcher with no neighbour gets nothing. Clears the tiles so a second endSky
+   * (idempotent guard) knits nothing.
+   */
+  private knitStargazers(): void {
+    const gazers = [...this.skyGazerTiles].map(([name, t]) => ({ name, ...t }));
+    for (const [a, b] of stargazingPairs(gazers)) {
+      this.bonds = strengthen(this.bonds, a, b, SHARED_WONDER_BOND);
+      this.memory = remember(this.memory, a, `watched the sky together with ${b}`);
+      this.memory = remember(this.memory, b, `watched the sky together with ${a}`);
+    }
+    this.skyGazerTiles.clear();
   }
 
   /**
@@ -758,6 +816,7 @@ export class WorldScene extends Phaser.Scene {
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
       if (atGather(next, SKY_GATHER_TILE, ring) && !this.skyGazers.has(d.name)) {
         this.skyGazers.add(d.name);
+        this.skyGazerTiles.set(d.name, next); // BACKLOG-288: remember where it settled to watch
         this.memory = remember(this.memory, d.name, this.activeSky.memory);
         this.showBubble(d, this.activeSky.bubble);
       }
@@ -2769,6 +2828,7 @@ export class WorldScene extends Phaser.Scene {
       roles: this.roles,
       gathered: this.gathered,
       stockpile: this.stockpile,
+      cairns: this.cairns,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2816,6 +2876,8 @@ export class WorldScene extends Phaser.Scene {
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
+      this.cairns = save.cairns ?? []; // BACKLOG-286: crafted cairns restore
+      for (const c of this.cairns) this.drawCairn(c);
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.

@@ -14,6 +14,7 @@ const sample: SaveData = {
   roles: {},
   gathered: {},
   stockpile: {},
+  cairns: [],
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],
@@ -163,5 +164,25 @@ describe('saveGame', () => {
 
   it('returns null for a malformed stockpile value (BACKLOG-285)', () => {
     expect(deserialize(JSON.stringify({ ...sample, stockpile: { branch: 'lots' } }))).toBeNull();
+  });
+
+  it('round-trips crafted cairns (BACKLOG-286)', () => {
+    const withCairns: SaveData = { ...sample, cairns: [{ tileX: 5, tileY: 7 }, { tileX: 12, tileY: 3 }] };
+    expect(deserialize(serialize(withCairns))).toEqual(withCairns);
+  });
+
+  it('loads an older save lacking cairns, defaulting it to [] (BACKLOG-286)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: sample.time,
+      player: sample.player,
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.cairns).toEqual([]);
+  });
+
+  it('returns null for a malformed cairn entry (BACKLOG-286)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5 }] }))).toBeNull();
   });
 });

@@ -85,3 +85,20 @@
 - Keep `craft` returning a **new** map (don't mutate `this.stockpile` in place before assigning).
 
 **Estimated touch count:** ~3 files (resource.ts, saveGame.ts, WorldScene.ts) + 2 test files. Lore adds ~2 (skyEvent.ts, WorldScene.ts) + 2 test files. Combined unique source files: skyEvent.ts, resource.ts, saveGame.ts, WorldScene.ts = **4 source + 4 test**.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/skyEvent.ts` — `SHARED_WONDER_BOND`, `Gazer`, pure `stargazingPairs` (288).
+- `game/src/world/resource.ts` — `CRAFT_RECIPE {branch:3,stone:2}`, `CAIRN_GLYPH`, pure `canCraft`/`craft` (286).
+- `game/src/world/saveGame.ts` — additive `cairns?: {tileX,tileY}[]` field + validation (default `[]`, no `SAVE_VERSION` bump).
+- `game/src/scenes/WorldScene.ts` — 288: `skyGazerTiles` map (filled in `stepSky`, cleared in `startSky`), `knitStargazers()` called in `endSky` before save, `__skyCompanions` hook. 286: `cairns`/`cairnSprites` fields, craft after `bankResource` in `checkGather`, `drawCairn`/`placeCairn`, save+restore, `__cairns`/`__canCraft` hooks.
+- Tests: `tests/unit/cycle-064-craft.test.ts`, `tests/unit/cycle-064-stargazing.test.ts`; save fixtures `tests/unit/saveGame.test.ts` (+`cairns:[]` baseline, +3 cases) and `tests/unit/cycle-061-save-version.test.ts` (+`cairns:[]` baseline); e2e `tests/e2e/cycle-064-craft.spec.ts`, `tests/e2e/cycle-064-stargazing.spec.ts`.
+
+**Deviations from plan:**
+- Added the optional `__skyCompanions` dev hook (plan flagged it optional) so the e2e can pick a real companion pair.
+- The 288 e2e asserts the **companion memory** (gossip-filtered to first-hand) rather than the raw bond delta: in-world the bond saturates at the 100 cap (and the event-ending step also runs ordinary meetings), so the exact +4 is pinned in the **unit** test and the memory is the deterministic end-to-end signal.
+
+**Build + test status:** `npm run build` clean; **621 unit** green; **203 e2e** green (full run, stargazing spec stable ×8 repeats); dev server HTTP 200. No new dependencies; `@mlc-ai/web-llm` boundary untouched (`skyEvent.ts`/`resource.ts` take plain params, no ai/ import).

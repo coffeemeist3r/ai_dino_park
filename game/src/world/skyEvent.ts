@@ -115,3 +115,31 @@ export function gazeRing(traits: { bravery: number; curiosity: number }): 0 | 1 
   if (boldness >= 0.35) return 1;
   return GAZE_MAX_RING;
 }
+
+/** How much a shared sky-watch warms a companion pair's bond (BACKLOG-288). */
+export const SHARED_WONDER_BOND = 4;
+
+export interface Gazer {
+  name: string;
+  tileX: number;
+  tileY: number;
+}
+
+/**
+ * Stargazing companions (BACKLOG-288): which gazers ended up watching the sky side by side. Two dinos
+ * that settled within one tile (Chebyshev ≤ 1) of each other are companions — the bold who pressed in
+ * together under the spectacle, the timid who happened to halt beside one another. Returns each unordered
+ * pair once. Pure; takes plain positions so this module stays free of an ai/ import.
+ */
+export function stargazingPairs(gazers: Gazer[]): [string, string][] {
+  const pairs: [string, string][] = [];
+  for (let i = 0; i < gazers.length; i++) {
+    for (let j = i + 1; j < gazers.length; j++) {
+      const a = gazers[i];
+      const b = gazers[j];
+      if (a.name === b.name) continue;
+      if (Math.abs(a.tileX - b.tileX) <= 1 && Math.abs(a.tileY - b.tileY) <= 1) pairs.push([a.name, b.name]);
+    }
+  }
+  return pairs;
+}

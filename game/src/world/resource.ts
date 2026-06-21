@@ -64,3 +64,27 @@ export function stockpileLine(pile: Stockpile): string {
     .map((k) => `${RESOURCE_GLYPH[k]} ${pile[k]}`)
     .join(' · ');
 }
+
+/**
+ * First craft (BACKLOG-286) — the first resources→craft step. Once the shared stockpile (285) covers
+ * one fixed recipe, a dino combines the banked branches and stones into a single crafted object: a cairn.
+ * One recipe, one output; multi-recipe crafting and building stay deferred to 029. Pure — WorldScene owns
+ * the placed sprite + persistence.
+ */
+export const CRAFT_RECIPE: Partial<Record<ResourceKind, number>> = { branch: 3, stone: 2 };
+export const CAIRN_GLYPH = '🗿';
+
+/** Can the stockpile afford one cairn — does it cover every kind the recipe needs? */
+export function canCraft(pile: Stockpile): boolean {
+  return (Object.keys(CRAFT_RECIPE) as ResourceKind[]).every((k) => (pile[k] ?? 0) >= (CRAFT_RECIPE[k] ?? 0));
+}
+
+/** Spend one cairn's worth of resources. Pure — returns a new pile minus the recipe, or null if unaffordable. */
+export function craft(pile: Stockpile): Stockpile | null {
+  if (!canCraft(pile)) return null;
+  const next: Stockpile = { ...pile };
+  for (const k of Object.keys(CRAFT_RECIPE) as ResourceKind[]) {
+    next[k] = (next[k] ?? 0) - (CRAFT_RECIPE[k] ?? 0);
+  }
+  return next;
+}

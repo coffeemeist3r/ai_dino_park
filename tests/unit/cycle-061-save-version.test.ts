@@ -20,6 +20,7 @@ const validV2: SaveData = {
   roles: {},
   gathered: {},
   stockpile: {},
+  cairns: [],
   eggs: [],
   born: [],
   scale: 1,

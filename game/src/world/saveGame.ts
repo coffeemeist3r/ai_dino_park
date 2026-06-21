@@ -66,6 +66,8 @@ export interface SaveData {
   gathered?: Record<string, number>;
   /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. */
   stockpile?: Record<string, number>;
+  /** Crafted cairns placed in the bowl (BACKLOG-286). Additive over v2; absent → []. */
+  cairns?: { tileX: number; tileY: number }[];
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -211,6 +213,18 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // cairns is additive over v2 — absent in older saves (default []); array of {tileX,tileY}. (BACKLOG-286)
+  let cairns: { tileX: number; tileY: number }[] = [];
+  if (o.cairns !== undefined) {
+    if (!Array.isArray(o.cairns)) return null;
+    for (const c of o.cairns) {
+      if (typeof c !== 'object' || c === null) return null;
+      const r = c as Record<string, unknown>;
+      if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+    }
+    cairns = o.cairns as { tileX: number; tileY: number }[];
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -279,6 +293,7 @@ export function deserialize(json: string): SaveData | null {
     roles,
     gathered,
     stockpile,
+    cairns,
     eggs,
     born,
     savedAt,
