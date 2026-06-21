@@ -15,6 +15,8 @@ const sample: SaveData = {
   gathered: {},
   stockpile: {},
   cairns: [],
+  plot: null,
+  harvested: 0,
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
   ],
@@ -184,5 +186,23 @@ describe('saveGame', () => {
 
   it('returns null for a malformed cairn entry (BACKLOG-286)', () => {
     expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5 }] }))).toBeNull();
+  });
+
+  it('round-trips a planted plot + harvest tally (BACKLOG-145)', () => {
+    const withPlot: SaveData = { ...sample, plot: { plantedDay: 4 }, harvested: 3 };
+    expect(deserialize(serialize(withPlot))).toEqual(withPlot);
+  });
+
+  it('loads an older save lacking plot/harvested, defaulting to null/0 (BACKLOG-145)', () => {
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.plot).toBeNull();
+    expect(out!.harvested).toBe(0);
+  });
+
+  it('returns null for a malformed plot or negative harvest (BACKLOG-145)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, plot: { plantedDay: 'x' } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, harvested: -1 }))).toBeNull();
   });
 });

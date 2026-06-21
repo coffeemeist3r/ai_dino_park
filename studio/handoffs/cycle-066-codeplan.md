@@ -110,3 +110,21 @@ Two tracks. Cross-track collision is **minimal**: the lore track changes one lin
 - Plot tile must not sit on a dino spawn or block the keeper; {2,12} is open. Coder: confirm no roster dino spawns there (roster.ts tiles).
 
 **Estimated touch count:** ~6 files (1 new src, saveGame.ts, WorldScene.ts, 2 new unit (or 1 new + extend saveGame test), 1 new e2e). At ceiling, acceptable — the WorldScene edits are localized.
+
+---
+
+## Shipped (Coder)
+
+**Lore track — BACKLOG-298 idle fidgets**
+- Created `game/src/world/fidget.ts` (pure): `Quirk`, `IDLE_QUIRKS` (10 quirks, glyphs disjoint from `ACTIVITY_GLYPH`), `fidget(Personality)` picks the dominant axis (max |v−0.5|, AXES tie-order) and its pole quirk.
+- `WorldScene.refreshActivityMarks()`: a `wandering` dino renders `fidget(d.traits).glyph` instead of 🚶; all other states unchanged; `activityById` untouched (295 `__activity` still returns `wandering`).
+- Hooks `__fidget(name)` (signature quirk) + `__activityMark(name)` (the glyph currently above the dino).
+
+**Structure track — BACKLOG-145 plantable plot**
+- Created `game/src/world/plot.ts` (pure): `cropStage(days)`, `STAGE_GLYPH`, `CROP_FOOD_ID='berries'`, `SPROUT_DAY=1`/`RIPE_DAY=2`, `PLOT_TILE={2,12}`, `plotAdjacent`.
+- `saveGame.ts`: additive `plot?: {plantedDay} | null` + `harvested?: number` (validated, defaults null/0, no `SAVE_VERSION` bump) — always present in `deserialize` output.
+- `WorldScene`: `setupPlot()` (marker sprite depth 2 + P key + hooks), `handlePlot()` (plant/harvest/not-ready by adjacency+stage), `plant()`, `harvest()` (reuses `dropFood(PLOT_TILE.tileX,'berries')` → swarm/favorites loop), `refreshPlot()` (once-only ripen note), `checkPlot()` at the `forceStep` tail; save/restore of `plot`+`harvested`. Hooks `__plot`, `__harvested`, `__plantPlot`, `__harvestPlot`.
+
+**Deviations:** none material. Added an `__activityMark` hook (not in the plan) so the e2e can read the rendered glyph. Updated the existing `cycle-061-save-version` + `saveGame` SaveData fixtures to carry the new always-present `plot:null, harvested:0` (additive-field convention).
+
+**Build + tests:** `npm run build` clean; `npm run test:unit` 642/642 green; dev server HTTP 200. E2E run by QA next.

@@ -68,6 +68,10 @@ export interface SaveData {
   stockpile?: Record<string, number>;
   /** Crafted cairns placed in the bowl (BACKLOG-286). Additive over v2; absent → []. */
   cairns?: { tileX: number; tileY: number }[];
+  /** The planted plot (BACKLOG-145), or null/absent when empty. Stores the in-game day it was planted. */
+  plot?: { plantedDay: number } | null;
+  /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
+  harvested?: number;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -225,6 +229,20 @@ export function deserialize(json: string): SaveData | null {
     cairns = o.cairns as { tileX: number; tileY: number }[];
   }
 
+  // plot/harvested are additive over v2 — absent in older saves (plot → null, harvested → 0). (BACKLOG-145)
+  let plot: { plantedDay: number } | null = null;
+  if (o.plot !== undefined && o.plot !== null) {
+    if (typeof o.plot !== 'object') return null;
+    const r = o.plot as Record<string, unknown>;
+    if (!isNum(r.plantedDay)) return null;
+    plot = { plantedDay: r.plantedDay as number };
+  }
+  let harvested = 0;
+  if (o.harvested !== undefined) {
+    if (!isNum(o.harvested) || (o.harvested as number) < 0) return null;
+    harvested = o.harvested as number;
+  }
+
   // eggs/born are additive over v1 — absent in older saves (default []); reject only if malformed.
   let eggs: Egg[] = [];
   if (o.eggs !== undefined) {
@@ -294,6 +312,8 @@ export function deserialize(json: string): SaveData | null {
     gathered,
     stockpile,
     cairns,
+    plot,
+    harvested,
     eggs,
     born,
     savedAt,

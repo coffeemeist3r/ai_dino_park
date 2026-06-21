@@ -84,6 +84,8 @@ import {
   type Stockpile,
 } from '../world/resource';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
+import { fidget } from '../world/fidget';
+import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -232,6 +234,13 @@ export class WorldScene extends Phaser.Scene {
   /** Crafted cairns placed in the bowl (BACKLOG-286). Persisted; absent → []. */
   private cairns: { tileX: number; tileY: number }[] = [];
   private cairnSprites: Phaser.GameObjects.Text[] = [];
+  /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
+  private plot: { plantedDay: number } | null = null;
+  private plotSprite: Phaser.GameObjects.Text | null = null;
+  /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. */
+  private harvested = 0;
+  /** Last plot stage drawn — so the ripen note fires once, on the edge into ripe. */
+  private plotStageShown: CropStage | 'empty' = 'empty';
   private moveTicks = 0;
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
@@ -335,6 +344,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupGlass();
     this.setupTap();
     this.setupFeeding();
+    this.setupPlot();
     this.setupSkyEvent();
     this.setupPlaque();
     this.setupScan();
@@ -570,6 +580,89 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       return d ? { ...favoriteFood(d.traits, season ?? this.currentSeason()) } : null;
     };
+  }
+
+  /**
+   * Plantable plot (BACKLOG-145): one fixed plot. Press P adjacent to plant a seed; it grows over
+   * realtime-clock days; press P adjacent again once ripe to harvest the crop into the feeding loop.
+   */
+  private setupPlot(): void {
+    this.plotSprite = this.add
+      .text(PLOT_TILE.tileX * TILE + TILE / 2, PLOT_TILE.tileY * TILE + TILE / 2, STAGE_GLYPH.empty, {
+        fontSize: '16px',
+      })
+      .setOrigin(0.5)
+      .setDepth(2);
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.P).on('down', () => this.handlePlot());
+    this.refreshPlot();
+
+    // any: dev-only Playwright hooks (BACKLOG-145). __plot reports stage off the live clock day;
+    // __plantPlot / __harvestPlot drive plant + harvest without walking the keeper onto the tile.
+    (window as any).__plot = () =>
+      this.plot
+        ? { plantedDay: this.plot.plantedDay, stage: cropStage(getWorldClock().now().day - this.plot.plantedDay) }
+        : null;
+    (window as any).__harvested = () => this.harvested;
+    (window as any).__plantPlot = () => {
+      this.plant();
+      return (window as any).__plot();
+    };
+    (window as any).__harvestPlot = () => {
+      this.harvest();
+      return this.harvested;
+    };
+  }
+
+  /** P press: plant an empty plot, harvest a ripe one, or note a growing one — only when adjacent. */
+  private handlePlot(): void {
+    if (!plotAdjacent(this.playerTile(), PLOT_TILE)) return;
+    if (!this.plot) {
+      this.plant();
+    } else if (cropStage(getWorldClock().now().day - this.plot.plantedDay) === 'ripe') {
+      this.harvest();
+    } else {
+      this.logEvent('🌿 the crop is not ready yet');
+    }
+  }
+
+  /** Plant a seed in the empty plot, stamping today as the planted day. */
+  private plant(): void {
+    if (this.plot) return;
+    this.plot = { plantedDay: getWorldClock().now().day };
+    this.logEvent('🌱 you planted a seed in the plot');
+    this.refreshPlot();
+    void this.saveGame();
+  }
+
+  /**
+   * Harvest a ripe plot: release the crop as a food drop at the plot column (reusing the feeding
+   * hatch so the swarm + favorites loop apply), clear the plot, and bump the harvest tally.
+   */
+  private harvest(): void {
+    if (!this.plot || cropStage(getWorldClock().now().day - this.plot.plantedDay) !== 'ripe') return;
+    this.dropFood(PLOT_TILE.tileX, CROP_FOOD_ID); // no-ops if a piece is already in play — retry later
+    this.plot = null;
+    this.harvested++;
+    this.logEvent('🍓 you harvested the crop');
+    this.refreshPlot();
+    void this.saveGame();
+  }
+
+  /** Redraw the plot marker for its current stage; log the ripen note once, on the edge into ripe. */
+  private refreshPlot(): void {
+    const stage: CropStage | 'empty' = this.plot
+      ? cropStage(getWorldClock().now().day - this.plot.plantedDay)
+      : 'empty';
+    this.plotSprite?.setText(STAGE_GLYPH[stage]);
+    if (stage === 'ripe' && this.plotStageShown !== 'ripe') {
+      this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
+    }
+    this.plotStageShown = stage;
+  }
+
+  /** forceStep tail: advance the plot's visible stage as realtime days pass (BACKLOG-145). */
+  private checkPlot(): void {
+    if (this.plot) this.refreshPlot();
   }
 
   /** The season the bowl is living in right now, off the live clock day (BACKLOG-170). */
@@ -934,6 +1027,15 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
     (window as any).__activity = (name: string) => this.activityById[name] ?? null; // BACKLOG-295
+    // BACKLOG-298: a dino's signature idle quirk, and the glyph currently rendered above it.
+    (window as any).__fidget = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? { ...fidget(d.traits) } : null;
+    };
+    (window as any).__activityMark = (name: string) => {
+      const i = this.dinos.findIndex((d) => d.name === name);
+      return i >= 0 && this.activityMarks[i] ? this.activityMarks[i].text : null;
+    };
     // dev-only: the live huddle verdict (BACKLOG-171) — season, bond bar, and window state now.
     (window as any).__huddleInfo = () => {
       const season = this.currentSeason();
@@ -1539,6 +1641,7 @@ export class WorldScene extends Phaser.Scene {
     this.refreshSleepMarks();
     this.refreshActivityMarks();
     this.checkFeeding();
+    this.checkPlot();
     this.maybeSpawnResource();
     this.checkGather();
     this.maybeLayEggs();
@@ -1552,7 +1655,13 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       const show = !this.isHuddling(d) && this.inView(d);
       mark.setVisible(show).setPosition(d.x, d.y - TILE);
-      if (show) mark.setText(ACTIVITY_GLYPH[this.activityById[d.name] ?? 'wandering']);
+      if (show) {
+        const act = this.activityById[d.name] ?? 'wandering';
+        // Idle fidgets (BACKLOG-298): a goalless wanderer shows its trait-derived signature quirk
+        // instead of the generic 🚶, so five idle dinos read as five individuals. Other 295 states
+        // keep their glyph; activityById is untouched (the 295 __activity hook still reads 'wandering').
+        mark.setText(act === 'wandering' ? fidget(d.traits).glyph : ACTIVITY_GLYPH[act]);
+      }
     });
   }
 
@@ -2883,6 +2992,8 @@ export class WorldScene extends Phaser.Scene {
       gathered: this.gathered,
       stockpile: this.stockpile,
       cairns: this.cairns,
+      plot: this.plot,
+      harvested: this.harvested,
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -2932,6 +3043,10 @@ export class WorldScene extends Phaser.Scene {
       this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
       this.cairns = save.cairns ?? []; // BACKLOG-286: crafted cairns restore
       for (const c of this.cairns) this.drawCairn(c);
+      this.plot = save.plot ?? null; // BACKLOG-145: plot + harvest tally restore
+      this.harvested = save.harvested ?? 0;
+      this.plotStageShown = 'empty';
+      this.refreshPlot();
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.
