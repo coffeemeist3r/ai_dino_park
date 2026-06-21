@@ -645,6 +645,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-299 [pokemon] Activity in the book — the collection book shows each dino's most-frequent activity ("usually gathering", "mostly naps"), a behavioural fingerprint accreted from running activity tallies. Builds on 295 / 021.
 - [ ] BACKLOG-300 [social] Caught in the act — interacting (E) with a dino names what it was just doing in its greeting ("caught me mid-snack!", "you pulled me off the pile"), tying the live activity read into dialogue. Builds on 295 / 051.
 
+## Cycle 66 lore additions — even nothing reads as character (2026-06-21)
+
+> Cycle 65 made the bowl legible (you can now see what each dino is *doing* — 295). Cycle 66's
+> next-up is the already-queued **BACKLOG-298** (idle fidgets): make the most common state — a
+> goalless 🚶 wanderer — read as character, so five idle dinos aren't five identical squares. These
+> extend the idle quirk into ripple, mood, and the book.
+
+- [ ] BACKLOG-301 [emergent] Contagious fidget — a dino idling beside another mid-quirk (298) may briefly pick the quirk up itself (mirroring), so an idle tic can ripple between near neighbours; a one-shot borrow, not a permanent trait. Builds on 298 / 018.
+- [ ] BACKLOG-302 [emergent] Mood-shaded fidget — the same dino's idle quirk darkens with its mood: a sulking / cold / jealous dino mopes or hunches where a content one paces breezily, so the fidget reads its feeling, not just its temperament. Builds on 298 / 123 / 179.
+- [ ] BACKLOG-303 [pokemon] Signature quirk in the dossier — the collection book names each dino's idle fidget as a one-line fingerprint ("a restless pacer", "always eyeing the glass"), distinct from the activity tally (299) — who it *is* at rest, not what it does most. Builds on 298 / 021.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
