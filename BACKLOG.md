@@ -625,6 +625,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-291 [social] Favorite sky — a dino that has witnessed both event kinds (meteors and aurora) forms a remembered preference and reacts a little harder to its favorite ("the lights, not the falling stars"); which sky moves which dino becomes a small per-dino tell. Builds on 144 / 011.
 - [ ] BACKLOG-292 [emergent] You-missed-it nudge — the deliberate companion to 151's secondhand gossip: a dino that watched the sky seeks out a specific dino that slept through it the next morning and tells it to its face (a 💬 "you should've SEEN it" beat), turning ambient rumor into a one-to-one telling. Builds on 144 / 151 / 019.
 
+## Operator session — 2026-06-21 (cycle 64 review — legibility)
+
+> Operator review after cycle 64: the bowl does a lot the player can't see — resources spawn rare + get
+> grabbed in a blink, the cairn/resources are emoji not art, and you can't tell what a dino is *doing now*.
+> Three legibility beats + a renderable-art unblock. (Stash-ahead art policy → Idea Box.)
+
+- [ ] BACKLOG-295 [emergent] Dino activity readout — a small persistent per-dino glyph showing its *current intent* (🚶 wandering / 🍖 heading to food / 🪵 gathering / 💤 huddling / ✨ gazing / 🗿 crafting / 💬 meeting), read off the intent the world tick already computes each `forceStep`, so the player can tell at a glance what each dino is doing *now*. Distinct from the emergent role tag (current action vs settled identity) and lighter than the 104 action layer (surfaces existing computed behaviour, no LLM). Builds on 020 / 146 / 144.
+- [ ] BACKLOG-296 [art] Resource + cairn pixel props — draw the gathered resources (branch 🪵, stone 🪨) and the crafted cairn (🗿) as Gen3-pixel props (CHARTER v4), baked like the dino/keeper rigs, replacing the emoji glyphs. Renders immediately where they spawn/stack — no terrain dependency, unlike the benched path/water (033) — so the gathering→craft arc finally has a face. Builds on 146 / 285 / 286 / 117.
+- [ ] BACKLOG-297 [core] Legible gathering — make a resource appearing something the player actually catches: a resource lingers a beat longer before a dino fetches it (and/or a brief "🪵 a branch fell" HUD/log note on spawn), plus a modest spawn-rate bump, so gathering isn't a sub-second blink (especially at high time-scale). Tuning + a spawn beat, no new system. Builds on 146 / 285.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
