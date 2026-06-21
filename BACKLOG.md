@@ -605,6 +605,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-288 [social] Stargazing companions — two dinos who watched the same sky event from adjacent spots that night gain a small shared-wonder bond bump and a "watched the sky together" memory, so a collective awe also knits specific pairs. Builds on 150 / 144 / 013.
 - [ ] BACKLOG-289 [pokemon] Skywatcher in the book — the collection book notes how each dino takes in the sky (crowds under it / watches from the edge), surfacing the temperament read that 150 makes visible in-world. Builds on 150 / 021.
 
+## Cycle 64 lore additions — what the sky leaves behind (2026-06-21)
+
+> Cycle 64's next-up is the queued **BACKLOG-288** (stargazing companions) — the collective awe of
+> 144/150 knits specific pairs. These extend the sky beat into the morning after: a mood that lingers,
+> a remembered preference between the two skies, and a deliberate telling of the one who slept.
+
+- [ ] BACKLOG-290 [emergent] Wonder afterglow — a dino that witnessed a sky event carries a brief warm-mood lift through the rest of that night (greets the keeper a notch fonder, files a "still buzzing from the sky" trace) that fades by dawn; awe is transient, and you can feel it cool. Builds on 144 / 150 / 011.
+- [ ] BACKLOG-291 [social] Favorite sky — a dino that has witnessed both event kinds (meteors and aurora) forms a remembered preference and reacts a little harder to its favorite ("the lights, not the falling stars"); which sky moves which dino becomes a small per-dino tell. Builds on 144 / 011.
+- [ ] BACKLOG-292 [emergent] You-missed-it nudge — the deliberate companion to 151's secondhand gossip: a dino that watched the sky seeks out a specific dino that slept through it the next morning and tells it to its face (a 💬 "you should've SEEN it" beat), turning ambient rumor into a one-to-one telling. Builds on 144 / 151 / 019.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
