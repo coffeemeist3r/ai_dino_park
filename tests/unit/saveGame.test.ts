@@ -210,6 +210,14 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5 }] }))).toBeNull();
   });
 
+  it('round-trips a cairn home zone, and rejects a non-string zone (BACKLOG-308)', () => {
+    const zoned: SaveData = { ...sample, cairns: [{ tileX: 5, tileY: 7, zone: 'grove' }] };
+    expect(deserialize(serialize(zoned))).toEqual(zoned);
+    // a pre-308 cairn (no zone) still loads — the scene backfills it to the bowl on restore.
+    expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5, tileY: 7 }] }))).not.toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5, tileY: 7, zone: 9 }] }))).toBeNull();
+  });
+
   it('round-trips a planted plot + harvest tally (BACKLOG-145)', () => {
     const withPlot: SaveData = { ...sample, plot: { plantedDay: 4 }, harvested: 3 };
     expect(deserialize(serialize(withPlot))).toEqual(withPlot);

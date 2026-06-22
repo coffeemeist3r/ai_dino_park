@@ -236,8 +236,8 @@ export class WorldScene extends Phaser.Scene {
   private foodKind: Food | null = null;
   private foodLanded = false;
   private foodSprite: Phaser.GameObjects.Text | null = null;
-  /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. */
-  private resource: { kind: ResourceKind; tileX: number; tileY: number } | null = null;
+  /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. `zone`: BACKLOG-308. */
+  private resource: { kind: ResourceKind; tileX: number; tileY: number; zone: string } | null = null;
   private resourceSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** World steps since the current resource spawned (BACKLOG-297) — gates the fetch grace. */
   private resourceAge = 0;
@@ -245,8 +245,8 @@ export class WorldScene extends Phaser.Scene {
   private gathered: Record<string, number> = {};
   /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
   private stockpile: Stockpile = {};
-  /** Crafted cairns placed in the bowl (BACKLOG-286). Persisted; absent → []. */
-  private cairns: { tileX: number; tileY: number }[] = [];
+  /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
+  private cairns: { tileX: number; tileY: number; zone: string }[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
   private plot: { plantedDay: number } | null = null;
@@ -463,6 +463,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneId = id;
       this.refreshPlaque();
       this.applyZoneVisibility();
+      this.applyObjectVisibility();
       this.drawFloor();
     };
     // dev-only hook — which ground tiles the pixel pipeline draws (BACKLOG-033 path/water render check).
@@ -594,6 +595,12 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
+    // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
+    (window as any).__objVisible = () => ({
+      resource: this.resourceSprite?.visible ?? false,
+      plot: this.plotSprite?.visible ?? false,
+      cairns: this.cairnSprites.map((s) => s.visible),
+    });
     (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number, fresh = false) => {
       // fresh=true starts the BACKLOG-297 grace at 0 (to test the linger); default → already fetchable,
       // so the existing gather/craft/stockpile e2e keep their immediate single-step pickup.
@@ -645,6 +652,8 @@ export class WorldScene extends Phaser.Scene {
 
   /** P press: plant an empty plot, harvest a ripe one, or note a growing one — only when adjacent. */
   private handlePlot(): void {
+    // ponytail: the plot is a fixed bowl installation; per-zone plots if the grove ever earns its own.
+    if (this.zoneId !== BOWL_ID) return; // BACKLOG-308: the plot lives in the bowl only
     if (!plotAdjacent(this.playerTile(), PLOT_TILE)) return;
     if (!this.plot) {
       this.plant();
@@ -684,6 +693,7 @@ export class WorldScene extends Phaser.Scene {
       ? cropStage(getWorldClock().now().day - this.plot.plantedDay)
       : 'empty';
     this.plotSprite?.setText(STAGE_GLYPH[stage]);
+    this.plotSprite?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-308: the plot draws in the bowl only
     if (stage === 'ripe' && this.plotStageShown !== 'ripe') {
       this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
     }
@@ -788,7 +798,8 @@ export class WorldScene extends Phaser.Scene {
 
   /** Place a resource at a tile and draw its glyph. Shared by the roll + the dev hook (deterministic). */
   private spawnResource(kind: ResourceKind, tileX: number, tileY: number): void {
-    this.resource = { kind, tileX, tileY };
+    // BACKLOG-308: a resource belongs to the zone it fell in, so it draws + is gatherable only there.
+    this.resource = { kind, tileX, tileY, zone: this.zoneId };
     this.resourceSprite?.destroy();
     const px = tileX * TILE + TILE / 2;
     const py = tileY * TILE + TILE / 2;
@@ -802,6 +813,7 @@ export class WorldScene extends Phaser.Scene {
   /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
   private checkGather(): void {
     if (!this.resource || !resourceFetchable(this.resourceAge)) return; // BACKLOG-297: respect the grace
+    if (this.resource.zone !== this.zoneId) return; // BACKLOG-308: only the active zone's resource is in play
     const taker = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), this.resource!));
     if (!taker) return;
     const kind = this.resource.kind;
@@ -824,7 +836,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Draw a cairn glyph at a tile (BACKLOG-286). Same depth/shape as a resource glyph. */
-  private drawCairn(c: { tileX: number; tileY: number }): void {
+  private drawCairn(c: { tileX: number; tileY: number; zone: string }): void {
     const px = c.tileX * TILE + TILE / 2;
     const py = c.tileY * TILE + TILE / 2;
     // BACKLOG-296: a baked pixel cairn where one exists, else the 🗿 glyph (graceful fallback).
@@ -832,13 +844,16 @@ export class WorldScene extends Phaser.Scene {
     const sprite = tex
       ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
       : this.add.text(px, py, CAIRN_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(c.zone === this.zoneId); // BACKLOG-308: a cairn shows only in its own zone
     this.cairnSprites.push(sprite);
   }
 
   /** Record + render a freshly crafted cairn and mark the moment on the crafter (BACKLOG-286). */
   private placeCairn(tile: { tileX: number; tileY: number }, crafter: Dino): void {
-    this.cairns.push(tile);
-    this.drawCairn(tile);
+    // BACKLOG-308: the cairn belongs to the zone the crafter built it in.
+    const c = { ...tile, zone: zoneOf(this.dinoZones, crafter.name, BOWL_ID) };
+    this.cairns.push(c);
+    this.drawCairn(c);
     this.flashFeed(crafter, CAIRN_GLYPH);
     this.memory = remember(this.memory, crafter.name, 'stacked the first cairn from gathered branches and stones');
     this.logEvent(`${CAIRN_GLYPH} ${crafter.name} stacked a cairn`);
@@ -2503,6 +2518,7 @@ export class WorldScene extends Phaser.Scene {
     this.player.setPosition(link.entry.x, link.entry.y);
     this.refreshPlaque();
     this.applyZoneVisibility();
+    this.applyObjectVisibility();
     this.drawFloor();
     return true;
   }
@@ -2519,6 +2535,17 @@ export class WorldScene extends Phaser.Scene {
       d.sprite.setVisible(v);
       d.label.setVisible(v);
     }
+  }
+
+  /**
+   * BACKLOG-308: world objects (resource, cairns, plot) draw only in their home zone, so the grove's
+   * own floor isn't overlaid with bowl-built props seen through the zone switch. Interaction is gated
+   * at the source (checkGather on `resource.zone`, handlePlot on the bowl); this is the render half.
+   */
+  private applyObjectVisibility(): void {
+    this.resourceSprite?.setVisible(!!this.resource && this.resource.zone === this.zoneId);
+    this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
+    this.plotSprite?.setVisible(this.zoneId === BOWL_ID);
   }
 
   /**
@@ -3131,12 +3158,14 @@ export class WorldScene extends Phaser.Scene {
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
-      this.cairns = save.cairns ?? []; // BACKLOG-286: crafted cairns restore
+      // BACKLOG-286 restore; BACKLOG-308: backfill a home zone for cairns from saves before 308 (→ bowl).
+      this.cairns = (save.cairns ?? []).map((c) => ({ ...c, zone: c.zone ?? BOWL_ID }));
       for (const c of this.cairns) this.drawCairn(c);
       this.plot = save.plot ?? null; // BACKLOG-145: plot + harvest tally restore
       this.harvested = save.harvested ?? 0;
       this.plotStageShown = 'empty';
       this.refreshPlot();
+      this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;
       // Respawn dinos born in a previous session, then redraw any pending eggs.

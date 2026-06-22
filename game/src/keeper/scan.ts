@@ -10,6 +10,7 @@
 import { AXES, type Personality } from '../ai/personality';
 import { moodFromTraits } from '../ai/brain';
 import { favoriteFood } from '../world/foods';
+import { fidget } from '../world/fidget';
 import type { Season } from '../world/seasons';
 import type { Role } from '../ai/roles';
 import type { Keeper } from './keepers';
@@ -46,6 +47,10 @@ export function scanLines(subject: ScanSubject, season?: Season): string[] {
     lines.push(`${axis.low.padStart(8)} ${meter(subject.traits[axis.key])} ${axis.high}`);
   }
   lines.push(`mood: ${moodFromTraits(subject.traits)}`);
+  // BACKLOG-312: the resting quirk the bowl already performs (298) + the book names (303), read here
+  // off the same deterministic fidget() so the dossier agrees with what the keeper sees in-world.
+  const q = fidget(subject.traits);
+  lines.push(`habit: ${q.glyph} ${q.label}`);
   const fav = favoriteFood(subject.traits, season);
   lines.push(`loves ${fav.emoji} ${fav.label}`);
   return lines;

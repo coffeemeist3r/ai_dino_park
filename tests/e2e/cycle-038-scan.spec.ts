@@ -38,6 +38,22 @@ test('as LUMEN-3, B beside a dino opens the dossier (boot is clean)', async ({ p
   expect(errors).toEqual([]);
 });
 
+test('the dossier reports the resting quirk, matching the live fidget (BACKLOG-312)', async ({ page }) => {
+  await boot(page);
+  await page.locator('canvas').focus();
+
+  await pickKeeper(page, 'lumen');
+  await page.keyboard.press('KeyE');
+  await warpTo(page, 'Rex');
+  await page.keyboard.press('KeyB');
+  await expect.poll(() => scanOpen(page)).toBe(true);
+
+  const quirk = await page.evaluate(() => ((window as W).__fidget('Rex') as { label: string }).label);
+  const lines = (await scanLines(page)).join('\n');
+  expect(lines).toContain('habit:');
+  expect(lines).toContain(quirk);
+});
+
 test('B again closes the dossier', async ({ page }) => {
   await boot(page);
   await page.locator('canvas').focus();

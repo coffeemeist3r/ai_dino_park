@@ -68,8 +68,8 @@ export interface SaveData {
   gathered?: Record<string, number>;
   /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. */
   stockpile?: Record<string, number>;
-  /** Crafted cairns placed in the bowl (BACKLOG-286). Additive over v2; absent → []. */
-  cairns?: { tileX: number; tileY: number }[];
+  /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
+  cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** The planted plot (BACKLOG-145), or null/absent when empty. Stores the in-game day it was planted. */
   plot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
@@ -232,15 +232,17 @@ export function deserialize(json: string): SaveData | null {
   }
 
   // cairns is additive over v2 — absent in older saves (default []); array of {tileX,tileY}. (BACKLOG-286)
-  let cairns: { tileX: number; tileY: number }[] = [];
+  // `zone` is additive over that (BACKLOG-308); absent → bowl, backfilled on restore.
+  let cairns: { tileX: number; tileY: number; zone?: string }[] = [];
   if (o.cairns !== undefined) {
     if (!Array.isArray(o.cairns)) return null;
     for (const c of o.cairns) {
       if (typeof c !== 'object' || c === null) return null;
       const r = c as Record<string, unknown>;
       if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+      if (r.zone !== undefined && typeof r.zone !== 'string') return null;
     }
-    cairns = o.cairns as { tileX: number; tileY: number }[];
+    cairns = o.cairns as { tileX: number; tileY: number; zone?: string }[];
   }
 
   // plot/harvested are additive over v2 — absent in older saves (plot → null, harvested → 0). (BACKLOG-145)

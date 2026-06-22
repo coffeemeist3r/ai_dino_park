@@ -4,6 +4,7 @@ import { keeperById } from '../../game/src/keeper/keepers';
 import { AXES, seededPersonality } from '../../game/src/ai/personality';
 import { moodFromTraits } from '../../game/src/ai/brain';
 import { favoriteFood } from '../../game/src/world/foods';
+import { fidget } from '../../game/src/world/fidget';
 
 const aether = keeperById('aether');
 const vanta = keeperById('vanta');
@@ -54,6 +55,12 @@ describe('field scan (BACKLOG-157)', () => {
 
   it('the mood line matches moodFromTraits for the same traits', () => {
     expect(scanLines(rex).join('\n')).toContain(`mood: ${moodFromTraits(rex.traits)}`);
+  });
+
+  it('the habit line matches the same fidget() the bowl + book use (BACKLOG-312)', () => {
+    const q = fidget(rex.traits);
+    const text = scanLines(rex).join('\n');
+    expect(text).toContain(`habit: ${q.glyph} ${q.label}`);
   });
 
   it('is deterministic: the same subject scans identically twice', () => {
