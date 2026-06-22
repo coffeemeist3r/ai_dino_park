@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 072 — 2026-06-22
+- BACKLOG-333: Realtime liveliness (operator-reported) — the bowl looked frozen and dinos never reached the grove because wander (every 5 in-game min) and migration (≤1/in-game day) were gated to the in-game clock, which at the 1× realtime default is glacial (5 real min/step; 1 migration/24 real hr). Wander now runs on a real-time timer (`WANDER_STEP_MS` 3 s) and migration on a real-time cooldown (`MIGRATE_COOLDOWN_MS` 60 s, pure `cooldownReady`), so the park mills + dinos cross zones at a watchable pace at any scale. `forceStep` body + `__migrate` untouched; no save change. Visible cross-zone walk = 334. (structure track)
+- BACKLOG-325: Lingering lift — after a recovery flourish (318) a dino's idle quirk stays brightened for a short window (8 s) before settling to its signature; a sulk still wins the glyph. Pure render + transient window, no save/model. Smooth decay = 330. (lore track)
+
 ## Cycle 071 — 2026-06-22
 - BACKLOG-318: Mood lifts the motion — the recovery twin of 310. When a funk clears (a sulk repaired (125) / a cold thawed (184)), the dino flashes a brightened flourish of its signature quirk (`🐾✨`), so bouncing back reads in motion, not just the mood emoji vanishing. Pure `reliefFlourish(p)` reused through the existing `flashFeed` channel at the two recovery seams, parallel to the repair/warm bubble; no affinity change, no save, no model. Lingering perk (325) + prickly-slower (327) deferred. (lore track)
 - BACKLOG-314: Zone-aware resource spawn — resources go per zone. Each inhabited zone holds its own resource slot and rolls on its own cadence (pure `occupiedZones`), so the grove grows + holds its own gathering even while the keeper's in the bowl, ready (grace elapsed) the moment you cross. Gather/fetch/visibility run per zone; the 274/308 gate (gathered only in the keeper's active zone) is unchanged. `__resource`/`__spawnResource` kept backward-compatible; no save change. Per-zone stockpile = 328, carry-between-zones = 329. (structure track)
