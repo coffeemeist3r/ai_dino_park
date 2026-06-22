@@ -1899,3 +1899,7 @@ Queue at 4 open (309/314/315/316) = cap X=4 → drain, no brainstorm. Picked **B
 ## 2026-06-22 — cycle 070 — coder — 310 + 309
 
 Built both. **310:** `moodFidget(p, mood?)` in fidget.ts (no-mood delegates to `fidget(p)`, byte-identical); WorldScene's `refreshActivityMarks` shades the wandering glyph to 😒 for a sulking runner-up (`pendingRepair`), cold left on its existing 🥶 mark; `__moodFidget` hook added. **309:** `STOCKPILE_CAP=8` + `atCap` + a `bankResource` clamp in resource.ts; `checkGather` consumes-but-doesn't-bank at cap and logs `stores full — <dino> drops the <kind>`. Build clean; 698/698 unit (689 + 9 new); dev server boots (HTTP 200). Phase → qa-pending.
+
+## 2026-06-22 — cycle 070 — qa — lore 6/6 + structure 6/6 — 698 unit / 225 e2e green
+
+Ran the full bar. Build clean; 698/698 unit; 225/225 e2e in one fresh run, no flake (+9 unit, +2 e2e). **310:** no-mood `moodFidget` byte-identical to `fidget`; sulk → 😒 + ", sulking"; cold → signature glyph + ", shivering"; verified through the real scene build via `__moodFidget`; cycle-066/068 quirk specs untouched. **309:** `atCap` correct at the boundary; `bankResource` clamps at 8 without overflow and stays pure; banking 9 branches (no craft) holds the pile at 8 — the 9th stalled; a craft that spends a capped kind relieves the cap; cycle-062/063/064 + `stockpileLine` byte-identical, no save change. Recommend APPROVE / APPROVE. Phase → validator-pending.
