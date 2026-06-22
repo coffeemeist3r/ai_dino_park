@@ -1955,3 +1955,7 @@ Housekeeping: the Structure-smith refilled its queue (328 per-zone stockpile, 32
 ## 2026-06-22 — cycle 071-art — artist — no-op (no open [art] items)
 
 No drawing this fire: zero open `[art]` items at the start (317 closed last cycle, and this cycle's smiths seeded only logic items — lore 323–327, structure 328–329, none `[art]`). The Artist correctly no-ops per routine 7. The cast, tiles (grass/path/water), dialog frame, keeper roster, resource/cairn props, and the plot's crop stages all render in Gen3 pixel — art remains caught up to the shipped systems. The next renderable art (grove ambient props, a per-zone resource/shelter once 315 builds one) needs a smith to seed a fresh `[art]` item. Boundary intact (no `art/` change). artPipelineReady stays true. State → lore-pending; cycle 71 closed.
+
+## 2026-06-22 — cycle 072 — lore-smith — the afterglow
+
+Cycle bumped 71 → 72 (both prior APPROVED). Picked **BACKLOG-325** (lingering lift) as next-up: the afterglow of cycle 71's recovery flourish (318) — for a short while after a dino bounces back from a funk its idle quirk reads a touch perkier before settling to its signature. Pure-ish shading of the fidget render; no collision with the Structure-smith's operator-reported movement/migration tuning. Added 330–332 (afterglow fades / greeting notes the bounce-back / shared relief). Idea Box: lone open entry left deferred. Phase → designer-pending.

@@ -729,9 +729,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-323 [emergent] Funk seen by a friend — a dino idling near a sulking/cold friend (310) files a faint "saw <name> down" memory that can wistfully colour its next line; empathy through proximity. Builds on 310 / 130 / 011.
 - [ ] BACKLOG-324 [social] Mood in the tone pick — greeting a funked dino, the Warm/Tease/Honest menu hints its current mood ("Rex — sulking") so the keeper chooses knowing how it feels. Builds on 310 / 142.
-- [ ] BACKLOG-325 [emergent] Lingering lift — for a short while after a recovery flourish (318), the dino's idle quirk reads a touch perkier before settling to its signature. Builds on 318 / 298.
+- [~] BACKLOG-325 [emergent] Lingering lift — for a short while after a recovery flourish (318), the dino's idle quirk reads a touch perkier before settling to its signature. Builds on 318 / 298.
 - [ ] BACKLOG-326 [pokemon] Bounced-back in the book — the collection book notes "bounced back" on a dino that recently recovered from a funk, a fleeting positive tell beside its hearts. Builds on 318 / 131 / 021.
 - [ ] BACKLOG-327 [emergent] Stubborn funk — a low-agreeableness dino's recovery flourish (318) is smaller / slower, so even bouncing back is in-character. Builds on 318 / 310 / 070.
+
+## Cycle 72 lore additions — the afterglow (2026-06-22)
+
+> Cycle 71 shipped the recovery flourish (318). Cycle 72 picks the afterglow (325 —
+> a recovered dino stays perkier a while) and seeds its tail, its voice, and its spread.
+
+- [ ] BACKLOG-330 [emergent] Afterglow fades — the lingering-lift (325) perk decays smoothly back to the signature quirk over a short window rather than snapping off, so recovery has a tail. Builds on 325 / 318.
+- [ ] BACKLOG-331 [social] Greeting notes the bounce-back — greeting a just-recovered dino, its line carries a lighter note ("Rex — back on its feet —"); deterministic fallback, LLM colour behind the boundary. Builds on 318 / 051.
+- [ ] BACKLOG-332 [emergent] Shared relief — a dino that witnesses a friend's recovery flourish (318) nearby catches a small mood lift of its own; gladness spreads like funk does (320). Builds on 318 / 320 / 130.
 
 ## Operator session — 2026-06-12
 
