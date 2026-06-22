@@ -97,3 +97,40 @@ describe('jealous nuzzle (BACKLOG-120)', () => {
     expect(homecoming({ Sunny: 60, Glade: 55 }, HOMECOMING_MIN_MINUTES - 1)).toBeNull();
   });
 });
+
+describe('in-character homecoming (BACKLOG-306)', () => {
+  it('leads the welcome-back with the homecomer signature quirk', () => {
+    const hc = homecoming({ Sunny: 90 }, LONG, () => 'paces');
+    expect(hc?.line).toContain('Sunny');
+    expect(hc?.line).toContain('paces');
+    expect(hc?.line).toContain('👋');
+    // the quirk leads, the spoken line follows
+    expect(hc?.line.indexOf('paces')).toBeLessThan(hc!.line.indexOf('👋'));
+  });
+
+  it('only the homecomer name is looked up for the quirk', () => {
+    const seen: string[] = [];
+    const hc = homecoming({ Sunny: 60, Glade: 55 }, LONG, (n) => {
+      seen.push(n);
+      return 'hums to itself';
+    });
+    expect(hc?.name).toBe('Sunny');
+    expect(seen).toEqual(['Sunny']); // not the jealous runner-up
+  });
+
+  it('two different quirks make visibly different lines for the same dino', () => {
+    const a = homecoming({ Sunny: 90 }, LONG, () => 'paces');
+    const b = homecoming({ Sunny: 90 }, LONG, () => 'peeks around timidly');
+    expect(a?.line).not.toBe(b?.line);
+  });
+
+  it('with NO quirk lookup the line is byte-identical to the original tiers', () => {
+    expect(homecoming({ Sunny: 90 }, LONG)?.line).toBe('Sunny: You\'re finally back! 👋'); // 9 hearts
+    expect(homecoming({ Sunny: 50 }, LONG)?.line).toBe('Sunny: Welcome home! 👋'); // 5 hearts
+    expect(homecoming({ Sunny: 20 }, LONG)?.line).toBe('Sunny: Oh — you\'re back. 👋'); // 2 hearts
+  });
+
+  it('a lookup that returns undefined falls back to the plain tier line', () => {
+    expect(homecoming({ Sunny: 90 }, LONG, () => undefined)?.line).toBe('Sunny: You\'re finally back! 👋');
+  });
+});

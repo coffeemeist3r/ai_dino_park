@@ -18,6 +18,7 @@ const validV2: SaveData = {
   lastTone: {},
   zoneId: 'bowl',
   roles: {},
+  dinoZones: {},
   gathered: {},
   stockpile: {},
   cairns: [],

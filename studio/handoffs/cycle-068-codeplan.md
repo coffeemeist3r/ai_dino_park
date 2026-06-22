@@ -67,3 +67,9 @@ Both tracks are small, additive, and touch disjoint code. Land lore first (tiny,
 
 ### Blockers
 - None anticipated. Watch: the migration roll constant must be long enough that a full `playwright test` run (minutes) won't randomly migrate a founder mid-spec — set `MIGRATE_ROLL_INTERVAL_MS` ≥ the sky interval and keep the chance low; tests drive migration through `__migrate`, not the roll.
+
+---
+
+## SHIPPED (coder)
+
+**306:** `homecoming.ts` — `spokenLine` (old tiers) + `homecomingLine(name,hearts,quirk?)` prepend; `homecoming()` gained optional `quirkLabel` lookup; WorldScene `dinoQuirkLabel()` + both call-sites pass it. **274:** `zones.ts` `otherZone`; `saveGame.ts` additive `dinoZones` (validation mirrors `roles`); WorldScene persist/restore, `inView` gate on `nearestDino`/`checkFeeding`/`checkGather`, `setupMigration`/`maybeMigrate`/`relocate` (sky-cadence roll + per-day cap) + `__migrate` + `__nearestDino` hooks. Build clean; 687/687 unit; targeted e2e (068×2 + 030 + 059) 9/9 green. Full e2e bar runs in QA.

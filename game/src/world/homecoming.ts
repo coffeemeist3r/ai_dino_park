@@ -56,10 +56,20 @@ function topBy(friendship: Friendship, exclude?: string): { name: string; points
   return best;
 }
 
-function homecomingLine(name: string, hearts: number): string {
+function spokenLine(name: string, hearts: number): string {
   if (hearts >= 7) return `${name}: You're finally back! 👋`;
   if (hearts >= 4) return `${name}: Welcome home! 👋`;
   return `${name}: Oh — you're back. 👋`;
+}
+
+/**
+ * The welcome-back line. When the dino's signature idle quirk (BACKLOG-298/306) is supplied, it leads
+ * with that body language so the greeting is unmistakably *that* dino ("Rex paces — You're finally
+ * back! 👋"). With no quirk it is byte-identical to the original tier strings (protects the cycle-30 spec).
+ */
+function homecomingLine(name: string, hearts: number, quirk?: string): string {
+  const spoken = spokenLine(name, hearts);
+  return quirk ? `${name} ${quirk} — ${spoken}` : spoken;
 }
 
 function jealousLine(name: string): string {
@@ -70,7 +80,11 @@ function jealousLine(name: string): string {
  * Decide whether — and from whom — a homecoming beat plays. Returns null for a
  * short absence (below the threshold) or when no dino has any friendship yet.
  */
-export function homecoming(friendship: Friendship, awayMinutes: number): Homecoming | null {
+export function homecoming(
+  friendship: Friendship,
+  awayMinutes: number,
+  quirkLabel?: (name: string) => string | undefined,
+): Homecoming | null {
   if (awayMinutes < HOMECOMING_MIN_MINUTES) return null;
   const best = topBy(friendship);
   if (!best) return null;
@@ -89,7 +103,7 @@ export function homecoming(friendship: Friendship, awayMinutes: number): Homecom
   return {
     name: best.name,
     hearts,
-    line: homecomingLine(best.name, hearts),
+    line: homecomingLine(best.name, hearts, quirkLabel?.(best.name)),
     memory: 'the keeper came home after being away a while',
     jealous,
   };

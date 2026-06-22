@@ -8,6 +8,7 @@ import {
   linkedZone,
   setZone,
   zoneOf,
+  otherZone,
 } from '../../game/src/world/zones';
 import { serialize, deserialize, SAVE_VERSION } from '../../game/src/world/saveGame';
 
@@ -90,5 +91,16 @@ describe('save round-trips zoneId additively (BACKLOG-143)', () => {
     const out = deserialize(serialize(base as any));
     expect(out).not.toBeNull();
     expect(out?.zoneId).toBe(BOWL_ID);
+  });
+});
+
+describe('migration: otherZone (BACKLOG-274)', () => {
+  it('flips between the bowl and the grove', () => {
+    expect(otherZone(BOWL_ID)).toBe(GROVE_ID);
+    expect(otherZone(GROVE_ID)).toBe(BOWL_ID);
+  });
+
+  it('treats any unknown id as the bowl, so its other zone is the grove', () => {
+    expect(otherZone('nowhere')).toBe(GROVE_ID);
   });
 });

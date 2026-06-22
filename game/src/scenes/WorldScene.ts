@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, zoneById, zoneOf } from '../world/zones';
+import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -117,6 +117,14 @@ const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
 
+/**
+ * Dino migration (BACKLOG-274) rolls on a real-time cadence (like the sky event), NOT in-game hours, so
+ * offline catch-up / per-minute clock advances never retroactively migrate the cast, and a short headless
+ * test never waits this long. Sparse + capped to ≤1/in-game-day; tests drive migration via `__migrate`.
+ */
+const MIGRATE_ROLL_INTERVAL_MS = 90_000;
+const MIGRATE_CHANCE = 0.15;
+
 // Night sleeping huddle (BACKLOG-041): bonded dinos gather at the den after dark.
 // The bond bar + window are season-conditional since BACKLOG-171 (see world/huddle.ts).
 const HUDDLE_TILE = { tileX: 10, tileY: 11 };
@@ -138,6 +146,8 @@ export class WorldScene extends Phaser.Scene {
   private floorFallback?: Phaser.GameObjects.Graphics;
   /** Which zone each dino lives in (BACKLOG-143 occupancy API). Defaults to the bowl; -274 migrates. */
   private dinoZones: Record<string, string> = {};
+  /** Last in-game day a dino migrated (BACKLOG-274) — caps ambient migration to ≤1/day. */
+  private lastMigrationDay = -1;
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -350,6 +360,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupFeeding();
     this.setupPlot();
     this.setupSkyEvent();
+    this.setupMigration();
     this.setupPlaque();
     this.setupScan();
     this.setupIdle();
@@ -718,7 +729,7 @@ export class WorldScene extends Phaser.Scene {
   /** First dino standing on (or beside) the landed food eats it. */
   private checkFeeding(): void {
     if (!this.food || !this.foodLanded) return;
-    const eater = this.dinos.find((d) => reachedFood(this.tileOf(d), this.food!));
+    const eater = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), this.food!));
     if (eater) this.eatFood(eater);
   }
 
@@ -791,7 +802,7 @@ export class WorldScene extends Phaser.Scene {
   /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
   private checkGather(): void {
     if (!this.resource || !resourceFetchable(this.resourceAge)) return; // BACKLOG-297: respect the grace
-    const taker = this.dinos.find((d) => reachedFood(this.tileOf(d), this.resource!));
+    const taker = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), this.resource!));
     if (!taker) return;
     const kind = this.resource.kind;
     this.resourceSprite?.destroy();
@@ -1865,6 +1876,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Float the welcome-back line over the closest dino; if a near-tied rival is jealous, float its sulk too (BACKLOG-112/120). */
+  /** A dino's signature idle quirk label (BACKLOG-306) — the same `fidget()` read the book/live glyph use. */
+  private dinoQuirkLabel(name: string): string | undefined {
+    const d = this.dinos.find((x) => x.name === name);
+    return d ? fidget(d.traits).label : undefined;
+  }
+
   private playHomecoming(): void {
     const hc = this.lastHomecoming;
     if (!hc) return;
@@ -2504,6 +2521,44 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Dino migration (BACKLOG-274) — the grove fills by dinos wandering into it, not at spawn (spawn stays
+   * byte-identical, so every bowl-targeting spec is intact). A sparse real-time roll, capped ≤1/in-game-day.
+   */
+  private setupMigration(): void {
+    this.time.addEvent({ delay: MIGRATE_ROLL_INTERVAL_MS, loop: true, callback: () => this.maybeMigrate() });
+    // dev-only Playwright hook — migrate a named dino to a zone deterministically; returns its new zone.
+    (window as any).__migrate = (name: string, zoneId: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.relocate(d, zoneId);
+      return zoneOf(this.dinoZones, name, BOWL_ID);
+    };
+  }
+
+  private maybeMigrate(): void {
+    const day = getWorldClock().now().day;
+    if (day === this.lastMigrationDay) return; // at most one migration per in-game day
+    if (Math.random() >= MIGRATE_CHANCE) return;
+    const d = this.dinos[Math.floor(Math.random() * this.dinos.length)];
+    if (!d) return;
+    this.relocate(d, otherZone(zoneOf(this.dinoZones, d.name, BOWL_ID)));
+    this.lastMigrationDay = day;
+  }
+
+  /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
+  private relocate(d: Dino, destZoneId: string): void {
+    setZone(this.dinoZones, d.name, destZoneId);
+    // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
+    const tileX = Phaser.Math.Between(2, COLS - 3);
+    const tileY = Phaser.Math.Between(2, ROWS - 3);
+    d.setPosition(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2);
+    this.applyZoneVisibility();
+    this.logEvent(
+      `🌿 ${d.name} ${destZoneId === GROVE_ID ? `wandered into ${zoneById(GROVE_ID).name}` : 'wandered back to the bowl'}`,
+    );
+    void this.saveGame();
+  }
+
   private handleInteract(): void {
     // GBA-style paging: with more text to read, E/Z turns the page first; the
     // dismiss/cancel below only fires from the last page. (The ✕ chip skips this.)
@@ -2745,6 +2800,9 @@ export class WorldScene extends Phaser.Scene {
       if (d) this.player.setPosition(d.x, d.y);
       return !!d;
     };
+    // any: dev-only Playwright hook — who the keeper would interact with right now (the zone-gated
+    // nearest dino, BACKLOG-274), or null when none is in range/zone.
+    (window as any).__nearestDino = () => this.nearestDino()?.name ?? null;
   }
 
   /**
@@ -2819,6 +2877,7 @@ export class WorldScene extends Phaser.Scene {
     let best: Dino | null = null;
     let bestDist = TILE * 2;
     for (const d of this.dinos) {
+      if (!this.inView(d)) continue; // BACKLOG-274: only a dino in the keeper's zone is interactable
       const dist = Phaser.Math.Distance.Between(this.player.x, this.player.y, d.x, d.y);
       if (dist < bestDist) {
         best = d;
@@ -3018,6 +3077,7 @@ export class WorldScene extends Phaser.Scene {
       keeperId: this.keeperId,
       zoneId: this.zoneId,
       roles: this.roles,
+      dinoZones: this.dinoZones,
       gathered: this.gathered,
       stockpile: this.stockpile,
       cairns: this.cairns,
@@ -3068,6 +3128,7 @@ export class WorldScene extends Phaser.Scene {
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
+      this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
       this.cairns = save.cairns ?? []; // BACKLOG-286: crafted cairns restore
@@ -3094,7 +3155,7 @@ export class WorldScene extends Phaser.Scene {
       }
       // After a long absence, your closest dino notices you came back (BACKLOG-112).
       // Friendship is assigned above, so the homecomer reads the restored hearts.
-      this.lastHomecoming = homecoming(this.friendship, away.minutes);
+      this.lastHomecoming = homecoming(this.friendship, away.minutes, (name) => this.dinoQuirkLabel(name));
       if (this.lastHomecoming) {
         this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();
@@ -3132,7 +3193,7 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = away.bonds;
       this.memory = away.memory;
       this.lastAwayDigest = away.digest;
-      this.lastHomecoming = homecoming(this.friendship, away.minutes);
+      this.lastHomecoming = homecoming(this.friendship, away.minutes, (name) => this.dinoQuirkLabel(name));
       if (this.lastHomecoming) {
         this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();

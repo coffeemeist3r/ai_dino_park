@@ -95,3 +95,8 @@ export function setZone(map: Record<string, string>, id: string, zoneId: string)
 export function zoneOf(map: Record<string, string>, id: string, fallback: string): string {
   return map[id] ?? fallback;
 }
+
+/** The other zone of the bowl↔grove pair (BACKLOG-274 migration). Any non-grove id maps to the bowl. */
+export function otherZone(id: string): string {
+  return id === GROVE_ID ? BOWL_ID : GROVE_ID;
+}

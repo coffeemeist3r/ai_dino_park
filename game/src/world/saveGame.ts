@@ -62,6 +62,8 @@ export interface SaveData {
   zoneId?: string;
   /** Each dino's settled (durable) role (BACKLOG-032). Additive; absent → {}. Stored as plain strings. */
   roles?: Record<string, string>;
+  /** Each dino's home zone (BACKLOG-274). Additive; absent → {} (every dino defaults to the bowl). */
+  dinoZones?: Record<string, string>;
   /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
   gathered?: Record<string, number>;
   /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. */
@@ -195,6 +197,18 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // dinoZones is additive over v2 — absent in older saves (default {}); name→zone-id, mirrors roles
+  // (string values only). Absent/empty → every dino reads the bowl via zoneOf's fallback. (BACKLOG-274)
+  let dinoZones: Record<string, string> = {};
+  if (o.dinoZones !== undefined) {
+    if (typeof o.dinoZones !== 'object' || o.dinoZones === null) return null;
+    const entries = o.dinoZones as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (typeof entries[k] !== 'string') return null;
+      dinoZones[k] = entries[k] as string;
+    }
+  }
+
   // gathered is additive over v1 — absent in older saves (default {}); name→count, mirrors friendship.
   let gathered: Record<string, number> = {};
   if (o.gathered !== undefined) {
@@ -309,6 +323,7 @@ export function deserialize(json: string): SaveData | null {
     keeperId,
     zoneId,
     roles,
+    dinoZones,
     gathered,
     stockpile,
     cairns,

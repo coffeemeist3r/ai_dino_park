@@ -12,6 +12,7 @@ const sample: SaveData = {
   lastTone: { Rex: 'warm' },
   zoneId: 'bowl',
   roles: {},
+  dinoZones: { Mossback: 'grove' },
   gathered: {},
   stockpile: {},
   cairns: [],
@@ -105,6 +106,27 @@ describe('saveGame', () => {
   it('returns null for a malformed gratitude value (BACKLOG-132)', () => {
     expect(deserialize(JSON.stringify({ ...sample, gratitude: { Rex: 5 } }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, gratitude: { Rex: [1] } }))).toBeNull();
+  });
+
+  it('round-trips a dinoZones map (BACKLOG-274)', () => {
+    const withZones: SaveData = { ...sample, dinoZones: { Rex: 'grove', Sunny: 'bowl' } };
+    expect(deserialize(serialize(withZones))).toEqual(withZones);
+  });
+
+  it('loads an older save lacking dinoZones, defaulting it to {} (BACKLOG-274)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.dinoZones).toEqual({});
+  });
+
+  it('returns null for a malformed dinoZones value (BACKLOG-274)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, dinoZones: { Rex: 5 } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, dinoZones: 'grove' }))).toBeNull();
   });
 
   it('round-trips a lastTone map (BACKLOG-142)', () => {
