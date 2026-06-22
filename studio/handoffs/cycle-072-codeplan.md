@@ -55,3 +55,17 @@
 Both in `WorldScene`, disjoint methods. Build order: 333 (driver rewire + migration
 cooldown) first, then 325 (`liftMood` window + `refreshActivityMarks` perk). `clock.ts`
 gets `cooldownReady`; `fidget.ts` is already shipped (no change).
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/clock.ts` — pure `cooldownReady(now,last,ms)`.
+- `game/src/scenes/WorldScene.ts` — 333: `WANDER_STEP_MS`/`MIGRATE_COOLDOWN_MS` consts; `setupMovement` real-time wander timer (dropped `moveTicks` + the onTick coupling); `maybeMigrate` real-time cooldown (dropped `lastMigrationDay`, added `lastMigrationMs`); `__wanderStepMs`/`__migrateCooldownMs`. 325: `LIFT_WINDOW_MS` + `liftedUntil`; `liftMood` stamps the window; `refreshActivityMarks` perks a wandering in-window dino with `reliefFlourish`; `__lifted`/`__liftMood`.
+- `tests/unit/cycle-072-cooldown.test.ts` (3).
+- `tests/e2e/cycle-072-liveliness.spec.ts`, `tests/e2e/cycle-072-lingering-lift.spec.ts`.
+
+**Deviations:** none.
+
+**Build + unit-test status:** build clean; `npm run test:unit` 722/722 (719 + 3 new). Dev server boots (HTTP 200). E2E left to QA.

@@ -19,7 +19,7 @@ import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
-import { getWorldClock, type GameTime } from '../world/clock';
+import { getWorldClock, cooldownReady, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
@@ -121,10 +121,22 @@ const ROWS = 15;
 /**
  * Dino migration (BACKLOG-274) rolls on a real-time cadence (like the sky event), NOT in-game hours, so
  * offline catch-up / per-minute clock advances never retroactively migrate the cast, and a short headless
- * test never waits this long. Sparse + capped to ≤1/in-game-day; tests drive migration via `__migrate`.
+ * test never waits this long. Paced by a real-time cooldown (BACKLOG-333) — the old ≤1/in-game-day cap was
+ * ≤1/24 real hr at the 1× default, so the grove never filled; tests drive migration via `__migrate`.
  */
 const MIGRATE_ROLL_INTERVAL_MS = 90_000;
 const MIGRATE_CHANCE = 0.15;
+const MIGRATE_COOLDOWN_MS = 60_000; // BACKLOG-333: real-time floor between ambient migrations
+
+/**
+ * Wander cadence (BACKLOG-333) — `forceStep` runs on this real-time timer instead of the in-game-minute
+ * clock, so the bowl mills about at a watchable pace at any time scale (at 1× an in-game minute is 60 real
+ * seconds, so the old "every 5 in-game minutes" was one step per ~5 real minutes — the park looked frozen).
+ */
+const WANDER_STEP_MS = 3_000;
+
+/** How long a recovered dino's idle quirk reads perkier after a flourish (BACKLOG-325), in real ms. */
+const LIFT_WINDOW_MS = 8_000;
 
 // Night sleeping huddle (BACKLOG-041): bonded dinos gather at the den after dark.
 // The bond bar + window are season-conditional since BACKLOG-171 (see world/huddle.ts).
@@ -147,8 +159,8 @@ export class WorldScene extends Phaser.Scene {
   private floorFallback?: Phaser.GameObjects.Graphics;
   /** Which zone each dino lives in (BACKLOG-143 occupancy API). Defaults to the bowl; -274 migrates. */
   private dinoZones: Record<string, string> = {};
-  /** Last in-game day a dino migrated (BACKLOG-274) — caps ambient migration to ≤1/day. */
-  private lastMigrationDay = -1;
+  /** Wall-clock ms of the last ambient migration (BACKLOG-333) — paces it by a real-time cooldown. */
+  private lastMigrationMs = 0;
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -174,6 +186,8 @@ export class WorldScene extends Phaser.Scene {
   private pendingRepair: string | null = null;
   /** The last recovery flourish fired (BACKLOG-318), for the dev hook; transient, not persisted. */
   private lastMoodLift: string | null = null;
+  /** Per-dino wall-clock ms until which a recovered dino idles perkier (BACKLOG-325); transient. */
+  private liftedUntil: Record<string, number> = {};
   /** The last dino-to-dino comfort beat (BACKLOG-130): who consoled whom, or null. Transient. */
   private lastComfort: { comforter: string; sulker: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
@@ -259,7 +273,6 @@ export class WorldScene extends Phaser.Scene {
   private harvested = 0;
   /** Last plot stage drawn — so the ripen note fires once, on the edge into ripe. */
   private plotStageShown: CropStage | 'empty' = 'empty';
-  private moveTicks = 0;
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
   private skyStartAbsMin = 0;
@@ -803,6 +816,7 @@ export class WorldScene extends Phaser.Scene {
   private liftMood(d: Dino): void {
     this.lastMoodLift = reliefFlourish(d.traits);
     this.flashFeed(d, this.lastMoodLift);
+    this.liftedUntil[d.name] = Date.now() + LIFT_WINDOW_MS; // BACKLOG-325: idle perkier for a while after
   }
 
   private flashFeed(d: Dino, emoji = '😋'): void {
@@ -1145,6 +1159,13 @@ export class WorldScene extends Phaser.Scene {
       return d ? reliefFlourish(d.traits) : null;
     };
     (window as any).__lastMoodLift = () => this.lastMoodLift;
+    // BACKLOG-325: is a dino in its post-recovery perk window, and a hook to force one for tests.
+    (window as any).__lifted = (name: string) => Date.now() < (this.liftedUntil[name] ?? 0);
+    (window as any).__liftMood = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.liftMood(d);
+      return this.lastMoodLift;
+    };
     (window as any).__activityMark = (name: string) => {
       const i = this.dinos.findIndex((d) => d.name === name);
       return i >= 0 && this.activityMarks[i] ? this.activityMarks[i].text : null;
@@ -1473,10 +1494,9 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private setupMovement(): void {
-    getWorldClock().onTick(() => {
-      // Wander every 5 in-game minutes so the park mills about without jittering.
-      if (++this.moveTicks % 5 === 0) this.forceStep();
-    });
+    // BACKLOG-333: wander on a real-time timer, not the in-game clock, so the park mills about at a
+    // watchable pace whatever the time scale (at 1× an in-game minute is 60 real seconds).
+    this.time.addEvent({ delay: WANDER_STEP_MS, loop: true, callback: () => this.forceStep() });
 
     // any: dev-only Playwright hooks
     (window as any).__dinoPositions = () => this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
@@ -1782,7 +1802,11 @@ export class WorldScene extends Phaser.Scene {
         // BACKLOG-310: a jealous sulk (pendingRepair) shades that idle glyph to 😒 — mood over motion.
         // Cold keeps its signature glyph (the floating 🥶 mark already signals the cold funk).
         const mood: Mood | undefined = this.pendingRepair === d.name ? 'sulk' : undefined;
-        mark.setText(act === 'wandering' ? moodFidget(d.traits, mood).glyph : ACTIVITY_GLYPH[act]);
+        // BACKLOG-325: a just-recovered dino (no current mood) idles with the brightened flourish glyph
+        // for a short window before settling back to its plain signature quirk.
+        const lifted = !mood && Date.now() < (this.liftedUntil[d.name] ?? 0);
+        const wanderGlyph = lifted ? reliefFlourish(d.traits) : moodFidget(d.traits, mood).glyph;
+        mark.setText(act === 'wandering' ? wanderGlyph : ACTIVITY_GLYPH[act]);
       }
     });
   }
@@ -2629,16 +2653,19 @@ export class WorldScene extends Phaser.Scene {
       if (d) this.relocate(d, zoneId);
       return zoneOf(this.dinoZones, name, BOWL_ID);
     };
+    // BACKLOG-333: the real-time cadences (regression guard — a return to clock-gating fails these).
+    (window as any).__wanderStepMs = () => WANDER_STEP_MS;
+    (window as any).__migrateCooldownMs = () => MIGRATE_COOLDOWN_MS;
   }
 
   private maybeMigrate(): void {
-    const day = getWorldClock().now().day;
-    if (day === this.lastMigrationDay) return; // at most one migration per in-game day
+    // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
+    if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
     const d = this.dinos[Math.floor(Math.random() * this.dinos.length)];
     if (!d) return;
     this.relocate(d, otherZone(zoneOf(this.dinoZones, d.name, BOWL_ID)));
-    this.lastMigrationDay = day;
+    this.lastMigrationMs = Date.now();
   }
 
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */

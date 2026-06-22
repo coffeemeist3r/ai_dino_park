@@ -61,6 +61,15 @@ export function advanceTime(t: GameTime, minutes: number): GameTime {
   return absToTime(timeToAbs(t) + Math.max(0, Math.floor(minutes)));
 }
 
+/**
+ * Real-time cooldown gate (BACKLOG-333): has at least `cooldownMs` of wall-clock time passed since
+ * `lastMs`? Used to pace migration off real time instead of the in-game clock, so the cadence holds at
+ * any time scale (at the 1× default an in-game day is 24 real hours — far too sparse for a live beat).
+ */
+export function cooldownReady(nowMs: number, lastMs: number, cooldownMs: number): boolean {
+  return nowMs - lastMs >= cooldownMs;
+}
+
 export class WorldClock {
   private _time: GameTime = { day: 1, hour: 8, minute: 0 };
   private _tickListeners: TimeListener[] = [];
