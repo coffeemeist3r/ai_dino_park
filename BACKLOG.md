@@ -704,6 +704,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [x] BACKLOG-312 [pokemon] Quirk in the scan — Lux's Field Scan (157) reports the dino's signature resting quirk ("at rest: paces") as a line alongside its axes/mood/role, so the read-a-mind power surfaces body language too. Builds on 298 / 157 / 303.  *(shipped: cycle 69 lore track — pure one-line add to `keeper/scan.ts` `scanLines`: a `habit: <glyph> <label>` line read from `fidget(subject.traits)`, the same deterministic quirk the bowl glyph (298), the book (303), and the homecoming (306) use, so all four agree. No save, no NPCBrain, no movement. 1 unit + 1 e2e; the season-sensitive favorite line + all prior scan lines untouched.)*
 - [ ] BACKLOG-313 [emergent] Caught habit — a dino that spends many ticks beside another very slowly picks up its kindred tic (capped, one swap, the personality-drift shape of 043), so body language spreads through proximity the way traits do. Builds on 298 / 305 / 043.
 
+## Cycle 70 lore additions — the motion reads the mood (2026-06-22)
+
+> Cycle 68 made the fidget *perform* (homecoming, 306); cycle 69 put it in the scan (312).
+> Cycle 70 makes the same motion read the dino's *right-now feeling*, not just its temperament:
+> a sulking pacer mopes its own way. These extend mood-shaded body language into recovery,
+> dialogue, the book, proximity, and the resting loop itself.
+
+- [ ] BACKLOG-318 [emergent] Mood lifts the motion — when a funk clears (a sulk repaired (125) / a cold thawed (184)), the dino throws a brief brightened flourish of its signature quirk, so recovery reads in motion, not just the emoji vanishing. Builds on 310 / 125 / 184.
+- [ ] BACKLOG-319 [social] Greeting reads the funk — the keeper's greeting of a dino in a mood leans on its *mood-shaded* fidget ("Rex paces, still sulking —"), layering 310 onto the spoken beat; deterministic fallback per mood, LLM colour behind the NPCBrain boundary. Builds on 310 / 311 / 051.
+- [ ] BACKLOG-320 [emergent] Contagious posture — a dino idling within a tile of a sulking friend briefly mirrors the glum posture (a short one-shot echo), so funk leaks through proximity the way gossip and comfort already do. Builds on 310 / 130 / 019.
+- [ ] BACKLOG-321 [pokemon] Mood in the book — the collection book's body-language line shows a dino's *current* mood-shaded fidget while a funk is active, falling back to its signature quirk when calm, so the book reads live feeling not just temperament. Builds on 310 / 303.
+- [ ] BACKLOG-322 [emergent] Shake-it-out — a dino idle a long while occasionally breaks its signature quirk for a one-off different gesture (a stretch / a yawn) before settling back, so even the resting tell isn't perfectly looped. Builds on 298 / 108.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
