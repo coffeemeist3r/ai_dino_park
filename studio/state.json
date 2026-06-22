@@ -1,7 +1,7 @@
 {
   "cycle": 67,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-303: Signature quirk in the dossier",
   "structureItem": "BACKLOG-294: Grove terrain — distinct floor tint + path/water sub-regions in zones.ts",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-21T22:00:00-05:00",
     "structure-smith": "2026-06-21T22:06:00-05:00",
-    "designer": "2026-06-21T20:12:00-05:00",
+    "designer": "2026-06-21T22:12:00-05:00",
     "code-planner": "2026-06-21T20:18:00-05:00",
     "coder": "2026-06-21T20:40:00-05:00",
     "qa": "2026-06-21T20:46:00-05:00",
