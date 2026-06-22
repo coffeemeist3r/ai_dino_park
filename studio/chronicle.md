@@ -1989,3 +1989,7 @@ The operator caught a real one: the bowl looked frozen and nothing ever wandered
 And recovery got a tail. Cycle 71 made a dino flash a brightened version of its signature quirk the instant a funk lifted (318); cycle 72 lets that brightness linger — for about eight seconds after it bounces back, a dino's idle fidget reads perky (the ✨ flourish glyph) before settling to its plain quirk. A sulk still overrides it, so the perk only shows on a genuinely recovered dino. Pure render plus a transient window, no save, no model. (BACKLOG-325.)
 
 Housekeeping: the operator-directed fix went in at the top of the structure queue (333) with the visible-crossing follow-up seeded (334); the Lore-smith seeded the afterglow thread (330–332). Both tracks shared WorldScene's movement code without colliding (the step *driver* vs the idle *render*). Cycle closes; the Artist fires next. Lore-smith bumps to 73 next run.
+
+## 2026-06-22 — cycle 072-art — artist — no-op (no open [art] items)
+
+No open `[art]` items (317 closed cycle 70; cycles 71–72 seeded only logic items). Artist no-ops per routine 7. Next renderable art (grove ambient props, the 315 shelter, the 334 visible-crossing) needs a smith to seed a fresh `[art]` item. Boundary intact. artPipelineReady stays true. State → lore-pending; cycle 72 closed.
