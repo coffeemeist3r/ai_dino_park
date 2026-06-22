@@ -2,8 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { PROP_RIGS, propCharsUsed } from '../../game/src/art/propArt';
 
 describe('resource + cairn pixel props (BACKLOG-296)', () => {
-  it('draws branch, stone, and cairn', () => {
-    expect(Object.keys(PROP_RIGS).sort()).toEqual(['branch', 'cairn', 'stone']);
+  it('draws branch, stone, and cairn (+ the crop stages, BACKLOG-317)', () => {
+    expect(Object.keys(PROP_RIGS).sort()).toEqual([
+      'branch',
+      'cairn',
+      'crop_ripe',
+      'crop_seed',
+      'crop_sprout',
+      'stone',
+    ]);
   });
 
   for (const [name, rig] of Object.entries(PROP_RIGS)) {

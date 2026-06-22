@@ -108,11 +108,93 @@ const CAIRN_RIG: PropRig = {
   },
 };
 
-/** Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone') + 'cairn'. */
+// ── Crop stages (BACKLOG-317) — the plantable plot's 🌱🌿🍓 drawn as pixel props ───────────────
+// Three single-frame rigs sharing a soil mound (o/m/h) so the plot reads as one place growing, with
+// the plant rising stage by stage: a seeded mound → a leafy sprout → a berry-laden crop. The 'empty'
+// stage keeps its emoji (no rig) as the graceful fallback.
+
+const SOIL = { o: 0x4a2f17, m: 0x7a4a24, h: 0x9a6b3a }; // dark soil / brown / lit crown — shared base
+const LEAF = { g: 0x2f6b2a, l: 0x4f9a3c }; // vein dark-green / leaf green
+const BERRY = 0xc83a3a; // ripe berry red
+const SEED = 0xd9c08a; // pale seed
+
+// Seed 🌱 — a fresh soil mound with two pale seeds set on the crown.
+const CROP_SEED_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......ss.......',
+  '................',
+  '......ommo......',
+  '.....ommmmo.....',
+  '....ommmmmmo....',
+  '...ommmmmmmmo...',
+  '...ohhhhhhhho...',
+  '................',
+  '................',
+];
+
+const CROP_SEED_RIG: PropRig = { size: 16, grid: CROP_SEED_GRID, palette: { ...SOIL, s: SEED } };
+
+// Sprout 🌿 — a thin stem with two small leaves rising from the mound.
+const CROP_SPROUT_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......g........',
+  '.....llglll.....',
+  '......lgl.......',
+  '.......g........',
+  '.......g........',
+  '......ommo......',
+  '.....ommmmo.....',
+  '....ommmmmmo....',
+  '...ohhhhhhhho...',
+  '................',
+  '................',
+  '................',
+];
+
+const CROP_SPROUT_RIG: PropRig = { size: 16, grid: CROP_SPROUT_GRID, palette: { ...SOIL, ...LEAF } };
+
+// Ripe 🍓 — a full leafy bush dotted with red berries over the mound.
+const CROP_RIPE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....lllll......',
+  '....llgllll.....',
+  '...llrllllrl....',
+  '...llllgllll....',
+  '...lrlllllrl....',
+  '....llgllll.....',
+  '.....lllll......',
+  '.......g........',
+  '......ommo......',
+  '.....ommmmo.....',
+  '...ohhhhhhhho...',
+  '................',
+  '................',
+  '................',
+];
+
+const CROP_RIPE_RIG: PropRig = { size: 16, grid: CROP_RIPE_GRID, palette: { ...SOIL, ...LEAF, r: BERRY } };
+
+/**
+ * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone') + 'cairn', plus the
+ * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
+ */
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
   cairn: CAIRN_RIG,
+  crop_seed: CROP_SEED_RIG,
+  crop_sprout: CROP_SPROUT_RIG,
+  crop_ripe: CROP_RIPE_RIG,
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

@@ -251,7 +251,7 @@ export class WorldScene extends Phaser.Scene {
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
   private plot: { plantedDay: number } | null = null;
-  private plotSprite: Phaser.GameObjects.Text | null = null;
+  private plotSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. */
   private harvested = 0;
   /** Last plot stage drawn — so the ripen note fires once, on the edge into ripe. */
@@ -625,12 +625,7 @@ export class WorldScene extends Phaser.Scene {
    * realtime-clock days; press P adjacent again once ripe to harvest the crop into the feeding loop.
    */
   private setupPlot(): void {
-    this.plotSprite = this.add
-      .text(PLOT_TILE.tileX * TILE + TILE / 2, PLOT_TILE.tileY * TILE + TILE / 2, STAGE_GLYPH.empty, {
-        fontSize: '16px',
-      })
-      .setOrigin(0.5)
-      .setDepth(2);
+    this.drawPlotSprite('empty');
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.P).on('down', () => this.handlePlot());
     this.refreshPlot();
 
@@ -649,6 +644,21 @@ export class WorldScene extends Phaser.Scene {
       this.harvest();
       return this.harvested;
     };
+    // BACKLOG-317: the baked crop texture key when a stage rig renders, else null (emoji fallback).
+    (window as any).__plotArt = () =>
+      this.plotSprite instanceof Phaser.GameObjects.Image ? this.plotSprite.texture.key : null;
+  }
+
+  /** Draw the plot sprite for a stage: a baked crop prop where a rig exists (BACKLOG-317), else the
+   *  emoji glyph (graceful fallback). Recreated only on a stage change, so it's not rebuilt per tick. */
+  private drawPlotSprite(stage: CropStage | 'empty'): void {
+    this.plotSprite?.destroy();
+    const px = PLOT_TILE.tileX * TILE + TILE / 2;
+    const py = PLOT_TILE.tileY * TILE + TILE / 2;
+    const tex = stage === 'empty' ? null : bakePropArt(this, `crop_${stage}`);
+    this.plotSprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, STAGE_GLYPH[stage], { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
   }
 
   /** P press: plant an empty plot, harvest a ripe one, or note a growing one — only when adjacent. */
@@ -693,7 +703,7 @@ export class WorldScene extends Phaser.Scene {
     const stage: CropStage | 'empty' = this.plot
       ? cropStage(getWorldClock().now().day - this.plot.plantedDay)
       : 'empty';
-    this.plotSprite?.setText(STAGE_GLYPH[stage]);
+    if (stage !== this.plotStageShown) this.drawPlotSprite(stage); // BACKLOG-317: swap to the stage's prop
     this.plotSprite?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-308: the plot draws in the bowl only
     if (stage === 'ripe' && this.plotStageShown !== 'ripe') {
       this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
