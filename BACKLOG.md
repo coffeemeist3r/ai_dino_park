@@ -679,6 +679,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-306 [pokemon] In-character homecoming — the welcome-back beat (112) leans on the returning dino's signature quirk ("paces eagerly at the glass"), so even the greeting is unmistakably *that* dino. Builds on 298 / 112.
 - [ ] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
 
+## Cycle 68 lore additions — the body language leaves the page (2026-06-22)
+
+> Cycle 67 *named* each dino's idle fidget in the book (303); cycle 68 makes the welcome-back beat
+> **perform** it — the returning dino greets the keeper in its own body language (306). The resting tell
+> stops being a fingerprint you read and becomes something the bowl *does* at you. These extend that
+> motion-as-character beat into mood, dialogue, the scan, and proximity.
+
+- [ ] BACKLOG-310 [emergent] Quirk shaded by feeling — a dino in a transient mood (sulking 😒 / shivering 🥶 / freshly-fed 😋) colours its signature fidget so the same body language reads its current state, not just its temperament; mood surfaces through motion, not only an emoji. Builds on 298 / 120 / 179.
+- [ ] BACKLOG-311 [social] Greeting names the quirk — the keeper's greeting reply leans on whatever the dino's doing right then ("Rex looks up mid-pace, then —"), so the spoken beat reads the live fidget; deterministic fallback line per quirk, LLM colour behind the NPCBrain boundary. Builds on 298 / 051 / 148.
+- [ ] BACKLOG-312 [pokemon] Quirk in the scan — Lux's Field Scan (157) reports the dino's signature resting quirk ("at rest: paces") as a line alongside its axes/mood/role, so the read-a-mind power surfaces body language too. Builds on 298 / 157 / 303.
+- [ ] BACKLOG-313 [emergent] Caught habit — a dino that spends many ticks beside another very slowly picks up its kindred tic (capped, one swap, the personality-drift shape of 043), so body language spreads through proximity the way traits do. Builds on 298 / 305 / 043.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
