@@ -100,3 +100,12 @@ export function zoneOf(map: Record<string, string>, id: string, fallback: string
 export function otherZone(id: string): string {
   return id === GROVE_ID ? BOWL_ID : GROVE_ID;
 }
+
+/**
+ * The distinct zones that currently have residents (BACKLOG-314) — the home zone of every named dino,
+ * deduped. The resource roll spawns one slot per occupied zone, so each inhabited zone grows its own
+ * gathering economy instead of only the keeper's. Pure.
+ */
+export function occupiedZones(map: Record<string, string>, fallback: string, names: string[]): string[] {
+  return [...new Set(names.map((n) => zoneOf(map, n, fallback)))];
+}

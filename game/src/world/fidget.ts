@@ -73,3 +73,12 @@ export function moodFidget(p: Personality, mood?: Mood): Quirk {
     label: `${base.label}, ${MOOD_CLAUSE[mood]}`,
   };
 }
+
+/**
+ * Mood lifts the motion (BACKLOG-318): when a funk clears (a sulk repaired / a cold thawed), the dino
+ * throws a brief brightened flourish of its *signature* quirk — recovery read in motion, not just the
+ * mood emoji vanishing. The signature glyph plus a sparkle. Deterministic from traits.
+ */
+export function reliefFlourish(p: Personality): string {
+  return `${fidget(p).glyph}✨`;
+}

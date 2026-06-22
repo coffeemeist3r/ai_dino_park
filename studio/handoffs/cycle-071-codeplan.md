@@ -91,3 +91,18 @@ The stockpile cap (309) + craft (286) path in `checkGather` is shared — keep i
 Disjoint within `WorldScene.ts` (318 → fidget import + recovery methods + flourish
 hooks; 314 → resource fields/methods + resource hooks). Different pure modules
 (`fidget.ts` vs `zones.ts`). Build either order.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/fidget.ts` — `reliefFlourish(p)`.
+- `game/src/world/zones.ts` — `occupiedZones(map, fallback, names)`.
+- `game/src/scenes/WorldScene.ts` — 318: `lastMoodLift` + `liftMood` + calls at the repair (recordGreet/recordTone) and cold-thaw (clearColdFunk) seams + `__moodLift`/`__lastMoodLift`. 314: per-zone `resourceByZone`/`resourceSpriteByZone`/`resourceAgeByZone` maps; `residentZones`; `maybeSpawnResource` loops resident zones; `spawnResource(…,zone)`; `checkGather`/fetch/age/visibility per zone; `__resource`/`__spawnResource`/`__resourceIsArt`/`__objVisible` kept backward-compatible.
+- `tests/unit/cycle-071-relief-flourish.test.ts` (2), `tests/unit/cycle-071-occupied-zones.test.ts` (4).
+- `tests/e2e/cycle-071-mood-lift.spec.ts`, `tests/e2e/cycle-071-zone-spawn.spec.ts`.
+
+**Deviations:** the resident-zones helper lives in `zones.ts` as `occupiedZones` (pure, unit-tested) and is called from a thin `WorldScene.residentZones()` — cleaner reuse than a WorldScene-local scan.
+
+**Build + unit-test status:** build clean; `npm run test:unit` 719/719 (713 + 6 new). Dev server boots (HTTP 200). E2E left to QA.

@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
+import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, occupiedZones, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -85,7 +85,7 @@ import {
   type Stockpile,
 } from '../world/resource';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
-import { fidget, moodFidget, type Mood } from '../world/fidget';
+import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
@@ -172,6 +172,8 @@ export class WorldScene extends Phaser.Scene {
   private liveBubbles = new Set<string>();
   /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
   private pendingRepair: string | null = null;
+  /** The last recovery flourish fired (BACKLOG-318), for the dev hook; transient, not persisted. */
+  private lastMoodLift: string | null = null;
   /** The last dino-to-dino comfort beat (BACKLOG-130): who consoled whom, or null. Transient. */
   private lastComfort: { comforter: string; sulker: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
@@ -237,11 +239,12 @@ export class WorldScene extends Phaser.Scene {
   private foodKind: Food | null = null;
   private foodLanded = false;
   private foodSprite: Phaser.GameObjects.Text | null = null;
-  /** The one raw resource in play, or null (BACKLOG-146). One at a time, like food. `zone`: BACKLOG-308. */
-  private resource: { kind: ResourceKind; tileX: number; tileY: number; zone: string } | null = null;
-  private resourceSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
-  /** World steps since the current resource spawned (BACKLOG-297) — gates the fetch grace. */
-  private resourceAge = 0;
+  /** One raw resource per zone (BACKLOG-314, was a single global slot 146/308). Each inhabited zone
+   *  grows + holds its own; keyed by zone id. `zone` on the value mirrors the key for the 308 checks. */
+  private resourceByZone: Record<string, { kind: ResourceKind; tileX: number; tileY: number; zone: string }> = {};
+  private resourceSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
+  /** World steps since each zone's resource spawned (BACKLOG-297/314) — gates the per-zone fetch grace. */
+  private resourceAgeByZone: Record<string, number> = {};
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
   private gathered: Record<string, number> = {};
   /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
@@ -591,22 +594,32 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__food = () =>
       this.food ? { ...this.food, foodId: this.foodKind?.id ?? null } : null;
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
-    (window as any).__resource = () => (this.resource ? { ...this.resource } : null);
+    // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
+    (window as any).__resource = () => {
+      const r = this.resourceByZone[this.zoneId] ?? Object.values(this.resourceByZone)[0];
+      return r ? { ...r } : null;
+    };
     (window as any).__gathered = () => ({ ...this.gathered });
     (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
-      resource: this.resourceSprite?.visible ?? false,
+      resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
       plot: this.plotSprite?.visible ?? false,
       cairns: this.cairnSprites.map((s) => s.visible),
     });
-    (window as any).__spawnResource = (kind: ResourceKind, tileX: number, tileY: number, fresh = false) => {
+    (window as any).__spawnResource = (
+      kind: ResourceKind,
+      tileX: number,
+      tileY: number,
+      fresh = false,
+      zone: string = this.zoneId, // BACKLOG-314: default the active zone (existing specs spawn in the bowl)
+    ) => {
       // fresh=true starts the BACKLOG-297 grace at 0 (to test the linger); default → already fetchable,
       // so the existing gather/craft/stockpile e2e keep their immediate single-step pickup.
-      this.spawnResource(kind, tileX, tileY);
-      this.resourceAge = fresh ? 0 : RESOURCE_GRACE_STEPS;
+      this.spawnResource(kind, tileX, tileY, zone);
+      this.resourceAgeByZone[zone] = fresh ? 0 : RESOURCE_GRACE_STEPS;
     };
     (window as any).__favoriteFood = (name: string, season?: Season) => {
       const d = this.dinos.find((x) => x.name === name);
@@ -615,7 +628,8 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-296: pixel props. __hasPropArt = a rig exists; __resourceIsArt/__cairnIsArt = the live
     // sprite is the baked image (not the emoji fallback) — lets the e2e prove the swap without pixels.
     (window as any).__hasPropArt = (name: string) => hasPropArt(name);
-    (window as any).__resourceIsArt = () => this.resourceSprite instanceof Phaser.GameObjects.Image;
+    (window as any).__resourceIsArt = () =>
+      this.resourceSpriteByZone[this.zoneId] instanceof Phaser.GameObjects.Image;
     (window as any).__cairnIsArt = () =>
       this.cairnSprites.length > 0 && this.cairnSprites[0] instanceof Phaser.GameObjects.Image;
   }
@@ -784,6 +798,13 @@ export class WorldScene extends Phaser.Scene {
     void this.saveGame();
   }
 
+  /** Mood lifts the motion (BACKLOG-318): a recovering dino flashes a brightened flourish of its
+   *  signature quirk — a beat parallel to the repair/warm bubble, so recovery reads in motion. */
+  private liftMood(d: Dino): void {
+    this.lastMoodLift = reliefFlourish(d.traits);
+    this.flashFeed(d, this.lastMoodLift);
+  }
+
   private flashFeed(d: Dino, emoji = '😋'): void {
     const mark = this.add
       .text(d.x, d.y - TILE * 0.9, emoji, { fontSize: '14px' })
@@ -796,41 +817,54 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
-  /** A raw resource appears now and then (BACKLOG-146) — one at a time, like food. */
-  private maybeSpawnResource(): void {
-    if (this.resource || !rollResource()) return;
-    // BACKLOG-297: a natural spawn starts the fetch-grace clock and announces itself.
-    const landing = resourceLanding(COLS, ROWS);
-    const kind = pickKind();
-    this.spawnResource(kind, landing.tileX, landing.tileY);
-    this.resourceAge = 0;
-    this.logEvent(`${RESOURCE_GLYPH[kind]} a ${kind} fell into the bowl`);
+  /** The distinct zones with resident dinos (BACKLOG-314) — each rolls + holds its own resource. */
+  private residentZones(): string[] {
+    return occupiedZones(this.dinoZones, BOWL_ID, this.dinos.map((d) => d.name));
   }
 
-  /** Place a resource at a tile and draw its glyph. Shared by the roll + the dev hook (deterministic). */
-  private spawnResource(kind: ResourceKind, tileX: number, tileY: number): void {
-    // BACKLOG-308: a resource belongs to the zone it fell in, so it draws + is gatherable only there.
-    this.resource = { kind, tileX, tileY, zone: this.zoneId };
-    this.resourceSprite?.destroy();
+  /**
+   * A raw resource appears now and then (BACKLOG-146), now once per inhabited zone (BACKLOG-314): each
+   * occupied zone rolls into its own empty slot, so the grove grows resources even while the keeper is
+   * in the bowl (waiting, grace already elapsed, when you cross over).
+   */
+  private maybeSpawnResource(): void {
+    for (const zone of this.residentZones()) {
+      if (this.resourceByZone[zone] || !rollResource()) continue;
+      // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
+      const landing = resourceLanding(COLS, ROWS);
+      const kind = pickKind();
+      this.spawnResource(kind, landing.tileX, landing.tileY, zone);
+      this.resourceAgeByZone[zone] = 0;
+      if (zone === this.zoneId) this.logEvent(`${RESOURCE_GLYPH[kind]} a ${kind} fell`);
+    }
+  }
+
+  /** Place a resource in a zone and draw its glyph. Shared by the roll + the dev hook (deterministic). */
+  private spawnResource(kind: ResourceKind, tileX: number, tileY: number, zone: string = this.zoneId): void {
+    // BACKLOG-308/314: a resource belongs to its zone, drawn + gatherable only there; one slot per zone.
+    this.resourceByZone[zone] = { kind, tileX, tileY, zone };
+    this.resourceSpriteByZone[zone]?.destroy();
     const px = tileX * TILE + TILE / 2;
     const py = tileY * TILE + TILE / 2;
     // BACKLOG-296: a baked pixel prop where one exists, else the emoji glyph (graceful fallback).
     const tex = bakePropArt(this, kind);
-    this.resourceSprite = tex
+    const sprite = tex
       ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
       : this.add.text(px, py, RESOURCE_GLYPH[kind], { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(zone === this.zoneId); // only the keeper's zone shows its resource
+    this.resourceSpriteByZone[zone] = sprite;
   }
 
-  /** The first dino to reach the resource picks it up — its tally rises, the resource is gone. */
+  /** The first dino to reach the active zone's resource picks it up — its tally rises, it's gone. */
   private checkGather(): void {
-    if (!this.resource || !resourceFetchable(this.resourceAge)) return; // BACKLOG-297: respect the grace
-    if (this.resource.zone !== this.zoneId) return; // BACKLOG-308: only the active zone's resource is in play
-    const taker = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), this.resource!));
+    const res = this.resourceByZone[this.zoneId]; // BACKLOG-308/314: only the active zone's is in play
+    if (!res || !resourceFetchable(this.resourceAgeByZone[this.zoneId] ?? 0)) return; // 297: respect grace
+    const taker = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), res));
     if (!taker) return;
-    const kind = this.resource.kind;
-    this.resourceSprite?.destroy();
-    this.resourceSprite = null;
-    this.resource = null;
+    const kind = res.kind;
+    this.resourceSpriteByZone[this.zoneId]?.destroy();
+    delete this.resourceSpriteByZone[this.zoneId];
+    delete this.resourceByZone[this.zoneId];
     this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
     // BACKLOG-309: at the per-kind cap, the pickup is consumed but banks nothing — the first economy
     // constraint. The stall surfaces as a beat so the pressure to spend (craft) reads in-world.
@@ -1105,6 +1139,12 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinoByName(name);
       return d ? { ...moodFidget(d.traits, mood) } : null;
     };
+    // BACKLOG-318: the recovery flourish a dino would throw, and the last one actually fired.
+    (window as any).__moodLift = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? reliefFlourish(d.traits) : null;
+    };
+    (window as any).__lastMoodLift = () => this.lastMoodLift;
     (window as any).__activityMark = (name: string) => {
       const i = this.dinos.findIndex((d) => d.name === name);
       return i >= 0 && this.activityMarks[i] ? this.activityMarks[i].text : null;
@@ -1598,7 +1638,9 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
 
-    if (this.resource) this.resourceAge++; // BACKLOG-297: age the resource so the fetch grace can elapse
+    // BACKLOG-297/314: age every zone's resource so each zone's fetch grace can elapse (a grove resource
+    // is past its grace and ready when the keeper crosses in).
+    for (const z of Object.keys(this.resourceByZone)) this.resourceAgeByZone[z] = (this.resourceAgeByZone[z] ?? 0) + 1;
 
     const season = this.currentSeason();
     const denTime = inHuddleWindow(getWorldClock().now().hour, season);
@@ -1640,24 +1682,25 @@ export class WorldScene extends Phaser.Scene {
       }
 
       const other = this.nearestOther(d);
-      const resDist = this.resource
-        ? Math.hypot(cur.tileX - this.resource.tileX, cur.tileY - this.resource.tileY)
-        : Infinity;
+      // BACKLOG-314: a dino fetches the resource in its own home zone (each zone has its own slot now).
+      const dz = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      const dres = this.resourceByZone[dz];
+      const resDist = dres ? Math.hypot(cur.tileX - dres.tileX, cur.tileY - dres.tileY) : Infinity;
       // Decide the branch once (mutually exclusive), then both move and label off the same flags so the
       // glyph the player sees can never disagree with what the dino actually did this step (BACKLOG-295).
       // Winter opens the huddle window at dusk and lowers the bar; summer waits until late.
       const huddling = denTime && this.maxBond(d.name) >= huddleThreshold(season);
       const gathering =
         !huddling &&
-        !!this.resource &&
-        resourceFetchable(this.resourceAge) && // BACKLOG-297: ignore it until the grace elapses
+        !!dres &&
+        resourceFetchable(this.resourceAgeByZone[dz] ?? 0) && // BACKLOG-297: ignore it until the grace elapses
         noticeResource(d.traits.curiosity, resDist) === 'fetch';
       const socializing = !huddling && !gathering && !!other && Math.random() < 0.45;
       let next;
       if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
       } else if (gathering) {
-        next = stepToward(cur, this.resource!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
+        next = stepToward(cur, dres!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else {
@@ -2568,7 +2611,8 @@ export class WorldScene extends Phaser.Scene {
    * at the source (checkGather on `resource.zone`, handlePlot on the bowl); this is the render half.
    */
   private applyObjectVisibility(): void {
-    this.resourceSprite?.setVisible(!!this.resource && this.resource.zone === this.zoneId);
+    // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
+    for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
     this.plotSprite?.setVisible(this.zoneId === BOWL_ID);
   }
@@ -2881,7 +2925,10 @@ export class WorldScene extends Phaser.Scene {
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
-      if (dino) this.showBubble(dino, repairLine(name));
+      if (dino) {
+        this.showBubble(dino, repairLine(name));
+        this.liftMood(dino); // BACKLOG-318: the make-up greet bounces its signature quirk back
+      }
     }
     if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
@@ -2908,7 +2955,10 @@ export class WorldScene extends Phaser.Scene {
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
-      if (dino) this.showBubble(dino, repairLine(name));
+      if (dino) {
+        this.showBubble(dino, repairLine(name));
+        this.liftMood(dino); // BACKLOG-318: the make-up greet bounces its signature quirk back
+      }
     }
     if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
@@ -2921,7 +2971,10 @@ export class WorldScene extends Phaser.Scene {
     this.refreshColdMarks();
     if (withBeat) {
       const dino = this.dinoByName(name);
-      if (dino) this.showBubble(dino, warmLine(name));
+      if (dino) {
+        this.showBubble(dino, warmLine(name));
+        this.liftMood(dino); // BACKLOG-318: thawing the cold funk brightens its signature quirk
+      }
     }
   }
 
