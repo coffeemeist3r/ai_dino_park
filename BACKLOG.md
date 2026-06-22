@@ -676,7 +676,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-304 [emergent] Restlessness builds — a dino left idle (wandering) too many ticks escalates its fidget and may break the idle on its own to seek company or a resource; boredom becomes a driver, not just a pose. Builds on 298 / 295.
 - [ ] BACKLOG-305 [social] Kindred tics — when two dinos sharing the *same* signature quirk (298) idle near each other, a small 😄 recognition beat fires and nudges their bond; matching idle habits read as a quiet affinity. Builds on 298 / 013.
-- [ ] BACKLOG-306 [pokemon] In-character homecoming — the welcome-back beat (112) leans on the returning dino's signature quirk ("paces eagerly at the glass"), so even the greeting is unmistakably *that* dino. Builds on 298 / 112.
+- [~] BACKLOG-306 [pokemon] In-character homecoming — the welcome-back beat (112) leans on the returning dino's signature quirk ("paces eagerly at the glass"), so even the greeting is unmistakably *that* dino. Builds on 298 / 112.
 - [ ] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
 
 ## Cycle 68 lore additions — the body language leaves the page (2026-06-22)
