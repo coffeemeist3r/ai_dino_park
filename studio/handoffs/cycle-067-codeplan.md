@@ -88,3 +88,25 @@ keeping `quirk` optional avoids touching them. None beyond that.
   BACKLOG-308 next cycle; the grove draws empty of dinos so it's not visually alarming.
 
 **Estimated touch count:** ~5 files (3 src + 1 unit + 1 e2e).
+
+---
+
+## Shipped (Coder)
+
+**Lore track (303):**
+- `game/src/ui/lenses.ts` — `BookRow.quirk?: string`; `bookLines` pushes `  · <quirk>` under the heart line when set.
+- `game/src/scenes/WorldScene.ts` — `bookRows()` sets `quirk: fidget(d.traits).label`; added `__bookText` hook.
+- `tests/unit/lenses.test.ts` — +2 (quirk line shown / omitted).
+- `tests/e2e/cycle-067-dossier.spec.ts` — new (+2): book quirk matches live `__fidget`, ≥3 distinct, rendered line present, reload-deterministic.
+
+**Structure track (294):**
+- `game/src/world/zones.ts` — `TileKind`, `GROVE_TINT`, pure `groveTileAt(x,y,cols,rows)` (mid path band + NE pond, else grass).
+- `game/src/art/bake.ts` — `bakeTerrainMap(scene,key,cols,rows,tile,kindAt)` — per-cell rig, grass fallback for undrawn kinds.
+- `game/src/scenes/WorldScene.ts` — `drawGrassMap`→`drawFloor` (single held `floorImage`, bowl grass untinted / grove terrain tinted; flat-checker fallback once); called from `create` + `tryCrossZone` + `__setZone`; added `__floorInfo` hook + `floorImage`/`floorFallback` fields.
+- `tests/unit/cycle-067-grove-terrain.test.ts` — new (+5): pond/path/grass placement, ≥1 of each kind, valid kinds, non-neutral tint.
+- `tests/e2e/cycle-067-grove-terrain.spec.ts` — new (+1): floor swaps bowl(grass,untinted) → grove(terrain_grove,tinted) → bowl.
+
+**Deviations from plan:** none. (The unit `omits quirk line` test uses a line-prefix check because the heart bar's empty pip is also `·`.)
+
+**Build:** ✅ clean. **Unit:** ✅ 663/663. **Dev server:** ✅ HTTP 200.
+**Known deferred (per plan):** bowl props (cairns/plot) still draw over the grove floor — that's BACKLOG-308.

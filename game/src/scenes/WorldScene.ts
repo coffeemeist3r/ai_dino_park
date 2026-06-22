@@ -16,7 +16,7 @@ import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakePropArt, hasPropArt } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, crossing, linkedZone, zoneById, zoneOf } from '../world/zones';
+import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, zoneById, zoneOf } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -132,6 +132,10 @@ export class WorldScene extends Phaser.Scene {
   private dinos: Dino[] = [];
   /** The keeper's current zone (BACKLOG-143). Persisted; the grove starts empty (population is -274). */
   private zoneId: string = BOWL_ID;
+  /** The single depth-0 floor image, re-textured/re-tinted per zone (BACKLOG-294). */
+  private floorImage?: Phaser.GameObjects.Image;
+  /** Flat-checker floor used only if the grass rig is missing (BACKLOG-294 fallback). */
+  private floorFallback?: Phaser.GameObjects.Graphics;
   /** Which zone each dino lives in (BACKLOG-143 occupancy API). Defaults to the bowl; -274 migrates. */
   private dinoZones: Record<string, string> = {};
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
@@ -282,7 +286,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.drawGrassMap();
+    this.drawFloor();
     this.drawDen(); // drawn before dinos so they nap on top of it
 
     this.renderKeeperAvatar(); // the chosen observer's pixel rig, or the amber square if undrawn
@@ -448,7 +452,14 @@ export class WorldScene extends Phaser.Scene {
       this.zoneId = id;
       this.refreshPlaque();
       this.applyZoneVisibility();
+      this.drawFloor();
     };
+    // dev-only hook — the active floor render (BACKLOG-294): zone, texture key, and whether tinted.
+    (window as any).__floorInfo = () => ({
+      zone: this.zoneId,
+      key: this.floorImage?.texture.key ?? null,
+      tinted: this.floorImage?.isTinted ?? false,
+    });
   }
 
   private refreshPlaque(): void {
@@ -1267,6 +1278,7 @@ export class WorldScene extends Phaser.Scene {
       role: this.roleOf(d.name),
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
+      quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
     }));
   }
 
@@ -1322,6 +1334,8 @@ export class WorldScene extends Phaser.Scene {
       return out;
     };
     (window as any).__bookRows = () => this.bookRows();
+    // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
+    (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
     (window as any).__roleStore = () => ({ ...this.roles });
 
@@ -2470,6 +2484,7 @@ export class WorldScene extends Phaser.Scene {
     this.player.setPosition(link.entry.x, link.entry.y);
     this.refreshPlaque();
     this.applyZoneVisibility();
+    this.drawFloor();
     return true;
   }
 
@@ -3337,21 +3352,39 @@ export class WorldScene extends Phaser.Scene {
     URL.revokeObjectURL(url);
   }
 
-  private drawGrassMap(): void {
-    // Gen3 pixel grass baked to one static ground texture (BACKLOG-033). Falls back to the flat
-    // two-green checker if the tile rig is ever missing (STYLE-GUIDE: undrawn → flat).
-    const key = bakeTileMap(this, 'grass', COLS, ROWS, TILE);
+  /**
+   * Draw the active zone's floor (BACKLOG-294). The bowl is the untinted Gen3 grass (unchanged from the
+   * old drawGrassMap, BACKLOG-033); the grove bakes its own terrain layout (groveTileAt) under a cool
+   * GROVE_TINT so it reads as a different place. One held `floorImage` (depth 0) is re-textured/re-tinted
+   * on every zone change rather than stacking images. Falls back to the flat two-green checker if the
+   * grass rig is ever missing (STYLE-GUIDE: undrawn → flat).
+   */
+  private drawFloor(): void {
+    const inGrove = this.zoneId === GROVE_ID;
+    const key = inGrove
+      ? bakeTerrainMap(this, `terrain_${GROVE_ID}_${COLS}x${ROWS}`, COLS, ROWS, TILE, (x, y) =>
+          groveTileAt(x, y, COLS, ROWS),
+        )
+      : bakeTileMap(this, 'grass', COLS, ROWS, TILE);
     if (key) {
-      this.add.image(0, 0, key).setOrigin(0).setDepth(0);
+      if (!this.floorImage) this.floorImage = this.add.image(0, 0, key).setOrigin(0).setDepth(0);
+      else this.floorImage.setTexture(key);
+      this.floorImage.setTint(inGrove ? GROVE_TINT : 0xffffff); // 0xffffff = no tint (bowl unchanged)
+      this.floorImage.setVisible(true);
+      this.floorFallback?.setVisible(false);
       return;
     }
-    const g = this.add.graphics();
-    for (let y = 0; y < ROWS; y++) {
-      for (let x = 0; x < COLS; x++) {
-        const shade = (x + y) % 2 === 0 ? 0x3a6a3a : 0x2f5e2f;
-        g.fillStyle(shade, 1);
-        g.fillRect(x * TILE, y * TILE, TILE, TILE);
+    if (!this.floorFallback) {
+      const g = this.add.graphics().setDepth(0);
+      for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+          const shade = (x + y) % 2 === 0 ? 0x3a6a3a : 0x2f5e2f;
+          g.fillStyle(shade, 1);
+          g.fillRect(x * TILE, y * TILE, TILE, TILE);
+        }
       }
+      this.floorFallback = g;
     }
+    this.floorFallback.setVisible(true);
   }
 }

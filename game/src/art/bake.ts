@@ -214,6 +214,44 @@ export function bakeTileMap(
   return key;
 }
 
+/**
+ * Bake a mixed-terrain ground (BACKLOG-294) into ONE static texture: like `bakeTileMap`, but each cell's
+ * rig is chosen by `kindAt(cx, cy)`, falling back to the grass rig for any kind whose pixel rig doesn't
+ * exist yet (path/water until the Artist ships them, BACKLOG-033). Returns null only if even the grass
+ * rig is missing (WorldScene then keeps the flat fallback). Idempotent — keyed by the caller's `key`.
+ */
+export function bakeTerrainMap(
+  scene: Phaser.Scene,
+  key: string,
+  cols: number,
+  rows: number,
+  tile: number,
+  kindAt: (cx: number, cy: number) => string,
+): string | null {
+  const fallback = TILE_RIGS.grass;
+  if (!fallback) return null;
+  if (scene.textures.exists(key)) return key;
+
+  const g = scene.make.graphics({ x: 0, y: 0 }, false);
+  for (let cy = 0; cy < rows; cy++) {
+    for (let cx = 0; cx < cols; cx++) {
+      const rig = TILE_RIGS[kindAt(cx, cy)] ?? fallback;
+      const scale = Math.max(1, Math.floor(tile / rig.size));
+      const grid = rig.variants[(cx + cy) % rig.variants.length];
+      for (let py = 0; py < rig.size; py++) {
+        const row = grid[py];
+        for (let px = 0; px < row.length; px++) {
+          g.fillStyle(rig.palette[row[px]], 1);
+          g.fillRect(cx * tile + px * scale, cy * tile + py * scale, scale, scale);
+        }
+      }
+    }
+  }
+  g.generateTexture(key, cols * tile, rows * tile);
+  g.destroy();
+  return key;
+}
+
 /** The baked 9-slice corner inset in display px — the fixed corner size NineSlice must use. */
 export const DIALOG_FRAME_SLICE = DIALOG_FRAME.inset * 2;
 

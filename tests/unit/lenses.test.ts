@@ -56,4 +56,20 @@ describe('bookLines', () => {
     expect(text).toContain('knows 2 rumors');
     expect(text).toContain('child of Rex + Mossback');
   });
+
+  // BACKLOG-303 — the signature idle quirk shows as a kept fingerprint line, only when present.
+  it('renders the signature quirk line when a row carries one', () => {
+    const withQuirk = bookLines([
+      { name: 'Rex', species: 'triceratops', hearts: 4, topBond: 72, role: 'homebody', rumorsHeard: 0, quirk: 'paces' },
+    ]).join('\n');
+    expect(withQuirk).toContain('· paces');
+  });
+
+  it('omits the quirk line for a row without one (optional contract)', () => {
+    const noQuirk = bookLines([
+      { name: 'Rex', species: 'triceratops', hearts: 4, topBond: 72, role: 'homebody', rumorsHeard: 0 },
+    ]);
+    // the quirk line is the only one indented with `  · ` (the heart bar's empty pip is also '·').
+    expect(noQuirk.some((l) => l.startsWith('  · '))).toBe(false);
+  });
 });

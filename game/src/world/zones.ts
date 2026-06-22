@@ -62,6 +62,31 @@ export function linkedZone(
   return null;
 }
 
+/**
+ * Grove terrain (BACKLOG-294) — the second zone reads as its own *place*, not cloned bowl grass.
+ * Pure layout only: which sub-region each grove tile belongs to. The pixel rigs for path/water are the
+ * Artist's (BACKLOG-033); until they exist those tiles bake as grass under GROVE_TINT, so the floor is
+ * always whole and the tint alone already makes the grove distinct.
+ */
+export type TileKind = 'grass' | 'path' | 'water';
+
+/** A cool, shaded multiplicative tint applied to the whole grove floor so it reads as woodland. */
+export const GROVE_TINT = 0x9fc0b8;
+
+/**
+ * The grove's ground: a worn horizontal **path** band across the vertical middle (the trail through the
+ * clearing) and a small **water** pond in the north-east corner; everything else grass. Pure: (x,y) →
+ * tile kind, in tile coordinates over a cols×rows grid.
+ */
+export function groveTileAt(x: number, y: number, cols: number, rows: number): TileKind {
+  const midY = Math.floor(rows / 2);
+  // NE pond: a 4×3 block one tile in from the top-right.
+  if (x >= cols - 5 && x <= cols - 2 && y >= 2 && y <= 4) return 'water';
+  // the trail: the two middle rows, full width.
+  if (y === midY || y === midY - 1) return 'path';
+  return 'grass';
+}
+
 /** Per-entity occupancy over a plain map (BACKLOG-143 API; populated by BACKLOG-274). */
 export function setZone(map: Record<string, string>, id: string, zoneId: string): void {
   map[id] = zoneId;
