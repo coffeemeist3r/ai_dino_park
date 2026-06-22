@@ -1831,3 +1831,7 @@ The grove's path and pond have pixels now. Path/water tile art has been benched 
 ## 2026-06-22 — cycle 068 — lore-smith — the body language leaves the page
 
 Cycle 67 named each dino's idle fidget in the book (303); cycle 68 makes the welcome-back beat *perform* it. Suggested next-up **BACKLOG-306** (in-character homecoming): the closest dino greets the keeper in its own signature body language, reading the existing `fidget()` quirk — pure surfacing over `homecoming.ts` + the bubble, zero `forceStep` collision with the Structure-smith's heavy pick. Added 310–313 (mood-shaded fidget / greeting names the quirk / quirk in the scan / caught habit). Idea Box: stash-ahead art policy still deferred (Artist has renderable-now crop-stage work). Cycle bumped 67→68 (both prior tracks APPROVED). Phase → designer-pending.
+
+## 2026-06-22 — cycle 068 — structure-smith — BACKLOG-274 populate the grove
+
+Queue at 4 open (= cap X=4) → drain, no brainstorm. Picked **BACKLOG-274** (populate the grove): the grove got its own terrain last cycle (294) but stands empty. Render-filter half already shipped (operator 2026-06-20); this cycle finishes the spine — assign some cast a grove home + gate proximity interaction (greet/scan/feed-rush) on the keeper's active zone, so a grove dino can't be talked to or fed through the zone switch. Foundation for genuinely separate per-zone places (308). Flagged 293 (crafted-object persistence) for Validator ABANDON-as-duplicate again. Marked 274 `[~]`.
