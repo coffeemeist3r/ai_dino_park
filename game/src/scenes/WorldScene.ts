@@ -16,7 +16,7 @@ import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, type GameTime } from '../world/clock';
@@ -454,6 +454,8 @@ export class WorldScene extends Phaser.Scene {
       this.applyZoneVisibility();
       this.drawFloor();
     };
+    // dev-only hook — which ground tiles the pixel pipeline draws (BACKLOG-033 path/water render check).
+    (window as any).__hasTileArt = (name: string) => hasTileArt(name);
     // dev-only hook — the active floor render (BACKLOG-294): zone, texture key, and whether tinted.
     (window as any).__floorInfo = () => ({
       zone: this.zoneId,

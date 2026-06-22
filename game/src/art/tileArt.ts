@@ -74,9 +74,115 @@ export const GRASS_RIG: TileRig = {
   variants: [GRASS_A, GRASS_B],
 };
 
+// ── Path — a worn dirt trail (BACKLOG-033, the grove's path sub-region from -294). Flat warm-brown
+// earth scattered with a few darker divots and lighter pebbles, light from the upper-left. Two variants;
+// every border is flat base 'd' so a path strip reads as one continuous trail and tiles in any order.
+
+const PATH_A: ReadonlyArray<string> = [
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+  'dddspddddddddddd',
+  'ddddddddddpsdddd',
+  'dddddddddddddddd',
+  'ddpsdddddddddddd',
+  'dddddddddddddddd',
+  'ddddddddsddddddd',
+  'dddddddddddddddd',
+  'dddddddpsddddddd',
+  'dddddddddddddddd',
+  'dddddsdddddddddd',
+  'ddddddddddddpsdd',
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+];
+
+const PATH_B: ReadonlyArray<string> = [
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+  'ddddddddddpsdddd',
+  'dddddddddddddddd',
+  'ddspdddddddddddd',
+  'dddddddddddddddd',
+  'dddddddspddddddd',
+  'dddddddddddddddd',
+  'dddddsdddddddddd',
+  'dddddddddddddddd',
+  'ddddddddddpsdddd',
+  'dddddddddddddddd',
+  'ddpsdddddddddddd',
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+  'dddddddddddddddd',
+];
+
+export const PATH_RIG: TileRig = {
+  size: 16,
+  palette: {
+    d: 0x9a7850, // base trodden earth
+    s: 0x70502f, // darker divot / packed dirt
+    p: 0xb89460, // lighter pebble / upper-left lit grit
+  },
+  variants: [PATH_A, PATH_B],
+};
+
+// ── Water — the grove's NE pond (BACKLOG-033 / -294). Flat mid-blue with a sparse scatter of light and
+// dark ripple dashes (two pixels, horizontal — water catches light in lines). Two variants; borders flat
+// base 'w' so the pond body tiles seamlessly. The pond↔grass boundary is a hard shoreline edge by design.
+
+const WATER_A: ReadonlyArray<string> = [
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwhhwwwwwwwwwwww',
+  'wwwwwwwwwwhhwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwkkwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwhhwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwkkwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwhhwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwhhwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+];
+
+const WATER_B: ReadonlyArray<string> = [
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwhhwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwhhwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwkkwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwhhwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwhhwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwkkwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+  'wwwwwwwwwwwwwwww',
+];
+
+export const WATER_RIG: TileRig = {
+  size: 16,
+  palette: {
+    w: 0x3f7fa6, // base pond blue
+    h: 0x6aa6c4, // light ripple highlight
+    k: 0x2e5f80, // dark ripple trough
+  },
+  variants: [WATER_A, WATER_B],
+};
+
 /** Ground tiles the pixel pipeline can render today; others fall back to the flat checker. */
 export const TILE_RIGS: Record<string, TileRig> = {
   grass: GRASS_RIG,
+  path: PATH_RIG,
+  water: WATER_RIG,
 };
 
 /** The flat base char of a tile (its uniform border) — the seam colour. */
