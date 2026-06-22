@@ -1,6 +1,6 @@
 {
   "cycle": 71,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-318: Mood lifts the motion",
   "structureItem": "BACKLOG-314: Zone-aware resource spawn",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-06-22T17:00:00-05:00",
     "structure-smith": "2026-06-22T17:04:00-05:00",
     "designer": "2026-06-22T17:08:00-05:00",
-    "code-planner": "2026-06-22T16:12:00-05:00",
+    "code-planner": "2026-06-22T17:12:00-05:00",
     "coder": "2026-06-22T16:24:00-05:00",
     "qa": "2026-06-22T16:30:00-05:00",
     "validator": "2026-06-22T16:36:00-05:00",
