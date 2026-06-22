@@ -1,8 +1,8 @@
 {
   "cycle": 70,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-310: Quirk shaded by feeling",
-  "structureItem": "BACKLOG-309: Stockpile capacity + pressure",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-22T16:12:00-05:00",
     "coder": "2026-06-22T16:24:00-05:00",
     "qa": "2026-06-22T16:30:00-05:00",
-    "validator": "2026-06-22T14:36:00-05:00",
+    "validator": "2026-06-22T16:36:00-05:00",
     "artist": "2026-06-22T14:40:00-05:00"
   }
 }
