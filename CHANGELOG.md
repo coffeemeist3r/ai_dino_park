@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 067 — 2026-06-21
+- BACKLOG-303: Signature quirk in the dossier — the collection book now names each dino's idle fidget as a kept one-line fingerprint (`· paces`, `· peeks around timidly`, …), the label of the same `fidget()` quirk shown above its head while it wanders (298), so "who a dino is at rest" reads at a glance beside its hearts and role. Deterministic, no model, no save; `lenses.ts` stays Phaser-free. (lore track)
+- BACKLOG-294: Grove terrain — the grove gets its own ground: a pure `groveTileAt` layout (a worn path band across the middle + a small NE pond over grass) and a per-zone floor swap that draws the grove under a cool tint, so the second zone reads as a different *place* instead of cloned bowl grass — and the long-benched path/water tile art (033) finally has sub-regions to land in. The path/water pixel rigs themselves stay the Artist's. (structure track)
+
 ## Cycle 066 — 2026-06-21
 - BACKLOG-298: Idle fidgets — a goalless (wandering) dino shows its trait-derived signature quirk above its head instead of the generic 🚶 (bold→🐾 paces, timid→🫣 peeks, curious→👆 pokes the glass, …), keyed to its most-pronounced personality axis, so five idle dinos read as five individuals. Pure `world/fidget.ts`; the 295 `__activity` state is untouched, only the rendered glyph changes. No save. (lore track)
 - BACKLOG-145: Plantable plot — one fixed plot the keeper plants with **P**; a 🍓 crop grows seed→sprout→ripe over realtime-clock days (read off the clock, no second timer); harvesting releases the crop as a food drop at the plot (reusing the feeding hatch, so the swarm + favorites loop apply) and bumps a persisted harvest tally. Plot + tally persist additively (no version bump). The build arc's growing half, beside its gathering half. (structure track)

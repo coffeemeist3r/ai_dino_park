@@ -1,8 +1,8 @@
 {
   "cycle": 67,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-303: Signature quirk in the dossier",
-  "structureItem": "BACKLOG-294: Grove terrain — distinct floor tint + path/water sub-regions in zones.ts",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-21T22:18:00-05:00",
     "coder": "2026-06-21T22:40:00-05:00",
     "qa": "2026-06-21T22:46:00-05:00",
-    "validator": "2026-06-21T20:52:00-05:00",
+    "validator": "2026-06-21T22:52:00-05:00",
     "artist": "2026-06-21T21:10:00-05:00"
   }
 }
