@@ -73,6 +73,7 @@ import {
   rollResource,
   pickKind,
   bankResource,
+  atCap,
   stockpileLine,
   canCraft,
   craft,
@@ -84,7 +85,7 @@ import {
   type Stockpile,
 } from '../world/resource';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
-import { fidget } from '../world/fidget';
+import { fidget, moodFidget, type Mood } from '../world/fidget';
 import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines } from '../ui/plaque';
@@ -821,7 +822,13 @@ export class WorldScene extends Phaser.Scene {
     this.resourceSprite = null;
     this.resource = null;
     this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
-    this.stockpile = bankResource(this.stockpile, kind); // BACKLOG-285: bank into the shared park total
+    // BACKLOG-309: at the per-kind cap, the pickup is consumed but banks nothing — the first economy
+    // constraint. The stall surfaces as a beat so the pressure to spend (craft) reads in-world.
+    if (atCap(this.stockpile, kind)) {
+      this.logEvent(`${RESOURCE_GLYPH[kind]} stores full — ${taker.name} drops the ${kind}`);
+    } else {
+      this.stockpile = bankResource(this.stockpile, kind); // BACKLOG-285: bank into the shared park total
+    }
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
@@ -1082,6 +1089,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__fidget = (name: string) => {
       const d = this.dinoByName(name);
       return d ? { ...fidget(d.traits) } : null;
+    };
+    // BACKLOG-310: the signature quirk shaded by a transient mood (sulk/cold). No mood → signature.
+    (window as any).__moodFidget = (name: string, mood?: Mood) => {
+      const d = this.dinoByName(name);
+      return d ? { ...moodFidget(d.traits, mood) } : null;
     };
     (window as any).__activityMark = (name: string) => {
       const i = this.dinos.findIndex((d) => d.name === name);
@@ -1714,7 +1726,10 @@ export class WorldScene extends Phaser.Scene {
         // Idle fidgets (BACKLOG-298): a goalless wanderer shows its trait-derived signature quirk
         // instead of the generic 🚶, so five idle dinos read as five individuals. Other 295 states
         // keep their glyph; activityById is untouched (the 295 __activity hook still reads 'wandering').
-        mark.setText(act === 'wandering' ? fidget(d.traits).glyph : ACTIVITY_GLYPH[act]);
+        // BACKLOG-310: a jealous sulk (pendingRepair) shades that idle glyph to 😒 — mood over motion.
+        // Cold keeps its signature glyph (the floating 🥶 mark already signals the cold funk).
+        const mood: Mood | undefined = this.pendingRepair === d.name ? 'sulk' : undefined;
+        mark.setText(act === 'wandering' ? moodFidget(d.traits, mood).glyph : ACTIVITY_GLYPH[act]);
       }
     });
   }

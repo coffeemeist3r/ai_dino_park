@@ -1895,3 +1895,7 @@ Queue at 4 open (309/314/315/316) = cap X=4 → drain, no brainstorm. Picked **B
 ## 2026-06-22 — cycle 070 — code-planner — 310 + 309
 
 **310:** `moodFidget(p, mood?)` in fidget.ts delegating to `fidget(p)` (no-mood byte-identical); `Mood='sulk'|'cold'` + `MOOD_GLYPH`/`MOOD_CLAUSE`; WorldScene `refreshActivityMarks` passes `pendingRepair===name ? 'sulk' : undefined` to the wandering glyph (cold stays on its existing 🥶 mark — not re-shaded), plus a `__moodFidget` hook mirroring `__fidget`. **309:** `STOCKPILE_CAP=8` + `atCap` + a `bankResource` clamp in resource.ts; `checkGather` consumes-but-doesn't-bank at cap and logs the stall, reusing `logEvent`. Reuse audit: `fidget`/`pendingRepair`/`coldPending` for 310; `bankResource`/`craft`/`__stockpile`/`__spawnResource` for 309 — no reinvention. `stockpileLine` left byte-identical (cycle-063 pins exact strings). ~6 unique files, both tracks; WorldScene touched in different methods. Phase → coder-pending.
+
+## 2026-06-22 — cycle 070 — coder — 310 + 309
+
+Built both. **310:** `moodFidget(p, mood?)` in fidget.ts (no-mood delegates to `fidget(p)`, byte-identical); WorldScene's `refreshActivityMarks` shades the wandering glyph to 😒 for a sulking runner-up (`pendingRepair`), cold left on its existing 🥶 mark; `__moodFidget` hook added. **309:** `STOCKPILE_CAP=8` + `atCap` + a `bankResource` clamp in resource.ts; `checkGather` consumes-but-doesn't-bank at cap and logs `stores full — <dino> drops the <kind>`. Build clean; 698/698 unit (689 + 9 new); dev server boots (HTTP 200). Phase → qa-pending.

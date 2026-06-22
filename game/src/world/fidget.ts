@@ -47,3 +47,29 @@ export function fidget(p: Personality): Quirk {
   const pole = IDLE_QUIRKS[bestAxis];
   return p[bestAxis] >= 0.5 ? pole.high : pole.low;
 }
+
+/**
+ * A transient feeling the bowl already tracks on a dino: the jealous sulk awaiting a make-up greet
+ * (BACKLOG-125 `pendingRepair`) or the cold funk after a cold night (BACKLOG-184 `coldPending`). The
+ * fed 😋 is a one-frame flash, not a lingering state, so it isn't a mood here.
+ */
+export type Mood = 'sulk' | 'cold';
+
+const MOOD_GLYPH: Record<Mood, string> = { sulk: '😒', cold: '🥶' };
+const MOOD_CLAUSE: Record<Mood, string> = { sulk: 'sulking', cold: 'shivering' };
+
+/**
+ * Quirk shaded by feeling (BACKLOG-310): the same signature fidget read through a transient mood, so
+ * body language tells the dino's *current state*, not just its temperament. With no mood this is exactly
+ * `fidget(p)` (every 298/303/306/312 path stays byte-identical). With a mood the label gains a clause
+ * ("paces, sulking") and — for a sulk — the glyph becomes the mood tell (cold keeps its base glyph
+ * because the floating 🥶 mark already signals it; we don't want two).
+ */
+export function moodFidget(p: Personality, mood?: Mood): Quirk {
+  const base = fidget(p);
+  if (!mood) return base;
+  return {
+    glyph: mood === 'sulk' ? MOOD_GLYPH[mood] : base.glyph,
+    label: `${base.label}, ${MOOD_CLAUSE[mood]}`,
+  };
+}

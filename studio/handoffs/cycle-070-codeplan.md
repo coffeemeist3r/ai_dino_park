@@ -95,3 +95,18 @@ hooks block for 310; `checkGather` + import block for 309) and different imports
 (`fidget` vs `resource`). No shared lines — either order is safe. Pure modules are
 separate files. Combined: ~6 unique files (2 specs + 2 unit + fidget.ts +
 resource.ts + WorldScene.ts).
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/fidget.ts` — `Mood`, `MOOD_GLYPH`/`MOOD_CLAUSE`, `moodFidget()`.
+- `game/src/world/resource.ts` — `STOCKPILE_CAP=8`, `atCap()`, `bankResource` clamp.
+- `game/src/scenes/WorldScene.ts` — `moodFidget`/`Mood` + `atCap` imports; `refreshActivityMarks` shades the wandering glyph for a sulk; `__moodFidget` hook; `checkGather` stalls (consume-no-bank + log) at cap.
+- `tests/unit/cycle-070-mood-fidget.test.ts` (4), `tests/unit/cycle-070-stockpile-cap.test.ts` (5).
+- `tests/e2e/cycle-070-mood-fidget.spec.ts`, `tests/e2e/cycle-070-stockpile-cap.spec.ts`.
+
+**Deviations from plan:** none.
+
+**Build + unit-test status:** `npm --prefix game run build` clean; `npm run test:unit` 698/698 (was 689 + 9 new). Dev server boots (HTTP 200). E2E left to QA.

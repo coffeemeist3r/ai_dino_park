@@ -64,8 +64,24 @@ export function pickKind(rand: () => number = Math.random): ResourceKind {
  */
 export type Stockpile = Partial<Record<ResourceKind, number>>;
 
-/** Bank one gathered resource into the shared stockpile. Pure — returns a new map, never mutates `pile`. */
+/**
+ * Stockpile capacity (BACKLOG-309) — the first economy constraint. The shared pile was unbounded, so
+ * gathering accrued forever with no reason to spend. Each kind now caps; banking at cap stalls (the
+ * gather is consumed but nothing banks) until a craft (286) spends the kind back below the cap.
+ */
+export const STOCKPILE_CAP = 8;
+
+/** Is this kind's pile at (or over) the per-kind cap — i.e. banking more of it would stall? */
+export function atCap(pile: Stockpile, kind: ResourceKind): boolean {
+  return (pile[kind] ?? 0) >= STOCKPILE_CAP;
+}
+
+/**
+ * Bank one gathered resource into the shared stockpile. Pure — returns a new map, never mutates `pile`.
+ * Clamps at STOCKPILE_CAP (BACKLOG-309): a kind already at cap returns the pile unchanged.
+ */
 export function bankResource(pile: Stockpile, kind: ResourceKind): Stockpile {
+  if (atCap(pile, kind)) return pile;
   return { ...pile, [kind]: (pile[kind] ?? 0) + 1 };
 }
 
