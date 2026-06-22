@@ -717,6 +717,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-321 [pokemon] Mood in the book — the collection book's body-language line shows a dino's *current* mood-shaded fidget while a funk is active, falling back to its signature quirk when calm, so the book reads live feeling not just temperament. Builds on 310 / 303.
 - [ ] BACKLOG-322 [emergent] Shake-it-out — a dino idle a long while occasionally breaks its signature quirk for a one-off different gesture (a stretch / a yawn) before settling back, so even the resting tell isn't perfectly looped. Builds on 298 / 108.
 
+## Cycle 71 lore additions — the funk lifts (2026-06-22)
+
+> Cycle 70 made the idle fidget read a dino's funk (310). Cycle 71 adds the recovery
+> half (318 — the motion brightens when the funk lifts) and keeps extending mood-as-motion
+> into empathy, the tone pick, the afterglow, the book, and temperament.
+
+- [ ] BACKLOG-323 [emergent] Funk seen by a friend — a dino idling near a sulking/cold friend (310) files a faint "saw <name> down" memory that can wistfully colour its next line; empathy through proximity. Builds on 310 / 130 / 011.
+- [ ] BACKLOG-324 [social] Mood in the tone pick — greeting a funked dino, the Warm/Tease/Honest menu hints its current mood ("Rex — sulking") so the keeper chooses knowing how it feels. Builds on 310 / 142.
+- [ ] BACKLOG-325 [emergent] Lingering lift — for a short while after a recovery flourish (318), the dino's idle quirk reads a touch perkier before settling to its signature. Builds on 318 / 298.
+- [ ] BACKLOG-326 [pokemon] Bounced-back in the book — the collection book notes "bounced back" on a dino that recently recovered from a funk, a fleeting positive tell beside its hearts. Builds on 318 / 131 / 021.
+- [ ] BACKLOG-327 [emergent] Stubborn funk — a low-agreeableness dino's recovery flourish (318) is smaller / slower, so even bouncing back is in-character. Builds on 318 / 310 / 070.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
