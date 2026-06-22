@@ -1,7 +1,7 @@
 {
   "cycle": 70,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-310: Quirk shaded by feeling",
   "structureItem": "BACKLOG-309: Stockpile capacity + pressure",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-22T16:00:00-05:00",
     "structure-smith": "2026-06-22T16:04:00-05:00",
-    "designer": "2026-06-22T14:08:00-05:00",
+    "designer": "2026-06-22T16:08:00-05:00",
     "code-planner": "2026-06-22T14:12:00-05:00",
     "coder": "2026-06-22T14:24:00-05:00",
     "qa": "2026-06-22T14:30:00-05:00",
