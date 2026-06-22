@@ -654,7 +654,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-301 [emergent] Contagious fidget — a dino idling beside another mid-quirk (298) may briefly pick the quirk up itself (mirroring), so an idle tic can ripple between near neighbours; a one-shot borrow, not a permanent trait. Builds on 298 / 018.
 - [ ] BACKLOG-302 [emergent] Mood-shaded fidget — the same dino's idle quirk darkens with its mood: a sulking / cold / jealous dino mopes or hunches where a content one paces breezily, so the fidget reads its feeling, not just its temperament. Builds on 298 / 123 / 179.
-- [ ] BACKLOG-303 [pokemon] Signature quirk in the dossier — the collection book names each dino's idle fidget as a one-line fingerprint ("a restless pacer", "always eyeing the glass"), distinct from the activity tally (299) — who it *is* at rest, not what it does most. Builds on 298 / 021.
+- [~] BACKLOG-303 [pokemon] Signature quirk in the dossier — the collection book names each dino's idle fidget as a one-line fingerprint ("a restless pacer", "always eyeing the glass"), distinct from the activity tally (299) — who it *is* at rest, not what it does most. Builds on 298 / 021.
+
+## Cycle 67 lore additions — the bowl at rest has tells now (2026-06-21)
+
+> Cycle 66 made even *idleness* read as character (298 — each dino fidgets in its own way). Cycle 67's
+> next-up is the already-queued **BACKLOG-303** (signature quirk in the dossier): name each dino's idle
+> fidget in the collection book, so the bowl's resting tells become a legible per-dino fingerprint, not
+> just a glance you have to catch live. These extend the resting-character beat outward.
+
+- [ ] BACKLOG-304 [emergent] Restlessness builds — a dino left idle (wandering) too many ticks escalates its fidget and may break the idle on its own to seek company or a resource; boredom becomes a driver, not just a pose. Builds on 298 / 295.
+- [ ] BACKLOG-305 [social] Kindred tics — when two dinos sharing the *same* signature quirk (298) idle near each other, a small 😄 recognition beat fires and nudges their bond; matching idle habits read as a quiet affinity. Builds on 298 / 013.
+- [ ] BACKLOG-306 [pokemon] In-character homecoming — the welcome-back beat (112) leans on the returning dino's signature quirk ("paces eagerly at the glass"), so even the greeting is unmistakably *that* dino. Builds on 298 / 112.
+- [ ] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
 
 ## Operator session — 2026-06-12
 
