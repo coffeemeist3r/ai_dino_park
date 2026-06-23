@@ -1993,3 +1993,7 @@ Housekeeping: the operator-directed fix went in at the top of the structure queu
 ## 2026-06-22 — cycle 072-art — artist — no-op (no open [art] items)
 
 No open `[art]` items (317 closed cycle 70; cycles 71–72 seeded only logic items). Artist no-ops per routine 7. Next renderable art (grove ambient props, the 315 shelter, the 334 visible-crossing) needs a smith to seed a fresh `[art]` item. Boundary intact. artPipelineReady stays true. State → lore-pending; cycle 72 closed.
+
+## 2026-06-23 — cycle 073 — lore-smith — the den dreams (next-up 181)
+
+Cycle 72 closed both tracks APPROVED → bumped to 73. Picked **BACKLOG-181** (sleep murmurs) as the lore next-up: a huddled dino murmurs a 💭 sleep-line from its strongest memory of the day, deterministic core + LLM colour behind NPCBrain. Seeded the den-dream thread 335 (overheard → gossip) / 336 (dream in the book) / 337 (shared dream echoes the bond graph) / 338 (don't-wake-them tap) / 339 (first steps in the grove, riding 334). Idea Box: one deferred entry (stash-ahead art policy) untouched — no renderable-now art unblocked. Phase → designer-pending.

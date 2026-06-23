@@ -746,6 +746,20 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-331 [social] Greeting notes the bounce-back — greeting a just-recovered dino, its line carries a lighter note ("Rex — back on its feet —"); deterministic fallback, LLM colour behind the boundary. Builds on 318 / 051.
 - [ ] BACKLOG-332 [emergent] Shared relief — a dino that witnesses a friend's recovery flourish (318) nearby catches a small mood lift of its own; gladness spreads like funk does (320). Builds on 318 / 320 / 130.
 
+## Cycle 73 lore additions — the den dreams (2026-06-23)
+
+> Cycle 73 picks **BACKLOG-181** (sleep murmurs) — a huddled dino murmurs a 💭 sleep-line
+> drawn from its strongest memory of the day, deterministic core with LLM colour behind the
+> boundary. These extend the den's new inner life: who overhears it, what the book keeps, how
+> the bond graph dreams, and the keeper learning the den is for quiet. The grove-arrival beat
+> rides this cycle's structure pick (334, visible crossing).
+
+- [ ] BACKLOG-335 [emergent] Sleep-talk overheard — an awake dino near a murmuring sleeper (181) catches the murmur and lets it slip as morning gossip ("you were talking in your sleep about fish"). Builds on 181 / 019.
+- [ ] BACKLOG-336 [pokemon] Dream in the book — the collection book records a dino's last sleep-murmur ("dreams of: …"), the night's inner life made legible alongside the closest-friend line. Builds on 181 / 021.
+- [ ] BACKLOG-337 [emergent] Shared dream — two high-bond dinos huddled together may murmur echoing lines (one names the other), so the den's dreams reflect the bond graph the way the waking bowl does. Builds on 181 / 013.
+- [ ] BACKLOG-338 [social] Don't wake them — tapping the glass (057) near the den while a dino murmurs *stirs* it (it shifts, a brief 👀) instead of the usual startle-bolt; the keeper learns the den is for quiet. Builds on 181 / 057.
+- [ ] BACKLOG-339 [emergent] First steps in the grove — a dino that has just *visibly crossed* (334) into the grove for the first time pauses at the far edge and looks around (🌿 + a "first time across" memory) before wandering on; arrival becomes a beat, not just a relocation. Builds on 334 / 274 / 011.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
