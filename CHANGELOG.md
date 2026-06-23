@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 073 — 2026-06-23
+- BACKLOG-334: Visible zone crossing — migration no longer teleports. The ambient roll marks a dino "crossing"; in `forceStep` it walks to its zone's linked edge (bowl→east, grove→west) via pure `migrationStepTarget`/`atMigrationEdge`/`crossEntryTile`, and on arrival flips its home zone + reappears at the far zone's opposite edge (like a keeper crossing). You see a dino leave for / arrive from the grove instead of blinking there. The deterministic `__migrate` hook stays instant (cycle-068/069/071 parity); no save change. 7 unit + 2 e2e. (structure track)
+- BACKLOG-181: Sleep murmurs — a huddling, in-view dino floats a 💭 sleep-line drawn from its strongest day-memory (pure `world/murmur.ts`: most-recent memory → fragment, leading event glyph stripped); a memoryless dino dozes "💭 …zzz…". Sparse roll, deterministic (no model — the `NPCBrain` boundary is untouched), ephemeral (no save). LLM colour deferred to the 181 follow-ups (335–337). 5 unit + 2 e2e. (lore track)
+
 ## Cycle 072 — 2026-06-22
 - BACKLOG-333: Realtime liveliness (operator-reported) — the bowl looked frozen and dinos never reached the grove because wander (every 5 in-game min) and migration (≤1/in-game day) were gated to the in-game clock, which at the 1× realtime default is glacial (5 real min/step; 1 migration/24 real hr). Wander now runs on a real-time timer (`WANDER_STEP_MS` 3 s) and migration on a real-time cooldown (`MIGRATE_COOLDOWN_MS` 60 s, pure `cooldownReady`), so the park mills + dinos cross zones at a watchable pace at any scale. `forceStep` body + `__migrate` untouched; no save change. Visible cross-zone walk = 334. (structure track)
 - BACKLOG-325: Lingering lift — after a recovery flourish (318) a dino's idle quirk stays brightened for a short window (8 s) before settling to its signature; a sulk still wins the glyph. Pure render + transient window, no save/model. Smooth decay = 330. (lore track)

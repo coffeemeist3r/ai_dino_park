@@ -1,8 +1,8 @@
 {
   "cycle": 73,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-181: Sleep murmurs",
-  "structureItem": "BACKLOG-334: Visible zone crossing",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-23T10:15:00-05:00",
     "coder": "2026-06-23T10:25:00-05:00",
     "qa": "2026-06-23T10:30:00-05:00",
-    "validator": "2026-06-22T18:36:00-05:00",
+    "validator": "2026-06-23T10:35:00-05:00",
     "artist": "2026-06-22T18:40:00-05:00"
   }
 }
