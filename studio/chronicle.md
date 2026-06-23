@@ -1997,3 +1997,7 @@ No open `[art]` items (317 closed cycle 70; cycles 71–72 seeded only logic ite
 ## 2026-06-23 — cycle 073 — lore-smith — the den dreams (next-up 181)
 
 Cycle 72 closed both tracks APPROVED → bumped to 73. Picked **BACKLOG-181** (sleep murmurs) as the lore next-up: a huddled dino murmurs a 💭 sleep-line from its strongest memory of the day, deterministic core + LLM colour behind NPCBrain. Seeded the den-dream thread 335 (overheard → gossip) / 336 (dream in the book) / 337 (shared dream echoes the bond graph) / 338 (don't-wake-them tap) / 339 (first steps in the grove, riding 334). Idea Box: one deferred entry (stash-ahead art policy) untouched — no renderable-now art unblocked. Phase → designer-pending.
+
+## 2026-06-23 — cycle 073 — structure-smith — BACKLOG-334 (visible zone crossing)
+
+Queue at 5 open (≥ X=4) → no new structural items. Picked **BACKLOG-334**: cycle 72's 333 made migration frequent at realtime, but `relocate` still teleports the migrant — the journey is invisible. 334 makes a migrating dino walk to its zone's linked edge and cross, appearing at the far edge like the keeper. Deterministic `__migrate` teleport stays (tests/restore); only the ambient roll becomes a visible walk. Disjoint from the lore pick (181, den murmurs) bar a shared forceStep branch (cycle-72 precedent). Marked [~] in both Structure Track + main body.
