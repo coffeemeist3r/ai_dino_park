@@ -2013,3 +2013,7 @@ Queue at 5 open (≥ X=4) → no new structural items. Picked **BACKLOG-334**: c
 ## 2026-06-23 — cycle 073 — coder — 181 + 334
 
 Built both. **334:** pure `migrationStepTarget`/`atMigrationEdge`/`crossEntryTile` in zones.ts; WorldScene `migrating` Set, `maybeMigrate` starts a visible walk (not a teleport) on a non-crossing dino, a forceStep branch walks it to the linked edge, `crossDino` flips zone + drops it at the far entry edge; `__startMigration`/`__migrating` hooks; `__migrate` stays instant. **181:** new pure `world/murmur.ts`; `maybeMurmur` at the forceStep tail floats a 💭 on a sparse roll for a huddling in-view dino, deterministic from its memory; `__murmur`/`__forceMurmur` hooks. Build clean; 12 new unit green; 4 new e2e green; boundary intact (web-llm only under ai/). Phase → qa-pending.
+
+## 2026-06-23 — cycle 073 — qa — lore 8/8 + structure 8/8 — 734 unit / 234 e2e green
+
+Full bar. Build clean; 734/734 unit (12 new); 234 e2e — full run 233/234, the lone fail `cycle-028-realtime:25` (T-toggle clock HUD, unrelated) green 2/2 isolated → catalogued parallel cold-boot flake, not a regression. **334:** crossing spec proves the migrant stays in its origin zone, walks monotonically east (no teleport), then flips zone + lands at the grove's west entry; `__migrate` still instant (cycle-068 parity). **181:** murmur spec proves a 💭 bubble on a huddling in-view dino, silence for an awake one; unit covers the glyph-strip + per-dino distinctness; boundary intact. Recommend APPROVE / APPROVE. Phase → validator-pending.
