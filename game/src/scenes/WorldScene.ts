@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, GROVE_TINT, crossing, groveTileAt, linkedZone, occupiedZones, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
+import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -59,6 +59,7 @@ import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/hudd
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
+import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
@@ -143,6 +144,9 @@ const LIFT_WINDOW_MS = 8_000;
 const HUDDLE_TILE = { tileX: 10, tileY: 11 };
 const BOND_PER_MEET = 4;
 
+/** How often a huddling dino murmurs a 💭 sleep-line per step (BACKLOG-181) — sparse, so the den isn't a wall of 💭. */
+const MURMUR_CHANCE = 0.2;
+
 export class WorldScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
   /** Anim key of the current keeper avatar, or null when the observer is still the amber square. */
@@ -161,6 +165,8 @@ export class WorldScene extends Phaser.Scene {
   private dinoZones: Record<string, string> = {};
   /** Wall-clock ms of the last ambient migration (BACKLOG-333) — paces it by a real-time cooldown. */
   private lastMigrationMs = 0;
+  /** Dinos mid zone-crossing (BACKLOG-334): walking to their linked edge before the home zone flips. Transient. */
+  private migrating = new Set<string>();
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -1179,6 +1185,16 @@ export class WorldScene extends Phaser.Scene {
         inWindow: inHuddleWindow(getWorldClock().now().hour, season),
       };
     };
+    // dev-only: sleep murmurs (BACKLOG-181) — the deterministic line a dino would dream now, and a hook
+    // to force a murmur past the sparse roll (returns the line shown, or null if no eligible sleeper).
+    (window as any).__murmur = (name: string) => murmurLine(pickMurmurMemory(recall(this.memory, name)));
+    (window as any).__forceMurmur = (name?: string) => {
+      const d = name ? this.dinoByName(name) : this.pickMurmurer();
+      if (!d || !this.isHuddling(d) || !this.inView(d)) return null;
+      const line = murmurLine(pickMurmurMemory(recall(this.memory, d.name)));
+      this.showBubble(d, line);
+      return line;
+    };
     // dev-only: cold-night shiver (BACKLOG-179) — who slept cold at the last morning resolution.
     (window as any).__coldSleepers = () => [...this.lastColdSleepers];
     // dev-only: keeper's warmth (BACKLOG-184) — who still carries the cold funk.
@@ -1688,6 +1704,22 @@ export class WorldScene extends Phaser.Scene {
         }
       }
 
+      // Visible zone crossing (BACKLOG-334): a migrating dino is on a committed journey — it walks to its
+      // zone's linked edge and crosses, rather than teleporting (the old `relocate`). Above food/huddle (a
+      // crossing dino ignores snacks), below inspection/response (a startle can still pre-empt). The home
+      // zone flips only on arrival, so the dino stays visible in its origin zone for the whole walk.
+      if (this.migrating.has(d.name)) {
+        const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+        if (atMigrationEdge(home, cur, COLS)) {
+          this.crossDino(d);
+        } else {
+          const step = stepToward(cur, migrationStepTarget(home, cur.tileY, COLS), COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'wandering'; // BACKLOG-295: the journey reads in motion, not a glyph
+        }
+        continue;
+      }
+
       // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
@@ -1779,12 +1811,30 @@ export class WorldScene extends Phaser.Scene {
 
     this.refreshSleepMarks();
     this.refreshActivityMarks();
+    this.maybeMurmur();
     this.checkFeeding();
     this.checkPlot();
     this.maybeSpawnResource();
     this.checkGather();
     this.maybeLayEggs();
     this.checkHatch();
+  }
+
+  /**
+   * Sleep murmurs (BACKLOG-181): on a sparse roll, a huddling, in-view dino floats a 💭 line drawn from its
+   * strongest memory of the day, so the den has an audible-on-screen inner life. Deterministic (no model);
+   * out-of-view huddlers (the other zone) stay silent. The LLM-coloured murmur is a 181 follow-up.
+   */
+  private maybeMurmur(): void {
+    if (Math.random() >= MURMUR_CHANCE) return;
+    const d = this.pickMurmurer();
+    if (d) this.showBubble(d, murmurLine(pickMurmurMemory(recall(this.memory, d.name))));
+  }
+
+  /** A random huddling, in-view dino (BACKLOG-181), or null when the den is empty / out of view. */
+  private pickMurmurer(): Dino | undefined {
+    const sleepers = this.dinos.filter((d) => this.isHuddling(d) && this.inView(d));
+    return sleepers[Math.floor(Math.random() * sleepers.length)];
   }
 
   /** Show each awake dino's current-activity glyph (BACKLOG-295). The 💤 sleep mark owns the sleeping state. */
@@ -2647,12 +2697,21 @@ export class WorldScene extends Phaser.Scene {
    */
   private setupMigration(): void {
     this.time.addEvent({ delay: MIGRATE_ROLL_INTERVAL_MS, loop: true, callback: () => this.maybeMigrate() });
-    // dev-only Playwright hook — migrate a named dino to a zone deterministically; returns its new zone.
+    // dev-only Playwright hook — migrate a named dino to a zone INSTANTLY (teleport); returns its new zone.
+    // Kept instant (BACKLOG-274 semantics) so the cycle-068/069 migration specs + the save-restore path are
+    // byte-identical; the *ambient* roll is what became a visible walk (BACKLOG-334).
     (window as any).__migrate = (name: string, zoneId: string) => {
       const d = this.dinoByName(name);
       if (d) this.relocate(d, zoneId);
       return zoneOf(this.dinoZones, name, BOWL_ID);
     };
+    // BACKLOG-334: drive + observe the visible crossing from Playwright.
+    (window as any).__startMigration = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.startMigration(d);
+      return zoneOf(this.dinoZones, name, BOWL_ID);
+    };
+    (window as any).__migrating = () => [...this.migrating];
     // BACKLOG-333: the real-time cadences (regression guard — a return to clock-gating fails these).
     (window as any).__wanderStepMs = () => WANDER_STEP_MS;
     (window as any).__migrateCooldownMs = () => MIGRATE_COOLDOWN_MS;
@@ -2662,10 +2721,33 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
-    const d = this.dinos[Math.floor(Math.random() * this.dinos.length)];
+    // BACKLOG-334: pick a dino not already crossing; it walks to the edge (the journey is visible), it doesn't teleport.
+    const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
+    const d = candidates[Math.floor(Math.random() * candidates.length)];
     if (!d) return;
-    this.relocate(d, otherZone(zoneOf(this.dinoZones, d.name, BOWL_ID)));
+    this.startMigration(d);
     this.lastMigrationMs = Date.now();
+  }
+
+  /** Begin a visible crossing (BACKLOG-334): mark the dino migrating; the forceStep walk + `crossDino` do the rest. */
+  private startMigration(d: Dino): void {
+    this.migrating.add(d.name);
+  }
+
+  /** Arrival (BACKLOG-334): flip the home zone, drop the dino at the far zone's opposite edge, refresh + persist. */
+  private crossDino(d: Dino): void {
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const dest = otherZone(home);
+    const row = this.tileOf(d).tileY;
+    setZone(this.dinoZones, d.name, dest);
+    const entry = crossEntryTile(home, row, COLS);
+    d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
+    this.migrating.delete(d.name);
+    this.applyZoneVisibility();
+    this.logEvent(
+      `🌿 ${d.name} ${dest === GROVE_ID ? `crossed into ${zoneById(GROVE_ID).name}` : 'crossed back to the bowl'}`,
+    );
+    void this.saveGame();
   }
 
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */

@@ -83,3 +83,20 @@ the diff short; fold the colour into 181's follow-up thread (335–337) if wante
 **Risks:** `showBubble` dedupes by exact text (`liveBubbles` Set) — two identical murmurs in quick succession collapse to one bubble; acceptable (sparse roll). `isHuddling` already AND-gates the huddle window + den proximity, so murmurs can't fire outside the den.
 
 **Estimated touch count:** ~3 files (murmur.ts new, WorldScene.ts, + tests). Under 6.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/zones.ts` — added pure `migrationStepTarget` / `atMigrationEdge` / `crossEntryTile` (BACKLOG-334).
+- `game/src/world/murmur.ts` — **new** pure module: `pickMurmurMemory` + `murmurLine` (BACKLOG-181).
+- `game/src/scenes/WorldScene.ts` —
+  - 334: `migrating` Set field; import of the three zones helpers; a migration-walk branch in `forceStep` (after `pendingRespond`, before food); `maybeMigrate` now starts a walk on a non-migrating dino (not a teleport); new `startMigration` + `crossDino`; `__startMigration`/`__migrating` hooks; `__migrate` left instant.
+  - 181: import of murmur helpers + `recall` (already imported); `MURMUR_CHANCE` const; `maybeMurmur()` + `pickMurmurer()` called at the `forceStep` tail; `__murmur`/`__forceMurmur` hooks.
+- `tests/unit/cycle-073-migration-crossing.test.ts`, `tests/unit/cycle-073-murmur.test.ts` — **new** (12 unit).
+- `tests/e2e/cycle-073-crossing.spec.ts`, `tests/e2e/cycle-073-murmur.spec.ts` — **new** (4 e2e).
+
+**Deviations from plan:** LLM-coloured murmur deferred (as the plan flagged — no AC needs it; `murmur.ts` stays pure so the `NPCBrain` boundary holds). The murmur e2e checks awake-silence at **noon** (nobody huddling) rather than via a second dino, because winter dusk pulls the whole cast into the den (no awake dino remains) — same assertion, robust setup.
+
+**Build + tests:** `npm run build` clean. New unit 12/12 green. New e2e 4/4 green (after the first cold-Vite boot warmed — the catalogued flake). Boundary verified: `@mlc-ai/web-llm` only under `game/src/ai/`. Full suite is QA's run.

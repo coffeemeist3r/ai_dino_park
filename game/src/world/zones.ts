@@ -102,6 +102,32 @@ export function otherZone(id: string): string {
 }
 
 /**
+ * Visible zone crossing (BACKLOG-334) — a migrating dino walks to its zone's linked edge and crosses,
+ * instead of `relocate`-teleporting to a random far-zone tile. The bowl links east, the grove links west
+ * (the same bowl-east↔grove-west pairing the keeper crosses on). Pure tile math, keyed on the dino's
+ * *current* (origin) zone; only the bowl↔grove pair exists this spine.
+ */
+
+/** The linked-edge tile in the current zone the migrant heads for (bowl → east col, grove → west col); row preserved. */
+export function migrationStepTarget(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
+  return { tileX: homeZone === GROVE_ID ? 0 : cols - 1, tileY: row };
+}
+
+/** Has the migrant reached its linked edge (so the next step crosses)? */
+export function atMigrationEdge(homeZone: string, tile: { tileX: number }, cols: number): boolean {
+  return homeZone === GROVE_ID ? tile.tileX <= 0 : tile.tileX >= cols - 1;
+}
+
+/**
+ * The entry tile in the *destination* zone — one tile in from the opposite edge, row preserved — where the
+ * migrant reappears on crossing (bowl→grove enters the grove's west edge; grove→bowl enters the bowl's east
+ * edge), mirroring `linkedZone`'s keeper entries.
+ */
+export function crossEntryTile(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
+  return { tileX: homeZone === GROVE_ID ? cols - 2 : 1, tileY: row };
+}
+
+/**
  * The distinct zones that currently have residents (BACKLOG-314) — the home zone of every named dino,
  * deduped. The resource roll spawns one slot per occupied zone, so each inhabited zone grows its own
  * gathering economy instead of only the keeper's. Pure.
