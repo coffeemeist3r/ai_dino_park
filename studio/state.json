@@ -1,6 +1,6 @@
 {
   "cycle": 74,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-339: First steps in the grove",
   "structureItem": "BACKLOG-315: Dino-built shelter",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-24T10:00:00-05:00",
     "structure-smith": "2026-06-24T10:05:00-05:00",
-    "designer": "2026-06-23T10:10:00-05:00",
+    "designer": "2026-06-24T10:10:00-05:00",
     "code-planner": "2026-06-23T10:15:00-05:00",
     "coder": "2026-06-23T10:25:00-05:00",
     "qa": "2026-06-23T10:30:00-05:00",
