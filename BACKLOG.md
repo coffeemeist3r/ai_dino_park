@@ -770,9 +770,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-340 [emergent] Homesick for the bowl — a dino that crossed into the grove (339) but whose closest friend (013) is still back in the bowl drifts back across after a while, the grove feeling lonely without its bond; company, not scenery, decides where a dino settles. Builds on 339 / 274 / 013.
 - [ ] BACKLOG-341 [emergent] Grove favorite — a dino that has stayed in the grove across several real days (105) develops a "prefers the grove" lean and migrates back less readily, so home starts to mean something rather than a coin-flip each roll. Builds on 274 / 339 / 105.
-- [ ] BACKLOG-342 [social] Tell of the grove — a dino freshly back from the grove leads its next gossip with what it saw over there ("you should see the pond"), so news of the second zone travels the bowl the way cold/warm word does. Builds on 339 / 019 / 294.
+- [~] BACKLOG-342 [social] Tell of the grove — a dino freshly back from the grove leads its next gossip with what it saw over there ("you should see the pond"), so news of the second zone travels the bowl the way cold/warm word does. Builds on 339 / 019 / 294.
 - [ ] BACKLOG-343 [pokemon] Pioneer in the book — the collection book marks the first dino ever to set foot in the grove ("first across") as a small standing, the grove's founding made legible. Builds on 339 / 021.
 - [x] BACKLOG-344 [art] Lean-to shelter prop — **Gen3 pixel** (CHARTER v4): the dino-built shelter (315) renders as the 🛖 glyph; draw a pixel lean-to/windbreak prop rig in `art/propArt.ts` keyed `shelter`, baked via the existing `bakePropArt`, with WorldScene's shelter sprite swapping to the baked image and the emoji kept as the graceful fallback (exactly how the cairn prop landed in 296). Renderable once 315 ships (308 zone-scopes it). Builds on 315 / 296 / 308.  *(shipped: cycle 074-art — `SHELTER_RIG` in propArt.ts keyed `shelter` in `PROP_RIGS`; a lean-to of lashed branches (one sloped roof from a back post down to a wide eave, shaded interior tapering under), sharing the branch prop's wood/outline tones; `WorldScene.drawShelter` swaps the 🛖 glyph to the baked `bakePropArt('shelter')` image (emoji kept as fallback); `__shelterArt` hook. First draft read as a symmetric tent; rev 2 made it one slope + a back post so the open front reads. cycle-066 key-pin updated + a distinctness unit; 757 unit / e2e green (the cycle-074 shelter spec now asserts `__shelterArt === 'prop_shelter'`).)*
+
+## Cycle 75 lore additions — the grove travels home (2026-06-24)
+
+> Cycle 74 made the grove a place a dino arrives in (339) and builds in (315). Cycle 75 picks
+> **BACKLOG-342** (tell of the grove) — news of the second zone travelling the bowl on the existing
+> gossip spine — and seeds what that news *does* once it spreads: it pulls newcomers groveward (345),
+> it becomes common ground between travelers (346), and it leaves a returning dino visibly grove-struck
+> for a while (347).
+
+- [ ] BACKLOG-345 [emergent] News pulls a newcomer — a bowl dino that has *heard* grove news (342) but never crossed itself gets a one-time curiosity nudge: its next migration roll leans toward the grove instead of a coin-flip, so word of a place draws the un-traveled to it. Builds on 342 / 274 / 333.
+- [ ] BACKLOG-346 [social] Pond-swappers — when two dinos who have *both* seen the grove meet, they swap pond notes: a small shared-place bond bump + a memory each keeps, the second zone becoming common ground between travelers. Builds on 339 / 342 / 013.
+- [ ] BACKLOG-347 [emergent] Grove-struck idle — a dino freshly back from the grove occasionally floats a wistful 🌿 idle bubble in the bowl (a glance back the way it came) for a short window after returning, so you can read who's just come home from over there. Builds on 339 / 334 / 325.
 
 ## Operator session — 2026-06-12
 
