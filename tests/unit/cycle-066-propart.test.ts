@@ -9,6 +9,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'crop_ripe',
       'crop_seed',
       'crop_sprout',
+      'shelter',
       'stone',
     ]);
   });
@@ -42,5 +43,11 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
     expect(join('branch')).not.toBe(join('stone'));
     expect(join('stone')).not.toBe(join('cairn'));
     expect(join('branch')).not.toBe(join('cairn'));
+  });
+
+  it('the lean-to shelter is its own distinct grid (BACKLOG-344)', () => {
+    const join = (n: string) => PROP_RIGS[n].grid.join('\n');
+    expect(join('shelter')).not.toBe(join('cairn'));
+    expect(join('shelter')).not.toBe(join('branch'));
   });
 });

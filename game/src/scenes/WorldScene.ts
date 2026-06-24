@@ -635,6 +635,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
     (window as any).__shelters = () => this.shelters.map((s) => ({ ...s })); // BACKLOG-315: dino-built shelters
+    // BACKLOG-344: the first shelter's baked texture key (or null if it fell back to the 🛖 glyph).
+    (window as any).__shelterArt = () =>
+      this.shelterSprites[0] instanceof Phaser.GameObjects.Image ? this.shelterSprites[0].texture.key : null;
     (window as any).__canBuildShelter = () => canBuildShelter(this.stockpile); // BACKLOG-315
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
@@ -964,11 +967,15 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(`${CAIRN_GLYPH} ${crafter.name} stacked a cairn`);
   }
 
-  /** Draw a shelter glyph at a tile (BACKLOG-315). Mirror of drawCairn; 🛖 glyph until the prop rig (344). */
+  /** Draw a shelter at a tile (BACKLOG-315). Mirror of drawCairn — a baked lean-to prop (BACKLOG-344) where
+   *  the rig exists, else the 🛖 glyph (graceful fallback). */
   private drawShelter(s: { tileX: number; tileY: number; zone: string }): void {
     const px = s.tileX * TILE + TILE / 2;
     const py = s.tileY * TILE + TILE / 2;
-    const sprite = this.add.text(px, py, SHELTER_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    const tex = bakePropArt(this, 'shelter'); // BACKLOG-344: pixel lean-to where one exists
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, SHELTER_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
     sprite.setVisible(s.zone === this.zoneId); // BACKLOG-308: a shelter shows only in its own zone
     this.shelterSprites.push(sprite);
   }

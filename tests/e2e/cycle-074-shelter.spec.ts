@@ -73,6 +73,9 @@ test('a zone saves for a lean-to once it has stacked three cairns', async ({ pag
   // The shelter is zone-scoped to the bowl and persisted in the save.
   const built = await shelters(page);
   expect(built[0].zone).toBe('bowl');
+
+  // BACKLOG-344: the shelter renders as the baked lean-to prop, not the 🛖 glyph.
+  expect(await page.evaluate(() => (window as W).__shelterArt())).toBe('prop_shelter');
   const save = JSON.parse(await exportSave(page));
   expect(save.shelters.length).toBe(1);
   expect(save.version).toBe(2); // additive — no version bump

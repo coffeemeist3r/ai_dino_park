@@ -184,6 +184,41 @@ const CROP_RIPE_GRID: ReadonlyArray<string> = [
 
 const CROP_RIPE_RIG: PropRig = { size: 16, grid: CROP_RIPE_GRID, palette: { ...SOIL, ...LEAF, r: BERRY } };
 
+// ── Lean-to shelter 🛖 (BACKLOG-315/344) — the dino-built landmark beyond the cairn, drawn as branches.
+// A single sloped roof of lashed wood rising from a back post down to a wide front eave, with the open
+// shaded interior tapering underneath. Built of branches, so it shares the branch's wood/outline tones.
+const SHELTER_GRID: ReadonlyArray<string> = [
+  '................',
+  '....ooooo.......',
+  '...oLLLwwo......',
+  '..oLLwwwwwo.....',
+  '.oLLwwwwwwwo....',
+  '.owwwwwwwwwwo...',
+  '.ooooooooooooo..',
+  '.pokkkkkkkkkkdo.',
+  '.pokkkkkkkkkddo.',
+  '.pokkkkkkkkdddo.',
+  '.pokkkkkkkddo...',
+  '.pokkkkkkddo....',
+  '.pokkkkkddo.....',
+  '.pokkkkddo......',
+  '.pokkkddo.......',
+  '.ooooooooooooo..',
+];
+
+const SHELTER_RIG: PropRig = {
+  size: 16,
+  grid: SHELTER_GRID,
+  palette: {
+    o: 0x3a2410, // dark bark outline (shared with the branch — it's made of branches)
+    w: 0x8a5a2b, // wood roof body
+    L: 0xb98a4e, // lit roof highlight (the weathered upper slope)
+    p: 0x5e3a18, // back support post
+    k: 0x2c1d0e, // deep shaded interior
+    d: 0x46301a, // interior floor / lit eave underside
+  },
+};
+
 /**
  * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone') + 'cairn', plus the
  * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
@@ -195,6 +230,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_seed: CROP_SEED_RIG,
   crop_sprout: CROP_SPROUT_RIG,
   crop_ripe: CROP_RIPE_RIG,
+  shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */
