@@ -42,6 +42,7 @@ import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf, zonePopulations } from '../world/zones';
 import { spreadGroveWord, groveNewsMemory, groveWordLine } from '../world/groveword';
+import { groveCurious } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -273,8 +274,12 @@ export class WorldScene extends Phaser.Scene {
   private resourceAgeByZone: Record<string, number> = {};
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
   private gathered: Record<string, number> = {};
-  /** Shared per-kind park stockpile gathering banks into (BACKLOG-285). Persisted; absent → {}. */
-  private stockpile: Stockpile = {};
+  /** Per-zone per-kind stockpile gathering banks into (BACKLOG-285 shared → BACKLOG-328 per-zone). Persisted; absent → {}. */
+  private stockpileByZone: Record<string, Stockpile> = {};
+  /** The (lazily-created) pile for a zone — each zone banks, caps, and spends its own gathering (BACKLOG-328). */
+  private pileFor(zone: string): Stockpile {
+    return (this.stockpileByZone[zone] ??= {});
+  }
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
   private cairns: { tileX: number; tileY: number; zone: string }[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
@@ -491,7 +496,7 @@ export class WorldScene extends Phaser.Scene {
       day: getWorldClock().now().day,
       generations: maxGeneration(this.born),
       zone: zoneById(this.zoneId).name,
-      stockpile: stockpileLine(this.stockpile),
+      stockpile: stockpileLine(this.pileFor(this.zoneId)),
       zoneTally: this.zoneTally(),
     });
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
@@ -521,7 +526,7 @@ export class WorldScene extends Phaser.Scene {
         day: getWorldClock().now().day,
         generations: maxGeneration(this.born),
         zone: zoneById(this.zoneId).name,
-        stockpile: stockpileLine(this.stockpile),
+        stockpile: stockpileLine(this.pileFor(this.zoneId)),
         zoneTally: this.zoneTally(),
       }).join('\n'),
     );
@@ -642,14 +647,15 @@ export class WorldScene extends Phaser.Scene {
       return r ? { ...r } : null;
     };
     (window as any).__gathered = () => ({ ...this.gathered });
-    (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
+    (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
+    (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
-    (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
+    (window as any).__canCraft = () => canCraft(this.pileFor(this.zoneId)); // BACKLOG-286
     (window as any).__shelters = () => this.shelters.map((s) => ({ ...s })); // BACKLOG-315: dino-built shelters
     // BACKLOG-344: the first shelter's baked texture key (or null if it fell back to the 🛖 glyph).
     (window as any).__shelterArt = () =>
       this.shelterSprites[0] instanceof Phaser.GameObjects.Image ? this.shelterSprites[0].texture.key : null;
-    (window as any).__canBuildShelter = () => canBuildShelter(this.stockpile); // BACKLOG-315
+    (window as any).__canBuildShelter = () => canBuildShelter(this.pileFor(this.zoneId)); // BACKLOG-315
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
       resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
@@ -918,35 +924,35 @@ export class WorldScene extends Phaser.Scene {
     delete this.resourceSpriteByZone[this.zoneId];
     delete this.resourceByZone[this.zoneId];
     this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
-    // BACKLOG-309: at the per-kind cap, the pickup is consumed but banks nothing — the first economy
-    // constraint. The stall surfaces as a beat so the pressure to spend (craft) reads in-world.
-    if (atCap(this.stockpile, kind)) {
+    // BACKLOG-328: a dino banks into its *own* home zone's pile (split from the old shared park total).
+    const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
+    // BACKLOG-309: at the per-kind cap (now per zone), the pickup is consumed but banks nothing — the
+    // first economy constraint. The stall surfaces as a beat so the pressure to spend (craft) reads in-world.
+    if (atCap(this.pileFor(zone), kind)) {
       this.logEvent(`${RESOURCE_GLYPH[kind]} stores full — ${taker.name} drops the ${kind}`);
     } else {
-      this.stockpile = bankResource(this.stockpile, kind); // BACKLOG-285: bank into the shared park total
+      this.stockpileByZone[zone] = bankResource(this.pileFor(zone), kind); // BACKLOG-328: into this zone's pile
     }
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
-    // BACKLOG-286/315: the dino that just banked builds. A zone that has already stacked
-    // SHELTER_AFTER_CAIRNS cairns and has no shelter yet *saves* toward a larger lean-to (315) instead
-    // of draining the pile on more cairns — the only way the shared pile climbs to the richer recipe.
-    // Below that bar, the ordinary cairn craft (286) is untouched.
-    const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
+    // BACKLOG-286/315: the dino that just banked builds, spending its *zone's* pile. A zone that has
+    // already stacked SHELTER_AFTER_CAIRNS cairns and has no shelter yet *saves* toward a larger lean-to
+    // (315) instead of draining the pile on more cairns. Below that bar, the cairn craft (286) is untouched.
     const zoneCairns = this.cairns.filter((c) => c.zone === zone).length;
     const hasShelter = this.shelters.some((s) => s.zone === zone);
     if (zoneCairns >= SHELTER_AFTER_CAIRNS && !hasShelter) {
-      const built = buildShelter(this.stockpile);
+      const built = buildShelter(this.pileFor(zone));
       if (built) {
-        this.stockpile = built;
+        this.stockpileByZone[zone] = built;
         this.placeShelter(this.tileOf(taker), taker);
         this.refreshPlaque();
       }
       // else: still saving — no cairn this tick (the zone is building toward its shelter).
     } else {
-      const spent = craft(this.stockpile);
+      const spent = craft(this.pileFor(zone));
       if (spent) {
-        this.stockpile = spent;
+        this.stockpileByZone[zone] = spent;
         this.placeCairn(this.tileOf(taker), taker);
         this.refreshPlaque();
       }
@@ -2803,6 +2809,13 @@ export class WorldScene extends Phaser.Scene {
       if (d) this.startMigration(d);
       return zoneOf(this.dinoZones, name, BOWL_ID);
     };
+    // BACKLOG-345: run the migrant *pick* deterministically (bypassing cooldown/chance) — returns the
+    // chosen name, so a test can prove grove news pulls a curious newcomer over a coin-flip.
+    (window as any).__maybeMigrate = () => {
+      const d = this.pickMigrant();
+      if (d) this.startMigration(d);
+      return d?.name ?? null;
+    };
     (window as any).__migrating = () => [...this.migrating];
     // BACKLOG-333: the real-time cadences (regression guard — a return to clock-gating fails these).
     (window as any).__wanderStepMs = () => WANDER_STEP_MS;
@@ -2813,12 +2826,24 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
-    // BACKLOG-334: pick a dino not already crossing; it walks to the edge (the journey is visible), it doesn't teleport.
-    const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
-    const d = candidates[Math.floor(Math.random() * candidates.length)];
+    const d = this.pickMigrant();
     if (!d) return;
     this.startMigration(d);
     this.lastMigrationMs = Date.now();
+  }
+
+  /**
+   * Pick the next migrant (BACKLOG-334 pick + BACKLOG-345 nudge): a dino not already crossing, *preferring*
+   * a grove-curious one — a bowl dino pulled by grove news it has only heard, never crossed (342→345).
+   * When none is curious, the pick is the old uniform random over all candidates (behavior unchanged).
+   */
+  private pickMigrant(): Dino | null {
+    const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
+    const curious = candidates.filter((d) =>
+      groveCurious(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID)),
+    );
+    const pool = curious.length ? curious : candidates;
+    return pool[Math.floor(Math.random() * pool.length)] ?? null;
   }
 
   /** Begin a visible crossing (BACKLOG-334): mark the dino migrating; the forceStep walk + `crossDino` do the rest. */
@@ -3400,7 +3425,8 @@ export class WorldScene extends Phaser.Scene {
       roles: this.roles,
       dinoZones: this.dinoZones,
       gathered: this.gathered,
-      stockpile: this.stockpile,
+      stockpile: this.pileFor(BOWL_ID), // BACKLOG-328: legacy field kept = bowl pile (back-compat for old readers + tests)
+      stockpileByZone: this.stockpileByZone, // BACKLOG-328: the full per-zone map
       cairns: this.cairns,
       shelters: this.shelters,
       groveVisited: this.groveVisited,
@@ -3453,7 +3479,9 @@ export class WorldScene extends Phaser.Scene {
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
-      this.stockpile = (save.stockpile ?? {}) as Stockpile; // BACKLOG-285: park stockpile restore
+      // BACKLOG-328: per-zone piles restore; an older save's single global `stockpile` migrates into the bowl pile.
+      this.stockpileByZone = (save.stockpileByZone as Record<string, Stockpile>)
+        ?? (save.stockpile && Object.keys(save.stockpile).length ? { [BOWL_ID]: save.stockpile as Stockpile } : {});
       // BACKLOG-286 restore; BACKLOG-308: backfill a home zone for cairns from saves before 308 (→ bowl).
       this.cairns = (save.cairns ?? []).map((c) => ({ ...c, zone: c.zone ?? BOWL_ID }));
       for (const c of this.cairns) this.drawCairn(c);

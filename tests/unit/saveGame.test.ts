@@ -192,6 +192,23 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, stockpile: { branch: 'lots' } }))).toBeNull();
   });
 
+  it('round-trips per-zone stockpiles (BACKLOG-328)', () => {
+    const withZones: SaveData = { ...sample, stockpileByZone: { bowl: { branch: 2 }, grove: { stone: 1 } } };
+    expect(deserialize(serialize(withZones))).toEqual(withZones);
+  });
+
+  it('loads a pre-328 save with only the global stockpile (stockpileByZone undefined) (BACKLOG-328)', () => {
+    const out = deserialize(JSON.stringify({ ...sample, stockpile: { branch: 3 } }));
+    expect(out).not.toBeNull();
+    expect(out!.stockpile).toEqual({ branch: 3 });
+    expect(out!.stockpileByZone).toBeUndefined(); // WorldScene migrates this into the bowl pile at restore
+  });
+
+  it('returns null for a malformed per-zone stockpile value (BACKLOG-328)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, stockpileByZone: { bowl: { branch: 'lots' } } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, stockpileByZone: { bowl: 5 } }))).toBeNull();
+  });
+
   it('round-trips crafted cairns (BACKLOG-286)', () => {
     const withCairns: SaveData = { ...sample, cairns: [{ tileX: 5, tileY: 7 }, { tileX: 12, tileY: 3 }] };
     expect(deserialize(serialize(withCairns))).toEqual(withCairns);

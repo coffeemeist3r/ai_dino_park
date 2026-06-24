@@ -72,3 +72,20 @@ Both thin glue over pure helpers; one new pure module (345), one save-schema add
 
 ## Estimated touch count
 ~6 files: `curiosity.ts` (new), `saveGame.ts`, `WorldScene.ts`, `tests/unit/curiosity.test.ts` (new), `tests/unit/saveGame.test.ts` (extend), + 2 e2e specs. Production code 3 files; within one fire.
+
+---
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/curiosity.ts` (new) — pure `groveCurious` (345).
+- `game/src/scenes/WorldScene.ts` — `pickMigrant()` (curious-preferred) + `__maybeMigrate` hook; `maybeMigrate` uses it (345). `stockpile`→`stockpileByZone` + `pileFor`; `checkGather` banks/caps/crafts per gatherer-zone (one `zone` binding moved up); plaque Stores = active zone; `__stockpile`/`__zoneStockpile`/`__canCraft`/`__canBuildShelter` per active zone; save writes legacy `stockpile`=bowl + `stockpileByZone`; restore migrates old global pile → bowl (328).
+- `game/src/world/saveGame.ts` — `SaveData.stockpileByZone?`, nested validation (zone→kind→count), included in output (328).
+- `tests/unit/curiosity.test.ts` (new, 4) — `groveCurious` truth table.
+- `tests/unit/saveGame.test.ts` (extend, +3) — per-zone round-trip, pre-328 load, malformed reject.
+- `tests/e2e/cycle-076-news-pull.spec.ts` (new) — grove news pulls the curious newcomer.
+- `tests/e2e/cycle-076-zone-stockpile.spec.ts` (new) — zones bank independently; readout follows the keeper.
+
+**Deviations:** none. The pure resource.ts pile helpers were reused unchanged, as planned.
+
+**Build:** ✅ clean. **Unit:** ✅ 775 passed (was 768; +7). **E2E (new specs):** ✅ both pass warm (first cold-server run hit the known `__ready` boot flake; green on warm re-run — QA to confirm on the full run).

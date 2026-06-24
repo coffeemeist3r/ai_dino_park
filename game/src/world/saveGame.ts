@@ -66,8 +66,10 @@ export interface SaveData {
   dinoZones?: Record<string, string>;
   /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
   gathered?: Record<string, number>;
-  /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. */
+  /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. Legacy = bowl pile since 328. */
   stockpile?: Record<string, number>;
+  /** Per-zone stockpiles (BACKLOG-328). Additive over `stockpile`; absent in pre-328 saves (→ bowl pile on restore). zone→kind→count. */
+  stockpileByZone?: Record<string, Record<string, number>>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -235,6 +237,26 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // stockpileByZone is additive over the global stockpile (BACKLOG-328) — zone→(kind→count). Absent in
+  // pre-328 saves (left undefined; WorldScene migrates the global `stockpile` into the bowl pile on restore).
+  let stockpileByZone: Record<string, Record<string, number>> | undefined;
+  if (o.stockpileByZone !== undefined) {
+    if (typeof o.stockpileByZone !== 'object' || o.stockpileByZone === null) return null;
+    const zones = o.stockpileByZone as Record<string, unknown>;
+    stockpileByZone = {};
+    for (const z of Object.keys(zones)) {
+      const pile = zones[z];
+      if (typeof pile !== 'object' || pile === null) return null;
+      const entries = pile as Record<string, unknown>;
+      const out: Record<string, number> = {};
+      for (const k of Object.keys(entries)) {
+        if (!isNum(entries[k])) return null;
+        out[k] = entries[k] as number;
+      }
+      stockpileByZone[z] = out;
+    }
+  }
+
   // cairns is additive over v2 — absent in older saves (default []); array of {tileX,tileY}. (BACKLOG-286)
   // `zone` is additive over that (BACKLOG-308); absent → bowl, backfilled on restore.
   let cairns: { tileX: number; tileY: number; zone?: string }[] = [];
@@ -353,6 +375,7 @@ export function deserialize(json: string): SaveData | null {
     dinoZones,
     gathered,
     stockpile,
+    stockpileByZone,
     cairns,
     shelters,
     groveVisited,
