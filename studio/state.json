@@ -1,6 +1,6 @@
 {
   "cycle": 76,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-345: News pulls a newcomer - grove news nudges a curious bowl dino to migrate",
   "structureItem": "BACKLOG-328: Per-zone stockpile - split the shared pile into one per zone",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-24T14:00:00-05:00",
     "structure-smith": "2026-06-24T12:05:00-05:00",
-    "designer": "2026-06-24T12:10:00-05:00",
+    "designer": "2026-06-24T14:10:00-05:00",
     "code-planner": "2026-06-24T12:15:00-05:00",
     "coder": "2026-06-24T12:25:00-05:00",
     "qa": "2026-06-24T12:30:00-05:00",
