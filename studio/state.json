@@ -1,6 +1,6 @@
 {
   "cycle": 74,
-  "phase": "validator-pending",
+  "phase": "artist-pending",
   "currentItem": "BACKLOG-339: First steps in the grove",
   "structureItem": "BACKLOG-315: Dino-built shelter",
   "lastVerdict": "APPROVED",
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-24T10:15:00-05:00",
     "coder": "2026-06-24T10:25:00-05:00",
     "qa": "2026-06-24T10:30:00-05:00",
-    "validator": "2026-06-23T10:35:00-05:00",
+    "validator": "2026-06-24T10:35:00-05:00",
     "artist": "2026-06-23T10:40:00-05:00"
   }
 }

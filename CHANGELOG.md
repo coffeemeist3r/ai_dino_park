@@ -9,6 +9,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 074 — 2026-06-24
+- BACKLOG-315: Dino-built shelter — the build arc's second, larger structure beyond the cairn. Once a zone has stacked 3 cairns it stops draining the shared pile on cairns and *saves* toward a lean-to at the richer recipe {branch:6, stone:4} (the cairn auto-crafts at {3,2} every gather, so a count gate is the only way the pile climbs); the lean-to is placed/persisted/zone-scoped exactly like the cairn (additive `shelters` save, 🛖 glyph with the pixel prop seeded as 344), one landmark per zone, the cairn path untouched. 8 unit + 1 e2e. (structure track)
+- BACKLOG-339: First steps in the grove — a dino crossing *into* the grove for the first time ever reacts: a 🌿 look-around bubble, a "first time across" memory (rides the existing store → can colour a later greeting), and a one-step pause before it wanders on. Pure `world/arrival.ts` (`firstGroveArrival`/`groveArrivalMemory`/`groveArrivalLine`); fires once per dino, grove-only; the `__migrate` teleport untouched. Additive `groveVisited` save, no version bump. 5 unit + 1 e2e. (lore track)
+
 ## Cycle 073 — 2026-06-23
 - BACKLOG-334: Visible zone crossing — migration no longer teleports. The ambient roll marks a dino "crossing"; in `forceStep` it walks to its zone's linked edge (bowl→east, grove→west) via pure `migrationStepTarget`/`atMigrationEdge`/`crossEntryTile`, and on arrival flips its home zone + reappears at the far zone's opposite edge (like a keeper crossing). You see a dino leave for / arrive from the grove instead of blinking there. The deterministic `__migrate` hook stays instant (cycle-068/069/071 parity); no save change. 7 unit + 2 e2e. (structure track)
 - BACKLOG-181: Sleep murmurs — a huddling, in-view dino floats a 💭 sleep-line drawn from its strongest day-memory (pure `world/murmur.ts`: most-recent memory → fragment, leading event glyph stripped); a memoryless dino dozes "💭 …zzz…". Sparse roll, deterministic (no model — the `NPCBrain` boundary is untouched), ephemeral (no save). LLM colour deferred to the 181 follow-ups (335–337). 5 unit + 2 e2e. (lore track)
