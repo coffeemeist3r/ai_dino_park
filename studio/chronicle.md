@@ -2089,3 +2089,7 @@ Planned both. 342: new pure `world/groveword.ts` (`GROVE_NEWS_TOKEN`/`groveNewsM
 ## 2026-06-24 — cycle 075 — coder — 342 + 316
 
 Built both. 342: pure `world/groveword.ts` (cloned from `spreadColdWord` — `groveNewsMemory`/`groveWordLine`/`spreadGroveWord`, reusing `RUMOR_MARK`/`isShareable`/`remember`/`recall`); `crossDino` files `🌿 saw the pond over in the grove` on a grove→bowl return, and a grove rung sits in the gossip cascade between cold and generic gossip (a worry still outranks scenery). 316: `zonePopulations` (counting twin of `occupiedZones`) + `zoneTallyLine` + an additive `zoneTally?` on the plaque; a `▸` marks the keeper's active zone, fed at both plaque sites + refreshed on migration. Build clean; 768 unit green; both new cycle-075 e2e specs pass warm (first run hit the known cold-boot `__ready` flake, green on warm re-run). No save change, no new deps, NPCBrain untouched. phase → qa-pending.
+
+## 2026-06-24 — cycle 075 — qa — both tracks APPROVE
+
+Build clean; 768 unit / 238 e2e green (full run). All 8 AC for 342 and all 7 for 316 PASS — every criterion has a unit or e2e cite. The two new specs hit the known cold-boot `__ready` flake on a cold-server first run (not the feature); green warm and in the full suite. No bugs, no regressions. Both tracks → APPROVE. phase → validator-pending.
