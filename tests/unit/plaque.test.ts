@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { generationOf, maxGeneration, plaqueLines, type Lineaged } from '../../game/src/ui/plaque';
+import { generationOf, maxGeneration, plaqueLines, zoneTallyLine, type Lineaged } from '../../game/src/ui/plaque';
+import { zonePopulations, BOWL_ID, GROVE_ID } from '../../game/src/world/zones';
 
 describe('generations', () => {
   it('founders (no parents) are generation 1', () => {
@@ -46,5 +47,32 @@ describe('plaqueLines', () => {
     const lines = plaqueLines({ population: 6, day: 3, generations: 2, stockpile: '🪵 3 · 🪨 1' });
     expect(lines).toHaveLength(3);
     expect(lines[2]).toBe('Stores · 🪵 3 · 🪨 1');
+  });
+
+  it('appends a zones line when a tally is set, omits it when absent (BACKLOG-316)', () => {
+    expect(plaqueLines({ population: 6, day: 3, generations: 2 })).toHaveLength(2);
+    const lines = plaqueLines({ population: 6, day: 3, generations: 2, zoneTally: '▸Pocket Cretaceous 4 · The Grove 2' });
+    expect(lines[lines.length - 1]).toBe('Zones · ▸Pocket Cretaceous 4 · The Grove 2');
+  });
+});
+
+describe('zone indicator (BACKLOG-316)', () => {
+  it('zonePopulations counts each name by home zone, every ZONES id present', () => {
+    const map = { Rex: GROVE_ID, Mossback: BOWL_ID };
+    const pops = zonePopulations(map, ['Rex', 'Mossback', 'Sunny'], BOWL_ID); // Sunny unmapped → fallback bowl
+    expect(pops[BOWL_ID]).toBe(2);
+    expect(pops[GROVE_ID]).toBe(1);
+  });
+
+  it('zonePopulations seeds an empty zone to 0', () => {
+    const pops = zonePopulations({}, ['Rex', 'Mossback'], BOWL_ID);
+    expect(pops[BOWL_ID]).toBe(2);
+    expect(pops[GROVE_ID]).toBe(0);
+  });
+
+  it('zoneTallyLine marks only the active zone with ▸', () => {
+    const line = zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, GROVE_ID);
+    expect(line).toBe('Pocket Cretaceous 4 · ▸The Grove 2');
+    expect(zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, BOWL_ID)).toBe('▸Pocket Cretaceous 4 · The Grove 2');
   });
 });

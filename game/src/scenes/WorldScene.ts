@@ -40,7 +40,8 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf } from '../world/zones';
+import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf, zonePopulations } from '../world/zones';
+import { spreadGroveWord, groveNewsMemory, groveWordLine } from '../world/groveword';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -94,7 +95,7 @@ import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
-import { maxGeneration, plaqueLines } from '../ui/plaque';
+import { maxGeneration, plaqueLines, zoneTallyLine } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
@@ -491,6 +492,7 @@ export class WorldScene extends Phaser.Scene {
       generations: maxGeneration(this.born),
       zone: zoneById(this.zoneId).name,
       stockpile: stockpileLine(this.stockpile),
+      zoneTally: this.zoneTally(),
     });
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
     (window as any).__zone = () => this.zoneId;
@@ -520,7 +522,16 @@ export class WorldScene extends Phaser.Scene {
         generations: maxGeneration(this.born),
         zone: zoneById(this.zoneId).name,
         stockpile: stockpileLine(this.stockpile),
+        zoneTally: this.zoneTally(),
       }).join('\n'),
+    );
+  }
+
+  /** Per-zone population readout (BACKLOG-316): each zone's resident count, '▸' on the keeper's active zone. */
+  private zoneTally(): string {
+    return zoneTallyLine(
+      zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID),
+      this.zoneId,
     );
   }
 
@@ -1633,6 +1644,13 @@ export class WorldScene extends Phaser.Scene {
       return g.rumor;
     };
     (window as any).__coldWord = (speaker: string) => coldWordLine(speaker);
+    // dev-only: word of the grove (BACKLOG-342) — a just-returned speaker leads with grove news.
+    (window as any).__spreadGroveWord = (a: string, b: string) => {
+      const g = spreadGroveWord(this.memory, a, b);
+      this.memory = g.store;
+      return g.rumor;
+    };
+    (window as any).__groveWord = (speaker: string) => groveWordLine(speaker);
     // dev-only: word of the warmth (BACKLOG-223) — a warmed speaker leads with the good news.
     (window as any).__spreadWarmWord = (a: string, b: string) => {
       const g = spreadWarmWord(this.memory, a, b);
@@ -2044,11 +2062,15 @@ export class WorldScene extends Phaser.Scene {
       const relief = spreadReliefWord(this.memory, a.name, b.name);
       const warm = relief.rumor ? relief : spreadWarmWord(this.memory, a.name, b.name);
       const cold = warm.rumor ? warm : spreadColdWord(this.memory, a.name, b.name);
-      const gossip = cold.rumor ? cold : spreadGossip(this.memory, a.name, b.name);
+      // Tell of the grove (BACKLOG-342): a just-returned dino leads with grove news — below cold (a
+      // worry outranks scenery), above the generic retelling (news of a place beats an ordinary rumor).
+      const grove = cold.rumor ? cold : spreadGroveWord(this.memory, a.name, b.name);
+      const gossip = grove.rumor ? grove : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
       if (relief.rumor) this.logEvent(`😌 ${b.name} heard the all-clear from ${a.name}`);
       else if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
+      else if (grove.rumor) this.logEvent(`🌿 ${b.name} heard about the grove from ${a.name}`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
@@ -2826,6 +2848,12 @@ export class WorldScene extends Phaser.Scene {
       this.showBubble(d, groveArrivalLine());
       this.arriving.add(d.name);
     }
+    // Tell of the grove (BACKLOG-342): a dino crossing *back* to the bowl carries grove news, which it
+    // leads its next meeting with (the gossip cascade). Only the return crossing files it.
+    if (dest === BOWL_ID) {
+      this.memory = remember(this.memory, d.name, groveNewsMemory());
+    }
+    this.refreshPlaque(); // BACKLOG-316: the per-zone tally is live the moment a dino changes zones
     void this.saveGame();
   }
 

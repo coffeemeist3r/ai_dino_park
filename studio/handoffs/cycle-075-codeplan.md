@@ -78,3 +78,21 @@ Both tracks are thin glue over pure helpers, no save change, no new deps. Shared
 
 ## Estimated touch count
 ~6 files: `groveword.ts` (new), `zones.ts`, `plaque.ts`, `WorldScene.ts`, `tests/unit/groveword.test.ts` (new), `tests/unit/plaque.test.ts` (extend), + 2 e2e specs. Core production code is 4 files; within one fire.
+
+---
+
+## Shipped
+
+**Files touched:**
+- `game/src/world/groveword.ts` (new) — `GROVE_NEWS_TOKEN`, `groveNewsMemory`, `groveWordLine`, `spreadGroveWord` (342).
+- `game/src/world/zones.ts` — added `zonePopulations` (316).
+- `game/src/ui/plaque.ts` — `PlaqueStats.zoneTally?`, `plaqueLines` appends the Zones line, new `zoneTallyLine` (316).
+- `game/src/scenes/WorldScene.ts` — imports; `zoneTally()` helper + `zoneTally` field at both plaque sites (316); `crossDino` files grove news on a bowl return + `refreshPlaque()`; grove rung in the gossip cascade; `__spreadGroveWord`/`__groveWord` hooks (342).
+- `tests/unit/groveword.test.ts` (new, 7) — `spreadGroveWord` purity, token/RUMOR_MARK discipline, 1-hop, cascade-order sanity.
+- `tests/unit/plaque.test.ts` (extend, +5) — `zonePopulations`, `zoneTallyLine` ▸ marker, the Zones line.
+- `tests/e2e/cycle-075-grove-word.spec.ts` (new) — grove→bowl return files news, leads next meeting with it.
+- `tests/e2e/cycle-075-zone-indicator.spec.ts` (new) — active-zone ▸ marker moves, per-zone counts update on migration.
+
+**Deviations:** added `this.refreshPlaque()` to `crossDino` (not explicitly in the plan) so the 316 tally is live the instant a dino migrates, not a tick later — noted as a minor scope add within 316's intent. `__recall` doesn't exist; the e2e reads `__memory()[name]` as the plan anticipated.
+
+**Build:** ✅ clean (`npm run build`). **Unit:** ✅ 768 passed (was 752; +12 new + others). **E2E (new specs):** ✅ both cycle-075 specs pass warm (first run hit the known cold-boot `__ready` flake; green on warm re-run — QA to confirm on a full run).

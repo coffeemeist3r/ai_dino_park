@@ -135,3 +135,18 @@ export function crossEntryTile(homeZone: string, row: number, cols: number): { t
 export function occupiedZones(map: Record<string, string>, fallback: string, names: string[]): string[] {
   return [...new Set(names.map((n) => zoneOf(map, n, fallback)))];
 }
+
+/**
+ * Per-zone head count (BACKLOG-316) — how many named dinos call each zone home, so the split world is
+ * legible from the plaque without walking it. The counting twin of `occupiedZones`: every `ZONES` id is
+ * present (seeded 0), names map by home zone (unmapped → fallback). Pure.
+ */
+export function zonePopulations(map: Record<string, string>, names: string[], fallback: string): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const z of ZONES) counts[z.id] = 0;
+  for (const n of names) {
+    const id = zoneOf(map, n, fallback);
+    counts[id] = (counts[id] ?? 0) + 1;
+  }
+  return counts;
+}
