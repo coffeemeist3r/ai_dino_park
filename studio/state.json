@@ -2,7 +2,7 @@
   "cycle": 75,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-316: Zone indicator — active zone + per-zone population on the plaque",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-24T12:00:00-05:00",
-    "structure-smith": "2026-06-24T10:05:00-05:00",
+    "structure-smith": "2026-06-24T12:05:00-05:00",
     "designer": "2026-06-24T10:10:00-05:00",
     "code-planner": "2026-06-24T10:15:00-05:00",
     "coder": "2026-06-24T10:25:00-05:00",

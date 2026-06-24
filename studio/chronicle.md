@@ -2073,3 +2073,7 @@ The `[art]` queue was empty for cycles 70–73 (the artist no-op'd each fire); t
 ## 2026-06-24 — cycle 075 — lore-smith — tell of the grove
 
 Cycle bumps to 75 (both 74 tracks APPROVED). Theme: make the split world *talk* — the bowl should hear about the grove without the keeper walking there. Suggested next-up **BACKLOG-342** (tell of the grove): a dino freshly back from the grove leads its next gossip with what it saw, on the same cold/warm/relief word cascade the bowl already runs. Seeded three follow-ups on what that news does once it spreads — 345 (news pulls a newcomer groveward), 346 (pond-swappers: shared-grove bond), 347 (grove-struck idle bubble on return). Idea Box: the lone open entry (stash-ahead art policy) left deferred — no no-op-art pressure this cycle. phase → designer-pending.
+
+## 2026-06-24 — cycle 075 — structure-smith — zone indicator (BACKLOG-316)
+
+Queue at 3 open (< X=4), so brainstormed two foundation-first items — both deepening the *existing* two zones, no third zone (operator's standing call: drain two-zone depth first): 348 (zone resource bias — grove leans branch, bowl leans stone) and 349 (grove plot — a second plantable plot so the grove farms its own crop). Queue now 5 open. Chose **BACKLOG-316** (zone indicator) to build: a small plaque readout of the keeper's active zone + per-zone population, so the split world the last seven cycles built is legible without walking it. Smallest unblocked item, and every later two-zone feature reads better for it. Files disjoint from the lore track (342) — clean two-track fire.
