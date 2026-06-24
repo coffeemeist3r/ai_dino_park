@@ -1,8 +1,8 @@
 {
   "cycle": 76,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-345: News pulls a newcomer - grove news nudges a curious bowl dino to migrate",
-  "structureItem": "BACKLOG-328: Per-zone stockpile - split the shared pile into one per zone",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,12 +10,12 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-24T14:00:00-05:00",
-    "structure-smith": "2026-06-24T12:05:00-05:00",
+    "structure-smith": "2026-06-24T14:05:00-05:00",
     "designer": "2026-06-24T14:10:00-05:00",
     "code-planner": "2026-06-24T14:15:00-05:00",
     "coder": "2026-06-24T14:25:00-05:00",
     "qa": "2026-06-24T14:30:00-05:00",
-    "validator": "2026-06-24T12:35:00-05:00",
+    "validator": "2026-06-24T14:35:00-05:00",
     "artist": "2026-06-24T10:40:00-05:00"
   }
 }
