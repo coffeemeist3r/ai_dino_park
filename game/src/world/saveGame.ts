@@ -70,6 +70,10 @@ export interface SaveData {
   stockpile?: Record<string, number>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
+  /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
+  shelters?: { tileX: number; tileY: number; zone?: string }[];
+  /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
+  groveVisited?: string[];
   /** The planted plot (BACKLOG-145), or null/absent when empty. Stores the in-game day it was planted. */
   plot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
@@ -245,6 +249,27 @@ export function deserialize(json: string): SaveData | null {
     cairns = o.cairns as { tileX: number; tileY: number; zone?: string }[];
   }
 
+  // shelters is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors cairns. (BACKLOG-315)
+  let shelters: { tileX: number; tileY: number; zone?: string }[] = [];
+  if (o.shelters !== undefined) {
+    if (!Array.isArray(o.shelters)) return null;
+    for (const s of o.shelters) {
+      if (typeof s !== 'object' || s === null) return null;
+      const r = s as Record<string, unknown>;
+      if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+      if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+    }
+    shelters = o.shelters as { tileX: number; tileY: number; zone?: string }[];
+  }
+
+  // groveVisited is additive — absent in older saves (default []); a flat list of dino names. (BACKLOG-339)
+  let groveVisited: string[] = [];
+  if (o.groveVisited !== undefined) {
+    if (!Array.isArray(o.groveVisited)) return null;
+    for (const n of o.groveVisited) if (typeof n !== 'string') return null;
+    groveVisited = o.groveVisited as string[];
+  }
+
   // plot/harvested are additive over v2 — absent in older saves (plot → null, harvested → 0). (BACKLOG-145)
   let plot: { plantedDay: number } | null = null;
   if (o.plot !== undefined && o.plot !== null) {
@@ -329,6 +354,8 @@ export function deserialize(json: string): SaveData | null {
     gathered,
     stockpile,
     cairns,
+    shelters,
+    groveVisited,
     plot,
     harvested,
     eggs,

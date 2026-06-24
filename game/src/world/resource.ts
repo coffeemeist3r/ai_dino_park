@@ -116,3 +116,34 @@ export function craft(pile: Stockpile): Stockpile | null {
   }
   return next;
 }
+
+/**
+ * Dino-built shelter (BACKLOG-315) — the second, larger structure beyond the cairn (286). At a higher
+ * build bar a dino raises a lean-to: placed/persisted/zone-scoped exactly like the cairn, a real landmark
+ * of its zone. The next resources→build beat. Pure (WorldScene owns the sprite + persistence); the
+ * helpers below are structural twins of `canCraft`/`craft` over a richer recipe.
+ *
+ * The escalation gate is a *cairn count*, not just a pile size: the cairn auto-crafts at CRAFT_RECIPE on
+ * every gather, draining the shared pile, so it can never climb to the richer SHELTER_RECIPE while cairns
+ * keep firing. Once a zone has stacked SHELTER_AFTER_CAIRNS cairns, WorldScene stops draining it on cairns
+ * and saves toward one shelter (one landmark per zone) — the lazy correct way to let the pile reach {6,4}
+ * without touching the cairn path (so every cairn spec stays green).
+ */
+export const SHELTER_RECIPE: Partial<Record<ResourceKind, number>> = { branch: 6, stone: 4 };
+export const SHELTER_GLYPH = '🛖';
+export const SHELTER_AFTER_CAIRNS = 3; // cairns a zone stacks before it starts saving for a lean-to
+
+/** Can the stockpile afford one shelter — does it cover every kind the richer recipe needs? */
+export function canBuildShelter(pile: Stockpile): boolean {
+  return (Object.keys(SHELTER_RECIPE) as ResourceKind[]).every((k) => (pile[k] ?? 0) >= (SHELTER_RECIPE[k] ?? 0));
+}
+
+/** Spend one shelter's worth of resources. Pure — returns a new pile minus the recipe, or null if unaffordable. */
+export function buildShelter(pile: Stockpile): Stockpile | null {
+  if (!canBuildShelter(pile)) return null;
+  const next: Stockpile = { ...pile };
+  for (const k of Object.keys(SHELTER_RECIPE) as ResourceKind[]) {
+    next[k] = (next[k] ?? 0) - (SHELTER_RECIPE[k] ?? 0);
+  }
+  return next;
+}

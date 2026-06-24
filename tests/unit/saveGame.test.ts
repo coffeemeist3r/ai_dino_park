@@ -16,6 +16,8 @@ const sample: SaveData = {
   gathered: {},
   stockpile: {},
   cairns: [],
+  shelters: [],
+  groveVisited: [],
   plot: null,
   harvested: 0,
   eggs: [
@@ -216,6 +218,31 @@ describe('saveGame', () => {
     // a pre-308 cairn (no zone) still loads — the scene backfills it to the bowl on restore.
     expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5, tileY: 7 }] }))).not.toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, cairns: [{ tileX: 5, tileY: 7, zone: 9 }] }))).toBeNull();
+  });
+
+  it('round-trips dino-built shelters (BACKLOG-315)', () => {
+    const withShelters: SaveData = { ...sample, shelters: [{ tileX: 8, tileY: 4, zone: 'grove' }] };
+    expect(deserialize(serialize(withShelters))).toEqual(withShelters);
+  });
+
+  it('loads an older save lacking shelters, defaulting it to [] (BACKLOG-315)', () => {
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.shelters).toEqual([]);
+  });
+
+  it('returns null for a malformed shelter entry (BACKLOG-315)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, shelters: [{ tileX: 8 }] }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, shelters: [{ tileX: 8, tileY: 4, zone: 9 }] }))).toBeNull();
+  });
+
+  it('round-trips a groveVisited list, defaults it absent, rejects a non-string entry (BACKLOG-339)', () => {
+    const visited: SaveData = { ...sample, groveVisited: ['Rex', 'Sunny'] };
+    expect(deserialize(serialize(visited))).toEqual(visited);
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    expect(deserialize(old)!.groveVisited).toEqual([]);
+    expect(deserialize(JSON.stringify({ ...sample, groveVisited: [5] }))).toBeNull();
   });
 
   it('round-trips a planted plot + harvest tally (BACKLOG-145)', () => {

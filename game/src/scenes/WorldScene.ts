@@ -62,6 +62,7 @@ import { wanderStep, stepToward } from '../world/movement';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
+import { firstGroveArrival, groveArrivalMemory, groveArrivalLine } from '../world/arrival';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
@@ -79,6 +80,10 @@ import {
   canCraft,
   craft,
   CAIRN_GLYPH,
+  SHELTER_GLYPH,
+  SHELTER_AFTER_CAIRNS,
+  canBuildShelter,
+  buildShelter,
   resourceFetchable,
   RESOURCE_GRACE_STEPS,
   RESOURCE_GLYPH,
@@ -272,6 +277,13 @@ export class WorldScene extends Phaser.Scene {
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
   private cairns: { tileX: number; tileY: number; zone: string }[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+  /** Dino-built shelters (BACKLOG-315) — the larger landmark beyond the cairn. Persisted; absent → []. Zone-scoped (308). */
+  private shelters: { tileX: number; tileY: number; zone: string }[] = [];
+  private shelterSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+  /** Dinos that have ever set foot in the grove (BACKLOG-339). Persisted; absent → []. Gates the once-ever arrival beat. */
+  private groveVisited: string[] = [];
+  /** Dinos pausing to look around on a first grove arrival (BACKLOG-339) — transient, one forceStep hold. */
+  private arriving = new Set<string>();
   /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
   private plot: { plantedDay: number } | null = null;
   private plotSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
@@ -622,12 +634,18 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__stockpile = () => ({ ...this.stockpile }); // BACKLOG-285: shared park stockpile
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.stockpile); // BACKLOG-286
+    (window as any).__shelters = () => this.shelters.map((s) => ({ ...s })); // BACKLOG-315: dino-built shelters
+    (window as any).__canBuildShelter = () => canBuildShelter(this.stockpile); // BACKLOG-315
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
       resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
       plot: this.plotSprite?.visible ?? false,
       cairns: this.cairnSprites.map((s) => s.visible),
+      shelters: this.shelterSprites.map((s) => s.visible), // BACKLOG-315
     });
+    // BACKLOG-339: which dinos have ever been to the grove / are pausing on a fresh arrival.
+    (window as any).__groveVisited = () => [...this.groveVisited];
+    (window as any).__arriving = () => [...this.arriving];
     (window as any).__spawnResource = (
       kind: ResourceKind,
       tileX: number,
@@ -896,12 +914,28 @@ export class WorldScene extends Phaser.Scene {
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
-    // BACKLOG-286: once the stockpile covers the recipe, the dino that just banked stacks a cairn.
-    const spent = craft(this.stockpile);
-    if (spent) {
-      this.stockpile = spent;
-      this.placeCairn(this.tileOf(taker), taker);
-      this.refreshPlaque();
+    // BACKLOG-286/315: the dino that just banked builds. A zone that has already stacked
+    // SHELTER_AFTER_CAIRNS cairns and has no shelter yet *saves* toward a larger lean-to (315) instead
+    // of draining the pile on more cairns — the only way the shared pile climbs to the richer recipe.
+    // Below that bar, the ordinary cairn craft (286) is untouched.
+    const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
+    const zoneCairns = this.cairns.filter((c) => c.zone === zone).length;
+    const hasShelter = this.shelters.some((s) => s.zone === zone);
+    if (zoneCairns >= SHELTER_AFTER_CAIRNS && !hasShelter) {
+      const built = buildShelter(this.stockpile);
+      if (built) {
+        this.stockpile = built;
+        this.placeShelter(this.tileOf(taker), taker);
+        this.refreshPlaque();
+      }
+      // else: still saving — no cairn this tick (the zone is building toward its shelter).
+    } else {
+      const spent = craft(this.stockpile);
+      if (spent) {
+        this.stockpile = spent;
+        this.placeCairn(this.tileOf(taker), taker);
+        this.refreshPlaque();
+      }
     }
     void this.saveGame();
   }
@@ -928,6 +962,26 @@ export class WorldScene extends Phaser.Scene {
     this.flashFeed(crafter, CAIRN_GLYPH);
     this.memory = remember(this.memory, crafter.name, 'stacked the first cairn from gathered branches and stones');
     this.logEvent(`${CAIRN_GLYPH} ${crafter.name} stacked a cairn`);
+  }
+
+  /** Draw a shelter glyph at a tile (BACKLOG-315). Mirror of drawCairn; 🛖 glyph until the prop rig (344). */
+  private drawShelter(s: { tileX: number; tileY: number; zone: string }): void {
+    const px = s.tileX * TILE + TILE / 2;
+    const py = s.tileY * TILE + TILE / 2;
+    const sprite = this.add.text(px, py, SHELTER_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(s.zone === this.zoneId); // BACKLOG-308: a shelter shows only in its own zone
+    this.shelterSprites.push(sprite);
+  }
+
+  /** Record + render a freshly raised lean-to and mark the moment on the builder (BACKLOG-315). */
+  private placeShelter(tile: { tileX: number; tileY: number }, crafter: Dino): void {
+    // BACKLOG-308: the shelter belongs to the zone the crafter raised it in — a landmark of that zone.
+    const s = { ...tile, zone: zoneOf(this.dinoZones, crafter.name, BOWL_ID) };
+    this.shelters.push(s);
+    this.drawShelter(s);
+    this.flashFeed(crafter, SHELTER_GLYPH);
+    this.memory = remember(this.memory, crafter.name, 'raised a lean-to from gathered branches and stones');
+    this.logEvent(`${SHELTER_GLYPH} ${crafter.name} raised a lean-to`);
   }
 
   /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
@@ -1717,6 +1771,14 @@ export class WorldScene extends Phaser.Scene {
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           this.activityById[d.name] = 'wandering'; // BACKLOG-295: the journey reads in motion, not a glyph
         }
+        continue;
+      }
+
+      // First steps in the grove (BACKLOG-339): a dino fresh across pauses one step to look around (the
+      // 🌿 bubble crossDino floated still hangs) before it resumes wandering — arrival as a beat.
+      if (this.arriving.has(d.name)) {
+        this.arriving.delete(d.name);
+        this.activityById[d.name] = 'wandering';
         continue;
       }
 
@@ -2688,6 +2750,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
+    this.shelterSprites.forEach((s, i) => s.setVisible(this.shelters[i]?.zone === this.zoneId)); // BACKLOG-315
     this.plotSprite?.setVisible(this.zoneId === BOWL_ID);
   }
 
@@ -2747,6 +2810,15 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(
       `🌿 ${d.name} ${dest === GROVE_ID ? `crossed into ${zoneById(GROVE_ID).name}` : 'crossed back to the bowl'}`,
     );
+    // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
+    // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
+    // surfaces in a later greeting), and a one-step pause (the arriving Set) before it wanders on.
+    if (firstGroveArrival(this.groveVisited, d.name, dest)) {
+      this.groveVisited.push(d.name);
+      this.memory = remember(this.memory, d.name, groveArrivalMemory());
+      this.showBubble(d, groveArrivalLine());
+      this.arriving.add(d.name);
+    }
     void this.saveGame();
   }
 
@@ -3295,6 +3367,8 @@ export class WorldScene extends Phaser.Scene {
       gathered: this.gathered,
       stockpile: this.stockpile,
       cairns: this.cairns,
+      shelters: this.shelters,
+      groveVisited: this.groveVisited,
       plot: this.plot,
       harvested: this.harvested,
       eggs: this.eggs,
@@ -3348,6 +3422,10 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-286 restore; BACKLOG-308: backfill a home zone for cairns from saves before 308 (→ bowl).
       this.cairns = (save.cairns ?? []).map((c) => ({ ...c, zone: c.zone ?? BOWL_ID }));
       for (const c of this.cairns) this.drawCairn(c);
+      // BACKLOG-315: dino-built shelters restore (additive; new field, so old saves load none).
+      this.shelters = (save.shelters ?? []).map((s) => ({ ...s, zone: s.zone ?? BOWL_ID }));
+      for (const s of this.shelters) this.drawShelter(s);
+      this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.plot = save.plot ?? null; // BACKLOG-145: plot + harvest tally restore
       this.harvested = save.harvested ?? 0;
       this.plotStageShown = 'empty';

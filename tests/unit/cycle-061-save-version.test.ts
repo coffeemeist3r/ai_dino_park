@@ -22,6 +22,8 @@ const validV2: SaveData = {
   gathered: {},
   stockpile: {},
   cairns: [],
+  shelters: [],
+  groveVisited: [],
   plot: null,
   harvested: 0,
   eggs: [],
