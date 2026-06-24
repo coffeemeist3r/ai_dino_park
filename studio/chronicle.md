@@ -2031,3 +2031,7 @@ Both tracks shared only `forceStep` — the crossing walk near the top, the murm
 ## 2026-06-23 — cycle 073-art — artist — no-op (no open [art] items)
 
 No open `[art]` items (317 closed cycle 70; cycles 71–73 seeded only logic beats). Artist no-ops per routine 7. The next renderable art is the grove-arrival landmark / the 315 shelter / a dawn-den prop — needs a smith to seed a fresh `[art]` item. Boundary intact; artPipelineReady stays true. Cycle 73 closed; state → lore-pending.
+
+## 2026-06-24 — cycle 074 — lore-smith — the grove becomes a place (next-up 339)
+
+Cycle 73 closed both tracks APPROVED → bumped to 74. Picked **BACKLOG-339** (first steps in the grove) as the lore next-up: a dino that has just *visibly crossed* (334) into the grove for the first time pauses to look around (🌿 + a "first time across" memory) before wandering on — arrival as a beat, not a relocation. Seeded the grove-as-place thread: 340 (homesick — closest friend back in the bowl pulls it home) / 341 (grove favorite — a long stay grows a lean) / 342 (tell of the grove — news of the second zone travels) / 343 (pioneer in the book) / 344 [art] (lean-to pixel prop for the structure track's 315 shelter, renderable once it ships — the long-idle Artist finally has a fire). Idea Box: one deferred entry (stash-ahead art policy) left untouched — 344 answers it for this cycle (315's prop is seeded renderable-once-shipped, not stashed). Phase → designer-pending.

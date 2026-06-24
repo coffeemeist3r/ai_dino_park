@@ -758,7 +758,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-336 [pokemon] Dream in the book — the collection book records a dino's last sleep-murmur ("dreams of: …"), the night's inner life made legible alongside the closest-friend line. Builds on 181 / 021.
 - [ ] BACKLOG-337 [emergent] Shared dream — two high-bond dinos huddled together may murmur echoing lines (one names the other), so the den's dreams reflect the bond graph the way the waking bowl does. Builds on 181 / 013.
 - [ ] BACKLOG-338 [social] Don't wake them — tapping the glass (057) near the den while a dino murmurs *stirs* it (it shifts, a brief 👀) instead of the usual startle-bolt; the keeper learns the den is for quiet. Builds on 181 / 057.
-- [ ] BACKLOG-339 [emergent] First steps in the grove — a dino that has just *visibly crossed* (334) into the grove for the first time pauses at the far edge and looks around (🌿 + a "first time across" memory) before wandering on; arrival becomes a beat, not just a relocation. Builds on 334 / 274 / 011.
+- [~] BACKLOG-339 [emergent] First steps in the grove — a dino that has just *visibly crossed* (334) into the grove for the first time pauses at the far edge and looks around (🌿 + a "first time across" memory) before wandering on; arrival becomes a beat, not just a relocation. Builds on 334 / 274 / 011.
+
+## Cycle 74 lore additions — the grove becomes a place (2026-06-24)
+
+> Cycle 73 made the crossing a walk you can watch (334) and gave the den a voice (181). Cycle 74
+> picks **BACKLOG-339** (first steps in the grove) — arrival as a beat, the cast reacting to a new
+> place — and seeds what the second zone *means* once dinos live in it: homesickness, a settling-in
+> lean, news of the grove travelling the bowl, the pioneer's standing, and (riding the structure
+> track's 315 shelter) the lean-to's pixel prop.
+
+- [ ] BACKLOG-340 [emergent] Homesick for the bowl — a dino that crossed into the grove (339) but whose closest friend (013) is still back in the bowl drifts back across after a while, the grove feeling lonely without its bond; company, not scenery, decides where a dino settles. Builds on 339 / 274 / 013.
+- [ ] BACKLOG-341 [emergent] Grove favorite — a dino that has stayed in the grove across several real days (105) develops a "prefers the grove" lean and migrates back less readily, so home starts to mean something rather than a coin-flip each roll. Builds on 274 / 339 / 105.
+- [ ] BACKLOG-342 [social] Tell of the grove — a dino freshly back from the grove leads its next gossip with what it saw over there ("you should see the pond"), so news of the second zone travels the bowl the way cold/warm word does. Builds on 339 / 019 / 294.
+- [ ] BACKLOG-343 [pokemon] Pioneer in the book — the collection book marks the first dino ever to set foot in the grove ("first across") as a small standing, the grove's founding made legible. Builds on 339 / 021.
+- [ ] BACKLOG-344 [art] Lean-to shelter prop — **Gen3 pixel** (CHARTER v4): the dino-built shelter (315) renders as the 🛖 glyph; draw a pixel lean-to/windbreak prop rig in `art/propArt.ts` keyed `shelter`, baked via the existing `bakePropArt`, with WorldScene's shelter sprite swapping to the baked image and the emoji kept as the graceful fallback (exactly how the cairn prop landed in 296). Renderable once 315 ships (308 zone-scopes it). Builds on 315 / 296 / 308.
 
 ## Operator session — 2026-06-12
 
