@@ -1,8 +1,8 @@
 {
   "cycle": 75,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-342: Tell of the grove - a returning dino leads gossip with grove news",
-  "structureItem": "BACKLOG-316: Zone indicator - active zone + per-zone population on the plaque",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-24T12:15:00-05:00",
     "coder": "2026-06-24T12:25:00-05:00",
     "qa": "2026-06-24T12:30:00-05:00",
-    "validator": "2026-06-24T10:35:00-05:00",
+    "validator": "2026-06-24T12:35:00-05:00",
     "artist": "2026-06-24T10:40:00-05:00"
   }
 }
