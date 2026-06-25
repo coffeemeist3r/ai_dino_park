@@ -1,7 +1,7 @@
 {
-  "cycle": 77,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 78,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-355: Drew them across — direct grove-telling pulls harder than ambient hearsay",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-06-24T16:00:00-05:00",
+    "lore-smith": "2026-06-25T09:00:00-05:00",
     "structure-smith": "2026-06-24T16:05:00-05:00",
     "designer": "2026-06-24T16:10:00-05:00",
     "code-planner": "2026-06-24T16:15:00-05:00",

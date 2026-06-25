@@ -2157,3 +2157,7 @@ Build clean; 787 unit green (+12). All 6 AC for 346 and all 7 for 329 PASS with 
 ## 2026-06-24 — cycle 077 — artist — no-op
 
 No open `[art]` items in BACKLOG (cast 5/5 drawn, props/tiles/frame all shipped). Nothing to draw this fire — art has caught up to the shipped systems. The next renderable art will be whatever a future system queues (e.g. a grove-plot crop variant once 349 lands). No commit beyond this note.
+
+## 2026-06-25 — cycle 078 — lore-smith — the grove is a place you can miss
+
+Cycle bumps to 78 (both 77 tracks APPROVED). Theme: sharpen *how* the grove pull reaches a dino — being told to your face by a been-there dino should tug harder than ambient hearsay overheard secondhand. Suggested next-up **BACKLOG-355** (drew them across): split grove-curiosity into direct-telling (strong) vs hearsay (weak), migration pick prefers the directly-told. Picked 355 over its sibling 354 because 354 depends on the still-open 268. Seeded four follow-ups on what the grove *is* once known: 359 (first sight worth more than the hundredth), 360 (two friends return together), 361 (a who-keeps-going-back tally in the book), 362 (a dino who came home can come to miss it). Idea Box: lone entry stays deferred (art queue empty, not terrain-blocked). phase → designer-pending.

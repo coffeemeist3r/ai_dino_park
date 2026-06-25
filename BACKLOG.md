@@ -812,7 +812,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-353 [pokemon] Pond-swap in the book — once two dinos have swapped pond notes (346), the collection book reads the tie ("compared groves with Twitch") beside the closest-friend line, so the second zone's social ties are legible, not just felt. Builds on 346 / 013 / 021.
 - [ ] BACKLOG-354 [emergent] Pond note in their own voice — the line a dino leads with when it swaps pond notes (346) is coloured by temperament: a bold one brags up its find, a timid one murmurs it, a warm one gushes — the same favour, said like whoever's saying it (the gratitude-voice shape, 268, applied to scenery). Builds on 346 / 268 / 010.
-- [ ] BACKLOG-355 [social] Drew them across — a grove-visited dino that tells pond news to a *non*-visited one (342) lends that listener a stronger curiosity tug than ambient hearsay does, so being told to your face by someone who's been there pulls harder than overhearing it. Builds on 342 / 345 / 346.
+- [~] BACKLOG-355 [social] Drew them across — a grove-visited dino that tells pond news to a *non*-visited one (342) lends that listener a stronger curiosity tug than ambient hearsay does, so being told to your face by someone who's been there pulls harder than overhearing it. Builds on 342 / 345 / 346.
+
+## Cycle 78 lore additions — the grove is a place you can miss (2026-06-25)
+
+> Cycle 77 made the grove common ground between two travelers who'd both seen it (346). Cycle 78's
+> next-up is the already-queued **BACKLOG-355** (drew them across): being *told to your face* about
+> the pond by a dino who's actually been there pulls a non-visited listener harder than ambient
+> hearsay overheard secondhand — a direct telling jumps the migration queue ahead of a faint rumor.
+> These four extend what the grove *is* once a dino knows it: a first sight worth more than the
+> hundredth, a place two friends return to together, a tally of who keeps going back, and — the
+> weirdest — a place a dino who came home can quietly come to miss.
+
+- [ ] BACKLOG-359 [emergent] First sight of the pond — a dino's *very first* grove crossing lands a wide-eyed beat (✨ "first time I saw the pond" memory + a small lasting wonder) distinct from every routine crossing after, so a maiden voyage feels different from the hundredth. Builds on 334 / 339 / 346.
+- [ ] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
+- [ ] BACKLOG-361 [pokemon] Grove regulars in the book — the collection book tracks how many times each dino has crossed to the grove ("been to the pond 4×"), making homebody-vs-wanderer a legible standing rather than something you only feel. Builds on 334 / 021.
+- [ ] BACKLOG-362 [emergent] Grove-struck homesickness — a dino back from the grove a long while files a faint "miss the pond" pull that re-primes it to migrate back, so the grove becomes a place a dino can *yearn* for, not somewhere it visits once and forgets. Builds on 334 / 342 / 116.
 
 ## Operator session — 2026-06-12
 
