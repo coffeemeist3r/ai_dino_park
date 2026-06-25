@@ -55,3 +55,18 @@
 ## Cross-track collision check
 
 Both tracks edit `WorldScene.ts` but in **different methods** — lore in `converse` (+ a new `pondSwapBeat`), structure in `crossDino` — and different import lines (`groveword` vs `resource`). No region overlap; build either order. No shared test files (separate new spec files; groveword unit extended by lore only). No save-format change either track.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/groveword.ts` — `POND_BOND=3`, `pondSwapMemory(other)`, `pondSwap(visited,a,b)` (346).
+- `game/src/world/resource.ts` — `pickCarry(src,dest)`, `takeResource(pile,kind)` (329).
+- `game/src/scenes/WorldScene.ts` — import both; carry transfer in `crossDino` (home→dest pile, log); `pondSwapBeat(a,b)` private + call in `converse` after the sympathy/grateful block; `__pondSwap` hook.
+- `tests/unit/groveword.test.ts` — +5 pond-swap tests; `tests/unit/cycle-077-carry.test.ts` — +7 carry tests.
+- `tests/e2e/cycle-077-pond-swap.spec.ts`, `tests/e2e/cycle-077-carry.spec.ts` — new.
+
+**Deviations:** none. Carry adds to dest via the existing `bankResource` (pickCarry already excludes capped kinds). No save change either track, no deps, NPCBrain boundary intact.
+
+**Build + tests:** `npm run build` clean (type-check passes). `npm run test:unit` → 787 passed (+12). Dev server renders (HTTP 200). Both new e2e specs green warm (cold-server first run hit the documented `__ready` boot flake; green on warm re-run). phase → qa-pending.

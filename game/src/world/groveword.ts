@@ -11,6 +11,27 @@
 import { remember, recall, type MemoryStore } from '../ai/memory';
 import { RUMOR_MARK, isShareable } from '../social/gossip';
 
+/**
+ * Pond-swappers (BACKLOG-346) — once two dinos have *both* set foot in the grove (339), the place is
+ * common ground: meeting back in the bowl they trade pond notes for a small shared-place bond + a memory
+ * each, the grove's version of stargazing companions (288). A light bump, under the sky's shared-wonder.
+ */
+export const POND_BOND = 3;
+
+/**
+ * The memory a dino files when it swaps pond notes with another. Names the other dino. Deliberately does
+ * NOT contain `GROVE_NEWS_TOKEN` — a swap is a social tie, not a fresh sighting, so it must never be
+ * mistaken for first-hand grove news and re-spread (`spreadGroveWord` keys off the token).
+ */
+export function pondSwapMemory(other: string): string {
+  return `🌿 traded pond stories with ${other}`;
+}
+
+/** Do these two dinos swap pond notes? True iff both have set foot in the grove and they're distinct. */
+export function pondSwap(visited: readonly string[], a: string, b: string): boolean {
+  return a !== b && visited.includes(a) && visited.includes(b);
+}
+
 /** A stable substring of `groveNewsMemory()` — the tell that a remembered event is grove news. */
 export const GROVE_NEWS_TOKEN = 'pond over in the grove';
 

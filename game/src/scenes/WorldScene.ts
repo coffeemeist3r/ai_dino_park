@@ -41,7 +41,7 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf, zonePopulations } from '../world/zones';
-import { spreadGroveWord, groveNewsMemory, groveWordLine } from '../world/groveword';
+import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { groveCurious } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
@@ -86,6 +86,8 @@ import {
   SHELTER_AFTER_CAIRNS,
   canBuildShelter,
   buildShelter,
+  pickCarry,
+  takeResource,
   resourceFetchable,
   RESOURCE_GRACE_STEPS,
   RESOURCE_GLYPH,
@@ -1657,6 +1659,8 @@ export class WorldScene extends Phaser.Scene {
       return g.rumor;
     };
     (window as any).__groveWord = (speaker: string) => groveWordLine(speaker);
+    // dev-only: pond-swappers (BACKLOG-346) — two grove-visited dinos trade pond notes (applies it).
+    (window as any).__pondSwap = (a: string, b: string) => this.pondSwapBeat(a, b);
     // dev-only: word of the warmth (BACKLOG-223) — a warmed speaker leads with the good news.
     (window as any).__spreadWarmWord = (a: string, b: string) => {
       const g = spreadWarmWord(this.memory, a, b);
@@ -2118,9 +2122,23 @@ export class WorldScene extends Phaser.Scene {
           this.logEvent(`🫂 ${visit.visitor} came to find ${visit.sufferer} after hearing`);
         }
       }
+      // Pond-swappers (BACKLOG-346): if both dinos have been to the grove, they trade pond notes — a
+      // small shared-place bond + a memory each. Independent of the cold/grove cascade above, so it can
+      // fire alongside any of it; the grove's version of stargazing companions (288).
+      this.pondSwapBeat(a.name, b.name);
     } finally {
       this.convoInFlight = false;
     }
+  }
+
+  /** Pond-swap (BACKLOG-346): two grove-visited dinos trade pond notes — a memory each + a small bond. */
+  private pondSwapBeat(a: string, b: string): boolean {
+    if (!pondSwap(this.groveVisited, a, b)) return false;
+    this.memory = remember(this.memory, a, pondSwapMemory(b));
+    this.memory = remember(this.memory, b, pondSwapMemory(a));
+    this.bonds = strengthen(this.bonds, a, b, POND_BOND);
+    this.logEvent(`🌿 ${a} and ${b} compared notes on the grove`);
+    return true;
   }
 
   /** Fold the homecoming's memories into the store: the homecomer's, plus a near-tied runner-up's sulk (BACKLOG-120). */
@@ -2864,6 +2882,16 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(
       `🌿 ${d.name} ${dest === GROVE_ID ? `crossed into ${zoneById(GROVE_ID).name}` : 'crossed back to the bowl'}`,
     );
+    // Carry between zones (BACKLOG-329): the crossing dino ferries one banked resource from the pile it
+    // leaves into the pile it enters — the first link between the two per-zone economies (328). Only the
+    // visible crossing carries; the instant __migrate/relocate path does not. Empty source or a capped
+    // destination → nothing moves (pickCarry returns null), so nothing is ever lost.
+    const carry = pickCarry(this.pileFor(home), this.pileFor(dest));
+    if (carry) {
+      this.stockpileByZone[home] = takeResource(this.pileFor(home), carry);
+      this.stockpileByZone[dest] = bankResource(this.pileFor(dest), carry);
+      this.logEvent(`${RESOURCE_GLYPH[carry]} ${d.name} carried a ${carry} to ${zoneById(dest).name}`);
+    }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
     // surfaces in a later greeting), and a one-step pause (the arriving Set) before it wanders on.

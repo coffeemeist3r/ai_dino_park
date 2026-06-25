@@ -147,3 +147,28 @@ export function buildShelter(pile: Stockpile): Stockpile | null {
   }
   return next;
 }
+
+/**
+ * Carry between zones (BACKLOG-329) — the first link between two per-zone piles (328). A dino crossing
+ * zones ferries one banked resource from the pile it leaves into the pile it enters. These two pure
+ * helpers decide *what* moves; WorldScene applies the transfer in `crossDino` (the visible crossing only).
+ */
+
+/**
+ * Which kind to ferry `src → dest`: the most-stocked kind in `src` that `dest` can still accept (not at
+ * cap), or null when nothing can move (src empty, or dest full for every kind src has). Deterministic —
+ * the stable sort keeps `RESOURCE_GLYPH` order (branch before stone) on a count tie.
+ */
+export function pickCarry(src: Stockpile, dest: Stockpile): ResourceKind | null {
+  const kinds = (Object.keys(RESOURCE_GLYPH) as ResourceKind[])
+    .filter((k) => (src[k] ?? 0) > 0 && !atCap(dest, k))
+    .sort((x, y) => (src[y] ?? 0) - (src[x] ?? 0));
+  return kinds[0] ?? null;
+}
+
+/** Remove one of `kind` from a pile (floored at 0). Pure — returns a new map, never mutates. */
+export function takeResource(pile: Stockpile, kind: ResourceKind): Stockpile {
+  const have = pile[kind] ?? 0;
+  if (have <= 0) return pile;
+  return { ...pile, [kind]: have - 1 };
+}
