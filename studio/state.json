@@ -1,7 +1,7 @@
 {
   "cycle": 77,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-346: Pond-swappers",
   "structureItem": "BACKLOG-329: Carry between zones",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-24T16:00:00-05:00",
     "structure-smith": "2026-06-24T16:05:00-05:00",
-    "designer": "2026-06-24T14:10:00-05:00",
+    "designer": "2026-06-24T16:10:00-05:00",
     "code-planner": "2026-06-24T14:15:00-05:00",
     "coder": "2026-06-24T14:25:00-05:00",
     "qa": "2026-06-24T14:30:00-05:00",
