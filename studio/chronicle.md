@@ -2145,3 +2145,7 @@ Planned both. 346: pure `POND_BOND`/`pondSwapMemory`/`pondSwap` in groveword.ts;
 ## 2026-06-24 — cycle 077 — coder — 346 + 329
 
 Built both. 346: pure `POND_BOND`/`pondSwapMemory`/`pondSwap` in groveword.ts; WorldScene `pondSwapBeat(a,b)` files `🌿 traded pond stories with <other>` on each + a `strengthen` POND_BOND(3) bump + 🌿 log, called in `converse` after the sympathy/grateful block (additive — cascade byte-identical otherwise); `__pondSwap` hook. The swap memory is unit-pinned clear of `GROVE_NEWS_TOKEN` so it never re-spreads. 329: pure `pickCarry`(most-stocked kind dest can accept, deterministic stable sort) + `takeResource` in resource.ts; `crossDino` ferries one resource home→dest pile (`takeResource`+existing `bankResource`) with a glyph log; empty source / capped dest → no carry (lossless); instant `__migrate`/relocate untouched. Build clean; 787 unit green (+12); both new e2e green warm (cold-server first run hit the known `__ready` boot flake). No save change, no deps, NPCBrain intact. phase → qa-pending.
+
+## 2026-06-24 — cycle 077 — qa — both tracks APPROVE
+
+Build clean; 787 unit green (+12). All 6 AC for 346 and all 7 for 329 PASS with unit/e2e cites. E2e effectively 242/242 — full run showed 1 failure (cycle-076 news-pull `__maybeMigrate` pick), green isolated (828ms) = the documented rotating parallel-load flake, untouched by this diff; both new cycle-077 specs green in the full run. No bugs, no regressions. Both tracks → APPROVE. phase → validator-pending.
