@@ -4,8 +4,10 @@ import {
   resourceLanding,
   rollResource,
   pickKind,
+  BIAS_WEIGHT,
   RESOURCE_RANGE,
 } from '../../game/src/world/resource';
+import { BOWL_ID, GROVE_ID } from '../../game/src/world/zones';
 import { serialize, deserialize, SAVE_VERSION } from '../../game/src/world/saveGame';
 
 /**
@@ -48,6 +50,32 @@ describe('rollResource / pickKind are deterministic for a seeded rand (BACKLOG-1
   it('pickKind splits branch/stone on 0.5', () => {
     expect(pickKind(() => 0.1)).toBe('branch');
     expect(pickKind(() => 0.9)).toBe('stone');
+  });
+});
+
+describe('zone resource bias (BACKLOG-348)', () => {
+  it('the grove leans branch', () => {
+    expect(pickKind(() => 0.1, GROVE_ID)).toBe('branch'); // below BIAS_WEIGHT → favored
+    expect(pickKind(() => 0.5, GROVE_ID)).toBe('branch');
+  });
+
+  it('the bowl leans stone', () => {
+    expect(pickKind(() => 0.1, BOWL_ID)).toBe('stone');
+    expect(pickKind(() => 0.5, BOWL_ID)).toBe('stone');
+  });
+
+  it('a lean, not a lock — the off-kind still appears past BIAS_WEIGHT', () => {
+    expect(pickKind(() => 0.9, GROVE_ID)).toBe('stone'); // grove can still turn up a stone
+    expect(pickKind(() => 0.9, BOWL_ID)).toBe('branch'); // bowl can still drop a branch
+    expect(BIAS_WEIGHT).toBeGreaterThan(0.5);
+    expect(BIAS_WEIGHT).toBeLessThan(1);
+  });
+
+  it('back-compat: no zone (or an unknown zone) keeps the uniform 50/50', () => {
+    expect(pickKind(() => 0.1)).toBe('branch');
+    expect(pickKind(() => 0.9)).toBe('stone');
+    expect(pickKind(() => 0.1, 'nowhere')).toBe('branch'); // unbiased id → uniform
+    expect(pickKind(() => 0.9, 'nowhere')).toBe('stone');
   });
 });
 

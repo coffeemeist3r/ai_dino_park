@@ -42,7 +42,7 @@ import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf, zonePopulations } from '../world/zones';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
-import { groveCurious } from '../world/curiosity';
+import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
   bumpPoints,
@@ -686,6 +686,8 @@ export class WorldScene extends Phaser.Scene {
     };
     // BACKLOG-296: pixel props. __hasPropArt = a rig exists; __resourceIsArt/__cairnIsArt = the live
     // sprite is the baked image (not the emoji fallback) — lets the e2e prove the swap without pixels.
+    // BACKLOG-348: prove the production bundle wires the per-zone resource bias through pickKind.
+    (window as any).__biasKind = (zone: string, r: number) => pickKind(() => r, zone);
     (window as any).__hasPropArt = (name: string) => hasPropArt(name);
     (window as any).__resourceIsArt = () =>
       this.resourceSpriteByZone[this.zoneId] instanceof Phaser.GameObjects.Image;
@@ -892,7 +894,7 @@ export class WorldScene extends Phaser.Scene {
       if (this.resourceByZone[zone] || !rollResource()) continue;
       // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
       const landing = resourceLanding(COLS, ROWS);
-      const kind = pickKind();
+      const kind = pickKind(Math.random, zone); // BACKLOG-348: each zone leans its own resource mix
       this.spawnResource(kind, landing.tileX, landing.tileY, zone);
       this.resourceAgeByZone[zone] = 0;
       if (zone === this.zoneId) this.logEvent(`${RESOURCE_GLYPH[kind]} a ${kind} fell`);
@@ -1620,6 +1622,10 @@ export class WorldScene extends Phaser.Scene {
     });
 
     (window as any).__memory = () => ({ ...this.memory });
+    // BACKLOG-355: append a raw memory (lets the e2e age a grove telling toward the back of the ring).
+    (window as any).__remember = (name: string, event: string) => {
+      this.memory = remember(this.memory, name, event);
+    };
     // dev-only: tone state (BACKLOG-142) — friendship points, last-tone map, and live menu.
     (window as any).__friendship = () => ({ ...this.friendship });
     (window as any).__lastTone = () => ({ ...this.lastTone });
@@ -2851,16 +2857,18 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Pick the next migrant (BACKLOG-334 pick + BACKLOG-345 nudge): a dino not already crossing, *preferring*
-   * a grove-curious one — a bowl dino pulled by grove news it has only heard, never crossed (342→345).
-   * When none is curious, the pick is the old uniform random over all candidates (behavior unchanged).
+   * Pick the next migrant (BACKLOG-334 pick + BACKLOG-345 nudge + BACKLOG-355 grading): a dino not
+   * already crossing, *preferring* the one the grove pulls hardest. A dino freshly told to its face
+   * (pull 2) outranks one whose grove news has gone to ambient background (pull 1), which outranks a
+   * coin-flip. With no grove-curious dino at all, it's the old uniform random (345 behavior preserved).
    */
   private pickMigrant(): Dino | null {
     const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
-    const curious = candidates.filter((d) =>
-      groveCurious(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID)),
-    );
-    const pool = curious.length ? curious : candidates;
+    const pull = (d: Dino) =>
+      grovePull(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
+    const told = candidates.filter((d) => pull(d) === 2);
+    const curious = candidates.filter((d) => pull(d) >= 1);
+    const pool = told.length ? told : curious.length ? curious : candidates;
     return pool[Math.floor(Math.random() * pool.length)] ?? null;
   }
 

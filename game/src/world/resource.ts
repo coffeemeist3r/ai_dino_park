@@ -13,6 +13,7 @@
  */
 
 import type { Tile } from './movement';
+import { BOWL_ID, GROVE_ID } from './zones';
 
 export type ResourceKind = 'branch' | 'stone';
 
@@ -53,9 +54,21 @@ export function rollResource(rand: () => number = Math.random): boolean {
   return rand() < RESOURCE_SPAWN_CHANCE;
 }
 
-/** Pick which kind appears — branch or stone, 50/50. */
-export function pickKind(rand: () => number = Math.random): ResourceKind {
-  return rand() < 0.5 ? 'branch' : 'stone';
+/**
+ * Zone resource bias (BACKLOG-348) — each zone leans its roll toward its own character: the grove's
+ * trees drop 🪵 branches, the bowl's open ground turns up 🪨 stones. A *lean*, not a lock — the off-kind
+ * still rolls past `BIAS_WEIGHT` — so the two zone economies (328) gather *different* things and carry
+ * between them (329) has a point. An unbiased/omitted zone keeps the old uniform 50/50 (back-compat).
+ */
+export const ZONE_BIAS: Record<string, ResourceKind> = { [BOWL_ID]: 'stone', [GROVE_ID]: 'branch' };
+export const BIAS_WEIGHT = 0.75; // chance the favored kind rolls in its biased zone (vs 0.5 uniform)
+
+/** Pick which kind appears — uniform 50/50 with no zone, or leaning to the zone's bias (348). */
+export function pickKind(rand: () => number = Math.random, zone?: string): ResourceKind {
+  const favored = zone ? ZONE_BIAS[zone] : undefined;
+  if (!favored) return rand() < 0.5 ? 'branch' : 'stone';
+  const other: ResourceKind = favored === 'branch' ? 'stone' : 'branch';
+  return rand() < BIAS_WEIGHT ? favored : other;
 }
 
 /**
