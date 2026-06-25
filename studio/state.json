@@ -1,8 +1,8 @@
 {
   "cycle": 78,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-355: Drew them across — direct grove-telling pulls harder than ambient hearsay",
-  "structureItem": "BACKLOG-348: Zone resource bias — grove leans branch, bowl leans stone",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-25T09:15:00-05:00",
     "coder": "2026-06-25T09:30:00-05:00",
     "qa": "2026-06-25T09:35:00-05:00",
-    "validator": "2026-06-24T16:40:00-05:00",
+    "validator": "2026-06-25T09:40:00-05:00",
     "artist": "2026-06-24T10:40:00-05:00"
   }
 }
