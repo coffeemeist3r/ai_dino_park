@@ -793,6 +793,14 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-351 [emergent] Reluctant returner — a dino pulled groveward by news (345) that arrives to find its closest friend (013) wasn't there shows a brief 😕 on arrival before settling, the gap between the place it imagined and the empty one it found. Builds on 345 / 340 / 013.
 - [ ] BACKLOG-352 [pokemon] Traveler's mark — the collection book shows a small 🌿 beside any dino that has set foot in the grove (339), so the cast's wanderers are legible at a glance (broader than 343's "first across" standing). Builds on 339 / 021.
 
+## Cycle 77 lore additions — the grove is common ground (2026-06-24)
+
+> Cycle 76 made grove news *move a body* — a dino that only heard about the pond now gets pulled across to see it (345). Cycle 77's next-up is the already-queued **BACKLOG-346** (pond-swappers): once two dinos have *both* been over there, meeting in the bowl they trade pond notes — a small shared-place bond + a memory each, the second zone becoming the thing they have in common. These extend what the shared place *means* between travelers: legible in the book, coloured by temperament, and a pull it lends the news.
+
+- [ ] BACKLOG-353 [pokemon] Pond-swap in the book — once two dinos have swapped pond notes (346), the collection book reads the tie ("compared groves with Twitch") beside the closest-friend line, so the second zone's social ties are legible, not just felt. Builds on 346 / 013 / 021.
+- [ ] BACKLOG-354 [emergent] Pond note in their own voice — the line a dino leads with when it swaps pond notes (346) is coloured by temperament: a bold one brags up its find, a timid one murmurs it, a warm one gushes — the same favour, said like whoever's saying it (the gratitude-voice shape, 268, applied to scenery). Builds on 346 / 268 / 010.
+- [ ] BACKLOG-355 [social] Drew them across — a grove-visited dino that tells pond news to a *non*-visited one (342) lends that listener a stronger curiosity tug than ambient hearsay does, so being told to your face by someone who's been there pulls harder than overhearing it. Builds on 342 / 345 / 346.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
