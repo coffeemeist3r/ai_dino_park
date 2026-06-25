@@ -16,39 +16,29 @@ non-visited bowl dino holding the grove token is equally likely to be picked. 35
 *how you heard*, so the bowl dino a returning explorer told **to its face** is the one curiosity drags
 across next, ahead of one that merely caught the rumor going around. Distinctness through provenance.
 
-### The two tiers
+### The two tiers — graded by *how fresh* the telling is (recency, not a new channel)
 
-Today there is exactly one way a non-visited dino gets grove news: `spreadGroveWord` plants
-`groveWordLine(speaker)` (`"<speaker> 💬 you should see the pond over in the grove"`) when it meets a
-dino carrying *first-hand* grove news. That is the **direct telling** — the strong tier. 355 adds the
-weak tier: **ambient hearsay**, a fainter secondhand mention that a dino who was only *told* (not
-been there) passes one further hop to a listener who hasn't heard at all.
+**Planning correction (found while grounding in the tests):** the obvious "add a faint secondhand
+relay" approach is **rejected** — `groveword.test.ts` (cycle 75) pins grove news to **exactly 1 hop**
+(`RUMOR_MARK`), and 345 builds on that. Adding a 2nd-hop hearsay line would break that contract and
+change grove-news propagation. So 355 keeps `groveword.ts` **untouched** and grades the pull off
+something already present: **how recently the dino was told.**
 
-- **Strong (told to your face), pull = 2:** the dino holds a direct-telling memory — a `groveWordLine`,
-  identified by the substring **`you should see the pond`** (the been-there urging). Only
-  `spreadGroveWord` from a first-hand speaker plants this.
-- **Weak (ambient hearsay), pull = 1:** the dino holds the grove token (`pond over in the grove`) but
-  **not** the direct-telling substring — i.e. a `groveHearsayLine` (`"<speaker> 💬 heard there's a
-  pond over in the grove"`), the fainter relay.
-- **None, pull = 0:** visited the grove already, or lives in the grove, or carries no grove token.
+Memory is a 6-entry ring (`ai/memory.ts`, `recall` returns oldest→newest). A non-visited bowl dino's
+*only* carrier of the grove token is the `groveWordLine` a returning explorer planted on it — i.e. a
+direct telling. The pull grades by where that telling now sits in the ring:
 
-### The weak relay (how ambient hearsay comes to exist)
+- **Strong (just told to your face), pull = 2:** the grove token appears among the dino's most-recent
+  `GROVE_TELL_RECENT = 3` memories — the telling is fresh and foremost.
+- **Weak (gone to ambient background), pull = 1:** the dino still carries the grove token, but only in
+  the *older* part of its ring (≥3 newer memories have since pushed it back) — the news has faded from
+  a fresh telling into mere background awareness.
+- **None, pull = 0:** visited the grove already, or lives in the grove, or the telling has aged out of
+  the ring entirely (it forgot) / never carried the token.
 
-`spreadGroveWord(store, speaker, listener)` gains a second branch, *below* its existing first-hand
-branch (which is unchanged):
-
-1. **First-hand speaker** (holds a *shareable* memory with the grove token, i.e. its own
-   `groveNewsMemory`): plant `groveWordLine(speaker)` on the listener and return it. **Unchanged — 342
-   behaviour is preserved exactly.**
-2. **Was-told speaker** (holds the direct-telling substring `you should see the pond`, but is *not*
-   first-hand) **and** the listener carries **no** grove token yet: plant the fainter
-   `groveHearsayLine(speaker)` and return it. This is the one-further-hop ambient relay.
-3. Otherwise return `{ store, rumor: null }` (fall through to generic gossip, as today).
-
-Terminal by construction: a `groveHearsayLine` holder is neither first-hand (it's a rumor) nor a
-direct-telling holder (the hearsay line lacks the `you should see` substring), so it can never relay
-again — ambient hearsay dies after its single extra hop, exactly like every other 1-hop rumor in the
-bowl. The `listener carries no grove token` guard prevents re-planting churn.
+This is genuinely emergent and self-clearing: a dino told about the pond is keen *right then*, the
+keenness fades as life piles up newer memories, and eventually it forgets — so "drew them across"
+means the freshly-told get dragged over before that keenness cools.
 
 ### The migration pick
 
@@ -58,27 +48,24 @@ grades by strength: among non-crossing candidates, prefer the **told (pull 2)** 
 
 ### Acceptance criteria
 
-1. **Strong tier:** a non-visited bowl dino holding a `groveWordLine` (direct telling) has
-   `grovePull === 2`.
-2. **Weak tier:** a non-visited bowl dino holding only a `groveHearsayLine` (and no direct telling)
-   has `grovePull === 1`.
+1. **Strong tier:** a non-visited bowl dino whose grove telling (`groveWordLine`) sits among its
+   most-recent `GROVE_TELL_RECENT (=3)` memories has `grovePull === 2`.
+2. **Weak tier:** a non-visited bowl dino that carries the grove token only in the *older* part of its
+   ring (≥3 newer memories after it) has `grovePull === 1`.
 3. **No pull:** a dino that has visited the grove (`name ∈ groveVisited`), or whose home zone is the
-   grove, or that holds no grove token, has `grovePull === 0` regardless of memory. `groveCurious`
-   (the 345 predicate) is preserved as `grovePull(...) > 0`, so every existing 345 expectation holds.
-4. **Pick order:** given a directly-told dino, an ambient-only dino, and a no-news dino as candidates,
-   `pickMigrant` always returns the directly-told one; with no told dino it returns an ambient one
-   over the no-news one; with neither it falls back to the old uniform random.
-5. **Weak relay:** `spreadGroveWord` from a was-told (not first-hand) speaker plants a
-   `groveHearsayLine` on a never-heard listener (returns that rumor); a `groveHearsayLine` holder
-   relays **nothing** further (terminal); a listener that already holds any grove token is not
-   re-planted (returns null).
-6. **First-hand path unchanged:** `spreadGroveWord` from a first-hand speaker still plants exactly
-   `groveWordLine(speaker)` (342 specs green). The hearsay line contains `GROVE_NEWS_TOKEN` (so it
-   reads as grove-curious) and `RUMOR_MARK` (heard-not-witnessed) but **not** the direct-telling
-   substring. No save change; `@mlc-ai/web-llm` not imported by `groveword.ts`/`curiosity.ts`.
+   grove, or that holds no grove token at all, has `grovePull === 0` regardless of memory.
+   `groveCurious` (the 345 predicate) is preserved as `grovePull(...) > 0`, so every existing 345
+   expectation (including a single-entry `[groveWordLine('Rex')]` → curious) holds unchanged.
+4. **Pick order:** given a freshly-told dino (pull 2), an ambient-only dino (pull 1), and a no-news
+   dino as candidates, `pickMigrant` always returns the freshly-told one; with no pull-2 dino it
+   returns a pull-1 dino over the no-news one; with neither it falls back to the old uniform random.
+5. **groveword.ts untouched:** grove news stays exactly 1 hop — the cycle-75 `groveword.test.ts`
+   ("a heard grove rumor is not re-shared") stays green; no hearsay line, no 2nd-hop relay added.
+6. No save change (the pull is derived from existing memory + `groveVisited`, nothing persisted new);
+   `@mlc-ai/web-llm` not imported by `curiosity.ts`; build + full suite green.
 
-**E2e:** drive the deterministic `__maybeMigrate` pick hook with a directly-told dino and an
-ambient-only dino present; assert the directly-told dino is the one chosen to cross.
+**E2e:** drive the deterministic `__maybeMigrate` pick hook with a freshly-told dino and an
+ambient-only dino present; assert the freshly-told dino is the one chosen to cross.
 
 ---
 
