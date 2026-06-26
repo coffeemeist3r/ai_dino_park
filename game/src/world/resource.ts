@@ -179,6 +179,26 @@ export function pickCarry(src: Stockpile, dest: Stockpile): ResourceKind | null 
   return kinds[0] ?? null;
 }
 
+/**
+ * Directed carry (BACKLOG-356) — which kind to ferry `src → dest` so the trade route actively *balances*
+ * the two economies instead of moving a random spare (329's `pickCarry`). Prefers the recipe kind `dest` is
+ * most short of for its next craft (`CRAFT_RECIPE`, the always-on cairn) that `src` can supply (>0) and
+ * `dest` can still accept (not at cap). When `dest` has no fillable craft shortfall, falls back to
+ * `pickCarry` so a spare still moves (carry stays lossless and never a needless no-op). Deterministic — the
+ * `RESOURCE_GLYPH` iteration order keeps branch-before-stone on a deficit tie (stable sort).
+ */
+export function directedCarry(
+  src: Stockpile,
+  dest: Stockpile,
+  recipe: Partial<Record<ResourceKind, number>> = CRAFT_RECIPE,
+): ResourceKind | null {
+  const needed = (Object.keys(RESOURCE_GLYPH) as ResourceKind[])
+    .map((k) => ({ k, deficit: (recipe[k] ?? 0) - (dest[k] ?? 0) }))
+    .filter((x) => x.deficit > 0 && (src[x.k] ?? 0) > 0 && !atCap(dest, x.k))
+    .sort((a, b) => b.deficit - a.deficit);
+  return needed[0]?.k ?? pickCarry(src, dest);
+}
+
 /** Remove one of `kind` from a pile (floored at 0). Pure — returns a new map, never mutates. */
 export function takeResource(pile: Stockpile, kind: ResourceKind): Stockpile {
   const have = pile[kind] ?? 0;

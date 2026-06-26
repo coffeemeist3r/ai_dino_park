@@ -65,7 +65,7 @@ import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
-import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine } from '../world/loner';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, NEED_GLYPH, type Needs } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
@@ -88,7 +88,7 @@ import {
   SHELTER_AFTER_CAIRNS,
   canBuildShelter,
   buildShelter,
-  pickCarry,
+  directedCarry,
   takeResource,
   resourceFetchable,
   RESOURCE_GRACE_STEPS,
@@ -252,6 +252,10 @@ export class WorldScene extends Phaser.Scene {
   /** The loner (BACKLOG-135): the 🥀 mope mark, index-aligned like sleepMarks. Loner status itself is
    *  derived live from the bond graph (no persisted state — the bonds are already saved). */
   private mopeMarks: Phaser.GameObjects.Text[] = [];
+  /** The loner finds a friend (BACKLOG-369): dinos that have already fired the one-shot "not so alone"
+   *  beat. Transient — the memory it files is the persistent record, so a reload won't re-fire (the
+   *  loner→friend transition can't recur once the bond is already saved above the floor). */
+  private lonerFriended = new Set<string>();
   /** Need-drive spine (BACKLOG-371): each dino's hunger/thirst, persisted additively; the 🍖/💧 marks
    *  are index-aligned like sleepMarks. */
   private needs: Needs = {};
@@ -1287,7 +1291,10 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hooks
     (window as any).__bonds = () => ({ ...this.bonds });
     (window as any).__bondPair = (a: string, b: string, amount?: number) => {
+      const before = this.bonds;
       this.bonds = strengthen(this.bonds, a, b, amount ?? HUDDLE_THRESHOLD);
+      this.checkLonerLift(a, before); // BACKLOG-369: drive the loner→friend beat deterministically in tests
+      this.checkLonerLift(b, before);
       return bondPoints(this.bonds, a, b);
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
@@ -1541,6 +1548,21 @@ export class WorldScene extends Phaser.Scene {
       const lonely = isLoner(this.bonds, d.name, names, LONER_FLOOR);
       mark.setVisible(lonely && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
     });
+  }
+
+  /**
+   * The loner finds a friend (BACKLOG-369): if strengthening a bond just lifted `name` out of loner status
+   * (its first bond over the floor, per the pre-strengthen snapshot `before`), file the one-shot "not so
+   * alone now" memory + float a 🌱 perk-up. The 🥀 stops drawing on its own (refreshMopeMarks reads the
+   * live graph). Fires once ever per dino.
+   */
+  private checkLonerLift(name: string, before: Bonds): void {
+    if (this.lonerFriended.has(name)) return;
+    if (!liftsLoner(before, this.bonds, name, this.dinoNames(), LONER_FLOOR)) return;
+    this.lonerFriended.add(name);
+    this.memory = remember(this.memory, name, foundFriendMemory());
+    const d = this.dinoByName(name);
+    if (d) this.showBubble(d, foundFriendLine(name));
   }
 
   /** The need-drive 🍖/💧 (BACKLOG-371): the more pressing need, above the cold/mope slot. */
@@ -2012,7 +2034,12 @@ export class WorldScene extends Phaser.Scene {
         const b = this.dinos[j];
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
+          const beforeMeet = this.bonds;
           this.bonds = strengthen(this.bonds, a.name, b.name, BOND_PER_MEET); // meeting (and huddling) deepens the bond
+          // The loner finds a friend (BACKLOG-369): if this meeting lifted either dino out of loner status
+          // (its first bond over the floor), mark the moment once.
+          this.checkLonerLift(a.name, beforeMeet);
+          this.checkLonerLift(b.name, beforeMeet);
           this.flashMeet(a, b);
           // Governor (BACKLOG-107): ambient chatter yields when nobody watches or power is low.
           if (
@@ -3029,8 +3056,10 @@ export class WorldScene extends Phaser.Scene {
     // Carry between zones (BACKLOG-329): the crossing dino ferries one banked resource from the pile it
     // leaves into the pile it enters — the first link between the two per-zone economies (328). Only the
     // visible crossing carries; the instant __migrate/relocate path does not. Empty source or a capped
-    // destination → nothing moves (pickCarry returns null), so nothing is ever lost.
-    const carry = pickCarry(this.pileFor(home), this.pileFor(dest));
+    // destination → nothing moves (directedCarry returns null), so nothing is ever lost.
+    // Directed carry (BACKLOG-356): ferry the kind `dest` is short of for its next craft, not a random
+    // spare — so the trade route actively balances the diverging piles (falls back to a spare otherwise).
+    const carry = directedCarry(this.pileFor(home), this.pileFor(dest));
     if (carry) {
       this.stockpileByZone[home] = takeResource(this.pileFor(home), carry);
       this.stockpileByZone[dest] = bankResource(this.pileFor(dest), carry);

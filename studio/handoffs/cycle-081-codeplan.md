@@ -105,3 +105,17 @@ back to `pickCarry`.
   (needs branch ≥ 3), so the pile holds. Keep the banked counts below the recipe in the e2e.
 
 **Estimated touch count:** ~4 files (resource.ts, WorldScene.ts, 1 unit, 1 e2e). Under 6.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/loner.ts` — +`FOUND_FRIEND_GLYPH`, +`liftsLoner` (pure two-snapshot transition read), +`foundFriendMemory`, +`foundFriendLine`. Stays pure (no Phaser/WebLLM).
+- `game/src/world/resource.ts` — +`directedCarry` (largest craft-deficit kind src can supply & dest can accept; falls back to `pickCarry`). Reuses `atCap`/`CRAFT_RECIPE`/`RESOURCE_GLYPH`/`pickCarry`.
+- `game/src/scenes/WorldScene.ts` — imports updated (added the 3 loner symbols + `directedCarry`; **dropped** the now-unused `pickCarry` import since `crossDino` was its only caller); +`lonerFriended` transient Set; +`checkLonerLift(name, before)`; wired at the meet-site bond bump + the `__bondPair` hook (snapshot `before`, strengthen, check both names); `crossDino` carry swapped `pickCarry` → `directedCarry`.
+- `tests/unit/cycle-081-loner-friend.test.ts` (5), `tests/unit/cycle-081-directed-carry.test.ts` (6), `tests/e2e/cycle-081-loner-friend.spec.ts` (2), `tests/e2e/cycle-081-directed-carry.spec.ts` (1).
+
+**Deviations from plan:** one minor, flagged in plan as a risk — removed WorldScene's `pickCarry` import (unused after the `crossDino` swap; `directedCarry` calls `pickCarry` internally from resource.ts). No scope creep.
+
+**Build + tests:** `npm run build` clean (tsc + vite). **838 unit green** (+11: 5 loner-friend, 6 directed-carry). Dev server HTTP 200. Full e2e **255/256** — the lone failure is `cycle-069-zone-objects` (resource gatherable-in-own-zone), the catalogued rotating parallel-load flake: **green isolated 3/3** (`--workers=1`), in the zone-gate path untouched by this diff (the change lives in `crossDino` carry + the loner meet-site). web-llm boundary unaffected; `loner.ts`/`resource.ts` stay pure; no save-format change (the `lonerFriended` guard is transient). phase → qa-pending.

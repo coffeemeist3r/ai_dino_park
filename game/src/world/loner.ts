@@ -56,3 +56,31 @@ export function edgeTarget(tile: Tile, cols: number, rows: number): Tile {
 export function perkUpLine(name: string): string {
   return `${name} perks up 💐`;
 }
+
+/** The mark floated when a loner grows its first real friend (BACKLOG-369). */
+export const FOUND_FRIEND_GLYPH = '🌱';
+
+/**
+ * Did `name` just stop being a loner (BACKLOG-369) — a loner under `before`, no longer one under `after`?
+ * Pure read over two bond snapshots: the first time a friendless dino's bond clears the floor, this is the
+ * transition to mark. (The 🥀 lifts on its own off the live graph; this is what makes the moment a *beat*.)
+ */
+export function liftsLoner(
+  before: Bonds,
+  after: Bonds,
+  name: string,
+  peers: readonly string[],
+  floor = LONER_FLOOR,
+): boolean {
+  return isLoner(before, name, peers, floor) && !isLoner(after, name, peers, floor);
+}
+
+/** The memory a dino files when it grows out of loneliness (BACKLOG-369). */
+export function foundFriendMemory(): string {
+  return 'found a friend — not so alone now';
+}
+
+/** The one-shot perk-up bubble floated over a dino that just found its first friend (BACKLOG-369). */
+export function foundFriendLine(name: string): string {
+  return `${name} ${FOUND_FRIEND_GLYPH}`;
+}
