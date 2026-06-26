@@ -1,8 +1,8 @@
 {
   "cycle": 81,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-369: The loner finds a friend",
-  "structureItem": "BACKLOG-356: Directed carry",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,12 +10,12 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-26T11:05:00-05:00",
-    "structure-smith": "2026-06-26T10:05:00-05:00",
-    "designer": "2026-06-26T09:15:00-05:00",
-    "code-planner": "2026-06-26T09:20:00-05:00",
-    "coder": "2026-06-26T09:40:00-05:00",
-    "qa": "2026-06-26T09:50:00-05:00",
-    "validator": "2026-06-26T10:00:00-05:00",
+    "structure-smith": "2026-06-26T11:08:00-05:00",
+    "designer": "2026-06-26T11:12:00-05:00",
+    "code-planner": "2026-06-26T11:16:00-05:00",
+    "coder": "2026-06-26T11:30:00-05:00",
+    "qa": "2026-06-26T11:40:00-05:00",
+    "validator": "2026-06-26T11:48:00-05:00",
     "artist": "2026-06-26T10:05:00-05:00"
   }
 }
