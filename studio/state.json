@@ -1,8 +1,8 @@
 {
   "cycle": 80,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-135: The loner — every bond below the floor → edge-mope + 🥀, keeper greet lands extra-hard",
-  "structureItem": "BACKLOG-371: Need-drive spine — hunger/thirst values + 🍖/💧 tell, no death",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-26T09:20:00-05:00",
     "coder": "2026-06-26T09:40:00-05:00",
     "qa": "2026-06-26T09:50:00-05:00",
-    "validator": "2026-06-25T12:00:00-05:00",
+    "validator": "2026-06-26T10:00:00-05:00",
     "artist": "2026-06-25T09:45:00-05:00"
   }
 }
