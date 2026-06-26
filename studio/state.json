@@ -1,7 +1,7 @@
 {
   "cycle": 81,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-369: The loner finds a friend",
   "structureItem": "BACKLOG-356: Directed carry",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",

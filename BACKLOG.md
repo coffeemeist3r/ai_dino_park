@@ -856,7 +856,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 371) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 371 + a carnivore/herbivore split read off the existing roster diet. Builds on 371 / 018.
 - [ ] BACKLOG-368 [emergent] Hunger in the voice — a hungry dino (371 over the pressing threshold) lets it slip in its next greeting/gossip line ("…could eat, honestly"), so the need-drive surfaces as personality, not just a 🍖 mark. Deterministic fallback line + LLM colour behind NPCBrain. Builds on 371 / 051.
-- [ ] BACKLOG-369 [emergent] The loner finds a friend — when a dino that had been a loner (135) finally grows one bond above the floor, it files a quiet "not so alone now" beat and the 🥀 lifts; the payoff that keeps the mope from being a permanent label. Builds on 135 / 013.
+- [~] BACKLOG-369 [emergent] The loner finds a friend — when a dino that had been a loner (135) finally grows one bond above the floor, it files a quiet "not so alone now" beat and the 🥀 lifts; the payoff that keeps the mope from being a permanent label. Builds on 135 / 013.
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
 ## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
