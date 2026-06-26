@@ -1,8 +1,8 @@
 {
   "cycle": 79,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-359: first sight of the pond",
-  "structureItem": "BACKLOG-349: grove plot",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-25T11:20:00-05:00",
     "coder": "2026-06-25T11:40:00-05:00",
     "qa": "2026-06-25T11:50:00-05:00",
-    "validator": "2026-06-25T09:40:00-05:00",
+    "validator": "2026-06-25T12:00:00-05:00",
     "artist": "2026-06-25T09:45:00-05:00"
   }
 }
