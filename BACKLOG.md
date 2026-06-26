@@ -824,10 +824,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > hundredth, a place two friends return to together, a tally of who keeps going back, and — the
 > weirdest — a place a dino who came home can quietly come to miss.
 
-- [ ] BACKLOG-359 [emergent] First sight of the pond — a dino's *very first* grove crossing lands a wide-eyed beat (✨ "first time I saw the pond" memory + a small lasting wonder) distinct from every routine crossing after, so a maiden voyage feels different from the hundredth. Builds on 334 / 339 / 346.
+- [~] BACKLOG-359 [emergent] First sight of the pond — the first time a dino comes within sight of the grove's **pond water** (a place reached *within* the grove, not the zone-entry beat 339 already ships) it stops wide-eyed (💧 "first saw the pond" memory + bubble), once per dino ever, so finally beholding the pond every grove rumor was about lands as its own moment. Distinct trigger from 339 (zone entry vs pond proximity). Builds on 334 / 339 / 346.
 - [ ] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
 - [ ] BACKLOG-361 [pokemon] Grove regulars in the book — the collection book tracks how many times each dino has crossed to the grove ("been to the pond 4×"), making homebody-vs-wanderer a legible standing rather than something you only feel. Builds on 334 / 021.
 - [ ] BACKLOG-362 [emergent] Grove-struck homesickness — a dino back from the grove a long while files a faint "miss the pond" pull that re-primes it to migrate back, so the grove becomes a place a dino can *yearn* for, not somewhere it visits once and forgets. Builds on 334 / 342 / 116.
+
+## Cycle 79 lore additions — the pond as a known place (2026-06-25)
+
+> Cycle 79's lore pick is the already-queued **BACKLOG-359** (first sight of the pond), reframed to its
+> non-duplicative core: the wonder lands when a dino finally reaches the *pond water* itself (NE of the
+> grove), not when it first crosses the zone edge — 339 already owns the grove-entry beat. These four
+> extend what a dino *does* once it's seen the water all the rumors were about.
+
+- [ ] BACKLOG-363 [emergent] Pond reflection — a dino lingering alone at the pond water catches its own reflection and files a quiet reflective memory (💧 "saw myself in the water") that can wistfully colour its next line, so solitude at the pond becomes a distinct inner beat. Builds on 359 / 011.
+- [ ] BACKLOG-364 [emergent] Showed them the pond — a dino that has *seen* the pond (359) and then tells a never-been dino about it files a small teacher/pride memory ("showed <other> the pond"), distinct from passively spreading grove news, so being the one who knew first becomes part of who a dino is. Builds on 359 / 342.
+- [ ] BACKLOG-365 [pokemon] Pond firsts in the book — the collection book surfaces each dino's remembered "firsts" — first time across (339), first sight of the pond (359) — as a little keepsake list, making a dino's milestones legible. Builds on 359 / 339 / 021.
+- [ ] BACKLOG-366 [social] Pondside meeting — two dinos that meet *at the pond* (both within sight of the water) share an extra-warm beat distinct from a meeting anywhere else, so where two dinos run into each other starts to matter. Builds on 359 / 346 / 288.
 
 ## Operator session — 2026-06-12
 

@@ -2189,3 +2189,7 @@ Build clean; 796 unit green (+9). All 6 AC for 355 and all 6 for 348 PASS with u
 ## 2026-06-25 — cycle 078 — artist — no-op
 
 No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all shipped). Nothing renderable to draw this fire — art remains caught up to the shipped systems. The next renderable art is whatever a future system queues (e.g. a grove-plot crop variant once 349 lands). No commit beyond this note.
+
+## 2026-06-25 — cycle 079 — lore-smith — the pond becomes a place you reach
+
+Cycle bumps to 79 (both 78 tracks APPROVED). Theme: the grove-news arc has spent five cycles on the *pull* of the pond (339/342/345/346/355); this cycle pays it off — a dino finally reaches the **pond water** and stops wide-eyed. Suggested next-up **BACKLOG-359** (first sight of the pond), reframed to its non-dup core: the wonder fires on first proximity to the grove's NE pond water, NOT on first zone-crossing (339 already owns that) — dinos enter at the west edge, the pond sits across the clearing, so first-sight is a separate, later moment (new glyph 💧, new memory, new `pondSeen` set distinct from `groveVisited`). Seeded four follow-ups on what a dino does once it's seen the water: 363 (pond reflection), 364 (showed them the pond), 365 (pond firsts in the book), 366 (pondside meeting). Idea Box: lone entry stays deferred (art queue empty, not terrain-blocked). phase → designer-pending.
