@@ -2225,3 +2225,4 @@ No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all s
 ## Cycle 80 — 2026-06-26
 - [cycle 080] lore-smith: the bowl gets needs, and one dino gets left out. Lore pick = BACKLOG-135 (the loner). Processed the operator hunting/hunger/thirst/death nudge — split: need-drive spine → Structure-smith (371), hunting → 367, hunger-in-voice → 368, death routed to the operator (CHARTER-level). Seeded 367/368/369/370.
 - [cycle 080] structure-smith: BACKLOG-371 (need-drive spine) — hunger/thirst as trait-shaped values that build + resolve (eat→hunger 0, pond→thirst 0), a 🍖/💧 tell over a dino in want, no death/spiral/pull. Cap rule: 3 open < 4 → seeded 371, picked it.
+- [cycle 080] designer: BACKLOG-135 (loner) + BACKLOG-371 (need-drive spine). Two pure modules (loner.ts/needs.ts) + disjoint WorldScene glue; AC per track written. phase → codeplan-pending.
