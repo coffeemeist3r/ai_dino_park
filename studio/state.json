@@ -1,6 +1,6 @@
 {
-  "cycle": 80,
-  "phase": "lore-pending",
+  "cycle": 81,
+  "phase": "designer-pending",
   "currentItem": null,
   "structureItem": null,
   "lastVerdict": "APPROVED",
@@ -9,8 +9,8 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-06-26T09:00:00-05:00",
-    "structure-smith": "2026-06-26T09:05:00-05:00",
+    "lore-smith": "2026-06-26T11:05:00-05:00",
+    "structure-smith": "2026-06-26T10:05:00-05:00",
     "designer": "2026-06-26T09:15:00-05:00",
     "code-planner": "2026-06-26T09:20:00-05:00",
     "coder": "2026-06-26T09:40:00-05:00",

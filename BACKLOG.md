@@ -855,6 +855,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-369 [emergent] The loner finds a friend — when a dino that had been a loner (135) finally grows one bond above the floor, it files a quiet "not so alone now" beat and the 🥀 lifts; the payoff that keeps the mope from being a permanent label. Builds on 135 / 013.
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
+## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
+
+> Cycle 81's lore pick is the already-queued **BACKLOG-369** (the loner finds a friend) — the payoff of
+> cycle-80's loner (135): the 🥀 lifts the moment a friendless dino grows its first real bond, so loneliness
+> is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
+> social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
+
+- [ ] BACKLOG-373 [emergent] Shared meal — two dinos that eat from the same hatch drop within a short window form a small "ate together" bond bump + a matching memory, so communal feeding becomes a bonding moment, not just a scramble. Builds on 059 / 013 / 061.
+- [ ] BACKLOG-374 [emergent] Comfort food — a moping dino (a loner's 🥀, or a sulk) that eats its *favorite* food (061) perks up and its funk eases faster than a plain meal would; solace is per-palate, so who's soothed by what becomes a tell. Builds on 061 / 135 / 123.
+- [ ] BACKLOG-375 [social] Generous feeder — a well-fed dino (low hunger, 371) standing over a hatch drop beside a hungrier high-bond neighbor yields the food and lets the friend eat first; the need-drive shapes a small act of kindness between dinos. Builds on 371 / 059 / 013.
+- [ ] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
