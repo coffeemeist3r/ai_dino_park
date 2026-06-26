@@ -2,7 +2,7 @@
   "cycle": 79,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-359: first sight of the pond",
-  "structureItem": null,
+  "structureItem": "BACKLOG-349: grove plot",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-25T11:00:00-05:00",
-    "structure-smith": "2026-06-25T09:05:00-05:00",
+    "structure-smith": "2026-06-25T11:05:00-05:00",
     "designer": "2026-06-25T09:10:00-05:00",
     "code-planner": "2026-06-25T09:15:00-05:00",
     "coder": "2026-06-25T09:30:00-05:00",
