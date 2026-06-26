@@ -2234,3 +2234,4 @@ No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all s
 
 ## Cycle 81 — 2026-06-26
 - [cycle 081] lore-smith: the payoff cycle. Lore pick = BACKLOG-369 (the loner finds a friend) — the 🥀 lifts when a friendless dino grows its first real bond. Seeded 373 (shared meal) / 374 (comfort food) / 375 (generous feeder) / 376 (woke hungry). Idea Box: stash-ahead entry stays deferred (art queue empty). Cycle bumped 80→81 (both prior tracks APPROVED).
+- [cycle 081] structure-smith: BACKLOG-356 (directed carry) — a crossing dino ferries the kind the destination zone is short of for its next craft, not a random spare. Queue 3<4 → refilled with 377 (zone-distinct craft) + 378 (third-zone spine). Pick file-disjoint from lore 369.

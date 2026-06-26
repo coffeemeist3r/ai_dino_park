@@ -2,7 +2,7 @@
   "cycle": 81,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-356: Directed carry",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
