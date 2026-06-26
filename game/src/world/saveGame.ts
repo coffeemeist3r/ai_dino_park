@@ -66,6 +66,8 @@ export interface SaveData {
   dinoZones?: Record<string, string>;
   /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
   gathered?: Record<string, number>;
+  /** Each dino's hunger/thirst drives (BACKLOG-371). Additive; absent → {} (every dino starts sated). */
+  needs?: Record<string, { hunger: number; thirst: number }>;
   /** Shared per-kind park stockpile (BACKLOG-285). Additive; absent → {}. kind→count. Legacy = bowl pile since 328. */
   stockpile?: Record<string, number>;
   /** Per-zone stockpiles (BACKLOG-328). Additive over `stockpile`; absent in pre-328 saves (→ bowl pile on restore). zone→kind→count. */
@@ -230,6 +232,18 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // needs is additive (BACKLOG-371) — absent in older saves (default {}); name→{hunger,thirst}, both finite.
+  let needs: Record<string, { hunger: number; thirst: number }> = {};
+  if (o.needs !== undefined) {
+    if (typeof o.needs !== 'object' || o.needs === null) return null;
+    const entries = o.needs as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      const v = entries[k] as { hunger?: unknown; thirst?: unknown } | null;
+      if (!v || typeof v !== 'object' || !isNum(v.hunger) || !isNum(v.thirst)) return null;
+      needs[k] = { hunger: v.hunger as number, thirst: v.thirst as number };
+    }
+  }
+
   // stockpile is additive over v2 — absent in older saves (default {}); kind→count, mirrors gathered.
   let stockpile: Record<string, number> = {};
   if (o.stockpile !== undefined) {
@@ -390,6 +404,7 @@ export function deserialize(json: string): SaveData | null {
     roles,
     dinoZones,
     gathered,
+    needs,
     stockpile,
     stockpileByZone,
     cairns,

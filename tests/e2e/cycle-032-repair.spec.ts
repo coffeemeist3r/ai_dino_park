@@ -31,6 +31,13 @@ test('greeting the jealous runner-up repairs it with an outsized bump and a 😊
   const points = () =>
     page.evaluate(() => ((window as W).__friendshipPoints as () => Record<string, number>)());
 
+  // Lift the sulker out of loner status (BACKLOG-135) so the second, ordinary greet isn't padded by the
+  // loner bonus — this test measures the repair bonus differential in isolation.
+  await page.evaluate((n) => {
+    const partner = n === 'Rex' ? 'Mossback' : 'Rex';
+    ((window as W).__bondPair as (a: string, b: string, amt: number) => void)(n, partner, 30);
+  }, sulker);
+
   // make-up greet: outsized
   const before = (await points())[sulker];
   await page.evaluate((n) => ((window as W).__greet as (x: string) => number)(n), sulker);

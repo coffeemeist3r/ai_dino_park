@@ -57,6 +57,10 @@ test('a digit key selects a tone, closes the menu, and files the tone memory', a
 test('choosing a tone shifts affinity by a valid tone delta and records the trace', async ({ page }) => {
   await boot(page);
 
+  // Lift Sunny out of loner status (BACKLOG-135) so this test isolates the pure tone delta — a fresh
+  // bowl is all-unbonded, and a greet/tone to a loner carries an extra bonus this test isn't measuring.
+  await page.evaluate(() => ((window as W).__bondPair as (a: string, b: string, n: number) => void)('Sunny', 'Rex', 30));
+
   // Seed a base above the clamp floor so a clashing (negative) delta is still observable.
   await greet(page, 'Sunny');
   const before = (await friendship(page)).Sunny ?? 0;

@@ -20,6 +20,7 @@ const validV2: SaveData = {
   roles: {},
   dinoZones: {},
   gathered: {},
+  needs: {},
   stockpile: {},
   cairns: [],
   shelters: [],

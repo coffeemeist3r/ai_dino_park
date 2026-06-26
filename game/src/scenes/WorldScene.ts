@@ -64,7 +64,9 @@ import { wanderStep, stepToward } from '../world/movement';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
-import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
+import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine } from '../world/loner';
+import { advanceNeeds, pressingNeed, satisfy, NEED_GLYPH, type Needs } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
@@ -247,6 +249,13 @@ export class WorldScene extends Phaser.Scene {
    *  never persisted — like pendingRepair) and its 🥶 marks, index-aligned like sleepMarks. */
   private coldPending = new Set<string>();
   private coldMarks: Phaser.GameObjects.Text[] = [];
+  /** The loner (BACKLOG-135): the 🥀 mope mark, index-aligned like sleepMarks. Loner status itself is
+   *  derived live from the bond graph (no persisted state — the bonds are already saved). */
+  private mopeMarks: Phaser.GameObjects.Text[] = [];
+  /** Need-drive spine (BACKLOG-371): each dino's hunger/thirst, persisted additively; the 🍖/💧 marks
+   *  are index-aligned like sleepMarks. */
+  private needs: Needs = {};
+  private needMarks: Phaser.GameObjects.Text[] = [];
   /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
    *  responder mid-walk toward the caller. Both transient, never persisted. */
   private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
@@ -881,6 +890,7 @@ export class WorldScene extends Phaser.Scene {
     this.food = null;
     this.foodKind = null;
     this.foodLanded = false;
+    this.needs = satisfy(this.needs, d.name, 'hunger'); // BACKLOG-371: a meal sates hunger
     // A meal mends a cold funk too (BACKLOG-184): the food's gain plus the warm bonus.
     const warming = this.coldPending.has(d.name);
     this.friendship = bumpPoints(this.friendship, d.name, r.gain + (warming ? WARM_BONUS : 0));
@@ -1246,6 +1256,13 @@ export class WorldScene extends Phaser.Scene {
     this.coldMarks.push(
       this.add.text(0, 0, '🥶', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    this.mopeMarks.push(
+      this.add.text(0, 0, MOPE_GLYPH, { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
+    this.needMarks.push(
+      this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
+    this.needs[cfg.name] ??= { hunger: 0, thirst: 0 };
     this.roleTags.push(
       this.add
         .text(0, 0, '', { fontFamily: 'monospace', fontSize: '9px', color: '#ffe0a0', backgroundColor: '#000000aa', padding: { x: 2, y: 1 } })
@@ -1325,6 +1342,29 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__coldSleepers = () => [...this.lastColdSleepers];
     // dev-only: keeper's warmth (BACKLOG-184) — who still carries the cold funk.
     (window as any).__coldPending = () => [...this.coldPending];
+    // dev-only: the loner (BACKLOG-135) + need-drive spine (BACKLOG-371).
+    (window as any).__loners = () =>
+      this.dinoNames().filter((n) => isLoner(this.bonds, n, this.dinoNames(), LONER_FLOOR));
+    (window as any).__isLoner = (name: string) => isLoner(this.bonds, name, this.dinoNames(), LONER_FLOOR);
+    (window as any).__needs = () => JSON.parse(JSON.stringify(this.needs));
+    (window as any).__pressingNeed = (name: string) => pressingNeed(this.needs[name]);
+    (window as any).__advanceNeeds = (steps = 1) => {
+      this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })), steps);
+      this.refreshNeedMarks();
+      return JSON.parse(JSON.stringify(this.needs));
+    };
+    (window as any).__setNeed = (name: string, which: 'hunger' | 'thirst', v: number) => {
+      const base = this.needs[name] ?? { hunger: 0, thirst: 0 };
+      this.needs = { ...this.needs, [name]: { ...base, [which]: v } };
+      this.refreshNeedMarks();
+      return this.needs[name];
+    };
+    // Run the needs tick in place (advance + drink-at-pond) without moving any dino — lets the e2e drop
+    // a thirsty dino at the pond (via __seePond) and watch it drink deterministically.
+    (window as any).__checkNeeds = () => {
+      this.checkNeeds();
+      return JSON.parse(JSON.stringify(this.needs));
+    };
     // dev-only: distress call (BACKLOG-194) — the last cry, the responder mid-walk, and a
     // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
     (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
@@ -1484,6 +1524,46 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       mark.setVisible(this.coldPending.has(d.name) && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
     });
+    this.refreshMopeMarks();
+    this.refreshNeedMarks();
+  }
+
+  private dinoNames(): string[] {
+    return this.dinos.map((d) => d.name);
+  }
+
+  /** The loner's 🥀 (BACKLOG-135): live off the bond graph, beside the cold slot (rarely co-occurs). */
+  private refreshMopeMarks(): void {
+    const names = this.dinoNames();
+    this.dinos.forEach((d, i) => {
+      const mark = this.mopeMarks[i];
+      if (!mark) return;
+      const lonely = isLoner(this.bonds, d.name, names, LONER_FLOOR);
+      mark.setVisible(lonely && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
+    });
+  }
+
+  /** The need-drive 🍖/💧 (BACKLOG-371): the more pressing need, above the cold/mope slot. */
+  private refreshNeedMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.needMarks[i];
+      if (!mark) return;
+      const need = pressingNeed(this.needs[d.name]);
+      mark.setText(need ? NEED_GLYPH[need] : '').setVisible(!!need && this.inView(d)).setPosition(d.x, d.y - TILE * 1.7);
+    });
+  }
+
+  /**
+   * Need-drive spine (BACKLOG-371) — forceStep tail. Every dino's hunger/thirst builds one step at its
+   * trait-shaped rate; a dino within sight of the grove pond drinks (thirst → 0). Deathless: needs only
+   * ever build and resolve, nothing dies. Hunger resolves at the hatch (see `eatFood`).
+   */
+  private checkNeeds(): void {
+    this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })));
+    for (const d of this.dinos) {
+      if (nearPond(this.tileOf(d), COLS, ROWS)) this.needs = satisfy(this.needs, d.name, 'thirst');
+    }
+    this.refreshNeedMarks();
   }
 
   // ── Observer lenses (BACKLOG-021 + 020): cycle V through ways of seeing the sim ──
@@ -1894,12 +1974,21 @@ export class WorldScene extends Phaser.Scene {
         !!dres &&
         resourceFetchable(this.resourceAgeByZone[dz] ?? 0) && // BACKLOG-297: ignore it until the grace elapses
         noticeResource(d.traits.curiosity, resDist) === 'fetch';
-      const socializing = !huddling && !gathering && !!other && Math.random() < 0.45;
+      // The loner (BACKLOG-135): a dino with no real friend withdraws to the edge instead of drifting to
+      // the cluster. Below huddle/gather (it'll still come in from the cold / chase a snack), above
+      // socializing (loneliness IS the not-socializing). Probabilistic so a loner still mills enough to
+      // meet someone and grow out of it (no all-unbonded deadlock). Activity stays 'wandering' — the 🥀
+      // mark rides loner status, not this roll, so the tell shows the whole time.
+      const moping =
+        !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
+      const socializing = !huddling && !gathering && !moping && !!other && Math.random() < 0.45;
       let next;
       if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
       } else if (gathering) {
         next = stepToward(cur, dres!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
+      } else if (moping) {
+        next = stepToward(cur, edgeTarget(cur, COLS, ROWS), COLS, ROWS); // withdraw to the nearest wall
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else {
@@ -1962,6 +2051,7 @@ export class WorldScene extends Phaser.Scene {
     this.checkFeeding();
     this.checkPlot();
     this.checkPondSight(); // BACKLOG-359: a grove dino reaching the pond for the first time
+    this.checkNeeds(); // BACKLOG-371: hunger/thirst build; a dino at the pond drinks
     this.maybeSpawnResource();
     this.checkGather();
     this.maybeLayEggs();
@@ -3233,11 +3323,13 @@ export class WorldScene extends Phaser.Scene {
     const repairing = this.pendingRepair === name;
     // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
     const warming = !repairing && this.coldPending.has(name);
+    // The loner (BACKLOG-135): a tone pick to a friendless dino lands extra-hard too.
+    const lonely = !repairing && !warming && isLoner(this.bonds, name, this.dinoNames(), LONER_FLOOR);
     const gain = repairing
       ? repairGain(traits)
       : warming
         ? warmGain(traits)
-        : toneReaction(toneById(id), traits).delta + this.applyKeeperBonus(traits);
+        : toneReaction(toneById(id), traits).delta + this.applyKeeperBonus(traits) + (lonely ? LONER_BONUS : 0);
     this.friendship = bumpPoints(this.friendship, name, gain);
     this.memory = remember(
       this.memory,
@@ -3245,6 +3337,10 @@ export class WorldScene extends Phaser.Scene {
       repairing ? repairMemory(name) : warming ? warmMemory() : toneById(id).memory,
     );
     this.lastTone = { ...this.lastTone, [name]: id };
+    if (lonely) {
+      const dino = this.dinoByName(name);
+      if (dino) this.showBubble(dino, perkUpLine(name));
+    }
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
@@ -3264,17 +3360,23 @@ export class WorldScene extends Phaser.Scene {
     const repairing = this.pendingRepair === name;
     // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
     const warming = !repairing && this.coldPending.has(name);
+    // The loner (BACKLOG-135): the keeper's notice lands extra-hard on a dino with no dino-friends.
+    const lonely = !repairing && !warming && isLoner(this.bonds, name, this.dinoNames(), LONER_FLOOR);
     const gain = repairing
       ? repairGain(traits)
       : warming
         ? warmGain(traits)
-        : greetGain(traits) + this.applyKeeperBonus(traits);
+        : greetGain(traits) + this.applyKeeperBonus(traits) + (lonely ? LONER_BONUS : 0);
     this.friendship = bumpPoints(this.friendship, name, gain);
     this.memory = remember(
       this.memory,
       name,
       repairing ? repairMemory(name) : warming ? warmMemory() : 'the human stopped by to say hello',
     );
+    if (lonely) {
+      const dino = this.dinoByName(name);
+      if (dino) this.showBubble(dino, perkUpLine(name));
+    }
     if (repairing) {
       this.pendingRepair = null;
       const dino = this.dinos.find((d) => d.name === name);
@@ -3507,6 +3609,8 @@ export class WorldScene extends Phaser.Scene {
       roles: this.roles,
       dinoZones: this.dinoZones,
       gathered: this.gathered,
+      needs: this.needs, // BACKLOG-371: hunger/thirst per dino
+
       stockpile: this.pileFor(BOWL_ID), // BACKLOG-328: legacy field kept = bowl pile (back-compat for old readers + tests)
       stockpileByZone: this.stockpileByZone, // BACKLOG-328: the full per-zone map
       cairns: this.cairns,
@@ -3563,6 +3667,9 @@ export class WorldScene extends Phaser.Scene {
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
+      // BACKLOG-371: needs restore (absent → {}); any spawned dino missing an entry backfills to sated.
+      this.needs = save.needs ?? {};
+      for (const d of this.dinos) this.needs[d.name] ??= { hunger: 0, thirst: 0 };
       // BACKLOG-328: per-zone piles restore; an older save's single global `stockpile` migrates into the bowl pile.
       this.stockpileByZone = (save.stockpileByZone as Record<string, Stockpile>)
         ?? (save.stockpile && Object.keys(save.stockpile).length ? { [BOWL_ID]: save.stockpile as Stockpile } : {});

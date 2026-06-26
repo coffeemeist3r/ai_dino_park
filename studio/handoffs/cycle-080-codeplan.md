@@ -87,3 +87,27 @@ No `SAVE_VERSION` bump (loner derives from saved bonds; needs is an additive fie
   deferred wander-pull (372) will answer. Not a half-feature: thirst *is* resolvable (pond), just not in-bowl.
 
 **Estimated touch count:** ~7 files (2 new src, 1 src edit ×2 tracks = WorldScene + saveGame, 2 new unit, 2 new e2e). Within budget.
+
+---
+
+## SHIPPED (Coder)
+
+Both tracks built as planned. Files: `world/loner.ts` + `world/needs.ts` (new pure), `WorldScene.ts` +
+`world/saveGame.ts` (edits), `tests/unit/cycle-080-{loner,needs}.test.ts` + `tests/e2e/cycle-080-{loner,needs}.spec.ts`
+(new), `tests/unit/saveGame.test.ts` + `tests/unit/cycle-061-save-version.test.ts` (fixtures gained `needs: {}`).
+
+- **Loner (135):** `isLoner` reads the bond graph; the mope branch is **probabilistic** (`MOPE_CHANCE = 0.5`)
+  — a deterministic edge-drift deadlocked the all-unbonded fresh bowl (every dino is a loner at t=0, so all
+  would pin to a wall and never meet to form a bond). The 🥀 mark rides loner status itself (shows the whole
+  time), the roll only governs the drift. `LONER_BONUS = 4` added in the plain branch of `recordGreet`/`recordTone`
+  + a one-shot 💐 perk-up bubble.
+- **Need-drive (371):** pure `needs.ts` (build + `pressingNeed` + `satisfy`); `checkNeeds()` in the forceStep
+  tail advances all dinos one step + drinks at the pond (`nearPond`); `eatFood` sates hunger; 🍖/💧 marks;
+  additive `needs` save field (no `SAVE_VERSION` bump). Deathless — the module never removes a dino.
+- **Two existing greet-delta specs updated in-fire** (the loner bonus is the new truth): `cycle-035-tones`
+  and `cycle-032-repair` each lift their subject out of loner status (`__bondPair`) so they keep measuring the
+  pure tone/repair delta they were written to test — the same in-fire spec-correction the routine sanctions.
+
+**Build:** clean. **Unit:** 827 green (+14: 6 loner, 5 needs, 3 saveGame-needs). **E2E:** 252/253 green per
+full run; the lone failure is the catalogued `cycle-077-carry` parallel-load flake (green isolated ×2, nothing
+in the carry/migration path was touched). web-llm boundary clean; both new modules pure.
