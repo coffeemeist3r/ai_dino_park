@@ -841,6 +841,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-365 [pokemon] Pond firsts in the book — the collection book surfaces each dino's remembered "firsts" — first time across (339), first sight of the pond (359) — as a little keepsake list, making a dino's milestones legible. Builds on 359 / 339 / 021.
 - [ ] BACKLOG-366 [social] Pondside meeting — two dinos that meet *at the pond* (both within sight of the water) share an extra-warm beat distinct from a meeting anywhere else, so where two dinos run into each other starts to matter. Builds on 359 / 346 / 288.
 
+## Cycle 80 lore additions — the bowl gets needs (2026-06-26)
+
+> Cycle 80's lore pick is the already-queued **BACKLOG-135** (the loner) — a distinctness beat off the
+> dormant dino↔dino bond graph (013): a dino whose every bond sits below the floor withdraws to the edge
+> and mopes, and the keeper's attention lands extra-hard on it. These extend it, and seed the *emergent*
+> half of the operator's hunting/hunger nudge (the structural need-drive spine is the Structure-smith's,
+> seeded as 360; death is routed to the operator as a CHARTER-level call — see IDEABOX).
+
+- [ ] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 360) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 360 + a carnivore/herbivore split read off the existing roster diet. Builds on 360 / 018.
+- [ ] BACKLOG-368 [emergent] Hunger in the voice — a hungry dino (360 over the pressing threshold) lets it slip in its next greeting/gossip line ("…could eat, honestly"), so the need-drive surfaces as personality, not just a 🍖 mark. Deterministic fallback line + LLM colour behind NPCBrain. Builds on 360 / 051.
+- [ ] BACKLOG-369 [emergent] The loner finds a friend — when a dino that had been a loner (135) finally grows one bond above the floor, it files a quiet "not so alone now" beat and the 🥀 lifts; the payoff that keeps the mope from being a permanent label. Builds on 135 / 013.
+- [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*

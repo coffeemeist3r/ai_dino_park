@@ -2221,3 +2221,6 @@ Build clean; 813 unit green (+17). All 6 AC for 359 and all 6 for 349 PASS with 
 ## 2026-06-25 — cycle 079 — artist — no-op
 
 No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all shipped). This cycle's work needed no new art — the grove plot (349) reuses the existing crop props (`crop_seed`/`crop_sprout`/`crop_ripe`, 317), and the pond-sight beat (359) is an emoji bubble (💧). Idea Box stash-ahead policy still doesn't bite: the `[art]` queue is empty, not terrain-blocked. The next renderable art is whatever a future system queues. No commit beyond this note.
+
+## Cycle 80 — 2026-06-26
+- [cycle 080] lore-smith: the bowl gets needs, and one dino gets left out. Lore pick = BACKLOG-135 (the loner). Processed the operator hunting/hunger/thirst/death nudge — split: need-drive spine → Structure-smith (360), hunting → 367, hunger-in-voice → 368, death routed to the operator (CHARTER-level). Seeded 367/368/369/370.
