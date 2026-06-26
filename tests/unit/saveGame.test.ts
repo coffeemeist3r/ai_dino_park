@@ -18,7 +18,9 @@ const sample: SaveData = {
   cairns: [],
   shelters: [],
   groveVisited: [],
+  pondSeen: [],
   plot: null,
+  grovePlot: null,
   harvested: 0,
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
@@ -278,5 +280,32 @@ describe('saveGame', () => {
   it('returns null for a malformed plot or negative harvest (BACKLOG-145)', () => {
     expect(deserialize(JSON.stringify({ ...sample, plot: { plantedDay: 'x' } }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, harvested: -1 }))).toBeNull();
+  });
+
+  it('round-trips a grove plot independently of the bowl plot (BACKLOG-349)', () => {
+    const both: SaveData = { ...sample, plot: { plantedDay: 2 }, grovePlot: { plantedDay: 5 } };
+    expect(deserialize(serialize(both))).toEqual(both);
+    // grove planted, bowl empty
+    const groveOnly: SaveData = { ...sample, plot: null, grovePlot: { plantedDay: 7 } };
+    expect(deserialize(serialize(groveOnly))).toEqual(groveOnly);
+  });
+
+  it('loads an older save lacking grovePlot, defaulting it to null (BACKLOG-349)', () => {
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.grovePlot).toBeNull();
+  });
+
+  it('returns null for a malformed grovePlot (BACKLOG-349)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, grovePlot: { plantedDay: 'x' } }))).toBeNull();
+  });
+
+  it('round-trips a pondSeen list, defaults it absent, rejects a non-string entry (BACKLOG-359)', () => {
+    const seen: SaveData = { ...sample, pondSeen: ['Rex', 'Glade'] };
+    expect(deserialize(serialize(seen))).toEqual(seen);
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    expect(deserialize(old)!.pondSeen).toEqual([]);
+    expect(deserialize(JSON.stringify({ ...sample, pondSeen: [5] }))).toBeNull();
   });
 });

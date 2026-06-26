@@ -12,6 +12,7 @@
  */
 
 import type { Tile } from './movement';
+import { BOWL_ID, GROVE_ID } from './zones';
 
 export type CropStage = 'seed' | 'sprout' | 'ripe';
 
@@ -29,8 +30,20 @@ export const CROP_FOOD_ID = 'berries';
 export const SPROUT_DAY = 1;
 export const RIPE_DAY = 2;
 
-/** The single fixed plot tile — bottom-left, clear of the den ({10,11}), the feeding row, and centre. */
+/** The bowl's fixed plot tile — bottom-left, clear of the den ({10,11}), the feeding row, and centre. */
 export const PLOT_TILE: Tile = { tileX: 2, tileY: 12 };
+
+/**
+ * The grove's plot tile (BACKLOG-349) — grove grass, clear of the path band (rows 6–7) and the NE pond
+ * (x 15–18 / y 2–4) and the edges, so the second zone farms its own crop. The plot is now per-zone.
+ */
+export const GROVE_PLOT_TILE: Tile = { tileX: 4, tileY: 10 };
+
+/** Each zone's fixed plot tile (BACKLOG-308/349 — zone-scoped). A zone absent here has no plot. */
+export const PLOT_TILE_BY_ZONE: Record<string, Tile> = {
+  [BOWL_ID]: PLOT_TILE,
+  [GROVE_ID]: GROVE_PLOT_TILE,
+};
 
 /** The crop's stage given whole in-game days since it was planted. Negative gaps clamp to seed. */
 export function cropStage(daysElapsed: number): CropStage {

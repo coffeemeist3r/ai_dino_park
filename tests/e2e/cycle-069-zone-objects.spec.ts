@@ -34,14 +34,25 @@ test('a resource dropped in the bowl belongs to the bowl and hides in the grove 
   expect((await objVisible(page)).resource).toBe(true);
 });
 
-test('the plot draws in the bowl only (BACKLOG-308)', async ({ page }) => {
+test("each zone's plot draws only in its own zone (BACKLOG-308/349)", async ({ page }) => {
   await boot(page);
 
-  expect((await objVisible(page)).plot).toBe(true);
+  // In the bowl: the bowl plot is drawn, the grove plot (349) is hidden.
+  let v = await objVisible(page);
+  expect(v.plotByZone.bowl).toBe(true);
+  expect(v.plotByZone.grove).toBe(false);
+
+  // Cross to the grove: now the grove's own plot draws and the bowl's is hidden.
   await setZone(page, 'grove');
-  expect((await objVisible(page)).plot).toBe(false);
+  v = await objVisible(page);
+  expect(v.plotByZone.grove).toBe(true);
+  expect(v.plotByZone.bowl).toBe(false);
+
+  // Back in the bowl, the bowl plot is visible again.
   await setZone(page, 'bowl');
-  expect((await objVisible(page)).plot).toBe(true);
+  v = await objVisible(page);
+  expect(v.plotByZone.bowl).toBe(true);
+  expect(v.plotByZone.grove).toBe(false);
 });
 
 test('a resource is gatherable only in its own zone (BACKLOG-308)', async ({ page }) => {

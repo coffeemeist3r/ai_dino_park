@@ -76,8 +76,12 @@ export interface SaveData {
   shelters?: { tileX: number; tileY: number; zone?: string }[];
   /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
   groveVisited?: string[];
-  /** The planted plot (BACKLOG-145), or null/absent when empty. Stores the in-game day it was planted. */
+  /** Dinos that have ever seen the grove pond (BACKLOG-359). Additive; absent → []. Gates the once-ever pond-sight beat. */
+  pondSeen?: string[];
+  /** The bowl's planted plot (BACKLOG-145), or null/absent when empty. Stores the in-game day it was planted. */
   plot?: { plantedDay: number } | null;
+  /** The grove's planted plot (BACKLOG-349). Additive over `plot`; absent → null (old saves load grove-empty). */
+  grovePlot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
   harvested?: number;
   eggs: Egg[];
@@ -292,14 +296,26 @@ export function deserialize(json: string): SaveData | null {
     groveVisited = o.groveVisited as string[];
   }
 
-  // plot/harvested are additive over v2 — absent in older saves (plot → null, harvested → 0). (BACKLOG-145)
-  let plot: { plantedDay: number } | null = null;
-  if (o.plot !== undefined && o.plot !== null) {
-    if (typeof o.plot !== 'object') return null;
-    const r = o.plot as Record<string, unknown>;
-    if (!isNum(r.plantedDay)) return null;
-    plot = { plantedDay: r.plantedDay as number };
+  // pondSeen is additive — absent in older saves (default []); a flat list of dino names. (BACKLOG-359)
+  let pondSeen: string[] = [];
+  if (o.pondSeen !== undefined) {
+    if (!Array.isArray(o.pondSeen)) return null;
+    for (const n of o.pondSeen) if (typeof n !== 'string') return null;
+    pondSeen = o.pondSeen as string[];
   }
+
+  // plot/grovePlot/harvested are additive over v2 — absent in older saves (plots → null, harvested → 0). (BACKLOG-145/349)
+  const readPlot = (v: unknown): { plantedDay: number } | null | undefined => {
+    if (v === undefined || v === null) return null;
+    if (typeof v !== 'object') return undefined; // signal malformed
+    const r = v as Record<string, unknown>;
+    if (!isNum(r.plantedDay)) return undefined;
+    return { plantedDay: r.plantedDay as number };
+  };
+  const plot = readPlot(o.plot);
+  if (plot === undefined) return null;
+  const grovePlot = readPlot(o.grovePlot);
+  if (grovePlot === undefined) return null;
   let harvested = 0;
   if (o.harvested !== undefined) {
     if (!isNum(o.harvested) || (o.harvested as number) < 0) return null;
@@ -379,7 +395,9 @@ export function deserialize(json: string): SaveData | null {
     cairns,
     shelters,
     groveVisited,
+    pondSeen,
     plot,
+    grovePlot,
     harvested,
     eggs,
     born,

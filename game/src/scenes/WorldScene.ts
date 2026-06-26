@@ -64,7 +64,7 @@ import { wanderStep, stepToward } from '../world/movement';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
-import { firstGroveArrival, groveArrivalMemory, groveArrivalLine } from '../world/arrival';
+import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
@@ -96,7 +96,7 @@ import {
 } from '../world/resource';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
-import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE, type CropStage } from '../world/plot';
+import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines, zoneTallyLine } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -292,13 +292,15 @@ export class WorldScene extends Phaser.Scene {
   private groveVisited: string[] = [];
   /** Dinos pausing to look around on a first grove arrival (BACKLOG-339) — transient, one forceStep hold. */
   private arriving = new Set<string>();
-  /** The planted plot (BACKLOG-145), or null when empty. Stores the in-game day it was planted. */
-  private plot: { plantedDay: number } | null = null;
-  private plotSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
-  /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. */
+  /** Dinos that have ever seen the grove pond (BACKLOG-359). Persisted; absent → []. Gates the once-ever pond-sight beat. */
+  private pondSeen: string[] = [];
+  /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
+  private plotByZone: Record<string, { plantedDay: number } | null> = { [BOWL_ID]: null, [GROVE_ID]: null };
+  private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
+  /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. Shared across both plots. */
   private harvested = 0;
-  /** Last plot stage drawn — so the ripen note fires once, on the edge into ripe. */
-  private plotStageShown: CropStage | 'empty' = 'empty';
+  /** Last plot stage drawn per zone — so the ripen note fires once, on the edge into ripe. */
+  private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
   private skyStartAbsMin = 0;
@@ -661,13 +663,29 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
       resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
-      plot: this.plotSprite?.visible ?? false,
+      plot: this.plotSpriteByZone[this.zoneId]?.visible ?? false,
+      // BACKLOG-349: per-zone plot visibility — each zone's plot draws only while the keeper is in it.
+      plotByZone: Object.fromEntries(
+        Object.keys(this.plotSpriteByZone).map((z) => [z, this.plotSpriteByZone[z]?.visible ?? false]),
+      ),
       cairns: this.cairnSprites.map((s) => s.visible),
       shelters: this.shelterSprites.map((s) => s.visible), // BACKLOG-315
     });
     // BACKLOG-339: which dinos have ever been to the grove / are pausing on a fresh arrival.
     (window as any).__groveVisited = () => [...this.groveVisited];
     (window as any).__arriving = () => [...this.arriving];
+    // BACKLOG-359: which dinos have ever seen the pond; __seePond drives the once-ever beat for the e2e
+    // by dropping a dino into the grove beside the pond water and running the check.
+    (window as any).__pondSeen = () => [...this.pondSeen];
+    (window as any).__seePond = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) {
+        setZone(this.dinoZones, name, GROVE_ID);
+        d.setPosition(16 * TILE + TILE / 2, 5 * TILE + TILE / 2); // one tile south of the NE pond block
+        this.checkPondSight();
+      }
+      return [...this.pondSeen];
+    };
     (window as any).__spawnResource = (
       kind: ResourceKind,
       tileX: number,
@@ -700,95 +718,121 @@ export class WorldScene extends Phaser.Scene {
    * realtime-clock days; press P adjacent again once ripe to harvest the crop into the feeding loop.
    */
   private setupPlot(): void {
-    this.drawPlotSprite('empty');
+    for (const z of Object.keys(PLOT_TILE_BY_ZONE)) this.drawPlotSprite(z, 'empty');
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.P).on('down', () => this.handlePlot());
     this.refreshPlot();
 
-    // any: dev-only Playwright hooks (BACKLOG-145). __plot reports stage off the live clock day;
-    // __plantPlot / __harvestPlot drive plant + harvest without walking the keeper onto the tile.
-    (window as any).__plot = () =>
-      this.plot
-        ? { plantedDay: this.plot.plantedDay, stage: cropStage(getWorldClock().now().day - this.plot.plantedDay) }
-        : null;
-    (window as any).__harvested = () => this.harvested;
-    (window as any).__plantPlot = () => {
-      this.plant();
-      return (window as any).__plot();
+    // any: dev-only Playwright hooks (BACKLOG-145/349). Each takes an optional zone (default = the active
+    // zone, so existing bowl-default calls are byte-identical). __plot reports stage off the live clock day.
+    (window as any).__plot = (zone?: string) => {
+      const p = this.plotByZone[zone ?? this.zoneId];
+      return p ? { plantedDay: p.plantedDay, stage: cropStage(getWorldClock().now().day - p.plantedDay) } : null;
     };
-    (window as any).__harvestPlot = () => {
-      this.harvest();
+    (window as any).__harvested = () => this.harvested;
+    (window as any).__plantPlot = (zone?: string) => {
+      this.plant(zone ?? this.zoneId);
+      return (window as any).__plot(zone);
+    };
+    (window as any).__harvestPlot = (zone?: string) => {
+      this.harvest(zone ?? this.zoneId);
       return this.harvested;
     };
     // BACKLOG-317: the baked crop texture key when a stage rig renders, else null (emoji fallback).
-    (window as any).__plotArt = () =>
-      this.plotSprite instanceof Phaser.GameObjects.Image ? this.plotSprite.texture.key : null;
+    (window as any).__plotArt = (zone?: string) => {
+      const s = this.plotSpriteByZone[zone ?? this.zoneId];
+      return s instanceof Phaser.GameObjects.Image ? s.texture.key : null;
+    };
   }
 
-  /** Draw the plot sprite for a stage: a baked crop prop where a rig exists (BACKLOG-317), else the
+  /** Draw a zone's plot sprite for a stage: a baked crop prop where a rig exists (BACKLOG-317), else the
    *  emoji glyph (graceful fallback). Recreated only on a stage change, so it's not rebuilt per tick. */
-  private drawPlotSprite(stage: CropStage | 'empty'): void {
-    this.plotSprite?.destroy();
-    const px = PLOT_TILE.tileX * TILE + TILE / 2;
-    const py = PLOT_TILE.tileY * TILE + TILE / 2;
+  private drawPlotSprite(zone: string, stage: CropStage | 'empty'): void {
+    this.plotSpriteByZone[zone]?.destroy();
+    const tile = PLOT_TILE_BY_ZONE[zone];
+    const px = tile.tileX * TILE + TILE / 2;
+    const py = tile.tileY * TILE + TILE / 2;
     const tex = stage === 'empty' ? null : bakePropArt(this, `crop_${stage}`);
-    this.plotSprite = tex
+    this.plotSpriteByZone[zone] = tex
       ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
       : this.add.text(px, py, STAGE_GLYPH[stage], { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
   }
 
-  /** P press: plant an empty plot, harvest a ripe one, or note a growing one — only when adjacent. */
+  /** P press: plant the active zone's empty plot, harvest its ripe one, or note a growing one — only
+   *  when adjacent (BACKLOG-308/349: each zone has its own plot; a zone without one ignores P). */
   private handlePlot(): void {
-    // ponytail: the plot is a fixed bowl installation; per-zone plots if the grove ever earns its own.
-    if (this.zoneId !== BOWL_ID) return; // BACKLOG-308: the plot lives in the bowl only
-    if (!plotAdjacent(this.playerTile(), PLOT_TILE)) return;
-    if (!this.plot) {
-      this.plant();
-    } else if (cropStage(getWorldClock().now().day - this.plot.plantedDay) === 'ripe') {
-      this.harvest();
+    const z = this.zoneId;
+    const tile = PLOT_TILE_BY_ZONE[z];
+    if (!tile) return; // this zone has no plot
+    if (!plotAdjacent(this.playerTile(), tile)) return;
+    const plot = this.plotByZone[z];
+    if (!plot) {
+      this.plant(z);
+    } else if (cropStage(getWorldClock().now().day - plot.plantedDay) === 'ripe') {
+      this.harvest(z);
     } else {
       this.logEvent('🌿 the crop is not ready yet');
     }
   }
 
-  /** Plant a seed in the empty plot, stamping today as the planted day. */
-  private plant(): void {
-    if (this.plot) return;
-    this.plot = { plantedDay: getWorldClock().now().day };
+  /** Plant a seed in a zone's empty plot, stamping today as the planted day. */
+  private plant(zone: string): void {
+    if (this.plotByZone[zone]) return;
+    this.plotByZone[zone] = { plantedDay: getWorldClock().now().day };
     this.logEvent('🌱 you planted a seed in the plot');
     this.refreshPlot();
     void this.saveGame();
   }
 
   /**
-   * Harvest a ripe plot: release the crop as a food drop at the plot column (reusing the feeding
+   * Harvest a zone's ripe plot: release the crop as a food drop at the plot column (reusing the feeding
    * hatch so the swarm + favorites loop apply), clear the plot, and bump the harvest tally.
    */
-  private harvest(): void {
-    if (!this.plot || cropStage(getWorldClock().now().day - this.plot.plantedDay) !== 'ripe') return;
-    this.dropFood(PLOT_TILE.tileX, CROP_FOOD_ID); // no-ops if a piece is already in play — retry later
-    this.plot = null;
+  private harvest(zone: string): void {
+    const plot = this.plotByZone[zone];
+    if (!plot || cropStage(getWorldClock().now().day - plot.plantedDay) !== 'ripe') return;
+    this.dropFood(PLOT_TILE_BY_ZONE[zone].tileX, CROP_FOOD_ID); // no-ops if a piece is already in play — retry later
+    this.plotByZone[zone] = null;
     this.harvested++;
     this.logEvent('🍓 you harvested the crop');
     this.refreshPlot();
     void this.saveGame();
   }
 
-  /** Redraw the plot marker for its current stage; log the ripen note once, on the edge into ripe. */
+  /** Redraw each zone's plot marker for its current stage; log the ripen note once, on the edge into ripe.
+   *  Each plot draws only in its own zone (BACKLOG-308/349). */
   private refreshPlot(): void {
-    const stage: CropStage | 'empty' = this.plot
-      ? cropStage(getWorldClock().now().day - this.plot.plantedDay)
-      : 'empty';
-    if (stage !== this.plotStageShown) this.drawPlotSprite(stage); // BACKLOG-317: swap to the stage's prop
-    this.plotSprite?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-308: the plot draws in the bowl only
-    if (stage === 'ripe' && this.plotStageShown !== 'ripe') {
-      this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
+    for (const z of Object.keys(PLOT_TILE_BY_ZONE)) {
+      const plot = this.plotByZone[z];
+      const stage: CropStage | 'empty' = plot ? cropStage(getWorldClock().now().day - plot.plantedDay) : 'empty';
+      if (stage !== this.plotStageShownByZone[z]) this.drawPlotSprite(z, stage); // BACKLOG-317: swap to the stage's prop
+      this.plotSpriteByZone[z]?.setVisible(this.zoneId === z);
+      if (stage === 'ripe' && this.plotStageShownByZone[z] !== 'ripe') {
+        this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
+      }
+      this.plotStageShownByZone[z] = stage;
     }
-    this.plotStageShown = stage;
   }
 
-  /** forceStep tail: advance the plot's visible stage as realtime days pass (BACKLOG-145). */
+  /** forceStep tail: advance each plot's visible stage as realtime days pass (BACKLOG-145/349). */
   private checkPlot(): void {
-    if (this.plot) this.refreshPlot();
+    if (this.plotByZone[BOWL_ID] || this.plotByZone[GROVE_ID]) this.refreshPlot();
+  }
+
+  /**
+   * First sight of the pond (BACKLOG-359): a grove dino that comes within sight of the pond water for
+   * the first time ever stops wide-eyed — a 💧 memory + bubble, once per dino. Distinct from the
+   * grove-entry beat (339): keyed on pond proximity + its own `pondSeen` set, not zone entry.
+   */
+  private checkPondSight(): void {
+    for (const d of this.dinos) {
+      const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      if (firstPondSight(this.pondSeen, d.name, zone, this.tileOf(d), COLS, ROWS)) {
+        this.pondSeen.push(d.name);
+        this.memory = remember(this.memory, d.name, pondSightMemory());
+        this.showBubble(d, pondSightLine());
+        void this.saveGame();
+      }
+    }
   }
 
   /** The season the bowl is living in right now, off the live clock day (BACKLOG-170). */
@@ -1917,6 +1961,7 @@ export class WorldScene extends Phaser.Scene {
     this.maybeMurmur();
     this.checkFeeding();
     this.checkPlot();
+    this.checkPondSight(); // BACKLOG-359: a grove dino reaching the pond for the first time
     this.maybeSpawnResource();
     this.checkGather();
     this.maybeLayEggs();
@@ -2803,14 +2848,15 @@ export class WorldScene extends Phaser.Scene {
   /**
    * BACKLOG-308: world objects (resource, cairns, plot) draw only in their home zone, so the grove's
    * own floor isn't overlaid with bowl-built props seen through the zone switch. Interaction is gated
-   * at the source (checkGather on `resource.zone`, handlePlot on the bowl); this is the render half.
+   * at the source (checkGather on `resource.zone`, handlePlot on the active zone); this is the render half.
    */
   private applyObjectVisibility(): void {
     // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
     this.shelterSprites.forEach((s, i) => s.setVisible(this.shelters[i]?.zone === this.zoneId)); // BACKLOG-315
-    this.plotSprite?.setVisible(this.zoneId === BOWL_ID);
+    // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
+    for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
   }
 
   /**
@@ -3466,7 +3512,9 @@ export class WorldScene extends Phaser.Scene {
       cairns: this.cairns,
       shelters: this.shelters,
       groveVisited: this.groveVisited,
-      plot: this.plot,
+      pondSeen: this.pondSeen, // BACKLOG-359
+      plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
+      grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       harvested: this.harvested,
       eggs: this.eggs,
       born: this.born,
@@ -3525,9 +3573,11 @@ export class WorldScene extends Phaser.Scene {
       this.shelters = (save.shelters ?? []).map((s) => ({ ...s, zone: s.zone ?? BOWL_ID }));
       for (const s of this.shelters) this.drawShelter(s);
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
-      this.plot = save.plot ?? null; // BACKLOG-145: plot + harvest tally restore
+      this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
+      // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
+      this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null };
       this.harvested = save.harvested ?? 0;
-      this.plotStageShown = 'empty';
+      this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
