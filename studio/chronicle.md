@@ -2244,3 +2244,4 @@ No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all s
 
 ## Cycle 82 — 2026-06-26
 - [cycle 082] lore-smith: solace, per palate. Lore pick = BACKLOG-374 (comfort food) — a moping loner that eats its own favorite food gets a quiet 😌 beat a plain meal never gives, so who's soothed by what is a per-dino tell. Seeded 379 (comfort-food recognition) / 380 (picky when low) / 381 (brought to the hatch) / 382 (savored seconds). Idea Box: stash-ahead entry stays deferred (art queue empty). Cycle bumped 81→82 (both prior tracks APPROVED).
+- [cycle 082] structure-smith: BACKLOG-357 (both-zone stores readout) — the plaque's Stores line shows only the active zone's pile; surface both at once (like the zone tally) so the bowl/grove economies read apart standing still. Queue 4 open = X → drained, no invent. Pick file-disjoint from lore 374.
