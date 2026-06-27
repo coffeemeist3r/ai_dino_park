@@ -868,7 +868,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-373 [emergent] Shared meal — two dinos that eat from the same hatch drop within a short window form a small "ate together" bond bump + a matching memory, so communal feeding becomes a bonding moment, not just a scramble. Builds on 059 / 013 / 061.
 - [x] BACKLOG-374 [emergent] Comfort food — a moping dino (a loner's 🥀, or a sulk) that eats its *favorite* food (061) perks up and its funk eases faster than a plain meal would; solace is per-palate, so who's soothed by what becomes a tell. Builds on 061 / 135 / 123.  *(shipped: cycle 82 lore track — scoped to the loner (🥀) case (cleanly queryable via `isLoner`; the sulk version waits on 123). Pure `comfortsLoner(favorite, lonerNow)` + `comfortFoodMemory`/`comfortFoodLine` + `COMFORT_FOOD_GLYPH` 😌 in loner.ts; a six-line block in `eatFood` after the favorite path files a "comfort food — the <label> eased the ache 😌" memory + floats a 😌 bubble when a loner eats its favorite — `lastComfortFood`/`__lastComfortFood` + a `__eat` deterministic-eater hook. Honest to 369: the 🥀 still lifts only on a real bond, so this is a momentary per-palate solace, not a status flip (mirrors the 135 💐 perk). Plain favorite beat (gain 9 / 😋 / favorite memory) + hunger-sate (371) + cold-mend (184) byte-identical above the block. No save change. +5 unit / 3 e2e. Follow-ups: recognition 379, picky-when-low 380, brought-to-the-hatch 381, savored seconds 382.)*
-- [ ] BACKLOG-375 [social] Generous feeder — a well-fed dino (low hunger, 371) standing over a hatch drop beside a hungrier high-bond neighbor yields the food and lets the friend eat first; the need-drive shapes a small act of kindness between dinos. Builds on 371 / 059 / 013.
+- [~] BACKLOG-375 [social] Generous feeder — a well-fed dino (low hunger, 371) standing over a hatch drop beside a hungrier high-bond neighbor yields the food and lets the friend eat first; the need-drive shapes a small act of kindness between dinos. Builds on 371 / 059 / 013.
 - [ ] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
 
 ## Cycle 82 lore additions — solace, per palate (2026-06-26)
@@ -882,6 +882,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-380 [emergent] Picky when low — a moping loner (🥀) offered a *non-favorite* food turns away (😞, won't eat it) where a contented dino eats anything; when a dino is down, only the food that fits reaches it. Builds on 374 / 070 / 135.
 - [ ] BACKLOG-381 [social] Brought to the hatch — a moping loner's highest-bond friend, on a food drop, nudges it in from the edge toward the hatch so it doesn't miss the meal while withdrawn; comfort becomes a friend steering you to food. Builds on 374 / 130 / 135.
 - [ ] BACKLOG-382 [emergent] Savored seconds — a dino that just ate its comfort food (374) lingers contentedly a beat (a slow 😌 idle) before wandering off, so solace reads in the pause, not only the bite. Builds on 374 / 318.
+
+## Cycle 83 lore additions — kindness shaped by need (2026-06-27)
+
+> Cycle 83's lore pick is the already-queued **BACKLOG-375** (generous feeder) — the need-drive (371)
+> reaching *between* dinos: a well-fed dino beside a hungrier high-bond friend yields the keeper's drop
+> and lets the friend eat first, the first generosity that costs something. These extend it into
+> reciprocity, acknowledgement, its selfish inverse, and a legible standing.
+
+- [ ] BACKLOG-385 [emergent] Remembered generosity — a dino yielded food by a friend (375) files who fed it; it's quicker to yield back to that friend later, so generosity becomes reciprocal. Builds on 375 / 132.
+- [ ] BACKLOG-386 [social] Grateful nuzzle — a dino fed first by a generous friend (375) throws a small 💛 toward its benefactor, so the kindness gets visibly acknowledged. Builds on 375 / 130.
+- [ ] BACKLOG-387 [emergent] Greedy gobble — the inverse: a hungry, low-agreeableness dino never yields and may shoulder past a friend to the food first (😤), so generosity reads as a trait, not a universal. Builds on 375 / 070.
+- [ ] BACKLOG-388 [pokemon] Kindest in the book — the collection book tracks how many times each dino has yielded a meal to a friend ("gave up 3 meals"), making generosity a legible standing. Builds on 375 / 021.
 
 ## Operator session — 2026-06-12
 
