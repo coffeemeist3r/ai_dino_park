@@ -1,7 +1,7 @@
 {
-  "cycle": 81,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 82,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-374: comfort food",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-06-26T11:05:00-05:00",
+    "lore-smith": "2026-06-26T14:30:00-05:00",
     "structure-smith": "2026-06-26T11:08:00-05:00",
     "designer": "2026-06-26T11:12:00-05:00",
     "code-planner": "2026-06-26T11:16:00-05:00",

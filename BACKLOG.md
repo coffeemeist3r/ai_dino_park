@@ -867,9 +867,21 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
 
 - [ ] BACKLOG-373 [emergent] Shared meal — two dinos that eat from the same hatch drop within a short window form a small "ate together" bond bump + a matching memory, so communal feeding becomes a bonding moment, not just a scramble. Builds on 059 / 013 / 061.
-- [ ] BACKLOG-374 [emergent] Comfort food — a moping dino (a loner's 🥀, or a sulk) that eats its *favorite* food (061) perks up and its funk eases faster than a plain meal would; solace is per-palate, so who's soothed by what becomes a tell. Builds on 061 / 135 / 123.
+- [~] BACKLOG-374 [emergent] Comfort food — a moping dino (a loner's 🥀, or a sulk) that eats its *favorite* food (061) perks up and its funk eases faster than a plain meal would; solace is per-palate, so who's soothed by what becomes a tell. Builds on 061 / 135 / 123.
 - [ ] BACKLOG-375 [social] Generous feeder — a well-fed dino (low hunger, 371) standing over a hatch drop beside a hungrier high-bond neighbor yields the food and lets the friend eat first; the need-drive shapes a small act of kindness between dinos. Builds on 371 / 059 / 013.
 - [ ] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
+
+## Cycle 82 lore additions — solace, per palate (2026-06-26)
+
+> Cycle 82's lore pick is the already-queued **BACKLOG-374** (comfort food) — the emotional payoff of the
+> need-drive (371) + loner (135/369) + favorites (061) arcs: a moping loner that eats *its* favorite food
+> gets a quiet 😌 solace beat the plain meal never gives, so *who is soothed by what* becomes a per-dino tell.
+> These extend it into recognition, refusal, and lingering — solace as something a dino learns, withholds, and savors.
+
+- [ ] BACKLOG-379 [emergent] Comfort-food recognition — a dino soothed by its favorite (374) files *which* food eased it; the collection book later reveals "finds comfort in 🐟" once you've witnessed it, making each dino's solace legible alongside its favorite. Builds on 374 / 069 / 021.
+- [ ] BACKLOG-380 [emergent] Picky when low — a moping loner (🥀) offered a *non-favorite* food turns away (😞, won't eat it) where a contented dino eats anything; when a dino is down, only the food that fits reaches it. Builds on 374 / 070 / 135.
+- [ ] BACKLOG-381 [social] Brought to the hatch — a moping loner's highest-bond friend, on a food drop, nudges it in from the edge toward the hatch so it doesn't miss the meal while withdrawn; comfort becomes a friend steering you to food. Builds on 374 / 130 / 135.
+- [ ] BACKLOG-382 [emergent] Savored seconds — a dino that just ate its comfort food (374) lingers contentedly a beat (a slow 😌 idle) before wandering off, so solace reads in the pause, not only the bite. Builds on 374 / 318.
 
 ## Operator session — 2026-06-12
 
