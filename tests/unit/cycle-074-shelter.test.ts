@@ -3,7 +3,6 @@ import {
   canBuildShelter,
   buildShelter,
   SHELTER_RECIPE,
-  SHELTER_AFTER_CAIRNS,
   CRAFT_RECIPE,
   type Stockpile,
 } from '../../game/src/world/resource';
@@ -57,7 +56,8 @@ describe('dino-built shelter (BACKLOG-315)', () => {
     expect(SHELTER_RECIPE.stone!).toBeLessThanOrEqual(8);
   });
 
-  it('SHELTER_AFTER_CAIRNS is a meaningful escalation bar', () => {
-    expect(SHELTER_AFTER_CAIRNS).toBe(3);
-  });
+  // NOTE (BACKLOG-377): the lean-to is no longer a per-zone *escalation* after the cairn (the retired
+  // SHELTER_AFTER_CAIRNS bar). It is now the grove's bias-chosen landmark — the bowl stacks cairns, the
+  // grove raises lean-tos. The build math above is unchanged; the *selection* moved to zoneStructure
+  // (see cycle-083-zone-craft.test.ts + cycle-074-shelter.spec.ts).
 });

@@ -199,6 +199,29 @@ export function directedCarry(
   return needed[0]?.k ?? pickCarry(src, dest);
 }
 
+/**
+ * Zone-distinct craft (BACKLOG-377) — each zone builds the structure its resource bias (348) favors,
+ * so the two zones' *built landscapes* diverge, not only their piles. The stone-rich bowl stacks 🗿
+ * cairns; the branch-rich grove raises 🛖 lean-tos. This replaces the zone-agnostic cairn→lean-to
+ * escalation (286/315 `SHELTER_AFTER_CAIRNS`) with a one-structure-per-zone choice keyed off ZONE_BIAS.
+ * The pile-math (`craft`/`buildShelter`) and recipes are unchanged — only the *selection* moves here.
+ */
+export type Structure = 'cairn' | 'shelter';
+
+/** A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos. */
+export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter' };
+
+/** Which structure a zone builds, by its bias. An unbiased/unknown zone → 'cairn' (286 default, back-compat). */
+export function zoneStructure(zone?: string): Structure {
+  const bias = zone ? ZONE_BIAS[zone] : undefined;
+  return bias ? STRUCTURE_BY_BIAS[bias] : 'cairn';
+}
+
+/** The recipe a zone's structure costs — the cairn recipe (286) or the richer lean-to recipe (315). */
+export function structureRecipe(zone?: string): Partial<Record<ResourceKind, number>> {
+  return zoneStructure(zone) === 'shelter' ? SHELTER_RECIPE : CRAFT_RECIPE;
+}
+
 /** Remove one of `kind` from a pile (floored at 0). Pure — returns a new map, never mutates. */
 export function takeResource(pile: Stockpile, kind: ResourceKind): Stockpile {
   const have = pile[kind] ?? 0;

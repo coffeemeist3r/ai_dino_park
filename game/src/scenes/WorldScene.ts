@@ -72,7 +72,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, SWARM_RADIUS } from '../world/feeding';
 import {
   noticeResource,
   resourceLanding,
@@ -85,9 +85,10 @@ import {
   craft,
   CAIRN_GLYPH,
   SHELTER_GLYPH,
-  SHELTER_AFTER_CAIRNS,
   canBuildShelter,
   buildShelter,
+  zoneStructure,
+  structureRecipe,
   directedCarry,
   takeResource,
   resourceFetchable,
@@ -154,6 +155,8 @@ const LIFT_WINDOW_MS = 8_000;
 // The bond bar + window are season-conditional since BACKLOG-171 (see world/huddle.ts).
 const HUDDLE_TILE = { tileX: 10, tileY: 11 };
 const BOND_PER_MEET = 4;
+/** Bond a generous feeder gains with the friend it yields a meal to (BACKLOG-375) — kindness deepens the tie. */
+const GENEROUS_BOND_BUMP = 5;
 
 /** How often a huddling dino murmurs a 💭 sleep-line per step (BACKLOG-181) — sparse, so the den isn't a wall of 💭. */
 const MURMUR_CHANCE = 0.2;
@@ -210,6 +213,8 @@ export class WorldScene extends Phaser.Scene {
 
   /** The last comfort-food beat (BACKLOG-374): a loner soothed by its favorite, or null. Transient. */
   private lastComfortFood: { name: string; food: string } | null = null;
+  /** The last generous-feed beat (BACKLOG-375): who gave up a meal to whom, or null. Transient. */
+  private lastYield: { giver: string; eater: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
@@ -676,6 +681,14 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       if (d && this.food) this.eatFood(d);
     };
+    // BACKLOG-375: the last generous-feed beat (who gave up a meal to whom) or null, + a deterministic
+    // placement hook so a test can stand the winner + a hungry friend at chosen tiles before a drop.
+    (window as any).__yieldFood = () => (this.lastYield ? { ...this.lastYield } : null);
+    (window as any).__placeDino = (name: string, tileX: number, tileY: number) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (d) d.setPosition(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2);
+      return !!d;
+    };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
     (window as any).__resource = () => {
@@ -692,6 +705,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__shelterArt = () =>
       this.shelterSprites[0] instanceof Phaser.GameObjects.Image ? this.shelterSprites[0].texture.key : null;
     (window as any).__canBuildShelter = () => canBuildShelter(this.pileFor(this.zoneId)); // BACKLOG-315
+    (window as any).__zoneStructure = (z?: string) => zoneStructure(z ?? this.zoneId); // BACKLOG-377: the zone's landmark type
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
       resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
@@ -901,8 +915,37 @@ export class WorldScene extends Phaser.Scene {
   /** First dino standing on (or beside) the landed food eats it. */
   private checkFeeding(): void {
     if (!this.food || !this.foodLanded) return;
-    const eater = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), this.food!));
-    if (eater) this.eatFood(eater);
+    const food = this.food;
+    const eater = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), food));
+    if (!eater) return;
+    // BACKLOG-375: a well-fed winner standing beside a hungrier high-bond friend in the swarm gives up
+    // the meal and lets the friend eat first — the need-drive (371) shaping kindness between dinos.
+    const eaterHunger = this.needs[eater.name]?.hunger ?? 0;
+    const candidates = this.dinos
+      .filter((d) => this.inView(d) && this.chebyTiles(this.tileOf(d), food) <= SWARM_RADIUS)
+      .map((d) => ({
+        name: d.name,
+        hunger: this.needs[d.name]?.hunger ?? 0,
+        bond: bondPoints(this.bonds, eater.name, d.name),
+      }));
+    const friendName = yieldFoodTo(eater.name, eaterHunger, candidates);
+    if (friendName) {
+      const friend = this.dinos.find((d) => d.name === friendName)!;
+      this.lastYield = { giver: eater.name, eater: friendName };
+      this.bonds = strengthen(this.bonds, eater.name, friendName, GENEROUS_BOND_BUMP); // kindness deepens the tie
+      this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
+      this.flashFeed(eater, '🤝');
+      this.logEvent(`🤝 ${eater.name} let ${friendName} eat first`);
+      this.eatFood(friend);
+    } else {
+      this.lastYield = null;
+      this.eatFood(eater);
+    }
+  }
+
+  /** Chebyshev distance in tiles (king's-move). Used by the feeding swarm (BACKLOG-375). */
+  private chebyTiles(a: { tileX: number; tileY: number }, b: { tileX: number; tileY: number }): number {
+    return Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY));
   }
 
   private eatFood(d: Dino): void {
@@ -1025,19 +1068,17 @@ export class WorldScene extends Phaser.Scene {
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
-    // BACKLOG-286/315: the dino that just banked builds, spending its *zone's* pile. A zone that has
-    // already stacked SHELTER_AFTER_CAIRNS cairns and has no shelter yet *saves* toward a larger lean-to
-    // (315) instead of draining the pile on more cairns. Below that bar, the cairn craft (286) is untouched.
-    const zoneCairns = this.cairns.filter((c) => c.zone === zone).length;
-    const hasShelter = this.shelters.some((s) => s.zone === zone);
-    if (zoneCairns >= SHELTER_AFTER_CAIRNS && !hasShelter) {
+    // BACKLOG-377: the dino that just banked builds the structure its *zone's* bias (348) favors,
+    // spending its zone's pile — the stone-rich bowl stacks 🗿 cairns (286), the branch-rich grove
+    // raises 🛖 lean-tos (315). Each zone builds one landmark type, so the two skylines diverge.
+    if (zoneStructure(zone) === 'shelter') {
       const built = buildShelter(this.pileFor(zone));
       if (built) {
         this.stockpileByZone[zone] = built;
         this.placeShelter(this.tileOf(taker), taker);
         this.refreshPlaque();
       }
-      // else: still saving — no cairn this tick (the zone is building toward its shelter).
+      // else: still saving — the grove's pile is climbing toward its lean-to recipe.
     } else {
       const spent = craft(this.pileFor(zone));
       if (spent) {
@@ -3086,7 +3127,9 @@ export class WorldScene extends Phaser.Scene {
     // destination → nothing moves (directedCarry returns null), so nothing is ever lost.
     // Directed carry (BACKLOG-356): ferry the kind `dest` is short of for its next craft, not a random
     // spare — so the trade route actively balances the diverging piles (falls back to a spare otherwise).
-    const carry = directedCarry(this.pileFor(home), this.pileFor(dest));
+    // BACKLOG-377: aim at the destination zone's *own* structure recipe (a grove short of stone for its
+    // lean-to pulls stone; a bowl short of branch for its cairn pulls branch).
+    const carry = directedCarry(this.pileFor(home), this.pileFor(dest), structureRecipe(dest));
     if (carry) {
       this.stockpileByZone[home] = takeResource(this.pileFor(home), carry);
       this.stockpileByZone[dest] = bankResource(this.pileFor(dest), carry);

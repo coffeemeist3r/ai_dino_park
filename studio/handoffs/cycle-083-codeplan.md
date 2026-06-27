@@ -71,3 +71,6 @@ if (zoneStructure(zone) === 'shelter') {
 **Blocker:** none.
 
 phase → coder-pending.
+
+---
+**SHIPPED (coder).** Build clean; 859 unit green (+12: 7 generous + 6 zone-craft − 1 retired escalation-bar); 263 e2e green (full run, no flake this run). web-llm boundary clean (only game/src/ai/). No save-format change. 375 = feeding.ts yieldFoodTo + WorldScene checkFeeding swarm glue + GENEROUS_BOND_BUMP + 🤝 beat + __yieldFood/__placeDino hooks. 377 = resource.ts zoneStructure/structureRecipe + checkGather bias-selection + crossDino directedCarry(structureRecipe(dest)) + __zoneStructure hook; cycle-074 shelter unit/e2e rewritten to the 377 truth (bowl→cairns, grove→lean-to). cycle-081 directed-carry stays green (branch is the bigger deficit under both recipes).
