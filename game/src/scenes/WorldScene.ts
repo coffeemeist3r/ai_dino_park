@@ -65,7 +65,7 @@ import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
-import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine } from '../world/loner';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, NEED_GLYPH, type Needs } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
@@ -100,7 +100,7 @@ import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
-import { maxGeneration, plaqueLines, zoneTallyLine } from '../ui/plaque';
+import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
@@ -207,6 +207,9 @@ export class WorldScene extends Phaser.Scene {
   private liftedUntil: Record<string, number> = {};
   /** The last dino-to-dino comfort beat (BACKLOG-130): who consoled whom, or null. Transient. */
   private lastComfort: { comforter: string; sulker: string } | null = null;
+
+  /** The last comfort-food beat (BACKLOG-374): a loner soothed by its favorite, or null. Transient. */
+  private lastComfortFood: { name: string; food: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
@@ -513,7 +516,7 @@ export class WorldScene extends Phaser.Scene {
       day: getWorldClock().now().day,
       generations: maxGeneration(this.born),
       zone: zoneById(this.zoneId).name,
-      stockpile: stockpileLine(this.pileFor(this.zoneId)),
+      stockpile: this.zoneStores(),
       zoneTally: this.zoneTally(),
     });
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
@@ -543,7 +546,7 @@ export class WorldScene extends Phaser.Scene {
         day: getWorldClock().now().day,
         generations: maxGeneration(this.born),
         zone: zoneById(this.zoneId).name,
-        stockpile: stockpileLine(this.pileFor(this.zoneId)),
+        stockpile: this.zoneStores(),
         zoneTally: this.zoneTally(),
       }).join('\n'),
     );
@@ -553,6 +556,15 @@ export class WorldScene extends Phaser.Scene {
   private zoneTally(): string {
     return zoneTallyLine(
       zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID),
+      this.zoneId,
+    );
+  }
+
+  /** Both-zone stores readout (BACKLOG-357): each zone's pile glyphs, '▸' on the keeper's active zone, so the
+   *  player can watch the two economies diverge without crossing. Empty zones drop out (see zoneStoresLine). */
+  private zoneStores(): string {
+    return zoneStoresLine(
+      { [BOWL_ID]: stockpileLine(this.pileFor(BOWL_ID)), [GROVE_ID]: stockpileLine(this.pileFor(GROVE_ID)) },
       this.zoneId,
     );
   }
@@ -657,6 +669,13 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__food = () =>
       this.food ? { ...this.food, foodId: this.foodKind?.id ?? null } : null;
+    // BACKLOG-374: comfort food. Last comfort beat (a loner soothed by its favorite) or null; a named dino
+    // eats the food in play (deterministic eater for the swarm race).
+    (window as any).__lastComfortFood = () => (this.lastComfortFood ? { ...this.lastComfortFood } : null);
+    (window as any).__eat = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (d && this.food) this.eatFood(d);
+    };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
     (window as any).__resource = () => {
@@ -910,6 +929,14 @@ export class WorldScene extends Phaser.Scene {
       this.clearColdFunk(d.name, true);
     }
     this.flashFeed(d, r.emoji);
+    // BACKLOG-374: a moping loner soothed by its *favorite* food gets a quiet solace beat a plain meal never
+    // gives. The 🥀 itself only lifts when a real bond forms (369) — this is a momentary per-palate comfort.
+    const comforted = comfortsLoner(r.favorite, isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR));
+    this.lastComfortFood = comforted ? { name: d.name, food: kind!.id } : null;
+    if (comforted) {
+      this.memory = remember(this.memory, d.name, comfortFoodMemory(kind!.label));
+      this.showBubble(d, comfortFoodLine(d.name));
+    }
     this.logEvent(
       `🍖 ${d.name} snapped up the food at the hatch${r.favorite ? ` — its favorite ${kind!.label}!` : ''}`,
     );

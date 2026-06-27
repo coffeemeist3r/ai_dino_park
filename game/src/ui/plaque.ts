@@ -72,3 +72,17 @@ export function plaqueLines(s: PlaqueStats): string[] {
 export function zoneTallyLine(populations: Record<string, number>, activeZoneId: string): string {
   return ZONES.map((z) => `${z.id === activeZoneId ? '▸' : ''}${z.name} ${populations[z.id] ?? 0}`).join(' · ');
 }
+
+/**
+ * The both-zone stores line (BACKLOG-357): each zone's already-formatted stockpile glyphs prefixed by its
+ * name, '▸' on the keeper's active zone — so the player watches the two economies diverge without crossing.
+ * A zone with an empty pile is omitted; both empty → '' (the caller then drops the Stores line entirely,
+ * byte-identical to the pre-357 empty case). `stores` maps a zone id → its `stockpileLine` output, keeping
+ * this glyph-agnostic (no resource import). Pure.
+ */
+export function zoneStoresLine(stores: Record<string, string>, activeZoneId: string): string {
+  return ZONES.map((z) => ({ z, line: stores[z.id] ?? '' }))
+    .filter((e) => e.line)
+    .map((e) => `${e.z.id === activeZoneId ? '▸' : ''}${e.z.name} ${e.line}`)
+    .join(' · ');
+}

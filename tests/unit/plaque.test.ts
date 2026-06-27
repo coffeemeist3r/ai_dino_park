@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generationOf, maxGeneration, plaqueLines, zoneTallyLine, type Lineaged } from '../../game/src/ui/plaque';
+import { generationOf, maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type Lineaged } from '../../game/src/ui/plaque';
 import { zonePopulations, BOWL_ID, GROVE_ID } from '../../game/src/world/zones';
 
 describe('generations', () => {
@@ -74,5 +74,29 @@ describe('zone indicator (BACKLOG-316)', () => {
     const line = zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, GROVE_ID);
     expect(line).toBe('Pocket Cretaceous 4 · ▸The Grove 2');
     expect(zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, BOWL_ID)).toBe('▸Pocket Cretaceous 4 · The Grove 2');
+  });
+});
+
+describe('both-zone stores readout (BACKLOG-357)', () => {
+  it('shows both zones piles with ▸ on the active zone', () => {
+    const stores = { [BOWL_ID]: '🪨 2', [GROVE_ID]: '🪵 3' };
+    expect(zoneStoresLine(stores, BOWL_ID)).toBe('▸Pocket Cretaceous 🪨 2 · The Grove 🪵 3');
+    expect(zoneStoresLine(stores, GROVE_ID)).toBe('Pocket Cretaceous 🪨 2 · ▸The Grove 🪵 3');
+  });
+
+  it('omits a zone whose pile is empty', () => {
+    expect(zoneStoresLine({ [BOWL_ID]: '🪨 2', [GROVE_ID]: '' }, BOWL_ID)).toBe('▸Pocket Cretaceous 🪨 2');
+    expect(zoneStoresLine({ [BOWL_ID]: '', [GROVE_ID]: '🪵 3' }, BOWL_ID)).toBe('The Grove 🪵 3');
+  });
+
+  it('returns "" when both piles are empty (caller drops the Stores line — pre-357 behavior)', () => {
+    expect(zoneStoresLine({ [BOWL_ID]: '', [GROVE_ID]: '' }, BOWL_ID)).toBe('');
+    expect(zoneStoresLine({}, BOWL_ID)).toBe('');
+  });
+
+  it('feeds plaqueLines a single Stores line that carries both zones', () => {
+    const stockpile = zoneStoresLine({ [BOWL_ID]: '🪨 2', [GROVE_ID]: '🪵 3' }, BOWL_ID);
+    const lines = plaqueLines({ population: 6, day: 3, generations: 2, stockpile });
+    expect(lines[lines.length - 1]).toBe('Stores · ▸Pocket Cretaceous 🪨 2 · The Grove 🪵 3');
   });
 });

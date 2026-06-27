@@ -84,3 +84,25 @@ export function foundFriendMemory(): string {
 export function foundFriendLine(name: string): string {
   return `${name} ${FOUND_FRIEND_GLYPH}`;
 }
+
+/** The mark floated when a moping loner is soothed by its favorite food (BACKLOG-374). */
+export const COMFORT_FOOD_GLYPH = '😌';
+
+/**
+ * Does a meal comfort a moping dino (BACKLOG-374) — only when it's the dino's *favorite* food AND the dino
+ * is currently a loner? A plain meal, or a favorite eaten by a well-bonded dino, is just food. Solace is
+ * per-palate: who is soothed by what becomes a per-dino tell. Pure.
+ */
+export function comfortsLoner(favorite: boolean, lonerNow: boolean): boolean {
+  return favorite && lonerNow;
+}
+
+/** The memory a loner files when its favorite eased the ache (BACKLOG-374) — distinct from a plain favorite. */
+export function comfortFoodMemory(label: string): string {
+  return `comfort food — the ${label} eased the ache ${COMFORT_FOOD_GLYPH}`;
+}
+
+/** The one-shot solace bubble floated over a comforted loner (BACKLOG-374). */
+export function comfortFoodLine(name: string): string {
+  return `${name} ${COMFORT_FOOD_GLYPH}`;
+}
