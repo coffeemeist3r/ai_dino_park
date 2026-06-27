@@ -2,7 +2,7 @@
   "cycle": 83,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-375: Generous feeder",
-  "structureItem": null,
+  "structureItem": "BACKLOG-377: Zone-distinct craft",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-27T10:00:00-05:00",
-    "structure-smith": "2026-06-26T14:34:00-05:00",
+    "structure-smith": "2026-06-27T10:05:00-05:00",
     "designer": "2026-06-26T14:38:00-05:00",
     "code-planner": "2026-06-26T14:41:00-05:00",
     "coder": "2026-06-26T14:55:00-05:00",
