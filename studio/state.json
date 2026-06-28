@@ -1,7 +1,7 @@
 {
   "cycle": 84,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-387: greedy gobble",
   "structureItem": "BACKLOG-383: zone adjacency graph",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-06-28T10:00:00-05:00",
     "structure-smith": "2026-06-28T10:05:00-05:00",
-    "designer": "2026-06-27T10:12:00-05:00",
+    "designer": "2026-06-28T10:12:00-05:00",
     "code-planner": "2026-06-27T10:18:00-05:00",
     "coder": "2026-06-27T10:40:00-05:00",
     "qa": "2026-06-27T10:45:00-05:00",
