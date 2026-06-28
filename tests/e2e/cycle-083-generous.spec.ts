@@ -68,13 +68,16 @@ test('no qualifying friend → the winner eats as before (passthrough)', async (
   await boot(page);
 
   const [winner, friend] = await names(page);
-  // winner well-fed, but the only nearby dino is a LOW-bond stranger → no one to yield to.
+  // winner well-fed, but the only nearby dino is a LOW-bond stranger → no one to yield to. The stranger
+  // is warm (high agreeableness) so the cycle-084 greedy gobble (387) doesn't fire either — this isolates
+  // the 375 passthrough: no generous yield, no gobble, the winner simply eats.
   await page.evaluate(({ winner, friend, DROP_COL, DROP_ROW }) => {
     const w = window as W;
     w.__placeDino(winner, DROP_COL, DROP_ROW);
     w.__placeDino(friend, DROP_COL + 3, DROP_ROW);
     w.__setNeed(winner, 'hunger', 0.1);
     w.__setNeed(friend, 'hunger', 0.9); // hungry, but no bond
+    w.__setTrait(friend, 'agreeableness', 0.9); // warm → waits its turn (no greedy gobble)
   }, { winner, friend, DROP_COL, DROP_ROW });
 
   await page.evaluate(({ DROP_COL }) => (window as W).__dropFood(DROP_COL), { DROP_COL });

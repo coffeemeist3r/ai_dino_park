@@ -42,9 +42,38 @@ export function crossing(px: number, cols: number, tile: number): Edge | null {
 }
 
 /**
+ * Zone adjacency (BACKLOG-383) — the bowl↔grove link was hard-coded into linkedZone / otherZone / the
+ * three migration helpers (five places, all encoding bowl-east↔grove-west). This table is the single
+ * source of truth for which zones connect through which edge, so a third zone (BACKLOG-378) slots in by
+ * adding a row, not by editing every helper. The helpers below all read it; behavior is byte-identical
+ * while only this one pair exists.
+ */
+export interface ZoneLink {
+  from: string;
+  edge: Edge;
+  to: string;
+}
+
+export const ZONE_LINKS: ZoneLink[] = [
+  { from: BOWL_ID, edge: 'east', to: GROVE_ID },
+  { from: GROVE_ID, edge: 'west', to: BOWL_ID },
+];
+
+/** The zone reached by leaving `zoneId` through `edge`, or null when that edge has no link. */
+export function neighborThrough(zoneId: string, edge: Edge): string | null {
+  return ZONE_LINKS.find((l) => l.from === zoneId && l.edge === edge)?.to ?? null;
+}
+
+/** The edge `zoneId` uses to reach its linked neighbour (its single outbound link this spine), or null. */
+export function linkEdge(zoneId: string): Edge | null {
+  return ZONE_LINKS.find((l) => l.from === zoneId)?.edge ?? null;
+}
+
+/**
  * The neighbour reached by leaving `zoneId` through `edge`, plus the keeper's entry pixel on the far
  * side (one tile in from the opposite edge, vertical position preserved). null when that edge has no
- * link, so the caller clamps normally there.
+ * link, so the caller clamps normally there. The entry x keys on the *exit edge*, not the zone id, so
+ * it stays correct as the adjacency table grows.
  */
 export function linkedZone(
   zoneId: string,
@@ -53,13 +82,10 @@ export function linkedZone(
   cols: number,
   tile: number,
 ): { zoneId: string; entry: { x: number; y: number } } | null {
-  if (zoneId === BOWL_ID && edge === 'east') {
-    return { zoneId: GROVE_ID, entry: { x: tile * 1.5, y: py } };
-  }
-  if (zoneId === GROVE_ID && edge === 'west') {
-    return { zoneId: BOWL_ID, entry: { x: cols * tile - tile * 1.5, y: py } };
-  }
-  return null;
+  const to = neighborThrough(zoneId, edge);
+  if (!to) return null;
+  const x = edge === 'east' ? tile * 1.5 : cols * tile - tile * 1.5;
+  return { zoneId: to, entry: { x, y: py } };
 }
 
 /**
@@ -96,9 +122,13 @@ export function zoneOf(map: Record<string, string>, id: string, fallback: string
   return map[id] ?? fallback;
 }
 
-/** The other zone of the bowl↔grove pair (BACKLOG-274 migration). Any non-grove id maps to the bowl. */
+/**
+ * The linked neighbour a migrant heads to (BACKLOG-274 migration), now read off the adjacency table
+ * (BACKLOG-383). For the bowl↔grove pair this is each zone's single neighbour; an unknown id keeps the
+ * old default (→ grove) so behavior is unchanged.
+ */
 export function otherZone(id: string): string {
-  return id === GROVE_ID ? BOWL_ID : GROVE_ID;
+  return ZONE_LINKS.find((l) => l.from === id)?.to ?? (id === GROVE_ID ? BOWL_ID : GROVE_ID);
 }
 
 /**
@@ -110,12 +140,12 @@ export function otherZone(id: string): string {
 
 /** The linked-edge tile in the current zone the migrant heads for (bowl → east col, grove → west col); row preserved. */
 export function migrationStepTarget(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
-  return { tileX: homeZone === GROVE_ID ? 0 : cols - 1, tileY: row };
+  return { tileX: linkEdge(homeZone) === 'west' ? 0 : cols - 1, tileY: row };
 }
 
 /** Has the migrant reached its linked edge (so the next step crosses)? */
 export function atMigrationEdge(homeZone: string, tile: { tileX: number }, cols: number): boolean {
-  return homeZone === GROVE_ID ? tile.tileX <= 0 : tile.tileX >= cols - 1;
+  return linkEdge(homeZone) === 'west' ? tile.tileX <= 0 : tile.tileX >= cols - 1;
 }
 
 /**
@@ -124,7 +154,7 @@ export function atMigrationEdge(homeZone: string, tile: { tileX: number }, cols:
  * edge), mirroring `linkedZone`'s keeper entries.
  */
 export function crossEntryTile(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
-  return { tileX: homeZone === GROVE_ID ? cols - 2 : 1, tileY: row };
+  return { tileX: linkEdge(homeZone) === 'west' ? cols - 2 : 1, tileY: row };
 }
 
 /**

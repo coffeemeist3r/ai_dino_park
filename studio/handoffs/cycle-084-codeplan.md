@@ -67,3 +67,24 @@ WorldScene call sites (signatures unchanged).
 zone id — confirm against the two existing `linkedZone` asserts.
 
 **Estimated touch count:** ~2 files.
+
+---
+
+## Shipped
+
+**Lore track — BACKLOG-387 (greedy gobble):**
+- `game/src/world/feeding.ts` — added `GOBBLE_HUNGER`, `GREEDY_AGREE`, `gobblesFood`, `gobblerAmong` (mirrors `yieldFoodTo`; reuses `HUNGRIER_BY`).
+- `game/src/scenes/WorldScene.ts` — `lastGobble` field; import `gobblerAmong`; `checkFeeding` candidates map gains `agreeableness`; the no-yield branch now runs `gobblerAmong` → gobbler eats (😤 + memory + log) else winner eats; `__gobbleFood` + `__setTrait` hooks.
+- `tests/unit/cycle-084-gobble.test.ts` (new), `tests/e2e/cycle-084-gobble.spec.ts` (new).
+
+**Structure track — BACKLOG-383 (zone adjacency graph):**
+- `game/src/world/zones.ts` — `ZoneLink` interface + `ZONE_LINKS` table + `neighborThrough` + `linkEdge`; `linkedZone` / `otherZone` / `migrationStepTarget` / `atMigrationEdge` / `crossEntryTile` rewired to read the table. Signatures unchanged → no WorldScene edits. `crossing` untouched.
+- `tests/unit/cycle-084-zone-adjacency.test.ts` (new).
+
+**Deviations from plan:**
+- `tests/e2e/cycle-083-generous.spec.ts` passthrough test updated (1 line): set the hungry low-bond stranger warm (`__setTrait(..., 'agreeableness', 0.9)`) so the new 387 gobble doesn't fire — isolating the 375 passthrough. 387 legitimately changes that scenario (a hungry *prickly* stranger now gobbles a well-fed winner's kept drop); the test's intent (no generous yield → winner eats) is preserved. Same pattern as cycle-074 rewritten for 377.
+
+**Build + tests:** `npm --prefix game run build` clean. `npm run test:unit` → 874 passed (+15). Full
+`npx playwright test` → 263/265; the 2 failures (cycle-077-carry, cycle-081-directed-carry) are the
+catalogued parallel-load flake — both green isolated single-worker (2/2). web-llm boundary untouched.
+No save change either track.

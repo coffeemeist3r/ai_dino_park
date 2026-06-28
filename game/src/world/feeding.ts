@@ -71,6 +71,39 @@ export function yieldFoodTo(
 }
 
 /**
+ * Greedy gobble (BACKLOG-387) — the inverse pole of yieldFoodTo. Generosity (375) gives a contested
+ * meal away; greed seizes it. A hungry, prickly (low-agreeableness) dino won't wait its turn: standing
+ * in the swarm beside a winner that's *keeping* its food, it shoulders past and eats first (😤), so
+ * giving way reads as a trait, not a universal — some dinos cede, some grab. Pure + deterministic.
+ */
+export const GOBBLE_HUNGER = 0.5; // hunger at/above which a dino is hungry enough to push to the front
+export const GREEDY_AGREE = 0.35; // agreeableness at/below which a dino won't wait its turn (prickly)
+
+/** Is this dino greedy-hungry enough to shoulder past for food (BACKLOG-387)? */
+export function gobblesFood(hunger: number, agreeableness: number): boolean {
+  return hunger >= GOBBLE_HUNGER && agreeableness <= GREEDY_AGREE;
+}
+
+/**
+ * The greedy gobbler that shoulders the `winner` aside, or null when none does (the winner eats as
+ * normal). A candidate qualifies when it's `gobblesFood` AND at least `HUNGRIER_BY` hungrier than the
+ * winner (so it has real cause to push). Hungriest first, ties broken toward the pricklier dino.
+ * Deterministic stable sort over the supplied order — the mirror of `yieldFoodTo`.
+ */
+export function gobblerAmong(
+  winner: string,
+  winnerHunger: number,
+  candidates: ReadonlyArray<{ name: string; hunger: number; agreeableness: number }>,
+): string | null {
+  const greedy = candidates
+    .filter(
+      (c) => c.name !== winner && gobblesFood(c.hunger, c.agreeableness) && c.hunger - winnerHunger >= HUNGRIER_BY,
+    )
+    .sort((a, b) => b.hunger - a.hunger || a.agreeableness - b.agreeableness);
+  return greedy[0]?.name ?? null;
+}
+
+/**
  * Where dropped food lands. `col` (the hatch column) is honored and clamped when
  * given; otherwise a column is picked from `rand`. It always settles in the
  * upper-middle feeding zone so it falls into the cast rather than onto the rim.

@@ -72,7 +72,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, SWARM_RADIUS } from '../world/feeding';
 import {
   noticeResource,
   resourceLanding,
@@ -215,6 +215,8 @@ export class WorldScene extends Phaser.Scene {
   private lastComfortFood: { name: string; food: string } | null = null;
   /** The last generous-feed beat (BACKLOG-375): who gave up a meal to whom, or null. Transient. */
   private lastYield: { giver: string; eater: string } | null = null;
+  /** The last greedy-gobble beat (BACKLOG-387): who shouldered past whom for a kept drop, or null. Transient. */
+  private lastGobble: { winner: string; gobbler: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
@@ -684,6 +686,14 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-375: the last generous-feed beat (who gave up a meal to whom) or null, + a deterministic
     // placement hook so a test can stand the winner + a hungry friend at chosen tiles before a drop.
     (window as any).__yieldFood = () => (this.lastYield ? { ...this.lastYield } : null);
+    // BACKLOG-387: the last greedy-gobble beat (who shouldered past whom) + a trait setter so a test can
+    // make a dino prickly/hungry-greedy deterministically (no existing trait-mutation hook).
+    (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
+    (window as any).__setTrait = (name: string, key: string, v: number) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (d) (d.traits as any)[key] = v;
+      return !!d;
+    };
     (window as any).__placeDino = (name: string, tileX: number, tileY: number) => {
       const d = this.dinos.find((x) => x.name === name);
       if (d) d.setPosition(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2);
@@ -927,18 +937,33 @@ export class WorldScene extends Phaser.Scene {
         name: d.name,
         hunger: this.needs[d.name]?.hunger ?? 0,
         bond: bondPoints(this.bonds, eater.name, d.name),
+        agreeableness: d.traits.agreeableness,
       }));
     const friendName = yieldFoodTo(eater.name, eaterHunger, candidates);
     if (friendName) {
       const friend = this.dinos.find((d) => d.name === friendName)!;
       this.lastYield = { giver: eater.name, eater: friendName };
+      this.lastGobble = null;
       this.bonds = strengthen(this.bonds, eater.name, friendName, GENEROUS_BOND_BUMP); // kindness deepens the tie
       this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
       this.flashFeed(eater, '🤝');
       this.logEvent(`🤝 ${eater.name} let ${friendName} eat first`);
       this.eatFood(friend);
+      return;
+    }
+    this.lastYield = null;
+    // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
+    // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
+    const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
+    if (gobblerName) {
+      const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
+      this.lastGobble = { winner: eater.name, gobbler: gobblerName };
+      this.memory = remember(this.memory, gobblerName, `you shouldered past ${eater.name} and snatched the food first`);
+      this.flashFeed(gobbler, '😤');
+      this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food`);
+      this.eatFood(gobbler);
     } else {
-      this.lastYield = null;
+      this.lastGobble = null;
       this.eatFood(eater);
     }
   }
