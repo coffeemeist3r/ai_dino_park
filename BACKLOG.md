@@ -899,6 +899,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-387 [emergent] Greedy gobble — the inverse: a hungry, low-agreeableness dino never yields and may shoulder past a friend to the food first (😤), so generosity reads as a trait, not a universal. Builds on 375 / 070.
 - [ ] BACKLOG-388 [pokemon] Kindest in the book — the collection book tracks how many times each dino has yielded a meal to a friend ("gave up 3 meals"), making generosity a legible standing. Builds on 375 / 021.
 
+## Cycle 84 lore additions — generosity has an opposite (2026-06-28)
+
+> Cycle 84's lore pick is the already-queued **BACKLOG-387** (greedy gobble) — the selfish inverse of
+> last cycle's generous feeder (375): a hungry, prickly dino won't wait its turn and shoulders past a
+> friend to a contested drop (😤), so giving way reads as a *trait*, not a universal. These extend the
+> scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
+
+- [ ] BACKLOG-389 [emergent] Bullied dino remembers — a dino shouldered past at the hatch (387) files who grabbed its meal; repeated, it gives that gobbler a wider berth at future drops (drifts to a different food tile rather than contest it). Builds on 387 / 011.
+- [ ] BACKLOG-390 [emergent] Standing up to the gobbler — a high-bravery dino shouldered past by a gobbler (387) doesn't cede next time: it holds its tile and the gobbler backs down (a brief 😠 standoff the bold dino wins). Builds on 387 / 062.
+- [ ] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
+- [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
