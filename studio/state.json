@@ -1,6 +1,6 @@
 {
   "cycle": 85,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-390: standing up to the gobbler",
   "structureItem": "BACKLOG-378: third zone spine",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-06-29T10:00:00-05:00",
     "structure-smith": "2026-06-29T10:06:00-05:00",
     "designer": "2026-06-29T10:12:00-05:00",
-    "code-planner": "2026-06-28T10:18:00-05:00",
+    "code-planner": "2026-06-29T10:18:00-05:00",
     "coder": "2026-06-28T10:40:00-05:00",
     "qa": "2026-06-28T10:45:00-05:00",
     "validator": "2026-06-28T10:52:00-05:00",
