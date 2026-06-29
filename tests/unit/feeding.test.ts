@@ -4,6 +4,8 @@ import {
   feedStep,
   reachedFood,
   foodLanding,
+  standsGround,
+  STAND_BRAVERY,
   FEED_RANGE,
   FEED_RANGE_FAV,
 } from '../../game/src/world/feeding';
@@ -81,5 +83,20 @@ describe('foodLanding', () => {
   it('always settles in the upper-middle feeding zone', () => {
     expect(foodLanding(20, 15, 3).tileY).toBe(Math.floor(15 * 0.45));
     expect(foodLanding(20, 15, undefined, () => 0.9).tileY).toBe(Math.floor(15 * 0.45));
+  });
+});
+
+// BACKLOG-390: the bold winner holds its ground against a gobbler instead of ceding. A pure bravery read.
+describe('standsGround (BACKLOG-390)', () => {
+  it('a bold winner (bravery ≥ STAND_BRAVERY) stands its ground', () => {
+    expect(standsGround(STAND_BRAVERY)).toBe(true); // boundary is inclusive
+    expect(standsGround(0.9)).toBe(true);
+    expect(standsGround(1)).toBe(true);
+  });
+
+  it('a timid winner (below the bar) cedes', () => {
+    expect(standsGround(STAND_BRAVERY - 0.01)).toBe(false);
+    expect(standsGround(0)).toBe(false);
+    expect(standsGround(0.3)).toBe(false);
   });
 });

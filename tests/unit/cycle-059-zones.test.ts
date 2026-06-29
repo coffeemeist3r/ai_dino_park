@@ -50,7 +50,7 @@ describe('linkedZone (BACKLOG-143)', () => {
 
   it('returns null for an unlinked edge (bowl west clamps normally)', () => {
     expect(linkedZone(BOWL_ID, 'west', 100, COLS, TILE)).toBeNull();
-    expect(linkedZone(GROVE_ID, 'east', 100, COLS, TILE)).toBeNull();
+    // (grove east used to be unlinked here too; BACKLOG-378 links it to the Fernreach — see cycle-085-third-zone.)
   });
 });
 

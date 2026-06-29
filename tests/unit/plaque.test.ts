@@ -70,10 +70,13 @@ describe('zone indicator (BACKLOG-316)', () => {
     expect(pops[GROVE_ID]).toBe(0);
   });
 
-  it('zoneTallyLine marks only the active zone with ▸', () => {
+  it('zoneTallyLine marks only the active zone with ▸ (all zones listed, BACKLOG-378)', () => {
+    // The tally lists every ZONES entry now the chain is three long; an unlisted zone reads 0.
     const line = zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, GROVE_ID);
-    expect(line).toBe('Pocket Cretaceous 4 · ▸The Grove 2');
-    expect(zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, BOWL_ID)).toBe('▸Pocket Cretaceous 4 · The Grove 2');
+    expect(line).toBe('Pocket Cretaceous 4 · ▸The Grove 2 · The Fernreach 0');
+    expect(zoneTallyLine({ [BOWL_ID]: 4, [GROVE_ID]: 2 }, BOWL_ID)).toBe(
+      '▸Pocket Cretaceous 4 · The Grove 2 · The Fernreach 0',
+    );
   });
 });
 

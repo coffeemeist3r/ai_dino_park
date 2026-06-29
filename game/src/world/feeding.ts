@@ -104,6 +104,20 @@ export function gobblerAmong(
 }
 
 /**
+ * Standing up to the gobbler (BACKLOG-390) — the third pole of the contested-drop trio. A yield (375)
+ * gives the meal away; a gobble (387) seizes it; this is the winner who *won't be seized from*. When a
+ * gobbler would shoulder past (gobblerAmong returned someone), a **bold** winner instead holds its tile
+ * and the gobbler backs down (😠). So who gets pushed around at the hatch is a bravery read — the timid
+ * cede, the bold don't. Pure; consumed only in checkFeeding's no-yield branch, after the gobbler is found.
+ */
+export const STAND_BRAVERY = 0.65; // bravery at/above which a winner holds its ground rather than ceding
+
+/** Does this winner stand up to a gobbler rather than cede the contested drop (BACKLOG-390)? */
+export function standsGround(winnerBravery: number): boolean {
+  return winnerBravery >= STAND_BRAVERY;
+}
+
+/**
  * Where dropped food lands. `col` (the hatch column) is honored and clamped when
  * given; otherwise a column is picked from `rand`. It always settles in the
  * upper-middle feeding zone so it falls into the cast rather than onto the rim.

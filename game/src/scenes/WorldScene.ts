@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, GROVE_TINT, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneOf, zonePopulations } from '../world/zones';
+import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTint } from '../world/zones';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -72,7 +72,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, SWARM_RADIUS } from '../world/feeding';
 import {
   noticeResource,
   resourceLanding,
@@ -181,6 +181,12 @@ export class WorldScene extends Phaser.Scene {
   private lastMigrationMs = 0;
   /** Dinos mid zone-crossing (BACKLOG-334): walking to their linked edge before the home zone flips. Transient. */
   private migrating = new Set<string>();
+  /**
+   * Each migrant's chosen crossing (BACKLOG-378): the destination zone + the edge it walks to, fixed when the
+   * migration starts so a multi-neighbour zone (the grove now borders both the bowl and the Fernreach) doesn't
+   * oscillate its target mid-walk. Keyed by name, cleared on arrival. Transient (companion to `migrating`).
+   */
+  private migrationCross: Record<string, { dest: string; edge: Edge }> = {};
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -217,6 +223,8 @@ export class WorldScene extends Phaser.Scene {
   private lastYield: { giver: string; eater: string } | null = null;
   /** The last greedy-gobble beat (BACKLOG-387): who shouldered past whom for a kept drop, or null. Transient. */
   private lastGobble: { winner: string; gobbler: string } | null = null;
+  /** The last stand-up beat (BACKLOG-390): a bold winner that held its food against a gobbler, or null. Transient. */
+  private lastStand: { winner: string; gobbler: string } | null = null;
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
@@ -567,11 +575,12 @@ export class WorldScene extends Phaser.Scene {
     );
   }
 
-  /** Both-zone stores readout (BACKLOG-357): each zone's pile glyphs, '▸' on the keeper's active zone, so the
-   *  player can watch the two economies diverge without crossing. Empty zones drop out (see zoneStoresLine). */
+  /** Both-zone stores readout (BACKLOG-357/378): each zone's pile glyphs, '▸' on the keeper's active zone, so the
+   *  player can watch the economies diverge without crossing. Over every zone now (a third can hold a pile too);
+   *  empty zones drop out (see zoneStoresLine). */
   private zoneStores(): string {
     return zoneStoresLine(
-      { [BOWL_ID]: stockpileLine(this.pileFor(BOWL_ID)), [GROVE_ID]: stockpileLine(this.pileFor(GROVE_ID)) },
+      Object.fromEntries(ZONES.map((z) => [z.id, stockpileLine(this.pileFor(z.id))])),
       this.zoneId,
     );
   }
@@ -689,6 +698,8 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-387: the last greedy-gobble beat (who shouldered past whom) + a trait setter so a test can
     // make a dino prickly/hungry-greedy deterministically (no existing trait-mutation hook).
     (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
+    // BACKLOG-390: the last stand-up beat (a bold winner that held its ground against a gobbler) or null.
+    (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
     (window as any).__setTrait = (name: string, key: string, v: number) => {
       const d = this.dinos.find((x) => x.name === name);
       if (d) (d.traits as any)[key] = v;
@@ -944,6 +955,7 @@ export class WorldScene extends Phaser.Scene {
       const friend = this.dinos.find((d) => d.name === friendName)!;
       this.lastYield = { giver: eater.name, eater: friendName };
       this.lastGobble = null;
+      this.lastStand = null;
       this.bonds = strengthen(this.bonds, eater.name, friendName, GENEROUS_BOND_BUMP); // kindness deepens the tie
       this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
       this.flashFeed(eater, '🤝');
@@ -955,14 +967,25 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
     const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
-    if (gobblerName) {
+    if (gobblerName && standsGround(eater.traits.bravery)) {
+      // BACKLOG-390: the winner is bold — it holds its tile and the gobbler backs down (😠), so who gets
+      // pushed around at the hatch is a bravery read (the timid cede, the bold don't). The winner eats.
+      this.lastStand = { winner: eater.name, gobbler: gobblerName };
+      this.lastGobble = null;
+      this.memory = remember(this.memory, eater.name, `you stood your ground and kept your food from ${gobblerName}`);
+      this.flashFeed(eater, '😠');
+      this.logEvent(`😠 ${eater.name} held its ground against ${gobblerName}`);
+      this.eatFood(eater);
+    } else if (gobblerName) {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
+      this.lastStand = null;
       this.lastGobble = { winner: eater.name, gobbler: gobblerName };
       this.memory = remember(this.memory, gobblerName, `you shouldered past ${eater.name} and snatched the food first`);
       this.flashFeed(gobbler, '😤');
       this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food`);
       this.eatFood(gobbler);
     } else {
+      this.lastStand = null;
       this.lastGobble = null;
       this.eatFood(eater);
     }
@@ -2044,10 +2067,11 @@ export class WorldScene extends Phaser.Scene {
       // zone flips only on arrival, so the dino stays visible in its origin zone for the whole walk.
       if (this.migrating.has(d.name)) {
         const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
-        if (atMigrationEdge(home, cur, COLS)) {
+        const edge = this.migrationCross[d.name]?.edge; // BACKLOG-378: the chosen crossing's edge (grove → bowl|Fernreach)
+        if (atMigrationEdge(home, cur, COLS, edge)) {
           this.crossDino(d);
         } else {
-          const step = stepToward(cur, migrationStepTarget(home, cur.tileY, COLS), COLS, ROWS);
+          const step = stepToward(cur, migrationStepTarget(home, cur.tileY, COLS, edge), COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           this.activityById[d.name] = 'wandering'; // BACKLOG-295: the journey reads in motion, not a glyph
         }
@@ -3089,6 +3113,13 @@ export class WorldScene extends Phaser.Scene {
       if (d) this.startMigration(d);
       return zoneOf(this.dinoZones, name, BOWL_ID);
     };
+    // BACKLOG-378: start a visible crossing toward a *chosen* neighbour (deterministic), so a test can prove a
+    // grove dino migrates east into the Fernreach (not only west to the bowl) — migration generalized past two.
+    (window as any).__startMigrationTo = (name: string, dest: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.startMigration(d, dest);
+      return zoneOf(this.dinoZones, name, BOWL_ID);
+    };
     // BACKLOG-345: run the migrant *pick* deterministically (bypassing cooldown/chance) — returns the
     // chosen name, so a test can prove grove news pulls a curious newcomer over a coin-flip.
     (window as any).__maybeMigrate = () => {
@@ -3108,7 +3139,12 @@ export class WorldScene extends Phaser.Scene {
     if (Math.random() >= MIGRATE_CHANCE) return;
     const d = this.pickMigrant();
     if (!d) return;
-    this.startMigration(d);
+    // BACKLOG-378: pick which neighbour to head for. A single-neighbour zone has one choice; the grove now
+    // borders two (bowl + Fernreach), so the ambient roll spreads dinos across the whole chain over time.
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const neighbors = zoneNeighbors(home).map((l) => l.to);
+    const dest = neighbors[Math.floor(Math.random() * neighbors.length)] ?? otherZone(home);
+    this.startMigration(d, dest);
     this.lastMigrationMs = Date.now();
   }
 
@@ -3128,23 +3164,34 @@ export class WorldScene extends Phaser.Scene {
     return pool[Math.floor(Math.random() * pool.length)] ?? null;
   }
 
-  /** Begin a visible crossing (BACKLOG-334): mark the dino migrating; the forceStep walk + `crossDino` do the rest. */
-  private startMigration(d: Dino): void {
+  /**
+   * Begin a visible crossing (BACKLOG-334/378): fix the destination + the edge to walk to, then mark the dino
+   * migrating; the forceStep walk + `crossDino` do the rest. `dest` defaults to the home zone's primary
+   * neighbour (`otherZone`), so the old single-neighbour callers (the `__startMigration` hook) are byte-identical.
+   */
+  private startMigration(d: Dino, dest?: string): void {
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const to = dest ?? otherZone(home);
+    const neighbors = zoneNeighbors(home);
+    const link = neighbors.find((l) => l.to === to) ?? neighbors[0];
+    this.migrationCross[d.name] = { dest: to, edge: link?.edge ?? 'east' };
     this.migrating.add(d.name);
   }
 
   /** Arrival (BACKLOG-334): flip the home zone, drop the dino at the far zone's opposite edge, refresh + persist. */
   private crossDino(d: Dino): void {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
-    const dest = otherZone(home);
+    const cross = this.migrationCross[d.name];
+    const dest = cross?.dest ?? otherZone(home); // BACKLOG-378: the destination fixed at startMigration
     const row = this.tileOf(d).tileY;
     setZone(this.dinoZones, d.name, dest);
-    const entry = crossEntryTile(home, row, COLS);
+    const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
     this.migrating.delete(d.name);
+    delete this.migrationCross[d.name];
     this.applyZoneVisibility();
     this.logEvent(
-      `🌿 ${d.name} ${dest === GROVE_ID ? `crossed into ${zoneById(GROVE_ID).name}` : 'crossed back to the bowl'}`,
+      `🌿 ${d.name} ${dest === BOWL_ID ? 'crossed back to the bowl' : `crossed into ${zoneById(dest).name}`}`,
     );
     // Carry between zones (BACKLOG-329): the crossing dino ferries one banked resource from the pile it
     // leaves into the pile it enters — the first link between the two per-zone economies (328). Only the
@@ -4106,7 +4153,7 @@ export class WorldScene extends Phaser.Scene {
     if (key) {
       if (!this.floorImage) this.floorImage = this.add.image(0, 0, key).setOrigin(0).setDepth(0);
       else this.floorImage.setTexture(key);
-      this.floorImage.setTint(inGrove ? GROVE_TINT : 0xffffff); // 0xffffff = no tint (bowl unchanged)
+      this.floorImage.setTint(zoneTint(this.zoneId)); // BACKLOG-378: grove cool, Fernreach warm, bowl untinted
       this.floorImage.setVisible(true);
       this.floorFallback?.setVisible(false);
       return;

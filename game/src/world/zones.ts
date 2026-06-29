@@ -11,6 +11,7 @@
 
 export const BOWL_ID = 'bowl';
 export const GROVE_ID = 'grove';
+export const FERNREACH_ID = 'fernreach'; // BACKLOG-378: the third zone, east of the grove (first non-bowl-adjacent)
 
 export interface Zone {
   id: string;
@@ -20,6 +21,7 @@ export interface Zone {
 export const ZONES: Zone[] = [
   { id: BOWL_ID, name: 'Pocket Cretaceous' },
   { id: GROVE_ID, name: 'The Grove' },
+  { id: FERNREACH_ID, name: 'The Fernreach' },
 ];
 
 /** The zone for an id, falling back to the bowl for an unknown id. */
@@ -57,6 +59,10 @@ export interface ZoneLink {
 export const ZONE_LINKS: ZoneLink[] = [
   { from: BOWL_ID, edge: 'east', to: GROVE_ID },
   { from: GROVE_ID, edge: 'west', to: BOWL_ID },
+  // BACKLOG-378: the third link — the grove's *east* edge opens onto the Fernreach (and back west). Appended
+  // after the grove→bowl row so `linkEdge`/`otherZone` (first-match) keep the grove's primary neighbour = bowl.
+  { from: GROVE_ID, edge: 'east', to: FERNREACH_ID },
+  { from: FERNREACH_ID, edge: 'west', to: GROVE_ID },
 ];
 
 /** The zone reached by leaving `zoneId` through `edge`, or null when that edge has no link. */
@@ -64,7 +70,16 @@ export function neighborThrough(zoneId: string, edge: Edge): string | null {
   return ZONE_LINKS.find((l) => l.from === zoneId && l.edge === edge)?.to ?? null;
 }
 
-/** The edge `zoneId` uses to reach its linked neighbour (its single outbound link this spine), or null. */
+/** Every link out of `zoneId` (a zone may now border more than one neighbour — BACKLOG-378). */
+export function zoneNeighbors(zoneId: string): ZoneLink[] {
+  return ZONE_LINKS.filter((l) => l.from === zoneId);
+}
+
+/**
+ * The edge `zoneId` uses to reach its *primary* neighbour (its first outbound link), or null. With a third
+ * zone the grove now has two links; this returns the first (grove→bowl, 'west') so the single-edge default
+ * paths stay byte-identical — multi-neighbour callers pass the chosen edge explicitly (BACKLOG-378).
+ */
 export function linkEdge(zoneId: string): Edge | null {
   return ZONE_LINKS.find((l) => l.from === zoneId)?.edge ?? null;
 }
@@ -98,6 +113,14 @@ export type TileKind = 'grass' | 'path' | 'water';
 
 /** A cool, shaded multiplicative tint applied to the whole grove floor so it reads as woodland. */
 export const GROVE_TINT = 0x9fc0b8;
+
+/** A warm, sunlit tint for the Fernreach (BACKLOG-378) — the open fern flats read distinct from the cool grove. */
+export const FERNREACH_TINT = 0xd9c98c;
+
+/** The multiplicative floor tint for a zone (BACKLOG-294/378): grove cool, Fernreach warm, bowl untinted. */
+export function zoneTint(zoneId: string): number {
+  return zoneId === GROVE_ID ? GROVE_TINT : zoneId === FERNREACH_ID ? FERNREACH_TINT : 0xffffff;
+}
 
 /**
  * The grove's ground: a worn horizontal **path** band across the vertical middle (the trail through the
@@ -138,23 +161,43 @@ export function otherZone(id: string): string {
  * *current* (origin) zone; only the bowl↔grove pair exists this spine.
  */
 
-/** The linked-edge tile in the current zone the migrant heads for (bowl → east col, grove → west col); row preserved. */
-export function migrationStepTarget(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
-  return { tileX: linkEdge(homeZone) === 'west' ? 0 : cols - 1, tileY: row };
+/**
+ * The linked-edge tile in the current zone the migrant heads for (west edge → col 0, east edge → last col);
+ * row preserved. `edge` defaults to the home zone's primary link, so single-neighbour callers are unchanged;
+ * a migrant crossing to a *chosen* neighbour (the grove can now go west to the bowl OR east to the Fernreach,
+ * BACKLOG-378) passes that crossing's edge explicitly.
+ */
+export function migrationStepTarget(
+  homeZone: string,
+  row: number,
+  cols: number,
+  edge: Edge | null = linkEdge(homeZone),
+): { tileX: number; tileY: number } {
+  return { tileX: edge === 'west' ? 0 : cols - 1, tileY: row };
 }
 
-/** Has the migrant reached its linked edge (so the next step crosses)? */
-export function atMigrationEdge(homeZone: string, tile: { tileX: number }, cols: number): boolean {
-  return linkEdge(homeZone) === 'west' ? tile.tileX <= 0 : tile.tileX >= cols - 1;
+/** Has the migrant reached its crossing edge (so the next step crosses)? `edge` defaults to the primary link. */
+export function atMigrationEdge(
+  homeZone: string,
+  tile: { tileX: number },
+  cols: number,
+  edge: Edge | null = linkEdge(homeZone),
+): boolean {
+  return edge === 'west' ? tile.tileX <= 0 : tile.tileX >= cols - 1;
 }
 
 /**
  * The entry tile in the *destination* zone — one tile in from the opposite edge, row preserved — where the
- * migrant reappears on crossing (bowl→grove enters the grove's west edge; grove→bowl enters the bowl's east
- * edge), mirroring `linkedZone`'s keeper entries.
+ * migrant reappears on crossing (a west-crossing enters the destination's east side; an east-crossing enters
+ * its west side), mirroring `linkedZone`'s keeper entries. `edge` defaults to the home zone's primary link.
  */
-export function crossEntryTile(homeZone: string, row: number, cols: number): { tileX: number; tileY: number } {
-  return { tileX: linkEdge(homeZone) === 'west' ? cols - 2 : 1, tileY: row };
+export function crossEntryTile(
+  homeZone: string,
+  row: number,
+  cols: number,
+  edge: Edge | null = linkEdge(homeZone),
+): { tileX: number; tileY: number } {
+  return { tileX: edge === 'west' ? cols - 2 : 1, tileY: row };
 }
 
 /**

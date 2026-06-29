@@ -33,6 +33,7 @@ test('a hungry prickly dino shoulders past the winner to the food', async ({ pag
       w.__setNeed(winner, 'hunger', 0.45); // hungry enough to keep its food (no 375 yield), but mild
       w.__setNeed(gobbler, 'hunger', 0.95); // much hungrier
       w.__setTrait(winner, 'agreeableness', 0.9); // the winner is warm — it would not gobble
+      w.__setTrait(winner, 'bravery', 0.1); // timid — it cedes rather than standing up (isolates 387 from 390)
       w.__setTrait(gobbler, 'agreeableness', 0.1); // prickly — won't wait its turn
     },
     { winner, gobbler, DROP_COL, DROP_ROW },

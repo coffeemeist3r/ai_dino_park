@@ -92,3 +92,23 @@ none.
 
 ### Estimated touch count
 ~5 files (zones.ts, WorldScene.ts, cycle-084 test update, 2 new tests) — within one track's budget. Combined-cycle distinct files ≈ 8 (WorldScene + feeding shared).
+
+---
+
+## Shipped (Coder)
+
+### Lore track — BACKLOG-390
+**Files touched:** `game/src/world/feeding.ts` (+`STAND_BRAVERY`, +`standsGround`), `game/src/scenes/WorldScene.ts` (import; `lastStand` field; `checkFeeding` no-yield branch — bold winner holds → 😠 + "stood your ground" memory + `eatFood(winner)`, gobbler denied; `lastStand` reset on the yield + non-stand branches; `__standFood` hook), `tests/unit/feeding.test.ts` (+`standsGround` describe, 2 tests), `tests/e2e/cycle-085-stand-up.spec.ts` (new, 2 tests), `tests/e2e/cycle-084-gobble.spec.ts` (1-line isolation: winner bravery 0.1 so 387 stays the gobble path).
+**Deviations:** none.
+
+### Structure track — BACKLOG-378
+**Files touched:** `game/src/world/zones.ts` (+`FERNREACH_ID`/ZONES entry; +2 `ZONE_LINKS` rows appended; +`zoneNeighbors`; optional `edge?` param on `migrationStepTarget`/`atMigrationEdge`/`crossEntryTile` defaulting to `linkEdge(home)`; +`FERNREACH_TINT`/`zoneTint`), `game/src/scenes/WorldScene.ts` (imports incl. `ZONES`/`Edge`/`zoneNeighbors`/`zoneTint`; `migrationCross` companion record; `startMigration(d, dest?)` fixes dest+edge; `maybeMigrate` picks a random neighbour; forceStep + `crossDino` read the chosen edge/dest; `crossDino` log generalized; `drawFloor` tint via `zoneTint`; `zoneStores` over all `ZONES`; `__startMigrationTo` hook), `tests/unit/cycle-085-third-zone.test.ts` (new, 9 tests), `tests/e2e/cycle-085-third-zone.spec.ts` (new, 3 tests).
+**In-fire spec updates (the table genuinely grew a third zone):** `tests/unit/cycle-084-zone-adjacency.test.ts` (ZONE_LINKS now 4 rows; grove-east → Fernreach; bowl↔grove byte-identity assertions untouched), `tests/unit/cycle-059-zones.test.ts` (dropped the now-false "grove-east is unlinked" assertion), `tests/unit/plaque.test.ts` (zone tally now lists all three zones).
+**Deviations:** none. Migrating stayed a `Set` + a companion `migrationCross` record (no Set→Map churn), so `__migrating`/`__startMigration` hooks are byte-identical and the existing crossing/carry specs needed no edit.
+
+### Status (combined, both tracks)
+- `npm run build` (game): **clean** (type-check passed).
+- `npm run test:unit`: **883 passed / 883** (+9 net new).
+- `npx playwright test` (full): **269 / 270**; the lone failure was `cycle-037-keeper` (observer-persists-across-reload) — the catalogued parallel-load flake, **green 4/4 isolated**, untouched by this diff (keeper persistence, not zones/feeding).
+- `@mlc-ai/web-llm` boundary: **clean** (only under `game/src/ai/`).
+- Save schema: **no change** either track (no `SAVE_VERSION` bump; `dinoZones` already persisted any zone id additively).
