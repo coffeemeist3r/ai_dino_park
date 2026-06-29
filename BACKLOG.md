@@ -907,9 +907,23 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
 
 - [ ] BACKLOG-389 [emergent] Bullied dino remembers — a dino shouldered past at the hatch (387) files who grabbed its meal; repeated, it gives that gobbler a wider berth at future drops (drifts to a different food tile rather than contest it). Builds on 387 / 011.
-- [ ] BACKLOG-390 [emergent] Standing up to the gobbler — a high-bravery dino shouldered past by a gobbler (387) doesn't cede next time: it holds its tile and the gobbler backs down (a brief 😠 standoff the bold dino wins). Builds on 387 / 062.
+- [~] BACKLOG-390 [emergent] Standing up to the gobbler — a high-bravery dino shouldered past by a gobbler (387) doesn't cede next time: it holds its tile and the gobbler backs down (a brief 😠 standoff the bold dino wins). Builds on 387 / 062.
 - [ ] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
 - [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
+
+## Cycle 85 lore additions — the worm turns (2026-06-29)
+
+> Cycle 85's lore pick is the already-queued **BACKLOG-390** (standing up to the gobbler) — the reply to
+> cycle 84's greedy gobble (387): a *bold* dino shouldered past doesn't cede, it holds its tile and the
+> gobbler backs down (😠), so bravery decides who gets pushed around. These extend the standoff into the
+> bully's retreat, a witness's admiration, a legible spine, and a reputation that eventually cows the bully —
+> the defiance half of the 389-392 scramble thread. Also seeds the operator's brain-decisions nudge (393).
+
+- [ ] BACKLOG-393 [ai] Brain-biased intent — route a *bias*, not an actuator, through the dino brain (operator Idea-Box nudge, foundation-first). `NPCBrain` gains an async, low-frequency, cached **intent** ("Thornback feels like sulking near the pond today") authored once per stretch from persona + memory, that nudges the *existing* deterministic wander/social/need weights for a while. **Hard floor:** the rules run identically when the brain is `stub`/`fallback` (full sim, zero download) — the intent is enrichment on top, never a requirement; headless CI / a phone that declined the model behave exactly as today. Model authors no world state directly (CHARTER `NPCBrain` boundary holds); sim stays tickable + Node-testable (tests assert the *pipeline* — generated→cached→nudges weights→deterministic when no model — not prose). The spine BACKLOG-104 (action layer) builds on. Builds on 104 / 103 / 107.
+- [ ] BACKLOG-394 [emergent] Backed-down gobbler slinks off — a gobbler that gets stood up to (390) doesn't just lose the tile: it slinks away (😖) and files a "<bold> wouldn't budge" memory, so the failed grab has a visible cost. Builds on 390 / 123.
+- [ ] BACKLOG-395 [emergent] Witnessed backbone — a dino that watches a friend hold its ground against a gobbler (390) admires it: a small bond nudge toward the bold one and a "saw <bold> stand up to <gobbler>" that can travel as gossip. Courage is socially rewarded. Builds on 390 / 019 / 013.
+- [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
+- [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
 
 ## Operator session — 2026-06-12
 
