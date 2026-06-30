@@ -939,6 +939,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
 - [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
 
+## Cycle 86 lore additions — the hatch remembers your face (2026-06-30)
+
+> Cycle 86 turns the contested-drop trio (yield 375 / gobble 387 / stand 390) from three isolated
+> moments into a *remembered* pecking order. The suggested pick is the already-queued **BACKLOG-394**
+> (the backed-down gobbler slinks off, 😖) — the smallest clean reply that gives the failed grab a
+> visible cost, completing the 390 standoff's emotional arc. The new seeds carry the thread further:
+> the outcomes congeal into a per-dino disposition (401), become legible in the book (402) and the
+> voice (404), grow a victor's-mercy grace note (403), and — off the feeding treadmill — let a dino
+> alone too long invent a tic of its very own (405).
+
+- [ ] BACKLOG-401 [emergent] Pecking-order memory — a dino carries a running sense of who it's yielded to (375), been gobbled by (387), and stood up to (390) at the hatch, so the trio's outcomes congeal into a per-dino disposition (a quiet wariness toward a dino that's out-grabbed it, a little confidence toward one it's faced down) it can read next time they meet at a drop. Builds on 375 / 387 / 390 / 011.
+- [ ] BACKLOG-402 [pokemon] Hatch temperament in the book — the collection book shows each dino's table manner — generous / greedy / unbowed / timid — derived from its feeding tallies, a one-line "at the hatch: …" read that folds 388's "kindest", 392's "grabbed first", and 396's "held the line" into a single legible character note. Builds on 375 / 387 / 390 / 021.
+- [ ] BACKLOG-403 [emergent] Victor's mercy — a dino that stood its ground (390) and ate, later seeing the same gobbler it denied still hungry, may let it have the *next* scrap (a magnanimous yield the bold/agreeable do and the petty don't), so defiance and grace can live in the same dino. Builds on 390 / 375 / 013.
+- [ ] BACKLOG-404 [social] Mealtime mood in the voice — a dino's most recent hatch outcome tints its next dialogue line: a gobbler that just grabbed sounds smug, a dino that yielded sounds wistful, one that stood its ground sounds proud — layering the feeding trait (375/387/390) into speech the way mood and time-of-day already do (051). Builds on 375 / 387 / 390 / 051.
+- [ ] BACKLOG-405 [emergent] Solitary tic — a dino left alone with nothing pressing (no need, no nearby food, no friend in range) for a long real stretch invents a small personal ritual — paces a fixed little path, fusses one spot, turns a slow circle — that becomes a recognizable *tic* of its own, logged to memory and occasionally let slip in talk. Distinctness from idleness, not interaction. Builds on 010 / 011 / 060.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
