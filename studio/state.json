@@ -2,7 +2,7 @@
   "cycle": 86,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-399: Third-zone terrain identity",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-06-30T10:00:00-05:00",
-    "structure-smith": "2026-06-29T10:06:00-05:00",
+    "structure-smith": "2026-06-30T10:06:00-05:00",
     "designer": "2026-06-29T10:12:00-05:00",
     "code-planner": "2026-06-29T10:18:00-05:00",
     "coder": "2026-06-29T10:40:00-05:00",
