@@ -178,11 +178,66 @@ export const WATER_RIG: TileRig = {
   variants: [WATER_A, WATER_B],
 };
 
+// ── Fern — The Fernreach's scrub ground (BACKLOG-399 layout, drawn cycle 086-art). An olive bracken floor
+// scattered with small fern fronds (a light tip 'l' over a two-pixel dark stem 'dd', a denser, leafier
+// scatter than grass's single blades) so the third zone reads as fern flats, not lawn. A warmer, more
+// olive base than grass's field green, under the zone's FERNREACH_TINT. Two variants; every border is flat
+// base 'f' so the scrub tiles seamlessly. First renderable terrain art since the grove's path/water (033).
+
+const FERN_A: ReadonlyArray<string> = [
+  'ffffffffffffffff',
+  'ffffffffffffffff',
+  'fffflfffffffffff',
+  'fffddfffffffffff',
+  'ffffffffffflffff',
+  'ffffffffffddffff',
+  'ffffffflffffffff',
+  'ffffffddffffffff',
+  'ffffffffffffffff',
+  'ffflffffffffffff',
+  'ffddffffffffffff',
+  'fffffffffffflfff',
+  'fffffffffffddfff',
+  'fffffffflfffffff',
+  'fffffffddfffffff',
+  'ffffffffffffffff',
+];
+
+const FERN_B: ReadonlyArray<string> = [
+  'ffffffffffffffff',
+  'ffffffffffffffff',
+  'fffffffffflfffff',
+  'fffffffffddfffff',
+  'fffflfffffffffff',
+  'fffddfffffffffff',
+  'fffffffffffflfff',
+  'fffffffffffddfff',
+  'ffffffflffffffff',
+  'ffffffddffffffff',
+  'ffffffffffffffff',
+  'ffflffffffffffff',
+  'ffddfffffflfffff',
+  'fffffffffddfffff',
+  'ffffffffffffffff',
+  'ffffffffffffffff',
+];
+
+export const FERN_RIG: TileRig = {
+  size: 16,
+  palette: {
+    f: 0x567a32, // base olive scrub (warmer/yellower than grass's field green)
+    d: 0x37501f, // dark frond stem
+    l: 0x7fa84a, // light frond tip / upper-left lit leaf
+  },
+  variants: [FERN_A, FERN_B],
+};
+
 /** Ground tiles the pixel pipeline can render today; others fall back to the flat checker. */
 export const TILE_RIGS: Record<string, TileRig> = {
   grass: GRASS_RIG,
   path: PATH_RIG,
   water: WATER_RIG,
+  fern: FERN_RIG,
 };
 
 /** The flat base char of a tile (its uniform border) — the seam colour. */
