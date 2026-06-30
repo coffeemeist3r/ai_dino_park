@@ -67,3 +67,17 @@ Both tracks edit `WorldScene.ts` but in **different methods** (`checkFeeding` fo
 and different imports — no clobber. Suggested order: 399 first (drawFloor + zones.ts), then 394
 (checkFeeding + feeding.ts), build + full suite once at the end. No shared logic file (feeding.ts vs
 zones.ts). Neither track changes the save format or the `@mlc-ai/web-llm` boundary.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/feeding.ts` — added pure `slunkOffMemory(boldName)` (394).
+- `game/src/world/zones.ts` — `TileKind` gains `'fern'`; added `fernreachTileAt` (west water creek + southern/NE fern scrub) and the `zoneTileAt(zoneId,...)` dispatcher (399).
+- `game/src/scenes/WorldScene.ts` — `checkFeeding` stand branch: the denied gobbler now slinks off (😖 + `slunkOffMemory` + log line); `drawFloor` generalized off the `inGrove` binary to the `zoneTileAt` dispatch (bakes `terrain_<zone>_20x15`); import swap (`groveTileAt`→`zoneTileAt`, `+slunkOffMemory`).
+- Tests: `tests/unit/cycle-086-slink.test.ts`, `tests/unit/cycle-086-fernreach-terrain.test.ts`, `tests/e2e/cycle-086-slink.spec.ts`, `tests/e2e/cycle-086-fernreach-terrain.spec.ts`.
+
+**Deviations from plan:** none of substance. The bowl floor texture key is `tilemap_grass_20x15` (bakeTileMap's format) — the 399 e2e asserts that exact key (not the shorthand `'grass'`). No hook changes were needed (`__standFood`/`__floorInfo` already surface what the specs read), exactly as planned.
+
+**Build + tests:** `npm --prefix game run build` clean. `npm run test:unit` green — **894 unit (+11)**. New e2e (cycle-086-slink ×2, cycle-086-fernreach-terrain ×1) green on a warm Vite cache (the first cold invocation hit the catalogued boot flake, green on re-run). `@mlc-ai/web-llm` boundary unchanged (no art/world import). No save-format change either track.

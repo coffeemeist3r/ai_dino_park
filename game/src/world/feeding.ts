@@ -118,6 +118,15 @@ export function standsGround(winnerBravery: number): boolean {
 }
 
 /**
+ * Backed-down gobbler slinks off (BACKLOG-394) — when a bold winner holds its ground (390), the denied
+ * gobbler doesn't just lose the tile: it slinks away (😖) carrying who wouldn't budge, so the failed grab
+ * has a visible, remembered cost. Pure memory builder (sibling to world/cold.ts's coldMemory etc.).
+ */
+export function slunkOffMemory(boldName: string): string {
+  return `${boldName} wouldn't budge — you slunk off`;
+}
+
+/**
  * Where dropped food lands. `col` (the hatch column) is honored and clamped when
  * given; otherwise a column is picked from `rand`. It always settles in the
  * upper-middle feeding zone so it falls into the cast rather than onto the rim.

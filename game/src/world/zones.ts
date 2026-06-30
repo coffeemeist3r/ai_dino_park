@@ -109,7 +109,10 @@ export function linkedZone(
  * Artist's (BACKLOG-033); until they exist those tiles bake as grass under GROVE_TINT, so the floor is
  * always whole and the tint alone already makes the grove distinct.
  */
-export type TileKind = 'grass' | 'path' | 'water';
+export type TileKind = 'grass' | 'path' | 'water' | 'fern';
+// 'fern' (BACKLOG-399) is the Fernreach's scrub kind; like the grove's path/water once did (294), it
+// bakes as the grass fallback under the zone tint until the Artist draws its rig (FERN_RIG), so the floor
+// is always whole and adding the kind can never break the build.
 
 /** A cool, shaded multiplicative tint applied to the whole grove floor so it reads as woodland. */
 export const GROVE_TINT = 0x9fc0b8;
@@ -134,6 +137,33 @@ export function groveTileAt(x: number, y: number, cols: number, rows: number): T
   // the trail: the two middle rows, full width.
   if (y === midY || y === midY - 1) return 'path';
   return 'grass';
+}
+
+/**
+ * The Fernreach's ground (BACKLOG-399): the third zone reads as its own *place*, not tinted bowl grass.
+ * Deliberately laid out unlike the grove (whose pond sits NE and whose trail runs the horizontal middle):
+ * a **water creek** runs vertically down the west side, and **fern** scrub fills a southern band plus a
+ * north-east thicket — so even before the fern rig exists, the creek (the already-drawn water rig) and the
+ * warm FERNREACH_TINT make it distinct. Pure: (x,y) → tile kind over a cols×rows grid.
+ */
+export function fernreachTileAt(x: number, y: number, cols: number, rows: number): TileKind {
+  // the creek: a 2-wide vertical run down the west side (vs the grove's NE pond).
+  if (x >= 3 && x <= 4 && y >= 2 && y <= rows - 3) return 'water';
+  // fern scrub: a southern band along the bottom, plus a north-east thicket.
+  if (y >= rows - 2) return 'fern';
+  if (x >= cols - 4 && y >= 1 && y <= 3) return 'fern';
+  return 'grass';
+}
+
+/**
+ * The terrain layout for a zone (BACKLOG-294/399): the grove and the Fernreach each have their own ground;
+ * the bowl is plain grass (null → the caller bakes the untinted grass map). One dispatcher the floor render
+ * reads, so a fourth zone is another arm here, not another edit to `drawFloor`.
+ */
+export function zoneTileAt(zoneId: string, x: number, y: number, cols: number, rows: number): TileKind | null {
+  if (zoneId === GROVE_ID) return groveTileAt(x, y, cols, rows);
+  if (zoneId === FERNREACH_ID) return fernreachTileAt(x, y, cols, rows);
+  return null;
 }
 
 /** Per-entity occupancy over a plain map (BACKLOG-143 API; populated by BACKLOG-274). */

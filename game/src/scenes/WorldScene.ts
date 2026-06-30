@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, groveTileAt, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -72,7 +72,7 @@ import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, t
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
 import {
   noticeResource,
   resourceLanding,
@@ -975,6 +975,12 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, eater.name, `you stood your ground and kept your food from ${gobblerName}`);
       this.flashFeed(eater, '😠');
       this.logEvent(`😠 ${eater.name} held its ground against ${gobblerName}`);
+      // BACKLOG-394: the denied gobbler slinks off (😖) and remembers who wouldn't budge — the failed grab
+      // has a visible cost. The bold winner still eats; no bond change (395 owns the social ripple).
+      const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
+      this.memory = remember(this.memory, gobblerName, slunkOffMemory(eater.name));
+      this.flashFeed(gobbler, '😖');
+      this.logEvent(`😖 ${gobblerName} slunk off — ${eater.name} wouldn't budge`);
       this.eatFood(eater);
     } else if (gobblerName) {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
@@ -4144,12 +4150,13 @@ export class WorldScene extends Phaser.Scene {
    * grass rig is ever missing (STYLE-GUIDE: undrawn → flat).
    */
   private drawFloor(): void {
-    const inGrove = this.zoneId === GROVE_ID;
-    const key = inGrove
-      ? bakeTerrainMap(this, `terrain_${GROVE_ID}_${COLS}x${ROWS}`, COLS, ROWS, TILE, (x, y) =>
-          groveTileAt(x, y, COLS, ROWS),
-        )
-      : bakeTileMap(this, 'grass', COLS, ROWS, TILE);
+    // BACKLOG-399: dispatch on the zone's terrain layout — grove/Fernreach bake their own ground, the bowl
+    // (null) bakes plain grass. The probe at (0,0) is non-null exactly for zones that have a layout.
+    const tileAt = (x: number, y: number) => zoneTileAt(this.zoneId, x, y, COLS, ROWS);
+    const key =
+      tileAt(0, 0) !== null
+        ? bakeTerrainMap(this, `terrain_${this.zoneId}_${COLS}x${ROWS}`, COLS, ROWS, TILE, (x, y) => tileAt(x, y)!)
+        : bakeTileMap(this, 'grass', COLS, ROWS, TILE);
     if (key) {
       if (!this.floorImage) this.floorImage = this.add.image(0, 0, key).setOrigin(0).setDepth(0);
       else this.floorImage.setTexture(key);
