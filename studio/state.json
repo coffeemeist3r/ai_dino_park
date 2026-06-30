@@ -1,8 +1,8 @@
 {
   "cycle": 86,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-394: Backed-down gobbler slinks off",
-  "structureItem": "BACKLOG-399: Third-zone terrain identity",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-06-30T10:18:00-05:00",
     "coder": "2026-06-30T10:40:00-05:00",
     "qa": "2026-06-30T10:45:00-05:00",
-    "validator": "2026-06-29T10:52:00-05:00",
+    "validator": "2026-06-30T10:52:00-05:00",
     "artist": "2026-06-29T10:55:00-05:00"
   }
 }
