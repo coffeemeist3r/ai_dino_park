@@ -956,6 +956,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-404 [social] Mealtime mood in the voice — a dino's most recent hatch outcome tints its next dialogue line: a gobbler that just grabbed sounds smug, a dino that yielded sounds wistful, one that stood its ground sounds proud — layering the feeding trait (375/387/390) into speech the way mood and time-of-day already do (051). Builds on 375 / 387 / 390 / 051.
 - [ ] BACKLOG-405 [emergent] Solitary tic — a dino left alone with nothing pressing (no need, no nearby food, no friend in range) for a long real stretch invents a small personal ritual — paces a fixed little path, fusses one spot, turns a slow circle — that becomes a recognizable *tic* of its own, logged to memory and occasionally let slip in talk. Distinctness from idleness, not interaction. Builds on 010 / 011 / 060.
 
+## Cycle 87 — the tic spreads
+
+> The solitary tic (405) turns a lone dino's idleness into a signature ritual. These shade it outward:
+> a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
+> it (409), a stranger-zone deepens it (410), and being found lifts it (411).
+
+- [ ] BACKLOG-407 [emergent] Shared tic — a dino that watches a close friend perform its solitary tic (405) enough times picks up a faint echo of it, so a personal ritual can *spread* between friends (mimicry as quiet bonding). Builds on 405 / 013.
+- [ ] BACKLOG-408 [social] Caught mid-tic — a dino the keeper greets while it's deep in its tic (405) startles a little (😳) and its next line comes out bashful, as if caught doing something private. Builds on 405 / 051.
+- [ ] BACKLOG-409 [pokemon] Tics in the book — the collection book names each dino's signature tic ("paces a fixed little path"), a distinctness read the player collects at a glance. Builds on 405 / 021.
+- [ ] BACKLOG-410 [emergent] Homesick sooner — a dino freshly moved *alone* into a zone with no friends falls into its tic faster than one on home ground, so isolation in an unfamiliar place reads quicker. Builds on 405 / 274.
+- [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
