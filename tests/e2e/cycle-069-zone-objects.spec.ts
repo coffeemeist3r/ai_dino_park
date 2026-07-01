@@ -59,26 +59,34 @@ test('a resource is gatherable only in its own zone (BACKLOG-308)', async ({ pag
   const TILE = 32;
   await boot(page);
 
-  // Migrate a dino into the grove, then spawn a grove resource right on it.
+  // Migrate a dino into the grove and make it curious enough to lock onto a resource (the `gathering`
+  // branch), so it stays glued within reach every step. Without this the dino wanders and the 3s
+  // background step timer can drift it >1 tile off before the pickup — a ~30% flake (reachedFood is ≤1).
   const name = (await page.evaluate(() => (window as W).__dinoPositions()))[0].name as string;
   await page.evaluate((n) => (window as W).__migrate(n, 'grove'), name);
-  await setZone(page, 'grove');
+  await page.evaluate((n) => (window as W).__setTrait(n, 'curiosity', 1), name);
+
+  // Spawn the grove resource on the dino's tile while the view stays in the bowl, so no background step
+  // can gather it before the deliberate cross-and-gather below.
   const pos = (await page.evaluate(() => (window as W).__dinoPositions())).find(
     (d: { name: string }) => d.name === name,
   );
   await page.evaluate(
-    ({ tx, ty }) => (window as W).__spawnResource('branch', tx, ty),
+    ({ tx, ty }) => (window as W).__spawnResource('branch', tx, ty, false, 'grove'),
     { tx: Math.floor(pos.x / TILE), ty: Math.floor(pos.y / TILE) },
   );
   expect((await resource(page)).zone).toBe('grove');
 
   // From the bowl, the grove resource must NOT be gathered (zone mismatch gates checkGather).
-  await setZone(page, 'bowl');
   await page.evaluate(() => (window as W).__stepWorld());
   expect(await resource(page)).not.toBeNull();
 
-  // Back in the grove, the grove dino picks it up.
+  // Back in the grove, the curious grove dino is on/beside it and picks it up. Assert via the gather
+  // tally (not the resource slot): ambient spawns can drop a *bowl* resource meanwhile, which the
+  // __resource() cross-zone fallback would surface — the tally rising proves the grove pickup directly.
+  const before = (await page.evaluate((n) => (window as W).__gathered()[n] ?? 0, name)) as number;
   await setZone(page, 'grove');
   await page.evaluate(() => (window as W).__stepWorld());
-  expect(await resource(page)).toBeNull();
+  const after = (await page.evaluate((n) => (window as W).__gathered()[n] ?? 0, name)) as number;
+  expect(after).toBeGreaterThan(before);
 });
