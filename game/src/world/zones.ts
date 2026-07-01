@@ -76,6 +76,21 @@ export function zoneNeighbors(zoneId: string): ZoneLink[] {
 }
 
 /**
+ * The neighbour zone whose shared edge `tile` is currently sitting on (within `band` tiles of it), or null
+ * when the dino is in the zone interior. Reads the adjacency table (383): a `west` link is met at the left
+ * columns, an `east` link at the right columns. The gate for edge-meet barter (BACKLOG-358) — two dinos each
+ * `nearLinkEdge`'d toward the *other's* zone are meeting at the boundary between them. First matching link
+ * wins (a two-link zone like the grove reports whichever edge the tile is actually at).
+ */
+export function nearLinkEdge(zoneId: string, tile: { tileX: number }, cols: number, band = 1): string | null {
+  for (const l of zoneNeighbors(zoneId)) {
+    if (l.edge === 'west' && tile.tileX <= band) return l.to;
+    if (l.edge === 'east' && tile.tileX >= cols - 1 - band) return l.to;
+  }
+  return null;
+}
+
+/**
  * The edge `zoneId` uses to reach its *primary* neighbour (its first outbound link), or null. With a third
  * zone the grove now has two links; this returns the first (grove→bowl, 'west') so the single-edge default
  * paths stay byte-identical — multi-neighbour callers pass the chosen edge explicitly (BACKLOG-378).

@@ -228,3 +228,28 @@ export function takeResource(pile: Stockpile, kind: ResourceKind): Stockpile {
   if (have <= 0) return pile;
   return { ...pile, [kind]: have - 1 };
 }
+
+/**
+ * Edge-meet barter (BACKLOG-358) — the converse of one-way carry (329/356/377). When two dinos from
+ * different zones meet at their shared edge, each zone hands the other the kind it's *short of* for its own
+ * next structure. This is just `directedCarry` run in both directions: A gives B what B needs (`recipeB`),
+ * B gives A what A needs (`recipeA`), each falling back to a spare when there's no craft shortfall. Either
+ * side can be null (that giver has nothing the other can take). WorldScene applies the two moves on the same
+ * lossless `takeResource`→`bankResource` path carry uses, so a barter is conserved and cap-safe.
+ */
+export interface BarterSwap {
+  aGives: ResourceKind | null;
+  bGives: ResourceKind | null;
+}
+
+export function barterSwap(
+  pileA: Stockpile,
+  pileB: Stockpile,
+  recipeA: Partial<Record<ResourceKind, number>> = CRAFT_RECIPE,
+  recipeB: Partial<Record<ResourceKind, number>> = CRAFT_RECIPE,
+): BarterSwap {
+  return {
+    aGives: directedCarry(pileA, pileB, recipeB), // A → B: what B is short of for B's structure
+    bGives: directedCarry(pileB, pileA, recipeA), // B → A: what A is short of for A's structure
+  };
+}

@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, linkedZone, migrationStepTarget, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -73,6 +73,7 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
 import {
   noticeResource,
   resourceLanding,
@@ -91,6 +92,7 @@ import {
   structureRecipe,
   directedCarry,
   takeResource,
+  barterSwap,
   resourceFetchable,
   RESOURCE_GRACE_STEPS,
   RESOURCE_GLYPH,
@@ -140,6 +142,8 @@ const ROWS = 15;
 const MIGRATE_ROLL_INTERVAL_MS = 90_000;
 const MIGRATE_CHANCE = 0.15;
 const MIGRATE_COOLDOWN_MS = 60_000; // BACKLOG-333: real-time floor between ambient migrations
+const BARTER_COOLDOWN_MS = 45_000; // BACKLOG-358: real-time floor between edge-meet barters (paces the beat)
+const EDGE_DWELL = 2; // BACKLOG-358: force-steps a dino must linger at the edge column to count as *meeting* (not transiting)
 
 /**
  * Wander cadence (BACKLOG-333) — `forceStep` runs on this real-time timer instead of the in-game-minute
@@ -179,6 +183,19 @@ export class WorldScene extends Phaser.Scene {
   private dinoZones: Record<string, string> = {};
   /** Wall-clock ms of the last ambient migration (BACKLOG-333) — paces it by a real-time cooldown. */
   private lastMigrationMs = 0;
+  /** Wall-clock ms of the last edge-meet barter (BACKLOG-358) — paces the ambient trade by a real-time cooldown. */
+  private lastBarterMs = 0;
+  /** Consecutive steps each dino has lingered at a linking edge (BACKLOG-358) — a meet needs two *parked* dinos, not a crosser transiting through. Transient. */
+  private edgeDwell: Record<string, number> = {};
+  /**
+   * Solitary-tic bookkeeping (BACKLOG-405). All transient (re-derived from live solitude, never saved):
+   * how many consecutive force-steps a dino has been undisturbed, the tile it anchored its ritual on, the
+   * ritual's step phase, and whether it has invented the tic this solitary stretch (so the memory files once).
+   */
+  private soloSteps: Record<string, number> = {};
+  private ticAnchor: Record<string, { tileX: number; tileY: number }> = {};
+  private ticPhase: Record<string, number> = {};
+  private ticInvented = new Set<string>();
   /** Dinos mid zone-crossing (BACKLOG-334): walking to their linked edge before the home zone flips. Transient. */
   private migrating = new Set<string>();
   /**
@@ -710,6 +727,13 @@ export class WorldScene extends Phaser.Scene {
       if (d) d.setPosition(tileX * TILE + TILE / 2, tileY * TILE + TILE / 2);
       return !!d;
     };
+    // BACKLOG-405: a dino's solitary-tic state — its solo-step count, whether it has invented the tic this
+    // stretch, and its (deterministic) signature ritual — so a test can watch a lone dino fall into it.
+    (window as any).__tic = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return null;
+      return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits) };
+    };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
     (window as any).__resource = () => {
@@ -719,6 +743,23 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gathered = () => ({ ...this.gathered });
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
+    // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
+    (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
+      this.stockpileByZone[zone] = { ...pile };
+      return { ...this.pileFor(zone) };
+    };
+    // BACKLOG-358: run the ambient edge-meet scan deterministically (like __maybeMigrate) — dwell accumulates
+    // per call on the dinos' current tiles, so a test can park two at a shared edge and prove the scan fires.
+    (window as any).__maybeBarter = () => this.maybeBarter();
+    (window as any).__edgeBarter = (a: string, b: string) => {
+      const da = this.dinoByName(a);
+      const db = this.dinoByName(b);
+      if (!da || !db) return null;
+      const za = zoneOf(this.dinoZones, a, BOWL_ID);
+      const zb = zoneOf(this.dinoZones, b, BOWL_ID);
+      const traded = this.doBarter(da, za, db, zb);
+      return { traded, a: { ...this.pileFor(za) }, b: { ...this.pileFor(zb) } };
+    };
     (window as any).__cairns = () => this.cairns.map((c) => ({ ...c })); // BACKLOG-286: crafted cairns
     (window as any).__canCraft = () => canCraft(this.pileFor(this.zoneId)); // BACKLOG-286
     (window as any).__shelters = () => this.shelters.map((s) => ({ ...s })); // BACKLOG-315: dino-built shelters
@@ -2024,6 +2065,42 @@ export class WorldScene extends Phaser.Scene {
     return best;
   }
 
+  /** Is another dino in `d`'s own zone within tic-company range (BACKLOG-405)? Company breaks the solitude. */
+  private companyNear(d: Dino): boolean {
+    const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const cur = this.tileOf(d);
+    return this.dinos.some(
+      (o) =>
+        o !== d &&
+        zoneOf(this.dinoZones, o.name, BOWL_ID) === zone &&
+        this.chebyTiles(this.tileOf(o), cur) <= TIC_COMPANY_RANGE,
+    );
+  }
+
+  /** Company or a need returned (BACKLOG-405): drop the solitary streak so the ritual can re-form fresh later. */
+  private resetTic(name: string): void {
+    this.soloSteps[name] = 0;
+    this.ticInvented.delete(name);
+    delete this.ticAnchor[name];
+    delete this.ticPhase[name];
+  }
+
+  /**
+   * Perform the tic (BACKLOG-405): the first time a dino falls into its ritual this solitary stretch, float
+   * the glyph, log it, and file the one-time memory (which the greeting/reflection path can later surface).
+   * Afterward it re-floats the glyph every few steps so an ongoing ritual stays visible without spamming.
+   */
+  private performTic(d: Dino, tic: Tic): void {
+    if (!this.ticInvented.has(d.name)) {
+      this.ticInvented.add(d.name);
+      this.memory = remember(this.memory, d.name, ticMemory(tic.label));
+      this.flashFeed(d, tic.glyph);
+      this.logEvent(`${tic.glyph} ${d.name} ${tic.label}`);
+    } else if ((this.soloSteps[d.name] ?? 0) % 6 === 0) {
+      this.flashFeed(d, tic.glyph);
+    }
+  }
+
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
     if (this.convoCooldown > 0) this.convoCooldown--;
@@ -2127,6 +2204,18 @@ export class WorldScene extends Phaser.Scene {
       const moping =
         !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
       const socializing = !huddling && !gathering && !moping && !!other && Math.random() < 0.45;
+      // Solitary tic (BACKLOG-405): a dino truly alone — nothing pressing, nobody in its zone within range,
+      // and nothing to do (not huddling/gathering) — accrues a solitary streak and, past TIC_AFTER_STEPS,
+      // falls into a small ritual of its own. Only *company or a need* breaks the streak (`resetTic`); moping
+      // and pointless socializing toward a far cross-zone dino don't — a lonely dino at the edge is still
+      // alone, and its tic forms on the next calm step. Ranks above socializing (a real ritual beats drifting
+      // toward someone a whole zone away) but below moping, so the loner's withdrawal still reads first.
+      // (foodRush is already handled by an earlier `continue`, so it's false here.)
+      const aloneNow =
+        !huddling && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
+      if (aloneNow) this.soloSteps[d.name] = (this.soloSteps[d.name] ?? 0) + 1;
+      else this.resetTic(d.name);
+      const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0);
       let next;
       if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
@@ -2134,6 +2223,12 @@ export class WorldScene extends Phaser.Scene {
         next = stepToward(cur, dres!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
       } else if (moping) {
         next = stepToward(cur, edgeTarget(cur, COLS, ROWS), COLS, ROWS); // withdraw to the nearest wall
+      } else if (ticcing) {
+        const anchor = (this.ticAnchor[d.name] ??= cur); // settle where the ritual began
+        const tic = signatureTic(d.traits);
+        this.ticPhase[d.name] = (this.ticPhase[d.name] ?? 0) + 1;
+        next = ticStep(tic.kind, anchor, this.ticPhase[d.name], COLS, ROWS);
+        this.performTic(d, tic);
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else {
@@ -2204,8 +2299,68 @@ export class WorldScene extends Phaser.Scene {
     this.checkNeeds(); // BACKLOG-371: hunger/thirst build; a dino at the pond drinks
     this.maybeSpawnResource();
     this.checkGather();
+    this.maybeBarter(); // BACKLOG-358: two dinos meeting at a shared zone edge trade what each other's zone needs
     this.maybeLayEggs();
     this.checkHatch();
+  }
+
+  /**
+   * Edge-meet barter (BACKLOG-358) — the ambient scan. Two dinos who *linger* at their zones' shared edge
+   * (each parked on the literal edge column for `EDGE_DWELL` steps, facing the other's zone) trade — the
+   * converse of one-way carry (329), both piles flowing toward each other's shortfall. The dwell + exact-edge
+   * gate is deliberate: an arriving crosser sits at the entry tile for a frame, and must NOT be mistaken for a
+   * meet (else it would immediately barter back the resource it just carried). Near-inert unless two dinos
+   * actually settle at a boundary with tradeable stock. Dwell is tracked every step; the cooldown only paces firing.
+   */
+  private maybeBarter(): void {
+    const facing: Record<string, string | null> = {};
+    for (const d of this.dinos) {
+      const to = this.migrating.has(d.name)
+        ? null
+        : nearLinkEdge(zoneOf(this.dinoZones, d.name, BOWL_ID), this.tileOf(d), COLS, 0); // band 0: the edge column itself
+      facing[d.name] = to;
+      this.edgeDwell[d.name] = to === null ? 0 : (this.edgeDwell[d.name] ?? 0) + 1;
+    }
+    if (!cooldownReady(Date.now(), this.lastBarterMs, BARTER_COOLDOWN_MS)) return;
+    const parked = this.dinos.filter((d) => facing[d.name] && (this.edgeDwell[d.name] ?? 0) >= EDGE_DWELL);
+    for (const a of parked) {
+      const za = zoneOf(this.dinoZones, a.name, BOWL_ID);
+      const b = parked.find(
+        (y) => y !== a && zoneOf(this.dinoZones, y.name, BOWL_ID) === facing[a.name] && facing[y.name] === za,
+      );
+      if (!b) continue;
+      if (this.doBarter(a, za, b, zoneOf(this.dinoZones, b.name, BOWL_ID))) {
+        this.lastBarterMs = Date.now();
+        return; // one barter per scan
+      }
+    }
+  }
+
+  /**
+   * Apply an edge-meet barter (BACKLOG-358): each zone hands the other the kind it's short of for its own
+   * structure (`barterSwap` = `directedCarry` both ways). Conserved + cap-safe via the same lossless
+   * `takeResource`→`bankResource` path carry uses; no bond change (the economic beat only — the social
+   * ripple is the Lore-smith's). Returns whether anything actually traded (so the scan doesn't burn its
+   * cooldown on an empty meet).
+   */
+  private doBarter(a: Dino, zoneA: string, b: Dino, zoneB: string): boolean {
+    const swap = barterSwap(this.pileFor(zoneA), this.pileFor(zoneB), structureRecipe(zoneA), structureRecipe(zoneB));
+    if (!swap.aGives && !swap.bGives) return false; // nothing tradeable — no phantom beat
+    if (swap.aGives) {
+      this.stockpileByZone[zoneA] = takeResource(this.pileFor(zoneA), swap.aGives);
+      this.stockpileByZone[zoneB] = bankResource(this.pileFor(zoneB), swap.aGives);
+    }
+    if (swap.bGives) {
+      this.stockpileByZone[zoneB] = takeResource(this.pileFor(zoneB), swap.bGives);
+      this.stockpileByZone[zoneA] = bankResource(this.pileFor(zoneA), swap.bGives);
+    }
+    for (const d of [a, b]) if (this.inView(d)) this.flashFeed(d, '🔄');
+    this.memory = remember(this.memory, a.name, `bartered with ${b.name} at the ${zoneById(zoneB).name} edge`);
+    this.memory = remember(this.memory, b.name, `bartered with ${a.name} at the ${zoneById(zoneA).name} edge`);
+    this.logEvent(`🔄 ${a.name} and ${b.name} bartered at the ${zoneById(zoneA).name}–${zoneById(zoneB).name} edge`);
+    this.refreshPlaque();
+    void this.saveGame();
+    return true;
   }
 
   /**

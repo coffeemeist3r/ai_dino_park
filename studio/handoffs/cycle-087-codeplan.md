@@ -65,3 +65,20 @@
 **Risks — cross-track file overlap:** both tracks edit `WorldScene.ts`. **They do not overlap:** 405 edits the `forceStep` per-dino *decision branch* + adds `performTic`/`companyNear`/`__tic`; 358 edits the `forceStep` *tail* + adds `maybeBarter`/`doBarter`/hooks. Coder: apply 405's branch edit first, then 358's tail edit (they touch different line ranges of `forceStep`). The ambient `maybeBarter` is a near-no-op in existing specs (piles empty and no cross-zone edge pairs at start), so it can't perturb the current suite.
 
 **Estimated touch count:** ~4 files (resource.ts + zones.ts + WorldScene + 1 unit + 1 e2e; WorldScene shared with 405).
+
+---
+
+## Shipped
+
+**Lore track — BACKLOG-405 (solitary tic):**
+- `game/src/world/tic.ts` (new) — `signatureTic` (dominant-axis ritual over `TIC_BY_AXIS`), `undisturbed`, `inventsTic` (`TIC_AFTER_STEPS=20`), `ticStep` (pace/fuss/circle), `ticMemory`, `TIC_COMPANY_RANGE=3`.
+- `game/src/scenes/WorldScene.ts` — imports; transient `soloSteps`/`ticAnchor`/`ticPhase`/`ticInvented`; `companyNear`/`resetTic`/`performTic`; a `ticcing` branch in the `forceStep` decision chain (above `socializing`, below `moping`); `__tic` hook. **Deviation:** the solitude accounting is decoupled from the moping/socializing rolls (only company or a need resets it), so a lonely dino at the edge still forms its tic on a calm step — cleaner than the plan's implicit "any non-idle branch resets," and it keeps the loner's mope visibly first.
+- `tests/unit/cycle-087-tic.test.ts` (9) + `tests/e2e/cycle-087-solitary-tic.spec.ts` (1).
+
+**Structure track — BACKLOG-358 (edge-meet barter):**
+- `game/src/world/resource.ts` — `BarterSwap` + `barterSwap` (directedCarry both ways).
+- `game/src/world/zones.ts` — `nearLinkEdge`.
+- `game/src/scenes/WorldScene.ts` — imports; `lastBarterMs`/`edgeDwell` state; `BARTER_COOLDOWN_MS=45_000`/`EDGE_DWELL=2`; `maybeBarter` (dwell-gated, band-0 ambient scan) in the `forceStep` tail + `doBarter`; `__setZonePile`/`__maybeBarter`/`__edgeBarter` hooks. **Deviation (important):** the plan's naive ambient scan fired between an *arriving crosser* (parked one frame at the grove entry tile) and a wandering bowl dino, pulling a just-carried resource back and breaking cycle-077's carry conservation. Fixed by gating the scan to dinos *lingering* at the literal edge column (`band=0`) for `EDGE_DWELL` steps — a transiting crosser never qualifies. Added `__maybeBarter` so the ambient path is testable deterministically.
+- `tests/unit/cycle-087-barter.test.ts` (6) + `tests/e2e/cycle-087-edge-barter.spec.ts` (2).
+
+**Build + tests:** `npm run build` clean. Unit **917 green (+15)**. E2E **276/277** (the lone failure is `cycle-081-directed-carry` = the catalogued cold-boot/parallel-load flake — green isolated/warm; it does not touch this diff). New specs green. `@mlc-ai/web-llm` still only under `game/src/ai/`. No save-format change either track (both use only transient state + the existing additive memory ring / per-zone piles).
