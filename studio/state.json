@@ -1,6 +1,6 @@
 {
   "cycle": 88,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-408: Caught mid-tic",
   "structureItem": "BACKLOG-400: Third-zone resource bias",
   "lastVerdict": "APPROVED",
@@ -11,8 +11,8 @@
   "lastFire": {
     "lore-smith": "2026-07-02T03:05:00-05:00",
     "structure-smith": "2026-07-02T03:12:00-05:00",
-    "designer": "2026-07-01T09:12:00-05:00",
-    "code-planner": "2026-07-01T09:18:00-05:00",
+    "designer": "2026-07-02T03:18:00-05:00",
+    "code-planner": "2026-07-02T03:24:00-05:00",
     "coder": "2026-07-01T09:45:00-05:00",
     "qa": "2026-07-01T09:52:00-05:00",
     "validator": "2026-07-01T09:58:00-05:00",
