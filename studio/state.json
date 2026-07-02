@@ -1,7 +1,7 @@
 {
   "cycle": 88,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-408: Caught mid-tic",
   "structureItem": "BACKLOG-400: Third-zone resource bias",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",

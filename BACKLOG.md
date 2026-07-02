@@ -967,7 +967,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > it (409), a stranger-zone deepens it (410), and being found lifts it (411).
 
 - [ ] BACKLOG-407 [emergent] Shared tic — a dino that watches a close friend perform its solitary tic (405) enough times picks up a faint echo of it, so a personal ritual can *spread* between friends (mimicry as quiet bonding). Builds on 405 / 013.
-- [ ] BACKLOG-408 [social] Caught mid-tic — a dino the keeper greets while it's deep in its tic (405) startles a little (😳) and its next line comes out bashful, as if caught doing something private. Builds on 405 / 051.
+- [~] BACKLOG-408 [social] Caught mid-tic — a dino the keeper greets while it's deep in its tic (405) startles a little (😳) and its next line comes out bashful, as if caught doing something private. Builds on 405 / 051.  *(cycle 88 lore track)*
 - [ ] BACKLOG-409 [pokemon] Tics in the book — the collection book names each dino's signature tic ("paces a fixed little path"), a distinctness read the player collects at a glance. Builds on 405 / 021.
 - [ ] BACKLOG-410 [emergent] Homesick sooner — a dino freshly moved *alone* into a zone with no friends falls into its tic faster than one on home ground, so isolation in an unfamiliar place reads quicker. Builds on 405 / 274.
 - [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
