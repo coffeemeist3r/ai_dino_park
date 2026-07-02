@@ -968,6 +968,19 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-410 [emergent] Homesick sooner — a dino freshly moved *alone* into a zone with no friends falls into its tic faster than one on home ground, so isolation in an unfamiliar place reads quicker. Builds on 405 / 274.
 - [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
 
+## Cycle 88 — the ritual, seen
+
+> With the keeper about to catch a dino mid-tic (408), the private ritual meets the social world. These
+> shade the catch and the tic itself: the same catch reads opposite by love (413), a bad moment drives a
+> dino to it sooner (412), grief points it at a departed friend's edge (414), the book counts how *often*
+> a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
+
+- [ ] BACKLOG-412 [emergent] Self-soothing tic — a dino that's just had a bad moment at the hatch (slunk off 394, or lost a scrap) falls into its signature tic *sooner* than usual, so the private ritual reads as visible self-comfort after a sting, not only idle-time distinctness. Builds on 405 / 394 / 387.
+- [ ] BACKLOG-413 [social] Fond of being caught — a dino that loves the keeper (high affinity), caught mid-tic (408), isn't bashful but *pleased* — it shows the ritual off instead of hiding it, so the very same catch reads opposite depending on the bond. Builds on 408 / 013.
+- [ ] BACKLOG-414 [emergent] A ritual for the missing friend — a dino whose closest friend has migrated to another zone (334) aims its tic at the edge that friend left by (paces toward it / circles facing it), so solitude gains a direction and the departure leaves a visible ache. Builds on 405 / 334 / 013.
+- [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
+- [ ] BACKLOG-416 [emergent] Not the only one — when two solitary dinos happen to tic within sight of each other (just past company range, so neither breaks), each files a faint "not the only one out here" — a wordless kinship between loners without contact or a bond change. Builds on 405 / 135.
+
 ## Operator session — 2026-06-12
 
 - [x] BACKLOG-201 [infra] Bottom-bar HUD overhaul — the old one-line controls hint (~610px of text on a 640px canvas) collided with the gift HUD and the plaque (operator screenshot, desktop + mobile). Replaced by: short `Holding: <item>` left · plaque centre · a small `[?] controls` chip right that toggles a full key-reference panel (click, or the ?// key). On touch the chip hides (the More sheet covers it) and the held-item line moves under the build stamp, off the stick. Pure `ui/controlsHelp.ts`; 5 new unit + 3 new e2e.  *(shipped: operator, 2026-06-12)*
