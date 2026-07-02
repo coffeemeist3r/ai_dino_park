@@ -73,7 +73,7 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
 import {
   noticeResource,
   resourceLanding,
@@ -196,6 +196,10 @@ export class WorldScene extends Phaser.Scene {
   private ticAnchor: Record<string, { tileX: number; tileY: number }> = {};
   private ticPhase: Record<string, number> = {};
   private ticInvented = new Set<string>();
+  /** Caught mid-tic (BACKLOG-408): the dino this greet caught mid-ritual (bashful reply), + a once-per-stretch
+   *  memory guard. Both transient — cleared by resetTic (company/need ends the stretch) and on greet cancel. */
+  private caughtTic: string | null = null;
+  private ticCaughtFiled = new Set<string>();
   /** Dinos mid zone-crossing (BACKLOG-334): walking to their linked edge before the home zone flips. Transient. */
   private migrating = new Set<string>();
   /**
@@ -733,6 +737,16 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       if (!d) return null;
       return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits) };
+    };
+    // BACKLOG-408: force a dino into its invented-tic state (mid-ritual) so the caught-mid-tic greet is
+    // deterministic — no 20-step solitude loop a stray wanderer could perturb. Mirrors what forceStep does.
+    (window as any).__inventTic = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return false;
+      this.soloSteps[name] = TIC_AFTER_STEPS;
+      this.ticInvented.add(name);
+      this.ticAnchor[name] ??= this.tileOf(d);
+      return true;
     };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
@@ -2083,6 +2097,8 @@ export class WorldScene extends Phaser.Scene {
     this.ticInvented.delete(name);
     delete this.ticAnchor[name];
     delete this.ticPhase[name];
+    this.ticCaughtFiled.delete(name); // BACKLOG-408: the stretch ended — a later one can be caught (+ remembered) afresh
+    if (this.caughtTic === name) this.caughtTic = null;
   }
 
   /**
@@ -3418,6 +3434,12 @@ export class WorldScene extends Phaser.Scene {
 
   /** Open the Warm/Tease/Honest menu for a dino, showing the remembered last-tone trace. */
   private openToneMenu(target: Dino): void {
+    // Caught mid-tic (BACKLOG-408): if the dino is deep in its solitary ritual (405) when greeted, it
+    // startles the instant the greet opens — a 😳 over it, and its reply comes out bashful (see pickTone).
+    // The player isn't a dino, so approaching never counts as the company that would break the tic.
+    this.caughtTic = this.ticInvented.has(target.name) ? target.name : null;
+    if (this.caughtTic) this.flashFeed(target, '😳');
+
     this.toneTarget = target;
     this.toneMenuOpen = true;
     this.dialogOpen = true;
@@ -3431,13 +3453,14 @@ export class WorldScene extends Phaser.Scene {
     this.toneMenuOpen = false;
     this.toneTarget = null;
     this.toneMenuText = '';
+    this.caughtTic = null; // a cancelled greet mustn't leak the bashful frame into the next dino (BACKLOG-408)
     this.dialog.hide();
     this.dialogOpen = false;
   }
 
-  /** Resolve a tone pick: apply the affinity delta + memory + trace, then show the reply. */
-  private async pickTone(id: ToneId): Promise<void> {
-    if (!this.toneMenuOpen || !this.toneTarget) return;
+  /** Resolve a tone pick: apply the affinity delta + memory + trace, then show the reply. Returns the shown line. */
+  private async pickTone(id: ToneId): Promise<string> {
+    if (!this.toneMenuOpen || !this.toneTarget) return '';
     const target = this.toneTarget;
     this.toneMenuOpen = false;
     this.toneMenuText = '';
@@ -3457,8 +3480,20 @@ export class WorldScene extends Phaser.Scene {
       keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[target.name] ?? 0)),
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
-    this.dialog.show(`${replyPrefix(reply.source)}${target.name}: ${reply.text}`);
+    // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
+    // to whatever the brain/stub returned (never asks the model to be bashful; the NPCBrain boundary is intact).
+    // It files the caught memory once per solitary stretch (cleared by resetTic when the stretch ends).
+    const caught = this.caughtTic === target.name;
+    const text = caught ? `${bashfulOpener()} ${reply.text}` : reply.text;
+    if (caught && !this.ticCaughtFiled.has(target.name)) {
+      this.memory = remember(this.memory, target.name, caughtMemory(signatureTic(target.traits).label));
+      this.ticCaughtFiled.add(target.name);
+    }
+    this.caughtTic = null;
+    const line = `${replyPrefix(reply.source)}${target.name}: ${text}`;
+    this.dialog.show(line);
     this.toneTarget = null;
+    return line;
   }
 
   // --- Keeper select (BACKLOG-155) ---------------------------------------------------------

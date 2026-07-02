@@ -95,3 +95,17 @@ it's a stores/spawn line, not the greet path, so no collision with the lore trac
 Lore edits `tic.ts` + WorldScene greet path (`openToneMenu`/`pickTone`/`resetTic`/`__inventTic`).
 Structure edits `resource.ts` + possibly a WorldScene stores/spawn line. No shared function; no
 ordering constraint. Build + full suite must be green for the combined result before commit.
+
+---
+
+## Shipped (Coder)
+
+**Files touched:**
+- `game/src/world/resource.ts` (400) — `ResourceKind` += `'frond'`; `RESOURCE_GLYPH.frond='🌾'`; imported `FERNREACH_ID`; `ZONE_BIAS[FERNREACH_ID]='frond'`; `STRUCTURE_BY_BIAS.frond='cairn'`; off-kind comment. `pickKind` logic unchanged (the existing ternary already keeps the off-kind a primary, so frond stays Fernreach-exclusive and bowl/grove are byte-identical).
+- `game/src/world/tic.ts` (408) — added pure `bashfulOpener()` + `caughtMemory(label)`.
+- `game/src/scenes/WorldScene.ts` (408) — tic import extended (`bashfulOpener`, `caughtMemory`, `TIC_AFTER_STEPS`); fields `caughtTic` + `ticCaughtFiled`; `openToneMenu` flashes 😳 + snapshots `caughtTic` when `ticInvented`; `pickTone` prefixes `bashfulOpener()` + files the one-time `caughtMemory`, now returns the shown line (`Promise<string>`); `closeToneMenu`/`resetTic` clear the guards; `__inventTic` dev hook.
+- `tests/unit/cycle-088-caught-tic.test.ts` (3), `tests/unit/cycle-088-third-zone-bias.test.ts` (8), `tests/e2e/cycle-088-caught-mid-tic.spec.ts`, `tests/e2e/cycle-088-third-zone-bias.spec.ts`.
+
+**Deviations from plan:** none. As anticipated, no WorldScene *source* change was needed for 400 (the plaque/spawn/carry/save paths all generalize through `RESOURCE_GLYPH` + the un-whitelisted stockpile validator). The only WorldScene edits are the greet-path (408) glue.
+
+**Build + unit:** `npm --prefix game run build` clean (type-check passed — `STRUCTURE_BY_BIAS` completeness forced the frond key). `npm run test:unit` → **928 passed** (+11). Dev server returns HTTP 200. `@mlc-ai/web-llm` boundary untouched (no import outside `game/src/ai/`). No save-version bump.

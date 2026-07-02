@@ -97,3 +97,17 @@ export function ticStep(kind: TicKind, anchor: Tile, phase: number, cols: number
 export function ticMemory(label: string): string {
   return `alone a long while, you ${label} — a little ritual of your own`;
 }
+
+/**
+ * Caught mid-tic (BACKLOG-408) — the keeper greets a dino deep in its private ritual (405) and it startles.
+ * The bashful frame is prefixed to whatever the brain (or the stub) returns, so a caught dino sounds sheepish
+ * without asking the model to be — deterministic, model-free, and identical under the NPCBrain boundary.
+ */
+export function bashfulOpener(): string {
+  return '*caught mid-fidget* Oh—! You... um. Didn\'t see you there. Hello.';
+}
+
+/** The one-time memory a caught dino files — the ritual named, so it reads as being seen doing something private. */
+export function caughtMemory(label: string): string {
+  return `the keeper caught you mid-ritual — you ${label}, and went a little bashful`;
+}

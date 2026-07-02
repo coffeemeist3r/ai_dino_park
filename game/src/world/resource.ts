@@ -13,11 +13,11 @@
  */
 
 import type { Tile } from './movement';
-import { BOWL_ID, GROVE_ID } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID } from './zones';
 
-export type ResourceKind = 'branch' | 'stone';
+export type ResourceKind = 'branch' | 'stone' | 'frond';
 
-export const RESOURCE_GLYPH: Record<ResourceKind, string> = { branch: '🪵', stone: '🪨' };
+export const RESOURCE_GLYPH: Record<ResourceKind, string> = { branch: '🪵', stone: '🪨', frond: '🌾' };
 
 export const RESOURCE_RANGE = 6; // tiles — beyond this a resource goes unnoticed
 const CURIOUS = 0.35; // curiosity at/above which a dino bothers to fetch
@@ -59,14 +59,24 @@ export function rollResource(rand: () => number = Math.random): boolean {
  * trees drop 🪵 branches, the bowl's open ground turns up 🪨 stones. A *lean*, not a lock — the off-kind
  * still rolls past `BIAS_WEIGHT` — so the two zone economies (328) gather *different* things and carry
  * between them (329) has a point. An unbiased/omitted zone keeps the old uniform 50/50 (back-compat).
+ *
+ * Third-zone bias (BACKLOG-400): the Fernreach (378) leans a third kind, a 🌾 frond, so the 3-zone chain
+ * gathers three different things. Frond is favored *only* here — the off-kind below is always a primary
+ * (branch/stone), so a new favored kind never leaks into another zone's roll (bowl/grove stay byte-identical).
  */
-export const ZONE_BIAS: Record<string, ResourceKind> = { [BOWL_ID]: 'stone', [GROVE_ID]: 'branch' };
+export const ZONE_BIAS: Record<string, ResourceKind> = {
+  [BOWL_ID]: 'stone',
+  [GROVE_ID]: 'branch',
+  [FERNREACH_ID]: 'frond',
+};
 export const BIAS_WEIGHT = 0.75; // chance the favored kind rolls in its biased zone (vs 0.5 uniform)
 
-/** Pick which kind appears — uniform 50/50 with no zone, or leaning to the zone's bias (348). */
+/** Pick which kind appears — uniform 50/50 with no zone, or leaning to the zone's bias (348/400). */
 export function pickKind(rand: () => number = Math.random, zone?: string): ResourceKind {
   const favored = zone ? ZONE_BIAS[zone] : undefined;
   if (!favored) return rand() < 0.5 ? 'branch' : 'stone';
+  // The off-kind is intentionally a primary (branch↔stone), never the favored's "opposite" among all
+  // kinds — so the Fernreach's frond (400) can't surface as an off-roll in the bowl or grove.
   const other: ResourceKind = favored === 'branch' ? 'stone' : 'branch';
   return rand() < BIAS_WEIGHT ? favored : other;
 }
@@ -208,8 +218,12 @@ export function directedCarry(
  */
 export type Structure = 'cairn' | 'shelter';
 
-/** A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos. */
-export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter' };
+/**
+ * A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos. Frond (400)
+ * builds a cairn by default until it gets its own frond-distinct structure (BACKLOG-417); this keeps the
+ * record type-complete over the ResourceKind union so a new kind can never silently fall through.
+ */
+export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter', frond: 'cairn' };
 
 /** Which structure a zone builds, by its bias. An unbiased/unknown zone → 'cairn' (286 default, back-compat). */
 export function zoneStructure(zone?: string): Structure {
