@@ -39,6 +39,15 @@ test('a crossing dino ferries one banked resource to the zone it enters; an empt
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
+  // Pin every dino's day-intent to 'social' (BACKLOG-393): a seeded 'forage' day widens resource
+  // notice enough that an organic grove spawn (which leans branch, 348) gets gathered and banked
+  // mid-test, double-counting the very pile this spec pins. Carry conservation is what's under
+  // test, not the day's mood — so hold the mood still.
+  await page.evaluate(() => {
+    const w = window as W;
+    for (const n of w.__visibleDinos() as string[]) w.__setIntent(n, 'social');
+  });
+
   // Bank a branch in the bowl pile (active zone at boot).
   await bankOn(page, 'Rex', 'branch');
   expect((await zonePile(page, 'bowl')).branch).toBe(1);
