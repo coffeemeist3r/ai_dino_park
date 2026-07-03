@@ -31,7 +31,7 @@ order so the Coder doesn't clobber one with the other. If a track already APPROV
      - Unit tests (vitest) — file path + what each test asserts
      - E2E tests (playwright) — what user flow each test exercises
    - **Risks** — anything that could surprise the Coder
-   - **Estimated touch count** — `~N files`. If `N > 6`, split into a follow-up and ship the spine this cycle.
+   - **Estimated touch count** — `~N files`. Arc-sized (CHARTER v6): up to ~15 files is normal. If `N > 15`, split at a playable seam into a follow-up and ship the spine this cycle.
 2. Update `state.json`: `phase = "coder-pending"`, `lastFire.code-planner = now`.
 3. Chronicle.
 4. Commit: `[cycle NNN] codeplan: <lore BACKLOG-NNN> + <structure BACKLOG-NNN>`.

@@ -65,9 +65,17 @@ for structure).
      (the rework loop re-attempts only the failing track; **do NOT bump cycle** next
      time — Lore-smith honors this). If **both** tracks are APPROVED/ABANDON →
      `phase = "lore-pending"` (cycle closes; Lore-smith bumps next run).
-3. `lastFire.validator = now`.
-4. Append a chronicle entry — this is the headline log entry the human will read first thing.
-5. Commit: `[cycle NNN] validator: lore <VERDICT> / structure <VERDICT> — <one-line>`.
+3. **Milestone bookkeeping (CHARTER v6):** open `studio/MILESTONE.md`. For each
+   APPROVED item, check off any milestone arc it completes. If **all** arcs are
+   now `[x]`, declare the milestone **SHIPPED**: move it to "Shipped milestones"
+   with the closing cycle number, and make the chronicle entry a *headline* —
+   this is the "came back after a week and the park is different" moment. The
+   smiths draft the next milestone at the next cycle open.
+4. When closing items in BACKLOG.md, move the closed bullet + its closed-log
+   entry to `BACKLOG-archive.md` (the closed log lives there, not in BACKLOG.md).
+5. `lastFire.validator = now`.
+6. Append a chronicle entry — this is the headline log entry the human will read first thing.
+7. Commit: `[cycle NNN] validator: lore <VERDICT> / structure <VERDICT> — <one-line>`.
 
 ## Tone of the chronicle entry
 

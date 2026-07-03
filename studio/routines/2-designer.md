@@ -64,9 +64,13 @@ When picking and speccing, weigh two things the CHARTER now makes first-class:
 
 When a feature touches persona, respect the CHARTER rules: persona is **LLM-authored-from-lore where the device allows, deterministic procedural fallback where it doesn't**, generated **once** then cached/persisted, never per-message. Spec the fallback path explicitly so QA can test it without a model. All inference stays behind the `NPCBrain` boundary.
 
-## Sizing rule
+## Sizing rule (CHARTER v6 — arc-sized)
 
-The item must be doable in **one Coder fire** (~1 hour of focused coding by a competent dev). If too big, split it: ship a stub this cycle, mark a follow-up BACKLOG.
+The item must be doable in **one Coder fire** — now sized at **~half a day of
+focused dev, up to ~15 files**, and playable end-to-end when it lands. Spec the
+whole arc slice, not a stub. Only split if it can't land *playable* in one fire —
+split at a playable seam and mark the follow-up BACKLOG. Under-speccing a
+micro-beat when the item supports an arc is now the defect, not the safe default.
 
 ## Acceptance criteria style
 

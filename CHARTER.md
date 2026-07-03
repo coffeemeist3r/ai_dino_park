@@ -51,6 +51,15 @@ The `NPCBrain` interface (in `game/src/ai/brain.ts`) is a hard boundary. WebLLM-
 - No silent failures — errors must reach `chronicle.md`
 - File comments are rare. Code should explain itself.
 
+## Milestones (v6)
+
+The studio works toward a **milestone**: one player-visible headline goal spanning
+~5 cycles, kept in `studio/MILESTONE.md` (headline + arc checklist per track).
+Autonomous: the smiths draft it, the Validator marks arcs done and declares it
+shipped (big chronicle entry), then the smiths draft the next. Cycles serve the
+milestone — the smiths pick items that advance its checklist first; off-milestone
+picks are allowed but need a one-line justification in the handoff.
+
 ## Routine contract (the chain)
 
 One full cycle = **two** BACKLOG items advanced in parallel: one **lore-track**
@@ -58,6 +67,10 @@ item (social/emergent/distinctness, chosen by the Lore-smith) and one
 **structure-track** item (world systems / map / jobs / build arc / infra, chosen
 by the Structure-smith). Each is shipped (or REWORK'd or ABANDON'd) on its own
 verdict; the two tracks are independent.
+
+**Items are arc-sized (v6).** An item is a coherent arc slice (~half a day of
+focused dev, up to ~15 files), not a one-hour micro-beat. Ship a playable arc,
+not a crumb; if it can't land playable in one Coder fire, split at a playable seam.
 
 | # | Routine | Reads | Writes | Model | Verb |
 |---|---|---|---|---|---|
@@ -116,4 +129,5 @@ The human will NOT:
 - 2026-06-03: v2 — **Art pipeline = procedural code, not an image API.** The Artist now authors flat-vector dinos/props as pure shape rigs (`game/src/art/`) baked to animated Canvas textures, via a dedicated sub-agent per character — no API keys, no asset downloads, no copyright risk (the key-gated raster pipeline had stalled for 29 cycles). Gen3-pixel mandate retired in favour of clean flat vector at the same footprint; STYLE-GUIDE rewritten to match. Human-approved. Seeds BACKLOG-117/118; reframes BACKLOG-033–036 as vector.
 - 2026-06-07: v3 — **Idea Box** added as a low-influence human override channel (`studio/IDEABOX.md`). Operator drops raw nudges; the Lore-smith considers them each cycle as seeds it may reshape, defer, or decline, then logs the call in the lore handoff. Never skips the chain. Wired into routine 1. Human-approved.
 - 2026-06-19: v5 — **Structure track added (operator ruling).** A new routine **1.5 Structure-smith** fires right after the Lore-smith every cycle and picks one *structural* item (world systems, the bigger map, persistent jobs/roles, the resources→crafting→building→governance arc, save/versioning, load-bearing infra) from a new `## Structure Track` queue in BACKLOG.md. Routines 2–6 now build **both** tracks in parallel (two sections per handoff), and the Validator issues an independent verdict per track. This is the operator's counterweight to the Lore-smith's emergence-over-foundation bias, which had starved the structural backlog (zones/jobs/build arc seeded but never chosen). Cap rule: the Structure-smith only invents new structural items when fewer than X=4 remain queued (drain before invent). `state.json` gains `structureItem` + `structureVerdict`. Human-approved. Reframes BACKLOG-143/032/146/145/040 as the seed Structure Track.
+- 2026-07-03: v6 — **Arc-sized cycles + milestones (operator ruling).** Three changes to escape micro-beat stagnation: (1) **Items are arc-sized** — ~half-day dev scope, up to ~15 files, playable end-to-end (replaces the ~1-hour / 6-file caps). (2) **Milestone layer** — `studio/MILESTONE.md` holds one player-visible headline goal per ~5 cycles; smiths draft it autonomously, cycles serve its checklist, Validator declares it shipped. (3) **Backlog hygiene** — closed items + the closed log live in `BACKLOG-archive.md`; the Lore-smith gets a drain-before-invent cap like the Structure-smith's. Consolidated daily runs read the canon once per session instead of per stage. Human-approved.
 - 2026-06-09: v4 — **GBA-era pixel style reinstated (operator ruling).** The visual mandate returns to Pokemon Gen3 (Ruby/Sapphire/Emerald) pixel art: limited palettes, dark outlines, chunky readable overworld sprites. The **medium stays code** — pixels are authored as procedural pixel-grid rigs in `game/src/art/` baked to crisp nearest-neighbour textures; still no image APIs, no asset downloads, no keys, and **no sprite rips** (original pixels in the Gen3 *style*, never copied Nintendo assets). The cycle-37 decline of the GBA nudge was correct procedure (it needed this amendment); the operator has now made the call. STYLE-GUIDE rewritten to match; the flat-vector cast restyles one character per Artist fire (vector rigs keep rendering until each pixel rig replaces them — the build never breaks). Seeds BACKLOG-168/169; reframes 033/036/158 as pixel. Human-approved.

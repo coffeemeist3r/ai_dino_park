@@ -25,14 +25,30 @@ Before brainstorming, read `studio/IDEABOX.md` and consider each `[new]` entry u
 
 A decline is a legitimate outcome — this channel keeps the human's authorship low on purpose. Note any idea-box call in your `cycle-NNN-lore.md`. The Idea Box never skips the chain: it only feeds your brainstorm; the Designer still pulls from BACKLOG.
 
+## Milestone duty (CHARTER v6)
+
+Read `studio/MILESTONE.md`. If no milestone is ACTIVE, **draft the next one**: write
+the player-visible headline + the **Lore arcs** checklist (the Structure-smith adds
+the Structure arcs right after you). If one is ACTIVE, your seeding and your
+suggested next-up should advance its unchecked lore arcs first; an off-milestone
+suggestion needs a one-line justification in your handoff.
+
+## The cap rule (drain before you invent — mirrors the Structure-smith)
+
+Count open, unstarted lore-track items in BACKLOG.md (open `[ ]` items not in
+`## Structure Track`). **If ≥ 12:** do NOT brainstorm new items — theme the cycle
+and suggest a next-up from what's queued. **If < 12:** brainstorm 1–4 new items
+(arc-sized per CHARTER v6, milestone-advancing first). The backlog is a queue,
+not a landfill.
+
 ## Do
 
 1. Decide the cycle number (per above).
 2. Process the Idea Box (above) — seed or decline each open entry, commit those edits with the rest of your fire.
-3. Brainstorm 3–8 new BACKLOG items that:
+3. Apply the milestone duty and the cap rule above. When seeding, items must:
    - Fit the CHARTER vibe (Pokemon Gen3 + Stardew + Project Sid)
    - Do not duplicate existing BACKLOG items
-   - Are small enough to land in one cycle (one feature, not an arc)
+   - Are arc-sized (CHARTER v6): a coherent, playable slice ~half a day of dev — bigger than a micro-beat, small enough to land in one Coder fire
    - Tag appropriately: `[core] [social] [emergent] [pokemon] [ai] [art] [infra]`
 4. Append them to `BACKLOG.md` with the next available BACKLOG-NNN number.
 5. Write a fresh `studio/handoffs/cycle-NNN-lore.md` with:

@@ -37,6 +37,21 @@ If new routine files exist (e.g. `8-*.md`, or an inserted `3.5-*.md`), **include
 numeric order automatically** — the pipeline is meant to be self-extending. A cycle may even
 write a new routine file if the studio needs a new role; honor it on the next run.
 
+## Read the canon ONCE (token discipline)
+
+At session start, read the canon a single time: `CHARTER.md`, `studio/state.json`,
+`studio/MILESTONE.md`, `BACKLOG.md` (open items only — closed live in
+`BACKLOG-archive.md`), `studio/IDEABOX.md`, last ~50 lines of `studio/chronicle.md`,
+and the latest verdict. Each routine file's "Read first" list is then **already
+satisfied** — do NOT re-read a file per stage unless this session changed it and
+you need the fresh content. The budget saved is budget for shipping.
+
+## The milestone comes first
+
+The cycle serves `studio/MILESTONE.md` (CHARTER v6). If no milestone is ACTIVE,
+the smiths draft one before picking items. Both smiths pick checklist-advancing
+items by default; an off-milestone pick needs a one-line justification.
+
 ## How to run the chain in ONE session
 
 The individual routine files say "do NOT chain" and "no-op if phase mismatch" — those rules
@@ -68,6 +83,12 @@ up to **2 rework loops**. A track that already APPROVED is done; do not redo it.
 track still fails after 2 loops, write an ABANDON verdict for that track (so it closes
 cleanly) and move on. Never leave a track half-open. The cycle closes only when **both**
 tracks have resolved (APPROVED or ABANDON).
+
+## Housekeeping (once per cycle, before Finish)
+
+- If BACKLOG.md carries closed (`[x]`/`[a]`) bullets in its body, move them to
+  `BACKLOG-archive.md`. Keep the working backlog lean — every stage reads it.
+- If a body section has zero open items left, move the whole section to the archive.
 
 ## Finish
 
