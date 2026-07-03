@@ -66,9 +66,10 @@ export function undisturbed(hasPressingNeed: boolean, foodRush: boolean, company
   return !hasPressingNeed && !foodRush && !companyNear;
 }
 
-/** Has a dino been solitary long enough to invent its tic? */
-export function inventsTic(soloSteps: number): boolean {
-  return soloSteps >= TIC_AFTER_STEPS;
+/** Has a dino been solitary long enough to invent its tic? A solitary-intent day (BACKLOG-393)
+ *  passes a lower threshold; the default keeps every pre-393 caller byte-identical. */
+export function inventsTic(soloSteps: number, after: number = TIC_AFTER_STEPS): boolean {
+  return soloSteps >= after;
 }
 
 /**

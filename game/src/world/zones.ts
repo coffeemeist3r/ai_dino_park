@@ -105,6 +105,19 @@ export function linkEdge(zoneId: string): Edge | null {
  * link, so the caller clamps normally there. The entry x keys on the *exit edge*, not the zone id, so
  * it stays correct as the adjacency table grows.
  */
+/**
+ * Edge indicators (BACKLOG-398) — the label each linked edge of a zone shows so the neighbour is
+ * legible *before* you walk into it. Reads the adjacency table: a fourth zone labels itself by
+ * adding a ZONE_LINKS row, with zero UI changes. West links point left (◂ name), east links point
+ * right (name ▸). Pure.
+ */
+export function edgeIndicators(zoneId: string): Array<{ edge: Edge; text: string }> {
+  return zoneNeighbors(zoneId).map((l) => ({
+    edge: l.edge,
+    text: l.edge === 'west' ? `◂ ${zoneById(l.to).name}` : `${zoneById(l.to).name} ▸`,
+  }));
+}
+
 export function linkedZone(
   zoneId: string,
   edge: Edge,

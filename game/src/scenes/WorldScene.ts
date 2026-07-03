@@ -40,7 +40,8 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { INTENT_NOTES, forageCuriosity, fromDraft, proceduralIntent, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -391,6 +392,10 @@ export class WorldScene extends Phaser.Scene {
   private lastCacheAction: 'deleted' | 'error' | null = null;
   /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
   private lastSound: { kind: 'chirp' | 'thunk'; name?: string; params?: ChirpParams } | null = null;
+  /** Brain-biased intent (BACKLOG-393): today's lean per dino. Transient — a new day re-authors. */
+  private intents: Record<string, DinoIntent> = {};
+  /** Edge indicators (BACKLOG-398): the current zone's neighbour labels, rebuilt per zone change. */
+  private edgeLabelTexts: Phaser.GameObjects.Text[] = [];
 
   constructor() {
     super('World');
@@ -567,6 +572,18 @@ export class WorldScene extends Phaser.Scene {
       this.applyZoneVisibility();
       this.applyObjectVisibility();
       this.drawFloor();
+    };
+    // dev-only hook — the current zone's rendered edge labels (BACKLOG-398), west→east order.
+    (window as any).__edgeLabels = () => this.edgeLabelTexts.map((t) => t.text);
+    // dev-only hooks — brain-biased intent (BACKLOG-393): read today's intent (authoring it on
+    // first read, same path the step loop takes — deterministic either way); force one for e2e.
+    (window as any).__intent = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.ensureIntent(d) : (this.intents[name] ?? null);
+    };
+    (window as any).__setIntent = (name: string, kind: IntentKind) => {
+      this.intents[name] = { kind, note: INTENT_NOTES[kind], until: getWorldClock().now().day };
+      return this.intents[name];
     };
     // dev-only hook — which ground tiles the pixel pipeline draws (BACKLOG-033 path/water render check).
     (window as any).__hasTileArt = (name: string) => hasTileArt(name);
@@ -1822,6 +1839,7 @@ export class WorldScene extends Phaser.Scene {
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
+      intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
     }));
   }
 
@@ -2210,6 +2228,8 @@ export class WorldScene extends Phaser.Scene {
       }
 
       const other = this.nearestOther(d);
+      // Brain-biased intent (BACKLOG-393): today's lean scales the rolls below — never the order.
+      const intent = this.ensureIntent(d);
       // BACKLOG-314: a dino fetches the resource in its own home zone (each zone has its own slot now).
       const dz = zoneOf(this.dinoZones, d.name, BOWL_ID);
       const dres = this.resourceByZone[dz];
@@ -2222,7 +2242,7 @@ export class WorldScene extends Phaser.Scene {
         !huddling &&
         !!dres &&
         resourceFetchable(this.resourceAgeByZone[dz] ?? 0) && // BACKLOG-297: ignore it until the grace elapses
-        noticeResource(d.traits.curiosity, resDist) === 'fetch';
+        noticeResource(forageCuriosity(d.traits.curiosity, intent), resDist) === 'fetch'; // BACKLOG-393: a forage day looks wider
       // The loner (BACKLOG-135): a dino with no real friend withdraws to the edge instead of drifting to
       // the cluster. Below huddle/gather (it'll still come in from the cold / chase a snack), above
       // socializing (loneliness IS the not-socializing). Probabilistic so a loner still mills enough to
@@ -2230,7 +2250,7 @@ export class WorldScene extends Phaser.Scene {
       // mark rides loner status, not this roll, so the tell shows the whole time.
       const moping =
         !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
-      const socializing = !huddling && !gathering && !moping && !!other && Math.random() < 0.45;
+      const socializing = !huddling && !gathering && !moping && !!other && Math.random() < socializeChanceFor(intent); // BACKLOG-393
       // Solitary tic (BACKLOG-405): a dino truly alone — nothing pressing, nobody in its zone within range,
       // and nothing to do (not huddling/gathering) — accrues a solitary streak and, past TIC_AFTER_STEPS,
       // falls into a small ritual of its own. Only *company or a need* breaks the streak (`resetTic`); moping
@@ -2242,7 +2262,7 @@ export class WorldScene extends Phaser.Scene {
         !huddling && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
       if (aloneNow) this.soloSteps[d.name] = (this.soloSteps[d.name] ?? 0) + 1;
       else this.resetTic(d.name);
-      const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0);
+      const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0, ticAfterFor(intent, TIC_AFTER_STEPS)); // BACKLOG-393: a solitary day settles into the ritual sooner
       let next;
       if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
@@ -2259,7 +2279,9 @@ export class WorldScene extends Phaser.Scene {
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else {
-        next = wanderStep(cur, Math.floor(Math.random() * 5), COLS, ROWS);
+        // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.
+        const dir = rerollStay(intent, Math.floor(Math.random() * 5), () => Math.floor(Math.random() * 5));
+        next = wanderStep(cur, dir, COLS, ROWS);
       }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
       this.activityById[d.name] = dinoActivity({
@@ -3240,6 +3262,30 @@ export class WorldScene extends Phaser.Scene {
    * If the keeper has stepped off a linked edge, cross into the neighbour zone (repositioned to the
    * far side) and return true; otherwise false so the caller clamps normally. (BACKLOG-143)
    */
+  /**
+   * Today's intent for a dino (BACKLOG-393) — the cached one while the day lasts, else a fresh
+   * seeded procedural intent (the deterministic floor: full sim with zero model). Where a brain
+   * can author (`intend` present, ambient inference allowed by the governor), fire-and-forget an
+   * upgrade — exactly the `converse` shape — merged via `fromDraft` only if the day hasn't turned.
+   * The model leans on the day; it never decides a step.
+   */
+  private ensureIntent(d: Dino): DinoIntent {
+    const day = getWorldClock().now().day;
+    const cached = this.intents[d.name];
+    if (cached && cached.until >= day) return cached;
+    const fresh = proceduralIntent(d.name, day, d.traits);
+    this.intents[d.name] = fresh;
+    if (this.npcBrain.intend && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
+      void this.npcBrain
+        .intend({ name: d.name, species: d.species, personality: d.personality, traits: d.traits })
+        .then((draft) => {
+          if (this.intents[d.name]?.until === day) this.intents[d.name] = fromDraft(draft, fresh);
+        })
+        .catch(() => {});
+    }
+    return fresh;
+  }
+
   private tryCrossZone(): boolean {
     const edge = crossing(this.player.x, COLS, TILE);
     const link = edge ? linkedZone(this.zoneId, edge, this.player.y, COLS, TILE) : null;
@@ -4357,7 +4403,30 @@ export class WorldScene extends Phaser.Scene {
    * on every zone change rather than stacking images. Falls back to the flat two-green checker if the
    * grass rig is ever missing (STYLE-GUIDE: undrawn → flat).
    */
+  /**
+   * Edge indicators (BACKLOG-398): a small label at each linked edge naming the neighbour zone, so
+   * the chain is legible before you cross. Rebuilt on every floor draw (create, __setZone, keeper
+   * cross) from the adjacency table — a fourth zone labels itself with zero changes here.
+   */
+  private drawEdgeLabels(): void {
+    for (const t of this.edgeLabelTexts) t.destroy();
+    this.edgeLabelTexts = edgeIndicators(this.zoneId).map((ind) => {
+      const west = ind.edge === 'west';
+      return this.add
+        .text(west ? 6 : COLS * TILE - 6, (ROWS * TILE) / 2, ind.text, {
+          fontFamily: 'monospace',
+          fontSize: '10px',
+          color: '#ffe9c0',
+          shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+        })
+        .setOrigin(west ? 0 : 1, 0.5)
+        .setAlpha(0.85)
+        .setDepth(7); // chrome: over the night overlay, under HUD/dialog
+    });
+  }
+
   private drawFloor(): void {
+    this.drawEdgeLabels(); // BACKLOG-398: every floor redraw is a zone change (or boot) — relabel the edges
     // BACKLOG-399: dispatch on the zone's terrain layout — grove/Fernreach bake their own ground, the bowl
     // (null) bakes plain grass. The probe at (0,0) is non-null exactly for zones that have a layout.
     const tileAt = (x: number, y: number) => zoneTileAt(this.zoneId, x, y, COLS, ROWS);

@@ -49,6 +49,13 @@ export interface NPCBrain {
   respond(ctx: NPCContext, obs: Observation): Promise<Reply>;
   /** Optional lifecycle status for backends that load asynchronously (e.g. WebLLM). */
   status?(): string;
+  /**
+   * Brain-biased intent (BACKLOG-393): the model's lean on a dino's day — a kind + a short note —
+   * or null when it can't/won't author one. Optional: the stub omits it entirely, and the caller
+   * falls back to the seeded procedural intent either way. The draft is untrusted; `fromDraft`
+   * (ai/intent.ts) validates it against the closed kind set.
+   */
+  intend?(ctx: NPCContext): Promise<import('./intent').IntentDraft | null>;
 }
 
 const cannedGreetings = [

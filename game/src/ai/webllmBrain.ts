@@ -13,6 +13,34 @@
 import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
+import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
+
+/**
+ * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
+ * (case-insensitive) wins; the note is whatever follows it, stripped of leading punctuation. No
+ * kind word → null, and the caller keeps the procedural intent. Pure, unit-pinned.
+ */
+export function parseIntentDraft(raw: string): IntentDraft | null {
+  const text = raw.trim();
+  if (!text) return null;
+  const lower = text.toLowerCase();
+  let kind: IntentKind | null = null;
+  let at = -1;
+  for (const k of INTENT_KINDS) {
+    const i = lower.indexOf(k);
+    if (i !== -1 && (at === -1 || i < at)) {
+      kind = k;
+      at = i;
+    }
+  }
+  if (!kind) return null;
+  const note = text
+    .slice(at + kind.length)
+    .replace(/^[\s—–\-:,.]+/, '')
+    .split('\n')[0]
+    .trim();
+  return { kind, note };
+}
 
 /** Describe the player's standing with the dino from their friendship hearts. */
 export function relationshipLabel(affection?: number): string {
@@ -256,6 +284,39 @@ export class WebLLMBrain implements NPCBrain {
     if (this._status === 'idle') void this.init();
     this._lastSource = 'canned';
     return cannedReply(ctx);
+  }
+
+  /**
+   * Brain-biased intent (BACKLOG-393): ask the model for a one-word lean on the dino's day plus a
+   * short in-voice note. Cheap (few tokens), strictly parsed against the closed kind set, and any
+   * failure — not ready, throw, unparseable — returns null so the caller keeps the deterministic
+   * procedural intent. Never kicks off a model load: an intent is ambience, not worth a download.
+   */
+  async intend(ctx: NPCContext): Promise<IntentDraft | null> {
+    if (this._status !== 'ready' || !this.engine) return null;
+    try {
+      const res = await this.engine.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content:
+              `You choose how a dinosaur feels about its day. Reply with exactly one of: ` +
+              `social, solitary, forage, restless — then a dash and a short note (under 8 words) in its voice.`,
+          },
+          {
+            role: 'user',
+            content: `${ctx.name} the ${ctx.species}. Personality: ${ctx.personality}.`,
+          },
+        ],
+        max_tokens: 40,
+        temperature: 0.9,
+        extra_body: { enable_thinking: false },
+      });
+      return parseIntentDraft(res.choices[0]?.message?.content ?? '');
+    } catch (err) {
+      console.warn('[webllm] intent authoring failed; keeping procedural intent', err);
+      return null;
+    }
   }
 
   private async generate(engine: ChatEngine, ctx: NPCContext, obs: Observation): Promise<Reply> {

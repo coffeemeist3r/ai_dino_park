@@ -52,6 +52,8 @@ export interface BookRow {
   /** Signature idle quirk label (BACKLOG-303) — the `fidget()` label, set by the live bookRows().
    *  Optional so older BookRow literals (tests) stay valid; the dossier always shows it in-game. */
   quirk?: string;
+  /** Today's intent note (BACKLOG-393) — what the dino feels like doing with its day. */
+  intent?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -65,6 +67,7 @@ export function bookLines(rows: BookRow[]): string[] {
     out.push(`${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
+    if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }

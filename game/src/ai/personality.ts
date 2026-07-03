@@ -24,7 +24,7 @@ export const AXES: ReadonlyArray<{ key: keyof Personality; low: string; high: st
 ];
 
 /** 32-bit string hash (cyrb53-lite) — mixes well enough that short names diverge. */
-function hashSeed(str: string): number {
+export function hashSeed(str: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
@@ -34,7 +34,7 @@ function hashSeed(str: string): number {
 }
 
 /** mulberry32 — tiny deterministic PRNG returning 0..1. */
-function mulberry32(seed: number): () => number {
+export function mulberry32(seed: number): () => number {
   let a = seed;
   return () => {
     a |= 0;

@@ -117,3 +117,29 @@ trait system uses); `allowAmbient` (governor.ts); the `converse` fire-and-forget
 **Cross-track collision:** both touch `WorldScene.ts` in disjoint regions (zone-switch render site
 vs step-loop decision block + hooks). Implement 398 first, commit both together after combined
 build+tests (single Coder fire, per routine).
+
+## Shipped (Coder)
+
+**Files touched (11 + 4 tests):**
+- `game/src/world/zones.ts` — `edgeIndicators()` (398)
+- `game/src/scenes/WorldScene.ts` — edge-label layer + `__edgeLabels`; intent state, `ensureIntent`
+  (converse-shape fire-and-forget, governor-gated, day-guarded merge), three roll-site nudges +
+  restless wander re-roll, `__intent`/`__setIntent` hooks, bookRows intent (393 + 398)
+- `game/src/ai/intent.ts` — NEW: closed kinds, seeded `proceduralIntent`, `fromDraft`, clamped weight fns
+- `game/src/ai/brain.ts` — optional `NPCBrain.intend` + doc (stub omits it)
+- `game/src/ai/webllmBrain.ts` — `parseIntentDraft` (pure, exported) + `WebLLMBrain.intend` (never loads the model for ambience)
+- `game/src/ai/personality.ts` — exported `hashSeed`/`mulberry32` (reuse, no behavior change)
+- `game/src/world/tic.ts` — `inventsTic` optional `after` param (default byte-identical)
+- `game/src/ui/lenses.ts` — `BookRow.intent` + "today:" book line
+- tests: `unit/cycle-090-intent.test.ts` (17), `unit/cycle-090-edge-indicators.test.ts` (4),
+  `e2e/cycle-090-intent.spec.ts` (3), `e2e/cycle-090-edge-labels.spec.ts` (3)
+
+**Deviations from plan:**
+- `ensureIntent(d: Dino)` takes the dino (no `npcCtx` helper exists; contexts are inline
+  everywhere) and builds the minimal NPCContext inline.
+- `__intent(name)` authors-on-read through the same `ensureIntent` path, so boot-time reads don't
+  wait a wander step (deterministic either way).
+- `drawEdgeLabels()` is called from `drawFloor()` — every zone change (boot, `__setZone`, keeper
+  cross) already redraws the floor, so one call site covers all three.
+
+**Build:** ✅ clean · **Unit:** ✅ 963/963 (was 936; +27) · dev server 200.
