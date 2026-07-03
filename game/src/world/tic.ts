@@ -14,6 +14,7 @@
  */
 
 import { AXES, type Personality } from '../ai/personality';
+import { FOND_MIN } from '../ai/brain';
 import type { Tile } from './movement';
 
 export type TicKind = 'pace' | 'fuss' | 'circle';
@@ -110,4 +111,25 @@ export function bashfulOpener(): string {
 /** The one-time memory a caught dino files — the ritual named, so it reads as being seen doing something private. */
 export function caughtMemory(label: string): string {
   return `the keeper caught you mid-ritual — you ${label}, and went a little bashful`;
+}
+
+/**
+ * Fond of being caught (BACKLOG-413) — the same catch reads *opposite* by bond. A dino that already loves the
+ * keeper (hearts ≥ FOND_MIN, the close-friend floor the fond greeting 272 already uses) isn't embarrassed to be
+ * seen mid-ritual — it's pleased you came by, and shows the tic off instead of hiding it. Deterministic from
+ * friendship, model-free: the fond frame wraps the reply exactly like the bashful one (408), so 413 is just a
+ * fork on which frame + memory to use — never a change to the sim or a bond.
+ */
+export function fondOfBeingCaught(hearts: number): boolean {
+  return hearts >= FOND_MIN;
+}
+
+/** The pleased opener a *fond* caught dino leads with — the warm twin of `bashfulOpener` (it shows the ritual off). */
+export function fondOpener(): string {
+  return '*looks up, delighted* Oh, it\'s you! You caught me at my little ritual — I don\'t mind, not with you here.';
+}
+
+/** The glad one-time memory a fond caught dino files — the ritual named, read as being happily, not sheepishly, seen. */
+export function fondCaughtMemory(label: string): string {
+  return `the keeper caught you mid-ritual — you ${label}, and you were glad it was them`;
 }

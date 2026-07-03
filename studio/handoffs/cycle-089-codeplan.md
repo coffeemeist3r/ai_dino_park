@@ -71,3 +71,20 @@
 `WorldScene.ts` is shared but the tracks touch different methods (413: `openToneMenu`/`pickTone`; 384:
 `maybeSpawnResource`/`checkGather` + new field + hook + imports). No ordering constraint. Separate new/modified
 modules otherwise (`tic.ts` vs `regrowth.ts`). ~4 files + 4 test files total.
+
+---
+
+## Shipped
+
+**Lore track (BACKLOG-413):**
+- `game/src/world/tic.ts` — added `fondOfBeingCaught(hearts)` (imported `FOND_MIN` from `ai/brain`), `fondOpener()`, `fondCaughtMemory(label)` beside the 408 bashful helpers.
+- `game/src/scenes/WorldScene.ts` — tic import extended; `openToneMenu` picks 😊/😳 by fondness; `pickTone` picks the opener + memory by fondness (both compute from `heartsFromPoints(this.friendship[name])`).
+- Tests: `tests/unit/cycle-089-fond-caught.test.ts` (3), `tests/e2e/cycle-089-fond-caught.spec.ts` (1).
+
+**Structure track (BACKLOG-384):**
+- `game/src/world/regrowth.ts` — new pure module (YIELD_MAX/DEPLETE/REGROW + depleteYield/regrowYield/yieldSpawnChance/rollResourceAt).
+- `game/src/scenes/WorldScene.ts` — `RESOURCE_SPAWN_CHANCE` imported (dropped unused `rollResource`); `yieldByZone` field; `maybeSpawnResource` regrows + scales the roll; `checkGather` depletes the active zone; `__yield(zone)` hook.
+- Tests: `tests/unit/cycle-089-regrowth.test.ts` (5), `tests/e2e/cycle-089-regrowth.spec.ts` (1).
+
+**Deviations:** none — touched exactly the planned files.
+**Build:** ✅ clean. **Unit:** ✅ 936 (+8). **Dev server:** ✅ HTTP 200. web-llm boundary untouched (`world/tic.ts` imports only `ai/brain` interface). No save-format change either track.

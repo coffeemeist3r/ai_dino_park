@@ -73,11 +73,11 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
 import {
   noticeResource,
   resourceLanding,
-  rollResource,
+  RESOURCE_SPAWN_CHANCE,
   pickKind,
   bankResource,
   atCap,
@@ -99,6 +99,7 @@ import {
   type ResourceKind,
   type Stockpile,
 } from '../world/resource';
+import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
@@ -326,6 +327,9 @@ export class WorldScene extends Phaser.Scene {
   private resourceSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
   /** World steps since each zone's resource spawned (BACKLOG-297/314) — gates the per-zone fetch grace. */
   private resourceAgeByZone: Record<string, number> = {};
+  /** Per-zone gather yield (BACKLOG-384, 0..1) — a pickup thins it, each tick regrows it; scales the spawn roll.
+   *  Transient (not persisted): absent → YIELD_MAX (a reload starts each zone fresh-full). */
+  private yieldByZone: Record<string, number> = {};
   /** Per-dino gathered-resource tally (BACKLOG-146). Persisted; absent → 0. */
   private gathered: Record<string, number> = {};
   /** Per-zone per-kind stockpile gathering banks into (BACKLOG-285 shared → BACKLOG-328 per-zone). Persisted; absent → {}. */
@@ -755,6 +759,8 @@ export class WorldScene extends Phaser.Scene {
       return r ? { ...r } : null;
     };
     (window as any).__gathered = () => ({ ...this.gathered });
+    (window as any).__yield = (zone: string) => this.yieldByZone[zone] ?? YIELD_MAX; // BACKLOG-384: a zone's gather yield
+
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
@@ -1128,7 +1134,10 @@ export class WorldScene extends Phaser.Scene {
    */
   private maybeSpawnResource(): void {
     for (const zone of this.residentZones()) {
-      if (this.resourceByZone[zone] || !rollResource()) continue;
+      // BACKLOG-384: a zone's yield regrows a little each tick (even while a resource waits or the keeper's away),
+      // and the spawn roll is scaled by it — a worked-out zone spawns rarer until it rests, a full zone unchanged.
+      this.yieldByZone[zone] = regrowYield(this.yieldByZone[zone] ?? YIELD_MAX);
+      if (this.resourceByZone[zone] || !rollResourceAt(RESOURCE_SPAWN_CHANCE, this.yieldByZone[zone])) continue;
       // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
       const landing = resourceLanding(COLS, ROWS);
       const kind = pickKind(Math.random, zone); // BACKLOG-348: each zone leans its own resource mix
@@ -1164,6 +1173,8 @@ export class WorldScene extends Phaser.Scene {
     this.resourceSpriteByZone[this.zoneId]?.destroy();
     delete this.resourceSpriteByZone[this.zoneId];
     delete this.resourceByZone[this.zoneId];
+    // BACKLOG-384: working this zone thins its yield — over-gathering here slows its future spawns until it regrows.
+    this.yieldByZone[this.zoneId] = depleteYield(this.yieldByZone[this.zoneId] ?? YIELD_MAX);
     this.gathered[taker.name] = (this.gathered[taker.name] ?? 0) + 1;
     // BACKLOG-328: a dino banks into its *own* home zone's pile (split from the old shared park total).
     const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
@@ -3438,7 +3449,11 @@ export class WorldScene extends Phaser.Scene {
     // startles the instant the greet opens — a 😳 over it, and its reply comes out bashful (see pickTone).
     // The player isn't a dino, so approaching never counts as the company that would break the tic.
     this.caughtTic = this.ticInvented.has(target.name) ? target.name : null;
-    if (this.caughtTic) this.flashFeed(target, '😳');
+    if (this.caughtTic) {
+      // BACKLOG-413: the same catch reads opposite by bond — a fond dino is *pleased* (😊), not bashful (😳).
+      const fond = fondOfBeingCaught(heartsFromPoints(this.friendship[target.name] ?? 0));
+      this.flashFeed(target, fond ? '😊' : '😳');
+    }
 
     this.toneTarget = target;
     this.toneMenuOpen = true;
@@ -3484,9 +3499,12 @@ export class WorldScene extends Phaser.Scene {
     // to whatever the brain/stub returned (never asks the model to be bashful; the NPCBrain boundary is intact).
     // It files the caught memory once per solitary stretch (cleared by resetTic when the stretch ends).
     const caught = this.caughtTic === target.name;
-    const text = caught ? `${bashfulOpener()} ${reply.text}` : reply.text;
+    // BACKLOG-413: a fond caught dino leads with a warm opener + files a glad memory; a non-fond one stays bashful (408).
+    const fond = caught && fondOfBeingCaught(heartsFromPoints(this.friendship[target.name] ?? 0));
+    const text = caught ? `${fond ? fondOpener() : bashfulOpener()} ${reply.text}` : reply.text;
     if (caught && !this.ticCaughtFiled.has(target.name)) {
-      this.memory = remember(this.memory, target.name, caughtMemory(signatureTic(target.traits).label));
+      const label = signatureTic(target.traits).label;
+      this.memory = remember(this.memory, target.name, fond ? fondCaughtMemory(label) : caughtMemory(label));
       this.ticCaughtFiled.add(target.name);
     }
     this.caughtTic = null;
