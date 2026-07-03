@@ -219,13 +219,47 @@ const SHELTER_RIG: PropRig = {
   },
 };
 
+// ── Frond 🌾 (BACKLOG-419) — the Fernreach's own resource (400), a golden reed tuft. A fan of stalks
+// arching up from a common base to drooping seed-tips, in warm golds kept clear of the branch's wood-brown
+// and the grass/fern greens so the third zone's gather reads apart. Twin of BRANCH/STONE: a static prop rig.
+const FROND_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '...t........t...',
+  '...ff......ff...',
+  '....ff....ff....',
+  '..t..ff..ff..t..',
+  '..ff..ffff..ff..',
+  '...ff.ffsff.ff..',
+  '....fffssfff....',
+  '.....ffssff.....',
+  '......fssf......',
+  '.......ss.......',
+  '.......ss.......',
+  '......osso......',
+  '.......oo.......',
+  '................',
+];
+
+const FROND_RIG: PropRig = {
+  size: 16,
+  grid: FROND_GRID,
+  palette: {
+    o: 0x4a3a12, // dark stem base (warm brown-olive, never pure black)
+    s: 0x9a7d2e, // stalk
+    f: 0xc2a94e, // frond blade (warm gold)
+    t: 0xe0cf72, // pale seed tip
+  },
+};
+
 /**
- * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone') + 'cairn', plus the
+ * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone'|'frond') + 'cairn', plus the
  * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
  */
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
+  frond: FROND_RIG, // BACKLOG-419: the Fernreach's frond (400), no longer a bare emoji glyph
   cairn: CAIRN_RIG,
   crop_seed: CROP_SEED_RIG,
   crop_sprout: CROP_SPROUT_RIG,
