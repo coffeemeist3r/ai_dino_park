@@ -1,7 +1,7 @@
 {
   "cycle": 90,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-393: brain-biased intent",
   "structureItem": "BACKLOG-398: edge indicator (zone-edge neighbour labels)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-07-03T14:50:00-05:00",
     "structure-smith": "2026-07-03T14:58:00-05:00",
-    "designer": "2026-07-03T03:18:00-05:00",
+    "designer": "2026-07-03T15:10:00-05:00",
     "code-planner": "2026-07-03T03:24:00-05:00",
     "coder": "2026-07-03T03:40:00-05:00",
     "qa": "2026-07-03T03:50:00-05:00",
