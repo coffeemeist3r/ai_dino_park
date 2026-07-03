@@ -20,9 +20,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-398 [core] Edge indicator — an on-screen cue at a linked zone edge ("◂ The Grove" / "The Fernreach ▸") so a neighbour zone is legible *before* you walk off the edge into it (operator Idea-Box nudge, handed from the cycle-85 Lore-smith; earns its keep now 378 makes a 3-zone chain) (builds on 143/378/316)
+- [~] BACKLOG-398 [core] Edge indicator — an on-screen cue at a linked zone edge ("◂ The Grove" / "The Fernreach ▸") so a neighbour zone is legible *before* you walk off the edge into it (operator Idea-Box nudge, handed from the cycle-85 Lore-smith; earns its keep now 378 makes a 3-zone chain) (builds on 143/378/316)
 - [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — the Fernreach's new frond pile (400) raises its own landmark (a woven frond thatch 🥻/reed stack), so the 3-zone chain builds *three* different structures, extending zone-distinct craft (377) past the cairn/lean-to pair (builds on 377/400/315)
 - [ ] BACKLOG-418 [core] Per-zone crop identity — each zone's plot (349) grows a crop suited to it (the bowl its berry, the grove/Fernreach their own) so the *farming* half of the economy diverges the way gathering already does under the resource bias (348), not the same 🍓 in every zone (builds on 349/348/145)
+- [ ] BACKLOG-425 [core] Zone map lens — a map overlay on the V-lens ring: the whole zone chain drawn from the adjacency table (383), each zone a labelled box with its live occupant count (316) and a dot for the keeper; the bigger world finally visible as a *world*, not inferred one edge at a time (Milestone 1 arc) (builds on 383/316/398)
+- [ ] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` + a small migration-hook table run on load, so future format changes (persona cache 103, intents 393, anything after) land as ordered migrations instead of ad-hoc additive luck; old saves load unchanged through a v0→v1 no-op migration that proves the rail (Milestone 1 arc) (builds on 009/042-save)
 
 ---
 
@@ -206,7 +208,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > "a table row"; these are the next beats it opens — a way to *see* the neighbour before you cross, the
 > third zone's own terrain, and its own resource lean.
 
-- [ ] BACKLOG-398 [core] Edge indicator — there's no on-screen cue that a zone sits past the current one's edge: the bowl gives no hint the grove is off the right, and now (378) the grove gives none that a third zone is off *its* right. Add a small edge marker / label ("◂ The Grove", "The Fernreach ▸") at a linked edge so the neighbour is legible before you walk into it. Reads the adjacency table (383) so it's correct for any zone in the chain. Operator Idea-Box nudge, handed from the cycle-85 Lore-smith (zone legibility is structural, like the zone tally 316). Builds on 143 / 378 / 316.
+- [~] BACKLOG-398 [core] Edge indicator — there's no on-screen cue that a zone sits past the current one's edge: the bowl gives no hint the grove is off the right, and now (378) the grove gives none that a third zone is off *its* right. Add a small edge marker / label ("◂ The Grove", "The Fernreach ▸") at a linked edge so the neighbour is legible before you walk into it. Reads the adjacency table (383) so it's correct for any zone in the chain. Operator Idea-Box nudge, handed from the cycle-85 Lore-smith (zone legibility is structural, like the zone tally 316). Builds on 143 / 378 / 316.
+
+## Cycle 90 structure additions — the spine for Milestone 1 (2026-07-03)
+
+> First v6 cycle. Queue sat at 3 open (398/417/418, below cap X=4), so the Structure-smith seeded two
+> while picking 398. Both are Milestone 1 arcs: the world made visible whole, and the persistence rail
+> the minds arc (103/393) will land its caches on.
+
+- [ ] BACKLOG-425 [core] Zone map lens — a map overlay on the V-lens ring: the whole zone chain drawn from the adjacency table (383), each zone a labelled box with its live occupant count (316) and a dot for the keeper; the bigger world finally visible as a *world*, not inferred one edge at a time. Milestone 1 arc. Builds on 383 / 316 / 398.
+- [ ] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` field + a small ordered migration-hook table run on load, so future format changes (persona cache 103, cached intents 393, anything after) land as migrations instead of ad-hoc additive luck; old versionless saves load unchanged through a v0→v1 no-op migration that proves the rail. Milestone 1 arc. Builds on 009 / 042.
 - [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — zone-distinct craft (377) maps two biases to two landmarks (stone→cairn, branch→lean-to); once the Fernreach leans its own kind (400) it still falls back to a cairn. Give the frond bias its own structure (a woven frond thatch / reed stack) so the three-zone chain raises three different built landmarks, not two. Builds on 377 / 400 / 315.
 - [ ] BACKLOG-418 [core] Per-zone crop identity — the plot (145/349) grows the same 🍓 berry in every zone; gathering already diverges per zone under the resource bias (348) but farming doesn't. Give each zone's plot a crop suited to it (bowl berry, grove/Fernreach their own from the FOODS set), so the farming half of the economy reads as distinct places too. Builds on 349 / 348 / 145.
 

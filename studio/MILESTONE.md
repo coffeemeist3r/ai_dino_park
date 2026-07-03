@@ -24,7 +24,9 @@ whole with zero download.
 - [ ] The day has a shape — persona-driven daily plan the world tick consults; minds act, not just reply (BACKLOG-104, 012)
 
 **Structure arcs:**
-*(Structure-smith adds these in its cycle-90 fire.)*
+- [ ] The chain is legible — edge indicators name the neighbour zone before you cross (BACKLOG-398)
+- [ ] The world at a glance — a zone-map lens: the whole chain, who lives where, drawn from the adjacency table (BACKLOG-425)
+- [ ] A save that can grow — versioned save envelope + migration hooks, the persistence spine personas/intents land on (BACKLOG-426)
 
 ### Format (use this when drafting)
 
