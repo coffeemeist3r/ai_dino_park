@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-398 [core] Edge indicator — an on-screen cue at a linked zone edge ("◂ The Grove" / "The Fernreach ▸") so a neighbour zone is legible *before* you walk off the edge into it (operator Idea-Box nudge, handed from the cycle-85 Lore-smith; earns its keep now 378 makes a 3-zone chain) (builds on 143/378/316)
 - [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — the Fernreach's new frond pile (400) raises its own landmark (a woven frond thatch 🥻/reed stack), so the 3-zone chain builds *three* different structures, extending zone-distinct craft (377) past the cairn/lean-to pair (builds on 377/400/315)
 - [ ] BACKLOG-418 [core] Per-zone crop identity — each zone's plot (349) grows a crop suited to it (the bowl its berry, the grove/Fernreach their own) so the *farming* half of the economy diverges the way gathering already does under the resource bias (348), not the same 🍓 in every zone (builds on 349/348/145)
 - [ ] BACKLOG-425 [core] Zone map lens — a map overlay on the V-lens ring: the whole zone chain drawn from the adjacency table (383), each zone a labelled box with its live occupant count (316) and a dot for the keeper; the bigger world finally visible as a *world*, not inferred one edge at a time (Milestone 1 arc) (builds on 383/316/398)
@@ -208,7 +207,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > "a table row"; these are the next beats it opens — a way to *see* the neighbour before you cross, the
 > third zone's own terrain, and its own resource lean.
 
-- [~] BACKLOG-398 [core] Edge indicator — there's no on-screen cue that a zone sits past the current one's edge: the bowl gives no hint the grove is off the right, and now (378) the grove gives none that a third zone is off *its* right. Add a small edge marker / label ("◂ The Grove", "The Fernreach ▸") at a linked edge so the neighbour is legible before you walk into it. Reads the adjacency table (383) so it's correct for any zone in the chain. Operator Idea-Box nudge, handed from the cycle-85 Lore-smith (zone legibility is structural, like the zone tally 316). Builds on 143 / 378 / 316.
 
 ## Cycle 90 structure additions — the spine for Milestone 1 (2026-07-03)
 
@@ -778,7 +776,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > bully's retreat, a witness's admiration, a legible spine, and a reputation that eventually cows the bully —
 > the defiance half of the 389-392 scramble thread. Also seeds the operator's brain-decisions nudge (393).
 
-- [~] BACKLOG-393 [ai] Brain-biased intent — route a *bias*, not an actuator, through the dino brain (operator Idea-Box nudge, foundation-first). `NPCBrain` gains an async, low-frequency, cached **intent** ("Thornback feels like sulking near the pond today") authored once per stretch from persona + memory, that nudges the *existing* deterministic wander/social/need weights for a while. **Hard floor:** the rules run identically when the brain is `stub`/`fallback` (full sim, zero download) — the intent is enrichment on top, never a requirement; headless CI / a phone that declined the model behave exactly as today. Model authors no world state directly (CHARTER `NPCBrain` boundary holds); sim stays tickable + Node-testable (tests assert the *pipeline* — generated→cached→nudges weights→deterministic when no model — not prose). The spine BACKLOG-104 (action layer) builds on. Builds on 104 / 103 / 107.
 - [ ] BACKLOG-395 [emergent] Witnessed backbone — a dino that watches a friend hold its ground against a gobbler (390) admires it: a small bond nudge toward the bold one and a "saw <bold> stand up to <gobbler>" that can travel as gossip. Courage is socially rewarded. Builds on 390 / 019 / 013.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
 - [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.

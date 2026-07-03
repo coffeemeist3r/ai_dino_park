@@ -19,12 +19,12 @@ spine of the whole thing — with the deterministic floor intact, so the park is
 whole with zero download.
 
 **Lore arcs:**
-- [ ] The brain leans on the wheel — a cached, async per-dino intent nudges what a dino *does* (wander/social/need weights), deterministic floor unchanged (BACKLOG-393)
+- [x] The brain leans on the wheel — a cached, async per-dino intent nudges what a dino *does* (wander/social/need weights), deterministic floor unchanged (BACKLOG-393 — shipped cycle 90)
 - [ ] A self to lean with — per-dino persona authored from lore, generate-once/cache/persist, procedural fallback (BACKLOG-103)
 - [ ] The day has a shape — persona-driven daily plan the world tick consults; minds act, not just reply (BACKLOG-104, 012)
 
 **Structure arcs:**
-- [ ] The chain is legible — edge indicators name the neighbour zone before you cross (BACKLOG-398)
+- [x] The chain is legible — edge indicators name the neighbour zone before you cross (BACKLOG-398 — shipped cycle 90)
 - [ ] The world at a glance — a zone-map lens: the whole chain, who lives where, drawn from the adjacency table (BACKLOG-425)
 - [ ] A save that can grow — versioned save envelope + migration hooks, the persistence spine personas/intents land on (BACKLOG-426)
 

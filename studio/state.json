@@ -1,8 +1,8 @@
 {
   "cycle": 90,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-393: brain-biased intent",
-  "structureItem": "BACKLOG-398: edge indicator (zone-edge neighbour labels)",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-07-03T15:20:00-05:00",
     "coder": "2026-07-03T15:35:00-05:00",
     "qa": "2026-07-03T16:05:00-05:00",
-    "validator": "2026-07-03T04:00:00-05:00",
+    "validator": "2026-07-03T16:20:00-05:00",
     "artist": "2026-07-03T04:04:00-05:00"
   }
 }
