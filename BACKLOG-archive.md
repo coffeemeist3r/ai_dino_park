@@ -2,6 +2,11 @@
 
 Closed (`[x]` shipped / `[a]` abandoned) items moved out of BACKLOG.md to keep the working file lean. The closed log lives here too. Move items here when they close; never reopen from here (re-seed a fresh BACKLOG-NNN instead).
 
+## Closed items (cycle 91, 2026-07-04)
+
+- [x] BACKLOG-103 [ai] Per-dino persona authored from lore (CHARTER "Living minds") — replace the shared one-line roster `personality` string with a real per-dino **persona**: backstory, quirks, speech tics, fears, wants; LLM-authored from world lore where the device allows, deterministic procedural fallback everywhere; generate once, cache, persist in the save, feed into `buildMessages`.  *(shipped: cycle 91 lore track — new pure `ai/persona.ts` (name-seeded `proceduralPersona` from authored backstory/want/fear/quirk tables, trait-shaded, roster flavor kept; `fromPersonaDraft` validation; `upgradePersona` generate-once guard — an llm self is permanent) + optional `NPCBrain.author` (WebLLM writes from `PARK_LORE`, status-gated, never triggers a download; stub omits) + `ensurePersona` in WorldScene feeding greet/npc_meet/intend + additive `personas` save field (no version bump). Milestone 1 lore arc 2. +11 unit / 3 e2e. Keeper personas = 156; persona drift = 043.)*
+- [x] BACKLOG-425 [core] Zone map lens — a map overlay on the V-lens ring: the whole zone chain drawn from the adjacency table (383), each zone a labelled box with its live occupant count (316) and a dot for the keeper.  *(shipped: cycle 91 structure track — pure `zoneChain()` (west→east walk of ZONE_LINKS, strays appended) + `zoneMapModel` in lenses.ts + Lens `'map'` appended to the ring + WorldScene boxes/connectors/keeper-dot drawn per lens refresh + `__zoneMap` hook; a fourth zone joins by adding its ZONE_LINKS row, zero UI edits. Milestone 1 structure arc 2. +6 unit / 3 e2e.)*
+
 ## Closed items (moved from body 2026-07-03)
 
 - [x] BACKLOG-143 [core] Connected zone — one adjacent zone via edge-walk handoff (also unblocks benched path/water art -033)  *(shipped: cycle 59 structure track — grove walkable + persisted; populate it = -274)*
