@@ -1,6 +1,6 @@
 {
   "cycle": 91,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-103: per-dino persona authored from lore — LLM where the device allows, procedural fallback, generate-once/cache/persist, fed to buildMessages",
   "structureItem": "BACKLOG-425: zone map lens — chain drawn from adjacency table, occupant counts, keeper dot, on the V-lens ring",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-07-03T23:25:00-05:00",
     "code-planner": "2026-07-03T23:32:00-05:00",
     "coder": "2026-07-03T23:55:00-05:00",
-    "qa": "2026-07-03T16:05:00-05:00",
+    "qa": "2026-07-04T00:20:00-05:00",
     "validator": "2026-07-03T16:20:00-05:00",
     "artist": "2026-07-03T16:22:00-05:00"
   }
