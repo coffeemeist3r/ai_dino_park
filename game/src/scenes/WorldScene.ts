@@ -40,8 +40,9 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { INTENT_NOTES, forageCuriosity, fromDraft, proceduralIntent, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
+import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -69,7 +70,7 @@ import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, NEED_GLYPH, type Needs } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
-import { nextLens, bondedPairs, tickerLines, bookLines, LENS_LABEL, type Lens, type BookRow } from '../ui/lenses';
+import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
@@ -310,6 +311,9 @@ export class WorldScene extends Phaser.Scene {
   private bookPanel!: Phaser.GameObjects.Text;
   private bondGfx!: Phaser.GameObjects.Graphics;
   private tickerPanel!: Phaser.GameObjects.Text;
+  /** Zone map lens (BACKLOG-425): boxes/connectors/keeper dot + one label per zone. */
+  private mapGfx!: Phaser.GameObjects.Graphics;
+  private mapLabels: Phaser.GameObjects.Text[] = [];
   private lensLabel!: Phaser.GameObjects.Text;
   private plaque!: Phaser.GameObjects.Text;
   private eventLog: string[] = [];
@@ -394,6 +398,8 @@ export class WorldScene extends Phaser.Scene {
   private lastSound: { kind: 'chirp' | 'thunk'; name?: string; params?: ChirpParams } | null = null;
   /** Brain-biased intent (BACKLOG-393): today's lean per dino. Transient — a new day re-authors. */
   private intents: Record<string, DinoIntent> = {};
+  /** Generate-once personas (BACKLOG-103): cached selves, persisted in the save. */
+  private personas: Record<string, Persona> = {};
   /** Edge indicators (BACKLOG-398): the current zone's neighbour labels, rebuilt per zone change. */
   private edgeLabelTexts: Phaser.GameObjects.Text[] = [];
 
@@ -585,6 +591,13 @@ export class WorldScene extends Phaser.Scene {
       this.intents[name] = { kind, note: INTENT_NOTES[kind], until: getWorldClock().now().day };
       return this.intents[name];
     };
+    // dev-only hooks — persona (BACKLOG-103): read a dino's persona (authoring it on first read,
+    // the same generate-once path every brain call site takes) + the whole cached store.
+    (window as any).__persona = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.ensurePersona(d) : (this.personas[name] ?? null);
+    };
+    (window as any).__personas = () => ({ ...this.personas });
     // dev-only hook — which ground tiles the pixel pipeline draws (BACKLOG-033 path/water render check).
     (window as any).__hasTileArt = (name: string) => hasTileArt(name);
     // dev-only hook — the active floor render (BACKLOG-294): zone, texture key, and whether tinted.
@@ -1869,6 +1882,20 @@ export class WorldScene extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDepth(13)
       .setVisible(false);
+    // Zone map lens (BACKLOG-425): boxes + connectors + keeper dot, one floating label per zone.
+    this.mapGfx = this.add.graphics().setDepth(13).setVisible(false);
+    this.mapLabels = ZONES.map(() =>
+      this.add
+        .text(0, 0, '', {
+          fontFamily: 'monospace',
+          fontSize: '11px',
+          color: '#ffffff',
+          align: 'center',
+        })
+        .setOrigin(0.5, 0.5)
+        .setDepth(14)
+        .setVisible(false),
+    );
     this.lensLabel = this.add
       .text((TILE * COLS) / 2, 4, '', {
         fontFamily: 'monospace',
@@ -1894,6 +1921,8 @@ export class WorldScene extends Phaser.Scene {
       for (const d of this.dinos) out[d.name] = this.roleOf(d.name);
       return out;
     };
+    // dev-only Playwright hook — the zone map model (BACKLOG-425): chain order, counts, keeper flag
+    (window as any).__zoneMap = () => this.zoneMapEntries();
     (window as any).__bookRows = () => this.bookRows();
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
@@ -1914,6 +1943,8 @@ export class WorldScene extends Phaser.Scene {
     this.bookPanel.setVisible(L === 'book');
     this.tickerPanel.setVisible(L === 'ticker');
     this.bondGfx.setVisible(L === 'bonds');
+    this.mapGfx.setVisible(L === 'map');
+    this.mapLabels.forEach((t) => t.setVisible(L === 'map'));
 
     // role tags float over each dino only in the roles lens
     this.roleTags.forEach((tag, i) => {
@@ -1940,7 +1971,52 @@ export class WorldScene extends Phaser.Scene {
         this.bondGfx.lineStyle(Math.max(1, Math.round(p.points / 18)), 0xff6fae, 0.6);
         this.bondGfx.lineBetween(a.x, a.y, b.x, b.y);
       }
+    } else if (L === 'map') {
+      this.drawZoneMap();
     }
+  }
+
+  /** The live zone-map model (BACKLOG-425) — the single source the lens draws and `__zoneMap` returns. */
+  private zoneMapEntries(): ZoneMapEntry[] {
+    return zoneMapModel(
+      zoneChain(),
+      zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID),
+      this.zoneId,
+    );
+  }
+
+  /**
+   * Draw the zone map (BACKLOG-425): the chain as a centered horizontal row of labelled boxes
+   * (name + head count), a connector between neighbours, and a dot marking the keeper's zone.
+   * Pure model in, chrome out — redrawn on every lens refresh so counts and the dot stay live.
+   */
+  private drawZoneMap(): void {
+    const entries = this.zoneMapEntries();
+    const boxW = 118;
+    const boxH = 52;
+    const gap = 26;
+    const totalW = entries.length * boxW + (entries.length - 1) * gap;
+    const x0 = ((TILE * COLS) - totalW) / 2;
+    const y = 44;
+    this.mapGfx.clear();
+    entries.forEach((e, i) => {
+      const x = x0 + i * (boxW + gap);
+      if (i > 0) {
+        this.mapGfx.lineStyle(2, 0xffffff, 0.5);
+        this.mapGfx.lineBetween(x - gap, y + boxH / 2, x, y + boxH / 2);
+      }
+      this.mapGfx.fillStyle(0x000000, 0.85);
+      this.mapGfx.fillRect(x, y, boxW, boxH);
+      this.mapGfx.lineStyle(2, e.keeper ? 0xffe0a0 : 0xffffff, 0.9);
+      this.mapGfx.strokeRect(x, y, boxW, boxH);
+      if (e.keeper) {
+        this.mapGfx.fillStyle(0xffe0a0, 1);
+        this.mapGfx.fillCircle(x + boxW / 2, y + boxH - 9, 4);
+      }
+      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
+    });
+    // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
+    for (let i = entries.length; i < this.mapLabels.length; i++) this.mapLabels[i].setVisible(false);
   }
 
   private setupMovement(): void {
@@ -2549,7 +2625,7 @@ export class WorldScene extends Phaser.Scene {
         {
           name: a.name,
           species: a.species,
-          personality: a.personality,
+          personality: this.ensurePersona(a).text, // BACKLOG-103: the stored self, not the roster one-liner
           traits: a.traits,
           timeOfDay: dayPhase(now.hour),
         },
@@ -3277,9 +3353,32 @@ export class WorldScene extends Phaser.Scene {
     this.intents[d.name] = fresh;
     if (this.npcBrain.intend && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
       void this.npcBrain
-        .intend({ name: d.name, species: d.species, personality: d.personality, traits: d.traits })
+        .intend({ name: d.name, species: d.species, personality: this.ensurePersona(d).text, traits: d.traits })
         .then((draft) => {
           if (this.intents[d.name]?.until === day) this.intents[d.name] = fromDraft(draft, fresh);
+        })
+        .catch(() => {});
+    }
+    return fresh;
+  }
+
+  /**
+   * A dino's persona (BACKLOG-103) — the cached self if it has one (generate-once: an 'llm'
+   * persona is settled forever), else the deterministic procedural persona cached immediately.
+   * Where a ready brain can author (`author` present, ambient inference allowed), fire-and-forget
+   * an upgrade — `upgradePersona` keeps it one-shot and never regresses an authored self. The
+   * hourly save persists whatever the cache holds; a phone loading a save pays nothing.
+   */
+  private ensurePersona(d: Dino): Persona {
+    const cached = this.personas[d.name];
+    if (cached) return cached;
+    const fresh = proceduralPersona(d.name, d.species, d.personality, d.traits);
+    this.personas[d.name] = fresh;
+    if (this.npcBrain.author && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
+      void this.npcBrain
+        .author({ name: d.name, species: d.species, personality: d.personality, traits: d.traits })
+        .then((draft) => {
+          this.personas[d.name] = upgradePersona(this.personas[d.name] ?? fresh, draft);
         })
         .catch(() => {});
     }
@@ -3532,6 +3631,7 @@ export class WorldScene extends Phaser.Scene {
     this.dialog.show(`${target.name}: ...`);
     const now = getWorldClock().now();
     const reply = await target.greet({
+      personality: this.ensurePersona(target).text, // BACKLOG-103: the stored self feeds the prompt
       timeOfDay: dayPhase(now.hour),
       affection: heartsFromPoints(this.friendship[target.name] ?? 0),
       recentMemory: recall(this.memory, target.name),
@@ -4035,6 +4135,7 @@ export class WorldScene extends Phaser.Scene {
       bonds: this.bonds,
       gratitude: this.gratitude,
       lastTone: this.lastTone,
+      personas: this.personas, // BACKLOG-103: generate-once selves ride the save
       keeperId: this.keeperId,
       zoneId: this.zoneId,
       roles: this.roles,
@@ -4093,6 +4194,7 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = away.bonds;
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
+      this.personas = (save.personas ?? {}) as Record<string, Persona>; // BACKLOG-103: selves restore
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore

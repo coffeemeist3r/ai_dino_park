@@ -56,6 +56,13 @@ export interface NPCBrain {
    * (ai/intent.ts) validates it against the closed kind set.
    */
   intend?(ctx: NPCContext): Promise<import('./intent').IntentDraft | null>;
+  /**
+   * Persona authoring (BACKLOG-103): 2–3 sentences of self written from park lore — or null when
+   * the model can't/won't. Optional: the stub omits it, and the caller keeps the deterministic
+   * procedural persona either way. The raw text is untrusted; `fromPersonaDraft` (ai/persona.ts)
+   * validates it. Fired once per dino ever (generate-once) — never per message.
+   */
+  author?(ctx: NPCContext): Promise<string | null>;
 }
 
 const cannedGreetings = [

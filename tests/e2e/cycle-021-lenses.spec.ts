@@ -12,9 +12,10 @@ test('the lens key cycles through every view and wraps back to off', async ({ pa
 
   const seq = await page.evaluate(() => {
     const cycle = (window as W).__cycleLens as () => string;
-    return [cycle(), cycle(), cycle(), cycle(), cycle()];
+    return [cycle(), cycle(), cycle(), cycle(), cycle(), cycle()];
   });
-  expect(seq).toEqual(['book', 'bonds', 'roles', 'ticker', 'off']);
+  // BACKLOG-425 appended the zone map to the end of the ring.
+  expect(seq).toEqual(['book', 'bonds', 'roles', 'ticker', 'map', 'off']);
 });
 
 test('a role emerges from behavior (a rumor-carrier becomes the gossip)', async ({ page }) => {

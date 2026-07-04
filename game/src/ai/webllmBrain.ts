@@ -14,6 +14,7 @@ import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type NPCBrain, 
 import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
 import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
+import { PARK_LORE } from './persona';
 
 /**
  * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
@@ -181,6 +182,29 @@ export function cleanReply(raw: string, maxSentences = 2): string {
   return out; // '' if nothing survived → caller falls back
 }
 
+/**
+ * Pure: the persona-authoring prompt (BACKLOG-103) — park lore + who the dino is, asking for a
+ * short first-person self (backstory scrap, a want, a fear, a speech quirk). No web-llm import.
+ */
+export function buildPersonaMessages(ctx: NPCContext): { role: string; content: string }[] {
+  const adjectives = ctx.traits ? describePersonality(ctx.traits) : '';
+  const character = [ctx.personality, adjectives].filter(Boolean).join('; ');
+  return [
+    {
+      role: 'system',
+      content:
+        `${PARK_LORE} ` +
+        `You write the inner self of one dinosaur living there. Write 2 or 3 short sentences: ` +
+        `a scrap of its backstory, one thing it wants, one thing it fears, and a small speech quirk. ` +
+        `Plain prose in third person, no lists, no headings, no names of real products or people.`,
+    },
+    {
+      role: 'user',
+      content: `${ctx.name} the ${ctx.species}. Known character: ${character}.`,
+    },
+  ];
+}
+
 /** Model download/load progress 0..1 while status is 'loading' (for the brain HUD). */
 let loadProgressValue = 0;
 export function loadProgress(): number {
@@ -315,6 +339,28 @@ export class WebLLMBrain implements NPCBrain {
       return parseIntentDraft(res.choices[0]?.message?.content ?? '');
     } catch (err) {
       console.warn('[webllm] intent authoring failed; keeping procedural intent', err);
+      return null;
+    }
+  }
+
+  /**
+   * Persona authoring (BACKLOG-103): one short self written from park lore. Only when the engine is
+   * already ready — a persona is ambience, never worth triggering a model download. Any failure
+   * (not ready, throw, nothing survives cleaning) returns null and the caller keeps the
+   * deterministic procedural persona. Fired once per dino ever (the caller's generate-once cache).
+   */
+  async author(ctx: NPCContext): Promise<string | null> {
+    if (this._status !== 'ready' || !this.engine) return null;
+    try {
+      const res = await this.engine.chat.completions.create({
+        messages: buildPersonaMessages(ctx),
+        max_tokens: 120,
+        temperature: 0.9,
+        extra_body: { enable_thinking: false },
+      });
+      return cleanReply(res.choices[0]?.message?.content ?? '', 3) || null;
+    } catch (err) {
+      console.warn('[webllm] persona authoring failed; keeping procedural persona', err);
       return null;
     }
   }

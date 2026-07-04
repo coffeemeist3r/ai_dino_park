@@ -8,16 +8,40 @@
 
 import { pairKey } from '../social/meetings';
 import type { Role } from '../ai/roles';
+import { zoneById } from '../world/zones';
 
-export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker';
-export const LENS_ORDER: ReadonlyArray<Lens> = ['off', 'book', 'bonds', 'roles', 'ticker'];
+export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker' | 'map';
+// 'map' (BACKLOG-425) is appended at the END so every pre-existing lens keeps its position on the ring.
+export const LENS_ORDER: ReadonlyArray<Lens> = ['off', 'book', 'bonds', 'roles', 'ticker', 'map'];
 export const LENS_LABEL: Record<Lens, string> = {
   off: '',
   book: '📖 Collection Book',
   bonds: '🔗 Bonds',
   roles: '🎭 Roles',
   ticker: '📰 Park News',
+  map: '🗺 Zone Map',
 };
+
+/**
+ * One box on the zone map (BACKLOG-425) — a pure readout the scene draws and `__zoneMap` returns:
+ * the zone, its live head count, and whether the keeper is standing in it.
+ */
+export interface ZoneMapEntry {
+  id: string;
+  name: string;
+  count: number;
+  keeper: boolean;
+}
+
+/** The zone map model: the chain in drawing order, counts from `zonePopulations`, keeper flagged. */
+export function zoneMapModel(chain: string[], populations: Record<string, number>, keeperZone: string): ZoneMapEntry[] {
+  return chain.map((id) => ({
+    id,
+    name: zoneById(id).name,
+    count: populations[id] ?? 0,
+    keeper: id === keeperZone,
+  }));
+}
 
 export function nextLens(cur: Lens): Lens {
   const i = LENS_ORDER.indexOf(cur);

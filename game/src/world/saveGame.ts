@@ -56,6 +56,9 @@ export interface SaveData {
   gratitude: Gratitude;
   /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
   lastTone: Record<string, string>;
+  /** Each dino's generate-once persona (BACKLOG-103). Additive; absent → {} (regenerated deterministically).
+   *  `source` kept as plain string so saveGame stays free of an ai import. */
+  personas?: Record<string, { text: string; source: string }>;
   /** The chosen observer's id (BACKLOG-155). Additive; absent → caller defaults to the first keeper. */
   keeperId?: string;
   /** The keeper's current zone (BACKLOG-143). Additive; absent → defaults to the bowl on load. */
@@ -178,6 +181,21 @@ export function deserialize(json: string): SaveData | null {
     for (const k of Object.keys(entries)) {
       if (typeof entries[k] !== 'string') return null;
       lastTone[k] = entries[k] as string;
+    }
+  }
+
+  // personas is additive (BACKLOG-103) — absent in older saves (left undefined; the caller
+  // defaults to {} and regenerates deterministically); name→{text,source}, both strings.
+  // Reject only if malformed. Mirrors stockpileByZone's undefined-when-absent shape.
+  let personas: Record<string, { text: string; source: string }> | undefined;
+  if (o.personas !== undefined) {
+    if (typeof o.personas !== 'object' || o.personas === null) return null;
+    const entries = o.personas as Record<string, unknown>;
+    personas = {};
+    for (const k of Object.keys(entries)) {
+      const v = entries[k] as { text?: unknown; source?: unknown } | null;
+      if (!v || typeof v !== 'object' || typeof v.text !== 'string' || typeof v.source !== 'string') return null;
+      personas[k] = { text: v.text, source: v.source };
     }
   }
 
@@ -399,6 +417,7 @@ export function deserialize(json: string): SaveData | null {
     bonds,
     gratitude,
     lastTone,
+    personas,
     keeperId,
     zoneId,
     roles,

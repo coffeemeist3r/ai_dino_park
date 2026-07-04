@@ -76,3 +76,15 @@ procedural persona everywhere, generate-once/cache/persist, fed to the prompt.
 **Estimated touch count:** ~7 files.
 
 **Combined:** ~12 files, in budget.
+
+## Shipped (coder)
+
+**Files touched:**
+- Structure 425: `game/src/world/zones.ts` (zoneChain), `game/src/ui/lenses.ts` (Lens 'map' appended, ZoneMapEntry, zoneMapModel), `game/src/scenes/WorldScene.ts` (mapGfx/mapLabels, refreshLens map branch, zoneMapEntries/drawZoneMap, __zoneMap), `tests/e2e/cycle-021-lenses.spec.ts` (ring gains 'map'), `tests/unit/cycle-091-zone-map.test.ts`, `tests/e2e/cycle-091-zone-map.spec.ts`.
+- Lore 103: `game/src/ai/persona.ts` (new), `game/src/ai/brain.ts` (optional author), `game/src/ai/webllmBrain.ts` (buildPersonaMessages + WebLLMBrain.author, status-gated), `game/src/world/saveGame.ts` (personas additive), `game/src/scenes/WorldScene.ts` (personas field, ensurePersona, fed into pickTone greet / npc_meet respond / intend ctx, save+restore, __persona/__personas), `tests/unit/cycle-091-persona.test.ts`, `tests/e2e/cycle-091-persona.spec.ts`.
+
+**Deviations:**
+- `personas` deserializes to **undefined when absent** (stockpileByZone precedent) instead of `{}` — the plan's `{}` default broke 15 full-object `toEqual` round-trip tests in saveGame.test.ts; WorldScene still defaults `save.personas ?? {}`. Plan's own risk note, resolved the additive way.
+- Planned persona e2e #3 (greet-path observation) replaced with a generate-once cache-stability test — `__greet` records friendship only and never runs the dialog path, so the greet-side wiring is pinned by the buildMessages unit test instead.
+
+**Status:** build clean; 980 unit green (+17: 11 persona + 6 zone-map); dev server HTTP 200. web-llm boundary intact (author lives in webllmBrain only). E2E left to QA.

@@ -118,6 +118,25 @@ export function edgeIndicators(zoneId: string): Array<{ edge: Edge; text: string
   }));
 }
 
+/**
+ * The zone chain west→east (BACKLOG-425) — the map lens's drawing order, read off the adjacency
+ * table: start at the zone no east link points to (the westmost; today the bowl) and walk east
+ * links. Any zone the walk never reaches is appended in ZONES order, so a future unlinked zone
+ * still shows on the map instead of silently vanishing. Pure.
+ */
+export function zoneChain(): string[] {
+  const eastTargets = new Set(ZONE_LINKS.filter((l) => l.edge === 'east').map((l) => l.to));
+  const root = ZONES.find((z) => !eastTargets.has(z.id))?.id ?? ZONES[0].id;
+  const chain: string[] = [];
+  let cur: string | null = root;
+  while (cur && !chain.includes(cur)) {
+    chain.push(cur);
+    cur = neighborThrough(cur, 'east');
+  }
+  for (const z of ZONES) if (!chain.includes(z.id)) chain.push(z.id);
+  return chain;
+}
+
 export function linkedZone(
   zoneId: string,
   edge: Edge,
