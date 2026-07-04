@@ -252,6 +252,44 @@ const FROND_RIG: PropRig = {
   },
 };
 
+// ── Frond thatch 🥻 (BACKLOG-427, stash-ahead) — the Fernreach's own built landmark BACKLOG-417 will
+// raise: a woven reed stack, bound at the waist, ragged seed-tips fringing the top and the skirt
+// flaring at the ground. Made of fronds, so it shares the frond's warm-gold family (the way the
+// lean-to shares the branch's wood) — and its silhouette is a cinched vertical stack, apart from the
+// cairn's stone tiers and the lean-to's slope. Authored ahead of 417 under the stash-ahead rule
+// (renders standalone via bakePropArt); world wiring lands when 417 ships.
+const THATCH_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '......tt.t......',
+  '....ttfftft.....',
+  '....offffffo....',
+  '...offffffffo...',
+  '..offsffsfffo...',
+  '..offffffffffo..',
+  '..obbbbbbbbbbo..',
+  '..offffffffffo..',
+  '.offsffsffsfffo.',
+  '.offffffffffffo.',
+  '.offfsffsffsffo.',
+  '.oddddddddddddo.',
+  '..oooooooooooo..',
+  '................',
+];
+
+const THATCH_RIG: PropRig = {
+  size: 16,
+  grid: THATCH_GRID,
+  palette: {
+    o: 0x4a3a12, // dark outline (the frond family's warm brown-olive, never pure black)
+    f: 0xc2a94e, // woven reed body (frond gold)
+    s: 0x9a7d2e, // stalk-dark weave flecks (texture, not noise)
+    t: 0xe0cf72, // pale seed-tip fringe at the crown
+    b: 0x6e5420, // binding cord cinched at the waist
+    d: 0x86702a, // shadowed base course where the skirt meets the ground
+  },
+};
+
 /**
  * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone'|'frond') + 'cairn', plus the
  * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
@@ -265,6 +303,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_sprout: CROP_SPROUT_RIG,
   crop_ripe: CROP_RIPE_RIG,
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
+  thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */
