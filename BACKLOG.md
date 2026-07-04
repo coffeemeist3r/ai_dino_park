@@ -63,7 +63,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 > Medium is **code, not an image API** (CHARTER v2 / STYLE-GUIDE): flat-vector rigs in
 > `game/src/art/`, baked to animated Canvas textures, one character per sub-agent. No keys.
+> Stash-ahead rule (Idea Box, adopted cycle 91): the Artist may author a rig ahead of the
+> system that displays it, but only when the rig renders standalone (a prop/sprite
+> `bakePropArt` can resolve in a test); true terrain that needs a host stays deferred.
 
+- [ ] BACKLOG-427 [art] Frond thatch rig (stash-ahead) — the woven frond thatch / reed-stack landmark BACKLOG-417 will raise in the Fernreach, authored now as a standalone `PROP_RIG` (warm-gold family per the frond prop 419, silhouette distinct from CAIRN/LEANTO); registered in `PROP_RIGS['thatch']` + unit/e2e via `bakePropArt`, world wiring lands with 417. First stash under the rule above. Builds on 419 / 377 / 417.
 
 ## Infra
 
