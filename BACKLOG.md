@@ -33,7 +33,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## NPC depth
 
-- [ ] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
+- [~] BACKLOG-012 [ai] NPC daily plan — at dawn, NPC generates a list of intended activities; world tick consults it
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [ ] BACKLOG-104 [emergent] Action-prompt layer — dinos *act* from their persona, not only reply (CHARTER "Living minds": minds act). A per-dino prompt path that turns persona + memory + world state into a chosen **action/intent** (where to go, what to do, how to react to an event), consumed by the world tick — not just dialogue. Spine for BACKLOG-012 (daily plan), -014 (reflection), -032 (roles persist). With Qwen3/3.5 thinking (BACKLOG-102), big choices can run in thinking mode, chitchat without. Start small: one persona-driven intent per dino per tick window, observable in-world. Deterministic fallback intent for no-model devices. Behind `NPCBrain`.
 

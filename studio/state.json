@@ -1,7 +1,7 @@
 {
   "cycle": 92,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-012: NPC daily plan (persona-shaped day-phase intent schedule)",
   "structureItem": "BACKLOG-426: root the save-migration rail at v0 (versionless saves load)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-07-05T03:06:00-05:00",
     "structure-smith": "2026-07-05T03:10:00-05:00",
-    "designer": "2026-07-03T23:25:00-05:00",
+    "designer": "2026-07-05T03:16:00-05:00",
     "code-planner": "2026-07-03T23:32:00-05:00",
     "coder": "2026-07-03T23:55:00-05:00",
     "qa": "2026-07-04T00:20:00-05:00",
