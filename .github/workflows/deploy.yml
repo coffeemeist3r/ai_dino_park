@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -47,6 +47,19 @@ jobs:
         with:
           path: game/dist
 
+      # Pages backend intermittently answers "Deployment failed, try again later".
+      # Retry must happen inside this run: re-running the failed job re-uploads the
+      # artifact and deploy-pages then dies on the duplicate "github-pages" artifact.
       - name: Deploy
         id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true
+
+      - name: Wait before retry
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+
+      - name: Deploy (retry)
+        id: deployment-retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4
