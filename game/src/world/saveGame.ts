@@ -2,10 +2,14 @@
  * Save payload + (de)serialization.
  *
  * Pure TypeScript: no Phaser, no IndexedDB — runs in Node for tests.
- * The IndexedDB I/O lives in saveStore.ts. Versioning + migration (BACKLOG-040):
- * an older-version save is *upgraded* to the current shape on load via the
- * `migrate` chain rather than discarded; an unknown/newer/missing version is
- * still rejected (null) so an incompatible save is ignored rather than crashing.
+ * The IndexedDB I/O lives in saveStore.ts. Versioning + migration (BACKLOG-040,
+ * rooted at v0 by BACKLOG-426): an older-version save is *upgraded* to the current
+ * shape on load via the `migrate` chain rather than discarded. The rail starts at
+ * v0 — a *versionless* save (the oldest, pre-versioning shape) is read as v0 and
+ * lifted through a v0→v1 no-op, so every save ever written rides the chain instead
+ * of being silently dropped as a new game. A present-but-newer/non-integer/negative
+ * version is still rejected (null) so a genuinely incompatible save is ignored
+ * rather than crashing.
  */
 
 import type { GameTime } from './clock';
@@ -24,6 +28,10 @@ type Migration = (o: Record<string, unknown>) => Record<string, unknown>;
  * lift an old save to SAVE_VERSION. A future non-additive change registers its own step here.
  */
 const MIGRATIONS: Record<number, Migration> = {
+  // v0 → v1: a versionless save predates any non-additive change — every field written since is
+  // additive-optional, so the pre-versioning payload is already shape-compatible. The step just
+  // stamps v1, rooting the rail at the origin (BACKLOG-426) so no save is ever dropped for lacking a version.
+  0: (o) => ({ ...o, version: 1 }),
   // v1 → v2: every field added since v1 was additive-optional, so a v1 payload is already
   // shape-compatible — the step just stamps the new version (the worked example proving the hook).
   1: (o) => ({ ...o, version: 2 }),
@@ -31,11 +39,13 @@ const MIGRATIONS: Record<number, Migration> = {
 
 /**
  * Lift a parsed save of any supported version up to SAVE_VERSION, returning the upgraded object — or
- * null for a missing/non-integer/newer version or a gap in the migration chain. Pure: never mutates `raw`.
+ * null for a present-but-non-integer/negative/newer version or a gap in the migration chain. A missing
+ * `version` is read as v0 (the versionless origin) and lifted through the chain. Pure: never mutates `raw`.
  */
 export function migrate(raw: Record<string, unknown>): Record<string, unknown> | null {
-  const v = raw.version;
-  if (typeof v !== 'number' || !Number.isInteger(v) || v < 1 || v > SAVE_VERSION) return null;
+  // Absent version ⇒ v0 (the pre-versioning origin). `null`/any non-number stays rejected below.
+  const v = raw.version === undefined ? 0 : raw.version;
+  if (typeof v !== 'number' || !Number.isInteger(v) || v < 0 || v > SAVE_VERSION) return null;
   let o = raw;
   for (let from = v; from < SAVE_VERSION; from++) {
     const step = MIGRATIONS[from];

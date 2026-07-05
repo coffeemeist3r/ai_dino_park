@@ -55,11 +55,15 @@ describe('migrate (BACKLOG-040)', () => {
     const v2 = { version: 2, foo: 'bar' };
     expect(migrate(v2)).toEqual(v2);
   });
-  it('rejects an unknown/newer version, a below-floor version, and a non-integer version', () => {
+  it('rejects an unknown/newer version, a negative version, and a non-integer version', () => {
     expect(migrate({ version: 99 })).toBeNull();
-    expect(migrate({ version: 0 })).toBeNull();
+    expect(migrate({ version: -1 })).toBeNull();
     expect(migrate({ version: 1.5 })).toBeNull();
-    expect(migrate({})).toBeNull();
+  });
+  // BACKLOG-426: the rail is now rooted at v0 — versionless (absent) and explicit v0 both load.
+  it('lifts an explicit v0 and a versionless save to the current version (BACKLOG-426)', () => {
+    expect(migrate({ version: 0, foo: 'bar' })!.version).toBe(SAVE_VERSION);
+    expect(migrate({ foo: 'bar' })!.version).toBe(SAVE_VERSION);
   });
 });
 
@@ -100,9 +104,16 @@ describe('deserialize routes through migration (BACKLOG-040)', () => {
     expect(deserialize(v99)).toBeNull();
   });
 
-  it('rejects a missing/non-numeric version', () => {
+  it('rejects a present-but-non-numeric version', () => {
     expect(deserialize(JSON.stringify({ ...validV2, version: 'two' }))).toBeNull();
+  });
+
+  // BACKLOG-426: a versionless save (the pre-versioning origin) now loads through the v0→v1→v2 chain
+  // instead of being discarded as a new game.
+  it('loads a versionless save through the v0 root, defaults applied, as the current version', () => {
     const { version: _omit, ...noVersion } = validV2 as Record<string, unknown>;
-    expect(deserialize(JSON.stringify(noVersion))).toBeNull();
+    const out = deserialize(JSON.stringify(noVersion));
+    expect(out).not.toBeNull();
+    expect(out!.version).toBe(SAVE_VERSION);
   });
 });

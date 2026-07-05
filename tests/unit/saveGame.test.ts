@@ -56,8 +56,10 @@ describe('saveGame', () => {
     expect(deserialize('null')).toBeNull();
   });
 
-  it('returns null on version mismatch', () => {
-    const bad = JSON.stringify({ ...sample, version: 0 });
+  it('returns null on version mismatch (a newer version we cannot downgrade)', () => {
+    // BACKLOG-426: v0/versionless now loads through the rail, so a "reject" case must use a
+    // genuinely-incompatible version — one newer than we know how to migrate.
+    const bad = JSON.stringify({ ...sample, version: 99 });
     expect(deserialize(bad)).toBeNull();
   });
 

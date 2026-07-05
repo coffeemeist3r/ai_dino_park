@@ -37,8 +37,12 @@ export const INTENT_NOTES: Record<IntentKind, string> = {
  * Traits weight the pick so the lean is in-character: a social dino leans social, a cautious
  * homebody leans solitary, a curious one forage, an energetic one restless.
  */
-export function proceduralIntent(name: string, day: number, traits: Personality): DinoIntent {
-  const rand = mulberry32(hashSeed(`${name}#intent#${day}`));
+/**
+ * The trait-weighted kind pick, factored out so the daily plan (BACKLOG-012) leans each day-phase
+ * the same in-character way a whole-day intent does — one weight table, not two. A social dino leans
+ * social, a cautious homebody solitary, a curious one forage, an energetic one restless.
+ */
+export function pickKind(rand: () => number, traits: Personality): IntentKind {
   const weights: Array<[IntentKind, number]> = [
     ['social', 0.2 + traits.sociability],
     ['solitary', 0.2 + (1 - traits.sociability)],
@@ -55,6 +59,11 @@ export function proceduralIntent(name: string, day: number, traits: Personality)
       break;
     }
   }
+  return kind;
+}
+
+export function proceduralIntent(name: string, day: number, traits: Personality): DinoIntent {
+  const kind = pickKind(mulberry32(hashSeed(`${name}#intent#${day}`)), traits);
   return { kind, note: INTENT_NOTES[kind], until: day };
 }
 

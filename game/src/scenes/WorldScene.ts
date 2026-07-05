@@ -24,7 +24,7 @@ import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
 import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
-import { tintFor, dayPhase } from '../world/dayNight';
+import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
   rollSkyEvent,
   atGather,
@@ -41,7 +41,8 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
-import { INTENT_NOTES, forageCuriosity, fromDraft, proceduralIntent, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
+import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
+import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { grovePull } from '../world/curiosity';
@@ -396,8 +397,12 @@ export class WorldScene extends Phaser.Scene {
   private lastCacheAction: 'deleted' | 'error' | null = null;
   /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
   private lastSound: { kind: 'chirp' | 'thunk'; name?: string; params?: ChirpParams } | null = null;
-  /** Brain-biased intent (BACKLOG-393): today's lean per dino. Transient — a new day re-authors. */
+  /** Active intent per dino (BACKLOG-393): the current day-phase's lean. Transient — re-derived when the phase or day turns. */
   private intents: Record<string, DinoIntent> = {};
+  /** The day-phase the cached active intent was derived for (BACKLOG-012) — a new phase re-derives from the plan. */
+  private intentPhase: Record<string, DayPhase> = {};
+  /** Persona-shaped daily plan (BACKLOG-012): the day's shape per dino. Transient — recomputed each in-game day, never persisted. */
+  private plans: Record<string, { day: number; plan: DayPlan }> = {};
   /** Generate-once personas (BACKLOG-103): cached selves, persisted in the save. */
   private personas: Record<string, Persona> = {};
   /** Edge indicators (BACKLOG-398): the current zone's neighbour labels, rebuilt per zone change. */
@@ -588,8 +593,16 @@ export class WorldScene extends Phaser.Scene {
       return d ? this.ensureIntent(d) : (this.intents[name] ?? null);
     };
     (window as any).__setIntent = (name: string, kind: IntentKind) => {
-      this.intents[name] = { kind, note: INTENT_NOTES[kind], until: getWorldClock().now().day };
+      const now = getWorldClock().now();
+      this.intents[name] = { kind, note: INTENT_NOTES[kind], until: now.day };
+      this.intentPhase[name] = dayPhase(now.hour); // pin the phase so ensureIntent honours the forced lean
       return this.intents[name];
+    };
+    // dev-only hook — daily plan (BACKLOG-012): read a dino's day shape (one lean per day-phase),
+    // computing it on first read the same deterministic path the step loop takes.
+    (window as any).__plan = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.ensurePlan(d, getWorldClock().now().day) : (this.plans[name]?.plan ?? null);
     };
     // dev-only hooks — persona (BACKLOG-103): read a dino's persona (authoring it on first read,
     // the same generate-once path every brain call site takes) + the whole cached store.
@@ -1853,6 +1866,7 @@ export class WorldScene extends Phaser.Scene {
       rumorsHeard: this.rumorsOf(d.name),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
+      plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
     }));
   }
 
@@ -3339,23 +3353,42 @@ export class WorldScene extends Phaser.Scene {
    * far side) and return true; otherwise false so the caller clamps normally. (BACKLOG-143)
    */
   /**
-   * Today's intent for a dino (BACKLOG-393) — the cached one while the day lasts, else a fresh
-   * seeded procedural intent (the deterministic floor: full sim with zero model). Where a brain
-   * can author (`intend` present, ambient inference allowed by the governor), fire-and-forget an
-   * upgrade — exactly the `converse` shape — merged via `fromDraft` only if the day hasn't turned.
+   * A dino's daily plan (BACKLOG-012) — the day's shape, one lean per day-phase. Recomputed once
+   * per in-game day from name+day+traits (deterministic floor, never persisted); cached so the hot
+   * step loop pays nothing after the first read of the day.
+   */
+  private ensurePlan(d: Dino, day: number): DayPlan {
+    const cached = this.plans[d.name];
+    if (cached && cached.day === day) return cached.plan;
+    const plan = proceduralPlan(d.name, day, d.traits);
+    this.plans[d.name] = { day, plan };
+    return plan;
+  }
+
+  /**
+   * The active intent for a dino (BACKLOG-393 + BACKLOG-012) — the current day-phase's lean pulled
+   * from today's plan (the deterministic floor: full sim with zero model). Cached until the phase or
+   * day turns, then re-derived so behaviour shifts across the day. Where a brain can author (`intend`
+   * present, ambient inference allowed by the governor), fire-and-forget an upgrade — exactly the
+   * `converse` shape — coloring the active note via `fromDraft` only if the phase hasn't turned.
    * The model leans on the day; it never decides a step.
    */
   private ensureIntent(d: Dino): DinoIntent {
-    const day = getWorldClock().now().day;
+    const now = getWorldClock().now();
+    const day = now.day;
+    const phase = dayPhase(now.hour);
     const cached = this.intents[d.name];
-    if (cached && cached.until >= day) return cached;
-    const fresh = proceduralIntent(d.name, day, d.traits);
+    if (cached && cached.until >= day && this.intentPhase[d.name] === phase) return cached;
+    const fresh = activeIntent(this.ensurePlan(d, day), phase, day);
     this.intents[d.name] = fresh;
+    this.intentPhase[d.name] = phase;
     if (this.npcBrain.intend && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
       void this.npcBrain
         .intend({ name: d.name, species: d.species, personality: this.ensurePersona(d).text, traits: d.traits })
         .then((draft) => {
-          if (this.intents[d.name]?.until === day) this.intents[d.name] = fromDraft(draft, fresh);
+          // Color the active note only if the same phase-intent is still current (day+phase unturned).
+          if (this.intents[d.name]?.until === day && this.intentPhase[d.name] === phase)
+            this.intents[d.name] = fromDraft(draft, fresh);
         })
         .catch(() => {});
     }

@@ -78,6 +78,8 @@ export interface BookRow {
   quirk?: string;
   /** Today's intent note (BACKLOG-393) — what the dino feels like doing with its day. */
   intent?: string;
+  /** The day's shape (BACKLOG-012) — the lean per day-phase, dawn→night (e.g. `forage → social → solitary → rest`). */
+  plans?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -92,6 +94,7 @@ export function bookLines(rows: BookRow[]): string[] {
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
+    if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }

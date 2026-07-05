@@ -92,3 +92,22 @@ none.
 
 ### Estimated touch count
 ~2 files (saveGame.ts + one test file).
+
+---
+
+## Shipped (Coder)
+
+**Lore track — BACKLOG-012:**
+- Created `game/src/ai/plan.ts` (DayPlan, DAY_PHASES, proceduralPlan, activeIntent, planShape).
+- `game/src/ai/intent.ts`: extracted `pickKind()`; `proceduralIntent` now calls it (byte-identical).
+- `game/src/scenes/WorldScene.ts`: `plans`+`intentPhase` caches; `ensurePlan()`; `ensureIntent()` reworked phase-aware (LLM `intend` upgrade unchanged, now colors the active-phase note only); `__setIntent` pins the phase; new `__plan` hook; `bookRows()` adds `plans:`. Dropped now-unused `proceduralIntent` import.
+- `game/src/ui/lenses.ts`: `BookRow.plans?`; `bookLines` renders a `plans:` line.
+- Tests: `tests/unit/cycle-092-plan.test.ts`, `tests/e2e/cycle-092-plan.spec.ts`.
+
+**Structure track — BACKLOG-426:**
+- `game/src/world/saveGame.ts`: `MIGRATIONS[0]` (v0→v1 no-op); `migrate()` coerces absent version to 0 and lowers the floor `<1`→`<0` (present-but-non-number/non-integer/negative/newer still rejected). Doc-comment updated.
+- Tests: `tests/unit/cycle-092-save-v0.test.ts`; updated the three older assertions that encoded the now-overturned "versionless/v0 rejected" contract (`cycle-061-save-version.test.ts` ×2, `saveGame.test.ts` ×1) to the rooted-at-v0 behaviour.
+
+**Deviations:** none beyond the three intended old-test updates above (the contract 426 reverses).
+
+**Status:** `npm --prefix game run build` clean; `npm run test:unit` 1005 passed (111 files); dev server HTTP 200; web-llm boundary clean (ai/ only). E2E left for QA.
