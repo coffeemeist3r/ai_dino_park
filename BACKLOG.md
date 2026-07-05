@@ -22,7 +22,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — the Fernreach's new frond pile (400) raises its own landmark (a woven frond thatch 🥻/reed stack), so the 3-zone chain builds *three* different structures, extending zone-distinct craft (377) past the cairn/lean-to pair (builds on 377/400/315)
 - [ ] BACKLOG-418 [core] Per-zone crop identity — each zone's plot (349) grows a crop suited to it (the bowl its berry, the grove/Fernreach their own) so the *farming* half of the economy diverges the way gathering already does under the resource bias (348), not the same 🍓 in every zone (builds on 349/348/145)
-- [ ] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` + a small migration-hook table run on load, so future format changes (persona cache 103, intents 393, anything after) land as ordered migrations instead of ad-hoc additive luck; old saves load unchanged through a v0→v1 no-op migration that proves the rail (Milestone 1 arc) (builds on 009/042-save)
+- [~] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` + a small migration-hook table run on load, so future format changes (persona cache 103, intents 393, anything after) land as ordered migrations instead of ad-hoc additive luck; old saves load unchanged through a v0→v1 no-op migration that proves the rail (Milestone 1 arc) (builds on 009/042-save)
+- [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316/328/418/425.
+- [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
 
 ---
 
@@ -215,7 +217,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > while picking 398. Both are Milestone 1 arcs: the world made visible whole, and the persistence rail
 > the minds arc (103/393) will land its caches on.
 
-- [ ] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` field + a small ordered migration-hook table run on load, so future format changes (persona cache 103, cached intents 393, anything after) land as migrations instead of ad-hoc additive luck; old versionless saves load unchanged through a v0→v1 no-op migration that proves the rail. Milestone 1 arc. Builds on 009 / 042.
+- [~] BACKLOG-426 [infra] Versioned save envelope — the save gains an explicit `version` field + a small ordered migration-hook table run on load, so future format changes (persona cache 103, cached intents 393, anything after) land as migrations instead of ad-hoc additive luck; old versionless saves load unchanged through a v0→v1 no-op migration that proves the rail. Milestone 1 arc. Builds on 009 / 042.
+
+## Cycle 92 structure additions — the queue refilled as Milestone 1 closes (2026-07-05)
+
+> The structure queue sat at 3 open (417/418/426, below cap X=4), so the Structure-smith seeded two
+> while picking 426 (Milestone 1's last structure arc) this cycle. Both keep the resources→economy arc
+> alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
+> flow between zones instead of piling up.
+
+- [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316 / 328 / 418 / 425.
+- [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
 - [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — zone-distinct craft (377) maps two biases to two landmarks (stone→cairn, branch→lean-to); once the Fernreach leans its own kind (400) it still falls back to a cairn. Give the frond bias its own structure (a woven frond thatch / reed stack) so the three-zone chain raises three different built landmarks, not two. Builds on 377 / 400 / 315.
 - [ ] BACKLOG-418 [core] Per-zone crop identity — the plot (145/349) grows the same 🍓 berry in every zone; gathering already diverges per zone under the resource bias (348) but farming doesn't. Give each zone's plot a crop suited to it (bowl berry, grove/Fernreach their own from the FOODS set), so the farming half of the economy reads as distinct places too. Builds on 349 / 348 / 145.
 

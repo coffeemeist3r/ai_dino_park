@@ -2,7 +2,7 @@
   "cycle": 92,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-426: root the save-migration rail at v0 (versionless saves load)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-07-05T03:06:00-05:00",
-    "structure-smith": "2026-07-03T23:15:00-05:00",
+    "structure-smith": "2026-07-05T03:10:00-05:00",
     "designer": "2026-07-03T23:25:00-05:00",
     "code-planner": "2026-07-03T23:32:00-05:00",
     "coder": "2026-07-03T23:55:00-05:00",
