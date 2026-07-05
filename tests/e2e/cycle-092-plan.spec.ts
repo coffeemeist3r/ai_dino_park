@@ -37,11 +37,12 @@ test('the active intent the world tick consults tracks the current day-phase', a
   const result = await page.evaluate((phaseHour) => {
     const w = window as W;
     const name = (w.__visibleDinos() as string[])[0];
-    const plan = w.__plan(name);
     const rows: { phase: string; active: string; planned: string }[] = [];
     for (const phase of Object.keys(phaseHour)) {
+      // Hold the day fixed across phases so the plan is stable; read the plan for THIS day (a
+      // different day would re-roll a different plan — the active intent tracks the same day's plan).
       w.__setClock(2, (phaseHour as any)[phase], 0);
-      rows.push({ phase, active: w.__intent(name).kind, planned: plan[phase] });
+      rows.push({ phase, active: w.__intent(name).kind, planned: w.__plan(name)[phase] });
     }
     return rows;
   }, PHASE_HOUR);
