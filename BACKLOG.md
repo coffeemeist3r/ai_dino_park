@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — the Fernreach's new frond pile (400) raises its own landmark (a woven frond thatch 🥻/reed stack), so the 3-zone chain builds *three* different structures, extending zone-distinct craft (377) past the cairn/lean-to pair (builds on 377/400/315)
 - [ ] BACKLOG-418 [core] Per-zone crop identity — each zone's plot (349) grows a crop suited to it (the bowl its berry, the grove/Fernreach their own) so the *farming* half of the economy diverges the way gathering already does under the resource bias (348), not the same 🍓 in every zone (builds on 349/348/145)
 - [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316/328/418/425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
@@ -71,6 +70,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
+- [ ] BACKLOG-430 [infra] Fix the mobile-minds dialog-paging e2e — `mobile-minds.spec.ts` "long dialogs page GBA-style: E forward, ◀ back, ✕ closes" fails at the ArrowLeft `prev()` page-back step, and **fails on a clean HEAD in isolation** (surfaced cycle 93 QA via a `git stash` reproduction), so it is *not* the catalogued parallel-load flake the cycle-92 verdict logged it as — a real break in the keeper-picker/dialog input path (`WorldScene.ts:448` `cursors.left → dialog.prev()`, or a body-tap `next()` undoing it). Off every recent feature diff; find where ArrowLeft's page-back stopped registering during the keeper picker and restore it, with the spec pinning both the keyboard and the ◀-chip twin. Infra hygiene — the full e2e run should read all-green so a genuine regression isn't lost in a standing red.
 
 ## Cycle 59 structure additions — the bigger world (2026-06-19)
 
@@ -224,7 +224,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316 / 328 / 418 / 425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
-- [ ] BACKLOG-417 [emergent] Fernreach-distinct structure — zone-distinct craft (377) maps two biases to two landmarks (stone→cairn, branch→lean-to); once the Fernreach leans its own kind (400) it still falls back to a cairn. Give the frond bias its own structure (a woven frond thatch / reed stack) so the three-zone chain raises three different built landmarks, not two. Builds on 377 / 400 / 315.
 - [ ] BACKLOG-418 [core] Per-zone crop identity — the plot (145/349) grows the same 🍓 berry in every zone; gathering already diverges per zone under the resource bias (348) but farming doesn't. Give each zone's plot a crop suited to it (bowl berry, grove/Fernreach their own from the FOODS set), so the farming half of the economy reads as distinct places too. Builds on 349 / 348 / 145.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
@@ -671,7 +670,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > track's 315 shelter) the lean-to's pixel prop.
 
 - [ ] BACKLOG-340 [emergent] Homesick for the bowl — a dino that crossed into the grove (339) but whose closest friend (013) is still back in the bowl drifts back across after a while, the grove feeling lonely without its bond; company, not scenery, decides where a dino settles. Builds on 339 / 274 / 013.
-- [ ] BACKLOG-341 [emergent] Grove favorite — a dino that has stayed in the grove across several real days (105) develops a "prefers the grove" lean and migrates back less readily, so home starts to mean something rather than a coin-flip each roll. Builds on 274 / 339 / 105.
 - [ ] BACKLOG-343 [pokemon] Pioneer in the book — the collection book marks the first dino ever to set foot in the grove ("first across") as a small standing, the grove's founding made legible. Builds on 339 / 021.
 
 ## Cycle 75 lore additions — the grove travels home (2026-06-24)
