@@ -77,6 +77,8 @@ export interface SaveData {
   roles?: Record<string, string>;
   /** Each dino's home zone (BACKLOG-274). Additive; absent → {} (every dino defaults to the bowl). */
   dinoZones?: Record<string, string>;
+  /** Each dino's home-zone tenure in rolls (BACKLOG-341) — how settled it is. Additive; absent → {} (settle from scratch). */
+  tenure?: Record<string, number>;
   /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
   gathered?: Record<string, number>;
   /** Each dino's hunger/thirst drives (BACKLOG-371). Additive; absent → {} (every dino starts sated). */
@@ -89,6 +91,8 @@ export interface SaveData {
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
   shelters?: { tileX: number; tileY: number; zone?: string }[];
+  /** Woven frond thatches (BACKLOG-417) — the Fernreach's landmark. Additive; absent → []. Mirrors `shelters`. */
+  thatches?: { tileX: number; tileY: number; zone?: string }[];
   /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
   groveVisited?: string[];
   /** Dinos that have ever seen the grove pond (BACKLOG-359). Additive; absent → []. Gates the once-ever pond-sight beat. */
@@ -249,6 +253,18 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // tenure is additive — absent in older saves (default {}); name→roll count, mirrors gathered (number values
+  // only). Absent → every dino settles from scratch on load. (BACKLOG-341)
+  let tenure: Record<string, number> = {};
+  if (o.tenure !== undefined) {
+    if (typeof o.tenure !== 'object' || o.tenure === null) return null;
+    const entries = o.tenure as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      tenure[k] = entries[k] as number;
+    }
+  }
+
   // gathered is additive over v1 — absent in older saves (default {}); name→count, mirrors friendship.
   let gathered: Record<string, number> = {};
   if (o.gathered !== undefined) {
@@ -328,6 +344,19 @@ export function deserialize(json: string): SaveData | null {
       if (r.zone !== undefined && typeof r.zone !== 'string') return null;
     }
     shelters = o.shelters as { tileX: number; tileY: number; zone?: string }[];
+  }
+
+  // thatches is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors shelters. (BACKLOG-417)
+  let thatches: { tileX: number; tileY: number; zone?: string }[] = [];
+  if (o.thatches !== undefined) {
+    if (!Array.isArray(o.thatches)) return null;
+    for (const t of o.thatches) {
+      if (typeof t !== 'object' || t === null) return null;
+      const r = t as Record<string, unknown>;
+      if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+      if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+    }
+    thatches = o.thatches as { tileX: number; tileY: number; zone?: string }[];
   }
 
   // groveVisited is additive — absent in older saves (default []); a flat list of dino names. (BACKLOG-339)
@@ -432,12 +461,14 @@ export function deserialize(json: string): SaveData | null {
     zoneId,
     roles,
     dinoZones,
+    tenure,
     gathered,
     needs,
     stockpile,
     stockpileByZone,
     cairns,
     shelters,
+    thatches,
     groveVisited,
     pondSeen,
     plot,

@@ -106,3 +106,24 @@ No `SAVE_VERSION` bump (both additive; envelope 426 loads older saves through th
 
 ## Blocker
 (none identified — the thatch rig is confirmed stashed and registered; all reuse targets exist.)
+
+## SHIPPED (coder)
+Both tracks built exactly as planned.
+- **417 (thatch):** `resource.ts` — `Structure += 'thatch'`, `THATCH_RECIPE {frond:4}`, `THATCH_GLYPH 🥻`,
+  `STRUCTURE_BY_BIAS.frond='thatch'`, `structureRecipe` thatch arm, new generic `buildStructureFor`.
+  `WorldScene.ts` — `thatches`/`thatchSprites`, three-way build dispatch via `buildStructureFor`,
+  `drawThatch`/`placeThatch`, zone-visibility toggle, save/restore, `__thatches`/`__thatchIsArt` hooks
+  (dropped now-unused `craft`/`buildShelter` imports; `canCraft`/`canBuildShelter` kept for their hooks).
+  `saveGame.ts` — additive `thatches?` mirroring `shelters?`.
+- **341 (settling):** new pure `world/belonging.ts` (tenure/settle/damp/line). `WorldScene.ts` — `tenure`
+  field, `bumpTenures()` in `maybeMigrate`, settled-resist gate, `resetTenure` in `crossDino` + `relocate`,
+  `bookRows().home`, `__settleTick`/`__tenure`/`__settled` hooks, save/restore. `lenses.ts` — `BookRow.home?`
+  + render. `saveGame.ts` — additive `tenure?` mirroring `dinoZones?`.
+- **Build:** `npm run build` clean. **Unit:** `npx vitest run` → 1020 pass (+15 net; 2 pre-existing
+  contract tests updated to the 417 thatch behaviour — cycle-088, cycle-061/saveGame samples gained the
+  additive fields). **e2e:** the two new specs (`cycle-093-thatch`, `cycle-093-settle`) → 4/4 green.
+- **Boundary:** `@mlc-ai/web-llm` still only under `game/src/ai/` (grep clean). Additive save only, no
+  `SAVE_VERSION` bump.
+- **Known pre-existing failure (off-diff, NOT this cycle):** `mobile-minds.spec.ts` "long dialogs page
+  GBA-style" fails even on a clean `git stash` of HEAD and in isolation — a keeper-picker/dialog ArrowLeft
+  paging issue untouched by either track. `cycle-028-realtime` is the usual parallel flake (passes isolated).

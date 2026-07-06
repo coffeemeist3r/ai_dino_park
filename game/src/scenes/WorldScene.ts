@@ -41,6 +41,7 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
@@ -86,11 +87,11 @@ import {
   atCap,
   stockpileLine,
   canCraft,
-  craft,
   CAIRN_GLYPH,
   SHELTER_GLYPH,
+  THATCH_GLYPH,
   canBuildShelter,
-  buildShelter,
+  buildStructureFor,
   zoneStructure,
   structureRecipe,
   directedCarry,
@@ -185,6 +186,8 @@ export class WorldScene extends Phaser.Scene {
   private floorFallback?: Phaser.GameObjects.Graphics;
   /** Which zone each dino lives in (BACKLOG-143 occupancy API). Defaults to the bowl; -274 migrates. */
   private dinoZones: Record<string, string> = {};
+  /** Per-dino residence tenure in its current zone (BACKLOG-341) — rolls since it last crossed; settles a home. Persisted. */
+  private tenure: Tenure = {};
   /** Wall-clock ms of the last ambient migration (BACKLOG-333) — paces it by a real-time cooldown. */
   private lastMigrationMs = 0;
   /** Wall-clock ms of the last edge-meet barter (BACKLOG-358) — paces the ambient trade by a real-time cooldown. */
@@ -350,6 +353,9 @@ export class WorldScene extends Phaser.Scene {
   /** Dino-built shelters (BACKLOG-315) — the larger landmark beyond the cairn. Persisted; absent → []. Zone-scoped (308). */
   private shelters: { tileX: number; tileY: number; zone: string }[] = [];
   private shelterSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+  /** Woven frond thatches (BACKLOG-417) — the Fernreach's own landmark. Persisted; absent → []. Zone-scoped (308). */
+  private thatches: { tileX: number; tileY: number; zone: string }[] = [];
+  private thatchSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Dinos that have ever set foot in the grove (BACKLOG-339). Persisted; absent → []. Gates the once-ever arrival beat. */
   private groveVisited: string[] = [];
   /** Dinos pausing to look around on a first grove arrival (BACKLOG-339) — transient, one forceStep hold. */
@@ -830,6 +836,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__shelterArt = () =>
       this.shelterSprites[0] instanceof Phaser.GameObjects.Image ? this.shelterSprites[0].texture.key : null;
     (window as any).__canBuildShelter = () => canBuildShelter(this.pileFor(this.zoneId)); // BACKLOG-315
+    (window as any).__thatches = () => this.thatches.map((t) => ({ ...t })); // BACKLOG-417: woven frond thatches
+    // BACKLOG-417: is the first thatch drawn from the stashed pixel rig (BACKLOG-427) rather than the 🥻 glyph?
+    (window as any).__thatchIsArt = () =>
+      this.thatchSprites.length > 0 && this.thatchSprites[0] instanceof Phaser.GameObjects.Image;
     (window as any).__zoneStructure = (z?: string) => zoneStructure(z ?? this.zoneId); // BACKLOG-377: the zone's landmark type
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
@@ -1231,24 +1241,19 @@ export class WorldScene extends Phaser.Scene {
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
     this.logEvent(`${RESOURCE_GLYPH[kind]} ${taker.name} picked up a ${kind}`);
-    // BACKLOG-377: the dino that just banked builds the structure its *zone's* bias (348) favors,
-    // spending its zone's pile — the stone-rich bowl stacks 🗿 cairns (286), the branch-rich grove
-    // raises 🛖 lean-tos (315). Each zone builds one landmark type, so the two skylines diverge.
-    if (zoneStructure(zone) === 'shelter') {
-      const built = buildShelter(this.pileFor(zone));
-      if (built) {
-        this.stockpileByZone[zone] = built;
-        this.placeShelter(this.tileOf(taker), taker);
-        this.refreshPlaque();
-      }
-      // else: still saving — the grove's pile is climbing toward its lean-to recipe.
-    } else {
-      const spent = craft(this.pileFor(zone));
-      if (spent) {
-        this.stockpileByZone[zone] = spent;
-        this.placeCairn(this.tileOf(taker), taker);
-        this.refreshPlaque();
-      }
+    // BACKLOG-377/417: the dino that just banked builds the structure its *zone's* bias (348) favors,
+    // spending its zone's pile — the stone-rich bowl stacks 🗿 cairns (286), the branch-rich grove raises
+    // 🛖 lean-tos (315), the frond-rich Fernreach weaves 🥻 thatches (417). Each zone builds one landmark
+    // type, so all three skylines diverge. `buildStructureFor` spends whatever `structureRecipe(zone)`
+    // costs (cairn/shelter math byte-identical), then place by kind — else the pile is still climbing.
+    const built = buildStructureFor(this.pileFor(zone), zone);
+    if (built) {
+      this.stockpileByZone[zone] = built;
+      const kind = zoneStructure(zone);
+      if (kind === 'thatch') this.placeThatch(this.tileOf(taker), taker);
+      else if (kind === 'shelter') this.placeShelter(this.tileOf(taker), taker);
+      else this.placeCairn(this.tileOf(taker), taker);
+      this.refreshPlaque();
     }
     void this.saveGame();
   }
@@ -1299,6 +1304,30 @@ export class WorldScene extends Phaser.Scene {
     this.flashFeed(crafter, SHELTER_GLYPH);
     this.memory = remember(this.memory, crafter.name, 'raised a lean-to from gathered branches and stones');
     this.logEvent(`${SHELTER_GLYPH} ${crafter.name} raised a lean-to`);
+  }
+
+  /** Draw a thatch at a tile (BACKLOG-417). Mirror of drawShelter — the baked 🥻 frond-thatch prop
+   *  (stashed BACKLOG-427) where the rig exists, else the 🥻 glyph (graceful fallback). */
+  private drawThatch(t: { tileX: number; tileY: number; zone: string }): void {
+    const px = t.tileX * TILE + TILE / 2;
+    const py = t.tileY * TILE + TILE / 2;
+    const tex = bakePropArt(this, 'thatch'); // BACKLOG-427: the stashed frond-thatch rig
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, THATCH_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(t.zone === this.zoneId); // BACKLOG-308: a thatch shows only in its own zone
+    this.thatchSprites.push(sprite);
+  }
+
+  /** Record + render a freshly woven frond thatch and mark the moment on the weaver (BACKLOG-417). */
+  private placeThatch(tile: { tileX: number; tileY: number }, crafter: Dino): void {
+    // BACKLOG-308: the thatch belongs to the zone the crafter wove it in — the Fernreach's own landmark.
+    const t = { ...tile, zone: zoneOf(this.dinoZones, crafter.name, BOWL_ID) };
+    this.thatches.push(t);
+    this.drawThatch(t);
+    this.flashFeed(crafter, THATCH_GLYPH);
+    this.memory = remember(this.memory, crafter.name, 'wove a frond thatch from gathered fronds');
+    this.logEvent(`${THATCH_GLYPH} ${crafter.name} wove a frond thatch`);
   }
 
   /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
@@ -1867,6 +1896,9 @@ export class WorldScene extends Phaser.Scene {
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
+      home: isSettled(tenureOf(this.tenure, d.name)) // BACKLOG-341: where it's settled, once it belongs
+        ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
+        : undefined,
     }));
   }
 
@@ -3455,6 +3487,7 @@ export class WorldScene extends Phaser.Scene {
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
     this.shelterSprites.forEach((s, i) => s.setVisible(this.shelters[i]?.zone === this.zoneId)); // BACKLOG-315
+    this.thatchSprites.forEach((s, i) => s.setVisible(this.thatches[i]?.zone === this.zoneId)); // BACKLOG-417
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
   }
@@ -3497,14 +3530,26 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-333: the real-time cadences (regression guard — a return to clock-gating fails these).
     (window as any).__wanderStepMs = () => WANDER_STEP_MS;
     (window as any).__migrateCooldownMs = () => MIGRATE_COOLDOWN_MS;
+    // BACKLOG-341: drive + observe home-zone settling from Playwright (tenure accrues one roll per tick).
+    (window as any).__settleTick = () => this.bumpTenures();
+    (window as any).__tenure = (name: string) => tenureOf(this.tenure, name);
+    (window as any).__settled = (name: string) => isSettled(tenureOf(this.tenure, name));
+  }
+
+  /** Accrue home-zone tenure (BACKLOG-341) for every settled-in-place dino, on the migration cadence. */
+  private bumpTenures(): void {
+    for (const d of this.dinos) if (!this.migrating.has(d.name)) this.tenure = bumpTenure(this.tenure, d.name);
   }
 
   private maybeMigrate(): void {
+    this.bumpTenures(); // BACKLOG-341: home-zone tenure accrues on the migrate cadence, migration or not
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
     const d = this.pickMigrant();
     if (!d) return;
+    // BACKLOG-341: a dino settled into its home zone resists the ambient wander (stays put this roll).
+    if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true)) return;
     // BACKLOG-378: pick which neighbour to head for. A single-neighbour zone has one choice; the grove now
     // borders two (bowl + Fernreach), so the ambient roll spreads dinos across the whole chain over time.
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
@@ -3551,6 +3596,7 @@ export class WorldScene extends Phaser.Scene {
     const dest = cross?.dest ?? otherZone(home); // BACKLOG-378: the destination fixed at startMigration
     const row = this.tileOf(d).tileY;
     setZone(this.dinoZones, d.name, dest);
+    this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
     const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
     this.migrating.delete(d.name);
@@ -3594,6 +3640,7 @@ export class WorldScene extends Phaser.Scene {
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
   private relocate(d: Dino, destZoneId: string): void {
     setZone(this.dinoZones, d.name, destZoneId);
+    this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a new zone starts fresh (mirrors crossDino)
     // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
     const tileX = Phaser.Math.Between(2, COLS - 3);
     const tileY = Phaser.Math.Between(2, ROWS - 3);
@@ -4173,6 +4220,7 @@ export class WorldScene extends Phaser.Scene {
       zoneId: this.zoneId,
       roles: this.roles,
       dinoZones: this.dinoZones,
+      tenure: this.tenure, // BACKLOG-341: per-dino home-zone tenure (settling persists across a reload)
       gathered: this.gathered,
       needs: this.needs, // BACKLOG-371: hunger/thirst per dino
 
@@ -4180,6 +4228,7 @@ export class WorldScene extends Phaser.Scene {
       stockpileByZone: this.stockpileByZone, // BACKLOG-328: the full per-zone map
       cairns: this.cairns,
       shelters: this.shelters,
+      thatches: this.thatches, // BACKLOG-417: the Fernreach's frond-thatch landmarks
       groveVisited: this.groveVisited,
       pondSeen: this.pondSeen, // BACKLOG-359
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
@@ -4232,6 +4281,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
+      this.tenure = save.tenure ?? {}; // BACKLOG-341: home-zone tenure restore (absent → settle from scratch)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       // BACKLOG-371: needs restore (absent → {}); any spawned dino missing an entry backfills to sated.
       this.needs = save.needs ?? {};
@@ -4245,6 +4295,9 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-315: dino-built shelters restore (additive; new field, so old saves load none).
       this.shelters = (save.shelters ?? []).map((s) => ({ ...s, zone: s.zone ?? BOWL_ID }));
       for (const s of this.shelters) this.drawShelter(s);
+      // BACKLOG-417: frond thatches restore (additive; new field, so old saves load none). Mirrors shelters.
+      this.thatches = (save.thatches ?? []).map((t) => ({ ...t, zone: t.zone ?? BOWL_ID }));
+      for (const t of this.thatches) this.drawThatch(t);
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).

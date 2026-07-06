@@ -13,11 +13,13 @@ const sample: SaveData = {
   zoneId: 'bowl',
   roles: {},
   dinoZones: { Mossback: 'grove' },
+  tenure: {},
   gathered: {},
   needs: {},
   stockpile: {},
   cairns: [],
   shelters: [],
+  thatches: [],
   groveVisited: [],
   pondSeen: [],
   plot: null,
@@ -156,6 +158,34 @@ describe('saveGame', () => {
   it('returns null for a malformed dinoZones value (BACKLOG-274)', () => {
     expect(deserialize(JSON.stringify({ ...sample, dinoZones: { Rex: 5 } }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, dinoZones: 'grove' }))).toBeNull();
+  });
+
+  it('round-trips a tenure map + thatches (BACKLOG-341 / 417)', () => {
+    const withHome: SaveData = {
+      ...sample,
+      tenure: { Rex: 4, Sunny: 0 },
+      thatches: [{ tileX: 5, tileY: 6, zone: 'fernreach' }],
+    };
+    expect(deserialize(serialize(withHome))).toEqual(withHome);
+  });
+
+  it('loads an older save lacking tenure/thatches, defaulting them (BACKLOG-341 / 417)', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.tenure).toEqual({});
+    expect(out!.thatches).toEqual([]);
+  });
+
+  it('returns null for a malformed tenure or thatches value (BACKLOG-341 / 417)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, tenure: { Rex: 'x' } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, tenure: 5 }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, thatches: [{ tileX: 'x', tileY: 1 }] }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, thatches: 'nope' }))).toBeNull();
   });
 
   it('round-trips a lastTone map (BACKLOG-142)', () => {

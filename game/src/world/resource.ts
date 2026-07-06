@@ -216,14 +216,24 @@ export function directedCarry(
  * escalation (286/315 `SHELTER_AFTER_CAIRNS`) with a one-structure-per-zone choice keyed off ZONE_BIAS.
  * The pile-math (`craft`/`buildShelter`) and recipes are unchanged — only the *selection* moves here.
  */
-export type Structure = 'cairn' | 'shelter';
+export type Structure = 'cairn' | 'shelter' | 'thatch';
 
 /**
- * A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos. Frond (400)
- * builds a cairn by default until it gets its own frond-distinct structure (BACKLOG-417); this keeps the
- * record type-complete over the ResourceKind union so a new kind can never silently fall through.
+ * Woven frond thatch (BACKLOG-417) — the Fernreach's own built landmark, the third structure beyond the
+ * bowl's cairn and the grove's lean-to. Made *of* fronds (the kind the Fernreach actually gathers under
+ * its bias, 400), the way the lean-to is made of branches — so the frond-rich third zone finally spends
+ * its own gather on its own skyline instead of scraping cairns off its 25% off-kind. The 🥻 pixel rig was
+ * stashed ahead of this item (BACKLOG-427); this wires it into the world. Twin recipe of cairn/lean-to.
  */
-export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter', frond: 'cairn' };
+export const THATCH_RECIPE: Partial<Record<ResourceKind, number>> = { frond: 4 };
+export const THATCH_GLYPH = '🥻';
+
+/**
+ * A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos, frond weaves
+ * a thatch (BACKLOG-417). Total over the ResourceKind union so a new kind can never silently fall through
+ * to a default.
+ */
+export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter', frond: 'thatch' };
 
 /** Which structure a zone builds, by its bias. An unbiased/unknown zone → 'cairn' (286 default, back-compat). */
 export function zoneStructure(zone?: string): Structure {
@@ -231,9 +241,25 @@ export function zoneStructure(zone?: string): Structure {
   return bias ? STRUCTURE_BY_BIAS[bias] : 'cairn';
 }
 
-/** The recipe a zone's structure costs — the cairn recipe (286) or the richer lean-to recipe (315). */
+/** The recipe a zone's structure costs — the cairn (286), the lean-to (315), or the frond thatch (417). */
 export function structureRecipe(zone?: string): Partial<Record<ResourceKind, number>> {
-  return zoneStructure(zone) === 'shelter' ? SHELTER_RECIPE : CRAFT_RECIPE;
+  const kind = zoneStructure(zone);
+  return kind === 'shelter' ? SHELTER_RECIPE : kind === 'thatch' ? THATCH_RECIPE : CRAFT_RECIPE;
+}
+
+/**
+ * Build a zone's *own* structure (BACKLOG-417) — the general form of `craft`/`buildShelter` over whatever
+ * `structureRecipe(zone)` returns, so a new zone-structure (the thatch, and any future kind) needs no fourth
+ * bespoke afford/spend pair. Returns a new pile minus the zone's recipe, or null when unaffordable. Pure —
+ * never mutates `pile`. The per-structure helpers stay exported (their unit tests + the barter fallback).
+ */
+export function buildStructureFor(pile: Stockpile, zone?: string): Stockpile | null {
+  const recipe = structureRecipe(zone);
+  const kinds = Object.keys(recipe) as ResourceKind[];
+  if (!kinds.every((k) => (pile[k] ?? 0) >= (recipe[k] ?? 0))) return null;
+  const next: Stockpile = { ...pile };
+  for (const k of kinds) next[k] = (next[k] ?? 0) - (recipe[k] ?? 0);
+  return next;
 }
 
 /** Remove one of `kind` from a pile (floored at 0). Pure — returns a new map, never mutates. */

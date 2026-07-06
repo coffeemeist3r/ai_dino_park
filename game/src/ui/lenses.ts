@@ -80,6 +80,8 @@ export interface BookRow {
   intent?: string;
   /** The day's shape (BACKLOG-012) — the lean per day-phase, dawn→night (e.g. `forage → social → solitary → rest`). */
   plans?: string;
+  /** Where the dino has settled (BACKLOG-341) — `at home in <zone>`, set only once it belongs. */
+  home?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -95,6 +97,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
+    if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }

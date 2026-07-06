@@ -8,6 +8,7 @@ import {
   zoneStructure,
   structureRecipe,
   CRAFT_RECIPE,
+  THATCH_RECIPE,
   BIAS_WEIGHT,
   type ResourceKind,
 } from '../../game/src/world/resource';
@@ -79,9 +80,11 @@ describe('BACKLOG-400 third-zone resource bias', () => {
     expect(directedCarry({ branch: 1, frond: 3 }, {}, CRAFT_RECIPE)).toBe('branch');
   });
 
-  it('the Fernreach builds a cairn by default (frond structure is follow-up 417) and is type-complete', () => {
-    expect(zoneStructure(FERNREACH_ID)).toBe('cairn');
-    expect(structureRecipe(FERNREACH_ID)).toBe(CRAFT_RECIPE);
+  it('the Fernreach now weaves a frond thatch (BACKLOG-417 shipped; was cairn placeholder) and is type-complete', () => {
+    // Contract overturned by BACKLOG-417 (the follow-up this test's old name pointed to): frond → 'thatch'.
+    expect(zoneStructure(FERNREACH_ID)).toBe('thatch');
+    expect(structureRecipe(FERNREACH_ID)).toBe(THATCH_RECIPE);
+    expect(structureRecipe(FERNREACH_ID)).not.toBe(CRAFT_RECIPE);
   });
 
   it('barter moves a frond-heavy Fernreach pile to a neighbour via the spare fallback', () => {
