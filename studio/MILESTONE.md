@@ -8,7 +8,25 @@
 
 ## Current milestone
 
-(none active — Milestone 1 shipped cycle 92; the smiths draft Milestone 2 at the next cycle open.)
+**Milestone 2: Places to belong — the chain becomes three homes**
+**Status:** ACTIVE (opened cycle 93)
+
+Come back after a week and the three-zone chain no longer reads as one bowl with two tinted
+annexes: each zone is its own *place* — its own crop in the ground, its own built landmark on
+the skyline, a prosperity you can read at a glance — and the dinos start to **belong** to one.
+A resident that stays put long enough settles in and stops drifting on every ambient wander;
+where a dino calls home, and the ache when a friend leaves it, become legible. Milestone 1 gave
+the dinos minds; Milestone 2 gives those minds a *home ground*.
+
+**Lore arcs:**
+- [ ] A dino calls a zone home — a resident that stays put long enough settles in, resisting the ambient wander; where it belongs reads in the book (BACKLOG-341)
+- [ ] The ache of a departed friend — a settled dino aims its solitary tic at the edge a close friend left by (BACKLOG-414)
+- [ ] Homesick for a friend — a dino whose closest bond lives in another zone drifts back toward them (BACKLOG-340)
+
+**Structure arcs:**
+- [ ] Three skylines — the Fernreach raises its own woven-frond thatch, so the chain builds three different landmarks (BACKLOG-417)
+- [ ] Per-zone crops — each zone's plot grows a crop suited to it, the farming half diverging like gathering already does (BACKLOG-418)
+- [ ] A zone you can read — a derived prosperity index folds pile + crops + structures + heads into one tier (BACKLOG-428)
 
 ### Format (use this when drafting)
 
