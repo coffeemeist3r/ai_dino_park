@@ -5,6 +5,11 @@ import { boot } from './helpers';
  * Solitary tic (BACKLOG-405). A dino left truly alone — no company in its zone, no pressing need, nothing to
  * do — falls into a small personal ritual after a solitary stretch, filing a one-time "a little ritual of
  * your own" memory. A dino kept beside company never invents one.
+ *
+ * The whole cast is pinned each step: the lone dino to one bowl tile, everyone else to a tight grove cluster
+ * (company for each other, so none of them tics) that never shares the lone dino's tile — so it forms no
+ * cross-zone bond (meets key on pixel proximity, not zone) and its ritual stays a plain 405 one, not the
+ * grief-aimed variant a departed friend would trigger (BACKLOG-414).
  */
 
 type W = Record<string, any>;
@@ -21,36 +26,31 @@ test('a dino alone with nothing pressing invents its tic; one with company never
 
   const roster = await names(page);
   const alone = roster[0];
-  const [c1, c2] = [roster[1], roster[2]];
+  const others = roster.slice(1);
 
-  // Isolate the target in the bowl: send everyone else to the grove, drop the target mid-bowl, and quiet its
-  // gathering (curiosity 0 → never fetches) so nothing but wandering competes with the ritual.
+  // Send everyone else to the grove and quiet the target's gathering (curiosity 0 → never fetches).
   await page.evaluate(
-    ({ others }) => {
+    ({ others, alone }) => {
       const w = window as W;
       for (const n of others) w.__migrate(n, 'grove');
+      w.__setTrait(alone, 'curiosity', 0);
     },
-    { others: roster.slice(1) },
+    { others, alone },
   );
-  await page.evaluate((n) => {
-    const w = window as W;
-    w.__placeDino(n, 10, 7);
-    w.__setTrait(n, 'curiosity', 0);
-  }, alone);
 
-  // Step the world; keep the target's needs quiet so solitude (not hunger) is what it experiences, and keep
-  // the two exiles standing together in the grove each step (company within range → neither can ever tic).
+  // Each step: keep the target's needs quiet, pin it mid-bowl, and pin the exiles in a tight grove cluster
+  // (company within range → neither can ever tic; never on the target's tile → no cross-zone bond).
   let invented = false;
-  for (let i = 0; i < 100 && !invented; i++) {
+  for (let i = 0; i < 60 && !invented; i++) {
     await page.evaluate(
-      ({ n, a, b }) => {
+      ({ alone, others }) => {
         const w = window as W;
-        w.__setNeed(n, 'hunger', 0);
-        w.__setNeed(n, 'thirst', 0);
-        w.__placeDino(a, 5, 5);
-        w.__placeDino(b, 6, 5);
+        w.__setNeed(alone, 'hunger', 0);
+        w.__setNeed(alone, 'thirst', 0);
+        w.__placeDino(alone, 10, 7);
+        others.forEach((n: string, idx: number) => w.__placeDino(n, 2 + idx, 2));
       },
-      { n: alone, a: c1, b: c2 },
+      { alone, others },
     );
     await page.evaluate(() => (window as W).__stepWorld());
     invented = (await tic(page, alone)).invented;
@@ -62,9 +62,9 @@ test('a dino alone with nothing pressing invents its tic; one with company never
   const mem = await memory(page, alone);
   expect(mem.some((m) => m.includes('a little ritual of your own'))).toBe(true);
 
-  // The companioned pair never invented a tic — company breaks the solitude.
-  expect((await tic(page, c1)).invented).toBe(false);
-  expect((await tic(page, c2)).invented).toBe(false);
+  // The companioned cluster never invented a tic — company breaks the solitude.
+  expect((await tic(page, others[0])).invented).toBe(false);
+  expect((await tic(page, others[1])).invented).toBe(false);
 
   expect(errors).toEqual([]);
 });
