@@ -84,3 +84,22 @@ full suite to confirm no fallout.
 
 **Cross-track collision:** none — lore touches the tic block/`performTic`/`resetTic`/tic+bonds modules; structure
 touches the three timer callbacks + hooks + `helpers.ts`. Different regions of WorldScene, no shared lines.
+
+---
+
+## Shipped (Coder)
+
+**Lore track (BACKLOG-414) — files touched:**
+- `game/src/world/tic.ts` — added `griefEdge`, `griefAnchor`, `griefTicMemory`, `GRIEF_BOND_FLOOR`; import `zoneChain`/`Edge`.
+- `game/src/social/bonds.ts` — added `closestFriend`.
+- `game/src/scenes/WorldScene.ts` — `ticGrief` field; `griefFor` method; tic block anchors at grief edge + walks there via `stepToward`; `performTic` files grief memory + directional log; `resetTic` clears grief; `__griefTic` hook; imports.
+- `tests/unit/cycle-094-grief-tic.test.ts`, `tests/e2e/cycle-094-grief-tic.spec.ts`.
+
+**Structure track (BACKLOG-431) — files touched:**
+- `game/src/scenes/WorldScene.ts` — `ambientPaused` field; three timer callbacks (wander L2071 / sky L1353 / migration L3500) gated; `__pauseAmbient`/`__resumeAmbient`/`__ambientPaused` hooks.
+- `tests/e2e/helpers.ts` — `boot()` calls `__pauseAmbient()` after `__ready`.
+- `tests/e2e/cycle-094-pause-ambient.spec.ts`.
+
+**Deviations:** none.
+
+**Build + unit-test status:** `npm run build` clean; `npx vitest run` = 1029/1029 pass (114 files, +9 new). E2E is QA's gate.

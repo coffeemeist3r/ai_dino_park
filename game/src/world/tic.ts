@@ -16,6 +16,7 @@
 import { AXES, type Personality } from '../ai/personality';
 import { FOND_MIN } from '../ai/brain';
 import type { Tile } from './movement';
+import { zoneChain, type Edge } from './zones';
 
 export type TicKind = 'pace' | 'fuss' | 'circle';
 
@@ -133,4 +134,39 @@ export function fondOpener(): string {
 /** The glad one-time memory a fond caught dino files — the ritual named, read as being happily, not sheepishly, seen. */
 export function fondCaughtMemory(label: string): string {
   return `the keeper caught you mid-ritual — you ${label}, and you were glad it was them`;
+}
+
+/**
+ * A ritual for the missing friend (BACKLOG-414) — a real friend (pairwise bond ≥ this) whose departure
+ * to another zone turns the tic into an ache. Below it, a crossing isn't a loss worth grieving. One
+ * huddle's worth, matching `comfort.ts`'s COMFORT_BOND_FLOOR (013).
+ */
+export const GRIEF_BOND_FLOOR = 8;
+
+/**
+ * The edge a departed friend left by (BACKLOG-414) — the direction, along the west→east zone chain, from
+ * the grieving dino's zone toward the zone its closest friend has crossed to. A friend further east in the
+ * chain left by the 'east' edge; further west, by 'west'. null when the friend shares the dino's zone (no
+ * ache) or either zone is off the chain. Reads `zoneChain` so a fourth zone needs no change here.
+ */
+export function griefEdge(dinoZone: string, friendZone: string): Edge | null {
+  if (dinoZone === friendZone) return null;
+  const chain = zoneChain();
+  const di = chain.indexOf(dinoZone);
+  const fi = chain.indexOf(friendZone);
+  if (di < 0 || fi < 0 || di === fi) return null;
+  return fi > di ? 'east' : 'west';
+}
+
+/**
+ * The tile a grieving dino aims its ritual at (BACKLOG-414): the mid-height (its own row) tile on the edge
+ * its friend left by, so the tic faces the way they went. West edge → column 0, east edge → last column.
+ */
+export function griefAnchor(edge: Edge, row: number, cols: number): Tile {
+  return { tileX: edge === 'west' ? 0 : cols - 1, tileY: row };
+}
+
+/** The one-time memory a grieving dino files (BACKLOG-414) — names the friend + the ritual, so the ache is legible in talk. */
+export function griefTicMemory(label: string, friend: string): string {
+  return `your closest friend ${friend} crossed away — you ${label} at the edge they left by`;
 }

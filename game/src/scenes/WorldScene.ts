@@ -77,7 +77,7 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
 import {
   noticeResource,
   resourceLanding,
@@ -121,7 +121,7 @@ import {
   menuChips,
   type Vec2,
 } from '../input/touch';
-import { strengthen, bondPoints, type Bonds } from '../social/bonds';
+import { strengthen, bondPoints, closestFriend, type Bonds } from '../social/bonds';
 import {
   shouldLay,
   makeEgg,
@@ -203,6 +203,13 @@ export class WorldScene extends Phaser.Scene {
   private ticAnchor: Record<string, { tileX: number; tileY: number }> = {};
   private ticPhase: Record<string, number> = {};
   private ticInvented = new Set<string>();
+  /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
+   *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
+  private ticGrief: Record<string, string | null> = {};
+  /** BACKLOG-431: when true, the wall-clock background timers (wander/sky/migration rolls) no-op — set by the
+   *  `__pauseAmbient` dev hook from the e2e boot() so 300+ parallel specs don't race the ambient world tick.
+   *  Never set in normal play (defaults false); explicit dev hooks (`__stepWorld` etc.) bypass it. */
+  private ambientPaused = false;
   /** Caught mid-tic (BACKLOG-408): the dino this greet caught mid-ritual (bashful reply), + a once-per-stretch
    *  memory guard. Both transient — cleared by resetTic (company/need ends the stretch) and on greet cancel. */
   private caughtTic: string | null = null;
@@ -488,6 +495,12 @@ export class WorldScene extends Phaser.Scene {
     this.setupScan();
     this.setupIdle();
     this.setupTouchControls();
+
+    // BACKLOG-431: freeze/thaw the wall-clock ambient timers (wander/sky/migration rolls) so parallel e2e
+    // specs don't race the background world tick. boot() pauses; ambient-beat specs step explicitly anyway.
+    (window as any).__pauseAmbient = () => { this.ambientPaused = true; };
+    (window as any).__resumeAmbient = () => { this.ambientPaused = false; };
+    (window as any).__ambientPaused = () => this.ambientPaused;
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
     // avoid the parallel-load flake of reading a hook before create() finishes.
@@ -790,6 +803,13 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinos.find((x) => x.name === name);
       if (!d) return null;
       return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits) };
+    };
+    // BACKLOG-414: the grief a dino's tic carries — its computed grief (closest cross-zone friend + edge), the
+    // anchor its ritual settled on, and the friend it's grieving this stretch — so the e2e can prove the aim.
+    (window as any).__griefTic = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return null;
+      return { grief: this.griefFor(d), anchor: this.ticAnchor[name] ?? null, grieved: this.ticGrief[name] ?? null };
     };
     // BACKLOG-408: force a dino into its invented-tic state (mid-ritual) so the caught-mid-tic greet is
     // deterministic — no 20-step solitude loop a stray wanderer could perturb. Mirrors what forceStep does.
@@ -1350,7 +1370,7 @@ export class WorldScene extends Phaser.Scene {
 
     // Roll on a real-time cadence (NOT in-game hours): offline catch-up and per-minute clock
     // advances must not retroactively spawn events, and a short headless test never waits this long.
-    this.time.addEvent({ delay: SKY_ROLL_INTERVAL_MS, loop: true, callback: () => this.maybeStartSky() });
+    this.time.addEvent({ delay: SKY_ROLL_INTERVAL_MS, loop: true, callback: () => { if (!this.ambientPaused) this.maybeStartSky(); } }); // BACKLOG-431
 
     // dev-only Playwright hooks
     (window as any).__skyEvent = () => this.activeSky?.id ?? null;
@@ -2068,7 +2088,7 @@ export class WorldScene extends Phaser.Scene {
   private setupMovement(): void {
     // BACKLOG-333: wander on a real-time timer, not the in-game clock, so the park mills about at a
     // watchable pace whatever the time scale (at 1× an in-game minute is 60 real seconds).
-    this.time.addEvent({ delay: WANDER_STEP_MS, loop: true, callback: () => this.forceStep() });
+    this.time.addEvent({ delay: WANDER_STEP_MS, loop: true, callback: () => { if (!this.ambientPaused) this.forceStep(); } }); // BACKLOG-431
 
     // any: dev-only Playwright hooks
     (window as any).__dinoPositions = () => this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
@@ -2248,8 +2268,24 @@ export class WorldScene extends Phaser.Scene {
     this.ticInvented.delete(name);
     delete this.ticAnchor[name];
     delete this.ticPhase[name];
+    delete this.ticGrief[name]; // BACKLOG-414: the grief re-derives fresh next stretch
+
     this.ticCaughtFiled.delete(name); // BACKLOG-408: the stretch ended — a later one can be caught (+ remembered) afresh
     if (this.caughtTic === name) this.caughtTic = null;
+  }
+
+  /**
+   * BACKLOG-414: the ache a lone dino carries into its ritual — its *closest* friend (013, above the
+   * grief floor) and the edge that friend crossed away by, or null when that friend shares its zone (no
+   * departure to grieve) or it has no real friend at all. A solitude with a direction.
+   */
+  private griefFor(d: Dino): { edge: Edge; friend: string } | null {
+    const friend = closestFriend(d.name, this.bonds, this.dinoNames(), GRIEF_BOND_FLOOR);
+    if (!friend) return null;
+    const dz = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const fz = zoneOf(this.dinoZones, friend, BOWL_ID);
+    const edge = griefEdge(dz, fz);
+    return edge ? { edge, friend } : null;
   }
 
   /**
@@ -2260,9 +2296,11 @@ export class WorldScene extends Phaser.Scene {
   private performTic(d: Dino, tic: Tic): void {
     if (!this.ticInvented.has(d.name)) {
       this.ticInvented.add(d.name);
-      this.memory = remember(this.memory, d.name, ticMemory(tic.label));
+      // BACKLOG-414: a dino grieving a departed friend files the directional ache; else the plain 405 ritual.
+      const grieved = this.ticGrief[d.name];
+      this.memory = remember(this.memory, d.name, grieved ? griefTicMemory(tic.label, grieved) : ticMemory(tic.label));
       this.flashFeed(d, tic.glyph);
-      this.logEvent(`${tic.glyph} ${d.name} ${tic.label}`);
+      this.logEvent(`${tic.glyph} ${d.name} ${grieved ? `${tic.label} at the edge ${grieved} left by` : tic.label}`);
     } else if ((this.soloSteps[d.name] ?? 0) % 6 === 0) {
       this.flashFeed(d, tic.glyph);
     }
@@ -2393,10 +2431,20 @@ export class WorldScene extends Phaser.Scene {
       } else if (moping) {
         next = stepToward(cur, edgeTarget(cur, COLS, ROWS), COLS, ROWS); // withdraw to the nearest wall
       } else if (ticcing) {
-        const anchor = (this.ticAnchor[d.name] ??= cur); // settle where the ritual began
+        // BACKLOG-414: on the first ticcing step, if this dino's closest friend has crossed to another zone,
+        // aim the ritual at the edge they left by (walked toward, below); else settle where the ritual began (405).
+        if (this.ticAnchor[d.name] === undefined) {
+          const grief = this.griefFor(d);
+          this.ticGrief[d.name] = grief?.friend ?? null;
+          this.ticAnchor[d.name] = grief ? griefAnchor(grief.edge, cur.tileY, COLS) : cur;
+        }
+        const anchor = this.ticAnchor[d.name];
         const tic = signatureTic(d.traits);
         this.ticPhase[d.name] = (this.ticPhase[d.name] ?? 0) + 1;
-        next = ticStep(tic.kind, anchor, this.ticPhase[d.name], COLS, ROWS);
+        const atAnchor = cur.tileX === anchor.tileX && cur.tileY === anchor.tileY;
+        // Walk to the grief edge first (the ache with a direction), then perform the ritual there. For a
+        // plain 405 tic the anchor IS the current tile, so atAnchor is true immediately — byte-identical.
+        next = atAnchor ? ticStep(tic.kind, anchor, this.ticPhase[d.name], COLS, ROWS) : stepToward(cur, anchor, COLS, ROWS);
         this.performTic(d, tic);
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
@@ -3497,7 +3545,7 @@ export class WorldScene extends Phaser.Scene {
    * byte-identical, so every bowl-targeting spec is intact). A sparse real-time roll, capped ≤1/in-game-day.
    */
   private setupMigration(): void {
-    this.time.addEvent({ delay: MIGRATE_ROLL_INTERVAL_MS, loop: true, callback: () => this.maybeMigrate() });
+    this.time.addEvent({ delay: MIGRATE_ROLL_INTERVAL_MS, loop: true, callback: () => { if (!this.ambientPaused) this.maybeMigrate(); } }); // BACKLOG-431
     // dev-only Playwright hook — migrate a named dino to a zone INSTANTLY (teleport); returns its new zone.
     // Kept instant (BACKLOG-274 semantics) so the cycle-068/069 migration specs + the save-restore path are
     // byte-identical; the *ambient* roll is what became a visible walk (BACKLOG-334).

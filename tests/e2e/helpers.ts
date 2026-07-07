@@ -22,4 +22,9 @@ export async function boot(page: Page): Promise<void> {
   await page.waitForFunction(() => (window as Record<string, unknown>).__ready === true, undefined, {
     timeout: BOOT_TIMEOUT,
   });
+  // BACKLOG-431: freeze the wall-clock ambient timers (wander/sky/migration rolls) for every spec, so the
+  // background world tick can't mutate pinned state mid-assert. Specs drive beats via explicit hooks
+  // (__stepWorld, __triggerSky, __migrate, __maybeBarter, __advanceWall), which bypass the pause. A spec
+  // that genuinely needs the live timers calls __resumeAmbient() after boot.
+  await page.evaluate(() => (window as Record<string, () => void>).__pauseAmbient?.());
 }
