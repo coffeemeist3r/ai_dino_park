@@ -20,7 +20,7 @@ the dinos minds; Milestone 2 gives those minds a *home ground*.
 
 **Lore arcs:**
 - [x] A dino calls a zone home — a resident that stays put long enough settles in, resisting the ambient wander; where it belongs reads in the book (BACKLOG-341 — cycle 93)
-- [ ] The ache of a departed friend — a settled dino aims its solitary tic at the edge a close friend left by (BACKLOG-414)
+- [x] The ache of a departed friend — a settled dino aims its solitary tic at the edge a close friend left by (BACKLOG-414 — cycle 94)
 - [ ] Homesick for a friend — a dino whose closest bond lives in another zone drifts back toward them (BACKLOG-340)
 
 **Structure arcs:**
