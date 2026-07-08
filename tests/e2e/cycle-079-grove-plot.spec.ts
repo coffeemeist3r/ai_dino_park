@@ -32,11 +32,12 @@ test('the grove grows its own crop, independent of the bowl plot', async ({ page
   await step(page);
   expect((await plot(page, 'grove')).stage).toBe('ripe');
 
-  // Harvest the grove crop: a 🍓 drops into play, the grove plot empties, the shared tally rises.
+  // Harvest the grove crop: the grove grows *greens* now (BACKLOG-418 — per-zone crops), so greens drop
+  // into play, the grove plot empties, the shared tally rises.
   await page.evaluate(() => (window as W).__harvestPlot('grove'));
   const food = await page.evaluate(() => (window as W).__food());
   expect(food).not.toBeNull();
-  expect(food.foodId).toBe('berries');
+  expect(food.foodId).toBe('greens');
   expect(await plot(page, 'grove')).toBeNull();
   expect(await page.evaluate(() => (window as W).__harvested())).toBe(1);
 
