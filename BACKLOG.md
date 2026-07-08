@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-418 [core] Per-zone crop identity — each zone's plot (349) grows a crop suited to it (the bowl its berry, the grove/Fernreach their own) so the *farming* half of the economy diverges the way gathering already does under the resource bias (348), not the same 🍓 in every zone (builds on 349/348/145)
 - [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316/328/418/425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
 - [ ] BACKLOG-432 [core] Fernreach plot + a farmable third crop — the Fernreach has no plot (349 gave bowl + grove only), and FOODS has just two plant crops (berries/greens), both now spoken for by 418. Add a third *farmable* food and a Fernreach plot tile so all three zones farm a distinct crop, completing the three-zone farming divergence 418 starts. Builds on 418/349/145.
@@ -226,7 +225,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316 / 328 / 418 / 425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
-- [ ] BACKLOG-418 [core] Per-zone crop identity — the plot (145/349) grows the same 🍓 berry in every zone; gathering already diverges per zone under the resource bias (348) but farming doesn't. Give each zone's plot a crop suited to it (bowl berry, grove/Fernreach their own from the FOODS set), so the farming half of the economy reads as distinct places too. Builds on 349 / 348 / 145.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
 
@@ -671,7 +669,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > lean, news of the grove travelling the bowl, the pioneer's standing, and (riding the structure
 > track's 315 shelter) the lean-to's pixel prop.
 
-- [ ] BACKLOG-340 [emergent] Homesick for the bowl — a dino that crossed into the grove (339) but whose closest friend (013) is still back in the bowl drifts back across after a while, the grove feeling lonely without its bond; company, not scenery, decides where a dino settles. Builds on 339 / 274 / 013.
 - [ ] BACKLOG-343 [pokemon] Pioneer in the book — the collection book marks the first dino ever to set foot in the grove ("first across") as a small standing, the grove's founding made legible. Builds on 339 / 021.
 
 ## Cycle 75 lore additions — the grove travels home (2026-06-24)

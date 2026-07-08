@@ -21,11 +21,11 @@ the dinos minds; Milestone 2 gives those minds a *home ground*.
 **Lore arcs:**
 - [x] A dino calls a zone home — a resident that stays put long enough settles in, resisting the ambient wander; where it belongs reads in the book (BACKLOG-341 — cycle 93)
 - [x] The ache of a departed friend — a settled dino aims its solitary tic at the edge a close friend left by (BACKLOG-414 — cycle 94)
-- [ ] Homesick for a friend — a dino whose closest bond lives in another zone drifts back toward them (BACKLOG-340)
+- [x] Homesick for a friend — a dino whose closest bond lives in another zone drifts back toward them (BACKLOG-340 — cycle 95)
 
 **Structure arcs:**
 - [x] Three skylines — the Fernreach raises its own woven-frond thatch, so the chain builds three different landmarks (BACKLOG-417 — cycle 93)
-- [ ] Per-zone crops — each zone's plot grows a crop suited to it, the farming half diverging like gathering already does (BACKLOG-418)
+- [x] Per-zone crops — each zone's plot grows a crop suited to it, the farming half diverging like gathering already does (BACKLOG-418 — cycle 95)
 - [ ] A zone you can read — a derived prosperity index folds pile + crops + structures + heads into one tier (BACKLOG-428)
 
 ### Format (use this when drafting)
