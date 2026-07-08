@@ -42,6 +42,7 @@ import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
+import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
@@ -106,7 +107,7 @@ import {
 import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
-import { cropStage, plotAdjacent, STAGE_GLYPH, CROP_FOOD_ID, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
+import { cropStage, plotAdjacent, cropOf, stageGlyph, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -943,6 +944,11 @@ export class WorldScene extends Phaser.Scene {
       const s = this.plotSpriteByZone[zone ?? this.zoneId];
       return s instanceof Phaser.GameObjects.Image ? s.texture.key : null;
     };
+    // BACKLOG-418: the plot's glyph marker (a Text sprite), so the per-zone ripe crop marker is assertable.
+    (window as any).__plotGlyph = (zone?: string) => {
+      const s = this.plotSpriteByZone[zone ?? this.zoneId];
+      return s instanceof Phaser.GameObjects.Text ? s.text : null;
+    };
   }
 
   /** Draw a zone's plot sprite for a stage: a baked crop prop where a rig exists (BACKLOG-317), else the
@@ -952,10 +958,14 @@ export class WorldScene extends Phaser.Scene {
     const tile = PLOT_TILE_BY_ZONE[zone];
     const px = tile.tileX * TILE + TILE / 2;
     const py = tile.tileY * TILE + TILE / 2;
-    const tex = stage === 'empty' ? null : bakePropArt(this, `crop_${stage}`);
+    // BACKLOG-317/418: bake the shared soil-mound rig for seed/sprout, and for a *berry* ripe plot (the 317
+    // bush rig is berry-specific); a non-berry ripe plot (the grove's greens) falls back to its own glyph
+    // until an [art] fire draws its rig, so the crop still reads as that zone's own.
+    const wantsProp = stage !== 'empty' && (stage !== 'ripe' || cropOf(zone).food === 'berries');
+    const tex = wantsProp ? bakePropArt(this, `crop_${stage}`) : null;
     this.plotSpriteByZone[zone] = tex
       ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
-      : this.add.text(px, py, STAGE_GLYPH[stage], { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+      : this.add.text(px, py, stageGlyph(zone, stage), { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
   }
 
   /** P press: plant the active zone's empty plot, harvest its ripe one, or note a growing one — only
@@ -991,10 +1001,11 @@ export class WorldScene extends Phaser.Scene {
   private harvest(zone: string): void {
     const plot = this.plotByZone[zone];
     if (!plot || cropStage(getWorldClock().now().day - plot.plantedDay) !== 'ripe') return;
-    this.dropFood(PLOT_TILE_BY_ZONE[zone].tileX, CROP_FOOD_ID); // no-ops if a piece is already in play — retry later
+    const crop = cropOf(zone); // BACKLOG-418: each zone yields its own crop into the feeding loop
+    this.dropFood(PLOT_TILE_BY_ZONE[zone].tileX, crop.food); // no-ops if a piece is already in play — retry later
     this.plotByZone[zone] = null;
     this.harvested++;
-    this.logEvent('🍓 you harvested the crop');
+    this.logEvent(`${crop.ripe} you harvested the crop`);
     this.refreshPlot();
     void this.saveGame();
   }
@@ -1008,7 +1019,7 @@ export class WorldScene extends Phaser.Scene {
       if (stage !== this.plotStageShownByZone[z]) this.drawPlotSprite(z, stage); // BACKLOG-317: swap to the stage's prop
       this.plotSpriteByZone[z]?.setVisible(this.zoneId === z);
       if (stage === 'ripe' && this.plotStageShownByZone[z] !== 'ripe') {
-        this.logEvent('🍓 the crop ripened — press P beside the plot to harvest');
+        this.logEvent(`${cropOf(z).ripe} the crop ripened — press P beside the plot to harvest`); // BACKLOG-418
       }
       this.plotStageShownByZone[z] = stage;
     }
@@ -3575,6 +3586,12 @@ export class WorldScene extends Phaser.Scene {
       return d?.name ?? null;
     };
     (window as any).__migrating = () => [...this.migrating];
+    // BACKLOG-340: run the homesick decision + crossing for a named dino deterministically; returns the
+    // destination zone it set off toward (or null when it isn't homesick). Drives the exact production path.
+    (window as any).__homesickMigrate = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d && this.tryHomesick(d) ? this.migrationCross[name]?.dest ?? null : null;
+    };
     // BACKLOG-333: the real-time cadences (regression guard — a return to clock-gating fails these).
     (window as any).__wanderStepMs = () => WANDER_STEP_MS;
     (window as any).__migrateCooldownMs = () => MIGRATE_COOLDOWN_MS;
@@ -3589,6 +3606,32 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) if (!this.migrating.has(d.name)) this.tenure = bumpTenure(this.tenure, d.name);
   }
 
+  /** A dino's homesickness (BACKLOG-340): the neighbour zone + friend to head toward, or null. */
+  private homesickOf(d: Dino): { dest: string; friend: string } | null {
+    return homesickDest(
+      d.name,
+      zoneOf(this.dinoZones, d.name, BOWL_ID),
+      this.bonds,
+      this.dinoNames(),
+      (n) => zoneOf(this.dinoZones, n, BOWL_ID),
+      tenureOf(this.tenure, d.name),
+    );
+  }
+
+  /**
+   * BACKLOG-340: if a dino is homesick, start its crossing back toward its closest friend, file the one-time
+   * memory, and float the beat. Returns true when it fired (so the caller skips the ambient path). Shared by
+   * `maybeMigrate` and the `__homesickMigrate` dev hook so production and test drive the exact same path.
+   */
+  private tryHomesick(d: Dino): boolean {
+    const h = this.homesickOf(d);
+    if (!h) return false;
+    this.startMigration(d, h.dest);
+    this.memory = remember(this.memory, d.name, homesickMemory(h.friend));
+    this.logEvent(`🧭 ${d.name} misses ${h.friend} — drifts back toward ${zoneById(h.dest).name}`);
+    return true;
+  }
+
   private maybeMigrate(): void {
     this.bumpTenures(); // BACKLOG-341: home-zone tenure accrues on the migrate cadence, migration or not
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
@@ -3596,6 +3639,12 @@ export class WorldScene extends Phaser.Scene {
     if (Math.random() >= MIGRATE_CHANCE) return;
     const d = this.pickMigrant();
     if (!d) return;
+    // BACKLOG-340: homesickness overrules scenery — a dino aching for a friend a zone away crosses toward it,
+    // ignoring the 341 settle-resist. Checked before the resist gate so a *settled* lonely dino still leaves.
+    if (this.tryHomesick(d)) {
+      this.lastMigrationMs = Date.now();
+      return;
+    }
     // BACKLOG-341: a dino settled into its home zone resists the ambient wander (stays put this roll).
     if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true)) return;
     // BACKLOG-378: pick which neighbour to head for. A single-neighbour zone has one choice; the grove now
@@ -3615,6 +3664,9 @@ export class WorldScene extends Phaser.Scene {
    */
   private pickMigrant(): Dino | null {
     const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
+    // BACKLOG-340: a dino homesick for a friend a zone away is the first the wander picks up (company > scenery).
+    const homesick = candidates.filter((d) => this.homesickOf(d));
+    if (homesick.length) return homesick[Math.floor(Math.random() * homesick.length)];
     const pull = (d: Dino) =>
       grovePull(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
     const told = candidates.filter((d) => pull(d) === 2);

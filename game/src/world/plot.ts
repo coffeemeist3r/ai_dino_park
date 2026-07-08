@@ -23,8 +23,35 @@ export const STAGE_GLYPH: Record<CropStage | 'empty', string> = {
   ripe: '🍓',
 };
 
-/** The crop is an existing food (foods.ts) — harvested "into the existing food set". */
+/** The crop is an existing food (foods.ts) — harvested "into the existing food set". Bowl default. */
 export const CROP_FOOD_ID = 'berries';
+
+/**
+ * Per-zone crop identity (BACKLOG-418) — each zone's plot grows a crop suited to it, so the *farming* half
+ * of the economy reads as separate places the way gathering already diverges per zone (348) and the three
+ * skylines do (417). The bowl keeps its sweet berries (byte-identical); the shaded grove grows leafy greens.
+ * `ripe` is the marker the ripe plot shows — deliberately distinct from the 🌿 *sprout* glyph AND the greens
+ * food's own 🌿 (so a grove plot never reads ambiguously). A zone with no entry falls back to the bowl berry.
+ */
+export interface ZoneCrop {
+  food: string; // a FOODS id — harvest releases this into the feeding loop
+  ripe: string; // the ripe-stage marker glyph
+}
+
+export const CROP_BY_ZONE: Record<string, ZoneCrop> = {
+  [BOWL_ID]: { food: CROP_FOOD_ID, ripe: '🍓' },
+  [GROVE_ID]: { food: 'greens', ripe: '🥬' },
+};
+
+/** The crop a zone's plot grows (BACKLOG-418) — its own entry, or the bowl berry as fallback. */
+export function cropOf(zone: string): ZoneCrop {
+  return CROP_BY_ZONE[zone] ?? CROP_BY_ZONE[BOWL_ID];
+}
+
+/** A plot marker glyph for a stage: the ripe stage reads the zone's *own* crop, the rest share STAGE_GLYPH. */
+export function stageGlyph(zone: string, stage: CropStage | 'empty'): string {
+  return stage === 'ripe' ? cropOf(zone).ripe : STAGE_GLYPH[stage];
+}
 
 /** In-game days since planting at which the crop advances. Realtime-clock days (WorldClock.now().day). */
 export const SPROUT_DAY = 1;

@@ -57,3 +57,11 @@
 ## No collision
 homesick.ts + plot.ts are new/disjoint; the WorldScene edits touch migration methods vs plot
 methods — no shared lines. Both tracks: `npm run build` + `npx vitest run` before commit; e2e is QA's gate.
+
+---
+
+## SHIPPED (coder)
+
+- **340:** new `game/src/world/homesick.ts` (`homesickDest`/`homesickMemory`/`HOMESICK_ROLLS`, reusing `closestFriend`+`GRIEF_BOND_FLOOR`+`griefEdge`+`neighborThrough`). `WorldScene`: `homesickOf`/`tryHomesick`, `pickMigrant` homesick-preferred, `maybeMigrate` homesick-before-settle-resist, `__homesickMigrate` hook.
+- **418:** `plot.ts` `CROP_BY_ZONE`/`cropOf`/`stageGlyph`/`ZoneCrop` (bowl berries/🍓, grove greens/🥬). `WorldScene`: `drawPlotSprite` bakes the bush only for berry-ripe, `harvest` drops `cropOf(zone).food`, ripen/harvest logs read the crop marker, `__plotGlyph` hook. Kept `CROP_FOOD_ID` (bowl default) so cycle-066 stays green.
+- Build clean. 1042/1042 unit (+13: 7 homesick + 6 crops). No save version bump (grove plot already persisted; its harvest just yields greens now). web-llm boundary untouched. E2E is QA's gate.
