@@ -27,4 +27,15 @@ describe('plot crop-stage props (BACKLOG-317)', () => {
       expect(propCharsUsed(PROP_RIGS[k].grid).has(ch)).toBe(true);
     }
   });
+
+  // BACKLOG-418: the grove grows greens, not berries — a stashed ripe-greens rig (renders standalone via
+  // bakePropArt) that drawPlotSprite can adopt once wired; today the grove ripe plot reads its 🥬 glyph.
+  it('registers a distinct berry-free greens ripe rig for the grove crop', () => {
+    const greens = PROP_RIGS.crop_ripe_greens;
+    expect(greens).toBeDefined();
+    expect(greens.grid.join('\n')).not.toBe(PROP_RIGS.crop_ripe.grid.join('\n')); // not the berry bush
+    expect(propCharsUsed(greens.grid).has('r')).toBe(false); // no berry-red at all
+    expect(propCharsUsed(greens.grid).has('l')).toBe(true); // still leafy
+    for (const ch of ['o', 'm', 'h']) expect(propCharsUsed(greens.grid).has(ch)).toBe(true); // shared mound
+  });
 });

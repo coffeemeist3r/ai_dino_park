@@ -65,6 +65,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > system that displays it, but only when the rig renders standalone (a prop/sprite
 > `bakePropArt` can resolve in a test); true terrain that needs a host stays deferred.
 
+- [ ] BACKLOG-434 [art] Wire the grove greens-crop rig — cycle 95 stashed a `crop_ripe_greens` pixel rig (a leafy green head, no berries) in `PROP_RIGS`, but `drawPlotSprite` (WorldScene) still renders the grove's ripe plot as the 🥬 emoji glyph fallback. Teach `drawPlotSprite` to bake a per-crop ripe rig (a `cropOf(zone).ripeRig`, or a `crop_ripe_<food>` key lookup) so the grove's ripe plot shows the stashed greens bush instead of the glyph — the display half of BACKLOG-418. Small, art-adjacent WorldScene wiring; the rig + its standalone test already exist. Builds on 418 / 317.
 
 ## Infra
 

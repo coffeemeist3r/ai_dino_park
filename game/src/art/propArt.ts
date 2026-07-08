@@ -184,6 +184,35 @@ const CROP_RIPE_GRID: ReadonlyArray<string> = [
 
 const CROP_RIPE_RIG: PropRig = { size: 16, grid: CROP_RIPE_GRID, palette: { ...SOIL, ...LEAF, r: BERRY } };
 
+// Ripe greens 🥬 (BACKLOG-418, stashed ahead of the wiring) — the grove's crop: a full rounded head of
+// leaves over the shared mound, no berries. A pale-leaf highlight (p) rounds the head so it reads as a
+// distinct cabbage-y green crop, not the berry bush recoloured. Renders standalone via bakePropArt.
+const LEAF_PALE = 0x7fc060; // sun-caught leaf highlight
+const CROP_RIPE_GREENS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....lllll......',
+  '....lgpppgl.....',
+  '...lpllpllpl....',
+  '...pllgllglp....',
+  '...lplllllpl....',
+  '....lgpppgl.....',
+  '.....lllll......',
+  '.......g........',
+  '......ommo......',
+  '.....ommmmo.....',
+  '...ohhhhhhhho...',
+  '................',
+  '................',
+  '................',
+];
+
+const CROP_RIPE_GREENS_RIG: PropRig = {
+  size: 16,
+  grid: CROP_RIPE_GREENS_GRID,
+  palette: { ...SOIL, ...LEAF, p: LEAF_PALE },
+};
+
 // ── Lean-to shelter 🛖 (BACKLOG-315/344) — the dino-built landmark beyond the cairn, drawn as branches.
 // A single sloped roof of lashed wood rising from a back post down to a wide front eave, with the open
 // shaded interior tapering underneath. Built of branches, so it shares the branch's wood/outline tones.
@@ -302,6 +331,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_seed: CROP_SEED_RIG,
   crop_sprout: CROP_SPROUT_RIG,
   crop_ripe: CROP_RIPE_RIG,
+  crop_ripe_greens: CROP_RIPE_GREENS_RIG, // BACKLOG-418: the grove's greens crop, stashed ahead of drawPlotSprite wiring
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
   thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
 };
