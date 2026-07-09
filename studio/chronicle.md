@@ -2379,3 +2379,7 @@ No open `[art]` items in BACKLOG (cast 5/5 drawn; props/tiles/dialog-frame all s
 ## 2026-07-09 02:30 — cycle 096 — lore-smith — BACKLOG-410 (homesick sooner)
 
 Milestone 2 lore checklist is complete (341/414/340), so this cycle picks off-milestone: BACKLOG-410 — a dino freshly moved *alone* into a friendless zone falls into its signature tic (405) sooner than one on home ground. The inward companion to the just-shipped homesick arc, tying the tic system to the zone-home system both built. Cap rule: open lore items >= 12, so no new seeds. Idea Box empty. phase -> designer-pending.
+
+## 2026-07-09 02:38 — cycle 096 — structure-smith — BACKLOG-428 (zone prosperity index)
+
+Picks the milestone-closing structure arc: BACKLOG-428, a pure derived per-zone read folding stockpile total + crops harvested + built structures + resident heads into one tier, hung on the map lens (425). Cap rule: Structure Track at 4 open = X, so drained (no new items). Scope note: adds the minimal per-zone harvest counter 428 needs; 433 keeps its surfacing half. phase stays designer-pending (lore-smith set it).
