@@ -108,7 +108,7 @@ import {
 import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
-import { cropStage, plotAdjacent, cropOf, stageGlyph, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
+import { cropStage, plotAdjacent, cropOf, stageGlyph, ripeRigKey, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
@@ -967,11 +967,11 @@ export class WorldScene extends Phaser.Scene {
     const tile = PLOT_TILE_BY_ZONE[zone];
     const px = tile.tileX * TILE + TILE / 2;
     const py = tile.tileY * TILE + TILE / 2;
-    // BACKLOG-317/418: bake the shared soil-mound rig for seed/sprout, and for a *berry* ripe plot (the 317
-    // bush rig is berry-specific); a non-berry ripe plot (the grove's greens) falls back to its own glyph
-    // until an [art] fire draws its rig, so the crop still reads as that zone's own.
-    const wantsProp = stage !== 'empty' && (stage !== 'ripe' || cropOf(zone).food === 'berries');
-    const tex = wantsProp ? bakePropArt(this, `crop_${stage}`) : null;
+    // BACKLOG-317/418/434: seed/sprout share the soil-mound rig; the ripe stage bakes the zone crop's OWN
+    // ripe rig (berries → `crop_ripe`, the grove's greens → `crop_ripe_greens`), falling back to the crop
+    // glyph only when no rig is stashed for that crop yet — so a rig-less crop still reads as its own marker.
+    const propKey = stage === 'empty' ? null : stage === 'ripe' ? ripeRigKey(cropOf(zone).food) : `crop_${stage}`;
+    const tex = propKey && hasPropArt(propKey) ? bakePropArt(this, propKey) : null;
     this.plotSpriteByZone[zone] = tex
       ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
       : this.add.text(px, py, stageGlyph(zone, stage), { fontSize: '16px' }).setOrigin(0.5).setDepth(2);

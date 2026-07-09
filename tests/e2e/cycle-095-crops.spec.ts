@@ -23,9 +23,12 @@ test('the grove grows greens with a 🥬 marker, and harvests greens into the fe
 
   await ripen(page, 'grove');
 
-  // The ripe grove plot reads its own crop marker (a glyph, not the bowl's berry-bush prop).
-  expect(await page.evaluate(() => (window as W).__plotGlyph('grove'))).toBe('🥬');
-  expect(await page.evaluate(() => (window as W).__plotArt('grove'))).toBeNull(); // not the berry pixel rig
+  // The ripe grove plot bakes its OWN greens rig (BACKLOG-434) — an Image, not the 🥬 glyph fallback, and a
+  // different texture from the bowl's berry bush.
+  const groveArt = await page.evaluate(() => (window as W).__plotArt('grove'));
+  expect(groveArt).not.toBeNull();
+  expect(groveArt).toContain('crop_ripe_greens');
+  expect(await page.evaluate(() => (window as W).__plotGlyph('grove'))).toBeNull(); // no glyph fallback now
 
   // Harvest releases *greens* (not berries) into the feeding loop.
   await page.evaluate(() => (window as W).__harvestPlot('grove'));

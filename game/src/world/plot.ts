@@ -53,6 +53,16 @@ export function stageGlyph(zone: string, stage: CropStage | 'empty'): string {
   return stage === 'ripe' ? cropOf(zone).ripe : STAGE_GLYPH[stage];
 }
 
+/**
+ * The PROP_RIGS key for a crop's *ripe* pixel rig (BACKLOG-434) — the berry keeps the original `crop_ripe`
+ * (byte-identical bowl), every other crop reads `crop_ripe_<food>` (the grove's greens → `crop_ripe_greens`,
+ * the rig stashed cycle 95). `drawPlotSprite` bakes this where the rig exists, else falls back to the glyph —
+ * so a crop with no rig yet still reads as its own marker.
+ */
+export function ripeRigKey(food: string): string {
+  return food === CROP_FOOD_ID ? 'crop_ripe' : `crop_ripe_${food}`;
+}
+
 /** In-game days since planting at which the crop advances. Realtime-clock days (WorldClock.now().day). */
 export const SPROUT_DAY = 1;
 export const RIPE_DAY = 2;
