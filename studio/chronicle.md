@@ -2387,3 +2387,7 @@ Picks the milestone-closing structure arc: BACKLOG-428, a pure derived per-zone 
 ## 2026-07-09 02:46 — cycle 096 — designer — BACKLOG-410 + BACKLOG-428
 
 Two file-disjoint tracks. 410 (lore): a dino alone in a strange zone (not settled + no in-zone bonded friend) falls into its tic sooner (TIC_AFTER_STEPS_HOMESICK=12 via Math.min with the 393 shortener), filing a distinct strange-zone memory; 414 grief aim stays independent + prioritized. 428 (structure): pure world/prosperity.ts folds per-zone stockpile+structures+heads+harvested into one score/tier, hung on the map lens (425) + a __zoneProsperity hook, plus a minimal per-zone harvest counter. 6 AC per track. phase -> codeplan-pending.
+
+## 2026-07-09 02:52 — cycle 096 — code-planner — BACKLOG-410 + BACKLOG-428
+
+410: TIC_AFTER_STEPS_HOMESICK/aloneInStrangeZone/strangeZoneTicMemory in tic.ts + a min-threshold + ticStrange marker in the maybeWander tic branch; reuses isSettled/closestFriend/ticAfterFor, 414 grief aim untouched. 428: new pure world/prosperity.ts (ZoneSignals/zoneProsperity/prosperityTier/glyph/badge) + tier on ZoneMapEntry/zoneMapModel + zoneSignals()/harvestedByZone/__zoneProsperity + a third map-box line. 4 test files (2 unit, 2 e2e). Disjoint WorldScene methods; no new deps; save additive. phase -> coder-pending.
