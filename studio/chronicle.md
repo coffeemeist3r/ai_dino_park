@@ -2383,3 +2383,7 @@ Milestone 2 lore checklist is complete (341/414/340), so this cycle picks off-mi
 ## 2026-07-09 02:38 — cycle 096 — structure-smith — BACKLOG-428 (zone prosperity index)
 
 Picks the milestone-closing structure arc: BACKLOG-428, a pure derived per-zone read folding stockpile total + crops harvested + built structures + resident heads into one tier, hung on the map lens (425). Cap rule: Structure Track at 4 open = X, so drained (no new items). Scope note: adds the minimal per-zone harvest counter 428 needs; 433 keeps its surfacing half. phase stays designer-pending (lore-smith set it).
+
+## 2026-07-09 02:46 — cycle 096 — designer — BACKLOG-410 + BACKLOG-428
+
+Two file-disjoint tracks. 410 (lore): a dino alone in a strange zone (not settled + no in-zone bonded friend) falls into its tic sooner (TIC_AFTER_STEPS_HOMESICK=12 via Math.min with the 393 shortener), filing a distinct strange-zone memory; 414 grief aim stays independent + prioritized. 428 (structure): pure world/prosperity.ts folds per-zone stockpile+structures+heads+harvested into one score/tier, hung on the map lens (425) + a __zoneProsperity hook, plus a minimal per-zone harvest counter. 6 AC per track. phase -> codeplan-pending.
