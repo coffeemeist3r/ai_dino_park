@@ -59,6 +59,23 @@ export function signatureTic(p: Personality): Tic {
 /** Solitary force-steps before a dino falls into its tic (~a long real stretch at WANDER_STEP_MS). */
 export const TIC_AFTER_STEPS = 20;
 
+/**
+ * Homesick-sooner onset (BACKLOG-410) — a dino freshly moved *alone* into a friendless zone falls into
+ * its tic quicker than one on home ground, so isolation in an unfamiliar place reads faster. Below
+ * `TIC_AFTER_STEPS`; the caller takes the *min* of this and the 393 solitary-day threshold, so the two
+ * shorteners compose instead of fighting.
+ */
+export const TIC_AFTER_STEPS_HOMESICK = 12;
+
+/**
+ * Alone in a strange zone (BACKLOG-410) — the dino is freshly arrived (not yet *settled*, 341) and has no
+ * bonded friend residing in its current zone. Such a dino invents its tic sooner. Pure: the two reads
+ * (tenure→settled, same-zone bond graph→friend) are computed by the caller; this is the gate they feed.
+ */
+export function aloneInStrangeZone(settled: boolean, hasFriendInZone: boolean): boolean {
+  return !settled && !hasFriendInZone;
+}
+
 /** Tiles within which another dino in the same zone counts as company (so no tic forms). */
 export const TIC_COMPANY_RANGE = 3;
 

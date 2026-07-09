@@ -2391,3 +2391,7 @@ Two file-disjoint tracks. 410 (lore): a dino alone in a strange zone (not settle
 ## 2026-07-09 02:52 — cycle 096 — code-planner — BACKLOG-410 + BACKLOG-428
 
 410: TIC_AFTER_STEPS_HOMESICK/aloneInStrangeZone/strangeZoneTicMemory in tic.ts + a min-threshold + ticStrange marker in the maybeWander tic branch; reuses isSettled/closestFriend/ticAfterFor, 414 grief aim untouched. 428: new pure world/prosperity.ts (ZoneSignals/zoneProsperity/prosperityTier/glyph/badge) + tier on ZoneMapEntry/zoneMapModel + zoneSignals()/harvestedByZone/__zoneProsperity + a third map-box line. 4 test files (2 unit, 2 e2e). Disjoint WorldScene methods; no new deps; save additive. phase -> coder-pending.
+
+## 2026-07-09 03:16 — cycle 096 — coder — BACKLOG-410 + BACKLOG-428
+
+Shipped both tracks. 410: onset-shortening only — tic.ts TIC_AFTER_STEPS_HOMESICK(12)/aloneInStrangeZone; WorldScene zoneMates() + Math.min onset in the wander branch + __tic().strange. The planned strange memory was CUT (it regressed the 405 plain memory + was unreachable under 414 grief priority); 410 = "tics faster", ritual memory unchanged. 428: pure world/prosperity.ts (ZoneSignals/zoneProsperity/prosperityTier/badge) + tier on ZoneMapEntry/zoneMapModel + WorldScene zoneSignals/harvestedByZone/__zoneProsperity + a 3rd map-box line; saveGame.ts harvestedByZone additive round-trip. build clean; vitest 1060/1060; e2e green (fixed the cycle-087 regression from the memory cut; cycle-068 save/reload = known parallel flake, passes isolated). phase -> qa-pending.

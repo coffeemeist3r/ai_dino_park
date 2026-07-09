@@ -266,6 +266,22 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, stockpileByZone: { bowl: 5 } }))).toBeNull();
   });
 
+  it('round-trips a per-zone harvest tally (BACKLOG-428)', () => {
+    const withHarvest: SaveData = { ...sample, harvestedByZone: { bowl: 3, grove: 1 } };
+    expect(deserialize(serialize(withHarvest))).toEqual(withHarvest);
+  });
+
+  it('loads a pre-428 save without harvestedByZone (undefined → WorldScene defaults {}) (BACKLOG-428)', () => {
+    const out = deserialize(JSON.stringify({ ...sample, harvested: 5 }));
+    expect(out).not.toBeNull();
+    expect(out!.harvestedByZone).toBeUndefined();
+  });
+
+  it('returns null for a malformed per-zone harvest value (BACKLOG-428)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, harvestedByZone: { bowl: -1 } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, harvestedByZone: { bowl: 'lots' } }))).toBeNull();
+  });
+
   it('round-trips crafted cairns (BACKLOG-286)', () => {
     const withCairns: SaveData = { ...sample, cairns: [{ tileX: 5, tileY: 7 }, { tileX: 12, tileY: 3 }] };
     expect(deserialize(serialize(withCairns))).toEqual(withCairns);

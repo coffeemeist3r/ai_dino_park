@@ -56,3 +56,17 @@
 4. e2e both.
 
 **Blocker check:** none. `harvested` global stays for existing readers; save additive; no WebLLM outside `ai/`. The only shared file (`WorldScene.ts`) is touched in disjoint methods.
+
+---
+
+## Shipped (Coder)
+
+Both tracks implemented per plan.
+
+**BACKLOG-410:** `world/tic.ts` + `TIC_AFTER_STEPS_HOMESICK` + `aloneInStrangeZone`. `WorldScene` — `zoneMates(d)` helper, strange-read + `Math.min` onset shortening in the wander tic branch, `__tic` hook returns a live `strange` flag.
+
+> **Scope cut (Coder call):** the planned `strangeZoneTicMemory` was dropped. 410's gate (`!settled && !hasFriendInZone`) fires for *any* fresh friendless-in-zone lone dino — which includes the plain-405 lone dino the shipped cycle-087 spec enshrines with its "a little ritual of your own" memory. Adding a distinct memory *replaced* that, regressing 405; and the strange-memory case can never coexist with the 414 grief memory anyway (a dino with a friend-elsewhere always grieves, and grief keeps priority), so it was unreachable dead text. 410 ships as the **onset shortening only** — exactly the item's ask ("falls into its tic *faster*"); the ritual's memory (plain 405 / grief 414) is unchanged. cycle-087 keeps passing (it just tics a little sooner, well inside its 60-step budget).
+
+**BACKLOG-428:** new `world/prosperity.ts` (`ZoneSignals`/`zoneProsperity`/`prosperityTier`/`PROSPERITY_GLYPH`/`prosperityBadge`). `ui/lenses.ts` — `tier` on `ZoneMapEntry`, `zoneMapModel` 4th `tiers` arg (defaulted). `WorldScene` — `harvestedByZone` field (+ bump at the harvest site, + save/load additive), `zoneSignals`/`zoneTiers`, tier fed to `zoneMapEntries`, badge as a third map-box line (boxH 52→64), `__zoneProsperity` hook. `saveGame.ts` — `harvestedByZone?` on `SaveData` + validated round-trip.
+
+**Verification:** `npm run build` clean (only the pre-existing Phaser chunk-size warning). `npx vitest run` — **1060/1060** green. e2e — new specs `cycle-096-homesick-tic` (2) + `cycle-096-prosperity` (2) green under parallel workers; cycle-087-solitary-tic (the one the first full run flagged) re-run isolated + alongside the new specs = green after the memory cut; full suite result recorded by QA. No `@mlc-ai/web-llm` import outside `game/src/ai/`. Save change additive.

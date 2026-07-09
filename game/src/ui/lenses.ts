@@ -9,6 +9,7 @@
 import { pairKey } from '../social/meetings';
 import type { Role } from '../ai/roles';
 import { zoneById } from '../world/zones';
+import type { ProsperityTier } from '../world/prosperity';
 
 export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker' | 'map';
 // 'map' (BACKLOG-425) is appended at the END so every pre-existing lens keeps its position on the ring.
@@ -31,15 +32,27 @@ export interface ZoneMapEntry {
   name: string;
   count: number;
   keeper: boolean;
+  /** Prosperity tier (BACKLOG-428) — the zone's folded stockpile/structures/heads/harvest read; 'quiet' when unknown. */
+  tier: ProsperityTier;
 }
 
-/** The zone map model: the chain in drawing order, counts from `zonePopulations`, keeper flagged. */
-export function zoneMapModel(chain: string[], populations: Record<string, number>, keeperZone: string): ZoneMapEntry[] {
+/**
+ * The zone map model: the chain in drawing order, counts from `zonePopulations`, keeper flagged, and each
+ * zone's prosperity tier (BACKLOG-428) from the passed `tiers` map (a zone absent there reads 'quiet', so
+ * older 3-arg callers/tests stay valid).
+ */
+export function zoneMapModel(
+  chain: string[],
+  populations: Record<string, number>,
+  keeperZone: string,
+  tiers: Record<string, ProsperityTier> = {},
+): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
     name: zoneById(id).name,
     count: populations[id] ?? 0,
     keeper: id === keeperZone,
+    tier: tiers[id] ?? 'quiet',
   }));
 }
 

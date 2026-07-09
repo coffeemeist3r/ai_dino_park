@@ -78,7 +78,8 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_COMPANY_RANGE, type Tic } from '../world/tic';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
+import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
   resourceLanding,
@@ -375,6 +376,8 @@ export class WorldScene extends Phaser.Scene {
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
   /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. Shared across both plots. */
   private harvested = 0;
+  /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Persisted; absent → {}. */
+  private harvestedByZone: Record<string, number> = {};
   /** Last plot stage drawn per zone — so the ripen note fires once, on the edge into ripe. */
   private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
@@ -803,7 +806,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__tic = (name: string) => {
       const d = this.dinos.find((x) => x.name === name);
       if (!d) return null;
-      return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits) };
+      // BACKLOG-410: `strange` = alone in a strange zone (fresh + no in-zone friend); reported so the e2e can
+      // prove the shortened onset. Computed the same way the wander branch does (settled + zone-mate friend read).
+      const strange = aloneInStrangeZone(
+        isSettled(tenureOf(this.tenure, name)),
+        closestFriend(name, this.bonds, this.zoneMates(d), GRIEF_BOND_FLOOR) !== null,
+      );
+      return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits), strange };
     };
     // BACKLOG-414: the grief a dino's tic carries — its computed grief (closest cross-zone friend + edge), the
     // anchor its ritual settled on, and the friend it's grieving this stretch — so the e2e can prove the aim.
@@ -1005,6 +1014,7 @@ export class WorldScene extends Phaser.Scene {
     this.dropFood(PLOT_TILE_BY_ZONE[zone].tileX, crop.food); // no-ops if a piece is already in play — retry later
     this.plotByZone[zone] = null;
     this.harvested++;
+    this.harvestedByZone[zone] = (this.harvestedByZone[zone] ?? 0) + 1; // BACKLOG-428: per-zone farming term
     this.logEvent(`${crop.ripe} you harvested the crop`);
     this.refreshPlot();
     void this.saveGame();
@@ -2000,6 +2010,12 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only Playwright hook — the zone map model (BACKLOG-425): chain order, counts, keeper flag
     (window as any).__zoneMap = () => this.zoneMapEntries();
+    // BACKLOG-428: a zone's prosperity read — the folded signals, score, and tier the map lens shows.
+    (window as any).__zoneProsperity = (zone: string) => {
+      const signals = this.zoneSignals(zone);
+      const score = zoneProsperity(signals);
+      return { signals, score, tier: prosperityTier(score) };
+    };
     (window as any).__bookRows = () => this.bookRows();
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
@@ -2053,12 +2069,34 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** The live zone-map model (BACKLOG-425) — the single source the lens draws and `__zoneMap` returns. */
+  /**
+   * A zone's prosperity signals (BACKLOG-428) — the four live per-zone reads the index folds: banked
+   * resources, built landmarks, resident heads, and crops harvested from the zone's plot. Pure gather;
+   * `zoneProsperity` does the math.
+   */
+  private zoneSignals(id: string): ZoneSignals {
+    const pile = this.pileFor(id);
+    const stockpile = Object.values(pile).reduce((sum, n) => sum + (n ?? 0), 0);
+    const structures = [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === id).length;
+    const heads = zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID)[id] ?? 0;
+    const harvested = this.harvestedByZone[id] ?? 0;
+    return { stockpile, structures, heads, harvested };
+  }
+
+  /** The prosperity tier of each zone (BACKLOG-428) — the map lens's per-zone read, keyed by zone id. */
+  private zoneTiers(): Record<string, ProsperityTier> {
+    const tiers: Record<string, ProsperityTier> = {};
+    for (const id of zoneChain()) tiers[id] = prosperityTier(zoneProsperity(this.zoneSignals(id)));
+    return tiers;
+  }
+
+  /** The live zone-map model (BACKLOG-425 + 428 tier) — the single source the lens draws and `__zoneMap` returns. */
   private zoneMapEntries(): ZoneMapEntry[] {
     return zoneMapModel(
       zoneChain(),
       zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID),
       this.zoneId,
+      this.zoneTiers(),
     );
   }
 
@@ -2070,7 +2108,7 @@ export class WorldScene extends Phaser.Scene {
   private drawZoneMap(): void {
     const entries = this.zoneMapEntries();
     const boxW = 118;
-    const boxH = 52;
+    const boxH = 64; // BACKLOG-428: taller to fit the third (prosperity) line
     const gap = 26;
     const totalW = entries.length * boxW + (entries.length - 1) * gap;
     const x0 = ((TILE * COLS) - totalW) / 2;
@@ -2090,7 +2128,8 @@ export class WorldScene extends Phaser.Scene {
         this.mapGfx.fillStyle(0xffe0a0, 1);
         this.mapGfx.fillCircle(x + boxW / 2, y + boxH - 9, 4);
       }
-      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
+      // BACKLOG-428: name + head count + prosperity badge (○/◐/● quiet/growing/thriving).
+      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
     });
     // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
     for (let i = entries.length; i < this.mapLabels.length; i++) this.mapLabels[i].setVisible(false);
@@ -2290,6 +2329,15 @@ export class WorldScene extends Phaser.Scene {
    * grief floor) and the edge that friend crossed away by, or null when that friend shares its zone (no
    * departure to grieve) or it has no real friend at all. A solitude with a direction.
    */
+  /** BACKLOG-410: the names of the *other* dinos residing in `d`'s current zone (any distance) — the pool
+   *  `closestFriend` searches to decide whether `d` has a friend at home in its strange new zone. */
+  private zoneMates(d: Dino): string[] {
+    const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    return this.dinos
+      .filter((o) => o.name !== d.name && zoneOf(this.dinoZones, o.name, BOWL_ID) === zone)
+      .map((o) => o.name);
+  }
+
   private griefFor(d: Dino): { edge: Edge; friend: string } | null {
     const friend = closestFriend(d.name, this.bonds, this.dinoNames(), GRIEF_BOND_FLOOR);
     if (!friend) return null;
@@ -2433,7 +2481,16 @@ export class WorldScene extends Phaser.Scene {
         !huddling && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
       if (aloneNow) this.soloSteps[d.name] = (this.soloSteps[d.name] ?? 0) + 1;
       else this.resetTic(d.name);
-      const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0, ticAfterFor(intent, TIC_AFTER_STEPS)); // BACKLOG-393: a solitary day settles into the ritual sooner
+      // BACKLOG-410: a dino freshly moved *alone* into a friendless zone (not settled + no in-zone bonded
+      // friend) falls into its tic sooner — take the min with the 393 solitary-day threshold so the two
+      // shorteners compose. The onset only shortens; the ritual + its memory (plain 405 / grief 414) are unchanged.
+      const strange = aloneInStrangeZone(
+        isSettled(tenureOf(this.tenure, d.name)),
+        closestFriend(d.name, this.bonds, this.zoneMates(d), GRIEF_BOND_FLOOR) !== null,
+      );
+      let ticAfter = ticAfterFor(intent, TIC_AFTER_STEPS); // BACKLOG-393: a solitary day settles into the ritual sooner
+      if (strange) ticAfter = Math.min(ticAfter, TIC_AFTER_STEPS_HOMESICK);
+      const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0, ticAfter);
       let next;
       if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
@@ -4334,6 +4391,7 @@ export class WorldScene extends Phaser.Scene {
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       harvested: this.harvested,
+      harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -4403,6 +4461,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
       this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null };
       this.harvested = save.harvested ?? 0;
+      this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
       this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove

@@ -103,6 +103,8 @@ export interface SaveData {
   grovePlot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
   harvested?: number;
+  /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Additive; absent → {}. */
+  harvestedByZone?: Record<string, number>;
   eggs: Egg[];
   born: BornDino[];
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
@@ -319,6 +321,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
+  // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
+  let harvestedByZone: Record<string, number> | undefined;
+  if (o.harvestedByZone !== undefined) {
+    if (typeof o.harvestedByZone !== 'object' || o.harvestedByZone === null) return null;
+    const zones = o.harvestedByZone as Record<string, unknown>;
+    harvestedByZone = {};
+    for (const z of Object.keys(zones)) {
+      if (!isNum(zones[z]) || (zones[z] as number) < 0) return null;
+      harvestedByZone[z] = zones[z] as number;
+    }
+  }
+
   // cairns is additive over v2 — absent in older saves (default []); array of {tileX,tileY}. (BACKLOG-286)
   // `zone` is additive over that (BACKLOG-308); absent → bowl, backfilled on restore.
   let cairns: { tileX: number; tileY: number; zone?: string }[] = [];
@@ -474,6 +489,7 @@ export function deserialize(json: string): SaveData | null {
     plot,
     grovePlot,
     harvested,
+    harvestedByZone,
     eggs,
     born,
     savedAt,
