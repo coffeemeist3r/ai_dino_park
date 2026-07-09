@@ -1,7 +1,7 @@
 {
-  "cycle": 95,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 96,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-410: Homesick sooner — a dino alone in a friendless zone falls into its tic faster",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-07-08T02:30:00-05:00",
+    "lore-smith": "2026-07-09T02:30:00-05:00",
     "structure-smith": "2026-07-08T02:38:00-05:00",
     "designer": "2026-07-08T02:46:00-05:00",
     "code-planner": "2026-07-08T02:52:00-05:00",
