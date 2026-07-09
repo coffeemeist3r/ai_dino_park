@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316/328/418/425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
 - [ ] BACKLOG-432 [core] Fernreach plot + a farmable third crop — the Fernreach has no plot (349 gave bowl + grove only), and FOODS has just two plant crops (berries/greens), both now spoken for by 418. Add a third *farmable* food and a Fernreach plot tile so all three zones farm a distinct crop, completing the three-zone farming divergence 418 starts. Builds on 418/349/145.
 - [ ] BACKLOG-433 [emergent] Per-zone harvest tally — the crop-harvest count is a single global `harvested` shared across both plots. Split it per zone so each zone's farming output reads on its own, feeding the prosperity index (428) and the map lens (425) with a real per-zone farming signal instead of one bowl-wide number. Builds on 418/428/316.
@@ -224,7 +223,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
 > flow between zones instead of piling up.
 
-- [~] BACKLOG-428 [emergent] Zone prosperity index — a pure derived per-zone read (its live stockpile total + crops harvested + built structures + resident head count folded into one tier/number), exposed for the map lens (425) and any future beat that asks "which zone is thriving"; foundation the deferred governance/festival items (031/026) read instead of re-deriving. Builds on 316 / 328 / 418 / 425.
 - [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
@@ -809,7 +807,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-407 [emergent] Shared tic — a dino that watches a close friend perform its solitary tic (405) enough times picks up a faint echo of it, so a personal ritual can *spread* between friends (mimicry as quiet bonding). Builds on 405 / 013.
 - [ ] BACKLOG-409 [pokemon] Tics in the book — the collection book names each dino's signature tic ("paces a fixed little path"), a distinctness read the player collects at a glance. Builds on 405 / 021.
-- [~] BACKLOG-410 [emergent] Homesick sooner — a dino freshly moved *alone* into a zone with no friends falls into its tic faster than one on home ground, so isolation in an unfamiliar place reads quicker. Builds on 405 / 274.
 - [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
 
 ## Cycle 88 — the ritual, seen
