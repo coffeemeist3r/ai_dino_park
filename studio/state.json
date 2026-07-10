@@ -1,6 +1,6 @@
 {
   "cycle": 97,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-368: Hunger in the voice",
   "structureItem": "BACKLOG-429: Zone carry pressure",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-07-10T02:46:00-05:00",
     "code-planner": "2026-07-10T02:52:00-05:00",
     "coder": "2026-07-10T03:16:00-05:00",
-    "qa": "2026-07-09T03:40:00-05:00",
+    "qa": "2026-07-10T03:40:00-05:00",
     "validator": "2026-07-09T03:52:00-05:00",
     "artist": "2026-07-09T03:56:00-05:00"
   }
