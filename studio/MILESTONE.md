@@ -8,7 +8,26 @@
 
 ## Current milestone
 
-**(none — Milestone 2 shipped cycle 96; the next cycle's smiths draft Milestone 3)**
+**Milestone 3: Enough to go around**
+**Status:** ACTIVE (opened cycle 97)
+
+The three-zone chain stops merely *reading* as three places (Milestone 2) and starts *providing*
+like one economy: banked resources flow toward the zone that needs them instead of piling forever
+in one, all three zones farm their own crop, and each zone's yield reads on its own. And the dinos
+live inside that economy as hungry mouths and providers — hunger surfaces in a dino's own voice, the
+food web wakes with its first hunt, and giving way to a hungrier friend becomes a remembered kindness.
+Milestone 1 gave the dinos minds; Milestone 2 gave them a home ground; Milestone 3 makes that ground
+*feed them*.
+
+**Lore arcs:**
+- [ ] Hunger you can hear — a dino over its hunger threshold lets the need slip in its own greeting/gossip line (BACKLOG-368)
+- [ ] The food web wakes — a hungry carnivore stalks the nearest herbivore, which flees; the bowl's first hunt, deathless (BACKLOG-367)
+- [ ] Provision remembered — a dino that yields a meal to a hungrier friend is repaid, gratitude leaving a trace between them (BACKLOG-385, -386)
+
+**Structure arcs:**
+- [ ] Resources flow toward need — a zone past its stockpile soft cap biases its carry outflow toward a lighter neighbour (BACKLOG-429)
+- [ ] All three zones farm — the Fernreach gets its own plot and a third farmable crop, completing the farming divergence (BACKLOG-432)
+- [ ] Each zone's harvest reads on its own — a per-zone harvest tally feeds the prosperity index and the map lens (BACKLOG-433)
 
 ### Format (use this when drafting)
 
