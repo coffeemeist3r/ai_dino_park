@@ -210,6 +210,56 @@ export function directedCarry(
 }
 
 /**
+ * Zone carry pressure (BACKLOG-429) — the first inter-zone economic *pressure*. A zone's pile has a soft
+ * cap on its total (below the per-kind hard cap, so it bites first): once a zone is over it, a dino leaving
+ * it toward a *strictly lighter* neighbour sheds harder — it ferries the glut (its most-stocked acceptable
+ * kinds, `pickCarry`), up to `PRESSURE_CARRY` units, so banked resources flow toward need instead of piling
+ * forever in one zone. Below the soft cap, or toward a heavier/equal neighbour, it's byte-identical to the
+ * single directed carry (356/377): resources are never pushed into an already-fuller zone.
+ */
+export const STOCKPILE_SOFT_CAP = 6; // per-zone total; over this a glutted zone sheds toward a lighter neighbour
+export const PRESSURE_CARRY = 2; // most units a crossing sheds under pressure (a lean, not a firehose)
+
+/** A pile's total across all kinds. */
+export function pileTotal(pile: Stockpile): number {
+  return (Object.keys(RESOURCE_GLYPH) as ResourceKind[]).reduce((s, k) => s + (pile[k] ?? 0), 0);
+}
+
+/** Is a zone's pile over its soft cap — i.e. glutted enough to shed surplus under pressure? */
+export function overSoftCap(pile: Stockpile): boolean {
+  return pileTotal(pile) > STOCKPILE_SOFT_CAP;
+}
+
+/**
+ * The kinds to ferry `src → dest` this crossing (BACKLOG-429). Normal (src not over its soft cap, or `dest`
+ * not strictly lighter than `src`) → the single directed kind (356/377), or `[]` when nothing can move —
+ * byte-identical to the old carry. Under pressure (src over cap AND `dest` strictly lighter) → up to
+ * `PRESSURE_CARRY` of the most-stocked kinds `dest` can still accept, each simulated on working copies so
+ * every unit re-checks the destination cap (lossless + cap-safe). Deterministic (stable `pickCarry`).
+ */
+export function pressuredCarry(
+  src: Stockpile,
+  dest: Stockpile,
+  recipe: Partial<Record<ResourceKind, number>> = CRAFT_RECIPE,
+): ResourceKind[] {
+  if (!(overSoftCap(src) && pileTotal(dest) < pileTotal(src))) {
+    const one = directedCarry(src, dest, recipe);
+    return one ? [one] : [];
+  }
+  const out: ResourceKind[] = [];
+  let s: Stockpile = { ...src };
+  let d: Stockpile = { ...dest };
+  for (let i = 0; i < PRESSURE_CARRY; i++) {
+    const k = pickCarry(s, d);
+    if (!k) break;
+    out.push(k);
+    s = takeResource(s, k);
+    d = bankResource(d, k);
+  }
+  return out;
+}
+
+/**
  * Zone-distinct craft (BACKLOG-377) — each zone builds the structure its resource bias (348) favors,
  * so the two zones' *built landscapes* diverge, not only their piles. The stone-rich bowl stacks 🗿
  * cairns; the branch-rich grove raises 🛖 lean-tos. This replaces the zone-agnostic cairn→lean-to

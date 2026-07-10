@@ -96,7 +96,7 @@ import {
   buildStructureFor,
   zoneStructure,
   structureRecipe,
-  directedCarry,
+  pressuredCarry,
   takeResource,
   barterSwap,
   resourceFetchable,
@@ -3770,11 +3770,17 @@ export class WorldScene extends Phaser.Scene {
     // spare — so the trade route actively balances the diverging piles (falls back to a spare otherwise).
     // BACKLOG-377: aim at the destination zone's *own* structure recipe (a grove short of stone for its
     // lean-to pulls stone; a bowl short of branch for its cairn pulls branch).
-    const carry = directedCarry(this.pileFor(home), this.pileFor(dest), structureRecipe(dest));
-    if (carry) {
+    // BACKLOG-429: under carry pressure (leaving a zone over its soft cap toward a lighter neighbour) the
+    // crosser sheds the glut — up to PRESSURE_CARRY kinds — instead of a single directed kind, so banked
+    // resources flow toward need. Not over cap / heavier dest → one kind, byte-identical to 356/377.
+    const carried = pressuredCarry(this.pileFor(home), this.pileFor(dest), structureRecipe(dest));
+    for (const carry of carried) {
       this.stockpileByZone[home] = takeResource(this.pileFor(home), carry);
       this.stockpileByZone[dest] = bankResource(this.pileFor(dest), carry);
-      this.logEvent(`${RESOURCE_GLYPH[carry]} ${d.name} carried a ${carry} to ${zoneById(dest).name}`);
+    }
+    if (carried.length) {
+      const glyphs = carried.map((k) => RESOURCE_GLYPH[k]).join('');
+      this.logEvent(`${glyphs} ${d.name} carried ${carried.length} to ${zoneById(dest).name}`);
     }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
@@ -3876,6 +3882,8 @@ export class WorldScene extends Phaser.Scene {
       gratitude: whoClearedMyName(this.memory, target.name) ?? undefined,
       // A fond dino names the chosen observer (BACKLOG-276); the closest of all uses the nickname (BACKLOG-278).
       keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[target.name] ?? 0)),
+      // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets it slip into its line.
+      hungry: pressingNeed(this.needs[target.name]) === 'hunger',
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed

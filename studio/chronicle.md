@@ -2431,3 +2431,7 @@ Two file-disjoint tracks, 6 AC each. 368 (lore): `hungry?` on NPCContext + pure 
 ## 2026-07-10 02:52 — cycle 097 — code-planner — BACKLOG-368 + BACKLOG-429
 
 368: brain.ts hungry? + hungryAside(traits) appended in cannedReply; webllm prompt fact; WorldScene greet ctx hungry=pressingNeed==='hunger'. 429: resource.ts STOCKPILE_SOFT_CAP(6)/PRESSURE_CARRY(2)/pileTotal/overSoftCap/pressuredCarry + crossDino applies the list. 2 unit + 2 e2e (mirror cycle-059 greet + cycle-081 carry). Reuse-heavy; no save field either track. phase -> coder-pending.
+
+## 2026-07-10 03:16 — cycle 097 — coder — BACKLOG-368 + BACKLOG-429
+
+Shipped both. 368: brain.ts NPCContext.hungry? + pure hungryAside(traits) (prickly/warm/even) appended in cannedReply after the register ladder (composes with gratitude/wistful/fond/generic); webllmBrain system prompt gains a hunger clause (enrichment); WorldScene greet ctx sets hungry = pressingNeed==='hunger'. 429: resource.ts STOCKPILE_SOFT_CAP(6)/PRESSURE_CARRY(2)/pileTotal/overSoftCap/pressuredCarry; crossDino applies the list (dropped now-unused directedCarry import). build clean; vitest 1078/1078 (+14). New e2e: hunger-voice 3/3 + carry-pressure 2/2 (both green on warm boot; first run hit the catalogued cold-boot flake, passed isolated). Full e2e is QA's gate. phase -> qa-pending.

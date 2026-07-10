@@ -26,6 +26,8 @@ export interface NPCContext {
   gratitude?: string;
   /** The chosen observer's designation — a fond dino drops it into its hello (BACKLOG-276). */
   keeperName?: string;
+  /** Pressing hunger (need-drive 371 over threshold): the dino lets it slip in its line (BACKLOG-368). */
+  hungry?: boolean;
 }
 
 export interface Observation {
@@ -136,25 +138,45 @@ export function thanksLine(clearer: string, traits?: Personality): string {
   return `${clearer} told everyone I was alright — I owe them one.`;
 }
 
+/**
+ * A pressing-hunger aside a dino lets slip mid-greeting (BACKLOG-368), temperament-shaded like the thanks
+ * register: a prickly dino (`agreeableness < PRICKLY_MAX`) grumbles it, a warm one (`> EFFUSIVE_MIN`) makes
+ * a whole plea of it, an even-tempered one just mentions it. No traits → the plain mention (back-compat).
+ * Leads with a space so it appends cleanly onto whatever register produced the base line.
+ */
+export function hungryAside(traits?: Personality): string {
+  if (traits && traits.agreeableness < PRICKLY_MAX) return ` …and I'm starving, if the keeper's asking.`;
+  if (traits && traits.agreeableness > EFFUSIVE_MIN) {
+    return ` Oh — and I'm *so* hungry, you wouldn't believe, could you spare a bite?`;
+  }
+  return ` …could eat, honestly.`;
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
+  let reply: Reply;
   // A just-cleared dino leads with gratitude, naming its clearer (BACKLOG-247) — the deterministic
   // half of "thanks in the voice"; the LLM path colours the same fact via buildMessages.
   if (ctx.gratitude) {
-    return { text: thanksLine(ctx.gratitude, ctx.traits), mood: 'happy', source: 'canned' };
+    reply = { text: thanksLine(ctx.gratitude, ctx.traits), mood: 'happy', source: 'canned' };
   }
   // A neglected dino (rock-bottom friendship, nothing to be grateful for) opens wistfully (BACKLOG-271)
   // — the affection-pole counterpart of the gratitude register. Gratitude above always wins.
-  if (ctx.affection !== undefined && ctx.affection <= WISTFUL_MAX) {
-    return { text: wistfulGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
+  else if (ctx.affection !== undefined && ctx.affection <= WISTFUL_MAX) {
+    reply = { text: wistfulGreeting(ctx.name), mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
   // A close dino (high friendship) opens warmly (BACKLOG-272) — the warm pole of the wistful greeting.
-  if (ctx.affection !== undefined && ctx.affection >= FOND_MIN) {
-    return { text: fondGreeting(ctx.name, ctx.keeperName), mood: moodFromTraits(ctx.traits), source: 'canned' };
+  else if (ctx.affection !== undefined && ctx.affection >= FOND_MIN) {
+    reply = { text: fondGreeting(ctx.name, ctx.keeperName), mood: moodFromTraits(ctx.traits), source: 'canned' };
+  } else {
+    const idx = Math.floor(Math.random() * cannedGreetings.length);
+    const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
+    reply = { text, mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
-  const idx = Math.floor(Math.random() * cannedGreetings.length);
-  const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
-  return { text, mood: moodFromTraits(ctx.traits), source: 'canned' };
+  // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets the want slip into whatever it
+  // was going to say, regardless of register — the tell composes with gratitude/wistful/fond/generic alike.
+  if (ctx.hungry) reply = { ...reply, text: (reply.text + hungryAside(ctx.traits)).slice(0, 240) };
+  return reply;
 }
 
 class StubBrain implements NPCBrain {
