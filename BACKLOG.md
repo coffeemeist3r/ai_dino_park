@@ -20,9 +20,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
+- [~] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
 - [ ] BACKLOG-432 [core] Fernreach plot + a farmable third crop — the Fernreach has no plot (349 gave bowl + grove only), and FOODS has just two plant crops (berries/greens), both now spoken for by 418. Add a third *farmable* food and a Fernreach plot tile so all three zones farm a distinct crop, completing the three-zone farming divergence 418 starts. Builds on 418/349/145.
 - [ ] BACKLOG-433 [emergent] Per-zone harvest tally — the crop-harvest count is a single global `harvested` shared across both plots. Split it per zone so each zone's farming output reads on its own, feeding the prosperity index (428) and the map lens (425) with a real per-zone farming signal instead of one bowl-wide number. Builds on 418/428/316.
+- [ ] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf`/`isCarnivore`/`eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060/foods.
+- [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
 
 ---
 
@@ -222,7 +224,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
 > flow between zones instead of piling up.
 
-- [ ] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
+- [~] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348.
+
+## Cycle 97 structure additions — the food web's data spine + the need that moves (2026-07-10)
+
+> Structure Track sat at 3 open (429/432/433, below cap X=4), so the Structure-smith seeded two while
+> picking 429 (Milestone 3 structure arc 1). Both are Milestone 3 spines: a diet split so the food web
+> (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
+> hungry dino finally *seeks* food instead of just wearing the mark.
+
+- [ ] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf` / `isCarnivore` / `eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060 / foods.
+- [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371 / needs.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
 
