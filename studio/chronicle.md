@@ -2427,3 +2427,7 @@ Milestone 3 structure arcs written to MILESTONE.md (429/432/433 — the queued t
 ## 2026-07-10 02:46 — cycle 097 — designer — BACKLOG-368 + BACKLOG-429
 
 Two file-disjoint tracks, 6 AC each. 368 (lore): `hungry?` on NPCContext + pure `hungryAside(traits)` (prickly/warm/even) appended in cannedReply when `ctx.hungry`, composing with every greeting register; WorldScene greet ctx sets hungry = pressingNeed==='hunger'; webllm prompt gets the fact (enrichment). 429 (structure): pure resource.ts STOCKPILE_SOFT_CAP/PRESSURE_CARRY/pileTotal/overSoftCap/pressuredCarry — over-cap + strictly-lighter dest sheds up to 2 most-stocked kinds, else byte-identical single directedCarry; crossDino applies the list. No save change either track. phase -> codeplan-pending.
+
+## 2026-07-10 02:52 — cycle 097 — code-planner — BACKLOG-368 + BACKLOG-429
+
+368: brain.ts hungry? + hungryAside(traits) appended in cannedReply; webllm prompt fact; WorldScene greet ctx hungry=pressingNeed==='hunger'. 429: resource.ts STOCKPILE_SOFT_CAP(6)/PRESSURE_CARRY(2)/pileTotal/overSoftCap/pressuredCarry + crossDino applies the list. 2 unit + 2 e2e (mirror cycle-059 greet + cycle-081 carry). Reuse-heavy; no save field either track. phase -> coder-pending.
