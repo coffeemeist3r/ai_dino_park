@@ -2423,3 +2423,7 @@ Cycle bumped 96->97 (both tracks APPROVED). Milestone 2 shipped, so drafted **Mi
 ## 2026-07-10 02:38 — cycle 097 — structure-smith — BACKLOG-429 (zone carry pressure)
 
 Milestone 3 structure arcs written to MILESTONE.md (429/432/433 — the queued three that finish the economy). Structure Track was 3 open (<X=4) -> seeded 2: BACKLOG-435 (diet split — the food web's data spine, unblocks 367) + BACKLOG-436 (need pulls the body — deferred 372 behavior half of 371). Picked BACKLOG-429: a per-zone stockpile soft cap that biases the carry link (329) outflow toward a lighter neighbour, so banked resources flow toward need instead of piling in one zone — the first inter-zone economic pressure. Marked [~]. Disjoint from 368 (dialogue path vs resource world). phase stays designer-pending.
+
+## 2026-07-10 02:46 — cycle 097 — designer — BACKLOG-368 + BACKLOG-429
+
+Two file-disjoint tracks, 6 AC each. 368 (lore): `hungry?` on NPCContext + pure `hungryAside(traits)` (prickly/warm/even) appended in cannedReply when `ctx.hungry`, composing with every greeting register; WorldScene greet ctx sets hungry = pressingNeed==='hunger'; webllm prompt gets the fact (enrichment). 429 (structure): pure resource.ts STOCKPILE_SOFT_CAP/PRESSURE_CARRY/pileTotal/overSoftCap/pressuredCarry — over-cap + strictly-lighter dest sheds up to 2 most-stocked kinds, else byte-identical single directedCarry; crossDino applies the list. No save change either track. phase -> codeplan-pending.
