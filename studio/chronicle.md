@@ -2459,3 +2459,7 @@ No open [art] items, and neither shipped track has an art surface: 368 is greeti
 ## 2026-07-11 02:30 — cycle 098 — lore-smith — Provision remembered (BACKLOG-385 + 386)
 
 Cycle bumped 97->98 (both tracks APPROVED). Milestone 3 ACTIVE — picked lore arc 3 "Provision remembered": the generous feeder (375) becomes reciprocal + acknowledged. BACKLOG-385 (remembered generosity — a fed dino files who fed it and repays at a relaxed bond bar) + BACKLOG-386 (grateful nuzzle — a 💛 toward the benefactor) ship together as the two named halves of one milestone arc, both hooking the 375 yield in checkFeeding. Lore cap >> 12 -> no new seeds. The food web arc (367) stays blocked on the diet split (435, Structure Track), so it can't lead this cycle. Idea Box empty. phase -> designer-pending.
+
+## 2026-07-11 02:38 — cycle 098 — structure-smith — BACKLOG-432 (Fernreach plot + third crop)
+
+Structure Track at cap (4 open: 432/433/435/436 = X) -> no new seeds, drain. Picked BACKLOG-432 (Milestone 3 structure arc 2, "All three zones farm"): the Fernreach — the third zone since cycle 85 — still grows nothing (349 cut bowl + grove plots only) and FOODS has just two plant crops, both spoken for by 418. Give the Fernreach its own plot tile + add a third farmable food so all three zones farm a distinct crop. Disjoint from the lore pick (foods/plot data vs feeding.ts yield path); the plot machinery is already zone-generic (iterates PLOT_TILE_BY_ZONE), so it's a zone row not new plumbing. Marked [~]. phase stays designer-pending.
