@@ -8,6 +8,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'cairn',
       'crop_ripe',
       'crop_ripe_greens', // BACKLOG-418: the grove's greens crop, stashed ahead of the drawPlotSprite wiring
+      'crop_ripe_roots', // BACKLOG-432: the Fernreach's roots crop
       'crop_seed',
       'crop_sprout',
       'frond',

@@ -213,6 +213,37 @@ const CROP_RIPE_GREENS_RIG: PropRig = {
   palette: { ...SOIL, ...LEAF, p: LEAF_PALE },
 };
 
+// Ripe roots 🍠 (BACKLOG-432) — the Fernreach's crop: a plump orange tuber shouldering out of the soil
+// mound under a small leaf sprig, so the third zone's ripe plot reads apart from the berry bush and the
+// greens head (no berry-red, its bulk is the root, not the leaves). Warm root tones suit the sunlit fern
+// flats. Renders standalone via bakePropArt, the twin of the greens rig stashed cycle 95.
+const ROOT_BODY = 0xd07a2e; // starchy-root orange
+const ROOT_LIT = 0xe8a24e; // sun-caught root highlight
+const CROP_RIPE_ROOTS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '......ggg.......',
+  '.....glllg......',
+  '......lll.......',
+  '.....ttttt......',
+  '....tttTttt.....',
+  '....ttTTTtt.....',
+  '.....ttttt......',
+  '.......g........',
+  '......ommo......',
+  '.....ommmmo.....',
+  '...ohhhhhhhho...',
+  '................',
+  '................',
+  '................',
+];
+
+const CROP_RIPE_ROOTS_RIG: PropRig = {
+  size: 16,
+  grid: CROP_RIPE_ROOTS_GRID,
+  palette: { ...SOIL, ...LEAF, t: ROOT_BODY, T: ROOT_LIT },
+};
+
 // ── Lean-to shelter 🛖 (BACKLOG-315/344) — the dino-built landmark beyond the cairn, drawn as branches.
 // A single sloped roof of lashed wood rising from a back post down to a wide front eave, with the open
 // shaded interior tapering underneath. Built of branches, so it shares the branch's wood/outline tones.
@@ -332,6 +363,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_sprout: CROP_SPROUT_RIG,
   crop_ripe: CROP_RIPE_RIG,
   crop_ripe_greens: CROP_RIPE_GREENS_RIG, // BACKLOG-418: the grove's greens crop, stashed ahead of drawPlotSprite wiring
+  crop_ripe_roots: CROP_RIPE_ROOTS_RIG, // BACKLOG-432: the Fernreach's roots crop, so all three ripe crops bake a rig
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
   thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
 };

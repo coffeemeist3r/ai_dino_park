@@ -33,6 +33,9 @@ test('the Fernreach grows and harvests its own roots, independent of the other p
   await step(page);
   expect((await plot(page, 'fernreach')).stage).toBe('ripe');
 
+  // BACKLOG-432 (art): the ripe Fernreach plot bakes its own roots rig, not the 🍠 glyph fallback.
+  expect(await page.evaluate(() => (window as W).__plotArt('fernreach'))).not.toBeNull();
+
   // Harvest: roots drop into play, the plot empties, the shared tally rises.
   await page.evaluate(() => (window as W).__harvestPlot('fernreach'));
   const food = await page.evaluate(() => (window as W).__food());
