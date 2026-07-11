@@ -768,8 +768,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > and lets the friend eat first, the first generosity that costs something. These extend it into
 > reciprocity, acknowledgement, its selfish inverse, and a legible standing.
 
-- [ ] BACKLOG-385 [emergent] Remembered generosity — a dino yielded food by a friend (375) files who fed it; it's quicker to yield back to that friend later, so generosity becomes reciprocal. Builds on 375 / 132.
-- [ ] BACKLOG-386 [social] Grateful nuzzle — a dino fed first by a generous friend (375) throws a small 💛 toward its benefactor, so the kindness gets visibly acknowledged. Builds on 375 / 130.
+- [~] BACKLOG-385 [emergent] Remembered generosity — a dino yielded food by a friend (375) files who fed it; it's quicker to yield back to that friend later, so generosity becomes reciprocal. Builds on 375 / 132.
+- [~] BACKLOG-386 [social] Grateful nuzzle — a dino fed first by a generous friend (375) throws a small 💛 toward its benefactor, so the kindness gets visibly acknowledged. Builds on 375 / 130.
 - [ ] BACKLOG-388 [pokemon] Kindest in the book — the collection book tracks how many times each dino has yielded a meal to a friend ("gave up 3 meals"), making generosity a legible standing. Builds on 375 / 021.
 
 ## Cycle 84 lore additions — generosity has an opposite (2026-06-28)
