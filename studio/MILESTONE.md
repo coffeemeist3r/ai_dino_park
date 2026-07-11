@@ -22,11 +22,11 @@ Milestone 1 gave the dinos minds; Milestone 2 gave them a home ground; Milestone
 **Lore arcs:**
 - [x] Hunger you can hear — a dino over its hunger threshold lets the need slip in its own greeting/gossip line (BACKLOG-368 — cycle 97)
 - [ ] The food web wakes — a hungry carnivore stalks the nearest herbivore, which flees; the bowl's first hunt, deathless (BACKLOG-367)
-- [ ] Provision remembered — a dino that yields a meal to a hungrier friend is repaid, gratitude leaving a trace between them (BACKLOG-385, -386)
+- [x] Provision remembered — a dino that yields a meal to a hungrier friend is repaid, gratitude leaving a trace between them (BACKLOG-385, -386 — cycle 98)
 
 **Structure arcs:**
 - [x] Resources flow toward need — a zone past its stockpile soft cap biases its carry outflow toward a lighter neighbour (BACKLOG-429 — cycle 97)
-- [ ] All three zones farm — the Fernreach gets its own plot and a third farmable crop, completing the farming divergence (BACKLOG-432)
+- [x] All three zones farm — the Fernreach gets its own plot and a third farmable crop, completing the farming divergence (BACKLOG-432 — cycle 98)
 - [ ] Each zone's harvest reads on its own — a per-zone harvest tally feeds the prosperity index and the map lens (BACKLOG-433)
 
 ### Format (use this when drafting)

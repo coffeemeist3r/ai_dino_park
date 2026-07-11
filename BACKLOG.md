@@ -20,8 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [x] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328/329/348.
-- [~] BACKLOG-432 [core] Fernreach plot + a farmable third crop — the Fernreach has no plot (349 gave bowl + grove only), and FOODS has just two plant crops (berries/greens), both now spoken for by 418. Add a third *farmable* food and a Fernreach plot tile so all three zones farm a distinct crop, completing the three-zone farming divergence 418 starts. Builds on 418/349/145.
 - [ ] BACKLOG-433 [emergent] Per-zone harvest tally — the crop-harvest count is a single global `harvested` shared across both plots. Split it per zone so each zone's farming output reads on its own, feeding the prosperity index (428) and the map lens (425) with a real per-zone farming signal instead of one bowl-wide number. Builds on 418/428/316.
 - [ ] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf`/`isCarnivore`/`eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060/foods.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
@@ -224,7 +222,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
 > flow between zones instead of piling up.
 
-- [x] BACKLOG-429 [core] Zone carry pressure — a per-zone stockpile soft cap: once a zone's pile passes it, the carry link (329) biases outflow toward a lighter neighbour, so banked resources *flow* toward need instead of piling forever in one zone; the first real inter-zone economic pressure. Builds on 328 / 329 / 348. — SHIPPED cycle 97 (STOCKPILE_SOFT_CAP + pressuredCarry: over-cap sheds up to 2 toward a lighter neighbour).
 
 ## Cycle 97 structure additions — the food web's data spine + the need that moves (2026-07-10)
 
@@ -736,7 +733,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > seeded as 360; death is routed to the operator as a CHARTER-level call — see IDEABOX).
 
 - [ ] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 371) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 371 + a carnivore/herbivore split read off the existing roster diet. Builds on 371 / 018.
-- [x] BACKLOG-368 [emergent] Hunger in the voice — a hungry dino (371 over the pressing threshold) lets it slip in its next greeting/gossip line ("…could eat, honestly"), so the need-drive surfaces as personality, not just a 🍖 mark. Deterministic fallback line + LLM colour behind NPCBrain. Builds on 371 / 051. — SHIPPED cycle 97 (hungryAside appended in cannedReply; temperament-shaded; composes with every register).
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
 ## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
@@ -768,8 +764,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > and lets the friend eat first, the first generosity that costs something. These extend it into
 > reciprocity, acknowledgement, its selfish inverse, and a legible standing.
 
-- [~] BACKLOG-385 [emergent] Remembered generosity — a dino yielded food by a friend (375) files who fed it; it's quicker to yield back to that friend later, so generosity becomes reciprocal. Builds on 375 / 132.
-- [~] BACKLOG-386 [social] Grateful nuzzle — a dino fed first by a generous friend (375) throws a small 💛 toward its benefactor, so the kindness gets visibly acknowledged. Builds on 375 / 130.
 - [ ] BACKLOG-388 [pokemon] Kindest in the book — the collection book tracks how many times each dino has yielded a meal to a friend ("gave up 3 meals"), making generosity a legible standing. Builds on 375 / 021.
 
 ## Cycle 84 lore additions — generosity has an opposite (2026-06-28)
