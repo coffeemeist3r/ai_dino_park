@@ -1,7 +1,7 @@
 {
   "cycle": 98,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-385+386: Provision remembered",
   "structureItem": "BACKLOG-432: Fernreach plot + a farmable third crop",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-07-11T02:30:00-05:00",
     "structure-smith": "2026-07-11T02:38:00-05:00",
-    "designer": "2026-07-10T02:46:00-05:00",
+    "designer": "2026-07-11T02:46:00-05:00",
     "code-planner": "2026-07-10T02:52:00-05:00",
     "coder": "2026-07-10T03:16:00-05:00",
     "qa": "2026-07-10T03:40:00-05:00",
