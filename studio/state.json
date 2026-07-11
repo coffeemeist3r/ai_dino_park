@@ -1,6 +1,6 @@
 {
   "cycle": 98,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-385+386: Provision remembered",
   "structureItem": "BACKLOG-432: Fernreach plot + a farmable third crop",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-07-11T02:46:00-05:00",
     "code-planner": "2026-07-11T02:52:00-05:00",
     "coder": "2026-07-11T03:16:00-05:00",
-    "qa": "2026-07-10T03:40:00-05:00",
+    "qa": "2026-07-11T03:40:00-05:00",
     "validator": "2026-07-10T03:52:00-05:00",
     "artist": "2026-07-10T03:56:00-05:00"
   }
