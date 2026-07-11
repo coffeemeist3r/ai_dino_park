@@ -101,6 +101,8 @@ export interface SaveData {
   plot?: { plantedDay: number } | null;
   /** The grove's planted plot (BACKLOG-349). Additive over `plot`; absent → null (old saves load grove-empty). */
   grovePlot?: { plantedDay: number } | null;
+  /** The Fernreach's planted plot (BACKLOG-432). Additive over `grovePlot`; absent → null (old saves load Fernreach-empty). */
+  fernreachPlot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
   harvested?: number;
   /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Additive; absent → {}. */
@@ -402,6 +404,8 @@ export function deserialize(json: string): SaveData | null {
   if (plot === undefined) return null;
   const grovePlot = readPlot(o.grovePlot);
   if (grovePlot === undefined) return null;
+  const fernreachPlot = readPlot(o.fernreachPlot); // BACKLOG-432: additive, absent → null (readPlot)
+  if (fernreachPlot === undefined) return null;
   let harvested = 0;
   if (o.harvested !== undefined) {
     if (!isNum(o.harvested) || (o.harvested as number) < 0) return null;
@@ -488,6 +492,7 @@ export function deserialize(json: string): SaveData | null {
     pondSeen,
     plot,
     grovePlot,
+    fernreachPlot,
     harvested,
     harvestedByZone,
     eggs,

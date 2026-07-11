@@ -53,20 +53,40 @@ export const HUNGRIER_BY = 0.25; // the friend must be at least this much hungri
 export const SWARM_RADIUS = 4; // tiles from the food — who counts as "beside" the winner in the swarm
 
 /**
+ * Remembered generosity (BACKLOG-385) — a dino repays a friend that once fed it (375) more readily
+ * than a mere acquaintance. When a candidate is in the winner's `owes` set (a benefactor it remembers),
+ * the two yield bars drop from the stranger-friend thresholds to these: you'll cross the bowl for
+ * someone who crossed it for you, at a bond you wouldn't for anyone else.
+ */
+export const RECIPROCAL_BOND = 20; // owed benefactor: yielded to at half the GENEROUS_BOND bar
+export const RECIPROCAL_HUNGRIER_BY = 0.1; // ...and a smaller hunger gap suffices to repay a kindness
+
+/**
  * The friend the `winner` yields its meal to, or null when it eats itself. Null when the winner is
  * hungry (> WELL_FED) — it keeps its own food — or when no candidate clears both bars (bond ≥
  * GENEROUS_BOND AND at least HUNGRIER_BY hungrier). Otherwise the hungriest qualifying friend, ties
  * broken by the higher bond. Deterministic — a stable sort over the supplied order.
+ *
+ * `owes` names benefactors the winner remembers being fed by (BACKLOG-385): a candidate in this set
+ * qualifies at the relaxed RECIPROCAL_* bars and wins ties over an un-owed friend, so generosity is
+ * repaid. Omitting `owes` (an empty set) reproduces the cycle-83 verdict exactly.
  */
 export function yieldFoodTo(
   winner: string,
   winnerHunger: number,
   candidates: ReadonlyArray<{ name: string; hunger: number; bond: number }>,
+  owes: ReadonlySet<string> = new Set(),
 ): string | null {
   if (winnerHunger > WELL_FED) return null;
   const worthy = candidates
-    .filter((c) => c.name !== winner && c.bond >= GENEROUS_BOND && c.hunger - winnerHunger >= HUNGRIER_BY)
-    .sort((a, b) => b.hunger - a.hunger || b.bond - a.bond);
+    .filter((c) => {
+      if (c.name === winner) return false;
+      const bondBar = owes.has(c.name) ? RECIPROCAL_BOND : GENEROUS_BOND;
+      const hungrierBar = owes.has(c.name) ? RECIPROCAL_HUNGRIER_BY : HUNGRIER_BY;
+      return c.bond >= bondBar && c.hunger - winnerHunger >= hungrierBar;
+    })
+    // owed benefactors first (repay a kindness), then hungriest, then the higher bond
+    .sort((a, b) => Number(owes.has(b.name)) - Number(owes.has(a.name)) || b.hunger - a.hunger || b.bond - a.bond);
   return worthy[0]?.name ?? null;
 }
 

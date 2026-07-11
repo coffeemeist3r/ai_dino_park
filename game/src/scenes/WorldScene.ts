@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
@@ -262,6 +262,11 @@ export class WorldScene extends Phaser.Scene {
   private lastGobble: { winner: string; gobbler: string } | null = null;
   /** The last stand-up beat (BACKLOG-390): a bold winner that held its food against a gobbler, or null. Transient. */
   private lastStand: { winner: string; gobbler: string } | null = null;
+  /** The last grateful-nuzzle beat (BACKLOG-386): who threw a 💛 at whom on a yield, or null. Transient. */
+  private lastNuzzle: { from: string; to: string } | null = null;
+  /** Who each dino remembers being fed by (BACKLOG-385): a live per-session ledger of generosity owed
+   *  back, biasing a later yield toward a benefactor. The durable trace is the persisted memory (as 375). */
+  private owesFood: Record<string, string[]> = {};
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
@@ -372,14 +377,14 @@ export class WorldScene extends Phaser.Scene {
   /** Dinos that have ever seen the grove pond (BACKLOG-359). Persisted; absent → []. Gates the once-ever pond-sight beat. */
   private pondSeen: string[] = [];
   /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
-  private plotByZone: Record<string, { plantedDay: number } | null> = { [BOWL_ID]: null, [GROVE_ID]: null };
+  private plotByZone: Record<string, { plantedDay: number } | null> = { [BOWL_ID]: null, [GROVE_ID]: null, [FERNREACH_ID]: null };
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
   /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. Shared across both plots. */
   private harvested = 0;
   /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Persisted; absent → {}. */
   private harvestedByZone: Record<string, number> = {};
   /** Last plot stage drawn per zone — so the ripen note fires once, on the edge into ripe. */
-  private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
+  private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
   private skyStartAbsMin = 0;
@@ -791,6 +796,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
     // BACKLOG-390: the last stand-up beat (a bold winner that held its ground against a gobbler) or null.
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
+    // BACKLOG-386/385: the last grateful-nuzzle beat, and the live "who owes whom a meal back" ledger.
+    (window as any).__nuzzle = () => (this.lastNuzzle ? { ...this.lastNuzzle } : null);
+    (window as any).__owesFood = () => JSON.parse(JSON.stringify(this.owesFood)) as Record<string, string[]>;
     (window as any).__setTrait = (name: string, key: string, v: number) => {
       const d = this.dinos.find((x) => x.name === name);
       if (d) (d.traits as any)[key] = v;
@@ -1105,7 +1113,8 @@ export class WorldScene extends Phaser.Scene {
         bond: bondPoints(this.bonds, eater.name, d.name),
         agreeableness: d.traits.agreeableness,
       }));
-    const friendName = yieldFoodTo(eater.name, eaterHunger, candidates);
+    // BACKLOG-385: the winner repays a benefactor it remembers being fed by at a relaxed bond bar.
+    const friendName = yieldFoodTo(eater.name, eaterHunger, candidates, new Set(this.owesFood[eater.name] ?? []));
     if (friendName) {
       const friend = this.dinos.find((d) => d.name === friendName)!;
       this.lastYield = { giver: eater.name, eater: friendName };
@@ -1115,10 +1124,23 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
       this.flashFeed(eater, '🤝');
       this.logEvent(`🤝 ${eater.name} let ${friendName} eat first`);
+      // BACKLOG-385: if this very yield repays a debt (the friend once fed the winner), the ledger closes —
+      // a one-shot, so kindness keeps cycling rather than locking one pair forever.
+      if ((this.owesFood[eater.name] ?? []).includes(friendName)) {
+        this.owesFood[eater.name] = this.owesFood[eater.name].filter((n) => n !== friendName);
+        this.memory = remember(this.memory, eater.name, `you repaid ${friendName}'s kindness at the hatch`);
+      }
+      // ...and the fed friend now remembers the winner as a benefactor to repay later.
+      this.owesFood[friendName] = [...new Set([...(this.owesFood[friendName] ?? []), eater.name])];
+      // BACKLOG-386: the fed friend throws a grateful 💛 toward its benefactor as it eats.
+      this.lastNuzzle = { from: friendName, to: eater.name };
+      this.flashFeed(friend, '💛');
+      this.logEvent(`💛 ${friendName} nuzzled ${eater.name} in thanks`);
       this.eatFood(friend);
       return;
     }
     this.lastYield = null;
+    this.lastNuzzle = null;
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
     const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
@@ -4398,6 +4420,7 @@ export class WorldScene extends Phaser.Scene {
       pondSeen: this.pondSeen, // BACKLOG-359
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
+      fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
       harvested: this.harvested,
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       eggs: this.eggs,
@@ -4467,10 +4490,10 @@ export class WorldScene extends Phaser.Scene {
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
-      this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null };
+      this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null, [FERNREACH_ID]: save.fernreachPlot ?? null };
       this.harvested = save.harvested ?? 0;
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
-      this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty' };
+      this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position

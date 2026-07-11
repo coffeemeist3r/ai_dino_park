@@ -16,8 +16,11 @@ describe('per-zone crop identity (BACKLOG-418)', () => {
     expect(cropOf(GROVE_ID)).toEqual({ food: 'greens', ripe: '🥬' });
   });
 
+  it('the Fernreach grows starchy roots with its own 🍠 marker (BACKLOG-432)', () => {
+    expect(cropOf(FERNREACH_ID)).toEqual({ food: 'roots', ripe: '🍠' });
+  });
+
   it('a zone with no crop entry falls back to the bowl berry', () => {
-    expect(cropOf(FERNREACH_ID)).toEqual(cropOf(BOWL_ID)); // no Fernreach plot yet
     expect(cropOf('nowhere')).toEqual(cropOf(BOWL_ID));
   });
 

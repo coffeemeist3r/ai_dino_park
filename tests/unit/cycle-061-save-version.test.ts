@@ -30,6 +30,7 @@ const validV2: SaveData = {
   pondSeen: [],
   plot: null,
   grovePlot: null,
+  fernreachPlot: null,
   harvested: 0,
   eggs: [],
   born: [],

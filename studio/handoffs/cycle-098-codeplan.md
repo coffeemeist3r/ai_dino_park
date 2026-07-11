@@ -106,3 +106,23 @@ rejected like grovePlot.
 **Estimated touch count:** ~7 files (foods.ts, plot.ts, saveGame.ts, WorldScene.ts, +3 tests). Arc-sized.
 
 phase → coder-pending.
+
+---
+
+## Shipped (Coder — 2026-07-11)
+
+**Lore track (385 + 386):**
+- `game/src/world/feeding.ts` — `RECIPROCAL_BOND=20` / `RECIPROCAL_HUNGRIER_BY=0.1`; `yieldFoodTo` gains an optional `owes` set (relaxed bars for owed benefactors + owed-first tiebreak; empty set = byte-identical to cycle-83).
+- `game/src/scenes/WorldScene.ts` — `owesFood` ledger + `lastNuzzle`; `checkFeeding` yield branch passes the ledger, records the debt, clears it on a repayment (+ "repaid X's kindness" memory), throws the 💛 (386). `__nuzzle` / `__owesFood` hooks. No save field (durable trace = the memory, per 375).
+
+**Structure track (432):**
+- `game/src/world/foods.ts` — `roots` (🥕, appeal {energy:-0.5, bravery:0.4}).
+- `game/src/world/plot.ts` — `FERNREACH_PLOT_TILE {8,8}`; `CROP_BY_ZONE`/`PLOT_TILE_BY_ZONE` Fernreach rows (crop roots, ripe 🍠).
+- `game/src/world/saveGame.ts` — `fernreachPlot` (additive, validated via `readPlot`).
+- `game/src/scenes/WorldScene.ts` — `fernreachPlot` save/restore + field-init seeds for the Fernreach plot keys.
+
+**Deviations:** added 3 mirror save tests (round-trip / old-save / malformed `fernreachPlot`) and updated the stale cycle-095-crops "no Fernreach plot yet" assertion — both anticipated in the plan.
+
+**Tests added:** `tests/unit/cycle-098-reciprocity.test.ts`, `tests/unit/cycle-098-fernreach-plot.test.ts`, `tests/e2e/cycle-098-provision.spec.ts`, `tests/e2e/cycle-098-fernreach-farm.spec.ts`.
+
+**Build:** ✅ clean. **Unit:** ✅ 1094/1094 (+16). **Dev render:** ✅ HTTP 200. **WebLLM boundary:** ✅ only under `ai/`. E2E is QA's gate.

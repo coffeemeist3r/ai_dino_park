@@ -24,6 +24,7 @@ const sample: SaveData = {
   pondSeen: [],
   plot: null,
   grovePlot: null,
+  fernreachPlot: null,
   harvested: 0,
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
@@ -370,6 +371,22 @@ describe('saveGame', () => {
 
   it('returns null for a malformed grovePlot (BACKLOG-349)', () => {
     expect(deserialize(JSON.stringify({ ...sample, grovePlot: { plantedDay: 'x' } }))).toBeNull();
+  });
+
+  it('round-trips a Fernreach plot independently of the other plots (BACKLOG-432)', () => {
+    const all: SaveData = { ...sample, plot: { plantedDay: 2 }, grovePlot: { plantedDay: 5 }, fernreachPlot: { plantedDay: 8 } };
+    expect(deserialize(serialize(all))).toEqual(all);
+    const fernOnly: SaveData = { ...sample, plot: null, grovePlot: null, fernreachPlot: { plantedDay: 9 } };
+    expect(deserialize(serialize(fernOnly))).toEqual(fernOnly);
+  });
+
+  it('loads an older save lacking fernreachPlot, defaulting it to null (BACKLOG-432)', () => {
+    const old = JSON.stringify({ version: SAVE_VERSION, time: sample.time, player: sample.player });
+    expect(deserialize(old)!.fernreachPlot).toBeNull();
+  });
+
+  it('returns null for a malformed fernreachPlot (BACKLOG-432)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, fernreachPlot: { plantedDay: 'x' } }))).toBeNull();
   });
 
   it('round-trips a pondSeen list, defaults it absent, rejects a non-string entry (BACKLOG-359)', () => {

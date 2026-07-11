@@ -26,6 +26,9 @@ export const FOODS: ReadonlyArray<Food> = [
   { id: 'greens', emoji: '🌿', label: 'leafy greens', appeal: { agreeableness: 1, curiosity: -0.3 } },
   { id: 'fish', emoji: '🐟', label: 'silver fish', appeal: { curiosity: 1 } },
   { id: 'berries', emoji: '🍓', label: 'sweet berries', appeal: { sociability: 1, agreeableness: 0.5 } },
+  // BACKLOG-432: the Fernreach's farmable crop — a hardy root for a calm, sure-footed dino. Appeal tuned
+  // low enough that it flips no roster dino's favorite in any season (061/170/418 verdicts unchanged).
+  { id: 'roots', emoji: '🥕', label: 'starchy roots', appeal: { energy: -0.5, bravery: 0.4 } },
 ];
 
 /**
