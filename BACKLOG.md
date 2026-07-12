@@ -20,10 +20,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-433 [emergent] Per-zone harvest tally — the crop-harvest count is a single global `harvested` shared across both plots. Split it per zone so each zone's farming output reads on its own, feeding the prosperity index (428) and the map lens (425) with a real per-zone farming signal instead of one bowl-wide number. Builds on 418/428/316. *(Scope note cycle 99: the data half — `harvestedByZone` → prosperity tier — already landed with 428; remaining scope = surfacing the per-zone `🌾N` on the map lens so farming reads on its own, not only blended into the tier.)*
 - [ ] BACKLOG-437 [core] Meat drops from a carnivore's own take — the food web (367) is a chase with no payoff. Give a successful stalk (occasional, deathless) a small meat FOODS drop the carnivore eats, so hunger (371) resolves through hunting, not only the hatch. The meat half of the diet economy (435). Builds on 367 / 435 / 059.
 - [ ] BACKLOG-438 [emergent] A zone wants what it can't grow — each zone farms one crop (418/432) and its harvest reads on its own (433); make that a want: a zone light on a food kind its own plot can't grow biases its carry-request toward a neighbour that can (the flow rule 429, keyed to farming output). The demand half of "enough to go around." Builds on 433 / 429 / 435.
-- [~] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf`/`isCarnivore`/`eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060/foods.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
 
 ---
@@ -72,6 +70,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
+- [ ] BACKLOG-439 [infra] Stand up a real test harness — cycle 99 found the repo tracks **no** test files (`git ls-files` → zero `*.test.ts`/`*.spec.ts`; the chronicle's prior vitest/e2e counts were never committed artifacts). Cycle 99 landed the first 16 vitest unit tests. Add a `playwright.config.ts` + a boot spec (game loads → `__ready`) and wire `test`/`test:e2e` into a check the studio can actually run, so WorldScene glue ACs (the food-web stalk/flee, the harvest lens) can be **executed**, not only code-reviewed. Highest-leverage infra debt: the quality bar has been aspirational, not enforced. Builds on 037/038/039.
 - [ ] BACKLOG-430 [infra] Fix the mobile-minds dialog-paging e2e — `mobile-minds.spec.ts` "long dialogs page GBA-style: E forward, ◀ back, ✕ closes" fails at the ArrowLeft `prev()` page-back step, and **fails on a clean HEAD in isolation** (surfaced cycle 93 QA via a `git stash` reproduction), so it is *not* the catalogued parallel-load flake the cycle-92 verdict logged it as — a real break in the keeper-picker/dialog input path (`WorldScene.ts:448` `cursors.left → dialog.prev()`, or a body-tap `next()` undoing it). Off every recent feature diff; find where ArrowLeft's page-back stopped registering during the keeper picker and restore it, with the spec pinning both the keyboard and the ◀-chip twin. Infra hygiene — the full e2e run should read all-green so a genuine regression isn't lost in a standing red.
 
 ## Cycle 59 structure additions — the bigger world (2026-06-19)
@@ -232,7 +231,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
 > hungry dino finally *seeks* food instead of just wearing the mark.
 
-- [~] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf` / `isCarnivore` / `eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060 / foods.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371 / needs.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
@@ -734,7 +732,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > half of the operator's hunting/hunger nudge (the structural need-drive spine is the Structure-smith's,
 > seeded as 360; death is routed to the operator as a CHARTER-level call — see IDEABOX).
 
-- [~] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 371) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 371 + a carnivore/herbivore split read off the existing roster diet. Builds on 371 / 018.
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
 ## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
