@@ -21,7 +21,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-433 [emergent] Per-zone harvest tally — the crop-harvest count is a single global `harvested` shared across both plots. Split it per zone so each zone's farming output reads on its own, feeding the prosperity index (428) and the map lens (425) with a real per-zone farming signal instead of one bowl-wide number. Builds on 418/428/316.
-- [ ] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf`/`isCarnivore`/`eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060/foods.
+- [~] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf`/`isCarnivore`/`eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060/foods.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
 
 ---
@@ -230,7 +230,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
 > hungry dino finally *seeks* food instead of just wearing the mark.
 
-- [ ] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf` / `isCarnivore` / `eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060 / foods.
+- [~] BACKLOG-435 [core] Diet split (carnivore/herbivore) — the roster has no diet: every dino eats any FOODS drop and the food web (367) is blocked for want of a predator/prey read. Add a per-species diet field (deterministic, name/species-seeded) + a FOODS `kind` (plant/meat) tag, with pure `dietOf` / `isCarnivore` / `eats` reads — data only, no behavior change yet. The spine 367 (hunting) and per-zone-crop wanting build on. Builds on 060 / foods.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371 / needs.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
@@ -732,7 +732,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > half of the operator's hunting/hunger nudge (the structural need-drive spine is the Structure-smith's,
 > seeded as 360; death is routed to the operator as a CHARTER-level call — see IDEABOX).
 
-- [ ] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 371) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 371 + a carnivore/herbivore split read off the existing roster diet. Builds on 371 / 018.
+- [~] BACKLOG-367 [emergent] Hunting — predator and prey: a carnivore (Glade) that grows hungry (the need-drive spine, 371) stalks the nearest herbivore, which flees; the bowl's first food-web beat, distinct from grazing the hatch. Blocked on 371 + a carnivore/herbivore split read off the existing roster diet. Builds on 371 / 018.
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
 ## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
