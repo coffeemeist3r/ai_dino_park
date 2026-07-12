@@ -10,6 +10,8 @@ export type Activity =
   | 'gazing'
   | 'inspecting'
   | 'responding'
+  | 'stalking'
+  | 'fleeing'
   | 'feeding'
   | 'huddling'
   | 'gathering'
@@ -20,6 +22,8 @@ export const ACTIVITY_GLYPH: Record<Activity, string> = {
   gazing: '✨',
   inspecting: '👀',
   responding: '🆘',
+  stalking: '🎯', // BACKLOG-367: a hungry carnivore closing on prey
+  fleeing: '💨', // BACKLOG-367: the hunted herbivore bolting
   feeding: '🍖',
   huddling: '💤',
   gathering: '🪵',

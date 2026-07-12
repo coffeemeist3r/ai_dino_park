@@ -66,6 +66,8 @@ import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/hudd
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
+import { isCarnivore, dietOf } from '../world/diet';
+import { nearestPrey, fleeStep, huntCaught } from '../world/foodweb';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -149,6 +151,7 @@ const ROWS = 15;
 const MIGRATE_ROLL_INTERVAL_MS = 90_000;
 const MIGRATE_CHANCE = 0.15;
 const MIGRATE_COOLDOWN_MS = 60_000; // BACKLOG-333: real-time floor between ambient migrations
+const HUNT_COOLDOWN_MS = 30_000; // BACKLOG-367: after an empty hunt a carnivore rests before stalking again
 const BARTER_COOLDOWN_MS = 45_000; // BACKLOG-358: real-time floor between edge-meet barters (paces the beat)
 const EDGE_DWELL = 2; // BACKLOG-358: force-steps a dino must linger at the edge column to count as *meeting* (not transiting)
 
@@ -319,6 +322,10 @@ export class WorldScene extends Phaser.Scene {
   /** Need-drive spine (BACKLOG-371): each dino's hunger/thirst, persisted additively; the 🍖/💧 marks
    *  are index-aligned like sleepMarks. */
   private needs: Needs = {};
+  /** Food web (BACKLOG-367): wall-clock ms until a carnivore may hunt again after an empty hunt. */
+  private huntCooldownUntil: Record<string, number> = {};
+  /** Food web (BACKLOG-367): the last forceStep's {hunter → prey} pairing — exposed via `__stalkTargets`. */
+  private lastStalk: Record<string, string> = {};
   private needMarks: Phaser.GameObjects.Text[] = [];
   /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
    *  responder mid-walk toward the caller. Both transient, never persisted. */
@@ -1678,6 +1685,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__isLoner = (name: string) => isLoner(this.bonds, name, this.dinoNames(), LONER_FLOOR);
     (window as any).__needs = () => JSON.parse(JSON.stringify(this.needs));
     (window as any).__pressingNeed = (name: string) => pressingNeed(this.needs[name]);
+    // BACKLOG-367 (food web): the last forceStep's {hunter → prey} pairing, and a dino's diet.
+    (window as any).__stalkTargets = () => ({ ...this.lastStalk });
+    (window as any).__diet = (species: string) => dietOf(species);
     (window as any).__advanceNeeds = (steps = 1) => {
       this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })), steps);
       this.refreshNeedMarks();
@@ -2119,6 +2129,7 @@ export class WorldScene extends Phaser.Scene {
       zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID),
       this.zoneId,
       this.zoneTiers(),
+      this.harvestedByZone, // BACKLOG-433: each zone's farming tally, read on its own on the lens
     );
   }
 
@@ -2151,7 +2162,8 @@ export class WorldScene extends Phaser.Scene {
         this.mapGfx.fillCircle(x + boxW / 2, y + boxH - 9, 4);
       }
       // BACKLOG-428: name + head count + prosperity badge (○/◐/● quiet/growing/thriving).
-      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
+      // BACKLOG-433: the zone's own harvest tally (🌾N) reads beside the folded tier.
+      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
     });
     // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
     for (let i = entries.length; i < this.mapLabels.length; i++) this.mapLabels[i].setVisible(false);
@@ -2406,6 +2418,29 @@ export class WorldScene extends Phaser.Scene {
 
     const season = this.currentSeason();
     const denTime = inHuddleWindow(getWorldClock().now().hour, season);
+
+    // Food web (BACKLOG-367): pair each hungry, in-view carnivore off cooldown with the nearest in-view
+    // herbivore — the bowl's first hunt. Built once per step (before the movement ladder) so the hunter
+    // and its prey read the same pairing whichever is processed first. Deathless; resolution below.
+    const now = Date.now();
+    const stalkTargets: Record<string, string> = {};
+    const fleeFrom: Record<string, string> = {};
+    const herbivores = this.dinos.filter((h) => this.inView(h) && !isCarnivore(h.species, h.name));
+    for (const d of this.dinos) {
+      if (!isCarnivore(d.species, d.name) || !this.inView(d)) continue;
+      if ((this.huntCooldownUntil[d.name] ?? 0) > now) continue;
+      if (pressingNeed(this.needs[d.name]) !== 'hunger') continue;
+      const prey = nearestPrey(
+        this.tileOf(d),
+        herbivores.map((h) => ({ name: h.name, tile: this.tileOf(h) })),
+      );
+      if (prey) {
+        stalkTargets[d.name] = prey;
+        fleeFrom[prey] = d.name; // a prey chased by two hunters flees the nearer-scanned one; harmless either way
+      }
+    }
+    this.lastStalk = stalkTargets;
+
     for (const d of this.dinos) {
       const cur = this.tileOf(d);
 
@@ -2464,6 +2499,39 @@ export class WorldScene extends Phaser.Scene {
           const step = feedStep(cur, this.food, COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           this.activityById[d.name] = 'feeding'; // BACKLOG-295
+          continue;
+        }
+      }
+
+      // Food web (BACKLOG-367): the hunt overrides ordinary life but yields to a sure meal (above). A
+      // hungry carnivore stalks (🎯); its quarry flees (💨). Deathless — reaching the prey ends the hunt
+      // empty, not fatal: the quarry escapes, the hunter rests on cooldown, and each keeps a memory.
+      const preyName = stalkTargets[d.name];
+      if (preyName) {
+        const prey = this.dinoByName(preyName);
+        if (prey) {
+          const preyTile = this.tileOf(prey);
+          if (huntCaught(cur, preyTile)) {
+            this.huntCooldownUntil[d.name] = Date.now() + HUNT_COOLDOWN_MS;
+            this.flashFeed(prey, '💨');
+            this.logEvent(`🦖 the hunt came up empty — ${preyName} slipped away from ${d.name}`);
+            this.memory = remember(this.memory, d.name, `your hunt for ${preyName} came up empty`);
+            this.memory = remember(this.memory, preyName, `you slipped ${d.name}'s hunt`);
+          } else {
+            const step = stepToward(cur, preyTile, COLS, ROWS);
+            d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          }
+          this.activityById[d.name] = 'stalking';
+          continue;
+        }
+      }
+      const hunterName = fleeFrom[d.name];
+      if (hunterName) {
+        const hunter = this.dinoByName(hunterName);
+        if (hunter) {
+          const step = fleeStep(cur, this.tileOf(hunter), COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'fleeing';
           continue;
         }
       }

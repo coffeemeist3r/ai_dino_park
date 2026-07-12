@@ -13,22 +13,24 @@ import type { Personality } from '../ai/personality';
 import { giftScore, type Gift } from '../social/gifts';
 import { FEED_GAIN, FEED_GAIN_FAV } from './feeding';
 import type { Season } from './seasons';
+import type { FoodKind } from './diet';
 
 export interface Food {
   id: string;
   emoji: string;
   label: string;
   appeal: Partial<Personality>; // axis → weight in [-1, 1], same shape as a gift
+  kind: FoodKind; // BACKLOG-435: plant | meat — the diet read; data only (not yet a feeding gate)
 }
 
 export const FOODS: ReadonlyArray<Food> = [
-  { id: 'meat', emoji: '🍖', label: 'hunk of meat', appeal: { bravery: 1, energy: 0.5 } },
-  { id: 'greens', emoji: '🌿', label: 'leafy greens', appeal: { agreeableness: 1, curiosity: -0.3 } },
-  { id: 'fish', emoji: '🐟', label: 'silver fish', appeal: { curiosity: 1 } },
-  { id: 'berries', emoji: '🍓', label: 'sweet berries', appeal: { sociability: 1, agreeableness: 0.5 } },
+  { id: 'meat', emoji: '🍖', label: 'hunk of meat', appeal: { bravery: 1, energy: 0.5 }, kind: 'meat' },
+  { id: 'greens', emoji: '🌿', label: 'leafy greens', appeal: { agreeableness: 1, curiosity: -0.3 }, kind: 'plant' },
+  { id: 'fish', emoji: '🐟', label: 'silver fish', appeal: { curiosity: 1 }, kind: 'meat' },
+  { id: 'berries', emoji: '🍓', label: 'sweet berries', appeal: { sociability: 1, agreeableness: 0.5 }, kind: 'plant' },
   // BACKLOG-432: the Fernreach's farmable crop — a hardy root for a calm, sure-footed dino. Appeal tuned
   // low enough that it flips no roster dino's favorite in any season (061/170/418 verdicts unchanged).
-  { id: 'roots', emoji: '🥕', label: 'starchy roots', appeal: { energy: -0.5, bravery: 0.4 } },
+  { id: 'roots', emoji: '🥕', label: 'starchy roots', appeal: { energy: -0.5, bravery: 0.4 }, kind: 'plant' },
 ];
 
 /**

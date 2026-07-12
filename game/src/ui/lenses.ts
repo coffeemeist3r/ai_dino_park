@@ -34,6 +34,9 @@ export interface ZoneMapEntry {
   keeper: boolean;
   /** Prosperity tier (BACKLOG-428) — the zone's folded stockpile/structures/heads/harvest read; 'quiet' when unknown. */
   tier: ProsperityTier;
+  /** Crops harvested from this zone's plot (BACKLOG-433) — the farming signal read on its own, beside the
+   *  folded tier; 0 when unknown, so older callers/tests stay valid. */
+  harvested: number;
 }
 
 /**
@@ -46,6 +49,7 @@ export function zoneMapModel(
   populations: Record<string, number>,
   keeperZone: string,
   tiers: Record<string, ProsperityTier> = {},
+  harvests: Record<string, number> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -53,6 +57,7 @@ export function zoneMapModel(
     count: populations[id] ?? 0,
     keeper: id === keeperZone,
     tier: tiers[id] ?? 'quiet',
+    harvested: harvests[id] ?? 0, // BACKLOG-433: the zone's own farming tally (absent → 0)
   }));
 }
 
