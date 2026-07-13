@@ -832,6 +832,17 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Operator session — 2026-06-12
 
 
+## Cycle 100 lore additions — the hunt has weight (2026-07-13)
+
+> Milestone 3 shipped cycle 99; Milestone 4 "The hunt has weight" opens here. The food web that woke
+> (367) always came up empty — these give it consequence. Cycle 100 ships **BACKLOG-440** (lore arc 1)
+> alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
+> arcs, drafted for the next two cycles.
+
+- [~] BACKLOG-440 [ai] Rattled after the chase — a herbivore that just slipped a hunt (a fresh 367 "you slipped X's hunt" memory) greets the keeper still shaken, naming who chased it ("…give me a sec, Twitch nearly had me"). The food-web drama surfaces in *what a prey says*, not just the 💨 glyph. Deterministic fallback aside, temperament-shaded like the hunger tell (368); LLM colour behind the NPCBrain boundary. Composes onto whatever register the greeting was already in. Builds on 367 / 368 / 110 / 225.
+- [ ] BACKLOG-442 [emergent] The hunter's reputation — a herbivore chased by the *same* carnivore several times grows warier of that dino specifically: it keeps more distance / startles sooner when that hunter is near, even when not being actively stalked. Fear becomes personal, a read on the food-web history. Builds on 440 / 367 / 011.
+- [ ] BACKLOG-443 [pokemon] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catch tally ("brought down 3 meals"), a herbivore's escapes ("slipped 5 hunts"), making the food web legible alongside the closest-friend and hardy-nights lines. Builds on 437 / 367 / 021.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
