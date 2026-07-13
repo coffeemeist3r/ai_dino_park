@@ -70,7 +70,32 @@ export function fleeStep(from: Tile, hunter: Tile, cols: number, rows: number): 
   return primary ?? slide ?? { ...from };
 }
 
-/** Has the stalker closed the gap — same tile or one away (Chebyshev ≤ 1)? The empty-hunt trigger. */
+/** Has the stalker closed the gap — same tile or one away (Chebyshev ≤ 1)? The catch trigger. */
 export function huntCaught(hunter: Tile, prey: Tile): boolean {
   return chebyshev(hunter, prey) <= 1;
+}
+
+/**
+ * The hunt feeds (BACKLOG-437) — how often a closed-gap stalk actually lands a meal. Deliberately low so the
+ * bowl doesn't turn into a slaughterhouse: most catches still come up empty (the chase is the point), and the
+ * ones that land feed the hunter without ever removing the prey (deathless — the quarry always slips away).
+ */
+export const HUNT_SUCCESS_CHANCE = 0.3;
+
+/** Did this stalk land? Pure so the rate is unit-pinned and callers can force the outcome (roll 0 / 0.99). */
+export function huntSucceeds(roll: number, chance = HUNT_SUCCESS_CHANCE): boolean {
+  return roll < chance;
+}
+
+/**
+ * Rattled after the chase (BACKLOG-440) — the name of the carnivore that most recently chased this dino, read
+ * back out of the prey memory 367 files (`you slipped <hunter>'s hunt`), or null when none is fresh. Scans
+ * newest-first; `recall` caps the store at 6, so a fright ages out of the window on its own.
+ */
+export function recentHunter(memories: readonly string[]): string | null {
+  for (let i = memories.length - 1; i >= 0; i--) {
+    const m = /slipped (.+?)'s hunt/.exec(memories[i]);
+    if (m) return m[1];
+  }
+  return null;
 }

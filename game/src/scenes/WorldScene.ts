@@ -67,7 +67,7 @@ import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warm
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
-import { nearestPrey, fleeStep, huntCaught } from '../world/foodweb';
+import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter } from '../world/foodweb';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -2512,11 +2512,21 @@ export class WorldScene extends Phaser.Scene {
         if (prey) {
           const preyTile = this.tileOf(prey);
           if (huntCaught(cur, preyTile)) {
+            // The catch resolves (BACKLOG-437). The quarry ALWAYS slips away (deathless — 💨 + memory in
+            // both outcomes); only the hunter's luck differs. An occasional success feeds it (hunger sated,
+            // the take modelled as a direct `satisfy`, not a spawned drop); most stalks still come up empty.
             this.huntCooldownUntil[d.name] = Date.now() + HUNT_COOLDOWN_MS;
             this.flashFeed(prey, '💨');
-            this.logEvent(`🦖 the hunt came up empty — ${preyName} slipped away from ${d.name}`);
-            this.memory = remember(this.memory, d.name, `your hunt for ${preyName} came up empty`);
             this.memory = remember(this.memory, preyName, `you slipped ${d.name}'s hunt`);
+            if (huntSucceeds(Math.random())) {
+              this.needs = satisfy(this.needs, d.name, 'hunger'); // BACKLOG-437: hunger resolves through hunting
+              this.flashFeed(d, '🍖');
+              this.logEvent(`🦖 ${d.name} made its catch — a lean meal`);
+              this.memory = remember(this.memory, d.name, `you brought down a meal`);
+            } else {
+              this.logEvent(`🦖 the hunt came up empty — ${preyName} slipped away from ${d.name}`);
+              this.memory = remember(this.memory, d.name, `your hunt for ${preyName} came up empty`);
+            }
           } else {
             const step = stepToward(cur, preyTile, COLS, ROWS);
             d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
@@ -3974,6 +3984,8 @@ export class WorldScene extends Phaser.Scene {
       keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[target.name] ?? 0)),
       // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets it slip into its line.
       hungry: pressingNeed(this.needs[target.name]) === 'hunger',
+      // Rattled after the chase (BACKLOG-440): a prey with a fresh "slipped X's hunt" memory names its chaser.
+      rattled: recentHunter(recall(this.memory, target.name)) ?? undefined,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed

@@ -119,13 +119,18 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   // BACKLOG-368: a dino over the need threshold is hungry — let it colour the line (the canned fallback
   // already carries the deterministic tell, so behavior never depends on the model reaching this).
   const hungry = ctx.hungry ? `You are hungry right now — let it slip into whatever you say. ` : '';
+  // BACKLOG-440: a dino that just slipped a hunt is still shaken — colour the line, naming its chaser (the
+  // canned fallback carries the deterministic aside, so behavior never depends on the model reaching this).
+  const rattled = ctx.rattled
+    ? `You just barely escaped ${ctx.rattled} chasing you — you're still catching your breath, and it slips into what you say. `
+    : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

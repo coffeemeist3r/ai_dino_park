@@ -61,3 +61,10 @@ return the first capture, else null.
 `npm run build` clean, `tsc --noEmit` clean, `npx vitest run` green, WebLLM `ai/`-only, no save change.
 
 phase → coder-pending
+
+---
+## SHIPPED (coder)
+- 437: `huntSucceeds`/`HUNT_SUCCESS_CHANCE` in foodweb.ts; hunt branch forked (💨+cooldown+prey memory hoisted, catch = satisfy+🍖+catch log+meal memory, empty = cycle-99 path). Deathless both ways.
+- 440: `recentHunter` in foodweb.ts; `NPCContext.rattled` + `rattledAside` in brain.ts (composed after hunger aside, cap 280); webllm parity hint; greet wire in WorldScene.pickTone.
+- **Infra fix (root cause):** `vitest.config.ts` include was `tests/unit/**` only, so cycle-99's colocated `game/src/**/*.test.ts` (diet/foodweb/lenses, 16 tests) — and this cycle's foodweb additions — **silently never ran** (vitest green while skipping them). Broadened include to `['tests/unit/**/*.test.ts','game/src/**/*.test.ts']`. Suite went 124→127 files, 1108→1130 tests, all green. This is the real remnant of BACKLOG-439 (harness existed but under-collected).
+- build clean, tsc clean, WebLLM ai/-only, no save change.

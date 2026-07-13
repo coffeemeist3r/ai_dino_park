@@ -28,6 +28,8 @@ export interface NPCContext {
   keeperName?: string;
   /** Pressing hunger (need-drive 371 over threshold): the dino lets it slip in its line (BACKLOG-368). */
   hungry?: boolean;
+  /** If set, the name of the carnivore that just chased this dino — it greets rattled, naming it (BACKLOG-440). */
+  rattled?: string;
 }
 
 export interface Observation {
@@ -152,6 +154,20 @@ export function hungryAside(traits?: Personality): string {
   return ` …could eat, honestly.`;
 }
 
+/**
+ * A still-shaken aside from a dino that just slipped a hunt (BACKLOG-440), naming its chaser. Temperament-
+ * shaded like the hunger tell (368): a prickly dino (`agreeableness < PRICKLY_MAX`) plays it down, a warm one
+ * (`> EFFUSIVE_MIN`) makes a whole breathless thing of it, an even-tempered one says it plain. No traits →
+ * the plain line. Leads with a space so it appends cleanly onto whatever register produced the base line.
+ */
+export function rattledAside(hunter: string, traits?: Personality): string {
+  if (traits && traits.agreeableness < PRICKLY_MAX) return ` …${hunter} took a run at me. I'm fine. obviously.`;
+  if (traits && traits.agreeableness > EFFUSIVE_MIN) {
+    return ` oh, you should've SEEN it — ${hunter} nearly had me, I've never run so fast!`;
+  }
+  return ` …give me a sec, ${hunter} nearly had me.`;
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -176,6 +192,9 @@ export function cannedReply(ctx: NPCContext): Reply {
   // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets the want slip into whatever it
   // was going to say, regardless of register — the tell composes with gratitude/wistful/fond/generic alike.
   if (ctx.hungry) reply = { ...reply, text: (reply.text + hungryAside(ctx.traits)).slice(0, 240) };
+  // Rattled after the chase (BACKLOG-440): a prey fresh off a hunt names its chaser, composing onto whatever
+  // the line already was (gratitude/wistful/fond/generic/hungry) — the food-web mirror of the hunger tell.
+  if (ctx.rattled) reply = { ...reply, text: (reply.text + rattledAside(ctx.rattled, ctx.traits)).slice(0, 280) };
   return reply;
 }
 

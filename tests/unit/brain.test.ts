@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { makeBrain, cannedReply, replyPrefix } from '../../game/src/ai/brain';
+import { makeBrain, cannedReply, replyPrefix, rattledAside } from '../../game/src/ai/brain';
+import type { Personality } from '../../game/src/ai/personality';
 import {
   WebLLMBrain,
   buildMessages,
@@ -131,6 +132,73 @@ describe('dialogue context (BACKLOG-051)', () => {
     const stranger = buildMessages({ ...ctx, timeOfDay: 'night', affection: 0 }, { kind: 'player_greet' })[0].content;
     expect(stranger).toMatch(/stranger/);
     expect(night).not.toBe(stranger);
+  });
+});
+
+describe('rattled after the chase (BACKLOG-440)', () => {
+  const traits = (agreeableness: number): Personality => ({
+    bravery: 0.5,
+    energy: 0.5,
+    curiosity: 0.5,
+    sociability: 0.5,
+    agreeableness,
+  });
+
+  it('names the chaser and shades by temperament, each aside leading with a space', () => {
+    const prickly = rattledAside('Twitch', traits(0.1));
+    const warm = rattledAside('Twitch', traits(0.9));
+    const plain = rattledAside('Twitch', traits(0.5));
+    for (const s of [prickly, warm, plain]) {
+      expect(s).toContain('Twitch');
+      expect(s.startsWith(' ')).toBe(true);
+    }
+    expect(prickly).not.toBe(warm);
+    expect(plain).not.toBe(prickly);
+    expect(plain).not.toBe(warm);
+    expect(rattledAside('Twitch')).toContain('Twitch'); // no traits → plain line
+  });
+
+  it('appends the aside onto the base greeting when ctx.rattled is set', () => {
+    const base = cannedReply({ name: 'Rex', species: 'triceratops', personality: 'x', affection: 10 });
+    const rattled = cannedReply({
+      name: 'Rex',
+      species: 'triceratops',
+      personality: 'x',
+      affection: 10,
+      rattled: 'Twitch',
+    });
+    expect(rattled.text.startsWith(base.text)).toBe(true);
+    expect(rattled.text).toContain('Twitch');
+    expect(rattled.text.length).toBeGreaterThan(base.text.length);
+  });
+
+  it('composes with the hunger tell — both asides present when both flags set', () => {
+    const both = cannedReply({
+      name: 'Rex',
+      species: 'triceratops',
+      personality: 'x',
+      affection: 10,
+      hungry: true,
+      rattled: 'Twitch',
+    });
+    expect(both.text).toContain('Twitch');
+    expect(both.text.toLowerCase()).toMatch(/hungr|eat|bite/);
+    expect(both.text.length).toBeLessThanOrEqual(280);
+  });
+
+  it('is byte-identical to the old reply when ctx.rattled is unset (back-compat)', () => {
+    const args = { name: 'Rex', species: 'triceratops', personality: 'x', affection: 10 } as const;
+    expect(cannedReply({ ...args }).text).toBe(cannedReply({ ...args, rattled: undefined }).text);
+  });
+
+  it('colours the webllm prompt when rattled, naming the chaser', () => {
+    const msg = buildMessages(
+      { ...ctx, rattled: 'Twitch' },
+      { kind: 'player_greet' },
+    )[0].content;
+    expect(msg).toContain('Twitch');
+    const calm = buildMessages(ctx, { kind: 'player_greet' })[0].content;
+    expect(calm).not.toContain('Twitch');
   });
 });
 

@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { nearestPrey, fleeStep, huntCaught, STALK_RANGE } from './foodweb';
+import {
+  nearestPrey,
+  fleeStep,
+  huntCaught,
+  STALK_RANGE,
+  huntSucceeds,
+  HUNT_SUCCESS_CHANCE,
+  recentHunter,
+} from './foodweb';
 import type { Tile } from './movement';
 
 const t = (tileX: number, tileY: number): Tile => ({ tileX, tileY });
@@ -65,6 +73,43 @@ describe('food web hunt (BACKLOG-367)', () => {
       expect(huntCaught(t(5, 5), t(5, 5))).toBe(true);
       expect(huntCaught(t(5, 5), t(6, 6))).toBe(true); // diagonal-adjacent
       expect(huntCaught(t(5, 5), t(7, 5))).toBe(false);
+    });
+  });
+
+  // The hunt feeds (BACKLOG-437)
+  describe('huntSucceeds', () => {
+    it('lands when the roll is under the chance, misses at or above it', () => {
+      expect(huntSucceeds(0)).toBe(true);
+      expect(huntSucceeds(0.99)).toBe(false);
+      expect(huntSucceeds(0.1, 0.5)).toBe(true);
+      expect(huntSucceeds(0.5, 0.5)).toBe(false); // strict <, boundary misses
+    });
+
+    it('keeps the default chance an occasional (0,1) rate — the chase stays the point', () => {
+      expect(HUNT_SUCCESS_CHANCE).toBeGreaterThan(0);
+      expect(HUNT_SUCCESS_CHANCE).toBeLessThan(1);
+      expect(HUNT_SUCCESS_CHANCE).toBeLessThanOrEqual(0.5); // most stalks come up empty
+    });
+  });
+
+  // Rattled after the chase (BACKLOG-440)
+  describe('recentHunter', () => {
+    it("reads the chaser out of the 367 prey memory", () => {
+      expect(recentHunter([`you slipped Twitch's hunt`])).toBe('Twitch');
+    });
+
+    it('returns null when there is no fresh hunt memory', () => {
+      expect(recentHunter([])).toBeNull();
+      expect(recentHunter(['ate some berries', 'watched the sky'])).toBeNull();
+    });
+
+    it('picks the newest chaser when several are present (newest-first scan)', () => {
+      const mem = [`you slipped Rex's hunt`, 'napped', `you slipped Twitch's hunt`];
+      expect(recentHunter(mem)).toBe('Twitch');
+    });
+
+    it('handles multi-word names via the non-greedy capture', () => {
+      expect(recentHunter([`you slipped Little Foot's hunt`])).toBe('Little Foot');
     });
   });
 });
