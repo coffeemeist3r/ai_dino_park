@@ -2586,3 +2586,18 @@ range — reusing the 367 flee machinery, so the motion + `fleeing` glyph come f
 in world/foodweb.ts; WorldScene adds one wariness pass beside the stalk pairing. Deathless, no roster
 mutation, no save change (the memory ages out on its own). 442 precedes 443 (the book read wants a standing to
 read). 442 → [~]. Structure-smith picks next (Structure Track top = 438). phase → structure-pending.
+
+## 2026-07-14 02:38 — cycle 101 — structure-smith — BACKLOG-438 (a zone wants what it can't grow)
+
+Structure pick: **BACKLOG-438** — Milestone 4 structure arc, the demand half of "enough to go around."
+Milestone 3 gave supply (a glutted zone sheds toward a lighter neighbour, 429); 438 keys the mirror to
+*farming* output. Each zone grows exactly one crop (cropOf: berries/greens/roots, 418/432) so it's
+structurally light on the other two; make that a legible want — a pure `zoneWant(zone, harvests)` in
+ui/lenses.ts picks the linked neighbour producing the most of a crop this zone can't grow (harvestedByZone,
+433), returns {food,glyph,from} or null until a neighbour has a surplus (>0), strict `>` for deterministic
+tie-break. ZoneMapEntry gains `want`; drawZoneMap renders a `wants <glyph>◂<neighbour>` line only when
+non-null. Honest scope (ponytail): no banked food/food-carry exists yet, so 438 ships the demand *read*, not a
+mover — same seam 429 sat behind before piles existed. Disjoint from 442 (foodweb + stalk pass) — 438 is
+lenses + drawZoneMap. Queue fell to 3 (436/444/445 < cap X=4), refilled with **BACKLOG-446** (a zone banks its
+harvest — the per-zone food store both 438's demand and 444's carrier are missing). Structure Track back to 4.
+438 → [~]. phase → designer-pending.
