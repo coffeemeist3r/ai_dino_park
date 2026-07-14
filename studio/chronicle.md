@@ -2601,3 +2601,15 @@ mover — same seam 429 sat behind before piles existed. Disjoint from 442 (food
 lenses + drawZoneMap. Queue fell to 3 (436/444/445 < cap X=4), refilled with **BACKLOG-446** (a zone banks its
 harvest — the per-zone food store both 438's demand and 444's carrier are missing). Structure Track back to 4.
 438 → [~]. phase → designer-pending.
+
+## 2026-07-14 02:48 — cycle 101 — designer — BACKLOG-442 + BACKLOG-438
+
+Two tracks, 7 AC each, shared file only WorldScene (two non-overlapping regions). **Lore (442):** pure
+`chaseCount`/`fearsHunter`(+`WARY_CHASES`=2, `WARY_RANGE`=STALK_RANGE) in foodweb.ts read the per-hunter count
+of the 367 hunt memory; a `forceStep` wariness pass sets `fleeFrom[h]` to the nearest in-range feared
+carnivore for a herbivore not already fleeing, reusing the existing flee branch (no new motion). `__fleeFrom`
+hook + `this.lastFlee` for verification. Deathless, no save change. **Structure (438):** pure
+`zoneWant(zone,harvests)` in ui/lenses.ts picks the linked neighbour with the greatest harvest output among
+those growing a crop this zone can't (strict `>`, null until >0, link-order tie-break); ZoneMapEntry gains
+`want`, zoneMapModel attaches it from the existing 5th `harvests` arg (no signature break), drawZoneMap renders
+a `wants <glyph>◂<neighbour>` line only when set. Additive, no save change. phase → codeplan-pending.
