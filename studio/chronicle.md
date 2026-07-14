@@ -2676,3 +2676,12 @@ seeded this cycle as 446. **Milestone 4 structure arc 2 ✅.**
 (436). Quality: build clean, tsc clean, vitest 1141/1141, e2e siblings green warm (the lens specs' cold-boot
 timeout was the documented flake — 6/6 on the warm re-run), WebLLM ai/-only, saves additive. 442/438 archived.
 Structure Track open = 436/444/445/446. phase → artist-pending.
+
+## 2026-07-14 03:58 — cycle 101-art — artist — no-op (no renderable target)
+
+No open `[art]` BACKLOG items, and cycle 101 baked nothing new. The hunter's reputation (442) reads through
+the existing all-emoji activity channel — a wary prey bolts on the same 💨 `fleeing` glyph the 367 hunt already
+uses (unchanged since 295); the wariness is behavior, not a sprite. A zone wants what it can't grow (438) is a
+text read on the zone-map lens (`wants <ripe-crop-emoji>◂<neighbour>`) using the crops' existing 🍓/🥬/🍠 ripe
+markers — no new glyph. No stash-rule target either (no standalone-renderable prop landed). Fallback control
+untouched. build clean; vitest 1141/1141. lastFire.artist updated. phase → lore-pending.
