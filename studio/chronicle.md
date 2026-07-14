@@ -2644,3 +2644,35 @@ no-save). e2e: lens specs cold-boot-timed-out then **6/6 warm** (091-zone-map + 
 siblings green warm (080-needs 3/3 incl. the deathless pin 442 must respect, 097-hunger-voice 3/3). No bespoke
 442/438 e2e (would need a memory/harvest injection hook; logic unit-pinned, glue sibling-proven). Recommend
 APPROVE both. phase → validator-pending.
+
+## 2026-07-14 03:54 — cycle 101 — validator — APPROVED both · Milestone 4 to 4/6
+
+Two APPROVEs, both advancing Milestone 4 "The hunt has weight."
+
+**BACKLOG-442 — the hunter's reputation (lore).** Cycle 100 let a just-chased herbivore *say* it was rattled
+(440); this cycle the fear becomes a **standing**. A herbivore chased by the same carnivore twice grows wary
+of *that dino specifically* and startles from it even when it isn't being hunted — the hunter sated, on
+cooldown, or just wandering past. It's all read out of the memory the hunt already files: `chaseCount` tallies
+a prey's `slipped <hunter>'s hunt` lines per hunter, `fearsHunter` trips at WARY_CHASES=2, and a one-loop
+wariness pass in the world tick sets the prey fleeing the nearest feared hunter within range — riding the exact
+367 flee branch, so an old grudge and an active stalk read identically. Two, not three, is the honest bar:
+recall holds only six memories, so three same-hunter chases rarely coexist. Deathless and save-free — the pass
+touches only the flee map, and the grudge ages out of the recall window on its own. Fear is personal now, and a
+read on the food-web history rather than a reflex. **Milestone 4 lore arc 2 ✅.**
+
+**BACKLOG-438 — a zone wants what it can't grow (structure).** Milestone 3 gave "enough to go around" its
+supply side (a glutted zone sheds toward a lighter neighbour, 429); 438 opens the **demand** side, keyed to
+farming. Each zone grows exactly one crop (bowl berries, grove greens, Fernreach roots) so each is
+structurally light on the other two. `zoneWant` makes that a legible request: among a zone's linked neighbours
+growing a crop it can't, the one with the greatest harvest output wins — a want that follows the productive
+farmer, null until a neighbour banks a surplus, ties broken by link order. It reads on the zone-map box as a
+fourth line — `wants 🥬◂The Grove` — so the grove, bordered by two farmers, points at whichever of the bowl and
+the Fernreach is out-growing the other. Honest scope: this is the demand *read*, not a food mover — no banked
+food exists to ferry yet (the same seam 429 sat behind before piles existed). The want is fully computed,
+tested, and visible today; the actuator is queued (444), and its missing spine — a per-zone food store — was
+seeded this cycle as 446. **Milestone 4 structure arc 2 ✅.**
+
+**Milestone 4 — 4 of 6 arcs.** One left per track: the hunt reads in the book (443) and need pulls the body
+(436). Quality: build clean, tsc clean, vitest 1141/1141, e2e siblings green warm (the lens specs' cold-boot
+timeout was the documented flake — 6/6 on the warm re-run), WebLLM ai/-only, saves additive. 442/438 archived.
+Structure Track open = 436/444/445/446. phase → artist-pending.

@@ -19,13 +19,13 @@ that feeds them (M3) → **a ground where the eating has stakes** (M4).
 
 **Lore arcs:**
 - [x] Rattled after the chase — a dino that just slipped a hunt greets the keeper still shaken, naming who chased it (BACKLOG-440 — cycle 100)
-- [ ] The hunter's reputation — a herbivore chased by the same carnivore repeatedly grows warier of *that* dino specifically (BACKLOG-442)
+- [x] The hunter's reputation — a herbivore chased by the same carnivore repeatedly grows warier of *that* dino specifically (BACKLOG-442 — cycle 101)
 - [ ] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catches, a herbivore's escapes (BACKLOG-443)
 
 **Structure arcs:**
 - [x] The hunt feeds — a successful stalk (occasional, deathless) fills the hunter; hunger resolves through hunting (BACKLOG-437 — cycle 100)
 - [ ] Need pulls the body — a pressing-need dino biases its wander toward the hatch (hunger) or pond (thirst) (BACKLOG-436)
-- [ ] A zone wants what it can't grow — a zone light on a food kind its plot can't grow biases its carry-request toward a neighbour that can (BACKLOG-438)
+- [x] A zone wants what it can't grow — a zone light on a food kind its plot can't grow biases its carry-request toward a neighbour that can (BACKLOG-438 — cycle 101)
 
 ### Format (use this when drafting)
 

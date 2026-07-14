@@ -394,3 +394,7 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - Studio scaffolded (7 routine prompts, state.json, chronicle, RE-ARM)
 - CI workflow written
 - Cron schedule created
+
+## Cycle 101 — 2026-07-14 (Milestone 4 "The hunt has weight" — arcs 3 & 4)
+- BACKLOG-442: the hunter's reputation — a herbivore chased twice by the same carnivore grows wary of that dino specifically, startling from it even off an active hunt (reuses the 367 flee branch; deathless, no save change).
+- BACKLOG-438: a zone wants what it can't grow — the zone map lens reads each zone's demand (`wants <crop>◂<neighbour>`), leaning toward the neighbour out-growing the most of a crop it can't farm itself (a read; the food mover is queued as 444/446).

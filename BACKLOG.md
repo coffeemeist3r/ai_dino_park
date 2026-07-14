@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-438 [emergent] A zone wants what it can't grow — each zone farms one crop (418/432) and its harvest reads on its own (433); make that a want: a zone light on a food kind its own plot can't grow biases its carry-request toward a neighbour that can (the flow rule 429, keyed to farming output). The demand half of "enough to go around." Builds on 433 / 429 / 435.
 - [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
 - [ ] BACKLOG-444 [core] A carrier feeds the hungry — the carry/flow system (429) moves resources between zones; extend it so a zone's stockpile can be spent to resolve a *starving resident's* hunger when no keeper drop comes (a banked food sates a pressing need), closing the loop between the economy and the need-drive. Builds on 429 / 371 / 437.
 - [ ] BACKLOG-445 [emergent] The waterhole — thirst (371) only resolves at the grove pond; give the bowl and Fernreach their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (418/432). Builds on 371 / 436 / 418.
@@ -840,7 +839,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
 > arcs, drafted for the next two cycles.
 
-- [~] BACKLOG-442 [emergent] The hunter's reputation — a herbivore chased by the *same* carnivore several times grows warier of that dino specifically: it keeps more distance / startles sooner when that hunter is near, even when not being actively stalked. Fear becomes personal, a read on the food-web history. Builds on 440 / 367 / 011.
 - [ ] BACKLOG-443 [pokemon] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catch tally ("brought down 3 meals"), a herbivore's escapes ("slipped 5 hunts"), making the food web legible alongside the closest-friend and hardy-nights lines. Builds on 437 / 367 / 021.
 
 ## Mobile (deferred, do not pick until charter clears)
