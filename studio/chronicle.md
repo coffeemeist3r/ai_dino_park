@@ -2613,3 +2613,12 @@ hook + `this.lastFlee` for verification. Deathless, no save change. **Structure 
 those growing a crop this zone can't (strict `>`, null until >0, link-order tie-break); ZoneMapEntry gains
 `want`, zoneMapModel attaches it from the existing 5th `harvests` arg (no signature break), drawZoneMap renders
 a `wants <glyph>◂<neighbour>` line only when set. Additive, no save change. phase → codeplan-pending.
+
+## 2026-07-14 02:54 — cycle 101 — code-planner — BACKLOG-442 + BACKLOG-438
+
+**442:** foodweb.ts += WARY_CHASES=2/WARY_RANGE=STALK_RANGE/chaseCount/fearsHunter; WorldScene += lastFlee
+field, forceStep wariness pass after lastStalk (nearest in-range feared carnivore → fleeFrom for a non-fleeing
+herbivore), __fleeFrom hook; existing L2538 flee branch reused unchanged. **438:** lenses.ts += ZoneWant +
+zoneWant(zone,harvests) (max-output differing-crop neighbour, strict `>`, null until >0) + ZoneMapEntry.want +
+zoneMapModel wiring; WorldScene drawZoneMap appends a `wants <glyph>◂<neighbour>` line, boxH 64→78. Tests
+extend foodweb.test.ts + ui/lenses.test.ts. No blockers. phase → coder-pending.
