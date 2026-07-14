@@ -7,6 +7,10 @@ import {
   huntSucceeds,
   HUNT_SUCCESS_CHANCE,
   recentHunter,
+  chaseCount,
+  fearsHunter,
+  WARY_CHASES,
+  WARY_RANGE,
 } from './foodweb';
 import type { Tile } from './movement';
 
@@ -110,6 +114,46 @@ describe('food web hunt (BACKLOG-367)', () => {
 
     it('handles multi-word names via the non-greedy capture', () => {
       expect(recentHunter([`you slipped Little Foot's hunt`])).toBe('Little Foot');
+    });
+  });
+
+  // The hunter's reputation (BACKLOG-442)
+  describe('chaseCount', () => {
+    it('counts only the hunt memories that name the given hunter', () => {
+      const mem = [`you slipped Twitch's hunt`, 'napped', `you slipped Twitch's hunt`, `you slipped Rex's hunt`];
+      expect(chaseCount(mem, 'Twitch')).toBe(2);
+      expect(chaseCount(mem, 'Rex')).toBe(1);
+    });
+
+    it('is 0 for a hunter never seen and for an empty / non-hunt store', () => {
+      expect(chaseCount([`you slipped Twitch's hunt`], 'Glade')).toBe(0);
+      expect(chaseCount([], 'Twitch')).toBe(0);
+      expect(chaseCount(['ate some berries'], 'Twitch')).toBe(0);
+    });
+  });
+
+  describe('fearsHunter', () => {
+    const twice = [`you slipped Twitch's hunt`, `you slipped Twitch's hunt`];
+
+    it('turns personal at WARY_CHASES and not before', () => {
+      expect(fearsHunter([`you slipped Twitch's hunt`], 'Twitch')).toBe(false); // one chase — rattled (440), not yet wary
+      expect(fearsHunter(twice, 'Twitch')).toBe(true); // WARY_CHASES = 2
+    });
+
+    it('tracks hunters independently — fears the repeat chaser, not the one-off', () => {
+      const mem = [...twice, `you slipped Rex's hunt`];
+      expect(fearsHunter(mem, 'Twitch')).toBe(true);
+      expect(fearsHunter(mem, 'Rex')).toBe(false);
+    });
+
+    it('honours an explicit threshold', () => {
+      expect(fearsHunter(twice, 'Twitch', 3)).toBe(false);
+      expect(fearsHunter(twice, 'Twitch', 1)).toBe(true);
+    });
+
+    it('keeps its constants sane — WARY_CHASES ≥ 2, WARY_RANGE reuses the stalk range', () => {
+      expect(WARY_CHASES).toBeGreaterThanOrEqual(2);
+      expect(WARY_RANGE).toBe(STALK_RANGE);
     });
   });
 });

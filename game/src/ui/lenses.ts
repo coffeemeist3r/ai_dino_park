@@ -8,7 +8,8 @@
 
 import { pairKey } from '../social/meetings';
 import type { Role } from '../ai/roles';
-import { zoneById } from '../world/zones';
+import { zoneById, zoneNeighbors } from '../world/zones';
+import { cropOf } from '../world/plot';
 import type { ProsperityTier } from '../world/prosperity';
 
 export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker' | 'map';
@@ -37,6 +38,44 @@ export interface ZoneMapEntry {
   /** Crops harvested from this zone's plot (BACKLOG-433) — the farming signal read on its own, beside the
    *  folded tier; 0 when unknown, so older callers/tests stay valid. */
   harvested: number;
+  /** What this zone wants from a neighbour (BACKLOG-438) — the demand read, or null when no neighbour has a
+   *  surplus of a crop this zone can't grow. */
+  want: ZoneWant | null;
+}
+
+/**
+ * A zone's demand (BACKLOG-438) — the crop it can't grow itself and the neighbour it would request it from.
+ * Surfaced on the zone map lens; a read, not a mover (there's no banked food to ferry yet — that's 446/444).
+ */
+export interface ZoneWant {
+  food: string; // the wanted crop's FOODS id
+  glyph: string; // the wanted crop's ripe marker (cropOf(from).ripe)
+  from: string; // the neighbour zone id to request it from
+  fromName: string; // that neighbour's display name
+}
+
+/**
+ * A zone wants what it can't grow (BACKLOG-438) — each zone farms exactly one crop (`cropOf`), so it's
+ * structurally light on every other. Its carry-request leans toward the linked neighbour producing the most
+ * of a crop it can't grow itself: among neighbours whose crop differs from this zone's, the one with the
+ * greatest harvest output (`harvests`, the 433 tally) wins — a demand that follows the productive farmer.
+ * Strict `>` from a 0 floor: **null** until some neighbour has actually grown a surplus, and the first
+ * neighbour in link order wins a tie (deterministic).
+ */
+export function zoneWant(zone: string, harvests: Record<string, number>): ZoneWant | null {
+  const own = cropOf(zone).food;
+  let best: ZoneWant | null = null;
+  let bestOut = 0;
+  for (const l of zoneNeighbors(zone)) {
+    const crop = cropOf(l.to);
+    if (crop.food === own) continue; // neighbour grows the same crop — no new want
+    const out = harvests[l.to] ?? 0;
+    if (out > bestOut) {
+      bestOut = out;
+      best = { food: crop.food, glyph: crop.ripe, from: l.to, fromName: zoneById(l.to).name };
+    }
+  }
+  return best;
 }
 
 /**
@@ -58,6 +97,7 @@ export function zoneMapModel(
     keeper: id === keeperZone,
     tier: tiers[id] ?? 'quiet',
     harvested: harvests[id] ?? 0, // BACKLOG-433: the zone's own farming tally (absent → 0)
+    want: zoneWant(id, harvests), // BACKLOG-438: what it wants from a neighbour (null until a neighbour has a surplus)
   }));
 }
 

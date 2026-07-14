@@ -48,3 +48,15 @@
 
 None foreseen — pure additive + a `forceStep` pass reusing the flee branch and a lens read reusing the
 harvest tally. phase → coder-pending.
+
+---
+
+## SHIPPED (coder)
+
+- **442:** foodweb.ts += `chaseCount`/`fearsHunter`/`WARY_CHASES=2`/`WARY_RANGE=STALK_RANGE`. WorldScene:
+  `lastFlee` field, `fearsHunter`/`WARY_RANGE` import, the wariness pass after `lastStalk` (nearest in-range
+  feared carnivore → `fleeFrom` for a non-fleeing herbivore), `__fleeFrom` hook. Flee branch reused unchanged.
+- **438:** lenses.ts += `ZoneWant`/`zoneWant`/`ZoneMapEntry.want` + `zoneMapModel` wiring. WorldScene
+  `drawZoneMap` appends `wants <glyph>◂<neighbour>` when `want` set, `boxH` 64→78.
+- Tests: foodweb.test.ts +8 (chaseCount/fearsHunter), lenses.test.ts +5 (zoneWant/model). Both files green.
+- build clean, tsc clean, no save-schema change.

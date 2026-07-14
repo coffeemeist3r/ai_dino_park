@@ -67,7 +67,7 @@ import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warm
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
-import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter } from '../world/foodweb';
+import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, WARY_RANGE } from '../world/foodweb';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -326,6 +326,9 @@ export class WorldScene extends Phaser.Scene {
   private huntCooldownUntil: Record<string, number> = {};
   /** Food web (BACKLOG-367): the last forceStep's {hunter → prey} pairing — exposed via `__stalkTargets`. */
   private lastStalk: Record<string, string> = {};
+  /** Food web (BACKLOG-442): the last forceStep's resolved {prey → hunter it flees} — active stalks plus
+   *  personal-fear startles. Exposed via `__fleeFrom`. */
+  private lastFlee: Record<string, string> = {};
   private needMarks: Phaser.GameObjects.Text[] = [];
   /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
    *  responder mid-walk toward the caller. Both transient, never persisted. */
@@ -1687,6 +1690,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__pressingNeed = (name: string) => pressingNeed(this.needs[name]);
     // BACKLOG-367 (food web): the last forceStep's {hunter → prey} pairing, and a dino's diet.
     (window as any).__stalkTargets = () => ({ ...this.lastStalk });
+    (window as any).__fleeFrom = () => ({ ...this.lastFlee }); // BACKLOG-442: prey → the hunter it flees
     (window as any).__diet = (species: string) => dietOf(species);
     (window as any).__advanceNeeds = (steps = 1) => {
       this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })), steps);
@@ -2141,7 +2145,7 @@ export class WorldScene extends Phaser.Scene {
   private drawZoneMap(): void {
     const entries = this.zoneMapEntries();
     const boxW = 118;
-    const boxH = 64; // BACKLOG-428: taller to fit the third (prosperity) line
+    const boxH = 78; // BACKLOG-428: third (prosperity) line; BACKLOG-438: room for the fourth (want) line
     const gap = 26;
     const totalW = entries.length * boxW + (entries.length - 1) * gap;
     const x0 = ((TILE * COLS) - totalW) / 2;
@@ -2163,7 +2167,10 @@ export class WorldScene extends Phaser.Scene {
       }
       // BACKLOG-428: name + head count + prosperity badge (○/◐/● quiet/growing/thriving).
       // BACKLOG-433: the zone's own harvest tally (🌾N) reads beside the folded tier.
-      this.mapLabels[i]?.setText(`${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`).setPosition(x + boxW / 2, y + boxH / 2 - 5);
+      // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
+      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`;
+      if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
+      this.mapLabels[i]?.setText(txt).setPosition(x + boxW / 2, y + boxH / 2 - 5);
     });
     // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
     for (let i = entries.length; i < this.mapLabels.length; i++) this.mapLabels[i].setVisible(false);
@@ -2440,6 +2447,26 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     this.lastStalk = stalkTargets;
+
+    // The hunter's reputation (BACKLOG-442): fear turns personal. A herbivore chased by the *same* carnivore
+    // WARY_CHASES+ times startles when that specific hunter comes within WARY_RANGE — even off an active hunt
+    // (the hunter sated, on cooldown, just passing). It reuses the flee branch below; only prey not already
+    // fleeing an active stalker are considered, and the nearest feared hunter wins.
+    for (const h of herbivores) {
+      if (fleeFrom[h.name]) continue;
+      const mem = recall(this.memory, h.name);
+      const ht = this.tileOf(h);
+      let feared: string | null = null;
+      let fearedDist = Infinity;
+      for (const c of this.dinos) {
+        if (c.name === h.name || !isCarnivore(c.species, c.name) || !this.inView(c)) continue;
+        if (!fearsHunter(mem, c.name)) continue;
+        const dist = this.chebyTiles(ht, this.tileOf(c));
+        if (dist <= WARY_RANGE && dist < fearedDist) { fearedDist = dist; feared = c.name; }
+      }
+      if (feared) fleeFrom[h.name] = feared;
+    }
+    this.lastFlee = fleeFrom;
 
     for (const d of this.dinos) {
       const cur = this.tileOf(d);

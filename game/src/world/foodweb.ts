@@ -99,3 +99,31 @@ export function recentHunter(memories: readonly string[]): string | null {
   }
   return null;
 }
+
+/**
+ * The hunter's reputation (BACKLOG-442) — fear turns personal. A prey files a `you slipped <hunter>'s hunt`
+ * memory each chase (367); `chaseCount` reads how many of those name a *given* hunter, out of whatever slice
+ * of the 6-slot recall window it's handed. Same pattern `recentHunter` matches, filtered to one hunter.
+ */
+export function chaseCount(memories: readonly string[], hunter: string): number {
+  let n = 0;
+  for (const m of memories) {
+    const x = /slipped (.+?)'s hunt/.exec(m);
+    if (x && x[1] === hunter) n++;
+  }
+  return n;
+}
+
+/** Repeat chases by the *same* hunter before a prey grows personally wary of it (BACKLOG-442). Two — not
+ *  three — because `recall` caps at 6 slots shared with all memory, so three same-hunter hunt lines rarely
+ *  coexist; two is a reachable "again — *that* one" while staying distinct from 440's single-chase rattle. */
+export const WARY_CHASES = 2;
+
+/** Tiles within which a wary prey startles from its feared hunter (BACKLOG-442) — reuses the stalk range; a
+ *  named knob so "keeps its distance" can be widened later without hunting the magic number. */
+export const WARY_RANGE = STALK_RANGE;
+
+/** Is this dino personally wary of `hunter` — chased by it at least `threshold` times (BACKLOG-442)? */
+export function fearsHunter(memories: readonly string[], hunter: string, threshold = WARY_CHASES): boolean {
+  return chaseCount(memories, hunter) >= threshold;
+}
