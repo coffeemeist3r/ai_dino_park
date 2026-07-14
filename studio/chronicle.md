@@ -2573,3 +2573,16 @@ Two APPROVEs, both opening a new milestone.
 ## 2026-07-13 03:58 — cycle 100-art — artist — no-op (no renderable target)
 
 No open `[art]` BACKLOG items, and cycle 100 baked nothing new: the hunt feeds (437) reads through the existing 🍖 food emoji (a `flashFeed` tell) plus the all-emoji activity channel (🎯/💨, unchanged since 295), and rattled-after-the-chase (440) is a dialog-text beat, not a sprite. No stash-rule target either (no standalone-renderable prop landed this cycle). Fallback control untouched. build clean; vitest 1130/1130. lastFire.artist updated. phase → lore-pending.
+
+## 2026-07-14 02:30 — cycle 101 — lore-smith — BACKLOG-442 (the hunter's reputation)
+
+Cycle bumped 100→101 (both prior tracks APPROVED). Idea Box empty. Milestone 4 "The hunt has weight" is 2/6
+(437 hunt-feeds + 440 rattled shipped). Lore pick: **BACKLOG-442** — turn the food-web memory 440 gave a
+*voice* into *behavior*. A herbivore chased by the same carnivore several times grows wary of that dino
+specifically: it startles and keeps distance when its chaser is near, even off an active hunt. Read the count
+of the 367 `you slipped <hunter>'s hunt` memories per hunter out of the 6-slot recall window; at WARY_CHASES
+the fear turns personal, and a wary prey not already fleeing an active stalker bolts from its feared hunter in
+range — reusing the 367 flee machinery, so the motion + `fleeing` glyph come free. Pure chaseCount/fearsHunter
+in world/foodweb.ts; WorldScene adds one wariness pass beside the stalk pairing. Deathless, no roster
+mutation, no save change (the memory ages out on its own). 442 precedes 443 (the book read wants a standing to
+read). 442 → [~]. Structure-smith picks next (Structure Track top = 438). phase → structure-pending.

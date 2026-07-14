@@ -839,7 +839,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
 > arcs, drafted for the next two cycles.
 
-- [ ] BACKLOG-442 [emergent] The hunter's reputation — a herbivore chased by the *same* carnivore several times grows warier of that dino specifically: it keeps more distance / startles sooner when that hunter is near, even when not being actively stalked. Fear becomes personal, a read on the food-web history. Builds on 440 / 367 / 011.
+- [~] BACKLOG-442 [emergent] The hunter's reputation — a herbivore chased by the *same* carnivore several times grows warier of that dino specifically: it keeps more distance / startles sooner when that hunter is near, even when not being actively stalked. Fear becomes personal, a read on the food-web history. Builds on 440 / 367 / 011.
 - [ ] BACKLOG-443 [pokemon] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catch tally ("brought down 3 meals"), a herbivore's escapes ("slipped 5 hunts"), making the food web legible alongside the closest-friend and hardy-nights lines. Builds on 437 / 367 / 021.
 
 ## Mobile (deferred, do not pick until charter clears)
