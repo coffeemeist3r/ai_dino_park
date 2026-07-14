@@ -58,5 +58,5 @@ harvest tally. phase → coder-pending.
   feared carnivore → `fleeFrom` for a non-fleeing herbivore), `__fleeFrom` hook. Flee branch reused unchanged.
 - **438:** lenses.ts += `ZoneWant`/`zoneWant`/`ZoneMapEntry.want` + `zoneMapModel` wiring. WorldScene
   `drawZoneMap` appends `wants <glyph>◂<neighbour>` when `want` set, `boxH` 64→78.
-- Tests: foodweb.test.ts +8 (chaseCount/fearsHunter), lenses.test.ts +5 (zoneWant/model). Both files green.
+- Tests: foodweb.test.ts +6 (chaseCount/fearsHunter), lenses.test.ts +5 (zoneWant/model). Both files green.
 - build clean, tsc clean, no save-schema change.

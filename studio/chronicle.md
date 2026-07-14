@@ -2629,5 +2629,18 @@ extend foodweb.test.ts + ui/lenses.test.ts. No blockers. phase → coder-pending
 a forceStep wariness pass after lastStalk (nearest in-range feared carnivore → fleeFrom for a herbivore not
 already fleeing an active stalker), __fleeFrom hook; the existing 367 flee branch reused unchanged.
 **438:** lenses.ts += ZoneWant/zoneWant/ZoneMapEntry.want + zoneMapModel wiring; WorldScene drawZoneMap appends
-a `wants <glyph>◂<neighbour>` line only when set, boxH 64→78. Tests: foodweb.test.ts +8, lenses.test.ts +5,
+a `wants <glyph>◂<neighbour>` line only when set, boxH 64→78. Tests: foodweb.test.ts +6, lenses.test.ts +5,
 both green (27/27 across the two). build clean, tsc clean, no save-schema change. phase → qa-pending.
+
+## 2026-07-14 03:40 — cycle 101 — qa — PASS both
+
+build clean; tsc clean; **vitest 1141/1141 (127 files)** (+11: chaseCount/fearsHunter ×6, zoneWant/model ×5).
+442: AC1–3 PASS unit (chaseCount count/independent, fearsHunter threshold+constants), AC4–7 PASS review
+(wariness pass sets fleeFrom to the nearest in-range feared carnivore for a non-fleeing herbivore, reuses the
+367 flee branch; deathless — only fleeFrom mutated; no save change; __fleeFrom hook). 438: AC1–4 PASS unit
+(null until surplus, productive-farmer lean, tie→link order, fields match cropOf/zoneById), AC5–7 PASS
+unit+review (zoneMapModel attaches want, 3-arg→all null, drawZoneMap `wants <glyph>◂<neighbour>` line, additive
+no-save). e2e: lens specs cold-boot-timed-out then **6/6 warm** (091-zone-map + 021-lenses); tick/needs
+siblings green warm (080-needs 3/3 incl. the deathless pin 442 must respect, 097-hunger-voice 3/3). No bespoke
+442/438 e2e (would need a memory/harvest injection hook; logic unit-pinned, glue sibling-proven). Recommend
+APPROVE both. phase → validator-pending.
