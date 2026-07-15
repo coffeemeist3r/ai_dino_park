@@ -2705,3 +2705,10 @@ Spec'd both. Lore 443: a food-web line per dino in the collection book — carni
 meal(s)`, herbivore `💨 slipped N hunt(s)`, hidden at 0, read from the memory the hunt already files (pure,
 no new state). Structure 436: a pressing 🍖/💧 leans the wander toward relief (hatch/pond), gated + below
 every ritual, deathless. No file overlap. phase→codeplan-pending; currentItem set; 443 marked [~].
+
+## 2026-07-15 02:54 — cycle 102 — code-planner — 443 + 436 file plan
+
+Planned both. 443: catchTally/escapeTally/foodwebStanding in foodweb.ts + a BookRow.foodweb line in
+lenses.ts, wired from bookRows via recall+dietOf — pure read, ~5 files. 436: needSeeks gate + grovePondTile
+helper + a seeking branch below socializing in forceStep, plus __needTarget/__needStep hooks — ~6 files.
+Cross-track: both touch WorldScene but different methods (bookRows vs forceStep); no clobber. phase→coder-pending.
