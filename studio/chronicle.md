@@ -2685,3 +2685,9 @@ uses (unchanged since 295); the wariness is behavior, not a sprite. A zone wants
 text read on the zone-map lens (`wants <ripe-crop-emoji>◂<neighbour>`) using the crops' existing 🍓/🥬/🍠 ripe
 markers — no new glyph. No stash-rule target either (no standalone-renderable prop landed). Fallback control
 untouched. build clean; vitest 1141/1141. lastFire.artist updated. phase → lore-pending.
+
+## 2026-07-15 02:30 — cycle 102 — lore-smith — finishing Milestone 4 (443 next-up)
+
+Cycle 102 opens with Milestone 4 at 4/6 and one arc left per track. No new lore seeded (cap: backlog
+deep). Suggested next-up BACKLOG-443 — the food web reads in the collection book (a carnivore's catches,
+a herbivore's escapes). Idea Box empty. cycle→102, phase→designer-pending.
