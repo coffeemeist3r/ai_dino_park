@@ -10,6 +10,7 @@
  */
 
 import type { Tile } from './movement';
+import type { Diet } from './diet';
 
 /** Tiles within which a hungry carnivore notices prey. */
 export const STALK_RANGE = 6;
@@ -126,4 +127,33 @@ export const WARY_RANGE = STALK_RANGE;
 /** Is this dino personally wary of `hunter` — chased by it at least `threshold` times (BACKLOG-442)? */
 export function fearsHunter(memories: readonly string[], hunter: string, threshold = WARY_CHASES): boolean {
   return chaseCount(memories, hunter) >= threshold;
+}
+
+/**
+ * Predator/prey in the book (BACKLOG-443) — the food web made legible. `catchTally` counts a carnivore's
+ * landed hunts (the `you brought down a meal` memory 437 files); `escapeTally` counts a prey's escapes (the
+ * `you slipped <hunter>'s hunt` memory 367 files, across *all* hunters). Both read the live recall window
+ * (capped at 6 shared slots), so a standing is *recent* food-web activity, exactly as 442's wariness is.
+ */
+export function catchTally(memories: readonly string[]): number {
+  return memories.filter((m) => m === 'you brought down a meal').length;
+}
+
+export function escapeTally(memories: readonly string[]): number {
+  return memories.filter((m) => /slipped (.+?)'s hunt/.test(m)).length;
+}
+
+/**
+ * A dino's food-web standing line for the collection book (BACKLOG-443): a carnivore reads its catches, a
+ * herbivore its escapes. **null** when that tally is 0, so a dino with no food-web history shows no line
+ * (the book stays clean, mirroring how `knows N rumors` hides at 0). Reuses the existing hunt glyphs
+ * (🦖 hunt / 💨 fleeing) so no new art is needed.
+ */
+export function foodwebStanding(diet: Diet, memories: readonly string[]): string | null {
+  if (diet === 'carnivore') {
+    const n = catchTally(memories);
+    return n > 0 ? `🦖 brought down ${n} meal${n === 1 ? '' : 's'}` : null;
+  }
+  const n = escapeTally(memories);
+  return n > 0 ? `💨 slipped ${n} hunt${n === 1 ? '' : 's'}` : null;
 }

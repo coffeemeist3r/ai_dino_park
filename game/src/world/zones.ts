@@ -186,6 +186,12 @@ export function groveTileAt(x: number, y: number, cols: number, rows: number): T
   return 'grass';
 }
 
+/** The centre of the grove's NE pond block (BACKLOG-436) — the tile a thirsty grove dino leans toward.
+ *  Kept in sync with the water block in `groveTileAt` (x∈[cols-5,cols-2], y∈[2,4]); pure. */
+export function grovePondTile(cols: number): { tileX: number; tileY: number } {
+  return { tileX: cols - 3, tileY: 3 };
+}
+
 /**
  * The Fernreach's ground (BACKLOG-399): the third zone reads as its own *place*, not tinted bowl grass.
  * Deliberately laid out unlike the grove (whose pond sits NE and whose trail runs the horizontal middle):

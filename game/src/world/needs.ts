@@ -79,3 +79,16 @@ export function satisfy(needs: Needs, name: string, which: NeedKind): Needs {
   const cur = needs[name] ?? { hunger: 0, thirst: 0 };
   return { ...needs, [name]: { ...cur, [which]: 0 } };
 }
+
+/**
+ * Need pulls the body (BACKLOG-436) — the deferred behavior half of the need-drive. A pressing need leans a
+ * dino's wander toward relief (WorldScene supplies the hatch/pond target), but only as a *lean, not a
+ * compulsion*: this gate fires on ~`NEED_PULL_CHANCE` of steps, so a hungry dino drifts toward the hatch
+ * without being locked to a beeline, and every existing ritual above it in the wander ladder still wins.
+ * Mirror of `huntSucceeds` — pure so the rate is unit-pinned and callers can force the outcome.
+ */
+export const NEED_PULL_CHANCE = 0.6;
+
+export function needSeeks(roll: number, chance = NEED_PULL_CHANCE): boolean {
+  return roll < chance;
+}

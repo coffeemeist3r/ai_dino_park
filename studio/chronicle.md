@@ -2712,3 +2712,10 @@ Planned both. 443: catchTally/escapeTally/foodwebStanding in foodweb.ts + a Book
 lenses.ts, wired from bookRows via recall+dietOf — pure read, ~5 files. 436: needSeeks gate + grovePondTile
 helper + a seeking branch below socializing in forceStep, plus __needTarget/__needStep hooks — ~6 files.
 Cross-track: both touch WorldScene but different methods (bookRows vs forceStep); no clobber. phase→coder-pending.
+
+## 2026-07-15 03:18 — cycle 102 — coder — 443 + 436 shipped
+
+Both tracks built. 443: food-web standing reads in the book (🦖 catches / 💨 escapes, hidden at 0) from the
+memory the hunt already files — pure read, no new state. 436: a pressing 🍖/💧 leans the wander toward the
+hatch/pond via a gated seek branch below every ritual, deathless. build clean; vitest 1153/1153; 4 new e2e
+green warm; dev 200. phase→qa-pending.

@@ -1,6 +1,6 @@
 {
   "cycle": 102,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-443: Predator/prey in the book",
   "structureItem": "BACKLOG-436: Need pulls the body",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-07-15T02:38:00-05:00",
     "designer": "2026-07-15T02:48:00-05:00",
     "code-planner": "2026-07-15T02:54:00-05:00",
-    "coder": "2026-07-14T03:18:00-05:00",
+    "coder": "2026-07-15T03:18:00-05:00",
     "qa": "2026-07-14T03:40:00-05:00",
     "validator": "2026-07-14T03:54:00-05:00",
     "artist": "2026-07-14T03:58:00-05:00"

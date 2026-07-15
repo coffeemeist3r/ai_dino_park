@@ -88,3 +88,23 @@ None. Lore touches `foodweb.ts` + `lenses.ts` + `bookRows()`; structure touches 
 
 ### Estimated touch count
 ~6 files. Under 15.
+
+---
+
+## Shipped (Coder)
+
+**Lore track (443) — files touched:**
+- `game/src/world/foodweb.ts` — added `catchTally`, `escapeTally`, `foodwebStanding` (+ `Diet` import).
+- `game/src/ui/lenses.ts` — `BookRow.foodweb?` field + render line (after parents, before rumors).
+- `game/src/scenes/WorldScene.ts` — `bookRows()` sets `foodweb` from `foodwebStanding(dietOf(...), recall(...))`; import updated.
+- `game/src/world/foodweb.test.ts`, `game/src/ui/lenses.test.ts`, `tests/e2e/cycle-102-book-foodweb.spec.ts`.
+
+**Structure track (436) — files touched:**
+- `game/src/world/needs.ts` — `NEED_PULL_CHANCE` + `needSeeks` gate.
+- `game/src/world/zones.ts` — `grovePondTile(cols)`.
+- `game/src/scenes/WorldScene.ts` — `needTargetFor` method; `seeking` branch in `forceStep` (below socializing, above plain wander); imports; `__needTarget`/`__needStep` hooks.
+- `tests/unit/cycle-102-need-seek.test.ts`, `tests/e2e/cycle-102-need-seek.spec.ts`.
+
+**Deviations:** none. Only the gate is pure; target geometry stays a scene method (reads COLS/ROWS/zone) as planned.
+
+**Build:** ✅ clean. **Unit:** ✅ 1153/1153 (+12). **E2E (new):** ✅ 4/4 warm; the parallel cold-first-boot `__ready` timeout is the documented boot flake (passes isolated/warm). **Dev smoke:** ✅ `/` → 200. **Boundary:** no web-llm outside `game/src/ai/`.

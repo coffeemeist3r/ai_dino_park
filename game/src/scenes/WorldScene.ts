@@ -40,7 +40,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, grovePondTile, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
 import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
@@ -67,13 +67,13 @@ import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warm
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
-import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, WARY_RANGE } from '../world/foodweb';
+import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
-import { advanceNeeds, pressingNeed, satisfy, NEED_GLYPH, type Needs } from '../world/needs';
+import { advanceNeeds, pressingNeed, satisfy, needSeeks, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
@@ -1709,6 +1709,26 @@ export class WorldScene extends Phaser.Scene {
       this.checkNeeds();
       return JSON.parse(JSON.stringify(this.needs));
     };
+    // BACKLOG-436: where a pressing need leans this dino (hatch/pond), or null (no pressing need, or thirst
+    // with no reachable water). __needStep applies one forced seek step (bypassing the lean gate) so the
+    // e2e can watch the body pulled toward relief deterministically.
+    (window as any).__needTarget = (name: string) => {
+      const d = this.dinoByName(name);
+      if (!d) return null;
+      const need = pressingNeed(this.needs[name]);
+      return need ? this.needTargetFor(d, need) : null;
+    };
+    (window as any).__needStep = (name: string) => {
+      const d = this.dinoByName(name);
+      if (!d) return null;
+      const need = pressingNeed(this.needs[name]);
+      const target = need ? this.needTargetFor(d, need) : null;
+      if (target) {
+        const nxt = stepToward(this.tileOf(d), target, COLS, ROWS);
+        d.setPosition(nxt.tileX * TILE + TILE / 2, nxt.tileY * TILE + TILE / 2);
+      }
+      return this.tileOf(d);
+    };
     // dev-only: distress call (BACKLOG-194) — the last cry, the responder mid-walk, and a
     // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
     (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
@@ -1925,6 +1945,17 @@ export class WorldScene extends Phaser.Scene {
     this.refreshNeedMarks();
   }
 
+  /**
+   * Where a pressing need leans a dino (BACKLOG-436): hunger → the hatch feeding zone (centre column, the
+   * `foodLanding` row where dropped food settles), thirst → the grove pond — but only when the dino is *in*
+   * the grove, the one place thirst is slaked (371); elsewhere thirst has no reachable water and returns
+   * null (the dino just wanders — a local waterhole is the separate 445).
+   */
+  private needTargetFor(d: Dino, need: NeedKind): { tileX: number; tileY: number } | null {
+    if (need === 'hunger') return { tileX: Math.floor(COLS / 2), tileY: Math.floor(ROWS * 0.45) };
+    return zoneOf(this.dinoZones, d.name, BOWL_ID) === GROVE_ID ? grovePondTile(COLS) : null;
+  }
+
   // ── Observer lenses (BACKLOG-021 + 020): cycle V through ways of seeing the sim ──
 
   private logEvent(line: string): void {
@@ -1976,6 +2007,7 @@ export class WorldScene extends Phaser.Scene {
       home: isSettled(tenureOf(this.tenure, d.name)) // BACKLOG-341: where it's settled, once it belongs
         ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
         : undefined,
+      foodweb: foodwebStanding(dietOf(d.species, d.name), recall(this.memory, d.name)) ?? undefined, // BACKLOG-443
     }));
   }
 
@@ -2597,6 +2629,13 @@ export class WorldScene extends Phaser.Scene {
       const moping =
         !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
       const socializing = !huddling && !gathering && !moping && !!other && Math.random() < socializeChanceFor(intent); // BACKLOG-393
+      // Need pulls the body (BACKLOG-436): a pressing 🍖/💧 leans the wander toward relief (hatch/pond),
+      // but only below every ritual above (they still win) and gated so it's a lean, not a compulsion.
+      // No reachable target (thirst outside the grove) → seekTarget null → the dino just wanders.
+      const need = pressingNeed(this.needs[d.name]);
+      const seekTarget =
+        !huddling && !gathering && !moping && !socializing && need ? this.needTargetFor(d, need) : null;
+      const seeking = !!seekTarget && needSeeks(Math.random());
       // Solitary tic (BACKLOG-405): a dino truly alone — nothing pressing, nobody in its zone within range,
       // and nothing to do (not huddling/gathering) — accrues a solitary streak and, past TIC_AFTER_STEPS,
       // falls into a small ritual of its own. Only *company or a need* breaks the streak (`resetTic`); moping
@@ -2643,6 +2682,8 @@ export class WorldScene extends Phaser.Scene {
         this.performTic(d, tic);
       } else if (socializing) {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
+      } else if (seeking) {
+        next = stepToward(cur, seekTarget!, COLS, ROWS); // BACKLOG-436: lean toward the hatch (hunger) / pond (thirst)
       } else {
         // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.
         const dir = rerollStay(intent, Math.floor(Math.random() * 5), () => Math.floor(Math.random() * 5));

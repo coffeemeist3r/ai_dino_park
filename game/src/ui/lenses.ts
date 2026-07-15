@@ -140,6 +140,9 @@ export interface BookRow {
   plans?: string;
   /** Where the dino has settled (BACKLOG-341) — `at home in <zone>`, set only once it belongs. */
   home?: string;
+  /** Food-web standing (BACKLOG-443) — a carnivore's catch tally / a herbivore's escape tally, or
+   *  undefined when the dino has no food-web history (then no line shows). Built by `foodwebStanding`. */
+  foodweb?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -157,6 +160,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
+    if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }
   return out;

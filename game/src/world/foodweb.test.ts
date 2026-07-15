@@ -11,6 +11,9 @@ import {
   fearsHunter,
   WARY_CHASES,
   WARY_RANGE,
+  catchTally,
+  escapeTally,
+  foodwebStanding,
 } from './foodweb';
 import type { Tile } from './movement';
 
@@ -154,6 +157,51 @@ describe('food web hunt (BACKLOG-367)', () => {
     it('keeps its constants sane — WARY_CHASES ≥ 2, WARY_RANGE reuses the stalk range', () => {
       expect(WARY_CHASES).toBeGreaterThanOrEqual(2);
       expect(WARY_RANGE).toBe(STALK_RANGE);
+    });
+  });
+
+  // Predator/prey in the book (BACKLOG-443)
+  describe('catchTally', () => {
+    it('counts only the 437 success memory', () => {
+      const mem = ['you brought down a meal', 'napped', 'you brought down a meal', `you slipped Rex's hunt`];
+      expect(catchTally(mem)).toBe(2);
+    });
+    it('is 0 for an empty / non-catch store', () => {
+      expect(catchTally([])).toBe(0);
+      expect(catchTally(['ate some berries'])).toBe(0);
+    });
+  });
+
+  describe('escapeTally', () => {
+    it('counts every slipped-hunt memory across all hunters', () => {
+      const mem = [`you slipped Twitch's hunt`, 'dozed', `you slipped Rex's hunt`, `you slipped Twitch's hunt`];
+      expect(escapeTally(mem)).toBe(3);
+    });
+    it('is 0 with no hunt memory', () => {
+      expect(escapeTally([])).toBe(0);
+      expect(escapeTally(['watched the sky'])).toBe(0);
+    });
+  });
+
+  describe('foodwebStanding', () => {
+    it('reads catches for a carnivore, escapes for a herbivore', () => {
+      expect(foodwebStanding('carnivore', ['you brought down a meal'])).toBe('🦖 brought down 1 meal');
+      expect(foodwebStanding('herbivore', [`you slipped Twitch's hunt`, `you slipped Rex's hunt`])).toBe(
+        '💨 slipped 2 hunts',
+      );
+    });
+    it('pluralises correctly', () => {
+      const twoCatches = ['you brought down a meal', 'you brought down a meal'];
+      expect(foodwebStanding('carnivore', twoCatches)).toBe('🦖 brought down 2 meals');
+      expect(foodwebStanding('herbivore', [`you slipped Twitch's hunt`])).toBe('💨 slipped 1 hunt');
+    });
+    it('is null when the relevant tally is 0 (no line shows)', () => {
+      expect(foodwebStanding('carnivore', [])).toBeNull();
+      expect(foodwebStanding('herbivore', [])).toBeNull();
+      // a carnivore reads catches only — a stray slipped memory doesn't give it a line
+      expect(foodwebStanding('carnivore', [`you slipped Rex's hunt`])).toBeNull();
+      // a herbivore reads escapes only — a stray catch memory doesn't give it a line
+      expect(foodwebStanding('herbivore', ['you brought down a meal'])).toBeNull();
     });
   });
 });

@@ -1,0 +1,61 @@
+import { test, expect, type Page } from '@playwright/test';
+import { boot } from './helpers';
+
+/**
+ * Need pulls the body (BACKLOG-436). A pressing need leans a dino's wander toward relief: hunger toward the
+ * hatch feeding zone, thirst toward the grove pond (grove-only — the one place thirst is slaked). __needStep
+ * applies one forced seek step so the body can be watched pulled toward the target deterministically.
+ */
+
+type W = Record<string, any>;
+type Tile = { tileX: number; tileY: number };
+
+const setNeed = (p: Page, name: string, which: string, v: number) =>
+  p.evaluate(({ name, which, v }) => (window as W).__setNeed(name, which, v), { name, which, v });
+const needTarget = (p: Page, name: string) =>
+  p.evaluate((name) => (window as W).__needTarget(name) as Tile | null, name);
+const needStep = (p: Page, name: string) =>
+  p.evaluate((name) => (window as W).__needStep(name) as Tile, name);
+const migrate = (p: Page, name: string, zone: string) =>
+  p.evaluate(({ name, zone }) => (window as W).__migrate(name, zone), { name, zone });
+
+const cheb = (a: Tile, b: Tile) => Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY));
+
+test('pressing hunger targets the hatch and pulls the body toward it', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await boot(page);
+
+  await setNeed(page, 'Rex', 'hunger', 1);
+  const target = await needTarget(page, 'Rex');
+  expect(target).not.toBeNull();
+
+  // forced seek steps close the gap to 0 (the body is pulled to the hatch)
+  let reached = false;
+  let last = await needStep(page, 'Rex');
+  for (let i = 0; i < 60 && !reached; i++) {
+    const t = await needStep(page, 'Rex');
+    if (cheb(t, target!) === 0) reached = true;
+    last = t;
+  }
+  expect(reached, `ended at ${JSON.stringify(last)}, target ${JSON.stringify(target)}`).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test('thirst pulls only in the grove (its water is grove-only)', async ({ page }) => {
+  await boot(page);
+
+  // in the bowl, a thirsty dino has no reachable water → no target
+  await setNeed(page, 'Rex', 'thirst', 1);
+  expect(await needTarget(page, 'Rex')).toBeNull();
+
+  // move it to the grove → the pond becomes its target
+  await migrate(page, 'Rex', 'grove');
+  await setNeed(page, 'Rex', 'thirst', 1);
+  expect(await needTarget(page, 'Rex')).not.toBeNull();
+});
+
+test('a sated dino has no seek target', async ({ page }) => {
+  await boot(page);
+  expect(await needTarget(page, 'Rex')).toBeNull();
+});

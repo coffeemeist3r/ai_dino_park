@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { zoneMapModel, zoneWant } from './lenses';
+import { zoneMapModel, zoneWant, bookLines, type BookRow } from './lenses';
 import { zoneChain, zoneById, BOWL_ID, GROVE_ID, FERNREACH_ID } from '../world/zones';
 import { cropOf } from '../world/plot';
 
@@ -56,5 +56,19 @@ describe('a zone wants what it can\'t grow (BACKLOG-438)', () => {
     expect(model.find((e) => e.id === BOWL_ID)!.want!.from).toBe(GROVE_ID);
     expect(model.find((e) => e.id === FERNREACH_ID)!.want!.from).toBe(GROVE_ID);
     expect(zoneMapModel(chain, pops, BOWL_ID).every((e) => e.want === null)).toBe(true);
+  });
+});
+
+describe('food-web standing in the book (BACKLOG-443)', () => {
+  const base: BookRow = { name: 'Twitch', species: 'compsognathus', hearts: 3, topBond: 10, role: 'wanderer', rumorsHeard: 0 };
+
+  it('renders the food-web line when set', () => {
+    const lines = bookLines([{ ...base, foodweb: '🦖 brought down 2 meals' }]);
+    expect(lines.some((l) => l.includes('🦖 brought down 2 meals'))).toBe(true);
+  });
+
+  it('omits the line when unset (a dino with no food-web history)', () => {
+    const lines = bookLines([{ ...base }]);
+    expect(lines.some((l) => l.includes('brought down') || l.includes('slipped'))).toBe(false);
   });
 });
