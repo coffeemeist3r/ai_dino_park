@@ -20,7 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
+- [~] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371/needs.
 - [ ] BACKLOG-444 [core] A carrier feeds the hungry — the carry/flow system (429) moves resources between zones; extend it so a zone's stockpile can be spent to resolve a *starving resident's* hunger when no keeper drop comes (a banked food sates a pressing need), closing the loop between the economy and the need-drive. Builds on 429 / 371 / 437.
 - [ ] BACKLOG-445 [emergent] The waterhole — thirst (371) only resolves at the grove pond; give the bowl and Fernreach their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (418/432). Builds on 371 / 436 / 418.
 - [ ] BACKLOG-446 [core] A zone banks its harvest — harvested crop (145/433) drops straight into the feeding loop and is gone; there is no *banked food*, so nothing can actually flow between zones. Add a per-zone food stockpile (the food twin of the resource pile 285/328): a share of each harvest banks by food id, capped like resources, read on the lens. The missing spine under both the demand read (438) and the carrier that feeds the hungry (444) — you can't ferry food you never stored. Builds on 433 / 285 / 438.
@@ -231,7 +231,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
 > hungry dino finally *seeks* food instead of just wearing the mark.
 
-- [ ] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371 / needs.
+- [~] BACKLOG-436 [core] Need pulls the body (372) — hunger/thirst is a *tell* only (371): a dino wears a 🍖/💧 but doesn't act on it. Bias a pressing-need dino's wander toward the hatch (hunger) or the grove pond (thirst) so it *seeks* relief, still deathless and capped (a lean, not a compulsion; keeper drops and existing rituals still win). The deferred 372 behavior half of the need-drive. Builds on 371 / needs.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
 

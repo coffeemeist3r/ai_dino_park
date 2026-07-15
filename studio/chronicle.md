@@ -2691,3 +2691,10 @@ untouched. build clean; vitest 1141/1141. lastFire.artist updated. phase → lor
 Cycle 102 opens with Milestone 4 at 4/6 and one arc left per track. No new lore seeded (cap: backlog
 deep). Suggested next-up BACKLOG-443 — the food web reads in the collection book (a carnivore's catches,
 a herbivore's escapes). Idea Box empty. cycle→102, phase→designer-pending.
+
+## 2026-07-15 02:38 — cycle 102 — structure-smith — BACKLOG-436 (need pulls the body)
+
+Structure Track at 4 open (436/444/445/446) ≥ X=4 → no invent. Picked 436, Milestone 4's last structure
+arc: the deferred 372 behavior half of the need-drive — a pressing 🍖/💧 finally leans the wander toward
+relief (hatch/pond), deathless and capped. No file collision with the lore track's book read (443).
+structureItem set; marked [~].
