@@ -2725,3 +2725,37 @@ green warm; dev 200. phase→qa-pending.
 build clean; vitest 1153/1153; playwright 330/330 full warm run (incl. both cycle-102 specs + the
 mobile-minds long-dialog spec, green). All acceptance criteria PASS on both tracks. Recommend APPROVE / APPROVE.
 phase→validator-pending.
+
+## 2026-07-15 03:54 — cycle 102 — validator — APPROVED both · 🎉 MILESTONE 4 SHIPPED
+
+Two APPROVEs, and with them the milestone closes. **Milestone 4 "The hunt has weight" — SHIPPED (cycle
+102, opened cycle 100), all 6 arcs green.** Come back after a week and the bowl's food web has *stakes* you
+can watch and read.
+
+**BACKLOG-443 — predator/prey in the book (lore).** The hunt has run for cycles — Twitch stalks, catches
+feed him (437), prey flee and grow personally wary (440/442) — but none of it was *legible*. Now the
+collection book reads each dino its food-web standing, straight out of the memory the hunt already files: a
+carnivore's recent catches (`🦖 brought down N meals`), a herbivore's recent escapes (`💨 slipped N hunts`),
+and nothing at all for a dino the food web never touched. It's a pure surfacing — `catchTally`/`escapeTally`
+count the `you brought down a meal` / `you slipped X's hunt` lines in the 6-slot recall window, diet-keyed
+so a grazer never shows catches and Twitch never shows escapes, hidden at zero so the page stays clean. No
+new state, no save change; the number reads *recent* standing the same way 442's wariness does. **Milestone
+4 lore arc 3 ✅.**
+
+**BACKLOG-436 — need pulls the body (structure).** 371 gave every dino hunger and thirst and a 🍖/💧 tell,
+then deliberately stopped — the mark showed, the dino did nothing. This is the deferred behavior half: a
+pressing need finally *moves the body*. A hungry dino leans its wander toward the hatch feeding zone; a
+thirsty dino in the grove leans toward the pond (and only there — thirst has no other water yet, so a
+parched bowl-dweller just wanders, the local waterhole left to 445). Crucially a *lean, not a compulsion*:
+gated at 0.6 and slotted below every ritual in the wander ladder, so huddling, gathering, the solitary tic,
+socializing, and the keeper's food-drop rush all still win. Deathless and save-free — it rides the existing
+needs map and only nudges a step. The bowl's hungry now drift toward where food comes from, under the mark
+that says why. **Milestone 4 structure arc 2 ✅ — milestone complete.**
+
+**The milestone, whole.** Minds (M1) → a home ground (M2) → a ground that feeds them (M3) → a ground where
+the eating has stakes (M4): a stalk that feeds (437), a need that seeks (436), a prey left rattled (440) and
+personally wary (442), a zone that asks for what it can't grow (438), and a food web you can read in the
+book (443). Still deathless by design — mortality remains the operator's CHARTER call. Quality: build clean,
+tsc clean, vitest 1153/1153, e2e 330/330 on a full warm run (the mobile-minds long-dialog spec green too),
+WebLLM ai/-only, saves additive. 443/436 archived; Structure Track open = 444/445/446. The smiths draft
+Milestone 5 next open. phase → lore-pending.

@@ -8,24 +8,7 @@
 
 ## Current milestone
 
-**Milestone 4: The hunt has weight**
-**Status:** ACTIVE (opened cycle 100)
-
-The food web woke in Milestone 3 as a chase that always came up empty. Milestone 4 gives it
-*consequence*: a successful stalk actually feeds the predator (so hunger resolves through hunting, not
-only the keeper's hatch), a slipped hunt leaves the prey rattled enough to say so, fear of a hunter turns
-personal, and the whole food-web standing reads in the book. Minds (M1) → a home ground (M2) → a ground
-that feeds them (M3) → **a ground where the eating has stakes** (M4).
-
-**Lore arcs:**
-- [x] Rattled after the chase — a dino that just slipped a hunt greets the keeper still shaken, naming who chased it (BACKLOG-440 — cycle 100)
-- [x] The hunter's reputation — a herbivore chased by the same carnivore repeatedly grows warier of *that* dino specifically (BACKLOG-442 — cycle 101)
-- [ ] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catches, a herbivore's escapes (BACKLOG-443)
-
-**Structure arcs:**
-- [x] The hunt feeds — a successful stalk (occasional, deathless) fills the hunter; hunger resolves through hunting (BACKLOG-437 — cycle 100)
-- [ ] Need pulls the body — a pressing-need dino biases its wander toward the hatch (hunger) or pond (thirst) (BACKLOG-436)
-- [x] A zone wants what it can't grow — a zone light on a food kind its plot can't grow biases its carry-request toward a neighbour that can (BACKLOG-438 — cycle 101)
+*(none active — Milestone 4 shipped cycle 102; the smiths draft Milestone 5 at the next cycle open.)*
 
 ### Format (use this when drafting)
 
@@ -43,6 +26,29 @@ that feeds them (M3) → **a ground where the eating has stakes** (M4).
 ```
 
 ## Shipped milestones
+
+### Milestone 4: The hunt has weight — SHIPPED cycle 102 (opened cycle 100)
+
+The food web woke in Milestone 3 as a chase that always came up empty; Milestone 4 gave it *consequence*.
+A stalk now occasionally feeds the hunter — hunger resolves through hunting, not only the keeper's hatch
+(437) — and a dino whose need is pressing finally *seeks* relief, leaning its wander toward the hatch or the
+grove pond instead of just wearing the 🍖/💧 (436). The prey got a voice and a memory: one that just
+slipped a hunt greets the keeper still shaken, naming its chaser (440), and a herbivore chased twice by the
+same carnivore grows wary of *that* dino specifically, startling from it even off an active hunt (442). The
+economy learned to *ask* — a zone light on a crop it can't grow points its carry-request at the neighbour
+out-growing the rest (438) — and the whole food web now reads in the collection book: a carnivore's catches,
+a herbivore's escapes (443). Minds (M1) → a home ground (M2) → a ground that feeds them (M3) → **a ground
+where the eating has stakes** (M4). Still deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] Rattled after the chase — a dino that just slipped a hunt greets the keeper still shaken, naming who chased it (BACKLOG-440 — cycle 100)
+- [x] The hunter's reputation — a herbivore chased by the same carnivore repeatedly grows warier of *that* dino specifically (BACKLOG-442 — cycle 101)
+- [x] Predator/prey in the book — the collection book reads each dino's food-web standing: a carnivore's catches, a herbivore's escapes (BACKLOG-443 — cycle 102)
+
+**Structure arcs:**
+- [x] The hunt feeds — a successful stalk (occasional, deathless) fills the hunter; hunger resolves through hunting (BACKLOG-437 — cycle 100)
+- [x] A zone wants what it can't grow — a zone light on a food kind its plot can't grow biases its carry-request toward a neighbour that can (BACKLOG-438 — cycle 101)
+- [x] Need pulls the body — a pressing-need dino biases its wander toward the hatch (hunger) or pond (thirst) (BACKLOG-436 — cycle 102)
 
 ### Milestone 3: Enough to go around — SHIPPED cycle 99 (opened cycle 97)
 
