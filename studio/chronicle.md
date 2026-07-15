@@ -2698,3 +2698,10 @@ Structure Track at 4 open (436/444/445/446) ≥ X=4 → no invent. Picked 436, M
 arc: the deferred 372 behavior half of the need-drive — a pressing 🍖/💧 finally leans the wander toward
 relief (hatch/pond), deathless and capped. No file collision with the lore track's book read (443).
 structureItem set; marked [~].
+
+## 2026-07-15 02:48 — cycle 102 — designer — 443 + 436 (both Milestone 4 finishers)
+
+Spec'd both. Lore 443: a food-web line per dino in the collection book — carnivore `🦖 brought down N
+meal(s)`, herbivore `💨 slipped N hunt(s)`, hidden at 0, read from the memory the hunt already files (pure,
+no new state). Structure 436: a pressing 🍖/💧 leans the wander toward relief (hatch/pond), gated + below
+every ritual, deathless. No file overlap. phase→codeplan-pending; currentItem set; 443 marked [~].
