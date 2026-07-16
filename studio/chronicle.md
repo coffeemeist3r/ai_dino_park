@@ -2783,3 +2783,12 @@ a share of each harvest banks by food id, capped, read on the zone-map lens. The
 the hungry) / 447 (ferry) / 438 (demand) all need — can't move food you never stored. Queue was 3 (<X=4);
 seeded 447 (food flows between zones) + 448 (provider role) to refill, then picked. Added M5 structure arcs
 (446/444/445) to MILESTONE.md. Pairs with lore 373 (different files). structureItem set.
+
+## 2026-07-16 02:48 — cycle 103 — designer — 373 + 446 specced
+
+Both tracks specced with acceptance criteria. 373 (lore): a `sharedMeal(prev,name,at,window)` helper in
+feeding.ts + a transient `lastMeal` anchor in eatFood — two different dinos eating within 4s bond by 3 (< a
+meet, < a yield) and each file an "ate together" memory, 🍽 flash. 446 (structure): new pure `world/foodstore.ts`
+(FoodPile, bankFood capped, foodPileLine), harvest banks one unit of the zone crop into a per-zone food pile,
+persisted additively, read on the zone-map lens. Cross-track clean (eatFood vs harvest/lens; both save additive).
+currentItem set. phase→codeplan-pending.
