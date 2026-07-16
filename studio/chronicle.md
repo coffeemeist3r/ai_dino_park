@@ -2808,3 +2808,10 @@ within 4s bond +3 and each file an "ate alongside <other>" memory, 🍽 flash + 
 `world/foodstore.ts` (FoodPile/bankFood capped at 6/foodPileLine), harvest banks one crop unit into a per-zone
 food store, additive save field, read on the zone-map lens (`🍓 N`, boxH 78→92). build clean; vitest 1164/1164
 (+11); 3 new e2e green warm; WebLLM ai/-only. phase→qa-pending.
+
+## 2026-07-16 03:40 — cycle 103 — qa — PASS both
+
+build clean; vitest 1164/1164 (+11); playwright 331 passed on the full warm run, 2 carry specs
+(077/097-carry-pressure) flaked under parallel load and pass 3/3 isolated (--workers=1) — the catalogued
+cross-zone parallel-load flake, and the 103 diff never touches resource carry. All acceptance criteria PASS
+on both tracks. Recommend APPROVE / APPROVE. phase→validator-pending.
