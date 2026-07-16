@@ -147,6 +147,27 @@ export function slunkOffMemory(boldName: string): string {
 }
 
 /**
+ * Shared meal (BACKLOG-373) — communal feeding made a bonding moment. A hatch drop is a single piece
+ * eaten by a single dino, so "eat from the same hatch drop" is realized as two *different* dinos eating
+ * within a short wall-clock window: successive rushes to sequential drops read as one meal taken together,
+ * so the pair warms a notch and each remembers it. A gentle tie — SHARED_MEAL_BOND is smaller than a meet
+ * or the 375 yield's bump: sharing a trough is warmth, not a grand kindness. Pure; WorldScene holds the
+ * transient `lastMeal` anchor and applies the (symmetric) strengthen + memory in `eatFood`.
+ */
+export const SHARED_MEAL_MS = 4000; // eat within this many ms of another dino → "ate together"
+export const SHARED_MEAL_BOND = 3; // the communal-feeding bond bump (< a meet, < GENEROUS_BOND_BUMP 5)
+
+/** Did two dinos share a meal — a prior eater exists, a *different* dino, within the window? */
+export function sharedMeal(
+  prev: { name: string; at: number } | null,
+  name: string,
+  at: number,
+  windowMs = SHARED_MEAL_MS,
+): boolean {
+  return !!prev && prev.name !== name && at - prev.at <= windowMs;
+}
+
+/**
  * Where dropped food lands. `col` (the hatch column) is honored and clamped when
  * given; otherwise a column is picked from `rand`. It always settles in the
  * upper-middle feeding zone so it falls into the cast rather than onto the rim.

@@ -24,6 +24,23 @@ describe('per-zone harvest on the map lens (BACKLOG-433)', () => {
   });
 });
 
+describe('banked food on the map lens (BACKLOG-446)', () => {
+  const chain = zoneChain();
+  const pops = { [BOWL_ID]: 3, [GROVE_ID]: 1, [FERNREACH_ID]: 1 };
+
+  it('reads each zone its banked-food glyph line from the foodPiles map', () => {
+    const model = zoneMapModel(chain, pops, BOWL_ID, {}, {}, { [BOWL_ID]: { berries: 2 }, [GROVE_ID]: { greens: 1 } });
+    const byId = Object.fromEntries(model.map((e) => [e.id, e.banked]));
+    expect(byId[BOWL_ID]).toBe('🍓 2');
+    expect(byId[GROVE_ID]).toBe('🌿 1');
+    expect(byId[FERNREACH_ID]).toBe(''); // absent → empty, no banked line shows
+  });
+
+  it('defaults banked to "" for older callers that omit the foodPiles arg', () => {
+    expect(zoneMapModel(chain, pops, BOWL_ID).every((e) => e.banked === '')).toBe(true);
+  });
+});
+
 describe('a zone wants what it can\'t grow (BACKLOG-438)', () => {
   it('has no want until a neighbour has actually grown a surplus', () => {
     expect(zoneWant(BOWL_ID, {})).toBeNull();

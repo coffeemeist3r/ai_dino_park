@@ -79,7 +79,8 @@ import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, LENS_LABEL
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
+import { bankFood, type FoodPile } from '../world/foodstore';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -393,6 +394,16 @@ export class WorldScene extends Phaser.Scene {
   private harvested = 0;
   /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Persisted; absent → {}. */
   private harvestedByZone: Record<string, number> = {};
+  /** Per-zone banked food (BACKLOG-446) — the food twin of `stockpileByZone`: a share of each harvest banks
+   *  here by food id, capped, read on the zone-map lens. Persisted; absent → {}. */
+  private foodPileByZone: Record<string, FoodPile> = {};
+  /** The (lazily-created) food pile for a zone (BACKLOG-446) — twin of `pileFor`. */
+  private foodStoreFor(zone: string): FoodPile {
+    return (this.foodPileByZone[zone] ??= {});
+  }
+  /** The last dino to eat + when (BACKLOG-373) — the anchor a shared meal pairs against. Transient (a live
+   *  moment, not saved state). */
+  private lastMeal: { name: string; at: number } | null = null;
   /** Last plot stage drawn per zone — so the ripen note fires once, on the edge into ripe. */
   private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
@@ -860,6 +871,7 @@ export class WorldScene extends Phaser.Scene {
 
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
+    (window as any).__zoneFoodPile = (z: string) => ({ ...this.foodStoreFor(z) }); // BACKLOG-446: a named zone's banked food
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
       this.stockpileByZone[zone] = { ...pile };
@@ -958,6 +970,7 @@ export class WorldScene extends Phaser.Scene {
       return p ? { plantedDay: p.plantedDay, stage: cropStage(getWorldClock().now().day - p.plantedDay) } : null;
     };
     (window as any).__harvested = () => this.harvested;
+    (window as any).__lastMeal = () => this.lastMeal; // BACKLOG-373: the last-eaten anchor a shared meal pairs against
     (window as any).__plantPlot = (zone?: string) => {
       this.plant(zone ?? this.zoneId);
       return (window as any).__plot(zone);
@@ -1033,6 +1046,9 @@ export class WorldScene extends Phaser.Scene {
     this.plotByZone[zone] = null;
     this.harvested++;
     this.harvestedByZone[zone] = (this.harvestedByZone[zone] ?? 0) + 1; // BACKLOG-428: per-zone farming term
+    // BACKLOG-446: a share of the harvest banks into the zone's food store (capped) — the drop above still
+    // feeds the loop; this is the stored surplus 444/447 spend and ferry, read on the zone-map lens.
+    this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food);
     this.logEvent(`${crop.ripe} you harvested the crop`);
     this.refreshPlot();
     void this.saveGame();
@@ -1224,6 +1240,19 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(
       `🍖 ${d.name} snapped up the food at the hatch${r.favorite ? ` — its favorite ${kind!.label}!` : ''}`,
     );
+    // BACKLOG-373: two *different* dinos eating within a short window shared a meal — communal feeding warms
+    // the pair a notch and each remembers it. A gentle tie (SHARED_MEAL_BOND < a meet). `lastMeal` re-anchors
+    // on every meal so the next eater pairs against this one.
+    const now = Date.now();
+    if (sharedMeal(this.lastMeal, d.name, now)) {
+      const other = this.lastMeal!.name;
+      this.bonds = strengthen(this.bonds, other, d.name, SHARED_MEAL_BOND);
+      this.memory = remember(this.memory, d.name, `you ate alongside ${other}`);
+      this.memory = remember(this.memory, other, `you ate alongside ${d.name}`);
+      this.flashFeed(d, '🍽');
+      this.logEvent(`🍽 ${other} and ${d.name} ate together`);
+    }
+    this.lastMeal = { name: d.name, at: now };
     this.refreshHeartsPanel();
     void this.saveGame();
   }
@@ -2166,6 +2195,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneId,
       this.zoneTiers(),
       this.harvestedByZone, // BACKLOG-433: each zone's farming tally, read on its own on the lens
+      this.foodPileByZone, // BACKLOG-446: each zone's banked food, read as a glyph line on the lens
     );
   }
 
@@ -2177,7 +2207,7 @@ export class WorldScene extends Phaser.Scene {
   private drawZoneMap(): void {
     const entries = this.zoneMapEntries();
     const boxW = 118;
-    const boxH = 78; // BACKLOG-428: third (prosperity) line; BACKLOG-438: room for the fourth (want) line
+    const boxH = 92; // BACKLOG-428/438: prosperity + want lines; BACKLOG-446: room for the banked-food line
     const gap = 26;
     const totalW = entries.length * boxW + (entries.length - 1) * gap;
     const x0 = ((TILE * COLS) - totalW) / 2;
@@ -2202,6 +2232,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
       let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
+      if (e.banked) txt += `\n${e.banked}`; // BACKLOG-446: the zone's banked food, only when it has some
       this.mapLabels[i]?.setText(txt).setPosition(x + boxW / 2, y + boxH / 2 - 5);
     });
     // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
@@ -4571,6 +4602,7 @@ export class WorldScene extends Phaser.Scene {
       fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
       harvested: this.harvested,
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
+      foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -4641,6 +4673,7 @@ export class WorldScene extends Phaser.Scene {
       this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null, [FERNREACH_ID]: save.fernreachPlot ?? null };
       this.harvested = save.harvested ?? 0;
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
+      this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove

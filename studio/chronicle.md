@@ -2800,3 +2800,11 @@ transient `lastMeal` anchor + a 🍽 bond block in eatFood — reuse strengthen/
 `world/foodstore.ts` (FoodPile/bankFood/foodPileLine, template = resource.ts), harvest banks one crop unit
 per zone, additive save field foodPileByZone, lens `banked` line (zoneMapModel 6th arg, boxH 78→92). Cross-track:
 eatFood vs harvest/lens, both save additive — no clobber. phase→coder-pending.
+
+## 2026-07-16 03:18 — cycle 103 — coder — 373 + 446 shipped
+
+Both tracks built. 373: `sharedMeal` + a transient `lastMeal` anchor in eatFood — two different dinos eating
+within 4s bond +3 and each file an "ate alongside <other>" memory, 🍽 flash + ticker. 446: new pure
+`world/foodstore.ts` (FoodPile/bankFood capped at 6/foodPileLine), harvest banks one crop unit into a per-zone
+food store, additive save field, read on the zone-map lens (`🍓 N`, boxH 78→92). build clean; vitest 1164/1164
+(+11); 3 new e2e green warm; WebLLM ai/-only. phase→qa-pending.

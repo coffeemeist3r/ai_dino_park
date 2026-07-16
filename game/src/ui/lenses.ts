@@ -11,6 +11,7 @@ import type { Role } from '../ai/roles';
 import { zoneById, zoneNeighbors } from '../world/zones';
 import { cropOf } from '../world/plot';
 import type { ProsperityTier } from '../world/prosperity';
+import { foodPileLine, type FoodPile } from '../world/foodstore';
 
 export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker' | 'map';
 // 'map' (BACKLOG-425) is appended at the END so every pre-existing lens keeps its position on the ring.
@@ -41,6 +42,9 @@ export interface ZoneMapEntry {
   /** What this zone wants from a neighbour (BACKLOG-438) — the demand read, or null when no neighbour has a
    *  surplus of a crop this zone can't grow. */
   want: ZoneWant | null;
+  /** Banked food (BACKLOG-446) — the zone's food stockpile as a glyph line (`🍓 2`), '' when empty so no
+   *  banked line shows; older callers/tests omit the pile and read ''. */
+  banked: string;
 }
 
 /**
@@ -89,6 +93,7 @@ export function zoneMapModel(
   keeperZone: string,
   tiers: Record<string, ProsperityTier> = {},
   harvests: Record<string, number> = {},
+  foodPiles: Record<string, FoodPile> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -98,6 +103,7 @@ export function zoneMapModel(
     tier: tiers[id] ?? 'quiet',
     harvested: harvests[id] ?? 0, // BACKLOG-433: the zone's own farming tally (absent → 0)
     want: zoneWant(id, harvests), // BACKLOG-438: what it wants from a neighbour (null until a neighbour has a surplus)
+    banked: foodPileLine(foodPiles[id] ?? {}), // BACKLOG-446: the zone's banked food (absent → '')
   }));
 }
 

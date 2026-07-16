@@ -87,6 +87,8 @@ export interface SaveData {
   stockpile?: Record<string, number>;
   /** Per-zone stockpiles (BACKLOG-328). Additive over `stockpile`; absent in pre-328 saves (→ bowl pile on restore). zone→kind→count. */
   stockpileByZone?: Record<string, Record<string, number>>;
+  /** Per-zone banked food (BACKLOG-446) — the food twin of `stockpileByZone`. Additive; absent → {}. zone→foodId→count. */
+  foodPileByZone?: Record<string, Record<string, number>>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
