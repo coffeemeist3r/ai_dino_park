@@ -2768,3 +2768,10 @@ in play (unchanged since 295/367); it's book text, not a sprite. Need pulls the 
 behavior under the existing 🍖/💧 need marks (371) — the tell moves, the glyph doesn't. No stash-rule target
 either (no standalone-renderable prop landed). Fallback control untouched. build clean; vitest 1153/1153.
 lastFire.artist updated. phase stays lore-pending.
+
+## 2026-07-16 02:30 — cycle 103 — lore-smith — Milestone 5 drafted: "No one goes hungry"
+
+Milestone 4 shipped last cycle; drafted **Milestone 5 "No one goes hungry"** (headline + 3 lore arcs) into
+MILESTONE.md — the bowl's plenty finally reaches its hungry: bank a share of every harvest, spend it on a
+starving resident, water every zone, and the cast feeds each other. Cap rule ≫12 → no new items; lore arcs
+drawn from queued 373/376/381. Suggested next-up **BACKLOG-373** (shared meal). Idea Box empty. phase→designer-pending.

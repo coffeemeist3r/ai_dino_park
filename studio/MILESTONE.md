@@ -8,7 +8,26 @@
 
 ## Current milestone
 
-*(none active — Milestone 4 shipped cycle 102; the smiths draft Milestone 5 at the next cycle open.)*
+**Milestone 5: No one goes hungry**
+**Status:** ACTIVE (opened cycle 103)
+
+The hunt got stakes in Milestone 4; Milestone 5 makes the bowl's *plenty* reach the mouths that need it.
+Today a harvest drops, is eaten, and is gone — nothing is banked, so a zone rich in crops can't feed a
+starving neighbour, and thirst only ever slakes at the one grove pond. This milestone closes that gap from
+both ends: the economy learns to *store* (a share of every harvest banks per zone), that store learns to
+*spend* on a starving resident when no keeper drop comes, and water finally reaches every zone — while the
+cast learns to feed *each other*, eating side by side into a bond, waking hungry, and walking a withdrawn
+friend to the food. Minds (M1) → a home ground (M2) → a ground that feeds them (M3) → a ground where eating
+has stakes (M4) → **a ground that provides for its own** (M5). Deathless by design; mortality stays an
+operator call.
+
+**Lore arcs:**
+- [ ] Ate together — two dinos that feed side by side within a short window bond over the shared meal, communal feeding made a moment (BACKLOG-373)
+- [ ] Woke hungry — a dino already over its hunger threshold at dawn plays a visible wake-hungry beat instead of a plain stretch (BACKLOG-376)
+- [ ] Brought to the hatch — a withdrawn loner's closest friend nudges it in from the edge to the food so it doesn't miss the meal (BACKLOG-381)
+
+**Structure arcs:**
+- *(the Structure-smith adds the structure arcs this cycle)*
 
 ### Format (use this when drafting)
 
