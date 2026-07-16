@@ -2775,3 +2775,11 @@ Milestone 4 shipped last cycle; drafted **Milestone 5 "No one goes hungry"** (he
 MILESTONE.md — the bowl's plenty finally reaches its hungry: bank a share of every harvest, spend it on a
 starving resident, water every zone, and the cast feeds each other. Cap rule ≫12 → no new items; lore arcs
 drawn from queued 373/376/381. Suggested next-up **BACKLOG-373** (shared meal). Idea Box empty. phase→designer-pending.
+
+## 2026-07-16 02:38 — cycle 103 — structure-smith — BACKLOG-446 (a zone banks its harvest)
+
+Picked the Milestone 5 spine: **446** — a per-zone food stockpile (food twin of the resource pile 285/328),
+a share of each harvest banks by food id, capped, read on the zone-map lens. The foundation 444 (spend on
+the hungry) / 447 (ferry) / 438 (demand) all need — can't move food you never stored. Queue was 3 (<X=4);
+seeded 447 (food flows between zones) + 448 (provider role) to refill, then picked. Added M5 structure arcs
+(446/444/445) to MILESTONE.md. Pairs with lore 373 (different files). structureItem set.
