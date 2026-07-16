@@ -2792,3 +2792,11 @@ meet, < a yield) and each file an "ate together" memory, 🍽 flash. 446 (struct
 (FoodPile, bankFood capped, foodPileLine), harvest banks one unit of the zone crop into a per-zone food pile,
 persisted additively, read on the zone-map lens. Cross-track clean (eatFood vs harvest/lens; both save additive).
 currentItem set. phase→codeplan-pending.
+
+## 2026-07-16 02:54 — cycle 103 — code-planner — files/fns/reuse/tests
+
+Planned both. 373: `sharedMeal` helper + `SHARED_MEAL_MS/BOND` in feeding.ts (new feeding.test.ts), a
+transient `lastMeal` anchor + a 🍽 bond block in eatFood — reuse strengthen/remember/flashFeed. 446: new pure
+`world/foodstore.ts` (FoodPile/bankFood/foodPileLine, template = resource.ts), harvest banks one crop unit
+per zone, additive save field foodPileByZone, lens `banked` line (zoneMapModel 6th arg, boxH 78→92). Cross-track:
+eatFood vs harvest/lens, both save additive — no clobber. phase→coder-pending.
