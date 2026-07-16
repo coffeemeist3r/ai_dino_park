@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-446 [core] A zone banks its harvest — harvested crop (145/433) drops straight into the feeding loop and is gone; there is no *banked food*, so nothing can actually flow between zones. Add a per-zone food stockpile (the food twin of the resource pile 285/328): a share of each harvest banks by food id, capped like resources, read on the lens. The missing spine under both the demand read (438) and the carrier that feeds the hungry (444) — you can't ferry food you never stored. Builds on 433 / 285 / 438.
 - [ ] BACKLOG-444 [core] A carrier feeds the hungry — the carry/flow system (429) moves resources between zones; extend it so a zone's stockpile can be spent to resolve a *starving resident's* hunger when no keeper drop comes (a banked food sates a pressing need), closing the loop between the economy and the need-drive. Builds on 429 / 371 / 437 / 446.
 - [ ] BACKLOG-445 [emergent] The waterhole — thirst (371) only resolves at the grove pond; give the bowl and Fernreach their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (418/432). Builds on 371 / 436 / 418.
 - [ ] BACKLOG-447 [core] Food flows between zones — 446 banks food per zone, but nothing moves it; extend the resource carry/flow (329/429) to the food stockpile so a dino crossing zones ferries banked food from a glutted zone toward a lighter neighbour (the food twin of resource carry), making the demand read (438) an actual mover. Builds on 446 / 429 / 438.
@@ -740,7 +739,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
 > social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
 
-- [ ] BACKLOG-373 [emergent] Shared meal — two dinos that eat from the same hatch drop within a short window form a small "ate together" bond bump + a matching memory, so communal feeding becomes a bonding moment, not just a scramble. Builds on 059 / 013 / 061.
 - [ ] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
 
 ## Cycle 82 lore additions — solace, per palate (2026-06-26)

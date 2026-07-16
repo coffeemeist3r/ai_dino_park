@@ -1,8 +1,8 @@
 {
   "cycle": 103,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-373: Shared meal — communal feeding bonds",
-  "structureItem": "BACKLOG-446: A zone banks its harvest — per-zone food stockpile",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-07-16T02:54:00-05:00",
     "coder": "2026-07-16T03:18:00-05:00",
     "qa": "2026-07-16T03:40:00-05:00",
-    "validator": "2026-07-15T03:54:00-05:00",
+    "validator": "2026-07-16T03:54:00-05:00",
     "artist": "2026-07-15T03:58:00-05:00"
   }
 }

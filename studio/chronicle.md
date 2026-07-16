@@ -2815,3 +2815,35 @@ build clean; vitest 1164/1164 (+11); playwright 331 passed on the full warm run,
 (077/097-carry-pressure) flaked under parallel load and pass 3/3 isolated (--workers=1) — the catalogued
 cross-zone parallel-load flake, and the 103 diff never touches resource carry. All acceptance criteria PASS
 on both tracks. Recommend APPROVE / APPROVE. phase→validator-pending.
+
+## 2026-07-16 03:54 — cycle 103 — validator — APPROVED both · Milestone 5 opens
+
+Two APPROVEs open **Milestone 5 "No one goes hungry"** — the bowl's plenty starting to reach the mouths that
+need it, from both the social end and the economy end.
+
+**BACKLOG-373 — shared meal (lore).** Feeding has been a scramble since cycle 25: a scatter of dinos racing
+one drop, and whoever got there ate alone. Now the trough is social. When two *different* dinos eat within a
+short window (4s), they shared a meal — a small symmetric bond (+3, deliberately gentler than a meet or the
+375 yield) and an "ate alongside <other>" memory each, with a 🍽 and a `🍽 <a> and <b> ate together` ticker
+line. The whole decision is a two-line pure `sharedMeal(prev, name, at, window)`; WorldScene keeps a transient
+`lastMeal` anchor and re-anchors on every bite, so communal feeding falls out of the existing eat path with no
+new saved state. A hatch drop is one piece for one dino, so "the same drop" reads as successive rushes inside
+the window — telephone-simple, and it makes eating together mean something. **Milestone 5 lore arc 1 ✅.**
+
+**BACKLOG-446 — a zone banks its harvest (structure).** The milestone needed one missing noun: *banked food*.
+For a hundred cycles a harvest dropped into the feeding loop and was gone the moment a dino ate it — so the
+demand read (438) pointed at nothing and a carrier (444) had nothing to ferry. 446 is the food twin of the
+resource pile: a new pure `world/foodstore.ts` (`FoodPile`, `bankFood` capped at 6, `foodPileLine`) modelled
+line-for-line on `resource.ts`, a `foodPileByZone` map, and one line in `harvest()` that banks a share of the
+yield by food id while leaving the feeding-loop drop untouched. It reads on the zone-map lens as a `🍓 N`
+line, rides an additive save field (old saves load empty), and is the spine 444 (spend on the hungry), 447
+(ferry between zones), and 438 (the demand) all stand on — you can't ferry, spend, or read food you never
+stored. **Milestone 5 structure arc 1 ✅.**
+
+**The milestone ahead.** Two arcs each remain: the cast learning to wake hungry (376) and steer a withdrawn
+friend to the food (381) on the lore side; the store learning to spend on a starving resident (444) and water
+reaching every zone (445) on the structure side. Minds → a home ground → a ground that feeds them → eating
+with stakes → **a ground that provides for its own.** Quality: build clean, vitest 1164/1164, e2e 331 green
+(the two carry specs that flaked under parallel load pass 3/3 isolated — the catalogued cross-zone flake, and
+the diff never touches resource carry), WebLLM `ai/`-only, saves additive. 373/446 archived; Structure Track
+open = 444/445/447/448. phase → lore-pending.
