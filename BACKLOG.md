@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-444 [core] A carrier feeds the hungry — the carry/flow system (429) moves resources between zones; extend it so a zone's stockpile can be spent to resolve a *starving resident's* hunger when no keeper drop comes (a banked food sates a pressing need), closing the loop between the economy and the need-drive. Builds on 429 / 371 / 437 / 446.
 - [ ] BACKLOG-445 [emergent] The waterhole — thirst (371) only resolves at the grove pond; give the bowl and Fernreach their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (418/432). Builds on 371 / 436 / 418.
 - [ ] BACKLOG-447 [core] Food flows between zones — 446 banks food per zone, but nothing moves it; extend the resource carry/flow (329/429) to the food stockpile so a dino crossing zones ferries banked food from a glutted zone toward a lighter neighbour (the food twin of resource carry), making the demand read (438) an actual mover. Builds on 446 / 429 / 438.
 - [ ] BACKLOG-448 [emergent] Provider role — the dino that banks the most harvest into its zone's food store (446) emerges with a persistent `provider` role tag, derived from a per-dino harvest-bank tally the way the `hoarder` role reads feed tallies (064/032); who keeps the pantry full becomes a legible standing. Builds on 446 / 064 / 032.
@@ -739,7 +738,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
 > social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
 
-- [~] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
 
 ## Cycle 82 lore additions — solace, per palate (2026-06-26)
 

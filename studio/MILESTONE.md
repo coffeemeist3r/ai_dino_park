@@ -23,12 +23,12 @@ operator call.
 
 **Lore arcs:**
 - [x] Ate together — two dinos that feed side by side within a short window bond over the shared meal, communal feeding made a moment (BACKLOG-373 — cycle 103)
-- [ ] Woke hungry — a dino already over its hunger threshold at dawn plays a visible wake-hungry beat instead of a plain stretch (BACKLOG-376)
+- [x] Woke hungry — a dino already over its hunger threshold at dawn plays a visible wake-hungry beat instead of a plain stretch (BACKLOG-376 — cycle 104)
 - [ ] Brought to the hatch — a withdrawn loner's closest friend nudges it in from the edge to the food so it doesn't miss the meal (BACKLOG-381)
 
 **Structure arcs:**
 - [x] A zone banks its harvest — a share of each harvest banks into a per-zone food stockpile, capped and read on the lens; the missing spine under both the demand read (438) and a carrier that feeds the hungry (BACKLOG-446 — cycle 103)
-- [ ] A carrier feeds the hungry — a zone's banked food can be spent to resolve a starving resident's hunger when no keeper drop comes, closing the loop between economy and need-drive (BACKLOG-444)
+- [x] A carrier feeds the hungry — a zone's banked food can be spent to resolve a starving resident's hunger when no keeper drop comes, closing the loop between economy and need-drive (BACKLOG-444 — cycle 104)
 - [ ] The waterhole — the bowl and Fernreach get their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (BACKLOG-445)
 
 ### Format (use this when drafting)

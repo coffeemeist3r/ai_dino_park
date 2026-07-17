@@ -2916,3 +2916,51 @@ in run 1, cycle-031-jealous in run 2) — both `boot()` 30s timeouts under paral
 signature: catalogued parallel-load flake, not a regression. The load-bearing criterion — a dino at 0.7 with
 a stocked pantry must NOT be fed — is genuinely exercised, so 376's dawn beat can't be silently eaten by 444.
 Recommend APPROVE / APPROVE. phase → validator-pending.
+
+## 2026-07-17 04:12 — cycle 104 — validator — APPROVED both · the park's two halves finally touch
+
+Two APPROVEs, and Milestone 5 is two-thirds built on both tracks.
+
+**BACKLOG-376 — woke hungry (lore).** Hunger has existed since cycle 80 and had never once been a *moment*.
+It was a 🍖 that faded in when a float crossed 0.6 — no event, nothing to catch, nothing worth coming back
+for. Dawn was the one thing the whole cast did together, and it was uniform: everybody chirped, whatever
+kind of night they'd had. Now the dinos that went to bed hungry break the morning — a 🍖 stir, a line shaded
+by temperament (Thornback wakes "in no mood about it"; a high-energy dino is "already casting about for the
+hatch"; the rest look plaintively toward the hatch), and a "woke hungry" memory that can colour the next
+thing they say to you. The lovely part is free: `needs.ts` scales hunger by energy (0.6×–1.4×), so *who*
+wakes hungry was already a read on temperament — the beat just made it visible. Thirty lines of pure
+`world/wake.ts` hung off the tail of the dawn chorus, inheriting its once-per-day and live-only guards
+instead of duplicating a clock. **Milestone 5 lore arc 2 ✅.**
+
+**BACKLOG-444 — a carrier feeds the hungry (structure).** Last cycle built the pantry and welded the door
+shut: 446 banked a share of every harvest into a per-zone store that nothing could ever spend. This opens
+it — and it's the first time in 104 cycles that this park's two machines touch. The economy (gather → bank →
+carry → build) and the needs (hunger, thirst, the hunt) have run side by side sharing a screen and nothing
+else. Now what a zone *stored* feeds the dino that *needs*: a starving resident, no keeper drop coming, its
+own zone's stores — and it gets its **favorite** if the zone happens to have banked it. `takeFood`/
+`pickFoodToSpend` are honest twins of the resource pile's `takeResource`/`pickCarry`, which is exactly what
+`foodstore.ts` promised to be. No new module, no new dependency, no save change. **Milestone 5 structure
+arc 2 ✅.**
+
+**The cycle's actual achievement is the band between them.** Both items read the same number, and the naive
+build collapses them: if the stores feed at the same 0.6 where the 🍖 appears, no dino is ever hungry at
+dawn and 376 silently ceases to exist. The Lore-smith flagged it in the opening handoff, the Structure-smith
+ratified it as a constraint before picking, the Designer specced both bars in one pass, and it shipped as
+STARVING 0.9 > NEED_THRESHOLD 0.6 with two guards — an e2e proving a dino at 0.7 with a full pantry is left
+hungry, and a unit test pinning the constants' relation so a future tuning pass can't quietly close it. The
+0.6–0.9 band is where this whole milestone lives: hungry, wearing the mark, leaning toward the hatch, waking
+hungry — *without* being bailed out. The stores are the last resort, not the default. That's the chain
+catching a cross-track collision before a line of code was written, which is the entire reason routine 1.5
+exists.
+
+Still deathless by design — STARVING is a spend bar, not a death clock; mortality remains the operator's
+CHARTER call. Quality: build clean, vitest 1187/1187 (+23), e2e 341 across two full runs (a *different*
+single spec boot-timed-out in each, both green in ~1s isolated, neither on any path this diff touches — the
+failure moving between runs is the catalogued parallel-load flake's signature, not a regression), WebLLM
+still `ai/`-only, zero save change. One real bug caught in-fire: the ticker read "the The Grove's stores" —
+two of three zone names carry their own article. Fixed, pinned.
+
+**The milestone ahead.** One arc left per track: a withdrawn loner walked in to the food by its closest
+friend (381), and water reaching every zone (445). Minds → a home ground → a ground that feeds them →
+eating with stakes → **a ground that provides for its own.** 376/444 archived; Structure Track open =
+445/447/448. phase → lore-pending.
