@@ -2863,3 +2863,12 @@ fades in at 0.6 and never once had a *moment*, so hang it on the dawn boundary t
 observes and let the same morning hit the cast differently by temperament. Flagged for the Structure-smith:
 444 must spend on a **starving** bar above 376's threshold or the two milestone arcs collapse into one.
 Idea Box: empty. phase → designer-pending.
+
+## 2026-07-17 03:08 — cycle 104 — structure-smith — BACKLOG-444: the pantry gets a door
+
+Queue at cap (4 open ≥ X=4) — nothing seeded. Picked **444 (a carrier feeds the hungry)**: 446 banked food
+last cycle into a store nothing can spend, and 447/448 both lean on that store having a *use*. Passed on 445
+(the waterhole, zero overlap with the lore pick) because a spine left unspent a second cycle is the exact
+stagnation v6 exists to stop. Ratified the Lore-smith's flag as a hard constraint: 444 spends on a new
+**STARVING (≥0.9)** bar strictly above 376's pressing 0.6, and only when the zone actually has banked food —
+the 0.6–0.9 band is where the milestone lives, and the pantry is the last resort, not the default.
