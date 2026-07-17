@@ -2883,3 +2883,15 @@ it. **444** spends a zone's banked food (446) on a resident at a new **STARVING 
 keeper drop is in play and the zone actually has stores, preferring the dino's favorite id. The 0.6–0.9 band
 is protected by acceptance criterion: a dino at 0.7 must NOT be fed, or 376's arc silently disappears.
 `needs.ts` is the only shared file — structure's constant lands first. phase → codeplan-pending.
+
+## 2026-07-17 03:26 — cycle 104 — code-planner — plan 444 + 376 (files/fns/reuse/tests)
+
+Planned structure-first because `needs.ts` is the one shared file: 444 adds `STARVING`/`isStarving`, 376
+only consumes the existing `NEED_THRESHOLD`. **444:** no new modules — `takeFood`/`pickFoodToSpend` mirror
+`resource.ts`'s `takeResource`/`pickCarry` (foodstore.ts already declares itself that file's twin), plus a
+thin `feedFromStores()` in `checkNeeds()` and a `__setZoneFoodPile` seeder. **376:** one new pure
+`world/wake.ts` (`wokeHungry`/`wakeHungryLine`/`wakeHungryMemory`) called synchronously at the tail of
+`checkDawnChorus` so it inherits the once-per-day + live-only guards instead of duplicating them. Two traps
+pinned as tests: `wokeHungry` must read `.hunger` directly (`pressingNeed` would drop a hungry-and-thirstier
+dino's beat), and `STARVING > NEED_THRESHOLD` guards the 0.6–0.9 band the lore arc lives in. ~9 files.
+phase → coder-pending.
