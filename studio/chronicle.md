@@ -2854,3 +2854,12 @@ No open `[art]` items, and cycle 103 baked nothing new. Shared meal (373) flashe
 the all-emoji channel; the food bank (446) reads on the lens through the existing FOODS emoji (🍓/🥬/…) — book
 text, not a sprite. No stash-rule target (no standalone-renderable prop landed). Fallback control untouched.
 build clean; vitest 1164/1164. lastFire.artist updated. phase stays lore-pending.
+
+## 2026-07-17 03:02 — cycle 104 — lore-smith — the bowl wakes up wanting something
+
+Cycle bumped (103 closed APPROVED/APPROVED). Cap rule held: 232 open lore items ≥ 12, so nothing new
+seeded. Next-up **BACKLOG-376 (woke hungry)** — Milestone 5 lore arc 2: hunger has been a gauge that
+fades in at 0.6 and never once had a *moment*, so hang it on the dawn boundary the chorus (192) already
+observes and let the same morning hit the cast differently by temperament. Flagged for the Structure-smith:
+444 must spend on a **starving** bar above 376's threshold or the two milestone arcs collapse into one.
+Idea Box: empty. phase → designer-pending.
