@@ -2974,3 +2974,9 @@ mark), and the stores' spend (444) flashes the fed food's existing FOODS emoji (
 read in the ticker. No stash-rule target either: nothing standalone-renderable landed (`bakePropArt` has
 nothing new to resolve), and the rectangle fallback control is untouched. build clean; vitest 1187/1187.
 lastFire.artist updated. phase stays lore-pending.
+
+## 2026-07-17 04:18 — cycle 104 — housekeeping
+
+Backlog hygiene (routine 0, once per cycle): the "Cycle 81 lore additions" section emptied when 376 shipped
+— whole section moved to `BACKLOG-archive.md` with its note kept for the record. No closed `[x]`/`[a]`
+bullets and no stale `[~]` remain in the working backlog. Open items: 234 (230 lore body + 4 structure).

@@ -731,14 +731,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-370 [social] Lonely lean on the keeper — a loner (135) drifts to the glass front toward the keeper instead of a random edge when its keeper-friendship is high, so a dino with no dino-friends leans on you specifically; loneliness becomes a bid for the keeper's attention. Builds on 135 / 112.
 
-## Cycle 81 lore additions — who's in want, who's fed (2026-06-26)
-
-> Cycle 81's lore pick is the already-queued **BACKLOG-369** (the loner finds a friend) — the payoff of
-> cycle-80's loner (135): the 🥀 lifts the moment a friendless dino grows its first real bond, so loneliness
-> is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
-> social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
-
-
 ## Cycle 82 lore additions — solace, per palate (2026-06-26)
 
 > Cycle 82's lore pick is the already-queued **BACKLOG-374** (comfort food) — the emotional payoff of the
