@@ -2906,3 +2906,13 @@ once-per-day + live-only guards. One real bug caught by the first e2e run: the t
 stores" — two of three zone display names carry their own article, so the template dropped its "the" and a
 unit test now pins it. build clean; vitest 1187/1187 (+23); new e2e 9/9 serial; webllm still `ai/`-only; no
 save change. phase → qa-pending.
+
+## 2026-07-17 03:58 — cycle 104 — qa — PASS both — vitest 1187/1187, e2e 341 (flake moved between runs)
+
+All acceptance criteria PASS on both tracks. Build clean, unit 1187/1187 (+23), webllm `ai/`-only, zero save
+change. E2E: two full runs, 341 passed each, one *different* spec failing each time (cycle-010-brain-status
+in run 1, cycle-031-jealous in run 2) — both `boot()` 30s timeouts under parallel cold load, both green in
+~1s isolated, and neither on any code path this diff touches. The failure *moving* between runs is the
+signature: catalogued parallel-load flake, not a regression. The load-bearing criterion — a dino at 0.7 with
+a stocked pantry must NOT be fed — is genuinely exercised, so 376's dawn beat can't be silently eaten by 444.
+Recommend APPROVE / APPROVE. phase → validator-pending.
