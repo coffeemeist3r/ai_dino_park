@@ -2895,3 +2895,14 @@ thin `feedFromStores()` in `checkNeeds()` and a `__setZoneFoodPile` seeder. **37
 pinned as tests: `wokeHungry` must read `.hunger` directly (`pressingNeed` would drop a hungry-and-thirstier
 dino's beat), and `STARVING > NEED_THRESHOLD` guards the 0.6–0.9 band the lore arc lives in. ~9 files.
 phase → coder-pending.
+
+## 2026-07-17 03:36 — cycle 104 — coder — BACKLOG-376 (woke hungry) + BACKLOG-444 (the stores feed)
+
+Both tracks shipped, structure's `needs.ts` constant first as planned. **444:** `STARVING`/`isStarving` +
+`takeFood`/`pickFoodToSpend` (twins of `takeResource`/`pickCarry`), spent by a thin `feedFromStores()` on the
+needs tick — gated on no-drop-in-play, starving, and a stocked *home* zone, preferring the dino's favorite id.
+**376:** new pure `world/wake.ts`, called synchronously off the dawn chorus's tail so it inherits the
+once-per-day + live-only guards. One real bug caught by the first e2e run: the ticker read "the The Grove's
+stores" — two of three zone display names carry their own article, so the template dropped its "the" and a
+unit test now pins it. build clean; vitest 1187/1187 (+23); new e2e 9/9 serial; webllm still `ai/`-only; no
+save change. phase → qa-pending.

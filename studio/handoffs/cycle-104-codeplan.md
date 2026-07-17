@@ -169,3 +169,53 @@ wake-hungry beat.
 
 **Combined estimated touch count:** ~9 files (2 pure modules + 1 new module + WorldScene + 4 test files).
 Within the v6 arc budget (~15).
+
+---
+
+## Shipped
+
+**Build:** ✅ clean (`npm --prefix game run build`, built in 8.96s).
+**Unit:** ✅ 1187/1187 across 132 files (was 1164 — +23: 9 wake, 14 stores-feed).
+**New e2e:** ✅ 9/9 green serially (`cycle-104-wake-hungry.spec.ts` 4, `cycle-104-stores-feed.spec.ts` 5).
+**Boundary:** ✅ `@mlc-ai/web-llm` still imported only under `game/src/ai/` (webllm.worker.ts, webllmBrain.ts).
+**Dev server:** ✅ `http://localhost:5173/` → 200.
+
+### Files touched (9)
+
+Structure track — BACKLOG-444:
+- `game/src/world/needs.ts` — added `STARVING = 0.9` + `isStarving()`. `NEED_THRESHOLD`/`pressingNeed` untouched.
+- `game/src/world/foodstore.ts` — added `takeFood`, `pickFoodToSpend`, `storesFedLine`, `storesFedMemory`.
+- `game/src/scenes/WorldScene.ts` — `feedFromStores()` called from `checkNeeds()` (after the pond drink,
+  before `refreshNeedMarks` so a fed dino's 🍖 clears the same tick); `__setZoneFoodPile` seeder hook.
+- `tests/unit/cycle-104-stores-feed.test.ts` (new, 14 tests)
+- `tests/e2e/cycle-104-stores-feed.spec.ts` (new, 5 specs)
+
+Lore track — BACKLOG-376:
+- `game/src/world/wake.ts` (new) — `wokeHungry`, `wakeHungryLine`, `wakeHungryMemory`.
+- `game/src/scenes/WorldScene.ts` — `lastWokeHungry` transient + `checkWakeHungry()` at the synchronous
+  tail of `checkDawnChorus`; `__wokeHungry` hook.
+- `tests/unit/cycle-104-wake.test.ts` (new, 9 tests)
+- `tests/e2e/cycle-104-wake-hungry.spec.ts` (new, 4 specs)
+
+### Deviations from the plan
+
+1. **`storesFedLine`/`storesFedMemory` dropped the leading article** — the plan's wording
+   (`the ${zoneName}'s stores`) renders as **"the The Grove's stores"**: two of the three `ZONES` display
+   names already carry their own article ('Pocket Cretaceous', 'The Grove', 'The Fernreach'). Now
+   `${zoneName}'s stores fed ${name}` → "The Grove's stores fed Rex". Caught by the first e2e run; pinned
+   with a unit test asserting no `the The` for an article-carrying zone name. (The same latent awkwardness
+   exists in the cycle-358 barter line at WorldScene ~2844, `at the ${zoneById(zoneB).name} edge` → "at the
+   The Grove edge". Out of scope for this diff — not filing a backlog item over one ticker string, but
+   noting it for whoever next touches that line.)
+2. **The wake e2e seeds Rex at hunger 0.7, not 0.9** as loosely implied by the plan's sketch — 0.7 is over
+   376's bar and under 444's, which makes the spec a live demonstration of the protected band rather than a
+   test that would fight the other track's feature if the bowl ever had stores at boot.
+
+### Notes for QA
+
+- **Both new specs must be run serially or in a warm run.** The first parallel run failed 6/9 at
+  `boot()`'s `__ready` wait (30s timeout) — the catalogued cold-boot flake (memory: `e2e-boot-flake`), not
+  these diffs: the same specs pass 9/9 with `--workers=1`, and the two failures that *weren't* boot timeouts
+  were the wording bug above, now fixed.
+- No save changes at all. `foodPileByZone` (446) was already persisted and additive; `lastWokeHungry` is
+  transient by design.

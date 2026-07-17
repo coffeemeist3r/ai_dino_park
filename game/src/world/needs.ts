@@ -27,6 +27,20 @@ export type NeedKind = 'hunger' | 'thirst';
 /** At or above this, a need is *pressing* — it shows its mark. */
 export const NEED_THRESHOLD = 0.6;
 
+/**
+ * Starving (BACKLOG-444) — the bar at which a zone's banked food (446) is spent on a resident. Deliberately
+ * well above NEED_THRESHOLD: the 0.6–0.9 band is where the whole of Milestone 5 lives — a dino that wears
+ * the 🍖, leans toward the hatch (436), and wakes hungry at dawn (376) *without* the pantry bailing it out.
+ * The store is the last resort, not the default. Still deathless: nothing happens to a dino left starving
+ * except that it stays starving (mortality is a CHARTER call, routed to the operator).
+ */
+export const STARVING = 0.9;
+
+/** Is this dino starving — hungry enough that its zone's stores would be spent on it (BACKLOG-444)? */
+export function isStarving(n: Need | undefined): boolean {
+  return (n?.hunger ?? 0) >= STARVING;
+}
+
 /** Per-`forceStep` build rates. Thirst is slower than hunger on purpose: hunger is the common,
  *  keeper-quenched need; thirst (only quenched at the grove pond) stays the rarer 💧. */
 export const HUNGER_RATE = 0.01;

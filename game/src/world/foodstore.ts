@@ -50,3 +50,41 @@ export function foodPileLine(pile: FoodPile): string {
     .map((f) => `${f.emoji} ${pile[f.id]}`)
     .join(' · ');
 }
+
+/**
+ * The pantry gets a door (BACKLOG-444) — the spend half of the food store. 446 banked food that nothing
+ * could ever take back out; these decide *what* a zone hands a starving resident. WorldScene owns the
+ * when (the `checkNeeds` gate: starving, no keeper drop in play, zone actually stocked).
+ */
+
+/** Remove one of `id` from a food pile (floored at 0). Pure — returns a new map, never mutates. Twin of
+ *  resource.ts takeResource. */
+export function takeFood(pile: FoodPile, id: string): FoodPile {
+  const have = pile[id] ?? 0;
+  if (have <= 0) return pile;
+  return { ...pile, [id]: have - 1 };
+}
+
+/**
+ * Which banked food a zone spends on a starving resident: its **favorite** when the zone has it banked,
+ * else the most-stocked id — null when the pile is empty. The favorite preference is the distinctness
+ * hook (being fed what *you* like out of your own zone's stores reads differently per dino); the
+ * most-stocked fallback keeps the pantry draining its glut first. Deterministic — the FOODS-order filter
+ * plus a stable sort breaks a count tie the same way pickCarry does.
+ */
+export function pickFoodToSpend(pile: FoodPile, favoriteId?: string): string | null {
+  if (favoriteId && (pile[favoriteId] ?? 0) > 0) return favoriteId;
+  const stocked = FOODS.filter((f) => (pile[f.id] ?? 0) > 0).map((f) => f.id);
+  return [...stocked].sort((a, b) => (pile[b] ?? 0) - (pile[a] ?? 0))[0] ?? null;
+}
+
+/** The ticker line when a zone's stores feed one of its own (BACKLOG-444). No leading article: two of the
+ *  three zone names already carry their own ("The Grove"), so `the ${zoneName}` reads as "the The Grove". */
+export function storesFedLine(zoneName: string, name: string, emoji: string): string {
+  return `${emoji} ${zoneName}'s stores fed ${name}`;
+}
+
+/** The memory the fed dino keeps; WorldScene folds this into the store. */
+export function storesFedMemory(zoneName: string): string {
+  return `you woke starving and ${zoneName}'s stores saw you through`;
+}

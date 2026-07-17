@@ -14,6 +14,7 @@ import {
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
+import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt, hasTileArt } from '../art/bake';
@@ -73,14 +74,14 @@ import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
-import { advanceNeeds, pressingNeed, satisfy, needSeeks, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
+import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
-import { bankFood, type FoodPile } from '../world/foodstore';
+import { bankFood, takeFood, pickFoodToSpend, storesFedLine, storesFedMemory, type FoodPile } from '../world/foodstore';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -296,6 +297,8 @@ export class WorldScene extends Phaser.Scene {
   /** Dawn chorus (BACKLOG-192): transient — the last in-game day a dawn fired (0 = none yet). */
   private lastDawnDay = 0;
   private dawnCount = 0;
+  /** Woke hungry (BACKLOG-376): transient — who woke over the hunger bar at the last dawn. Never persisted. */
+  private lastWokeHungry: string[] = [];
   private lastChorus: ChorusEntry[] | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
@@ -872,6 +875,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
     (window as any).__zoneFoodPile = (z: string) => ({ ...this.foodStoreFor(z) }); // BACKLOG-446: a named zone's banked food
+    // BACKLOG-444: seed a zone's banked food so the e2e can watch the stores feed a starving resident.
+    (window as any).__setZoneFoodPile = (zone: string, pile: Record<string, number>) => {
+      this.foodPileByZone[zone] = { ...pile };
+      return { ...this.foodStoreFor(zone) };
+    };
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
       this.stockpileByZone[zone] = { ...pile };
@@ -1971,7 +1979,34 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) {
       if (nearPond(this.tileOf(d), COLS, ROWS)) this.needs = satisfy(this.needs, d.name, 'thirst');
     }
+    this.feedFromStores();
     this.refreshNeedMarks();
+  }
+
+  /**
+   * A carrier feeds the hungry (BACKLOG-444) — the zone's banked food (446) spent on its own starving
+   * resident. The last resort, not the competition: a keeper drop in play always wins (a dino mid-rush to
+   * real food is never intercepted), and only a dino past STARVING (well above the 🍖 tell's 0.6, so the
+   * band 376/436 live in survives) is fed. A zone with an empty store feeds no one — which is the read.
+   * Deathless: an unfed dino just stays starving. Takes from the dino's *home* zone, not the viewed one.
+   */
+  private feedFromStores(): void {
+    if (this.food) return;
+    for (const d of this.dinos) {
+      if (!isStarving(this.needs[d.name])) continue;
+      const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      const pile = this.foodStoreFor(zone);
+      const id = pickFoodToSpend(pile, favoriteFood(d.traits, this.currentSeason()).id);
+      if (!id) continue;
+      const emoji = FOODS.find((f) => f.id === id)?.emoji ?? NEED_GLYPH.hunger;
+      const zoneName = zoneById(zone).name;
+      this.foodPileByZone[zone] = takeFood(pile, id);
+      this.needs = satisfy(this.needs, d.name, 'hunger');
+      this.memory = remember(this.memory, d.name, storesFedMemory(zoneName));
+      this.flashFeed(d, emoji);
+      this.logEvent(storesFedLine(zoneName, d.name, emoji));
+      void this.saveGame();
+    }
   }
 
   /**
@@ -4427,6 +4462,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__lastChorus = () => this.lastChorus;
     (window as any).__dawnCount = () => this.dawnCount;
     (window as any).__dawnHour = () => DAWN_HOUR;
+    // any: dev-only Playwright hook — woke hungry (BACKLOG-376): who woke over the bar at the last dawn.
+    (window as any).__wokeHungry = () => [...this.lastWokeHungry];
     (window as any).__chorusOrder = () => chorusOrder(this.dinos);
     // any: dev-only Playwright hook — stage the clock like a restore (sync, repaint, NO beat)
     (window as any).__setClock = (day: number, hour: number, minute: number) => {
@@ -4491,6 +4528,25 @@ export class WorldScene extends Phaser.Scene {
         const d = this.dinoByName(name);
         if (d) this.chirpFor(d);
       });
+    }
+    this.checkWakeHungry();
+  }
+
+  /**
+   * Woke hungry (BACKLOG-376) — the dinos that went to bed hungry break the morning's uniform chirp with a
+   * visible 🍖 stir, a temperament-shaded line, and a memory that can colour their next greeting. Called
+   * from the tail of the dawn chorus so it inherits both of that beat's guards (once per in-game day; live
+   * crossings only — a restore/away `clock.set` fires no onHour). Synchronous on purpose: the chorus chirps
+   * are staggered through delayedCall, but this beat must be readable the instant dawn breaks.
+   */
+  private checkWakeHungry(): void {
+    this.lastWokeHungry = [];
+    for (const d of this.dinos) {
+      if (!wokeHungry(this.needs[d.name])) continue;
+      this.lastWokeHungry.push(d.name);
+      this.memory = remember(this.memory, d.name, wakeHungryMemory());
+      this.flashFeed(d, NEED_GLYPH.hunger);
+      this.logEvent(wakeHungryLine(d.name, d.traits));
     }
   }
 
