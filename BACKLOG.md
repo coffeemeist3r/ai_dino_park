@@ -739,7 +739,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
 > social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
 
-- [ ] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
+- [~] BACKLOG-376 [emergent] Woke hungry — a dino already over the hunger threshold (371) at the in-game dawn boundary plays a visible wake-hungry beat (a 🍖 stir + a "woke hungry" memory) instead of a plain stretch, tying the need-drive into the daily ritual. Builds on 371 / 108 / 105.
 
 ## Cycle 82 lore additions — solace, per palate (2026-06-26)
 

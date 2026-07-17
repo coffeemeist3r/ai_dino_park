@@ -2872,3 +2872,14 @@ last cycle into a store nothing can spend, and 447/448 both lean on that store h
 stagnation v6 exists to stop. Ratified the Lore-smith's flag as a hard constraint: 444 spends on a new
 **STARVING (≥0.9)** bar strictly above 376's pressing 0.6, and only when the zone actually has banked food —
 the 0.6–0.9 band is where the milestone lives, and the pantry is the last resort, not the default.
+
+## 2026-07-17 03:18 — cycle 104 — designer — 376 (woke hungry) + 444 (the stores feed the starving)
+
+Both tracks spec'd around one shared drive at two bars. **376** rides the tail of `checkDawnChorus` (hour 7,
+live-only, once/day): hunger ≥ 0.6 at dawn → a 🍖 stir, a temperament-shaded ticker line, a "woke hungry"
+memory. Who wakes hungry is a read on temperament for free, since the hunger rate is energy-scaled. Spec'd
+`instead of a plain stretch` as *instead of a plain chorus chirp* — 108 never shipped and 376 doesn't wait on
+it. **444** spends a zone's banked food (446) on a resident at a new **STARVING (0.9)** bar, only when no
+keeper drop is in play and the zone actually has stores, preferring the dino's favorite id. The 0.6–0.9 band
+is protected by acceptance criterion: a dino at 0.7 must NOT be fed, or 376's arc silently disappears.
+`needs.ts` is the only shared file — structure's constant lands first. phase → codeplan-pending.

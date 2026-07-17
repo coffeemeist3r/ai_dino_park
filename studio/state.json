@@ -1,7 +1,7 @@
 {
   "cycle": 104,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-376: Woke hungry — a dino over the hunger threshold at the dawn boundary plays a visible wake-hungry beat",
   "structureItem": "BACKLOG-444: A carrier feeds the hungry — a zone's banked food (446) is spent to resolve a starving resident's hunger when no keeper drop comes",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-07-17T03:02:00-05:00",
     "structure-smith": "2026-07-17T03:08:00-05:00",
-    "designer": "2026-07-16T02:48:00-05:00",
+    "designer": "2026-07-17T03:18:00-05:00",
     "code-planner": "2026-07-16T02:54:00-05:00",
     "coder": "2026-07-16T03:18:00-05:00",
     "qa": "2026-07-16T03:40:00-05:00",
