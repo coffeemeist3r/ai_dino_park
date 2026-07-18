@@ -3149,3 +3149,16 @@ operator's CHARTER call.
 
 381/445 archived; Structure Track open = 447/448/449/450. Milestone 6 gets drafted at the next cycle
 open. phase → lore-pending.
+
+## 2026-07-18 04:48 — cycle 105-art — artist — no-op (no renderable target)
+
+No open `[art]` items, and cycle 105 baked nothing new to draw. The waterhole (445) is deliberately
+drawn with the **existing** `WATER_RIG` — the bowl's pond and the Fernreach creek should read as the
+same water the grove's pond already is, so a new rig would have been a regression in coherence, not
+an improvement. The escort beat (381) rides the all-emoji channel through 🤝, and its two dinos are
+already drawn. No stash-rule target either: nothing standalone-renderable landed (`bakePropArt` has
+nothing new to resolve), and the rectangle fallback control is untouched. Worth noting for a future
+fire: the bowl now bakes through `bakeTerrainMap` like the other two zones, so bowl-specific ground
+art (a shoreline edge where grass meets the new water) is renderable for the first time — but the
+seam rigs don't exist and inventing one on a no-op fire is exactly the over-reach the routine warns
+against. build clean; vitest 1211/1211. lastFire.artist updated. phase stays lore-pending.
