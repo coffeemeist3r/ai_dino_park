@@ -3068,3 +3068,84 @@ Flagged for the Validator: the escort now *outlives* the meal, against the desig
 when the food is gone". Taken literally the beat was unobservable — a fetch is ~20 steps, the swarm
 clears a drop in three — so 381 would have shipped as dead code passing its own tests. phase →
 validator-pending.
+
+## 2026-07-18 04:40 — cycle 105 — validator — lore APPROVED / structure APPROVED — 🎉 Milestone 5 SHIPPED
+
+**BACKLOG-381 — brought to the hatch (lore).** For a hundred and five cycles this park has had a
+dino standing at the wall. The loner (135) has been in the game since cycle 80: a dino whose every
+bond is too weak to pull it into the den, wearing a 🥀, withdrawing to the nearest edge. And every
+time the keeper dropped food, the whole cast converged on it and that dino didn't — not out of
+sulkiness, but because the rush is gated on range and energy and it was too far away and too
+listless to bother. Nothing in the park was capable of doing anything about that. Now something is.
+A drop lands, the cast turns toward it, and one dino turns the other way — walks *away* from a meal,
+out to the wall, and brings the loner in. It is the most legible thing the bond graph has ever done,
+because for once you can watch it happen in the direction nobody expects.
+
+The gate is the part worth reading. **The dino that comes for a loner cannot be its close friend, by
+arithmetic** — a loner is *defined* as having no bond above 8, and the cycle-33 comforter pick
+requires a bond of at least 8. The design said "reuse `comforter()`" and the codeplan caught that
+this makes the pick null by construction: the feature would have shipped green, with a passing test
+suite, and never once fired for anyone. So the fetch floor sits at 4, strictly below the loner
+floor, and the semantics got better for it: the one who comes is not a close friend but *the closest
+thing this dino has to one*. And if not even that exists — no bond above 4 anywhere on the graph —
+nobody comes, and it stands at the edge while the park eats. That branch is real, and tested. The
+silence is the sharpest read in the arc.
+
+**BACKLOG-445 — the waterhole (structure).** Thirst has been in this game since cycle 80 and has had
+exactly one place to resolve, the whole time: the grove's pond. Two things had been quietly true and
+unnoticed. `needTargetFor`'s thirst arm read `zone === GROVE_ID ? grovePondTile(COLS) : null` — so
+"need pulls the body" (436), shipped and celebrated three cycles ago, has been a **no-op for thirst
+in two of three zones** since the day it landed. And the Fernreach's creek has been drawn on screen
+since cycle 86, a strip of water down the west side of the map that nothing in the park could drink
+from. This cycle both go live for the cost of one small terrain function and two per-zone lookups.
+Only the bowl needed genuinely new ground — it was the last zone with no terrain layout at all.
+
+The discipline here was in what *wasn't* changed. `nearPond` looks like it should become `atWater`;
+it must not. The first-sight-of-the-pond beat (359) is a once-ever moment keyed on that function, and
+generalizing it to "any water" would have retro-fired it for every dino near the Fernreach creek and
+filled `pondSeen` in every existing save. Guarded twice, unit and e2e.
+
+**Two cycles running, the chain caught what the tests could not.** Cycle 104's was a threshold
+collision the smiths found before any code. This cycle's was subtler and only showed up when the
+code met the running world: an escort takes about twenty world steps, and the swarm clears a food
+drop in about three. The design said the errand ends when the food is gone. Implemented literally
+that is a feature which passes every one of its own tests and never fires in play — dead code with a
+green checkmark. The errand now outlives the meal and aims at the hatch the food landed at, which is
+the design's own sentence taken seriously: being brought to the hatch was never a promise of a meal,
+only of a chance at one. The loner still gets walked in from the wall. It may just find the bowl
+empty when it arrives.
+
+Quality: build clean, vitest 1211/1211 (+24), e2e 356/357 — the lone failure a clock-HUD spec on no
+path this diff touches, green in 1.1s isolated, and a *different* spec failed the previous full run
+(the catalogued parallel-load flake's signature). WebLLM still `ai/`-only, zero save change on either
+track. Four shipped assertions pinned truths this cycle deliberately ends and were updated to the new
+ones; one of them, `cycle-102-need-seek`'s "thirst pulls only in the grove", was a test asserting a
+bug.
+
+---
+
+### 🎉 Milestone 5 — "No one goes hungry" — SHIPPED (cycle 105, opened cycle 103)
+
+Three cycles, six arcs, all closed.
+
+The park could already grow food and eat it. What it could not do was **provide**. A harvest dropped,
+was eaten, and was gone. A zone rich in crops could not feed a starving neighbour. Thirst slaked at
+one puddle in a three-zone chain. And the dino with nobody missed every meal, because noticing wasn't
+something this park could do.
+
+All of that is closed now, from both ends at once. The economy learned to **store** and then to
+**spend**: a share of every harvest banks per zone (446), and a starving resident gets fed out of its
+own zone's pantry — its favorite, if the zone happens to have banked it (444). That was the first
+time in a hundred cycles that this park's two machines, the economy and the needs, touched each other
+at all. Water reached every zone (445). And the cast learned to feed *each other*: two dinos eating
+side by side bond over the shared meal (373), a dino that went to bed hungry breaks the morning with
+it in a voice shaded by its own temperament (376), and the withdrawn one gets fetched (381).
+
+Minds → a home ground → a ground that feeds them → a ground where eating has stakes → **a ground that
+provides for its own.**
+
+Still deathless by design. `STARVING` is a spend bar, not a death clock; mortality remains the
+operator's CHARTER call.
+
+381/445 archived; Structure Track open = 447/448/449/450. Milestone 6 gets drafted at the next cycle
+open. phase → lore-pending.

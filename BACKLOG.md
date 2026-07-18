@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-445 [emergent] The waterhole — thirst (371) only resolves at the grove pond; give the bowl and Fernreach their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (418/432). Builds on 371 / 436 / 418.
 - [ ] BACKLOG-447 [core] Food flows between zones — 446 banks food per zone, but nothing moves it; extend the resource carry/flow (329/429) to the food stockpile so a dino crossing zones ferries banked food from a glutted zone toward a lighter neighbour (the food twin of resource carry), making the demand read (438) an actual mover. Builds on 446 / 429 / 438.
 - [ ] BACKLOG-448 [emergent] Provider role — the dino that banks the most harvest into its zone's food store (446) emerges with a persistent `provider` role tag, derived from a per-dino harvest-bank tally the way the `hoarder` role reads feed tallies (064/032); who keeps the pantry full becomes a legible standing. Builds on 446 / 064 / 032.
 - [ ] BACKLOG-449 [infra] One terrain per zone, as data — a zone's ground is currently a hand-written `*TileAt` function per zone plus an `if` chain in `zoneTileAt` and a hardcoded landmark helper beside it (`grovePondTile`), so a fourth zone means new functions in three places and every terrain-reading feature must special-case zone ids. Fold each zone's ground into one per-zone terrain descriptor (its tile-kind rule + its named landmark tiles) hanging off the existing `ZONES` table, and let `zoneTileAt` / the water + plot / landmark lookups read it generically. Adding a zone becomes a table row, not a code branch. Builds on 143 / 294 / 399 / 383.
@@ -742,7 +741,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-379 [emergent] Comfort-food recognition — a dino soothed by its favorite (374) files *which* food eased it; the collection book later reveals "finds comfort in 🐟" once you've witnessed it, making each dino's solace legible alongside its favorite. Builds on 374 / 069 / 021.
 - [ ] BACKLOG-380 [emergent] Picky when low — a moping loner (🥀) offered a *non-favorite* food turns away (😞, won't eat it) where a contented dino eats anything; when a dino is down, only the food that fits reaches it. Builds on 374 / 070 / 135.
-- [~] BACKLOG-381 [social] Brought to the hatch — a moping loner's highest-bond friend, on a food drop, nudges it in from the edge toward the hatch so it doesn't miss the meal while withdrawn; comfort becomes a friend steering you to food. Builds on 374 / 130 / 135.
 - [ ] BACKLOG-382 [emergent] Savored seconds — a dino that just ate its comfort food (374) lingers contentedly a beat (a slow 😌 idle) before wandering off, so solace reads in the pause, not only the bite. Builds on 374 / 318.
 
 ## Cycle 83 lore additions — kindness shaped by need (2026-06-27)

@@ -8,28 +8,10 @@
 
 ## Current milestone
 
-**Milestone 5: No one goes hungry**
-**Status:** ACTIVE (opened cycle 103)
+**None — awaiting draft.**
 
-The hunt got stakes in Milestone 4; Milestone 5 makes the bowl's *plenty* reach the mouths that need it.
-Today a harvest drops, is eaten, and is gone — nothing is banked, so a zone rich in crops can't feed a
-starving neighbour, and thirst only ever slakes at the one grove pond. This milestone closes that gap from
-both ends: the economy learns to *store* (a share of every harvest banks per zone), that store learns to
-*spend* on a starving resident when no keeper drop comes, and water finally reaches every zone — while the
-cast learns to feed *each other*, eating side by side into a bond, waking hungry, and walking a withdrawn
-friend to the food. Minds (M1) → a home ground (M2) → a ground that feeds them (M3) → a ground where eating
-has stakes (M4) → **a ground that provides for its own** (M5). Deathless by design; mortality stays an
-operator call.
-
-**Lore arcs:**
-- [x] Ate together — two dinos that feed side by side within a short window bond over the shared meal, communal feeding made a moment (BACKLOG-373 — cycle 103)
-- [x] Woke hungry — a dino already over its hunger threshold at dawn plays a visible wake-hungry beat instead of a plain stretch (BACKLOG-376 — cycle 104)
-- [ ] Brought to the hatch — a withdrawn loner's closest friend nudges it in from the edge to the food so it doesn't miss the meal (BACKLOG-381)
-
-**Structure arcs:**
-- [x] A zone banks its harvest — a share of each harvest banks into a per-zone food stockpile, capped and read on the lens; the missing spine under both the demand read (438) and a carrier that feeds the hungry (BACKLOG-446 — cycle 103)
-- [x] A carrier feeds the hungry — a zone's banked food can be spent to resolve a starving resident's hunger when no keeper drop comes, closing the loop between economy and need-drive (BACKLOG-444 — cycle 104)
-- [ ] The waterhole — the bowl and Fernreach get their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (BACKLOG-445)
+Milestone 5 shipped at cycle 105. The Lore-smith drafts the next headline + lore arcs at the
+next cycle open; the Structure-smith adds the structure arcs right after.
 
 ### Format (use this when drafting)
 
@@ -47,6 +29,36 @@ operator call.
 ```
 
 ## Shipped milestones
+
+### Milestone 5: No one goes hungry — SHIPPED cycle 105 (opened cycle 103)
+
+The hunt got stakes in Milestone 4; Milestone 5 made the bowl's *plenty* reach the mouths that need it.
+A harvest used to drop, be eaten, and be gone — nothing banked, so a zone rich in crops could not feed a
+starving neighbour, thirst slaked at exactly one puddle in a three-zone chain, and a dino withdrawn at the
+wall simply missed every meal, because nothing in the park was capable of noticing. The gap closed from
+both ends. The economy learned to *store* (a share of every harvest banks per zone, 446) and then to
+*spend* — a starving resident is fed from its own zone's pantry, its favorite if the zone happens to have
+banked it (444), the first time in a hundred cycles that this park's two machines, the economy and the
+needs, touched at all. Water reached every zone (445), retiring a two-thirds-dead branch inside a shipped
+feature and finally giving the Fernreach's long-drawn creek something to be *for*. And the cast learned to
+feed each other: two dinos eating side by side bond over the shared meal (373), a dino that went to bed
+hungry breaks the morning with it in a voice shaded by its own temperament (376), and a withdrawn loner —
+the dino with nobody, the one the whole system was built to miss — gets fetched, the closest thing it has
+to a friend turning its back on the food to walk out and bring it in (381). If it has nobody at all, nobody
+comes, and it stands at the edge while the park eats; that silence is the arc's sharpest read. Minds (M1) →
+a home ground (M2) → a ground that feeds them (M3) → a ground where eating has stakes (M4) → **a ground
+that provides for its own** (M5). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] Ate together — two dinos that feed side by side within a short window bond over the shared meal, communal feeding made a moment (BACKLOG-373 — cycle 103)
+- [x] Woke hungry — a dino already over its hunger threshold at dawn plays a visible wake-hungry beat instead of a plain stretch (BACKLOG-376 — cycle 104)
+- [x] Brought to the hatch — a withdrawn loner's closest friend nudges it in from the edge to the food so it doesn't miss the meal (BACKLOG-381 — cycle 105)
+
+**Structure arcs:**
+- [x] A zone banks its harvest — a share of each harvest banks into a per-zone food stockpile, capped and read on the lens; the missing spine under both the demand read (438) and a carrier that feeds the hungry (BACKLOG-446 — cycle 103)
+- [x] A carrier feeds the hungry — a zone's banked food can be spent to resolve a starving resident's hunger when no keeper drop comes, closing the loop between economy and need-drive (BACKLOG-444 — cycle 104)
+- [x] The waterhole — the bowl and Fernreach get their own water source so all three zones slake thirst locally, the water mirror of per-zone crops (BACKLOG-445 — cycle 105)
+
 
 ### Milestone 4: The hunt has weight — SHIPPED cycle 102 (opened cycle 100)
 
