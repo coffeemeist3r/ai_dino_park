@@ -3162,3 +3162,16 @@ fire: the bowl now bakes through `bakeTerrainMap` like the other two zones, so b
 art (a shoreline edge where grass meets the new water) is renderable for the first time — but the
 seam rigs don't exist and inventing one on a no-op fire is exactly the over-reach the routine warns
 against. build clean; vitest 1211/1211. lastFire.artist updated. phase stays lore-pending.
+
+## 2026-07-18 04:52 — cycle 105 — housekeeping
+
+Backlog hygiene (routine 0, once per cycle). No section emptied *this* cycle — 381's block (cycle 82,
+solace) still holds 379/380/382, and the Structure Track refilled to 4 (447/448/449/450). But 16
+note-only sections had accumulated with zero open items between them, every item they ever seeded
+long since shipped or abandoned: the whole run of "Cycle NN structure additions" blocks, both
+operator-session blocks, the CHARTER-v4 art mandate pointer, Core loop, Multi-NPC world, Vivarium,
+and cycle 100's lore additions. All moved verbatim to `BACKLOG-archive.md`. **Deliberately kept in
+BACKLOG.md:** the `## Structure Track` queue (live) and the `## Art` block — the latter has no open
+items but carries the stash-ahead policy routine 7 reads on every fire, so archiving it would delete
+a live rule. Open items unchanged at 234 (230 lore body + 4 structure); the working file is 92 lines
+lighter, and every stage reads it.

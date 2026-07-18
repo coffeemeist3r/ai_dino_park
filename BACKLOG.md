@@ -27,16 +27,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ---
 
-## Core loop (shipped first)
-
-
 ## NPC depth
 
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [ ] BACKLOG-104 [emergent] Action-prompt layer — dinos *act* from their persona, not only reply (CHARTER "Living minds": minds act). A per-dino prompt path that turns persona + memory + world state into a chosen **action/intent** (where to go, what to do, how to react to an event), consumed by the world tick — not just dialogue. Spine for BACKLOG-012 (daily plan), -014 (reflection), -032 (roles persist). With Qwen3/3.5 thinking (BACKLOG-102), big choices can run in thinking mode, chitchat without. Start small: one persona-driven intent per dino per tick window, observable in-world. Deterministic fallback intent for no-model devices. Behind `NPCBrain`.
-
-## Multi-NPC world
-
 
 ## Pokemon flavor
 
@@ -73,17 +67,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
 - [ ] BACKLOG-430 [infra] Fix the mobile-minds dialog-paging e2e — `mobile-minds.spec.ts` "long dialogs page GBA-style: E forward, ◀ back, ✕ closes" fails at the ArrowLeft `prev()` page-back step, and **fails on a clean HEAD in isolation** (surfaced cycle 93 QA via a `git stash` reproduction), so it is *not* the catalogued parallel-load flake the cycle-92 verdict logged it as — a real break in the keeper-picker/dialog input path (`WorldScene.ts:448` `cursors.left → dialog.prev()`, or a body-tap `next()` undoing it). Off every recent feature diff; find where ArrowLeft's page-back stopped registering during the keeper picker and restore it, with the spec pinning both the keyboard and the ◀-chip twin. Infra hygiene — the full e2e run should read all-green so a genuine regression isn't lost in a standing red.
 
-## Cycle 59 structure additions — the bigger world (2026-06-19)
-
-
 ## Cycle 1 lore additions (2026-05-25)
 
 - [ ] BACKLOG-043 [ai] Personality drift — over many in-game weeks, an NPC's personality traits can shift toward those of the NPC they spend most ticks adjacent to. Very slow (cap: one trait swap per in-game month).
 - [ ] BACKLOG-044 [emergent] Lost-item lore — when the player drops an item and an NPC picks it up later, the NPC's brain may invent a story about its origin. Story is stored in NPC memory and may surface in unrelated dialog later.
 - [ ] BACKLOG-045 [social] Catchphrase emergence — first non-trivial line an NPC speaks each in-game morning is logged. If the same line surfaces 3+ days running, it becomes that NPC's catchphrase, shown in the collection book.
-
-## Vivarium / fishbowl (2026-05-30 — operator: "treat this like a mini dino fishbowl"; see studio/lore/vivarium.md)
-
 
 ## Cycle 25 lore additions — feeding (2026-05-31)
 
@@ -168,68 +156,12 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-148 [ai] Tone-aware reply — feed the remembered tone (142) into the dino's greeting/reply context so a teased dino ribs back, a warmly-treated one is fonder, an honestly-treated one is franker; the consequence surfaces in *what the dino says*, not just affinity. Behind the NPCBrain boundary, deterministic fallback line per tone. Builds on 142 / 051 / 055.
 - [ ] BACKLOG-149 [emergent] Tone reputation — a dino's accumulated tone-history settles into a read on the keeper (trusts / wary / playful), surfaced in the collection book; how you've *mostly* treated a dino becomes a visible standing. Builds on 142 / 021.
 
-## Cycle 62 structure additions — the resource arc grows a queue (2026-06-20)
-
-> The Structure-smith refilled the structure queue (it had fallen to 3 open, below cap X=4) while
-> picking 146 (the gathering spine) this cycle. These are the next two beats of the
-> resources→crafting arc the gathering spine opens.
-
-
-## Cycle 64 structure additions — the build arc gets its payoff queue (2026-06-21)
-
-> Structure Track had fallen to 3 open (145/274/286) below cap X=4, so the Structure-smith refilled
-> with 2 beats — both the natural follow-ons to 286 (first craft), the item picked this cycle.
-
-
-## Cycle 67 structure additions — per-zone world state + the first economy knob (2026-06-21)
-
-> Queue had fallen to 3 open (below cap X=4), so the Structure-smith refilled while picking 294. These
-> are the next two structural beats the grove-terrain work opens: making world objects zone-aware, and
-> putting the first constraint on the resource economy.
-
-
 ## Cycle 69 structure additions — the split world grows a queue (2026-06-22)
 
 > The Structure-smith refilled the structure queue (down to 2 open after cycle 68 abandoned 293, below
 > cap X=4) while picking 308 this cycle. The next beats the zone-scoping work opens.
 
 - [ ] BACKLOG-349 [core] Grove plot — the plantable plot (145) is gated bowl-only (308, fixed installation). Add a second plot in the grove so the second zone grows its own crop, the farming half of a genuinely separate per-zone economy (a step toward the grove being self-sufficient, not just a place dinos visit). Builds on 145 / 308 / 294.
-
-## Cycle 77 structure additions — the trade route opens (2026-06-24)
-
-> The structure queue sat at 3 open (329/348/349, below cap X=4), so the Structure-smith seeded three
-> while picking 329 this cycle. With per-zone piles split (328) and a carry link landing (329), the next
-> beats are about what *flows* along that link and how the two economies read.
-
-
-## Cycle 85 structure additions — the chain grows a third link (2026-06-29)
-
-> The structure queue sat at 3 open (358/378/384, below cap X=4), so the Structure-smith seeded three
-> while picking 378 (the third zone) this cycle. The cycle-84 adjacency graph (383) made the third zone
-> "a table row"; these are the next beats it opens — a way to *see* the neighbour before you cross, the
-> third zone's own terrain, and its own resource lean.
-
-
-## Cycle 90 structure additions — the spine for Milestone 1 (2026-07-03)
-
-> First v6 cycle. Queue sat at 3 open (398/417/418, below cap X=4), so the Structure-smith seeded two
-> while picking 398. Both are Milestone 1 arcs: the world made visible whole, and the persistence rail
-> the minds arc (103/393) will land its caches on.
-
-## Cycle 92 structure additions — the queue refilled as Milestone 1 closes (2026-07-05)
-
-> The structure queue sat at 3 open (417/418/426, below cap X=4), so the Structure-smith seeded two
-> while picking 426 (Milestone 1's last structure arc) this cycle. Both keep the resources→economy arc
-> alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
-> flow between zones instead of piling up.
-
-
-## Cycle 97 structure additions — the food web's data spine + the need that moves (2026-07-10)
-
-> Structure Track sat at 3 open (429/432/433, below cap X=4), so the Structure-smith seeded two while
-> picking 429 (Milestone 3 structure arc 1). Both are Milestone 3 spines: a diet split so the food web
-> (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
-> hungry dino finally *seeks* food instead of just wearing the mark.
 
 ## Cycle 36 lore additions — the night the sky lit up (2026-06-08)
 
@@ -281,12 +213,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-172 [pokemon] Season of hatching — every dino (and every future egg) gets a recorded hatch season shown in the collection book ("hatched in spring"); lineages start carrying birthdays the turning year makes meaningful. Builds on 042 / 021 / 159.
 - [ ] BACKLOG-173 [ai] Season in the voice — the current season joins the dialogue context (like time-of-day in 051), so a dino can grumble about winter or savour spring without being asked. Deterministic fallback line per season. Builds on 051 / 159.
-
-## Operator art mandate (2026-06-09 — CHARTER v4: GBA pixel)
-
-> The operator ruled: **Gen3 pixel**, authored as code (no rips, no downloads). Restyle rolls
-> one character per Artist fire; vector rigs keep rendering until each pixel replacement lands.
-
 
 ## Cycle 41 lore additions — the year keeps turning (2026-06-10)
 
@@ -575,13 +501,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-291 [social] Favorite sky — a dino that has witnessed both event kinds (meteors and aurora) forms a remembered preference and reacts a little harder to its favorite ("the lights, not the falling stars"); which sky moves which dino becomes a small per-dino tell. Builds on 144 / 011.
 - [ ] BACKLOG-292 [emergent] You-missed-it nudge — the deliberate companion to 151's secondhand gossip: a dino that watched the sky seeks out a specific dino that slept through it the next morning and tells it to its face (a 💬 "you should've SEEN it" beat), turning ambient rumor into a one-to-one telling. Builds on 144 / 151 / 019.
 
-## Operator session — 2026-06-21 (cycle 64 review — legibility)
-
-> Operator review after cycle 64: the bowl does a lot the player can't see — resources spawn rare + get
-> grabbed in a blink, the cairn/resources are emoji not art, and you can't tell what a dino is *doing now*.
-> Three legibility beats + a renderable-art unblock. (Stash-ahead art policy → Idea Box.)
-
-
 ## Cycle 65 lore additions — the bowl, legible (2026-06-21)
 
 > Cycle 65's next-up is the operator-seeded **BACKLOG-295** (dino activity readout) — surface what each
@@ -815,16 +734,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
-
-## Operator session — 2026-06-12
-
-
-## Cycle 100 lore additions — the hunt has weight (2026-07-13)
-
-> Milestone 3 shipped cycle 99; Milestone 4 "The hunt has weight" opens here. The food web that woke
-> (367) always came up empty — these give it consequence. Cycle 100 ships **BACKLOG-440** (lore arc 1)
-> alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
-> arcs, drafted for the next two cycles.
 
 ## Mobile (deferred, do not pick until charter clears)
 

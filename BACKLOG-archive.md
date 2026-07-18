@@ -457,3 +457,87 @@ Also swept here from the cycle-97 body (shipped cycle 97, archived cycle 98 for 
 > > is a state a dino can *leave*, not a label it wears forever. These extend the need-drive (371) into
 > > social texture — food as a thing dinos share, yield, and stir for — so hunger isn't only a 🍖 mark.
 
+## Archived sections — drained note-only blocks (moved here cycle 105, 2026-07-18)
+
+> Housekeeping (routine 0): these body sections had zero open items left — every item they
+> seeded has shipped or been abandoned. Their notes are kept verbatim for the record. The
+> `## Structure Track` queue and the `## Art` block stay in BACKLOG.md: the first is a live
+> queue, the second carries the stash-ahead policy routine 7 reads every fire.
+
+## Core loop (shipped first)
+
+## Multi-NPC world
+
+## Cycle 59 structure additions — the bigger world (2026-06-19)
+
+## Vivarium / fishbowl (2026-05-30 — operator: "treat this like a mini dino fishbowl"; see studio/lore/vivarium.md)
+
+## Cycle 62 structure additions — the resource arc grows a queue (2026-06-20)
+
+> The Structure-smith refilled the structure queue (it had fallen to 3 open, below cap X=4) while
+> picking 146 (the gathering spine) this cycle. These are the next two beats of the
+> resources→crafting arc the gathering spine opens.
+
+## Cycle 64 structure additions — the build arc gets its payoff queue (2026-06-21)
+
+> Structure Track had fallen to 3 open (145/274/286) below cap X=4, so the Structure-smith refilled
+> with 2 beats — both the natural follow-ons to 286 (first craft), the item picked this cycle.
+
+## Cycle 67 structure additions — per-zone world state + the first economy knob (2026-06-21)
+
+> Queue had fallen to 3 open (below cap X=4), so the Structure-smith refilled while picking 294. These
+> are the next two structural beats the grove-terrain work opens: making world objects zone-aware, and
+> putting the first constraint on the resource economy.
+
+## Cycle 77 structure additions — the trade route opens (2026-06-24)
+
+> The structure queue sat at 3 open (329/348/349, below cap X=4), so the Structure-smith seeded three
+> while picking 329 this cycle. With per-zone piles split (328) and a carry link landing (329), the next
+> beats are about what *flows* along that link and how the two economies read.
+
+## Cycle 85 structure additions — the chain grows a third link (2026-06-29)
+
+> The structure queue sat at 3 open (358/378/384, below cap X=4), so the Structure-smith seeded three
+> while picking 378 (the third zone) this cycle. The cycle-84 adjacency graph (383) made the third zone
+> "a table row"; these are the next beats it opens — a way to *see* the neighbour before you cross, the
+> third zone's own terrain, and its own resource lean.
+
+## Cycle 90 structure additions — the spine for Milestone 1 (2026-07-03)
+
+> First v6 cycle. Queue sat at 3 open (398/417/418, below cap X=4), so the Structure-smith seeded two
+> while picking 398. Both are Milestone 1 arcs: the world made visible whole, and the persistence rail
+> the minds arc (103/393) will land its caches on.
+
+## Cycle 92 structure additions — the queue refilled as Milestone 1 closes (2026-07-05)
+
+> The structure queue sat at 3 open (417/418/426, below cap X=4), so the Structure-smith seeded two
+> while picking 426 (Milestone 1's last structure arc) this cycle. Both keep the resources→economy arc
+> alive past the milestone: a way to *read* a zone's health, and the first pressure that makes resources
+> flow between zones instead of piling up.
+
+## Cycle 97 structure additions — the food web's data spine + the need that moves (2026-07-10)
+
+> Structure Track sat at 3 open (429/432/433, below cap X=4), so the Structure-smith seeded two while
+> picking 429 (Milestone 3 structure arc 1). Both are Milestone 3 spines: a diet split so the food web
+> (367) has a predator/prey read to stand on, and the deferred behavior half of the need-drive so a
+> hungry dino finally *seeks* food instead of just wearing the mark.
+
+## Operator art mandate (2026-06-09 — CHARTER v4: GBA pixel)
+
+> The operator ruled: **Gen3 pixel**, authored as code (no rips, no downloads). Restyle rolls
+> one character per Artist fire; vector rigs keep rendering until each pixel replacement lands.
+
+## Operator session — 2026-06-21 (cycle 64 review — legibility)
+
+> Operator review after cycle 64: the bowl does a lot the player can't see — resources spawn rare + get
+> grabbed in a blink, the cairn/resources are emoji not art, and you can't tell what a dino is *doing now*.
+> Three legibility beats + a renderable-art unblock. (Stash-ahead art policy → Idea Box.)
+
+## Operator session — 2026-06-12
+
+## Cycle 100 lore additions — the hunt has weight (2026-07-13)
+
+> Milestone 3 shipped cycle 99; Milestone 4 "The hunt has weight" opens here. The food web that woke
+> (367) always came up empty — these give it consequence. Cycle 100 ships **BACKLOG-440** (lore arc 1)
+> alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
+> arcs, drafted for the next two cycles.
