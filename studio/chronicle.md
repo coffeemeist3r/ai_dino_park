@@ -2980,3 +2980,11 @@ lastFire.artist updated. phase stays lore-pending.
 Backlog hygiene (routine 0, once per cycle): the "Cycle 81 lore additions" section emptied when 376 shipped
 — whole section moved to `BACKLOG-archive.md` with its note kept for the record. No closed `[x]`/`[a]`
 bullets and no stale `[~]` remain in the working backlog. Open items: 234 (230 lore body + 4 structure).
+
+## 2026-07-18 02:40 — cycle 105 — lore-smith — brought to the hatch (381)
+
+Milestone 5's last lore arc. The park can bank food (446) and spend it on a starving resident
+(444); what it can't do is notice the dino that won't come to the table. Next-up **BACKLOG-381**:
+a withdrawn loner's *closest* friend breaks off its own beeline to the food, goes out to the edge,
+and walks it in — comfort (130) that leads instead of consoling in place. Cap rule: 230 open lore
+items ≥ 12, so nothing new seeded. Idea Box empty. phase → designer-pending.
