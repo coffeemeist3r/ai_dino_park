@@ -3012,3 +3012,21 @@ grove-hardcoded lookups — `checkNeeds`' drink check and `needTargetFor`'s thir
 Guarded hard: the pond-sight (359) and pond-swap (346) beats stay grove-only or a once-ever beat
 retro-fires park-wide. Structure first, then lore — both land near `stepDinos` on opposite branches.
 phase → codeplan-pending.
+
+## 2026-07-18 03:20 — cycle 105 — code-planner — plan 381 + 445 (and a design bug caught)
+
+**The plan corrects its own design.** The 381 spec said "reuse `comforter()`" — and `comforter()`
+requires a bond ≥ 8 while `isLoner()` requires *every* bond < 8, so the fetcher pick is null by
+construction: nobody could ever come, for anyone. Same shape as cycle 104's threshold collision,
+caught one stage earlier. Resolved by picking with `closestFriend()` (the floor-parameterized
+primitive `comforter()` is built on — still reuse, not a second search) at a new
+`FETCH_BOND_FLOOR = 4`, strictly below `LONER_FLOOR`. The semantics got *better*: the dino that
+comes for a loner isn't a close friend — a loner has none — it's the closest thing it has to one.
+Pinned by a constants-relation unit test, cycle-104 style.
+
+**445** planned as `bowlTileAt` (a 3×2 waterhole at x∈[2,4], y∈[2,3], checked clear of the huddle
+tile, the plot, the food row and the migration edge) plus `zoneWaterTile`/`atWater` replacing the
+two grove-hardcoded reaches. Flagged risk: giving the bowl a terrain layout flips its floor onto
+the `bakeTerrainMap` path for the first time — render e2e + the existing tile-art specs are the
+fence. `nearPond` stays untouched with a guard test, or the once-ever pond-sight beat retro-fires
+park-wide. ~9 files total. phase → coder-pending.
