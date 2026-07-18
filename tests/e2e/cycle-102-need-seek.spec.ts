@@ -42,17 +42,24 @@ test('pressing hunger targets the hatch and pulls the body toward it', async ({ 
   expect(errors).toEqual([]);
 });
 
-test('thirst pulls only in the grove (its water is grove-only)', async ({ page }) => {
+/**
+ * BACKLOG-445 inverted this test. It used to pin "thirst pulls only in the grove", which was the
+ * shipped truth *and* the bug: the grove was the one place with water, so this feature — the need
+ * pulling the body — was a no-op for thirst in two zones out of three. Every zone has its own water
+ * now, so the pull works everywhere; what's still worth pinning is that the target follows the dino.
+ */
+test('thirst pulls toward the water of whichever zone the dino is in (BACKLOG-445)', async ({ page }) => {
   await boot(page);
 
-  // in the bowl, a thirsty dino has no reachable water → no target
   await setNeed(page, 'Rex', 'thirst', 1);
-  expect(await needTarget(page, 'Rex')).toBeNull();
+  const inBowl = await needTarget(page, 'Rex');
+  expect(inBowl).not.toBeNull(); // was null before 445 — the no-op this closed
 
-  // move it to the grove → the pond becomes its target
   await migrate(page, 'Rex', 'grove');
   await setNeed(page, 'Rex', 'thirst', 1);
-  expect(await needTarget(page, 'Rex')).not.toBeNull();
+  const inGrove = await needTarget(page, 'Rex');
+  expect(inGrove).not.toBeNull();
+  expect(inGrove).not.toEqual(inBowl); // it walks to its *own* zone's water, not a fixed pond
 });
 
 test('a sated dino has no seek target', async ({ page }) => {

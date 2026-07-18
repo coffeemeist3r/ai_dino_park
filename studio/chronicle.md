@@ -3052,3 +3052,19 @@ of one. `FETCH_STEPS` sized off manhattan distance (`stepToward` moves one axis 
 
 build clean; vitest 1211/1211; the two new e2e green 24/24 across three repeats. WebLLM still
 `ai/`-only; zero save change. phase → qa-pending.
+
+## 2026-07-18 04:20 — cycle 105 — qa — PASS both
+
+build clean; vitest **1211/1211** (+24); e2e **357 specs, 356 green**. The lone failure was
+`cycle-028-realtime` (clock HUD — nowhere near this diff), green in 1.1s isolated, and a *different*
+spec had failed the prior full run: the catalogued parallel-load flake's signature, not a regression.
+
+Four shipped assertions pinned truths 445 deliberately ends (the bowl "has no layout"; the bowl floor
+key is `tilemap_grass`; "thirst pulls only in the grove") and were updated to the new truth with their
+original intent kept. `__groundReady`/`__groundSize` had to stop reading a hardcoded grass key and read
+the live floor texture instead — the question they were always really asking.
+
+Flagged for the Validator: the escort now *outlives* the meal, against the design's literal "clears
+when the food is gone". Taken literally the beat was unobservable — a fetch is ~20 steps, the swarm
+clears a drop in three — so 381 would have shipped as dead code passing its own tests. phase →
+validator-pending.
