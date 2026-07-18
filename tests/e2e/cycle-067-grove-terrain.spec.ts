@@ -20,7 +20,7 @@ test('the floor swaps to a distinct tinted grove terrain and back', async ({ pag
   const bowl = await floor(page);
   expect(bowl.zone).toBe('bowl');
   expect(bowl.tinted).toBe(false);
-  expect(bowl.key).toContain('grass'); // the untinted bowl grass
+  expect(bowl.key).toContain('terrain_bowl'); // BACKLOG-445: the bowl bakes its own ground now, still untinted
 
   await page.evaluate(() => (window as W).__setZone('grove'));
   const grove = await floor(page);
@@ -32,7 +32,7 @@ test('the floor swaps to a distinct tinted grove terrain and back', async ({ pag
   await page.evaluate(() => (window as W).__setZone('bowl'));
   const back = await floor(page);
   expect(back.tinted).toBe(false);
-  expect(back.key).toContain('grass');
+  expect(back.key).toContain('terrain_bowl');
 
   expect(errors).toEqual([]);
 });

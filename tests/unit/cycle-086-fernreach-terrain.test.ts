@@ -76,8 +76,16 @@ describe('zoneTileAt dispatcher (BACKLOG-399)', () => {
     }
   });
 
-  it('returns null for the bowl (plain grass, no layout)', () => {
-    expect(zoneTileAt('bowl', 0, 0, COLS, ROWS)).toBeNull();
-    expect(zoneTileAt('bowl', 10, 7, COLS, ROWS)).toBeNull();
+  // BACKLOG-445 updated this: the bowl used to be the one zone with no layout at all (null → the caller
+  // baked plain grass), which is exactly why a thirsty dino there had nowhere to drink. It has its own
+  // waterhole now, so the dispatcher answers for it too — but it is still neither grove nor Fernreach
+  // ground, which is what this test was really guarding. An unknown zone id keeps the old null contract.
+  it('routes the bowl to its own ground, and only an unknown zone to null', () => {
+    expect(zoneTileAt('bowl', 10, 7, COLS, ROWS)).toBe('grass');
+    expect(zoneTileAt('bowl', 3, 2, COLS, ROWS)).toBe('water'); // the NW waterhole
+    // the Fernreach's west creek runs through (3,7); the bowl's ground there is plain grass
+    expect(fernreachTileAt(3, 7, COLS, ROWS)).toBe('water');
+    expect(zoneTileAt('bowl', 3, 7, COLS, ROWS)).toBe('grass');
+    expect(zoneTileAt('nowhere', 0, 0, COLS, ROWS)).toBeNull();
   });
 });

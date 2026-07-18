@@ -18,9 +18,9 @@ test('the Fernreach bakes its own terrain map, distinct from bowl and grove', as
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // bowl: plain grass tilemap (unchanged).
+  // bowl: its own terrain map since BACKLOG-445 gave it a waterhole (was the plain grass tilemap).
   await setZone(page, 'bowl');
-  expect((await floor(page)).key).toBe('tilemap_grass_20x15');
+  expect((await floor(page)).key).toBe('terrain_bowl_20x15');
 
   // grove: its own terrain map (cycle-85 byte-identical).
   await setZone(page, 'grove');

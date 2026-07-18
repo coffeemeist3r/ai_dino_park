@@ -56,3 +56,21 @@ describe('first sight of the pond (BACKLOG-359)', () => {
     expect(pondSightMemory()).not.toBe(groveArrivalMemory());
   });
 });
+
+/**
+ * BACKLOG-445 regression fence. The waterhole made thirst a per-zone question, but the pond-sight beat
+ * (359) and the pond-swap gossip (346) are *grove lore* — they mean "the grove's pond", not "any water".
+ * If `nearPond` ever widens to the zone-generic `atWater`, a once-ever beat retro-fires for every dino
+ * standing in the Fernreach creek or the bowl waterhole, and `pondSeen` fills up in existing saves.
+ */
+describe('nearPond stays pointed at the grove (BACKLOG-445 guard)', () => {
+  it('is false on the bowl waterhole and the Fernreach creek', () => {
+    expect(nearPond({ tileX: 3, tileY: 2 }, COLS, ROWS)).toBe(false); // bowl waterhole (bowlTileAt)
+    expect(nearPond({ tileX: 3, tileY: 7 }, COLS, ROWS)).toBe(false); // Fernreach creek (fernreachTileAt)
+  });
+
+  it('still fires only for a grove dino', () => {
+    expect(firstPondSight([], 'Rex', BOWL_ID, pondTile, COLS, ROWS)).toBe(false);
+    expect(firstPondSight([], 'Rex', GROVE_ID, pondTile, COLS, ROWS)).toBe(true);
+  });
+});

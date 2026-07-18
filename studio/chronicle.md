@@ -3030,3 +3030,25 @@ two grove-hardcoded reaches. Flagged risk: giving the bowl a terrain layout flip
 the `bakeTerrainMap` path for the first time — render e2e + the existing tile-art specs are the
 fence. `nearPond` stays untouched with a guard test, or the once-ever pond-sight beat retro-fires
 park-wide. ~9 files total. phase → coder-pending.
+
+## 2026-07-18 03:55 — cycle 105 — coder — BACKLOG-381 + BACKLOG-445 shipped
+
+10 files. Structure first: `bowlTileAt` (a 3×2 NW waterhole, unit-pinned clear of the den, the plot,
+the food row and the migration edge) plus `zoneWaterTile`/`atWater`, and the two grove-hardcoded
+reaches in `checkNeeds`/`needTargetFor` go per-zone. Three shipped tests correctly pinned the *old*
+truth ("the bowl has no layout") and were updated to the new one — including `__groundReady`, which
+read the hardcoded `tilemap_grass` key and went false the moment the bowl started baking its own
+terrain. `nearPond` untouched, with a guard test.
+
+Lore: `world/fetch.ts` + the escort state, picked by `closestFriend()` at `FETCH_BOND_FLOOR = 4` per
+the codeplan's correction. **One real design fault caught in the fire**: the spec had the errand
+cancel when the food went. But a fetch takes ~20 steps and the swarm clears a drop in about three —
+so the nudge would have fired approximately never, and 381 would have shipped as dead code that
+passes its own unit tests. The errand now outlives the meal and aims at the hatch the food landed at;
+the loner still gets walked in from the wall, it just may find the bowl empty. That's the honest
+reading of the design's own line — being brought to the hatch is a chance at a meal, not a promise
+of one. `FETCH_STEPS` sized off manhattan distance (`stepToward` moves one axis per step), not the
+14 the plan guessed.
+
+build clean; vitest 1211/1211; the two new e2e green 24/24 across three repeats. WebLLM still
+`ai/`-only; zero save change. phase → qa-pending.

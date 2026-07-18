@@ -209,14 +209,79 @@ export function fernreachTileAt(x: number, y: number, cols: number, rows: number
 }
 
 /**
- * The terrain layout for a zone (BACKLOG-294/399): the grove and the Fernreach each have their own ground;
- * the bowl is plain grass (null → the caller bakes the untinted grass map). One dispatcher the floor render
- * reads, so a fourth zone is another arm here, not another edit to `drawFloor`.
+ * The bowl's ground (BACKLOG-445): for 104 cycles the starting zone was the one place with no terrain at
+ * all — plain grass, and so the one place a thirsty dino had nowhere to drink. It gets a small **waterhole**
+ * in the north-west; everything else stays grass, so the bowl still reads as the open bowl it always was.
+ *
+ * The block is deliberately sited clear of everything the bowl already fixes in place: the huddle tile
+ * (10,11), the plot (2,12), the food-landing row (`foodLanding` → y=6 at 15 rows), and the east migration
+ * edge (x=cols-1). Pure: (x,y) → tile kind.
+ */
+export function bowlTileAt(x: number, y: number, _cols: number, _rows: number): TileKind {
+  // NW waterhole: a 3×2 block two tiles in from the top-left.
+  if (x >= 2 && x <= 4 && y >= 2 && y <= 3) return 'water';
+  return 'grass';
+}
+
+/** The centre of the bowl's NW waterhole (BACKLOG-445) — the bowl's twin of `grovePondTile`. Kept in sync
+ *  with the water block in `bowlTileAt` (x∈[2,4], y∈[2,3]); pure. */
+export function bowlPondTile(): { tileX: number; tileY: number } {
+  return { tileX: 3, tileY: 2 };
+}
+
+/** A point on the Fernreach's west creek (BACKLOG-445) — the creek has been drawn since 399 and nothing
+ *  ever drank from it. Kept in sync with the water run in `fernreachTileAt` (x∈[3,4], y∈[2,rows-3]); pure. */
+export function fernreachCreekTile(rows: number): { tileX: number; tileY: number } {
+  return { tileX: 3, tileY: Math.floor(rows / 2) };
+}
+
+/**
+ * The terrain layout for a zone (BACKLOG-294/399/445): every zone now has its own ground — the grove's
+ * pond and trail, the Fernreach's creek and scrub, the bowl's waterhole. One dispatcher the floor render
+ * reads, so a fourth zone is another arm here, not another edit to `drawFloor`. (An unknown zone id still
+ * returns null → the caller bakes the plain grass map.)
  */
 export function zoneTileAt(zoneId: string, x: number, y: number, cols: number, rows: number): TileKind | null {
   if (zoneId === GROVE_ID) return groveTileAt(x, y, cols, rows);
   if (zoneId === FERNREACH_ID) return fernreachTileAt(x, y, cols, rows);
+  if (zoneId === BOWL_ID) return bowlTileAt(x, y, cols, rows);
   return null;
+}
+
+/**
+ * Where a thirsty dino in this zone goes to drink (BACKLOG-445). Thirst has existed since cycle 80 with
+ * exactly one place in the whole park to resolve it, which quietly made the need-pull (436) a no-op for
+ * two zones out of three. Each zone now answers for itself, off its own terrain.
+ */
+export function zoneWaterTile(zoneId: string, cols: number, rows: number): { tileX: number; tileY: number } | null {
+  if (zoneId === GROVE_ID) return grovePondTile(cols);
+  if (zoneId === FERNREACH_ID) return fernreachCreekTile(rows);
+  if (zoneId === BOWL_ID) return bowlPondTile();
+  return null;
+}
+
+/**
+ * Is this dino at its own zone's water (BACKLOG-445) — any water tile of *that zone's* terrain within
+ * `radius`? The zone-scoped counterpart of `arrival.ts`'s `nearPond`, which stays pointed at the grove on
+ * purpose: the first-pond-sight beat (359) and the pond-swap gossip (346) are grove lore, and widening
+ * them to "any water" would retro-fire a once-ever beat for every dino standing in the Fernreach creek.
+ */
+export function atWater(
+  zoneId: string,
+  tile: { tileX: number; tileY: number },
+  cols: number,
+  rows: number,
+  radius = 1,
+): boolean {
+  for (let dy = -radius; dy <= radius; dy++) {
+    for (let dx = -radius; dx <= radius; dx++) {
+      const x = tile.tileX + dx;
+      const y = tile.tileY + dy;
+      if (x < 0 || y < 0 || x >= cols || y >= rows) continue;
+      if (zoneTileAt(zoneId, x, y, cols, rows) === 'water') return true;
+    }
+  }
+  return false;
 }
 
 /** Per-entity occupancy over a plain map (BACKLOG-143 API; populated by BACKLOG-274). */

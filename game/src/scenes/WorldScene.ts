@@ -41,13 +41,14 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, crossEntryTile, crossing, edgeIndicators, grovePondTile, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
+import { FETCH_BOND, FETCH_STEPS, FETCH_GLYPH, fetchEventLine, fetchLine, fetchedMemory, fetcher, fetcherMemory, missingTheMeal, type Escort } from '../world/fetch';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
 import {
@@ -72,7 +73,7 @@ import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHun
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
-import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine, nearPond } from '../world/arrival';
+import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
@@ -338,6 +339,9 @@ export class WorldScene extends Phaser.Scene {
    *  responder mid-walk toward the caller. Both transient, never persisted. */
   private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
   private pendingRespond: { name: string; caller: string; steps: number } | null = null;
+  /** Brought to the hatch (BACKLOG-381): the live escort — a friend walking out to a withdrawn loner and
+   *  then walking it back to the food. One at a time, transient, never persisted (the `pendingRespond` shape). */
+  private escort: Escort | null = null;
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
@@ -1127,7 +1131,81 @@ export class WorldScene extends Phaser.Scene {
       },
     });
     this.logEvent(`${kind.emoji} food dropped from the hatch (${kind.label})`);
+    this.startEscort(landing, kind);
     return landing;
+  }
+
+  /**
+   * Brought to the hatch (BACKLOG-381) — on a drop, look for the dino the meal is going to miss.
+   *
+   * A withdrawn loner (135) at the wall is exactly the dino that won't rush: it's too far, or too listless,
+   * and nothing in the park has ever been able to reach it. So the closest thing it has to a friend goes
+   * and gets it. The rush read here is the *same* `reactionToFood` call `stepDinos` makes, so the gate can
+   * never disagree with what the dino actually does. If nobody clears the floor, no escort starts and the
+   * loner stands at the edge while the park eats — which is the read the whole beat is for.
+   */
+  private startEscort(landing: { tileX: number; tileY: number }, kind: Food): void {
+    if (this.escort) return; // one escort at a time — a second drop doesn't restart it
+    const inView = this.dinos.filter((d) => this.inView(d));
+    const rushes = (d: Dino): boolean => {
+      const dist = Math.hypot(this.tileOf(d).tileX - landing.tileX, this.tileOf(d).tileY - landing.tileY);
+      const isFav = kind.id === favoriteFood(d.traits, this.currentSeason()).id;
+      return reactionToFood(d.traits.energy, dist, isFav) === 'rush';
+    };
+    const names = this.dinoNames();
+    // Deterministic pick (lexicographic, the topBy convention) — no RNG, so the beat is testable.
+    const stranded = inView
+      .filter((d) => missingTheMeal(isLoner(this.bonds, d.name, names, LONER_FLOOR), rushes(d)))
+      .map((d) => d.name)
+      .sort()[0];
+    if (!stranded) return;
+    const friend = fetcher(stranded, this.bonds, inView.map((d) => d.name).filter((n) => n !== stranded));
+    if (!friend) return; // nobody comes
+    this.escort = { friend, loner: stranded, phase: 'to-loner', steps: FETCH_STEPS };
+  }
+
+  /**
+   * Where the pair is headed (BACKLOG-381): the food still on the ground, or — once the swarm has eaten it —
+   * the hatch it landed at. The errand deliberately outlives the meal. A fetch takes ~20 steps and the cast
+   * clears a drop in about three, so cancelling on an empty ground would mean the nudge almost never fired
+   * and the beat would exist only on paper. The loner still gets walked in from the wall; it just may find
+   * the food gone. Being brought to the hatch was never a guarantee of a meal — only of a chance at one.
+   */
+  private escortTarget(): { tileX: number; tileY: number } {
+    return this.food ?? { tileX: Math.floor(COLS / 2), tileY: Math.floor(ROWS * 0.45) };
+  }
+
+  /**
+   * Resolve the escort once per world step (BACKLOG-381), beside `stepResponder` and built the same way:
+   * adjacency ends the outward leg, arrival or the step budget ends everything.
+   *
+   * Note it never re-reads `isLoner`. The nudge strengthens the pair's bond, which can lift the loner out
+   * of loner status at the moment of contact — re-checking would cancel the beat exactly when it lands.
+   */
+  private stepEscort(): void {
+    if (!this.escort) return;
+    const friend = this.dinoByName(this.escort.friend);
+    const loner = this.dinoByName(this.escort.loner);
+    if (!friend || !loner) {
+      this.escort = null; // a dino left the zone — nobody left to walk with
+      return;
+    }
+    if (this.escort.phase === 'to-loner') {
+      if (Math.abs(friend.x - loner.x) <= TILE * 1.01 && Math.abs(friend.y - loner.y) <= TILE * 1.01) {
+        this.showBubble(friend, fetchLine(friend.name, loner.name));
+        this.logEvent(fetchEventLine(friend.name, loner.name));
+        this.memory = remember(this.memory, loner.name, fetchedMemory(friend.name));
+        this.memory = remember(this.memory, friend.name, fetcherMemory(loner.name));
+        this.bonds = strengthen(this.bonds, friend.name, loner.name, FETCH_BOND);
+        this.flashFeed(loner, FETCH_GLYPH);
+        this.escort = { ...this.escort, phase: 'to-food' };
+      }
+    } else if (reachedFood(this.tileOf(loner), this.escortTarget())) {
+      this.escort = null; // it made it in — the errand is done, the meal is its own affair
+      return;
+    }
+    this.escort = { ...this.escort, steps: this.escort.steps - 1 };
+    if (this.escort.steps <= 0) this.escort = null;
   }
 
   /** First dino standing on (or beside) the landed food eats it. */
@@ -1770,6 +1848,8 @@ export class WorldScene extends Phaser.Scene {
     // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
     (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
     (window as any).__distressResponder = () => (this.pendingRespond ? { ...this.pendingRespond } : null);
+    // BACKLOG-381: the live escort — who is fetching whom, and which leg of the walk.
+    (window as any).__escort = () => (this.escort ? { ...this.escort } : null);
     (window as any).__cryDistress = (name: string) => {
       const d = this.dinoByName(name);
       if (d) this.cryDistress(d, 'startle');
@@ -1971,13 +2051,17 @@ export class WorldScene extends Phaser.Scene {
 
   /**
    * Need-drive spine (BACKLOG-371) — forceStep tail. Every dino's hunger/thirst builds one step at its
-   * trait-shaped rate; a dino within sight of the grove pond drinks (thirst → 0). Deathless: needs only
+   * trait-shaped rate; a dino at its own zone's water drinks (thirst → 0). Deathless: needs only
    * ever build and resolve, nothing dies. Hunger resolves at the hatch (see `eatFood`).
+   *
+   * BACKLOG-445: the drink check is per-zone now — the bowl's waterhole and the Fernreach's creek slake
+   * thirst the same way the grove pond always has. (`nearPond` stays grove-only for the 359 sight beat.)
    */
   private checkNeeds(): void {
     this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })));
     for (const d of this.dinos) {
-      if (nearPond(this.tileOf(d), COLS, ROWS)) this.needs = satisfy(this.needs, d.name, 'thirst');
+      const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      if (atWater(zone, this.tileOf(d), COLS, ROWS)) this.needs = satisfy(this.needs, d.name, 'thirst');
     }
     this.feedFromStores();
     this.refreshNeedMarks();
@@ -2011,13 +2095,13 @@ export class WorldScene extends Phaser.Scene {
 
   /**
    * Where a pressing need leans a dino (BACKLOG-436): hunger → the hatch feeding zone (centre column, the
-   * `foodLanding` row where dropped food settles), thirst → the grove pond — but only when the dino is *in*
-   * the grove, the one place thirst is slaked (371); elsewhere thirst has no reachable water and returns
-   * null (the dino just wanders — a local waterhole is the separate 445).
+   * `foodLanding` row where dropped food settles), thirst → its own zone's water. Until BACKLOG-445 the
+   * thirst arm returned null anywhere but the grove — the need-pull was a no-op in two zones out of three.
+   * Every zone answers for itself now (an unknown zone id still returns null and the dino just wanders).
    */
   private needTargetFor(d: Dino, need: NeedKind): { tileX: number; tileY: number } | null {
     if (need === 'hunger') return { tileX: Math.floor(COLS / 2), tileY: Math.floor(ROWS * 0.45) };
-    return zoneOf(this.dinoZones, d.name, BOWL_ID) === GROVE_ID ? grovePondTile(COLS) : null;
+    return zoneWaterTile(zoneOf(this.dinoZones, d.name, BOWL_ID), COLS, ROWS);
   }
 
   // ── Observer lenses (BACKLOG-021 + 020): cycle V through ways of seeing the sim ──
@@ -2615,6 +2699,28 @@ export class WorldScene extends Phaser.Scene {
         continue;
       }
 
+      // Brought to the hatch (BACKLOG-381): the escort outranks the food rush — that's the whole visible
+      // oddity, one dino walking *away* from the meal while everyone else converges on it — and it outranks
+      // the moping branch below, so the fetched loner follows instead of withdrawing. It sits under the
+      // sleeping/crossing/fleeing/stalking branches above: a hunt or a migration still beats a social errand.
+      if (this.escort) {
+        const partner = this.escort.phase === 'to-loner' ? this.dinoByName(this.escort.loner) : null;
+        const target =
+          d.name === this.escort.friend
+            ? partner
+              ? this.tileOf(partner)
+              : this.escortTarget()
+            : d.name === this.escort.loner && this.escort.phase === 'to-food'
+              ? this.escortTarget()
+              : null;
+        if (target) {
+          const step = stepToward(cur, target, COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = this.escort.phase === 'to-loner' && d.name === this.escort.friend ? 'responding' : 'feeding';
+          continue;
+        }
+      }
+
       // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
@@ -2793,6 +2899,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.stepInspection();
     this.stepResponder();
+    this.stepEscort(); // BACKLOG-381: the fetch's two legs resolve beside the distress walk
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
@@ -4823,14 +4930,14 @@ export class WorldScene extends Phaser.Scene {
     // drawn, the undrawn-subject guarantee is pinned on a genuine no-art id (the pterodactyl
     // convention): hasKeeperArt(false) is what routes makeKeeperArt to the amber square.
     (window as any).__hasKeeperArt = (id: string) => hasKeeperArt(id);
-    // any: dev-only — the Gen3 grass floor (BACKLOG-033). True once the ground texture is baked;
-    // the size hook proves it spans the whole bowl (COLS×ROWS world tiles).
-    (window as any).__groundReady = () =>
-      this.textures.exists(`tilemap_grass_${COLS}x${ROWS}`);
+    // any: dev-only — the Gen3 floor (BACKLOG-033). True once the ground texture is baked; the size hook
+    // proves it spans the whole zone (COLS×ROWS world tiles). BACKLOG-445 gave the bowl its own terrain,
+    // so these read the *live* floor texture rather than the hardcoded grass key — every zone bakes a
+    // different one now, and "is the ground there" is the question these were always really asking.
+    (window as any).__groundReady = () => !!this.floorImage?.texture.key;
     (window as any).__groundSize = () => {
-      const t = this.textures.get(`tilemap_grass_${COLS}x${ROWS}`);
-      const img = t.getSourceImage() as { width: number; height: number };
-      return [img.width, img.height];
+      const img = this.floorImage?.texture.getSourceImage() as { width: number; height: number } | undefined;
+      return img ? [img.width, img.height] : [0, 0];
     };
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));

@@ -1,6 +1,6 @@
 {
   "cycle": 105,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-381: Brought to the hatch — a friend fetches a withdrawn loner to the food",
   "structureItem": "BACKLOG-445: The waterhole — all three zones slake thirst locally",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-07-18T02:48:00-05:00",
     "designer": "2026-07-18T03:05:00-05:00",
     "code-planner": "2026-07-18T03:20:00-05:00",
-    "coder": "2026-07-17T03:36:00-05:00",
+    "coder": "2026-07-18T03:55:00-05:00",
     "qa": "2026-07-17T03:58:00-05:00",
     "validator": "2026-07-17T04:12:00-05:00",
     "artist": "2026-07-17T04:16:00-05:00"
