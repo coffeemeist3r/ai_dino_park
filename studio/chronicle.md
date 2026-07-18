@@ -2988,3 +2988,13 @@ Milestone 5's last lore arc. The park can bank food (446) and spend it on a star
 a withdrawn loner's *closest* friend breaks off its own beeline to the food, goes out to the edge,
 and walks it in — comfort (130) that leads instead of consoling in place. Cap rule: 230 open lore
 items ≥ 12, so nothing new seeded. Idea Box empty. phase → designer-pending.
+
+## 2026-07-18 02:48 — cycle 105 — structure-smith — the waterhole (445)
+
+Milestone 5's last structure arc. Hunger is served by local infrastructure now (446 banks, 444
+spends); thirst is still where cycle 80 left it — one puddle. `checkNeeds` only slakes at the grove
+pond and `seekTarget` returns null for a parched dino anywhere else, so 436's need-pull is a no-op
+in two of three zones. **BACKLOG-445** makes water local: the Fernreach's creek (399) already
+exists and nothing drinks from it, the grove has its pond, and only the bowl needs new ground.
+Queue was at 3 open (< X=4), so two seeded: **449** (per-zone terrain as data, surfaced by this
+very item) and **450** (scarcity biases migration). 445 marked `[~]`.
