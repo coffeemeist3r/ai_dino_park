@@ -2998,3 +2998,17 @@ in two of three zones. **BACKLOG-445** makes water local: the Fernreach's creek 
 exists and nothing drinks from it, the grove has its pond, and only the bowl needs new ground.
 Queue was at 3 open (< X=4), so two seeded: **449** (per-zone terrain as data, surfaced by this
 very item) and **450** (scarcity biases migration). 445 marked `[~]`.
+
+## 2026-07-18 03:05 — cycle 105 — designer — spec 381 (brought to the hatch) + 445 (the waterhole)
+
+Both of Milestone 5's remaining arcs specced in one pass. **381**: on a food drop, a withdrawn
+loner that *didn't* rush gets fetched — its closest friend above the comfort floor (picked by the
+existing `comforter()`, reused verbatim) breaks off its own rush, walks the wrong way to the wall,
+nudges, and walks the pair back to the food. Two phases, transient state on the `pendingRespond`
+pattern, no save change. If no peer clears the floor, nobody comes — the silence is the point.
+**445**: the bowl gets a waterhole (it's the only zone with no terrain layout at all), the
+Fernreach's creek (399, drawn since cycle 86, never drunk from) starts working, and the two
+grove-hardcoded lookups — `checkNeeds`' drink check and `needTargetFor`'s thirst arm — go per-zone.
+Guarded hard: the pond-sight (359) and pond-swap (346) beats stay grove-only or a once-ever beat
+retro-fires park-wide. Structure first, then lore — both land near `stepDinos` on opposite branches.
+phase → codeplan-pending.
