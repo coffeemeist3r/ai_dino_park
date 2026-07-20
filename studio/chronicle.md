@@ -3199,3 +3199,10 @@ demand read, fallback to glut→lighter, one unit per crossing, wired after the 
 `crossDino`. 451 (courier's pride): `courierMemory`/`courierLine`, a 📦 beat + memory hung inside 447's
 food-move success branch (reuses the existing recall→greet path, no new greet field). One seam, two verdicts.
 phase → codeplan-pending.
+
+## 2026-07-20 03:05 — cycle 106 — code-planner — one seam, one module
+
+Plan: `pickFoodCarry` + `courierMemory`/`courierLine` in foodstore.ts (twins of resource pickCarry /
+storesFedMemory); wire both into `crossDino` after the resource-carry block (add `zoneWant` + the food
+helpers to imports). No save-shape change (foodPileByZone already persists). Tests: foodstore.test.ts
+specs + new cycle-106-food-flow e2e. phase → coder-pending.
