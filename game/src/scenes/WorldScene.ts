@@ -77,12 +77,12 @@ import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
-import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
+import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
-import { bankFood, takeFood, pickFoodToSpend, storesFedLine, storesFedMemory, type FoodPile } from '../world/foodstore';
+import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, storesFedLine, storesFedMemory, type FoodPile } from '../world/foodstore';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -4122,6 +4122,25 @@ export class WorldScene extends Phaser.Scene {
     if (carried.length) {
       const glyphs = carried.map((k) => RESOURCE_GLYPH[k]).join('');
       this.logEvent(`${glyphs} ${d.name} carried ${carried.length} to ${zoneById(dest).name}`);
+    }
+    // Food flows between zones (BACKLOG-447): the food twin of the resource carry above. The crossing dino
+    // also ferries one banked *food* unit from the zone it leaves toward the lighter neighbour it enters,
+    // aimed at the demand read (438's zoneWant) so the "wants what it can't grow" line becomes a mover.
+    // ponytail: one unit per crossing (a lean, like the non-pressured resource carry) — a pressured
+    // multi-unit food shed can follow if a zone visibly stays glutted.
+    const wantId = zoneWant(dest, this.harvestedByZone)?.food;
+    const foodCarry = pickFoodCarry(this.foodStoreFor(home), this.foodStoreFor(dest), wantId);
+    if (foodCarry) {
+      this.foodPileByZone[home] = takeFood(this.foodStoreFor(home), foodCarry);
+      this.foodPileByZone[dest] = bankFood(this.foodStoreFor(dest), foodCarry);
+      const emoji = FOODS.find((f) => f.id === foodCarry)?.emoji ?? '';
+      const destName = zoneById(dest).name;
+      this.logEvent(`${emoji} ${d.name} carried food to ${destName}`);
+      // The courier's pride (BACKLOG-451): the carrier shows a 📦 beat and keeps the memory, which rides
+      // the store into `recall` → the next greeting reads a beat prouder. Only fires when a unit actually
+      // moved (dest was genuinely short), so a no-op crossing earns no false pride. Mirrors the 339 beat.
+      this.memory = remember(this.memory, d.name, courierMemory(destName, emoji));
+      this.showBubble(d, courierLine());
     }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,

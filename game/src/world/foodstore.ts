@@ -88,3 +88,37 @@ export function storesFedLine(zoneName: string, name: string, emoji: string): st
 export function storesFedMemory(zoneName: string): string {
   return `you woke starving and ${zoneName}'s stores saw you through`;
 }
+
+/**
+ * Food flows between zones (BACKLOG-447) — the food twin of the resource carry (329/356/429). Which banked
+ * food id a crossing dino ferries `src → dest`, aimed at *need*:
+ *  1. **Directed** by the demand read (438's `zoneWant`, passed as `wantId`): if `dest` wants that food,
+ *     `src` has it banked, `dest` can still accept it (not at cap) AND holds strictly less of it than `src`,
+ *     ferry it — the demand read becomes an actual mover.
+ *  2. **Fallback (glut → lighter):** else the most-stocked id in `src` that `dest` can accept and holds
+ *     strictly less of than `src`. The strict `dest < src` on every branch is what makes food flow *only*
+ *     toward the lighter neighbour (never into an already-fuller zone) and keeps two crossings from
+ *     ping-ponging one unit back and forth.
+ *  3. `null` when nothing qualifies (src empty, dest fuller of every src id, or all dest-capped) — never lossy.
+ * Pure, deterministic: the FOODS-order filter + stable count sort break a tie exactly like `pickCarry`.
+ */
+export function pickFoodCarry(src: FoodPile, dest: FoodPile, wantId?: string): string | null {
+  const flows = (id: string) =>
+    (src[id] ?? 0) > 0 && !foodAtCap(dest, id) && (dest[id] ?? 0) < (src[id] ?? 0);
+  if (wantId && flows(wantId)) return wantId;
+  const stocked = FOODS.filter((f) => flows(f.id)).map((f) => f.id);
+  return [...stocked].sort((a, b) => (src[b] ?? 0) - (src[a] ?? 0))[0] ?? null;
+}
+
+/**
+ * The courier's pride (BACKLOG-451) — a dino that ferries banked food across a zone edge (447) to a hungrier
+ * neighbour keeps this, and greets a beat prouder for it (the trace rides the store into `recall` → the next
+ * greeting). Twin of `storesFedMemory`. */
+export function courierMemory(zoneName: string, foodEmoji: string): string {
+  return `you carried ${foodEmoji} to ${zoneName} when its stores ran short`;
+}
+
+/** The pride bubble shown over the courier at the crossing (BACKLOG-451). */
+export function courierLine(): string {
+  return '📦';
+}
