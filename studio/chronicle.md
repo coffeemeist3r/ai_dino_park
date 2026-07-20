@@ -3191,3 +3191,11 @@ Structure Track drained (4 open = X), no invent. Picked **BACKLOG-447** — the 
 carry (329/356/429): a crossing dino ferries banked food from a glutted zone toward a lighter neighbour,
 making the 438 demand read an actual mover. The M6 spine 450/448/449 build on it; pairs cleanly with the
 Lore-smith's 451 (the courier's pride) on the same `crossDino` seam. Idea-box zone-lock nudge noted for 450.
+
+## 2026-07-20 02:55 — cycle 106 — designer — both tracks spec'd
+
+447 (food flows): `pickFoodCarry(src,dest,wantId?)` food twin of resource pickCarry — directed by the 438
+demand read, fallback to glut→lighter, one unit per crossing, wired after the resource-carry block in
+`crossDino`. 451 (courier's pride): `courierMemory`/`courierLine`, a 📦 beat + memory hung inside 447's
+food-move success branch (reuses the existing recall→greet path, no new greet field). One seam, two verdicts.
+phase → codeplan-pending.
