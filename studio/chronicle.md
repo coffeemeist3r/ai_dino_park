@@ -3175,3 +3175,12 @@ BACKLOG.md:** the `## Structure Track` queue (live) and the `## Art` block — t
 items but carries the stash-ahead policy routine 7 reads on every fire, so archiving it would delete
 a live rule. Open items unchanged at 234 (230 lore body + 4 structure); the working file is 92 lines
 lighter, and every stage reads it.
+
+## 2026-07-20 02:35 — cycle 106 — lore-smith — Milestone 6 opens
+
+**Milestone 6: "No zone stands alone"** drafted (opened cycle 106) — the chain becomes one economy:
+plenty ferried toward need, mouths that move toward plenty, a provider who emerges, the map generalized.
+Seeded three milestone lore arcs: 451 (the courier's pride), 452 (homecoming from the road), 453 (word of
+the provider). Suggested next-up 451 — the dino-feeling twin of the Structure-smith's 447 (food flows).
+Idea Box: the "zone-locked resources" nudge deferred/routed to the Structure-smith (substantially the queued
+450). phase → designer-pending.

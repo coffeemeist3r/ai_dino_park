@@ -735,6 +735,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
+## Cycle 106 lore additions — the chain moves as one (2026-07-20)
+
+> Milestone 6 ("No zone stands alone") opens: the three zones stop being three parallel economies and
+> become one that ferries plenty toward need. These are the milestone's **lore arcs** — the dino-feeling
+> half of the structural spine the Structure-smith owns (447/450/448/449). Cap note: the lore body is well
+> over the 12-item drain floor, but a milestone can't be drafted without arcs, so these three are seeded
+> tightly milestone-anchored (not opportunistic backlog fill), per the milestone-duty override.
+
+- [ ] BACKLOG-451 [emergent] The courier's pride — a dino that ferries banked food across a zone edge to a hungrier neighbour (the 447 food-flow mover) files a "carried <food> to <zone>" memory and shows a 📦 pride beat at the crossing; the trace rides the store so the next greeting reads a beat prouder. The bowl's first courier — 447 moves the cargo, this gives the carrier a feeling. Builds on 447 / 339 / 011.
+- [ ] BACKLOG-452 [emergent] Homecoming from the road — a dino that migrated to another zone and later crosses *back* to its original home zone plays a small "back where it belongs" resettle beat (a 🏡 bubble + a settling memory), and a resident still there greets its return; travel finally has a return, not just a one-way drift. Builds on 334 / 341 / 340.
+- [ ] BACKLOG-453 [social] Word of the provider — once a `provider` role emerges (448), a dino can name it in gossip/greeting ("the Fernreach eats because of Sunny"), the pantry-keeper's standing surfacing in voice the way the quiet-hero (260) and hoarder do; deterministic fallback line, LLM colour behind the boundary. Builds on 448 / 260 / 020.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
