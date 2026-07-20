@@ -3206,3 +3206,10 @@ Plan: `pickFoodCarry` + `courierMemory`/`courierLine` in foodstore.ts (twins of 
 storesFedMemory); wire both into `crossDino` after the resource-carry block (add `zoneWant` + the food
 helpers to imports). No save-shape change (foodPileByZone already persists). Tests: foodstore.test.ts
 specs + new cycle-106-food-flow e2e. phase → coder-pending.
+
+## 2026-07-20 03:45 — cycle 106 — qa — PASS both
+
+build clean · vitest **1217/1217** (134 files, +6) · playwright **359/359** (no flake, +2). 447 food-flow
+`pickFoodCarry` verified across directed/fallback/null/purity cases + the crossing e2e (one unit, bowl−1
+grove+1, ticker names it; no-surplus crossing moves nothing). 451 courier's pride: 📦 beat + memory on a
+ferry, neither on a no-op. web-llm boundary intact; save additive (reuses foodPileByZone). phase → validator-pending.
