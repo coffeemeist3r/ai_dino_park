@@ -3184,3 +3184,10 @@ Seeded three milestone lore arcs: 451 (the courier's pride), 452 (homecoming fro
 the provider). Suggested next-up 451 — the dino-feeling twin of the Structure-smith's 447 (food flows).
 Idea Box: the "zone-locked resources" nudge deferred/routed to the Structure-smith (substantially the queued
 450). phase → designer-pending.
+
+## 2026-07-20 02:42 — cycle 106 — structure-smith — 447 chosen (food flows between zones)
+
+Structure Track drained (4 open = X), no invent. Picked **BACKLOG-447** — the food twin of the resource
+carry (329/356/429): a crossing dino ferries banked food from a glutted zone toward a lighter neighbour,
+making the 438 demand read an actual mover. The M6 spine 450/448/449 build on it; pairs cleanly with the
+Lore-smith's 451 (the courier's pride) on the same `crossDino` seam. Idea-box zone-lock nudge noted for 450.
