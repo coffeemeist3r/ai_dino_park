@@ -18,12 +18,12 @@ generalized so a fourth zone is a table row, not three new code branches. You sh
 a dino carry a berry across the edge because the neighbour ran short — and feel the courier's pride in it.
 
 **Lore arcs:**
-- [ ] The courier's pride — a dino that ferries banked food across a zone edge to a hungrier neighbour keeps a "carried food to <zone>" memory and greets the keeper a beat prouder for it (BACKLOG-451)
+- [x] The courier's pride — a dino that ferries banked food across a zone edge to a hungrier neighbour keeps a "carried food to <zone>" memory and greets the keeper a beat prouder for it (BACKLOG-451)
 - [ ] Homecoming from the road — a dino that migrated away and later returns to its home zone resettles ("back where it belongs") and the residents it left greet its return (BACKLOG-452)
 - [ ] Word of the provider — once a provider role emerges (448), a dino names it in gossip/greeting ("the Fernreach eats because of Sunny"); the pantry-keeper's standing surfaces in voice (BACKLOG-453)
 
 **Structure arcs:**
-- [ ] Food flows between zones — a crossing dino ferries banked food from a glutted zone toward a lighter neighbour, making the demand read (438) an actual mover (BACKLOG-447)
+- [x] Food flows between zones — a crossing dino ferries banked food from a glutted zone toward a lighter neighbour, making the demand read (438) an actual mover (BACKLOG-447)
 - [ ] Scarcity moves the herd — the migration decision biases by prosperity index + food store, so mouths move toward plenty (BACKLOG-450)
 - [ ] The provider role — the dino that banks the most harvest into its zone's store emerges with a persistent `provider` role tag (BACKLOG-448)
 - [ ] One terrain per zone, as data — fold each zone's ground into a per-zone terrain descriptor on the ZONES table; a fourth zone becomes a row, not three branches (BACKLOG-449)

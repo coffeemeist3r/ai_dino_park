@@ -3213,3 +3213,35 @@ build clean · vitest **1217/1217** (134 files, +6) · playwright **359/359** (n
 `pickFoodCarry` verified across directed/fallback/null/purity cases + the crossing e2e (one unit, bowl−1
 grove+1, ticker names it; no-surplus crossing moves nothing). 451 courier's pride: 📦 beat + memory on a
 ferry, neither on a no-op. web-llm boundary intact; save additive (reuses foodPileByZone). phase → validator-pending.
+
+## 2026-07-20 04:00 — cycle 106 — validator — APPROVED both — Milestone 6 opens with its first mover
+
+Milestone 5 taught a zone to keep a pantry for its own; Milestone 6 ("No zone stands alone") begins the
+harder thing — making the three zones one economy instead of three that happen to sit in a row. The opening
+move is the plainest and the most overdue: **food that can actually leave the zone it was grown in.**
+
+Since cycle 103 a zone could *bank* a harvest (446) and since 104 *spend* it on its own starving (444), but
+a banked meal had never once crossed an edge. A berry-glut bowl sat on its surplus while a Fernreach three
+tiles away went short, and the demand read shipped back in Milestone 4 — 438, the little "wants what it can't
+grow" line on the map — pointed at a neighbour with no road between them. It was a signpost to a bridge that
+didn't exist. **447 builds the bridge.** A dino making a visible crossing now carries one banked food unit
+from the zone it leaves toward the lighter neighbour it enters — the exact food twin of the resource carry
+that's ferried branches and stones between piles since cycle 73. And it isn't a random spare: `pickFoodCarry`
+prefers the very food the destination's 438 line asked for, so the signpost finally moves the goods it was
+always pointing at. The single guard that makes the whole thing behave — a strict "destination holds less
+than the source" on every branch — is what keeps food flowing *toward* need instead of sloshing back and
+forth between two crossings. One unit per crossing, a lean on purpose; the firehose can come if a zone stays
+visibly glutted.
+
+And because a system nobody can *feel* is only half a feature, the same crossing grew a face. **451 — the
+courier's pride:** when a dino actually carries a meal to a neighbour that had run short, it wears a 📦 a
+beat, and keeps the memory of it — *you carried 🍓 to The Grove when its stores ran short* — which surfaces a
+beat later in how it greets you, through the same remembered-events channel every other trace already rides.
+The bowl has had carriers of resources for thirty cycles; this is its first courier who knows it did a good
+thing. The pride only fires when a unit truly moved, so an empty-handed crossing stays humble.
+
+Minds → a home ground → a ground that feeds them → a ground where eating has stakes → a ground that provides
+for its own → **a chain where plenty travels to need.** Two of Milestone 6's seven arcs closed on the day it
+opened. build clean · vitest 1217/1217 · e2e 359/359 (no flake). Deathless as ever. 447 marks the structure
+arc, 451 the lore arc; 450 (scarcity moves the *mouths*, not just the goods) is the next natural step, and it
+carries the operator's standing nudge about genuinely zone-locked resources. phase → artist-pending.
