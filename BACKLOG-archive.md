@@ -541,3 +541,8 @@ Also swept here from the cycle-97 body (shipped cycle 97, archived cycle 98 for 
 > (367) always came up empty — these give it consequence. Cycle 100 ships **BACKLOG-440** (lore arc 1)
 > alongside the structure arc **BACKLOG-437** (the hunt feeds). 442/443 are Milestone 4's remaining lore
 > arcs, drafted for the next two cycles.
+
+## Cycle 106 closed — Milestone 6 "No zone stands alone" opens (2026-07-20)
+
+- [x] BACKLOG-447 [core] Food flows between zones — the food twin of the resource carry (329/356/429): a crossing dino ferries one banked food unit toward the lighter neighbour, aimed at the 438 demand read. `pickFoodCarry` in foodstore.ts + a `crossDino` hook. SHIPPED cycle 106 (Milestone 6 structure arc 1).
+- [x] BACKLOG-451 [emergent] The courier's pride — a dino that ferries food across a zone edge shows a 📦 beat + keeps a "carried <food> to <zone>" memory that reads a beat later in its greeting. SHIPPED cycle 106 (Milestone 6 lore arc 1).

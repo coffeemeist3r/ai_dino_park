@@ -3253,3 +3253,9 @@ No open `[art]` items. Both shipped features are all-glyph: 447's food carry rid
 no bakeable prop. No stash-rule target either: nothing standalone-renderable landed (`bakePropArt` has nothing
 new to resolve), and the rectangle fallback control is untouched. build clean; vitest 1217/1217. lastFire.artist
 updated. phase stays artist-pending until housekeeping + finish flips it to lore-pending.
+
+## 2026-07-20 04:12 — cycle 106 — housekeeping
+
+Backlog hygiene (routine 0). Moved the two closed bullets to `BACKLOG-archive.md`: 447 (out of the Structure
+Track, now 448/449/450 open = 3) and 451 (out of the cycle-106 lore section, which keeps 452/453 open). No
+section emptied — both parents still carry open items. phase → lore-pending; currentItem/structureItem cleared.
