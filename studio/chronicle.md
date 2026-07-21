@@ -3259,3 +3259,10 @@ updated. phase stays artist-pending until housekeeping + finish flips it to lore
 Backlog hygiene (routine 0). Moved the two closed bullets to `BACKLOG-archive.md`: 447 (out of the Structure
 Track, now 448/449/450 open = 3) and 451 (out of the cycle-106 lore section, which keeps 452/453 open). No
 section emptied — both parents still carry open items. phase → lore-pending; currentItem/structureItem cleared.
+
+## 2026-07-21 03:05 — cycle 107 — lore-smith — the road runs both ways
+
+Cycle 106 closed APPROVED/APPROVED, so 107 opens. No new items (lore body far past the 12-item cap floor);
+Idea Box empty. Suggested next-up **BACKLOG-452 — homecoming from the road**: M6's second lore arc and the
+only unblocked one (453 waits on the provider role, 448). Belonging (341) stops being a private tally and
+becomes something two dinos share out loud. phase → designer-pending; cycle 106 → 107.
