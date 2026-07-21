@@ -3275,3 +3275,12 @@ a zone's food cap, first contact between the resource and food economies) and **
 park has ever grown reads the social graph; this is the first that reads the economy. Ships with a second,
 honest tally source (the harvest share credited to the resident who hauls it) so `provider` can't collapse
 into "wanders a lot". Unblocks lore arc 453 next cycle.
+
+## 2026-07-21 03:25 — cycle 107 — designer — 452 (homecoming) + 448 (provider role)
+
+Lore: a dino's **root** (the zone it last settled in) is recorded; crossing back into it resettles the dino
+outright (settled on arrival, not tenure 0), shows a 🏡 beat + memory, and a resident flashes 👋 and warms a
+notch. No root or wrong zone → nothing fires. Structure: a per-dino **food-bank tally** with two honest
+sources (the 447 courier carry; the nearest resident credited as hauler when a harvest banks), feeding a new
+durable `provider` 🧺 role checked ahead of the social reads. Both touch `crossDino` — structure's +1 first,
+then the lore beat. phase → codeplan-pending.

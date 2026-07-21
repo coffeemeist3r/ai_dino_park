@@ -744,7 +744,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > over the 12-item drain floor, but a milestone can't be drafted without arcs, so these three are seeded
 > tightly milestone-anchored (not opportunistic backlog fill), per the milestone-duty override.
 
-- [ ] BACKLOG-452 [emergent] Homecoming from the road — a dino that migrated to another zone and later crosses *back* to its original home zone plays a small "back where it belongs" resettle beat (a 🏡 bubble + a settling memory), and a resident still there greets its return; travel finally has a return, not just a one-way drift. Builds on 334 / 341 / 340.
+- [~] BACKLOG-452 [emergent] Homecoming from the road — a dino that migrated to another zone and later crosses *back* to its original home zone plays a small "back where it belongs" resettle beat (a 🏡 bubble + a settling memory), and a resident still there greets its return; travel finally has a return, not just a one-way drift. Builds on 334 / 341 / 340.
 - [ ] BACKLOG-453 [social] Word of the provider — once a `provider` role emerges (448), a dino can name it in gossip/greeting ("the Fernreach eats because of Sunny"), the pantry-keeper's standing surfacing in voice the way the quiet-hero (260) and hoarder do; deterministic fallback line, LLM colour behind the boundary. Builds on 448 / 260 / 020.
 
 ## Mobile (deferred, do not pick until charter clears)
