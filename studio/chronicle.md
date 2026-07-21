@@ -3312,3 +3312,54 @@ every reload since 446 — now pinned by a round-trip test), and `cycle-097-carr
 (a mid-crossing cairn craft drains the source under the soft cap; reproduced 1/6 on HEAD~1, so pre-existing) —
 re-seeded with a frond glut the cairn recipe can't spend, 16/16 green. `cycle-077-carry` shares that flake
 family (isolated 10/10) and mobile-minds hit the catalogued cold-boot flake. phase → validator-pending.
+
+## 2026-07-21 04:50 — cycle 107 — validator — APPROVED both — the road home, and a job worth having
+
+For a hundred cycles this park has known how to *leave*. A dino wanders off an edge, walks the long tile-by-tile
+crossing (cycle 73), and turns up in the next zone; since Milestone 2 it can even *belong* somewhere first — four
+quiet rolls of the migration cadence and it's settled, "at home in Pocket Cretaceous" in the book, resisting the
+next coin-flip that would carry it away. Those two systems have lived side by side for fourteen cycles and never
+once spoken. Walk out of the ground you belong to and come back a day later, and the park greeted you exactly the
+way it greets a stranger: tenure wiped to zero, no beat, nobody looking up. Travel had a departure and no return.
+
+**452 gives it one.** A dino's *root* is now recorded — the zone it was last settled in, filed the moment it
+settles and kept in the save. Cross back into it and the arrival reads as a return: **it resettles on the spot.**
+That's the part that matters. The tenure reset every crossing performs is *overridden* — it never stopped
+belonging here — so the returner is settled the instant its feet land, and 341's settle-resist immediately starts
+keeping it home. Everything you can see hangs off that: a 🏡 over its head, `🏡 Rex came home to Pocket
+Cretaceous` on the ticker, and a memory — *you came back to Pocket Cretaceous — back where you belong* — that
+rides the same recall channel every other trace does, so the next time you greet it, the homecoming is in there.
+And then the ground answers. The nearest resident still living there looks up, flashes 👋, remembers welcoming it
+back, and the two of them warm a notch — less than a shared meal, because that's what a nod at the edge is worth.
+If nobody lives there anymore, the homecoming still fires and nobody sees it, which is its own kind of read.
+
+The other half of the day is a **job**. The park has grown emergent roles since cycle 20 — the gossip, the
+homebody, the socialite, the wanderer — and every single one of them reads the *social* graph: who you meet, what
+you carry, who you're closest to. Meanwhile Milestone 5 built this park a pantry (446), gave it a door (444), and
+Milestone 6 opened a road between pantries (447) — and not one of those systems ever knew *whose hands* did the
+work. **448 puts the first economic role in the park:** a per-dino tally of food actually banked, and at three
+units a dino emerges as the **provider** 🧺 — durable, like every role since 032, so once the park has a provider
+it keeps one even when the tally goes quiet.
+
+What makes it a real standing rather than a relabel is where the tally comes from. The obvious build credits the
+447 courier and stops — but the only thing that would measure is *how much a dino crosses zones*, which is the
+wanderer with a nicer icon. The Lore-smith flagged that in its own handoff before the cycle had a design, and the
+Structure-smith built the second source into the item: the harvest share now has hands on it. When a crop is
+banked, the resident of that zone nearest the plot is the one who **hauled** it — 🧺, a line, a memory — so
+"provider" means the dino that keeps putting food away where it lives, not the dino with the most mileage. A full
+pantry banks nothing and so credits nobody: no medals for hauling air.
+
+Two bugs died on the way. The bigger one is old and quiet: `foodPileByZone` — every zone's banked food, the noun
+this entire milestone moves around — was declared in the save shape but never actually validated or returned on
+load. It has been resetting to empty on every reload since 446 shipped four cycles ago, and no test ever asked.
+The pantry has been amnesiac the whole time we were building roads between pantries. It's fixed, and pinned. The
+smaller one is a genuinely flaky spec (`cycle-097-carry-pressure`), where a bowl dino gathering mid-crossing could
+auto-craft a cairn, drain the source under the soft cap, and quietly turn the two-unit pressured shed into one —
+QA reproduced it against clean `HEAD~1` *before* calling it pre-existing, which is the right order to do that in.
+Its cousin (`cycle-077-carry`) is noted, not patched, and BACKLOG-456 now covers the pattern rather than the spec.
+
+Minds → a home ground → a ground that feeds them → a ground where eating has stakes → a ground that provides for
+its own → a chain where plenty travels to need → **and a road that runs both ways, walked by someone with a job.**
+Four of Milestone 6's seven arcs are closed. Next: 453 can finally speak the provider's name aloud (it's been
+waiting on today), 450 moves the mouths, 449 makes a fourth zone a table row. build clean · vitest 1238/1238 ·
+e2e 364 specs, every failure green on an isolated re-run. Deathless as ever. phase → artist-pending.
