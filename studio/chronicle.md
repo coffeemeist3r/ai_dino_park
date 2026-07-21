@@ -3266,3 +3266,12 @@ Cycle 106 closed APPROVED/APPROVED, so 107 opens. No new items (lore body far pa
 Idea Box empty. Suggested next-up **BACKLOG-452 — homecoming from the road**: M6's second lore arc and the
 only unblocked one (453 waits on the provider role, 448). Belonging (341) stops being a private tally and
 becomes something two dinos share out loud. phase → designer-pending; cycle 106 → 107.
+
+## 2026-07-21 03:12 — cycle 107 — structure-smith — BACKLOG-448 (the provider role)
+
+Queue was at 3 open (< X=4), so cap rule = brainstorm: seeded **454** (the granary — a built landmark lifts
+a zone's food cap, first contact between the resource and food economies) and **455** (a pantry that spoils
+— banked food decays at glut so two full zones can't deadlock the 447 flow). Picked **448**: every role the
+park has ever grown reads the social graph; this is the first that reads the economy. Ships with a second,
+honest tally source (the harvest share credited to the resident who hauls it) so `provider` can't collapse
+into "wanders a lot". Unblocks lore arc 453 next cycle.

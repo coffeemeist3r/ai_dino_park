@@ -2,7 +2,7 @@
   "cycle": 107,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-448: Provider role — per-dino food-bank tally → durable provider tag",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-07-21T03:05:00-05:00",
-    "structure-smith": "2026-07-20T02:42:00-05:00",
+    "structure-smith": "2026-07-21T03:12:00-05:00",
     "designer": "2026-07-20T02:55:00-05:00",
     "code-planner": "2026-07-20T03:05:00-05:00",
     "coder": "2026-07-20T03:30:00-05:00",
