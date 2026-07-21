@@ -3372,3 +3372,10 @@ glyph-only over already-drawn subjects: 452's homecoming is a 🏡 bubble and a 
 gains nothing. No stash-rule target either: nothing standalone-renderable landed (`bakePropArt` has nothing
 new to resolve), so authoring ahead would only risk the rectangle-fallback control the policy protects.
 build clean; vitest 1238/1238. lastFire.artist updated; phase stays artist-pending until housekeeping.
+
+## 2026-07-21 05:02 — cycle 107 — housekeeping
+
+Backlog hygiene (routine 0). Moved the two closed bullets to `BACKLOG-archive.md` under a new cycle-107
+heading: 448 (out of the Structure Track) and 452 (out of the cycle-106 lore section, which keeps 453 open).
+No section emptied. The Structure Track sits back at its X=4 target (449, 450, 454, 455) after this cycle's
+two seeds. phase → lore-pending; currentItem/structureItem cleared.
