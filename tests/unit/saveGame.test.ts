@@ -14,7 +14,9 @@ const sample: SaveData = {
   roles: {},
   dinoZones: { Mossback: 'grove' },
   tenure: {},
+  roots: {},
   gathered: {},
+  foodBanked: {},
   needs: {},
   stockpile: {},
   cairns: [],
@@ -187,6 +189,37 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, tenure: 5 }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, thatches: [{ tileX: 'x', tileY: 1 }] }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, thatches: 'nope' }))).toBeNull();
+  });
+
+  it('round-trips roots + a foodBanked tally (BACKLOG-452 / 448)', () => {
+    const withProvider: SaveData = {
+      ...sample,
+      roots: { Rex: 'bowl', Mossback: 'grove' },
+      foodBanked: { Rex: 3 },
+    };
+    expect(deserialize(serialize(withProvider))).toEqual(withProvider);
+  });
+
+  it('round-trips per-zone banked food (BACKLOG-446 — was dropped on load before cycle 107)', () => {
+    const withPantry: SaveData = { ...sample, foodPileByZone: { bowl: { berries: 2 }, grove: { greens: 1 } } };
+    expect(deserialize(serialize(withPantry))!.foodPileByZone).toEqual(withPantry.foodPileByZone);
+  });
+
+  it('loads an older save lacking roots/foodBanked/foodPileByZone, defaulting them (BACKLOG-452 / 448 / 446)', () => {
+    const out = deserialize(
+      JSON.stringify({ version: SAVE_VERSION, time: { day: 1, hour: 8, minute: 0 }, player: { x: 1, y: 2 } }),
+    );
+    expect(out).not.toBeNull();
+    expect(out!.roots).toEqual({});
+    expect(out!.foodBanked).toEqual({});
+    expect(out!.foodPileByZone).toBeUndefined(); // caller defaults to {}
+  });
+
+  it('returns null for a malformed roots / foodBanked / foodPileByZone value (BACKLOG-452 / 448 / 446)', () => {
+    expect(deserialize(JSON.stringify({ ...sample, roots: { Rex: 5 } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, foodBanked: { Rex: 'lots' } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, foodPileByZone: { bowl: { berries: 'two' } } }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, foodPileByZone: { bowl: 3 } }))).toBeNull();
   });
 
   it('round-trips a lastTone map (BACKLOG-142)', () => {

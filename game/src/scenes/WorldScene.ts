@@ -42,7 +42,25 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
-import { bumpTenure, resetTenure, tenureOf, isSettled, resistsMigration, settledLine, type Tenure } from '../world/belonging';
+import {
+  bumpTenure,
+  resetTenure,
+  tenureOf,
+  isSettled,
+  resistsMigration,
+  settledLine,
+  SETTLE_ROLLS,
+  rememberRoot,
+  isHomecoming,
+  homecomingLine,
+  homecomingEvent,
+  homecomingMemory,
+  welcomeMemory,
+  welcomeEvent,
+  WELCOME_BOND,
+  type Tenure,
+  type Roots,
+} from '../world/belonging';
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
@@ -67,7 +85,7 @@ import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
-import { wanderStep, stepToward } from '../world/movement';
+import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
@@ -82,7 +100,7 @@ import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
-import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, storesFedLine, storesFedMemory, type FoodPile } from '../world/foodstore';
+import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, type FoodPile } from '../world/foodstore';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -407,6 +425,15 @@ export class WorldScene extends Phaser.Scene {
   /** The (lazily-created) food pile for a zone (BACKLOG-446) — twin of `pileFor`. */
   private foodStoreFor(zone: string): FoodPile {
     return (this.foodPileByZone[zone] ??= {});
+  }
+  /** Per-dino banked-food tally (BACKLOG-448) — units this dino put into some zone's store, by carrying
+   *  (447) or hauling a harvest away. The `provider` role reads it. Persisted; absent → {}. */
+  private foodBanked: Record<string, number> = {};
+  /** Where each dino belongs (BACKLOG-452) — the zone it last settled in. Persisted; absent → {}. */
+  private roots: Roots = {};
+  /** Credit one banked food unit to a dino (BACKLOG-448) — the single write both sources go through. */
+  private creditFoodBank(name: string): void {
+    this.foodBanked[name] = (this.foodBanked[name] ?? 0) + 1;
   }
   /** The last dino to eat + when (BACKLOG-373) — the anchor a shared meal pairs against. Transient (a live
    *  moment, not saved state). */
@@ -1060,10 +1087,35 @@ export class WorldScene extends Phaser.Scene {
     this.harvestedByZone[zone] = (this.harvestedByZone[zone] ?? 0) + 1; // BACKLOG-428: per-zone farming term
     // BACKLOG-446: a share of the harvest banks into the zone's food store (capped) — the drop above still
     // feeds the loop; this is the stored surplus 444/447 spend and ferry, read on the zone-map lens.
+    // BACKLOG-448: the share doesn't put itself away. The nearest resident of the zone hauls it to the
+    // store and is credited for it — one of the two honest sources the `provider` role reads (the other is
+    // the 447 carry). A pile already at cap banks nothing, so nobody is credited for hauling nothing.
+    const banked = !foodAtCap(this.foodStoreFor(zone), crop.food);
     this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food);
+    if (banked) this.creditHauler(zone);
     this.logEvent(`${crop.ripe} you harvested the crop`);
     this.refreshPlot();
     void this.saveGame();
+  }
+
+  /**
+   * The resident that hauls a banked harvest share to its zone's store (BACKLOG-448): the dino living in
+   * that zone nearest the plot (ties by name, so the pick is deterministic). It wears a 🧺, keeps the
+   * memory, and its tally rises. A zone with nobody home banks the share unattributed, as before.
+   */
+  private creditHauler(zone: string): void {
+    const plot = PLOT_TILE_BY_ZONE[zone];
+    const residents = this.dinos
+      .filter((d) => zoneOf(this.dinoZones, d.name, BOWL_ID) === zone)
+      .map((d) => ({ name: d.name, dist: this.chebyTiles(this.tileOf(d), plot) }));
+    const name = pickNearest(residents);
+    if (!name) return;
+    const hauler = this.dinoByName(name)!;
+    this.creditFoodBank(name);
+    const zoneName = zoneById(zone).name;
+    this.memory = remember(this.memory, name, haulMemory(zoneName));
+    this.flashFeed(hauler, '🧺');
+    this.logEvent(haulLine(name, zoneName));
   }
 
   /** Redraw each zone's plot marker for its current stage; log the ripen note once, on the edge into ripe.
@@ -2133,7 +2185,12 @@ export class WorldScene extends Phaser.Scene {
    * source for the lens, the book, and `__roles`, and is persisted in the save.
    */
   private roleOf(name: string): Role {
-    const derived = deriveRole({ meetings: this.meetingsOf(name), rumorsHeard: this.rumorsOf(name), topBond: this.maxBond(name) });
+    const derived = deriveRole({
+      meetings: this.meetingsOf(name),
+      rumorsHeard: this.rumorsOf(name),
+      topBond: this.maxBond(name),
+      foodBanked: this.foodBanked[name] ?? 0, // BACKLOG-448: the economic read, checked first
+    });
     const settled = settleRole(this.roles[name], derived);
     this.roles[name] = settled;
     return settled;
@@ -2237,6 +2294,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
     (window as any).__roleStore = () => ({ ...this.roles });
+    // BACKLOG-448: the per-dino banked-food tally the provider role reads.
+    (window as any).__foodBanked = () => ({ ...this.foodBanked });
 
     this.refreshLens();
   }
@@ -3997,11 +4056,25 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__settleTick = () => this.bumpTenures();
     (window as any).__tenure = (name: string) => tenureOf(this.tenure, name);
     (window as any).__settled = (name: string) => isSettled(tenureOf(this.tenure, name));
+    // BACKLOG-452: observe/seed where a dino belongs, so a homecoming is drivable without 4 settle rolls.
+    (window as any).__roots = () => ({ ...this.roots });
+    (window as any).__setRoot = (name: string, zone: string) => {
+      this.roots = rememberRoot(this.roots, name, zone);
+      return this.roots[name];
+    };
   }
 
   /** Accrue home-zone tenure (BACKLOG-341) for every settled-in-place dino, on the migration cadence. */
   private bumpTenures(): void {
-    for (const d of this.dinos) if (!this.migrating.has(d.name)) this.tenure = bumpTenure(this.tenure, d.name);
+    for (const d of this.dinos) {
+      if (this.migrating.has(d.name)) continue;
+      this.tenure = bumpTenure(this.tenure, d.name);
+      // BACKLOG-452: settling somewhere makes it this dino's root — the ground a later crossing can come
+      // *home* to. Re-recording the same zone is a no-op, so this stays allocation-light on the cadence.
+      if (isSettled(tenureOf(this.tenure, d.name))) {
+        this.roots = rememberRoot(this.roots, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
+      }
+    }
   }
 
   /** A dino's homesickness (BACKLOG-340): the neighbour zone + friend to head toward, or null. */
@@ -4139,8 +4212,31 @@ export class WorldScene extends Phaser.Scene {
       // The courier's pride (BACKLOG-451): the carrier shows a 📦 beat and keeps the memory, which rides
       // the store into `recall` → the next greeting reads a beat prouder. Only fires when a unit actually
       // moved (dest was genuinely short), so a no-op crossing earns no false pride. Mirrors the 339 beat.
+      this.creditFoodBank(d.name); // BACKLOG-448: a carried unit is banked food this dino put there
       this.memory = remember(this.memory, d.name, courierMemory(destName, emoji));
       this.showBubble(d, courierLine());
+    }
+    // Homecoming from the road (BACKLOG-452): crossing back into the zone this dino last *settled* in is a
+    // return, not an arrival. It resettles on the spot — the tenure reset above is overridden, because it
+    // never stopped belonging here (341's settle-resist then keeps it put) — wears a 🏡, keeps the trace,
+    // and the nearest resident still living there looks up and welcomes it home.
+    if (isHomecoming(this.roots, d.name, home, dest)) {
+      const zoneName = zoneById(dest).name;
+      this.tenure = { ...this.tenure, [d.name]: SETTLE_ROLLS };
+      this.memory = remember(this.memory, d.name, homecomingMemory(zoneName));
+      this.showBubble(d, homecomingLine());
+      this.logEvent(homecomingEvent(d.name, zoneName));
+      const residents = this.dinos
+        .filter((r) => r.name !== d.name && zoneOf(this.dinoZones, r.name, BOWL_ID) === dest)
+        .map((r) => ({ name: r.name, dist: this.chebyTiles(this.tileOf(r), this.tileOf(d)) }));
+      const greeter = pickNearest(residents);
+      // Nobody home is a legitimate read: the homecoming still fires, it just goes unwitnessed.
+      if (greeter) {
+        this.bonds = strengthen(this.bonds, greeter, d.name, WELCOME_BOND);
+        this.memory = remember(this.memory, greeter, welcomeMemory(d.name, zoneName));
+        this.flashFeed(this.dinoByName(greeter)!, '👋');
+        this.logEvent(welcomeEvent(greeter, d.name));
+      }
     }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
@@ -4770,6 +4866,8 @@ export class WorldScene extends Phaser.Scene {
       dinoZones: this.dinoZones,
       tenure: this.tenure, // BACKLOG-341: per-dino home-zone tenure (settling persists across a reload)
       gathered: this.gathered,
+      foodBanked: this.foodBanked, // BACKLOG-448: who's been filling the pantries (additive)
+      roots: this.roots, // BACKLOG-452: where each dino belongs (additive)
       needs: this.needs, // BACKLOG-371: hunger/thirst per dino
 
       stockpile: this.pileFor(BOWL_ID), // BACKLOG-328: legacy field kept = bowl pile (back-compat for old readers + tests)
@@ -4834,6 +4932,8 @@ export class WorldScene extends Phaser.Scene {
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
       this.tenure = save.tenure ?? {}; // BACKLOG-341: home-zone tenure restore (absent → settle from scratch)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
+      this.foodBanked = save.foodBanked ?? {}; // BACKLOG-448: banked-food tally restore (absent → {})
+      this.roots = save.roots ?? {}; // BACKLOG-452: roots restore (absent → nobody can come home yet)
       // BACKLOG-371: needs restore (absent → {}); any spawned dino missing an entry backfills to sated.
       this.needs = save.needs ?? {};
       for (const d of this.dinos) this.needs[d.name] ??= { hunger: 0, thirst: 0 };

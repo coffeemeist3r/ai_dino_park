@@ -98,3 +98,24 @@ existing 447 carry block), then the lore track's homecoming block below it.
 - Cross-track: shared `crossDino` (ordering above) and shared `saveGame.ts` returned-object list (both tracks add a key — one edit, two keys).
 
 **Estimated touch count:** ~7 files (4 shared with the structure track).
+
+---
+
+## Shipped
+
+**Files touched (12):**
+- `game/src/ai/roles.ts` — `provider` role, 🧺 icon, optional `foodBanked` stat, `PROVIDER_BANKS = 3`, checked first in `deriveRole`.
+- `game/src/world/movement.ts` — `pickNearest` (closest, ties by name, null on empty).
+- `game/src/world/foodstore.ts` — `haulLine` / `haulMemory`.
+- `game/src/world/belonging.ts` — `Roots`, `rootOf`, `rememberRoot`, `isHomecoming`, `homecomingLine/Event/Memory`, `welcomeMemory/Event`, `WELCOME_BOND = 2`.
+- `game/src/world/saveGame.ts` — `roots` + `foodBanked` validated & returned; **`foodPileByZone` gap fixed** (declared but never validated/returned since 446 → banked food reset every reload).
+- `game/src/scenes/WorldScene.ts` — `foodBanked` + `roots` fields, `creditFoodBank`, `creditHauler`, harvest credit (guarded on a real bank), courier credit inside the 447 block, the homecoming block in `crossDino`, root recording in `bumpTenures`, `roleOf` reads the tally, save + restore, hooks `__foodBanked` / `__roots` / `__setRoot`.
+- Tests: `tests/unit/cycle-107-provider.test.ts`, `tests/unit/cycle-107-homecoming.test.ts` (new), `tests/e2e/cycle-107-provider.spec.ts`, `tests/e2e/cycle-107-homecoming.spec.ts` (new), `tests/unit/saveGame.test.ts` + `tests/unit/cycle-061-save-version.test.ts` (extended — the two sample payloads gain `roots`/`foodBanked`).
+
+**Deviations from the plan:** one, as pre-approved: the `foodPileByZone` persistence fix (planned scope creep,
+flagged to the Validator). Also added a `__setRoot` dev hook alongside `__roots` — seeding a root directly keeps
+future specs off a four-tick settle preamble. No other deviation; no new dependencies.
+
+**Build + unit status:** `npm --prefix game run build` clean (`tsc -b` + vite). `npx vitest run` **1238/1238**
+green (136 files, +21 tests over cycle 106's 1217). The two new e2e specs pass (5/5) — the full suite runs at QA.
+The page renders: every e2e boot drives the real dev server through `create()` to `__ready`.

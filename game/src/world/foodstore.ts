@@ -122,3 +122,17 @@ export function courierMemory(zoneName: string, foodEmoji: string): string {
 export function courierLine(): string {
   return '📦';
 }
+
+/**
+ * The provider role (BACKLOG-448) — a harvest's banked share (446) used to reach the store with nobody's
+ * hands on it. The nearest resident is now credited as the one who hauled it away, so "who keeps this zone
+ * fed" is a tally of real acts (this, plus the 447 courier carry) rather than an unattributed number.
+ */
+export function haulLine(name: string, zoneName: string): string {
+  return `🧺 ${name} put the harvest away in ${zoneName}'s stores`;
+}
+
+/** The memory the hauler keeps; WorldScene folds this into the store (twin of `courierMemory`). */
+export function haulMemory(zoneName: string): string {
+  return `you put the harvest away in ${zoneName}'s stores`;
+}

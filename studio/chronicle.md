@@ -3293,3 +3293,12 @@ gains roots + homecoming/welcome lines; `crossDino` resettles the returner (tenu
 resident welcomes it. Shared `pickNearest` in movement.ts; shared save-list edit. **Found while planning:**
 `foodPileByZone` is declared on SaveData but never validated/returned by `deserialize` — banked food has been
 resetting on every reload since 446. Planned fix rides the structure track (same file, same list). phase → coder-pending.
+
+## 2026-07-21 03:55 — cycle 107 — coder — 452 + 448 shipped
+
+12 files. 452: roots recorded when a dino settles; `crossDino` resettles a returner (tenure → SETTLE_ROLLS),
+🏡 + memory, nearest resident flashes 👋 and warms +2. 448: `foodBanked` tally fed by the 447 carry and by a
+new harvest-hauler credit (nearest resident of the zone, guarded so a capped pantry credits nobody) → the
+`provider` 🧺 role, durable through `settleRole`. Also fixed the 446 save gap: `foodPileByZone` was declared
+but never validated/returned by `deserialize`, so banked food reset on every reload. build clean · vitest
+1238/1238 (+21) · the 5 new e2e green. phase → qa-pending.

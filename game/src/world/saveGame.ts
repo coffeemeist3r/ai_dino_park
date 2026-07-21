@@ -79,6 +79,10 @@ export interface SaveData {
   dinoZones?: Record<string, string>;
   /** Each dino's home-zone tenure in rolls (BACKLOG-341) — how settled it is. Additive; absent → {} (settle from scratch). */
   tenure?: Record<string, number>;
+  /** Where each dino belongs — the zone it last settled in (BACKLOG-452). Additive; absent → {} (no roots yet). */
+  roots?: Record<string, string>;
+  /** Each dino's banked-food tally (BACKLOG-448) — what the `provider` role reads. Additive; absent → {}. */
+  foodBanked?: Record<string, number>;
   /** Each dino's gathered-resource tally (BACKLOG-146). Additive; absent → {}. */
   gathered?: Record<string, number>;
   /** Each dino's hunger/thirst drives (BACKLOG-371). Additive; absent → {} (every dino starts sated). */
@@ -271,6 +275,29 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // roots is additive — absent in older saves (default {}); name→zone-id, mirrors dinoZones (string values
+  // only). Absent → nobody has a recorded root, so no crossing reads as a homecoming. (BACKLOG-452)
+  let roots: Record<string, string> = {};
+  if (o.roots !== undefined) {
+    if (typeof o.roots !== 'object' || o.roots === null) return null;
+    const entries = o.roots as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (typeof entries[k] !== 'string') return null;
+      roots[k] = entries[k] as string;
+    }
+  }
+
+  // foodBanked is additive — absent in older saves (default {}); name→count, mirrors gathered. (BACKLOG-448)
+  let foodBanked: Record<string, number> = {};
+  if (o.foodBanked !== undefined) {
+    if (typeof o.foodBanked !== 'object' || o.foodBanked === null) return null;
+    const entries = o.foodBanked as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      foodBanked[k] = entries[k] as number;
+    }
+  }
+
   // gathered is additive over v1 — absent in older saves (default {}); name→count, mirrors friendship.
   let gathered: Record<string, number> = {};
   if (o.gathered !== undefined) {
@@ -322,6 +349,28 @@ export function deserialize(json: string): SaveData | null {
         out[k] = entries[k] as number;
       }
       stockpileByZone[z] = out;
+    }
+  }
+
+  // foodPileByZone (BACKLOG-446) — zone→(foodId→count). Was declared on SaveData but never validated or
+  // returned here, so every reload silently dropped a zone's banked food back to empty; fixed cycle 107
+  // alongside 448 (a provider tally is meaningless if the pantry it fills resets each session). Absent →
+  // undefined, caller defaults to {}. Shape-identical to stockpileByZone above.
+  let foodPileByZone: Record<string, Record<string, number>> | undefined;
+  if (o.foodPileByZone !== undefined) {
+    if (typeof o.foodPileByZone !== 'object' || o.foodPileByZone === null) return null;
+    const zones = o.foodPileByZone as Record<string, unknown>;
+    foodPileByZone = {};
+    for (const z of Object.keys(zones)) {
+      const pile = zones[z];
+      if (typeof pile !== 'object' || pile === null) return null;
+      const entries = pile as Record<string, unknown>;
+      const out: Record<string, number> = {};
+      for (const k of Object.keys(entries)) {
+        if (!isNum(entries[k])) return null;
+        out[k] = entries[k] as number;
+      }
+      foodPileByZone[z] = out;
     }
   }
 
@@ -483,10 +532,13 @@ export function deserialize(json: string): SaveData | null {
     roles,
     dinoZones,
     tenure,
+    roots,
     gathered,
+    foodBanked,
     needs,
     stockpile,
     stockpileByZone,
+    foodPileByZone,
     cairns,
     shelters,
     thatches,

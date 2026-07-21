@@ -46,3 +46,57 @@ export function resistsMigration(settled: boolean, rand: () => number = Math.ran
 export function settledLine(zoneName: string): string {
   return `at home in ${zoneName}`;
 }
+
+/**
+ * Homecoming from the road (BACKLOG-452) — the return half of migration. A crossing (334) has always been
+ * one-way: tenure resets, the zone a dino *belonged* to forgets it, and walking back in reads exactly like
+ * arriving somewhere new. A dino's **root** is the zone it was last settled in; crossing back into it is a
+ * homecoming — it resettles on arrival (it never stopped belonging here) and the residents notice.
+ */
+
+/** Where each dino belongs: name → the zone id it last settled in. Absent → it has never settled anywhere. */
+export type Roots = Record<string, string>;
+
+/** The zone a dino last settled in, or undefined if it never has. */
+export function rootOf(roots: Roots, name: string): string | undefined {
+  return roots[name];
+}
+
+/** Record `zone` as where `name` belongs. Pure — returns a new map, never mutates (no-op if unchanged). */
+export function rememberRoot(roots: Roots, name: string, zone: string): Roots {
+  if (roots[name] === zone) return roots;
+  return { ...roots, [name]: zone };
+}
+
+/** Is this crossing a homecoming — arriving back in the zone this dino settled in, from somewhere else? */
+export function isHomecoming(roots: Roots, name: string, from: string, to: string): boolean {
+  return from !== to && rootOf(roots, name) === to;
+}
+
+/** The bubble over a dino that just walked back into the ground it belongs to. */
+export function homecomingLine(): string {
+  return '🏡';
+}
+
+/** The ticker line for a homecoming. */
+export function homecomingEvent(name: string, zoneName: string): string {
+  return `🏡 ${name} came home to ${zoneName}`;
+}
+
+/** The trace the returner keeps; rides the memory store into its next greeting. */
+export function homecomingMemory(zoneName: string): string {
+  return `you came back to ${zoneName} — back where you belong`;
+}
+
+/** The trace the resident who was still there keeps. */
+export function welcomeMemory(returner: string, zoneName: string): string {
+  return `you welcomed ${returner} back to ${zoneName}`;
+}
+
+/** The ticker line for the welcome. */
+export function welcomeEvent(resident: string, returner: string): string {
+  return `👋 ${resident} welcomed ${returner} home`;
+}
+
+/** The bond a welcome home is worth — gentler than a shared meal (3): a nod at the edge, not a meal. */
+export const WELCOME_BOND = 2;

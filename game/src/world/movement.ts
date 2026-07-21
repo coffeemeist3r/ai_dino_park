@@ -31,6 +31,17 @@ export function wanderStep(t: Tile, dirIndex: number, cols: number, rows: number
   };
 }
 
+/**
+ * The closest of a set of named candidates (BACKLOG-448/452) — the dino nearest the plot that hauls the
+ * harvest away, the resident nearest a returning migrant that welcomes it home. Ties break by name so the
+ * pick is deterministic (two dinos the same distance away always resolve the same). null when nobody's there.
+ */
+export function pickNearest(entries: ReadonlyArray<{ name: string; dist: number }>): string | null {
+  return (
+    [...entries].sort((a, b) => a.dist - b.dist || a.name.localeCompare(b.name))[0]?.name ?? null
+  );
+}
+
 /** One tile toward `target`, stepping along the axis with the larger remaining distance. Clamped. */
 export function stepToward(from: Tile, target: Tile, cols: number, rows: number): Tile {
   const ax = target.tileX - from.tileX;
