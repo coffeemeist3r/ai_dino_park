@@ -3363,3 +3363,12 @@ its own → a chain where plenty travels to need → **and a road that runs both
 Four of Milestone 6's seven arcs are closed. Next: 453 can finally speak the provider's name aloud (it's been
 waiting on today), 450 moves the mouths, 449 makes a fourth zone a table row. build clean · vitest 1238/1238 ·
 e2e 364 specs, every failure green on an isolated re-run. Deathless as ever. phase → artist-pending.
+
+## 2026-07-21 04:58 — cycle 107-art — artist — no-op (nothing renderable to draw)
+
+Open `[art]` queue is empty (the section carries only its medium/stash-rule note). Both shipped beats are
+glyph-only over already-drawn subjects: 452's homecoming is a 🏡 bubble and a 👋 flash on existing dino rigs,
+448's provider is a 🧺 tell plus a role-lens tag — no new species, prop, or frame, and `bake.ts` `hasArt`
+gains nothing. No stash-rule target either: nothing standalone-renderable landed (`bakePropArt` has nothing
+new to resolve), so authoring ahead would only risk the rectangle-fallback control the policy protects.
+build clean; vitest 1238/1238. lastFire.artist updated; phase stays artist-pending until housekeeping.
