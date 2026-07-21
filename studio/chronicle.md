@@ -3284,3 +3284,12 @@ notch. No root or wrong zone → nothing fires. Structure: a per-dino **food-ban
 sources (the 447 courier carry; the nearest resident credited as hauler when a harvest banks), feeding a new
 durable `provider` 🧺 role checked ahead of the social reads. Both touch `crossDino` — structure's +1 first,
 then the lore beat. phase → codeplan-pending.
+
+## 2026-07-21 03:35 — cycle 107 — code-planner — two tracks, one shared crossing
+
+448: `roles.ts` gains `provider` 🧺 (optional `foodBanked` stat, checked first) fed by a WorldScene tally with
+two sources — the 447 carry and a new harvest-hauler credit (`pickNearest` resident). 452: `belonging.ts`
+gains roots + homecoming/welcome lines; `crossDino` resettles the returner (tenure → SETTLE_ROLLS) and a
+resident welcomes it. Shared `pickNearest` in movement.ts; shared save-list edit. **Found while planning:**
+`foodPileByZone` is declared on SaveData but never validated/returned by `deserialize` — banked food has been
+resetting on every reload since 446. Planned fix rides the structure track (same file, same list). phase → coder-pending.

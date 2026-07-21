@@ -1,6 +1,6 @@
 {
   "cycle": 107,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-452: Homecoming from the road",
   "structureItem": "BACKLOG-448: Provider role — per-dino food-bank tally → durable provider tag",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-07-21T03:05:00-05:00",
     "structure-smith": "2026-07-21T03:12:00-05:00",
     "designer": "2026-07-21T03:25:00-05:00",
-    "code-planner": "2026-07-20T03:05:00-05:00",
+    "code-planner": "2026-07-21T03:35:00-05:00",
     "coder": "2026-07-20T03:30:00-05:00",
     "qa": "2026-07-20T03:45:00-05:00",
     "validator": "2026-07-20T04:00:00-05:00",
