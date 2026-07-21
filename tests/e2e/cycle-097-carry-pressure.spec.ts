@@ -30,12 +30,16 @@ test('a glutted zone sheds two toward a lighter neighbour', async ({ page }) => 
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  await setZonePile(page, 'bowl', { stone: 5, branch: 3 }); // total 8 > soft cap 6
+  // The glut is fronds: a kind the bowl's own structure recipe (cairn = branch 3 + stone 2) can never spend.
+  // With a stone/branch glut a bowl dino gathering mid-crossing could auto-craft a cairn, drop the source
+  // under the soft cap, and flip the carry back to one unit — a genuine flake this spec hit ~1 run in 6 on
+  // clean HEAD (cycle-107 QA). A frond pile can only grow, so the pressure decision is stable.
+  await setZonePile(page, 'bowl', { frond: 8 }); // total 8 > soft cap 6
   await setZonePile(page, 'grove', {}); // empty destination, strictly lighter
   await crossOnce(page, 'Rex');
 
   // Assert on the grove (destination): it starts empty and no dino gathers there at boot, so the only thing
-  // that adds to it is Rex's carry. (The source total drifts as bowl dinos gather during the crossing steps.)
+  // that adds to it is Rex's carry.
   expect(totalOf(await zonePile(page, 'grove'))).toBe(2); // pressured: two units shed toward the lighter zone
   expect(errors).toEqual([]);
 });

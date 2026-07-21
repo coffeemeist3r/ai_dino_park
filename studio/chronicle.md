@@ -3302,3 +3302,13 @@ new harvest-hauler credit (nearest resident of the zone, guarded so a capped pan
 `provider` 🧺 role, durable through `settleRole`. Also fixed the 446 save gap: `foodPileByZone` was declared
 but never validated/returned by `deserialize`, so banked food reset on every reload. build clean · vitest
 1238/1238 (+21) · the 5 new e2e green. phase → qa-pending.
+
+## 2026-07-21 04:35 — cycle 107 — qa — PASS both
+
+build clean · vitest **1238/1238** (136 files, +21) · playwright **364 specs**, best full run 363/1 with every
+failure passing isolated. All 18 acceptance criteria PASS across the two tracks. Two bugs found and closed
+in-cycle: `foodPileByZone` was declared but never validated/returned by `deserialize` (banked food reset on
+every reload since 446 — now pinned by a round-trip test), and `cycle-097-carry-pressure` was genuinely flaky
+(a mid-crossing cairn craft drains the source under the soft cap; reproduced 1/6 on HEAD~1, so pre-existing) —
+re-seeded with a frond glut the cairn recipe can't spend, 16/16 green. `cycle-077-carry` shares that flake
+family (isolated 10/10) and mobile-minds hit the catalogued cold-boot flake. phase → validator-pending.
