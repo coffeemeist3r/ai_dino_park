@@ -3635,3 +3635,31 @@ for its own → plenty that travels to need → a road that runs both ways → *
 you fed gets named out loud.** Six of Milestone 6's seven arcs are closed; only 450, the herd moving toward
 plenty, stands between this milestone and its headline. build clean · vitest 1268/1268 · e2e 364 specs /
 368 assertions green. Deathless as ever. phase → artist-pending.
+
+## 2026-07-22 05:32 — cycle 108-art — artist — no-op (nothing renderable to draw)
+
+Open `[art]` queue is empty — the section carries only its medium/stash-rule note, and a grep for open
+`[art]` items across the whole backlog returns zero. Neither shipped beat gives the Artist a subject: 453 is
+a 🧺 bubble reusing last cycle's glyph plus ticker *text*, and 449 is a pure refactor with zero player-visible
+change by design. `bake.ts` `hasArt` gains nothing from either.
+
+Checked one hypothesis before writing this off, and it was wrong in the useful direction: `zones.ts` still
+carries a comment saying the `fern` tile kind "bakes as the grass fallback until the Artist draws its rig
+(FERN_RIG)", which read like live art debt. It isn't — `FERN_RIG` exists in `tileArt.ts` (two variants, fern
+fronds over a warmer olive base) and is registered in `TILE_RIGS`. The comment is stale, describing a state
+that ended when 399's rig landed. Not editing it from this routine (art fires don't touch world modules
+beyond bake wiring), but it's worth a smith's attention: a comment that describes undone work which is
+actually done is the same species of hazard 449 just retired.
+
+Full census, so the next fire doesn't re-derive it: all five roster species have pixel rigs
+(triceratops/stegosaurus/brontosaurus/compsognathus/parasaurolophus), all four tile kinds have rigs
+(grass/path/water/fern), props cover branch/stone/frond/cairn/shelter/thatch and all three ripe crops plus
+the seed and sprout stages, and the keeper roster and dialog frame are drawn. **The cast and its ground are
+fully drawn.** There is no stash-ahead target either — nothing standalone-renderable landed this cycle, so
+authoring ahead would only put the rectangle-fallback control at risk for no gain.
+
+The Artist has now no-op'd two cycles running for the same structural reason: the art queue is empty because
+nothing is seeding it, not because the work is done forever. Worth a smith weighing whether the park wants
+new *subjects* (a sixth species, a zone landmark prop, the HUD frame pass in 147/036) rather than waiting
+for a feature to demand one. build clean; vitest 1268/1268. lastFire.artist updated; phase stays
+artist-pending until housekeeping.
