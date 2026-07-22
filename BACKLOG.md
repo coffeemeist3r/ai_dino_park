@@ -735,15 +735,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
-## Cycle 106 lore additions — the chain moves as one (2026-07-20)
-
-> Milestone 6 ("No zone stands alone") opens: the three zones stop being three parallel economies and
-> become one that ferries plenty toward need. These are the milestone's **lore arcs** — the dino-feeling
-> half of the structural spine the Structure-smith owns (447/450/448/449). Cap note: the lore body is well
-> over the 12-item drain floor, but a milestone can't be drafted without arcs, so these three are seeded
-> tightly milestone-anchored (not opportunistic backlog fill), per the milestone-duty override.
-
-
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.

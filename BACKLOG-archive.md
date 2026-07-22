@@ -2,6 +2,18 @@
 
 Closed (`[x]` shipped / `[a]` abandoned) items moved out of BACKLOG.md to keep the working file lean. The closed log lives here too. Move items here when they close; never reopen from here (re-seed a fresh BACKLOG-NNN instead).
 
+## Spent section (moved cycle 108) — Cycle 106 lore additions
+
+> Moved here by cycle-108 housekeeping: all three of its items (451 courier pride, 452 homecoming, 453 word of the provider) shipped across cycles 106–108, leaving the section with a heading and its seeding note. Kept verbatim for the record — it documents the milestone-duty override that justified seeding three lore items while the body was far over its 12-item drain floor.
+
+## Cycle 106 lore additions — the chain moves as one (2026-07-20)
+
+> Milestone 6 ("No zone stands alone") opens: the three zones stop being three parallel economies and
+> become one that ferries plenty toward need. These are the milestone's **lore arcs** — the dino-feeling
+> half of the structural spine the Structure-smith owns (447/450/448/449). Cap note: the lore body is well
+> over the 12-item drain floor, but a milestone can't be drafted without arcs, so these three are seeded
+> tightly milestone-anchored (not opportunistic backlog fill), per the milestone-duty override.
+
 ## Closed items (cycle 108, 2026-07-22 — Milestone 6 lore arc 3 & structure arc 4)
 
 - [x] BACKLOG-453 [social] Word of the provider — a dino names the pantry-keeper in gossip/greeting, the standing surfacing in voice.  *(shipped: cycle 108 lore track, Milestone 6 lore arc 3, APPROVED after 1 rework — new pure `zoneProvider(residents, zoneId)` in `ai/roles.ts` (the per-zone read 448 deferred: the settled `provider` living here with the highest banked tally, ties alphabetical so a reload credits the same dino). Two registers off it. **Greeting:** `providerAside(name, zoneName, traits)` in `ai/brain.ts` composes onto whatever the dino was already saying — after the hunger tell (368) and the rattled tell (440), cap 280→320 — temperament-shaded on the *existing* `PRICKLY_MAX`/`EFFUSIVE_MIN` cutoffs so a prickly dino concedes it, a warm one makes a whole thing of it, an even one states it, with the **fact identical in all three** (262's principle applied to reputation). **Gossip:** new `world/providerword.ts` modeled directly on `groveword.ts` joins the `converse` cascade below grove-news and above generic gossip, planting a `RUMOR_MARK` line that can't re-spread; the listener's memory then rides the existing `recall → recentMemory → greet` path, so the word travels with no second mechanism. **A provider never says it about itself** — enforced in the pure layer (`spreadProviderWord` refuses when `speaker === provider`) rather than at the single call site that exists today, so no future caller can skip it; the greeting half is guarded by `providerAsideFor`. No leading article before the zone name (two of three carry their own — `storesFedLine`'s documented trap), pinned by a `not.toContain('the The')` test. `webllmBrain` gets the same fact as one prompt clause; the deterministic aside is the floor. No save change. **Rework loop 1:** QA failed the criterion asking the 🧺 ticker to name speaker and listener — it named listener and zone — fixed to `🧺 <b> heard from <a> who keeps <zone> fed`, matching the grove rung beside it. The tightened assertion then caught an older, unrelated defect: `🧺` is shared with 448's haul line, so the spec had been selecting `🧺 Sunny put the harvest away…` all along, masked by a fragment match. +19 unit, +4 e2e.)*

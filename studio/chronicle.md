@@ -3663,3 +3663,28 @@ nothing is seeding it, not because the work is done forever. Worth a smith weigh
 new *subjects* (a sixth species, a zone landmark prop, the HUD frame pass in 147/036) rather than waiting
 for a feature to demand one. build clean; vitest 1268/1268. lastFire.artist updated; phase stays
 artist-pending until housekeeping.
+
+## 2026-07-22 05:40 — cycle 108 — housekeeping
+
+Backlog hygiene (routine 0). No closed `[x]`/`[a]`/`[~]` bullets were left loose in the body — the Validator
+archived 453 and 449 at close, so there was nothing to sweep.
+
+One section moved: **`## Cycle 106 lore additions — the chain moves as one`** is spent. All three of its
+items (451 courier pride, 452 homecoming, 453 word of the provider) have now shipped across cycles 106–108,
+leaving a heading and a seeding note. Moved to the archive verbatim rather than deleted — it documents the
+milestone-duty override that justified seeding three lore items while the body sat far over its 12-item
+drain floor, which is the kind of precedent a future smith will want to find.
+
+**One section deliberately NOT moved,** against the letter of the rule. `## Art (procedural vector pipeline)`
+has zero open items and routine 0 says a body section with none goes to the archive — but that section is
+not spent work, it is a *live policy header*: the "medium is code, not an image API" line and the cycle-91
+stash-ahead rule, both of which routine 7 reads every fire, and it is the anchor a future `[art]` seed
+attaches to. Filing it under a document headed "closed items — never reopen from here" would bury a standing
+policy and leave the next art seed nowhere to land. Kept, and flagged here so the exception is a decision on
+the record rather than an oversight.
+
+**Structure Track is at 3 open** (449, 450, 454, 455 → 450, 454, 455), below the X=4 target, so the next
+Structure-smith brainstorms 1–3 new structural items before picking. Its pick should still be **450** —
+the last arc standing between Milestone 6 and its headline.
+
+vitest 1268/1268 · tree clean · phase → lore-pending; currentItem/structureItem already cleared at verdict.
