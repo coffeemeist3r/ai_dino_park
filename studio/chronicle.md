@@ -3432,3 +3432,31 @@ test asserting every declared landmark reports 'water' under its own rule. The c
 is still a test-only fourth zone getting ground + tint + landmark with zero dispatcher edits.
 
 currentItem=453, structureItem=449, phase → codeplan-pending.
+
+## 2026-07-22 03:40 — cycle 108 — code-planner — one shared file, two disjoint regions
+
+Build order set: **structure first, then lore**, with a build+vitest gate between them so a terrain
+regression is caught against a clean lore diff instead of a mixed one. Both tracks touch only
+`WorldScene.ts` in common, in non-overlapping regions (`drawFloor` vs `converse`/`pickTone`).
+
+**449 (~3 files):** `ZONE_TERRAIN` table beside `ZONES`/`ZONE_LINKS`, holding each zone's tile-kind rule,
+tint, and water landmark; the three dispatchers become lookups keeping their exact signatures. All six
+per-zone functions stay exported unchanged — four test files and `arrival.ts` import them directly, and a
+refactor that churns its callers has only moved the cost. The landmark helpers take different argument
+subsets, so the table normalizes them with arrow wrappers rather than editing three exported functions.
+Test-first discipline written in: the full `COLS×ROWS` sweep runs against pre-refactor code (should pass),
+then again after. The anti-drift invariant iterates `Object.entries(ZONE_TERRAIN)` rather than naming three
+zones, so a fourth row is covered the day it's added. No new e2e — a no-op refactor proving itself with a
+new e2e is test theater; the two existing terrain specs staying green unmodified is the proof.
+
+**453 (~7 files):** `world/providerword.ts` modeled directly on `groveword.ts`, plus `zoneProvider` in
+`ai/roles.ts` and a `providerAside` composed into `cannedReply` after the rattled tell (cap 280→320 for the
+third composable aside). The no-self-praise rule is enforced in the **pure layer** (`spreadProviderWord`
+refuses when `speaker === provider`) with the greeting half guarded in `pickTone` — not left to the scene.
+Unlike the other gossip rungs this one keys off live role state rather than a memory token, so the provider
+is passed as an argument, keeping the module Node-testable with no roles-store import. Three risks flagged:
+`roleOf` mutates (don't grow a second derivation path that could disagree with the lens), the `converse` log
+else-if order is load-bearing and must be edited in lockstep with the assignment chain, and a
+byte-identical assertion must pin a deterministic register since the generic canned branch is random.
+
+phase → coder-pending.
