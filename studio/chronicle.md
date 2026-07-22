@@ -3513,3 +3513,14 @@ criterion the Coder owes. Rework loop 1 of 2 opens on the lore track only; the s
 must not be re-opened.
 
 phase → validator-pending.
+
+## 2026-07-22 04:42 — cycle 108 — designer (rework 1) — the criterion stands
+
+Lore track only; 449 stays closed at 9/9. The design doesn't change — criterion 9 was right. The ticker is
+the keeper's only read on who carries word to whom, and a rung that silently breaks the convention its two
+neighbours keep makes the gossip feed unreadable exactly where it's most interesting. The zone name the
+Coder added is a real improvement and stays; it's additive to the requirement, not a substitute for it. So
+the criterion is sharpened in wording only: name **speaker, listener, and zone**. Everything else on the
+track is fenced off — ten criteria passed on automated evidence and a cosmetic fix has no business near
+them. Also fenced: `providerWordLine`, the rumor that lands in memory, is a different string from the ticker
+and is already correct. phase → codeplan-pending.

@@ -167,3 +167,34 @@ is — its comment explains why widening it to "any water" would retro-fire a on
 - Descriptors live beside `ZONES` / `ZONE_LINKS` in `world/zones.ts`. Do not add a module for three rows.
 - **File overlap with the lore track:** `WorldScene.ts` only, in a different region (`drawFloor` + the
   `world/zones` import line vs. the lore track's `converse` / `pickTone`). No shared function.
+
+---
+
+# Rework loop 1 — lore track only (2026-07-22)
+
+**Structure track (449): APPROVED at 9/9 by QA. Not re-specced, not re-opened, not to be touched.**
+
+## Lore track — BACKLOG-453, re-spec
+
+QA failed criterion 9: the 🧺 ticker names the listener and the zone but drops the **speaker**, where the
+written criterion asks for "a 🧺 ticker line naming speaker and listener" and both sibling rungs in the same
+cascade name both parties.
+
+The design does not change. The criterion was right and stays as written — the ticker is the keeper's only
+view of who is carrying word to whom, and a rung that breaks that convention makes the gossip feed unreadable
+exactly where it is most interesting. The zone name in the shipped line is a genuine improvement and should
+be **kept**; it is additive to the requirement, not a substitute for it.
+
+**The whole rework:** the ticker line names speaker, listener, and zone, and a test pins it.
+
+**Restated criterion 9 (unchanged in force, sharpened in wording):**
+- [ ] In `converse`, provider-word fires only when relief / warm / cold / grove word all decline, and posts a
+  🧺 ticker line naming **the speaker, the listener, and the zone**.
+
+**Out of scope for this loop — do not re-open:** the aside text, the temperament split, `zoneProvider`, the
+cascade position, the no-self-praise rule, the memory shape, or anything in the structure track. All ten
+other criteria passed on automated evidence; touching them risks a green track for a cosmetic fix.
+
+**Constraint:** the fix must not change what lands in the listener's *memory* — the rumor line
+(`providerWordLine`) is a separate string from the ticker line and is already correct and pinned. Only
+`WorldScene`'s `logEvent` call changes.
