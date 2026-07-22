@@ -3405,3 +3405,30 @@ test-only fourth zone that gets ground + water with zero edits to the dispatcher
 unglamorous of the two remaining M6 structure arcs — 450 is unblocked either way, every terrain-reading
 feature pays the branch tax until this lands. No new items seeded (Structure Track at 4 = X). Collision-free
 against the lore track (453 is dialogue; 449 is `world/zones.ts`).
+
+## 2026-07-22 03:25 — cycle 108 — designer — the park says a name; the ground becomes a table
+
+**Lore (453, word of the provider):** the 448 role is a lens tag today — the park's first economic standing
+and the only way to learn it is to open a debug overlay. Spec puts it in the residents' mouths in both
+registers the park already owns. A new pure `zoneProvider` read (highest-tally `provider`-roled resident of
+a zone, ties by name) answers "who keeps *this* pantry full" — the per-zone ranking 448 deferred. From it:
+a temperament-shaded greeting aside composed onto every existing register (the 368/440 shape), and
+`spreadProviderWord` as a new rung in the `converse` gossip cascade (below grove-word, above generic — a
+worry outranks background, background beats a generic retelling). Two hard rules written in: a provider
+never says it about itself (reputation is what others say), and the line must be `${zoneName} eats because
+of X` with no leading article, since two of three zone names carry their own (`storesFedLine`'s documented
+trap). No save change — the role, the tally, and the memory ring all already exist.
+
+**Structure (449, terrain as data):** `ZoneTerrain` descriptor per zone on the `ZONES` table — tile-kind
+rule, tint, water landmark — collapsing *three* if-chains (`zoneTileAt`, `zoneWaterTile`, and `zoneTint`,
+which the item text didn't even count). All six per-zone functions stay exported with unchanged behavior so
+four existing test files and `world/arrival.ts` need no edit; a refactor that churns its callers has only
+moved the cost. **Ruled against the structure handoff's criterion 2** (landmark derived from the rule): the
+three existing landmarks aren't reproducible by any one scan-and-centre rule — the grove's pond centre
+rounds up from its x-range, the Fernreach's creek rounds down — so deriving would move two of three tiles
+and break the byte-identical bar, which is higher. Took the handoff's own stated fallback (explicit field,
+one authoring site per zone) and delivered the anti-drift as a *mechanism* instead: a table-driven invariant
+test asserting every declared landmark reports 'water' under its own rule. The comment becomes CI. Acceptance
+is still a test-only fourth zone getting ground + tint + landmark with zero dispatcher edits.
+
+currentItem=453, structureItem=449, phase → codeplan-pending.

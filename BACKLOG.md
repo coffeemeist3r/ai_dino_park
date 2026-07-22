@@ -744,7 +744,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > over the 12-item drain floor, but a milestone can't be drafted without arcs, so these three are seeded
 > tightly milestone-anchored (not opportunistic backlog fill), per the milestone-duty override.
 
-- [ ] BACKLOG-453 [social] Word of the provider — once a `provider` role emerges (448), a dino can name it in gossip/greeting ("the Fernreach eats because of Sunny"), the pantry-keeper's standing surfacing in voice the way the quiet-hero (260) and hoarder do; deterministic fallback line, LLM colour behind the boundary. Builds on 448 / 260 / 020.
+- [~] BACKLOG-453 [social] Word of the provider — once a `provider` role emerges (448), a dino can name it in gossip/greeting ("the Fernreach eats because of Sunny"), the pantry-keeper's standing surfacing in voice the way the quiet-hero (260) and hoarder do; deterministic fallback line, LLM colour behind the boundary. Builds on 448 / 260 / 020.
 
 ## Mobile (deferred, do not pick until charter clears)
 
