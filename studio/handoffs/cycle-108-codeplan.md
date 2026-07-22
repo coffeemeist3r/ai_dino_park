@@ -379,3 +379,21 @@ different module and must stay untouched — the memory assertion in the same sp
 covers `logEvent` templates (none does, for any rung), so the e2e is the right level.
 
 **Estimated touch count:** `~2 files`.
+
+### Shipped (rework 1)
+
+- `game/src/scenes/WorldScene.ts:3257` — ticker now reads
+  `🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`.
+- `tests/e2e/cycle-108-provider-word.spec.ts` — the "word travels" assertion is now an exact phrase match
+  naming all three parties.
+
+**One extra fix, found by the new assertion.** The tightened test failed on first run — but not on the
+production change. `🧺` is shared with 448's haul line (`🧺 Sunny put the harvest away in Pocket
+Cretaceous's stores`), and the spec's `.find(e => e.includes('🧺'))` selected *that* event instead of the
+gossip one. The old weak assertion had masked the collision by also matching a phrase fragment. Fixed by
+selecting on `'🧺' && 'heard'`, with a comment naming the shared glyph so the next spec author doesn't
+repeat it. Production behavior was correct; the test was reading the wrong line. Worth recording: the
+sharper assertion earned its keep twice over in the same run.
+
+**Status:** build clean · vitest 1268/1268 · `cycle-108-provider-word` 4/4 · full e2e re-run below (QA).
+Structure track untouched, as fenced.

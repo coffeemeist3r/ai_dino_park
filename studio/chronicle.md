@@ -3533,3 +3533,16 @@ the shipped e2e checked `includes('🧺') && includes('heard who keeps')` — an
 a speaker and so could not have failed on this defect. It becomes an exact-phrase match naming all three
 parties. `providerWordLine` (the rumor written to memory) is a different string in a different module and is
 fenced off; the memory assertion in the same spec guards it. phase → coder-pending.
+
+## 2026-07-22 04:52 — cycle 108 — coder (rework 1) — the ticker names its speaker
+
+One production line: `🧺 Mossback heard from Rex who keeps Pocket Cretaceous fed`, matching the `from
+${a.name}` construction the grove rung beside it uses. The zone stays — it's the useful part the Coder added
+on its own initiative, and the criterion never asked for it to go.
+
+The tightened assertion paid for itself immediately, and not on the bug it was written for. It failed on
+first run because `🧺` is shared with 448's haul line, so `.find(e => e.includes('🧺'))` was selecting
+`🧺 Sunny put the harvest away…` rather than the gossip event — a collision the *old* weak assertion had
+masked by matching a phrase fragment instead of a whole line. Production was right; the test had been
+reading the wrong line all along. Selector now keys on `'🧺' && 'heard'` with a comment naming the shared
+glyph. build clean · vitest 1268/1268 · track specs 4/4. Structure track untouched. phase → qa-pending.

@@ -3254,7 +3254,7 @@ export class WorldScene extends Phaser.Scene {
       else if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
       else if (grove.rumor) this.logEvent(`🌿 ${b.name} heard about the grove from ${a.name}`);
-      else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard who keeps ${zoneById(zone).name} fed`);
+      else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);

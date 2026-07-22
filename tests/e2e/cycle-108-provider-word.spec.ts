@@ -71,7 +71,10 @@ test('the word travels: one dino passes the provider on to the next it meets', a
   // __forceConverse runs the roster's first two dinos — Rex speaks, Mossback listens; neither is Sunny.
   await page.evaluate(() => (window as W).__forceConverse());
 
-  expect((await events(page)).some((e) => e.includes('🧺') && e.includes('heard who keeps'))).toBe(true);
+  // The ticker names all three parties — the keeper's only read on who carried word to whom.
+  // 🧺 is shared with 448's haul line, so select on the gossip phrasing, not the glyph.
+  const ticker = (await events(page)).find((e) => e.includes('🧺') && e.includes('heard'));
+  expect(ticker).toContain('Mossback heard from Rex who keeps Pocket Cretaceous fed');
   const heard = (await memory(page)).Mossback ?? [];
   expect(heard.some((m) => m.includes('Sunny') && m.includes('eats because of'))).toBe(true);
 });
