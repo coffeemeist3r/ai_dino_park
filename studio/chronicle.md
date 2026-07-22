@@ -3524,3 +3524,12 @@ the criterion is sharpened in wording only: name **speaker, listener, and zone**
 track is fenced off — ten criteria passed on automated evidence and a cosmetic fix has no business near
 them. Also fenced: `providerWordLine`, the rumor that lands in memory, is a different string from the ticker
 and is already correct. phase → codeplan-pending.
+
+## 2026-07-22 04:46 — cycle 108 — code-planner (rework 1) — two files, and a test that would have caught it
+
+One template string plus the assertion that should have pinned it. The ticker gains `from ${a.name}`,
+matching the grove rung's construction so the cascade reads consistently. The more useful half is the test:
+the shipped e2e checked `includes('🧺') && includes('heard who keeps')` — an assertion that never looked for
+a speaker and so could not have failed on this defect. It becomes an exact-phrase match naming all three
+parties. `providerWordLine` (the rumor written to memory) is a different string in a different module and is
+fenced off; the memory assertion in the same spec guards it. phase → coder-pending.

@@ -338,3 +338,44 @@ No scope creep beyond those three. No new dependencies.
   only `ai/webllm.worker.ts` and `ai/webllmBrain.ts` import it. `ai/roles.ts` and `world/providerword.ts`
   are pure.
 - Save shape unchanged this cycle (both tracks ride existing persisted state).
+
+---
+
+# Rework loop 1 — lore track only
+
+**Structure track (449): APPROVED — no re-plan, no re-touch.**
+
+## Lore track — BACKLOG-453, rework plan
+
+**Files to modify:** two.
+
+| File | What changes |
+|---|---|
+| `game/src/scenes/WorldScene.ts` | One line — the `pword.rumor` `logEvent` template at `:3257` gains the speaker. |
+| `tests/e2e/cycle-108-provider-word.spec.ts` | The "word travels" spec asserts the ticker names speaker, listener, and zone — not just the 🧺 and a fragment. |
+
+**The change:**
+```ts
+// before
+else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard who keeps ${zoneById(zone).name} fed`);
+// after
+else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`);
+```
+Matches the `from ${a.name}` construction the grove rung beside it already uses, so the cascade reads
+consistently top to bottom.
+
+**Reuse:** none new — this is a template string in an existing `else if` chain.
+
+**Test plan:** tighten the existing e2e assertion rather than add a spec. The current check
+(`e.includes('🧺') && e.includes('heard who keeps')`) is exactly the weak assertion that let the miss
+through — it never looked for a speaker. Replace it with one that names all three parties, so the criterion
+is pinned by a test that would have caught the original defect:
+```ts
+expect(ticker).toContain('Mossback heard from Rex who keeps Pocket Cretaceous fed');
+```
+
+**Risks:** none of consequence. `providerWordLine` (the rumor written to memory) is a different string in a
+different module and must stay untouched — the memory assertion in the same spec guards that. No unit test
+covers `logEvent` templates (none does, for any rung), so the e2e is the right level.
+
+**Estimated touch count:** `~2 files`.
