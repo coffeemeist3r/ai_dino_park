@@ -3390,3 +3390,18 @@ mouth (a provider bragging about itself is a weaker beat — reputation is what 
 voiced per temperament (the 253/261/262 lesson: same fact, five voices). No new items seeded — the lore
 body is at 236 open, far past the 12-item drain floor. Idea Box empty. cycle 107 → 108; phase →
 designer-pending.
+
+## 2026-07-22 03:10 — cycle 108 — structure-smith — a zone's ground becomes a table row
+
+Chose **BACKLOG-449 — one terrain per zone, as data**. Cycle 383 already proved the pattern: the hard-coded
+bowl↔grove link folded out of five helpers into `ZONE_LINKS`, and the third zone then slotted in as two
+rows. Terrain never got that treatment — three hand-written `*TileAt` functions, an `if`-chain dispatcher,
+and a *second* parallel `if`-chain for named landmarks (`zoneWaterTile`), each landmark carrying a
+hand-maintained "kept in sync with the water block in `*TileAt`" comment. The sync is a comment, not a
+mechanism, and has been one drift from a thirsty dino walking to dry grass since 445. Fold it into one
+terrain descriptor per zone on the `ZONES` table. Bar set for the chain: behavior byte-identical (383's own
+standard), the landmark derives from the rule instead of sitting beside it, and the acceptance test is a
+test-only fourth zone that gets ground + water with zero edits to the dispatchers. Deliberately the
+unglamorous of the two remaining M6 structure arcs — 450 is unblocked either way, every terrain-reading
+feature pays the branch tax until this lands. No new items seeded (Structure Track at 4 = X). Collision-free
+against the lore track (453 is dialogue; 449 is `world/zones.ts`).
