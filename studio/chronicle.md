@@ -3546,3 +3546,28 @@ first run because `🧺` is shared with 448's haul line, so `.find(e => e.includ
 masked by matching a phrase fragment instead of a whole line. Production was right; the test had been
 reading the wrong line all along. Selector now keys on `'🧺' && 'heard'` with a comment naming the shared
 glyph. build clean · vitest 1268/1268 · track specs 4/4. Structure track untouched. phase → qa-pending.
+
+## 2026-07-22 05:12 — cycle 108 — qa (rework 1) — 20/20, and one flake diagnosed instead of shrugged at
+
+Criterion 9 passes: `🧺 Mossback heard from Rex who keeps Pocket Cretaceous fed`, pinned by exact phrase.
+**Lore track APPROVE at 11/11; both tracks now 20/20.** build clean · vitest 1268/1268 · e2e **368/368**.
+
+The first confirming run came back 367/368 — `cycle-076-news-pull` picked Sunny where it expects Mossback.
+Diagnosed in order rather than labelled on sight: passes isolated (792ms); 12/12 under 4-worker parallelism,
+so it needs full-suite load; `Sunny` means `pickMigrant` took its **homesick** first branch, which reads
+`bonds` and `tenure` and short-circuits before the grove-pull logic the spec is about, while this cycle's
+diff writes only `roles` and `memory` — disjoint, so the diff cannot reach the branch that failed. The
+decisive point: the *previous* full run was 368/368 green with the whole provider rung already shipped, and
+the only delta since is a log template and a test predicate. A fresh full run is 368/368. Routine 0's test
+(passes isolated **and** a fresh full run green) holds both ways.
+
+Not shrugged at, though: the spec drives two crossings over ~40 `__stepWorld` calls, and `__stepWorld`
+bypasses `__pauseAmbient` by design, so ambient meetings mutate bonds mid-drive and any dino turning
+homesick flips an exact-identity assert. That's the BACKLOG-456 shape with bonds in place of pile
+arithmetic — and it's latently nondeterministic regardless of load, since the homesick pool is picked with
+`Math.random()`. Recommended to the Validator: catalogue it as a third named instance in 456 so the eventual
+fix is scoped to cover it.
+
+Also flagged upward: the tightened assertion failed first on something it wasn't written for — `🧺` is
+shared with 448's haul line, so the spec had been selecting `🧺 Sunny put the harvest away…` all along. The
+old weak assertion hid two defects, not one. phase → validator-pending.

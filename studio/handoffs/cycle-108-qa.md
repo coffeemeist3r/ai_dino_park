@@ -108,3 +108,64 @@ None. Two observations for the Validator, neither a defect:
 
 Every criterion passes on automated evidence, the refactor is provably invisible to its consumers, and the
 "kept in sync with" comments are now a mechanism that fails CI instead of a comment nobody re-reads.
+
+---
+
+# Rework loop 1 — QA re-verification
+
+**Structure track (449): APPROVED in the first pass — not re-tested, not re-opened.**
+
+**Build:** ✅ clean. **Unit:** ✅ 1268 / 1268 (138 files). **E2E:** ✅ **368 / 368** on the confirming run.
+
+## Lore track — BACKLOG-453, criterion 9 re-scored
+
+| # | Criterion | Status | Evidence |
+|---|---|---|---|
+| 9 | In `converse`, fires only when relief/warm/cold/grove decline, and posts a 🧺 ticker naming **speaker, listener, and zone** | **PASS** | `WorldScene.ts:3257` now `🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`; e2e "the word travels" asserts the exact phrase `Mossback heard from Rex who keeps Pocket Cretaceous fed` |
+
+**11 / 11 pass. Lore track recommendation: APPROVE.**
+
+The other ten criteria were not re-run for scoring but are covered by the same suite, which is green. The
+rumor written to memory (`providerWordLine`) is unchanged and still pinned by the memory assertion in the
+same spec — the fenced constraint held.
+
+**A note on the fix that came free.** The tightened assertion failed on its first run for a reason unrelated
+to the defect it was written for: `🧺` is shared with 448's haul line, and the spec's
+`.find(e => e.includes('🧺'))` was selecting `🧺 Sunny put the harvest away…` instead of the gossip event.
+The *original* weak assertion had masked that by matching a phrase fragment rather than a whole line. So the
+spec had been reading the wrong event since it was written, and only became honest when it was asked to be
+exact. Production was correct throughout. This is worth the Validator's ink: the weak assertion hid two
+things, not one.
+
+## E2E flake — `cycle-076-news-pull`, not a regression
+
+The **first** confirming full run came back 367/368: `cycle-076-news-pull.spec.ts` "grove news pulls a
+curious, un-traveled bowl dino over a coin-flip" failed with `__maybeMigrate()` returning `Sunny` where the
+spec expects `Mossback`. Diagnosed before being labelled, in this order:
+
+1. **Isolated re-run:** passes, 792ms.
+2. **Under parallelism, 12 repeats × 4 workers:** 12/12 pass. It needs full-suite load, which is the
+   catalogued signature.
+3. **Code path:** `Sunny` means `pickMigrant` took its *first* branch — `homesick` — which short-circuits
+   before the grove-pull logic the spec is actually about. `homesickOf` reads `this.bonds` and
+   `this.tenure` and nothing else. The cycle-108 diff writes `this.roles` (via `roleOf`) and `this.memory`
+   (via `spreadProviderWord`). **Disjoint. The diff cannot reach the branch that failed.**
+4. **The decisive one:** the *previous* full run was 368/368 green **with the entire provider rung already
+   shipped**. The only delta between that green run and the red one is a `logEvent` template string and a
+   test's `.find` predicate — neither touches simulation state.
+5. **Fresh full run:** ✅ **368 / 368**.
+
+Routine 0's test is "passes isolated **and** a fresh full run is green → flake, note it, not a regression."
+Both hold. Noted, not a regression.
+
+**But it is a new member of a known family, and should be catalogued rather than shrugged at.** The spec
+drives two full crossings via ~40 `__stepWorld` calls each, and `__stepWorld` deliberately bypasses
+`__pauseAmbient` — so ambient meetings run on those same steps and mutate `bonds`. If any dino becomes
+homesick during the drive, `pickMigrant`'s first branch fires and the spec fails on an exact-identity
+assert. That is precisely the BACKLOG-456 shape (driven crossing + ambient activity on the driven steps +
+an exact assert), with `bonds`/`homesick` in place of the pile arithmetic. It is *also* latently
+nondeterministic independent of load, since the homesick pool is chosen with `Math.random()`.
+
+**Recommended to the Validator:** fold this spec into BACKLOG-456's text as a third named instance, so the
+eventual `__pauseAmbient`-one-level-down fix is scoped to cover it. No code change this cycle — it is
+pre-existing, off this diff, and out of both tracks' scope.
