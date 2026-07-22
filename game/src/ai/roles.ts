@@ -54,3 +54,27 @@ export function settleRole(prev: Role | undefined, derived: Role): Role {
   if (!prev || prev === 'wanderer') return derived;
   return derived === 'wanderer' ? prev : derived;
 }
+
+/** A dino as the provider read sees it: where it lives, what it settled into, how much it has banked. */
+export interface ProviderCandidate {
+  name: string;
+  zoneId: string;
+  role: Role;
+  foodBanked: number;
+}
+
+/**
+ * Word of the provider (BACKLOG-453) — of the dinos *living in* `zoneId`, the one keeping its pantry full:
+ * the settled `provider` with the highest banked tally. 448 made the role park-wide and per-dino on purpose;
+ * naming it aloud ("The Fernreach eats because of Sunny") needs the per-zone read it deferred.
+ *
+ * Ties resolve alphabetically so the park doesn't credit a different dino on a reload. Null when nobody
+ * here has the role — which is the normal state of a young park, and everything downstream stays inert.
+ */
+export function zoneProvider(residents: readonly ProviderCandidate[], zoneId: string): string | null {
+  return (
+    residents
+      .filter((r) => r.zoneId === zoneId && r.role === 'provider')
+      .sort((a, b) => b.foodBanked - a.foodBanked || a.name.localeCompare(b.name))[0]?.name ?? null
+  );
+}

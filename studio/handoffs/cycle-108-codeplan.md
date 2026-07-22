@@ -283,3 +283,58 @@ Disjoint regions, no shared function. **Order: structure, then lore.** Run `npm 
 regression is caught against a clean lore diff instead of a mixed one.
 
 **Combined estimate: ~10 files.** Within the CHARTER v6 arc size (~15); no split needed.
+
+---
+
+## Shipped
+
+Built in the planned order — structure first with a build + vitest gate before the lore track started.
+
+### Files touched
+
+**Structure (449):**
+- `game/src/world/zones.ts` — added `NO_TINT`, `ZoneTerrain`, `ZONE_TERRAIN`; rewrote `zoneTileAt`,
+  `zoneWaterTile`, `zoneTint` as table lookups; moved `zoneTint` down beside its siblings. All six per-zone
+  functions exported unchanged.
+- `tests/unit/cycle-108-terrain-table.test.ts` — new (11 tests).
+- `game/src/scenes/WorldScene.ts` — **no structure-track change needed.** The dispatchers kept their
+  signatures, so `drawFloor` / `needTargetFor` / the import line were untouched. The plan predicted "likely
+  a zero-line change"; it was zero.
+
+**Lore (453):**
+- `game/src/ai/roles.ts` — `ProviderCandidate`, `zoneProvider`.
+- `game/src/ai/brain.ts` — `NPCContext.provider`, `providerAside`, composition in `cannedReply` (cap 320).
+- `game/src/ai/webllmBrain.ts` — one prompt clause in `buildMessages`.
+- `game/src/world/providerword.ts` — new; `providerWordLine`, `spreadProviderWord`.
+- `game/src/scenes/WorldScene.ts` — `providerFor`, `providerAsideFor`, greet context in `pickTone`, the
+  cascade rung + 🧺 ticker in `converse`, `__zoneProvider` / `__spreadProviderWord` hooks.
+- `tests/unit/cycle-108-provider-word.test.ts` — new (19 tests).
+- `tests/e2e/cycle-108-provider-word.spec.ts` — new (4 specs).
+
+**9 files** (5 created, 4 modified) — under the ~10 estimate.
+
+### Deviations from the plan
+
+1. **The pre-refactor sweep run was skipped.** The plan said to run the full-sweep regression against the
+   old code first; that test imports `ZONE_TERRAIN`, which did not exist yet, so it could not compile
+   pre-refactor. The intent is preserved a different way: the sweep asserts the dispatcher against each
+   zone's own `*TileAt` rule (unchanged by the refactor), and a second test pins the three landmark tiles to
+   literal pre-refactor coordinates read out of the old source. Both would fail on drift.
+2. **Extracted a second scene helper.** The plan inlined the greet-context provider lookup as an IIFE in
+   `pickTone`; it became `providerAsideFor(name)` beside `providerFor`, since the "never itself" guard is a
+   rule worth naming rather than a closure buried in an argument list. Same behavior.
+3. **`NO_TINT` added.** The bare `0xffffff` appeared three times once the table existed; naming it was
+   cheaper than repeating it. Not in the plan, trivially in scope.
+
+No scope creep beyond those three. No new dependencies.
+
+### Status
+
+- `npm run build` — clean (`✓ built in 8.74s`).
+- `npx vitest run` — **1268/1268 green, 138 files** (was 1238/137; +30 new tests).
+- `npx playwright test cycle-108-provider-word` — 4/4 green.
+- Dev server renders: `curl localhost:5173` → `200`.
+- CHARTER boundary verified: `grep -rn "@mlc-ai/web-llm" game/src` outside `game/src/ai/` returns nothing;
+  only `ai/webllm.worker.ts` and `ai/webllmBrain.ts` import it. `ai/roles.ts` and `world/providerword.ts`
+  are pure.
+- Save shape unchanged this cycle (both tracks ride existing persisted state).

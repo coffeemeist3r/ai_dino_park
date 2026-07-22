@@ -96,7 +96,8 @@ import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget,
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
-import { deriveRole, settleRole, ROLE_ICON, type Role } from '../ai/roles';
+import { deriveRole, settleRole, zoneProvider, ROLE_ICON, type Role } from '../ai/roles';
+import { spreadProviderWord } from '../world/providerword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
@@ -2196,6 +2197,29 @@ export class WorldScene extends Phaser.Scene {
     return settled;
   }
 
+  /**
+   * Who keeps this zone's pantry full (BACKLOG-453) — the settled `provider` living here with the biggest
+   * banked tally. Goes through `roleOf` so the answer can never disagree with the roles lens or the book.
+   */
+  private providerFor(zoneId: string): string | null {
+    return zoneProvider(
+      this.dinos.map((d) => ({
+        name: d.name,
+        zoneId: zoneOf(this.dinoZones, d.name, BOWL_ID),
+        role: this.roleOf(d.name),
+        foodBanked: this.foodBanked[d.name] ?? 0,
+      })),
+      zoneId,
+    );
+  }
+
+  /** The provider a dino would name to the keeper — never itself (BACKLOG-453). */
+  private providerAsideFor(name: string): { name: string; zoneName: string } | undefined {
+    const zoneId = zoneOf(this.dinoZones, name, BOWL_ID);
+    const provider = this.providerFor(zoneId);
+    return provider && provider !== name ? { name: provider, zoneName: zoneById(zoneId).name } : undefined;
+  }
+
   private bookRows(): BookRow[] {
     const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
     return this.dinos.map((d) => ({
@@ -2491,6 +2515,14 @@ export class WorldScene extends Phaser.Scene {
       return g.rumor;
     };
     (window as any).__groveWord = (speaker: string) => groveWordLine(speaker);
+    // BACKLOG-453: who keeps a zone's pantry full, and the word of it passing between two dinos.
+    (window as any).__zoneProvider = (zone: string) => this.providerFor(zone);
+    (window as any).__spreadProviderWord = (a: string, b: string) => {
+      const zone = zoneOf(this.dinoZones, a, BOWL_ID);
+      const p = spreadProviderWord(this.memory, a, b, this.providerFor(zone), zoneById(zone).name);
+      this.memory = p.store;
+      return p.rumor;
+    };
     // dev-only: pond-swappers (BACKLOG-346) — two grove-visited dinos trade pond notes (applies it).
     (window as any).__pondSwap = (a: string, b: string) => this.pondSwapBeat(a, b);
     // dev-only: word of the warmth (BACKLOG-223) — a warmed speaker leads with the good news.
@@ -3208,12 +3240,21 @@ export class WorldScene extends Phaser.Scene {
       // Tell of the grove (BACKLOG-342): a just-returned dino leads with grove news — below cold (a
       // worry outranks scenery), above the generic retelling (news of a place beats an ordinary rumor).
       const grove = cold.rumor ? cold : spreadGroveWord(this.memory, a.name, b.name);
-      const gossip = grove.rumor ? grove : spreadGossip(this.memory, a.name, b.name);
+      // Word of the provider (BACKLOG-453): who keeps this ground fed — under grove news (a fresh sighting
+      // beats a standing), over the generic retelling (the ground you live on beats an ordinary rumor).
+      // The provider read is skipped entirely when an earlier rung already won, so a meet costs no extra
+      // role derivation.
+      const zone = zoneOf(this.dinoZones, a.name, BOWL_ID);
+      const pword = grove.rumor
+        ? grove
+        : spreadProviderWord(this.memory, a.name, b.name, this.providerFor(zone), zoneById(zone).name);
+      const gossip = pword.rumor ? pword : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
       if (relief.rumor) this.logEvent(`😌 ${b.name} heard the all-clear from ${a.name}`);
       else if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
       else if (grove.rumor) this.logEvent(`🌿 ${b.name} heard about the grove from ${a.name}`);
+      else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard who keeps ${zoneById(zone).name} fed`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
@@ -4342,6 +4383,8 @@ export class WorldScene extends Phaser.Scene {
       hungry: pressingNeed(this.needs[target.name]) === 'hunger',
       // Rattled after the chase (BACKLOG-440): a prey with a fresh "slipped X's hunt" memory names its chaser.
       rattled: recentHunter(recall(this.memory, target.name)) ?? undefined,
+      // Word of the provider (BACKLOG-453): it names whoever keeps its ground fed — never itself.
+      provider: this.providerAsideFor(target.name),
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed

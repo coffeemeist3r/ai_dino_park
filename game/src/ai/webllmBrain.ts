@@ -124,13 +124,19 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const rattled = ctx.rattled
     ? `You just barely escaped ${ctx.rattled} chasing you — you're still catching your breath, and it slips into what you say. `
     : '';
+  // BACKLOG-453: the dino keeping this zone's pantry full has a standing, and the residents know it — let it
+  // colour the line (the canned fallback carries the deterministic aside, so behavior never depends on the
+  // model reaching this). Never the speaker itself: the caller only sets this for someone *else*.
+  const provider = ctx.provider
+    ? `${ctx.provider.zoneName} eats because of ${ctx.provider.name}, who keeps its food stores full — you might mention it. `
+    : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

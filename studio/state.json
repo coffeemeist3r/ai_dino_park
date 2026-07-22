@@ -1,6 +1,6 @@
 {
   "cycle": 108,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-453: Word of the provider - a dino names the pantry-keeper in gossip/greeting",
   "structureItem": "BACKLOG-449: One terrain per zone, as data - per-zone terrain descriptor on the ZONES table",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-07-22T03:10:00-05:00",
     "designer": "2026-07-22T03:25:00-05:00",
     "code-planner": "2026-07-22T03:40:00-05:00",
-    "coder": "2026-07-21T03:55:00-05:00",
+    "coder": "2026-07-22T04:05:00-05:00",
     "qa": "2026-07-21T04:35:00-05:00",
     "validator": "2026-07-21T04:50:00-05:00",
     "artist": "2026-07-21T04:58:00-05:00"

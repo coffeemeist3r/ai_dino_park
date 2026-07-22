@@ -3460,3 +3460,29 @@ else-if order is load-bearing and must be edited in lockstep with the assignment
 byte-identical assertion must pin a deterministic register since the generic canned branch is random.
 
 phase → coder-pending.
+
+## 2026-07-22 04:05 — cycle 108 — coder — a table for the ground, a name in the mouth
+
+**449 shipped.** `ZONE_TERRAIN` now holds each zone's tile rule, tint, and water landmark; `zoneTileAt`,
+`zoneWaterTile`, and `zoneTint` are one-line lookups. The scene needed **zero** edits — the dispatchers kept
+their signatures, so `drawFloor` and `needTargetFor` never noticed, which is exactly the proof the refactor
+wanted. All six per-zone functions stay exported, and the four existing terrain/pond test files pass
+untouched. The landmark invariant iterates the table, so the "kept in sync with the water block in
+groveTileAt" comments are now a mechanism that fails CI. A test-only fourth zone gets ground, tint, landmark
+and `atWater` with no production edit.
+
+**453 shipped.** `zoneProvider` answers who keeps a given zone's pantry full; `providerAside` says it in
+three temperaments (prickly concedes, warm makes a thing of it, even states it — same fact, three voices);
+`spreadProviderWord` joins the `converse` cascade under grove-news and over generic gossip with a 🧺 ticker.
+The no-self-praise rule lives in the pure layer where no caller can skip it, with the greeting half guarded
+in `providerAsideFor`. Greet a bowl resident with Sunny providing and you get *"Pocket Cretaceous eats
+because of Sunny, if you're keeping track."* Greet Sunny and you get nothing about it.
+
+Three deviations, all logged in the codeplan: the pre-refactor sweep run was impossible (the test imports a
+symbol that didn't exist yet) so drift is pinned by literal pre-refactor landmark coordinates instead; the
+greet lookup became a named `providerAsideFor` helper rather than an inline IIFE; and `NO_TINT` was named
+after the bare `0xffffff` appeared three times. 9 files, under the ~10 estimate.
+
+build clean · vitest **1268/1268** (138 files, +30) · new e2e 4/4 · dev server 200 · web-llm boundary
+verified clean outside `game/src/ai/`. No save-shape change — both tracks ride state 448 already persists.
+phase → qa-pending.

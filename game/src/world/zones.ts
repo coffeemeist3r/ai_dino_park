@@ -167,10 +167,8 @@ export const GROVE_TINT = 0x9fc0b8;
 /** A warm, sunlit tint for the Fernreach (BACKLOG-378) — the open fern flats read distinct from the cool grove. */
 export const FERNREACH_TINT = 0xd9c98c;
 
-/** The multiplicative floor tint for a zone (BACKLOG-294/378): grove cool, Fernreach warm, bowl untinted. */
-export function zoneTint(zoneId: string): number {
-  return zoneId === GROVE_ID ? GROVE_TINT : zoneId === FERNREACH_ID ? FERNREACH_TINT : 0xffffff;
-}
+/** The untinted floor — the bowl, and any zone that doesn't ask for a wash. */
+export const NO_TINT = 0xffffff;
 
 /**
  * The grove's ground: a worn horizontal **path** band across the vertical middle (the trail through the
@@ -236,16 +234,45 @@ export function fernreachCreekTile(rows: number): { tileX: number; tileY: number
 }
 
 /**
- * The terrain layout for a zone (BACKLOG-294/399/445): every zone now has its own ground — the grove's
- * pond and trail, the Fernreach's creek and scrub, the bowl's waterhole. One dispatcher the floor render
- * reads, so a fourth zone is another arm here, not another edit to `drawFloor`. (An unknown zone id still
- * returns null → the caller bakes the plain grass map.)
+ * A zone's ground, as data (BACKLOG-449). Terrain used to be three hand-written layout functions reached
+ * through an `if` chain, with two more `if` chains beside it — one for the named water landmark, one for
+ * the floor tint. Three branch points for what is really *one fact per zone*, so a fourth zone meant an
+ * edit in three places and every terrain-reading feature had to special-case zone ids.
+ *
+ * This is the `ZONE_LINKS` treatment (383) applied to ground: one descriptor per zone hanging off the
+ * ZONES table, and the dispatchers below become lookups. A fourth zone is a row.
+ *
+ * The per-zone functions above stay exported and unchanged — they're the descriptors' rules now, not
+ * dispatcher arms, so the tests and `arrival.ts` that import them directly need no edit.
+ */
+export interface ZoneTerrain {
+  /** (x,y) → tile kind over a cols×rows grid. Pure. */
+  tileAt: (x: number, y: number, cols: number, rows: number) => TileKind;
+  /** Multiplicative floor tint (NO_TINT = untinted). */
+  tint: number;
+  /**
+   * The tile a thirsty resident walks to, or absent for a waterless zone. Pinned to `tileAt` by the
+   * table-driven invariant in `cycle-108-terrain-table.test.ts` — the landmark used to be kept honest by
+   * a "kept in sync with" comment on each helper, which is not a mechanism.
+   */
+  water?: (cols: number, rows: number) => { tileX: number; tileY: number };
+}
+
+/** Each zone's ground. The landmark helpers take different argument subsets, so they're wrapped here
+ *  rather than edited — three exported functions with four importers each are not worth the churn. */
+export const ZONE_TERRAIN: Record<string, ZoneTerrain> = {
+  [BOWL_ID]: { tileAt: bowlTileAt, tint: NO_TINT, water: () => bowlPondTile() },
+  [GROVE_ID]: { tileAt: groveTileAt, tint: GROVE_TINT, water: (cols) => grovePondTile(cols) },
+  [FERNREACH_ID]: { tileAt: fernreachTileAt, tint: FERNREACH_TINT, water: (_cols, rows) => fernreachCreekTile(rows) },
+};
+
+/**
+ * The terrain layout for a zone (BACKLOG-294/399/445, tabled by 449). An unknown zone id still returns
+ * null → the caller bakes the plain grass map, the escape hatch that has kept the floor whole through
+ * three terrain additions.
  */
 export function zoneTileAt(zoneId: string, x: number, y: number, cols: number, rows: number): TileKind | null {
-  if (zoneId === GROVE_ID) return groveTileAt(x, y, cols, rows);
-  if (zoneId === FERNREACH_ID) return fernreachTileAt(x, y, cols, rows);
-  if (zoneId === BOWL_ID) return bowlTileAt(x, y, cols, rows);
-  return null;
+  return ZONE_TERRAIN[zoneId]?.tileAt(x, y, cols, rows) ?? null;
 }
 
 /**
@@ -254,10 +281,12 @@ export function zoneTileAt(zoneId: string, x: number, y: number, cols: number, r
  * two zones out of three. Each zone now answers for itself, off its own terrain.
  */
 export function zoneWaterTile(zoneId: string, cols: number, rows: number): { tileX: number; tileY: number } | null {
-  if (zoneId === GROVE_ID) return grovePondTile(cols);
-  if (zoneId === FERNREACH_ID) return fernreachCreekTile(rows);
-  if (zoneId === BOWL_ID) return bowlPondTile();
-  return null;
+  return ZONE_TERRAIN[zoneId]?.water?.(cols, rows) ?? null;
+}
+
+/** The multiplicative floor tint for a zone (BACKLOG-294/378): grove cool, Fernreach warm, bowl untinted. */
+export function zoneTint(zoneId: string): number {
+  return ZONE_TERRAIN[zoneId]?.tint ?? NO_TINT;
 }
 
 /**

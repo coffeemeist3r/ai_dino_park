@@ -30,6 +30,8 @@ export interface NPCContext {
   hungry?: boolean;
   /** If set, the name of the carnivore that just chased this dino — it greets rattled, naming it (BACKLOG-440). */
   rattled?: string;
+  /** The provider keeping this dino's zone fed — it names them, unprompted (BACKLOG-453). Never itself. */
+  provider?: { name: string; zoneName: string };
 }
 
 export interface Observation {
@@ -168,6 +170,27 @@ export function rattledAside(hunter: string, traits?: Personality): string {
   return ` …give me a sec, ${hunter} nearly had me.`;
 }
 
+/**
+ * Word of the provider (BACKLOG-453) — a dino names whoever keeps its zone's pantry full. Third person, on
+ * purpose: reputation is what others say when you aren't the one talking, so the caller never passes a
+ * dino its own name. Temperament-shaded like the thanks register (253/261/262) and the hunger tell (368):
+ * a prickly dino concedes it, a warm one makes a whole thing of it, an even-tempered one states it — the
+ * *fact* is identical in all three, only the voice moves.
+ *
+ * No article before `zoneName`: two of the three zone names carry their own ("The Grove"), and `the ${zoneName}`
+ * reads as "the The Grove" — the same trap `storesFedLine` documents. Leads with a space so it appends onto
+ * whatever register produced the base line.
+ */
+export function providerAside(providerName: string, zoneName: string, traits?: Personality): string {
+  if (traits && traits.agreeableness < PRICKLY_MAX) {
+    return ` …and ${zoneName} eats because of ${providerName}. there. I said it.`;
+  }
+  if (traits && traits.agreeableness > EFFUSIVE_MIN) {
+    return ` Oh — and you should know ${zoneName} eats because of ${providerName}! Nobody puts food away like they do.`;
+  }
+  return ` ${zoneName} eats because of ${providerName}, if you're keeping track.`;
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -195,6 +218,14 @@ export function cannedReply(ctx: NPCContext): Reply {
   // Rattled after the chase (BACKLOG-440): a prey fresh off a hunt names its chaser, composing onto whatever
   // the line already was (gratitude/wistful/fond/generic/hungry) — the food-web mirror of the hunger tell.
   if (ctx.rattled) reply = { ...reply, text: (reply.text + rattledAside(ctx.rattled, ctx.traits)).slice(0, 280) };
+  // Word of the provider (BACKLOG-453): the standing of whoever keeps this zone fed slips in last — it's
+  // the least urgent thing a dino has to say, and it composes onto every register above it.
+  if (ctx.provider) {
+    reply = {
+      ...reply,
+      text: (reply.text + providerAside(ctx.provider.name, ctx.provider.zoneName, ctx.traits)).slice(0, 320),
+    };
+  }
   return reply;
 }
 
