@@ -3379,3 +3379,14 @@ Backlog hygiene (routine 0). Moved the two closed bullets to `BACKLOG-archive.md
 heading: 448 (out of the Structure Track) and 452 (out of the cycle-106 lore section, which keeps 453 open).
 No section emptied. The Structure Track sits back at its X=4 target (449, 450, 454, 455) after this cycle's
 two seeds. phase → lore-pending; currentItem/structureItem cleared.
+
+## 2026-07-22 03:03 — cycle 108 — lore-smith — someone's name gets said
+
+Milestone 6's last unchecked lore arc, unblocked the moment 448 landed the `provider` role. Next-up
+**BACKLOG-453 — word of the provider**: a dino names the pantry-keeper in gossip/greeting ("the Fernreach
+eats because of Sunny"), so the park's first *economic* standing stops being a lens tag and becomes
+something the residents know. Two constraints handed to the Designer: the line belongs in the witness's
+mouth (a provider bragging about itself is a weaker beat — reputation is what others say), and it must be
+voiced per temperament (the 253/261/262 lesson: same fact, five voices). No new items seeded — the lore
+body is at 236 open, far past the 12-item drain floor. Idea Box empty. cycle 107 → 108; phase →
+designer-pending.
