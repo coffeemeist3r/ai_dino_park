@@ -3486,3 +3486,30 @@ after the bare `0xffffff` appeared three times. 9 files, under the ~10 estimate.
 build clean · vitest **1268/1268** (138 files, +30) · new e2e 4/4 · dev server 200 · web-llm boundary
 verified clean outside `game/src/ai/`. No save-shape change — both tracks ride state 448 already persists.
 phase → qa-pending.
+
+## 2026-07-22 04:35 — cycle 108 — qa — 19/20 criteria pass; one ticker string misses
+
+build clean · vitest **1268/1268** (138 files) · e2e **368/368 in 6.0m, zero failures, zero retries**. No
+parallel-load flake surfaced at all this run — including the two specs BACKLOG-456 tracks. Worth the
+Validator's eye: `mobile-minds` "long dialogs page GBA-style", the standing red catalogued as BACKLOG-430,
+**passed**. One green run isn't a fix, but the whole suite read clean.
+
+**Structure (449): APPROVE, 9/9.** The refactor is provably invisible to its consumers — the Coder shipped
+it with *zero* `WorldScene.ts` edits, not even the one import line the plan allowed, which is the strongest
+available evidence that the fourth-zone generalization is real rather than asserted. The four pre-existing
+terrain/pond test files are byte-unmodified in `git status` and green. QA accepted the codeplan's logged
+deviation (the pre-refactor sweep run was impossible) because the substitute coverage is equivalent: the
+sweep pins the dispatcher to each unchanged rule, and a second test pins the three landmarks to literal
+coordinates transcribed from the old source — a drift would have to corrupt both in the same direction.
+
+**Lore (453): REWORK, 10/11.** Everything that matters is correct — the cascade sits in the right rung, the
+no-self-praise rule holds in the pure layer, the rumor is one-hop, the three voices carry one fact, the
+listener's memory feeds its next greeting. But criterion 9 asks for a 🧺 ticker "naming speaker and
+listener" and the shipped line is `🧺 ${b} heard who keeps ${zone} fed` — listener and zone, no speaker.
+Both sibling rungs beside it (`🌿 … from ${a}`, `🗣️ … about ${a}`) name both, so it breaks the local
+convention *and* the written criterion, and the ticker is the keeper's only read on who is talking to whom.
+Cosmetic, one string — and the bar doesn't get lowered for cosmetic. A criterion the Designer wrote is a
+criterion the Coder owes. Rework loop 1 of 2 opens on the lore track only; the structure track is closed and
+must not be re-opened.
+
+phase → validator-pending.
