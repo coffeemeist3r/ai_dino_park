@@ -3716,3 +3716,13 @@ residents), the two migration-decision edits (destination + who-leaves, fallback
 identity pins hold), and `world/greenerground.ts` + the `crossDino` scarcity-tagged departure beat. 8 accept
 criteria for 450, 5 for 457. Coder sequences structure-first (scarcity.ts + reason field) then lore.
 phase → codeplan-pending.
+
+## 2026-07-23 03:30 — cycle 109 — coder — 450 + 457 shipped
+
+New pure `world/scarcity.ts` (zoneAppeal / richestNeighbor / poorestResidents) + `world/greenerground.ts`.
+WorldScene: migration destination now heads for the richest neighbour (scarcityMigrate/scarcityDestOf), the
+ambient who-leaves pick draws from the poorest zone (fallback tier only — grove-pull told/curious returns
+lifted out first, byte-identical), `migrationCross` gains optional `reason`, and crossDino fires the 457
+greener-ground beat on a scarcity-tagged move (guarded !homecoming). Hooks __zoneAppeal/__scarcityDest; 
+__maybeMigrate routed through scarcityMigrate. build clean · vitest 1278/1278 · e2e 372/372 (cycle-076/078
+untouched green, mobile-minds standing red passed) · web-llm boundary intact. phase → qa-pending.

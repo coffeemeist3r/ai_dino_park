@@ -101,7 +101,9 @@ import { spreadProviderWord } from '../world/providerword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
-import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, type FoodPile } from '../world/foodstore';
+import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
+import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
+import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -248,7 +250,7 @@ export class WorldScene extends Phaser.Scene {
    * migration starts so a multi-neighbour zone (the grove now borders both the bowl and the Fernreach) doesn't
    * oscillate its target mid-walk. Keyed by name, cleared on arrival. Transient (companion to `migrating`).
    */
-  private migrationCross: Record<string, { dest: string; edge: Edge }> = {};
+  private migrationCross: Record<string, { dest: string; edge: Edge; reason?: 'scarcity' }> = {};
   /** Each dino's settled, durable role (BACKLOG-032). Persisted; accrues via roleOf, never reverts to wanderer. */
   private roles: Record<string, Role> = {};
   private dialog!: DialogBox;
@@ -4080,10 +4082,16 @@ export class WorldScene extends Phaser.Scene {
     // chosen name, so a test can prove grove news pulls a curious newcomer over a coin-flip.
     (window as any).__maybeMigrate = () => {
       const d = this.pickMigrant();
-      if (d) this.startMigration(d);
+      if (d) this.scarcityMigrate(d); // BACKLOG-450: drive the exact production destination bias
       return d?.name ?? null;
     };
     (window as any).__migrating = () => [...this.migrating];
+    // BACKLOG-450: a zone's scarcity appeal (prosperity + banked food), and where its residents would head.
+    (window as any).__zoneAppeal = (zone: string) => this.zoneAppeal(zone);
+    (window as any).__scarcityDest = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.scarcityDestOf(zoneOf(this.dinoZones, d.name, BOWL_ID)) : null;
+    };
     // BACKLOG-340: run the homesick decision + crossing for a named dino deterministically; returns the
     // destination zone it set off toward (or null when it isn't homesick). Drives the exact production path.
     (window as any).__homesickMigrate = (name: string) => {
@@ -4159,13 +4167,31 @@ export class WorldScene extends Phaser.Scene {
     }
     // BACKLOG-341: a dino settled into its home zone resists the ambient wander (stays put this roll).
     if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true)) return;
-    // BACKLOG-378: pick which neighbour to head for. A single-neighbour zone has one choice; the grove now
-    // borders two (bowl + Fernreach), so the ambient roll spreads dinos across the whole chain over time.
-    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
-    const neighbors = zoneNeighbors(home).map((l) => l.to);
-    const dest = neighbors[Math.floor(Math.random() * neighbors.length)] ?? otherZone(home);
-    this.startMigration(d, dest);
+    // BACKLOG-450: mouths move toward plenty — head for the richest neighbour, not a coin flip.
+    this.scarcityMigrate(d);
     this.lastMigrationMs = Date.now();
+  }
+
+  /** The neighbour a scarcity-driven migrant heads for (BACKLOG-450): the most appealing (richest prosperity
+   *  + fullest pantry) of `home`'s neighbours, falling back to the primary link for an unlinked zone. */
+  private scarcityDestOf(home: string): string {
+    const neighbors = zoneNeighbors(home).map((l) => l.to);
+    return richestNeighbor(neighbors, (z) => this.zoneAppeal(z)) ?? otherZone(home);
+  }
+
+  /** A zone's appeal to a mouth seeking plenty (BACKLOG-450) — its prosperity index (428) + banked food (446),
+   *  the live reads folded by `world/scarcity.ts`. */
+  private zoneAppeal(zoneId: string): number {
+    return zoneAppeal(zoneProsperity(this.zoneSignals(zoneId)), foodPileTotal(this.foodStoreFor(zoneId)));
+  }
+
+  /** Begin a scarcity-biased crossing (BACKLOG-450/457): head for the richest neighbour, tagging it
+   *  `'scarcity'` only when that neighbour is genuinely richer than home — so 457's greener-ground beat fires
+   *  on a move toward plenty and not on a lateral/downhill shuffle. Shared by `maybeMigrate` + `__maybeMigrate`. */
+  private scarcityMigrate(d: Dino): void {
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const dest = this.scarcityDestOf(home);
+    this.startMigration(d, dest, this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined);
   }
 
   /**
@@ -4182,9 +4208,15 @@ export class WorldScene extends Phaser.Scene {
     const pull = (d: Dino) =>
       grovePull(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
     const told = candidates.filter((d) => pull(d) === 2);
+    if (told.length) return told[Math.floor(Math.random() * told.length)];
     const curious = candidates.filter((d) => pull(d) >= 1);
-    const pool = told.length ? told : curious.length ? curious : candidates;
-    return pool[Math.floor(Math.random() * pool.length)] ?? null;
+    if (curious.length) return curious[Math.floor(Math.random() * curious.length)];
+    // BACKLOG-450: no news or homesickness pulling anyone — scarcity decides. A resident of the poorest,
+    // emptiest-pantry zone is likeliest to walk out (want empties out); random among the equally-poor keeps
+    // *which* of them leaves varied. Touches only this fallback tier, so the grove-pull picks above (pinned by
+    // cycle-076/078) and the homesick pick are byte-identical.
+    const poor = poorestResidents(candidates, (d) => zoneOf(this.dinoZones, d.name, BOWL_ID), (z) => this.zoneAppeal(z));
+    return poor[Math.floor(Math.random() * poor.length)] ?? null;
   }
 
   /**
@@ -4192,12 +4224,12 @@ export class WorldScene extends Phaser.Scene {
    * migrating; the forceStep walk + `crossDino` do the rest. `dest` defaults to the home zone's primary
    * neighbour (`otherZone`), so the old single-neighbour callers (the `__startMigration` hook) are byte-identical.
    */
-  private startMigration(d: Dino, dest?: string): void {
+  private startMigration(d: Dino, dest?: string, reason?: 'scarcity'): void {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
     const to = dest ?? otherZone(home);
     const neighbors = zoneNeighbors(home);
     const link = neighbors.find((l) => l.to === to) ?? neighbors[0];
-    this.migrationCross[d.name] = { dest: to, edge: link?.edge ?? 'east' };
+    this.migrationCross[d.name] = { dest: to, edge: link?.edge ?? 'east', reason };
     this.migrating.add(d.name);
   }
 
@@ -4261,7 +4293,8 @@ export class WorldScene extends Phaser.Scene {
     // return, not an arrival. It resettles on the spot — the tenure reset above is overridden, because it
     // never stopped belonging here (341's settle-resist then keeps it put) — wears a 🏡, keeps the trace,
     // and the nearest resident still living there looks up and welcomes it home.
-    if (isHomecoming(this.roots, d.name, home, dest)) {
+    const homecoming = isHomecoming(this.roots, d.name, home, dest);
+    if (homecoming) {
       const zoneName = zoneById(dest).name;
       this.tenure = { ...this.tenure, [d.name]: SETTLE_ROLLS };
       this.memory = remember(this.memory, d.name, homecomingMemory(zoneName));
@@ -4278,6 +4311,16 @@ export class WorldScene extends Phaser.Scene {
         this.flashFeed(this.dinoByName(greeter)!, '👋');
         this.logEvent(welcomeEvent(greeter, d.name));
       }
+    }
+    // Left for greener ground (BACKLOG-457): a scarcity-tagged crossing that moved toward a richer neighbour
+    // files the reason it left + a 🍃 departure beat; the memory rides recall → the next greeting. Only a
+    // scarcity move qualifies (maybeMigrate/scarcityMigrate found dest richer than home) — a homesick or
+    // homecoming crossing, or a lateral shuffle, sets no reason, so it earns no greener-ground line.
+    if (cross?.reason === 'scarcity' && !homecoming) {
+      const leftName = zoneById(home).name;
+      this.memory = remember(this.memory, d.name, greenerGroundMemory(leftName));
+      this.showBubble(d, greenerGroundLine());
+      this.logEvent(`🍃 ${d.name} left ${leftName} for greener ground in ${zoneById(dest).name}`);
     }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
