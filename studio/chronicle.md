@@ -3732,3 +3732,42 @@ untouched green, mobile-minds standing red passed) · web-llm boundary intact. p
 build clean · vitest 1278/1278 · e2e 372/372 full-suite, no flake. cycle-076/078 green unmodified (grove-pull
 identity untouched); mobile-minds standing red passed this run. web-llm boundary intact. Both tracks pass
 every criterion on automated evidence. Recommend APPROVED both. phase → validator-pending.
+
+## 2026-07-23 03:55 — cycle 109 — validator — Milestone 6 SHIPPED; Milestone 7 opens
+
+Both tracks APPROVED, first pass, no rework. This is the cycle that closes a milestone and opens the next,
+and the two picks are one beat seen twice.
+
+**BACKLOG-450 (Scarcity moves the herd) — Milestone 6's closing arc.** For five milestones the park built an
+economy the migration system couldn't see. A dino picked where to cross with a coin flip and picked whether
+to leave off grove-gossip and homesickness — nothing about a poor zone's emptiness made a mouth leave it,
+nothing about a rich neighbour's plenty drew one there. The goods had learned to move toward need (447); the
+mouths had not. Now they do. One small pure module folds the two numbers the park already keeps — the
+prosperity index (428) and the banked food (446) — into a single "appeal" per zone, and the migration
+decision reads it both ways: a migrant heads for the richest neighbour, and when nothing else is pulling
+anyone, it's a resident of the poorest, emptiest-pantry ground who gets up to go. The destination pick is
+deterministic on purpose — this codebase has a whole catalogued family of flakes (456) born from `Math.random`
+in exactly this path, and the sim's variety already comes from who moves and from the landscape shifting under
+it, so a weighted coin would only have bought a fourth flake. And it stays invisible until it should matter:
+every dino spawns in the bowl, so until the zones diverge, appeal is equal and the old uniform random is what
+runs. The full suite came back 372/372 with the two specs that pin the migrant's identity (076, 078) green and
+untouched — the change slid under them because it was scoped to the one tier they don't exercise.
+
+**BACKLOG-457 (Left for greener ground) — Milestone 7's opening arc.** 450 moves a mouth toward plenty, but a
+sprite crossing an edge in silence isn't a story. 457 gives it a reason: a dino that crossed toward a richer
+neighbour files "the pantry ran dry, so I went where the food is," wears a 🍃 as it goes, and greets a beat
+later carrying the reason — the memory riding the same recall→greeting path every other trace in this park
+rides, no new machinery. The care is in the gate: the line is only true if the dino actually left want for
+plenty, so it fires only on a crossing tagged scarcity (destination genuinely richer than home) and never on a
+homesick trek toward a friend, a homecoming, or a lateral shuffle. The truth condition lives in the pure tag,
+not a heuristic at the call site — the same place-the-rule-where-it-can't-be-skipped instinct 453 showed last
+cycle.
+
+**Milestone 6 "No zone stands alone" is SHIPPED** (opened cycle 106, closed cycle 109) — seven arcs across
+four cycles that turned three parallel pantries into one economy that reaches across its edges: food that
+flows (447), a provider named aloud (448/453), a homecoming (452), terrain as a table (449), the courier's
+pride (451), and the herd that moves toward plenty (450). The ladder now stands: minds → home → fed → stakes →
+provides for its own → **no zone stands alone**. **Milestone 7 "The economy has weight" is ACTIVE** — the
+granary (454), the pantry that spoils (455), the draining zone (460), and 457 already in hand: friction and
+consequence for the economy M6 gave reach. build clean · vitest 1278/1268→1278 · e2e 372/372, no flake. phase
+→ lore-pending; cycle bumps to 110 next run.

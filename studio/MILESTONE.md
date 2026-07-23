@@ -9,7 +9,7 @@
 ## Current milestone
 
 **Milestone 7: The economy has weight**
-**Status:** DRAFTING (drafted cycle 109 — the Validator flips this to ACTIVE when Milestone 6 closes on 450)
+**Status:** ACTIVE (opened cycle 109)
 
 Milestone 6 made the three-zone chain one economy: food and mouths cross the edges. But that economy has no
 *friction* — banked food is immortal (a glut freezes forever), a zone's structures raise a prosperity number
@@ -20,7 +20,7 @@ scarcity migration). Plenty and want stop being static numbers and start *pushin
 reach; M7 gives it consequence.
 
 **Lore arcs:**
-- [ ] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
+- [x] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
 - [ ] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458)
 - [ ] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459)
 
@@ -30,28 +30,6 @@ reach; M7 gives it consequence.
 - [ ] The draining zone — a zone hollowed by scarcity migration reads as declining and its remaining residents lean harder to leave, giving an exodus momentum (BACKLOG-460)
 
 ---
-
-## Recently closed (pending Validator confirmation this cycle)
-
-**Milestone 6: No zone stands alone**
-**Status:** ACTIVE (opened cycle 106) — all 3 lore arcs + 3 of 4 structure arcs closed; **450 closes it this cycle**
-
-Milestone 5 taught a zone to store and spend for *its own*. Milestone 6 makes the three-zone chain
-one economy instead of three parallel ones: banked food ferried from plenty toward need, mouths that
-move toward the richer ground, a provider who emerges as the one keeping a pantry full, and the map
-generalized so a fourth zone is a table row, not three new code branches. You should be able to watch
-a dino carry a berry across the edge because the neighbour ran short — and feel the courier's pride in it.
-
-**Lore arcs:**
-- [x] The courier's pride — a dino that ferries banked food across a zone edge to a hungrier neighbour keeps a "carried food to <zone>" memory and greets the keeper a beat prouder for it (BACKLOG-451)
-- [x] Homecoming from the road — a dino that migrated away and later returns to its home zone resettles ("back where it belongs") and the residents it left greet its return (BACKLOG-452)
-- [x] Word of the provider — once a provider role emerges (448), a dino names it in gossip/greeting ("the Fernreach eats because of Sunny"); the pantry-keeper's standing surfaces in voice (BACKLOG-453 — cycle 108)
-
-**Structure arcs:**
-- [x] Food flows between zones — a crossing dino ferries banked food from a glutted zone toward a lighter neighbour, making the demand read (438) an actual mover (BACKLOG-447)
-- [ ] Scarcity moves the herd — the migration decision biases by prosperity index + food store, so mouths move toward plenty (BACKLOG-450)
-- [x] The provider role — the dino that banks the most harvest into its zone's store emerges with a persistent `provider` role tag (BACKLOG-448)
-- [x] One terrain per zone, as data — fold each zone's ground into a per-zone terrain descriptor on the ZONES table; a fourth zone becomes a row, not three branches (BACKLOG-449 — cycle 108)
 
 ### Format (use this when drafting)
 
@@ -69,6 +47,35 @@ a dino carry a berry across the edge because the neighbour ran short — and fee
 ```
 
 ## Shipped milestones
+
+### Milestone 6: No zone stands alone — SHIPPED cycle 109 (opened cycle 106)
+
+Milestone 5 taught a zone to store and spend for *its own*; Milestone 6 turned three parallel pantries into
+one economy that reaches across the edges. Banked food learned to *travel* — a crossing dino now ferries a
+unit from a glutted zone toward a lighter neighbour (447), the demand read (438) finally given a mover, and
+the carrier feels the pride of it (451). The map generalized so the three hand-written per-zone terrains
+became one `ZONE_TERRAIN` table, a fourth zone now a row and not three code branches (449), with the old
+"kept in sync" landmark comments replaced by a CI invariant. The park grew its first *economic* standing —
+the dino that banks the most harvest emerges as its zone's `provider` (448) — and then learned to *say* it:
+a resident names who keeps its ground fed, in gossip and greeting, temperament-shaded but factually the same
+in every voice (453). A migrant walking back into ground it once settled resettles on the spot and is
+welcomed home (452). And the last piece, the one that makes the chain feel like a single living economy
+rather than three that merely trade: **mouths now move toward plenty** — a scarcity-driven migrant heads for
+the richest neighbour and empties the poorest zone first, off the same prosperity index and food store the
+milestone spent five cycles building (450). Minds (M1) → a home ground (M2) → a ground that feeds them (M3) →
+stakes in the eating (M4) → a ground that provides for its own (M5) → **a ground that no longer stands alone**
+(M6). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] The courier's pride — a dino that ferries banked food across a zone edge to a hungrier neighbour keeps a "carried food to <zone>" memory and greets the keeper a beat prouder for it (BACKLOG-451 — cycle 106)
+- [x] Homecoming from the road — a dino that migrated away and later returns to its home zone resettles ("back where it belongs") and the residents it left greet its return (BACKLOG-452 — cycle 107)
+- [x] Word of the provider — once a provider role emerges (448), a dino names it in gossip/greeting ("the Fernreach eats because of Sunny"); the pantry-keeper's standing surfaces in voice (BACKLOG-453 — cycle 108)
+
+**Structure arcs:**
+- [x] Food flows between zones — a crossing dino ferries banked food from a glutted zone toward a lighter neighbour, making the demand read (438) an actual mover (BACKLOG-447 — cycle 106)
+- [x] The provider role — the dino that banks the most harvest into its zone's store emerges with a persistent `provider` role tag (BACKLOG-448 — cycle 107)
+- [x] One terrain per zone, as data — fold each zone's ground into a per-zone terrain descriptor on the ZONES table; a fourth zone becomes a row, not three branches (BACKLOG-449 — cycle 108)
+- [x] Scarcity moves the herd — the migration decision biases by prosperity index + food store, so mouths move toward plenty and want empties the poorest zone first (BACKLOG-450 — cycle 109)
 
 ### Milestone 5: No one goes hungry — SHIPPED cycle 105 (opened cycle 103)
 
