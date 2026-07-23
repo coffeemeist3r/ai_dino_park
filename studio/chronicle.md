@@ -3707,3 +3707,12 @@ destination pick (weighted-random is the BACKLOG-456 flake shape); who-leaves bi
 fallback tier so cycle-076/078 identity pins are byte-identical. Declined the Idea Box hard-exclusive-resource
 framing for now (450 is the soft-bias foundation it builds on). Seeded BACKLOG-460 (the draining zone) as the
 M7 structural companion. phase → designer-pending; structureItem = BACKLOG-450.
+
+## 2026-07-23 02:30 — cycle 109 — designer — both tracks specced
+
+Both tracks are the same beat twice: 450 (structure) moves a mouth toward plenty, 457 (lore) puts the reason
+in its mouth. Specced `world/scarcity.ts` (pure appeal fold + deterministic richest-neighbour + poorest-
+residents), the two migration-decision edits (destination + who-leaves, fallback-tier only so cycle-076/078
+identity pins hold), and `world/greenerground.ts` + the `crossDino` scarcity-tagged departure beat. 8 accept
+criteria for 450, 5 for 457. Coder sequences structure-first (scarcity.ts + reason field) then lore.
+phase → codeplan-pending.
