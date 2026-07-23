@@ -3697,3 +3697,13 @@ herd). Its three lore arcs are all shipped, so this fire does milestone-boundary
 ground) — the voice on 450's new mechanic, shipped through the same migration path. Seeded 457/458/459 as
 M7's lore arcs under the milestone-duty override (body far over the 12-item drain floor, but no queued lore
 item fits the scarcity-migration theme). Idea Box empty. cycle 108→109; phase → designer-pending.
+
+## 2026-07-23 02:10 — cycle 109 — structure-smith — BACKLOG-450 (scarcity moves the herd)
+
+Picked **450**, the last M6 structure arc. Both signals it reads already exist and are derived (prosperity
+428, food store 446); this cycle folds them into a per-zone "appeal" and biases the migration decision two
+ways — mouths cross toward the richer neighbour, and want empties the poorest zone first. Deterministic
+destination pick (weighted-random is the BACKLOG-456 flake shape); who-leaves bias touches only the ambient
+fallback tier so cycle-076/078 identity pins are byte-identical. Declined the Idea Box hard-exclusive-resource
+framing for now (450 is the soft-bias foundation it builds on). Seeded BACKLOG-460 (the draining zone) as the
+M7 structural companion. phase → designer-pending; structureItem = BACKLOG-450.

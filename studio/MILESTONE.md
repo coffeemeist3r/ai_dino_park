@@ -24,7 +24,10 @@ reach; M7 gives it consequence.
 - [ ] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458)
 - [ ] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459)
 
-**Structure arcs:** _(the Structure-smith fills these — 454 granary and 455 spoilage are queued and are the spine)_
+**Structure arcs:**
+- [ ] The granary — a zone that has raised enough landmarks puts up a granary, and a standing granary lifts that zone's food cap, so building finally feeds the food economy (BACKLOG-454)
+- [ ] A pantry that spoils — banked food at/near cap slowly decays across in-game days, so a hoard costs something and the flows stay live (BACKLOG-455)
+- [ ] The draining zone — a zone hollowed by scarcity migration reads as declining and its remaining residents lean harder to leave, giving an exodus momentum (BACKLOG-460)
 
 ---
 
