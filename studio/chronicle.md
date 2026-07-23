@@ -3771,3 +3771,15 @@ provides for its own → **no zone stands alone**. **Milestone 7 "The economy ha
 granary (454), the pantry that spoils (455), the draining zone (460), and 457 already in hand: friction and
 consequence for the economy M6 gave reach. build clean · vitest 1278/1268→1278 · e2e 372/372, no flake. phase
 → lore-pending; cycle bumps to 110 next run.
+
+## 2026-07-23 04:00 — cycle 109-art — artist — no-op (nothing renderable to draw)
+
+Third no-op running, same structural reason: the open `[art]` queue is empty (the two grep hits are `[infra]`
+147 and `[core]` 212 merely *naming* [art] in prose, not art-tagged work), and neither shipped beat gives the
+Artist a subject. 450 is pure migration-decision logic with zero player-visible art; 457's departure beat is a
+🍃 bubble reusing the existing emoji-glyph path plus a ticker *text* line — `bake.ts` `hasArt` gains nothing
+from either. No stash-ahead target: nothing standalone-renderable landed. Cast and ground remain fully drawn
+(five species, four tile kinds, props, keepers, dialog frame). The recurring no-op is still worth a smith's
+eye — the queue is empty because nothing is seeding it, not because the art is finished forever; a sixth
+species or a zone-landmark prop would give the Artist a subject again. build clean; vitest 1278/1278.
+lastFire.artist updated; phase stays lore-pending.
