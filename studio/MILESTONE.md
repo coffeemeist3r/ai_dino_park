@@ -8,8 +8,30 @@
 
 ## Current milestone
 
+**Milestone 7: The economy has weight**
+**Status:** DRAFTING (drafted cycle 109 — the Validator flips this to ACTIVE when Milestone 6 closes on 450)
+
+Milestone 6 made the three-zone chain one economy: food and mouths cross the edges. But that economy has no
+*friction* — banked food is immortal (a glut freezes forever), a zone's structures raise a prosperity number
+and nothing else (building and the pantry never touch), and a mouth that leaves does it silently. Milestone 7
+gives the economy weight and voice: a hoard spoils if it just sits (455), a zone that builds earns a bigger
+pantry (454), and a dino that leaves a poor ground for a richer one can **say why** (457, riding 450's
+scarcity migration). Plenty and want stop being static numbers and start *pushing*. M6 gave the economy
+reach; M7 gives it consequence.
+
+**Lore arcs:**
+- [ ] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
+- [ ] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458)
+- [ ] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459)
+
+**Structure arcs:** _(the Structure-smith fills these — 454 granary and 455 spoilage are queued and are the spine)_
+
+---
+
+## Recently closed (pending Validator confirmation this cycle)
+
 **Milestone 6: No zone stands alone**
-**Status:** ACTIVE (opened cycle 106)
+**Status:** ACTIVE (opened cycle 106) — all 3 lore arcs + 3 of 4 structure arcs closed; **450 closes it this cycle**
 
 Milestone 5 taught a zone to store and spend for *its own*. Milestone 6 makes the three-zone chain
 one economy instead of three parallel ones: banked food ferried from plenty toward need, mouths that

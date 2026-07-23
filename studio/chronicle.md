@@ -3688,3 +3688,12 @@ Structure-smith brainstorms 1–3 new structural items before picking. Its pick 
 the last arc standing between Milestone 6 and its headline.
 
 vitest 1268/1268 · tree clean · phase → lore-pending; currentItem/structureItem already cleared at verdict.
+
+## 2026-07-23 02:00 — cycle 109 — lore-smith — M6 closing, M7 opening
+
+Milestone 6 ("No zone stands alone") closes this cycle on its last structure arc (450, scarcity moves the
+herd). Its three lore arcs are all shipped, so this fire does milestone-boundary work: drafted **Milestone 7
+("The economy has weight")** in MILESTONE.md and took its opening lore beat, BACKLOG-457 (left for greener
+ground) — the voice on 450's new mechanic, shipped through the same migration path. Seeded 457/458/459 as
+M7's lore arcs under the milestone-duty override (body far over the 12-item drain floor, but no queued lore
+item fits the scarcity-migration theme). Idea Box empty. cycle 108→109; phase → designer-pending.

@@ -735,6 +735,18 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
+## Cycle 109 lore additions — the herd has reasons (2026-07-23)
+
+> Milestone 6 closes this cycle on its last structure arc (450, scarcity moves the herd). Its three lore
+> arcs are all shipped, so cycle 109 does milestone-boundary work: it opens **Milestone 7 ("The economy has
+> weight")** and takes M7's first lore beat, which rides on 450's brand-new mechanic. Seeded under the
+> milestone-duty override (the body sits far over the 12-item drain floor, but no queued lore item fits the
+> scarcity-migration theme) — the same call cycles 106–108 made.
+
+- [ ] BACKLOG-457 [emergent] Left for greener ground — a dino whose migration carried it toward a *richer* neighbour (450) files a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat at the crossing, and the trace rides `recall` into its next greeting. The voice on 450's mechanic; a scarcity move stops being a silently-repositioned sprite and becomes a choice with a reason. Builds on 450 / 452 / 011 / 019.
+- [ ] BACKLOG-458 [emergent] Word of plenty — a dino that *hears* (gossip, 019) a neighbour zone is thriving is primed toward migrating there, so scarcity-migration gains a hearsay pull the way grove-news (345) pulls a never-been newcomer across; plenty travels by talk before a body follows it. Builds on 450 / 457 / 019 / 345.
+- [ ] BACKLOG-459 [social] Come for the plenty — a scarcity migrant arriving in the richer zone is met by a resident with a wry welcome ("come for the food, have you?") + a small bond, so arriving-for-plenty reads as a social moment, not just a sprite that reappeared on the far edge. Builds on 457 / 452 / 366.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
