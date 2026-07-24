@@ -28,6 +28,7 @@ const validV2: SaveData = {
   cairns: [],
   shelters: [],
   thatches: [],
+  granaries: [],
   groveVisited: [],
   pondSeen: [],
   plot: null,

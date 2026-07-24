@@ -22,6 +22,7 @@ const sample: SaveData = {
   cairns: [],
   shelters: [],
   thatches: [],
+  granaries: [],
   groveVisited: [],
   pondSeen: [],
   plot: null,
@@ -189,6 +190,15 @@ describe('saveGame', () => {
     expect(deserialize(JSON.stringify({ ...sample, tenure: 5 }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, thatches: [{ tileX: 'x', tileY: 1 }] }))).toBeNull();
     expect(deserialize(JSON.stringify({ ...sample, thatches: 'nope' }))).toBeNull();
+  });
+
+  it('round-trips granaries, defaults them absent, rejects malformed (BACKLOG-454)', () => {
+    const withGranary: SaveData = { ...sample, granaries: [{ tileX: 5, tileY: 6, zone: 'fernreach' }] };
+    expect(deserialize(serialize(withGranary))).toEqual(withGranary);
+    const old = JSON.stringify({ version: SAVE_VERSION, time: { day: 1, hour: 8, minute: 0 }, player: { x: 1, y: 2 } });
+    expect(deserialize(old)!.granaries).toEqual([]);
+    expect(deserialize(JSON.stringify({ ...sample, granaries: [{ tileX: 'x', tileY: 1 }] }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, granaries: 'nope' }))).toBeNull();
   });
 
   it('round-trips roots + a foodBanked tally (BACKLOG-452 / 448)', () => {

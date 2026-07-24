@@ -45,6 +45,8 @@ export interface ZoneMapEntry {
   /** Banked food (BACKLOG-446) — the zone's food stockpile as a glyph line (`🍓 2`), '' when empty so no
    *  banked line shows; older callers/tests omit the pile and read ''. */
   banked: string;
+  /** Has this zone raised a granary (BACKLOG-454)? Shows a 🏛️ marker; false when unknown (older callers). */
+  granary: boolean;
 }
 
 /**
@@ -94,6 +96,7 @@ export function zoneMapModel(
   tiers: Record<string, ProsperityTier> = {},
   harvests: Record<string, number> = {},
   foodPiles: Record<string, FoodPile> = {},
+  granaryZones: readonly string[] = [],
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -104,6 +107,7 @@ export function zoneMapModel(
     harvested: harvests[id] ?? 0, // BACKLOG-433: the zone's own farming tally (absent → 0)
     want: zoneWant(id, harvests), // BACKLOG-438: what it wants from a neighbour (null until a neighbour has a surplus)
     banked: foodPileLine(foodPiles[id] ?? {}), // BACKLOG-446: the zone's banked food (absent → '')
+    granary: granaryZones.includes(id), // BACKLOG-454: a raised granary shows a 🏛️ marker
   }));
 }
 

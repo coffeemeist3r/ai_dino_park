@@ -3813,3 +3813,14 @@ rung in the gossip cascade + a plenty tier in `pickMigrant` (after grove, before
 dest. **454:** new pure `granary.ts` (recipe/gate/food-cap) + optional cap threaded through `foodstore.ts` with a
 default (byte-identical callers) + a fourth structure array in WorldScene mirroring thatches + `saveGame`/lens wiring.
 Reuse audited: gossip marks, memory, zones, resource spend pattern, structure sprite pattern. ~4 + ~7 files. phase → coder-pending.
+
+## 2026-07-24 03:30 — cycle 110 — coder — 458 + 454 built
+
+Both tracks shipped green. **454 (granary):** new pure `granary.ts` (gate/recipe/food-cap lift); optional cap threaded
+through `foodstore` with a default (every old caller byte-identical); a fourth structure array in WorldScene mirroring
+thatches, gated so a zone with ≥3 landmarks saves toward a granary then resumes bias builds; food cap 6→9 wired at
+harvest + courier carry; 🏛️ on the map lens; additive `granaries` save field. **458 (word of plenty):** new pure
+`plentyword.ts` seeded for thriving-zone residents, spread on the gossip cascade below provider-word, consumed by a
+plenty tier in `pickMigrant` (after grove — 076/078 safe) + a named-neighbour destination. build clean · vitest
+1295/1295 · e2e 377/377 (updated cycle-074-shelter to 454's intended behaviour: the bowl saves for a granary after
+3 cairns instead of a 4th). phase → qa-pending.

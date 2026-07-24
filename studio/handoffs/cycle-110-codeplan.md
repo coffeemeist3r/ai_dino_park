@@ -93,3 +93,22 @@
 ## Cross-track order
 Land the structure track's pure modules + foodstore threading + WorldScene build/save/cap wiring first, then
 the lore track's migration/gossip wiring. Different WorldScene methods; no shared edit region.
+
+---
+
+## Shipped (Coder)
+
+**Structure track — BACKLOG-454 (granary):**
+- Created `game/src/world/granary.ts` + `granary.test.ts` (7 unit tests).
+- `game/src/world/foodstore.ts`: threaded an optional cap (default `FOOD_STOCKPILE_CAP`) through `foodAtCap`/`bankFood`/`pickFoodCarry`; extended `foodstore.test.ts` (raised-cap banking + carry-accept).
+- `game/src/scenes/WorldScene.ts`: `granaries`/`granarySprites` fields; `buildOnGather` (extracted the on-gather build decision; granary gate before bias landmark); `drawGranary`/`placeGranary`; `baseLandmarks`/`hasGranary`/`granaryZones` helpers; granary in `zoneSignals` structures + `applyZoneVisibility` + save/restore; food-cap threaded at `harvest` + courier carry in `crossDino`; dev hooks `__granaries`/`__hasGranary`/`__foodCap`/`__seedGranaryReady`/`__runBuild`/`__bankFood`.
+- `game/src/world/saveGame.ts`: additive `granaries` field (validated like `thatches`).
+- `game/src/ui/lenses.ts`: `ZoneMapEntry.granary` + `granaryZones` param; WorldScene draws a 🏛️ marker.
+
+**Lore track — BACKLOG-458 (word of plenty):**
+- Created `game/src/world/plentyword.ts` + `plentyword.test.ts` (7 unit tests).
+- `game/src/scenes/WorldScene.ts`: `seedPlentyWord` (thriving-zone residents seeded on the migrate cadence); plenty rung in the gossip cascade (below provider, above generic); `plentyDestOf`; a plenty tier in `pickMigrant` (after grove, before poorest — 076/078 untouched); named-neighbour destination in `scarcityMigrate`; dev hooks `__spreadPlentyWord`/`__plentyTarget`/`__seedPlentyWord`.
+
+**Deviations:** none material. Extracted the inline gather-build block into `buildOnGather` (so the granary decision is testable via `__runBuild`) — a refactor, byte-identical for the pre-454 path. Updated `tests/e2e/cycle-074-shelter.spec.ts` to reflect 454's intended change (the bowl now saves for a granary after 3 landmarks instead of stacking a 4th cairn) — not a disabled test, a corrected expectation. Two save-shape unit tests + one save-version test gained the additive `granaries: []` field.
+
+**Build + tests:** `npm run build` clean · `npx vitest run` 1295/1295 green · `npx playwright test` 377/377 green (cycle-074 fixed to match 454).

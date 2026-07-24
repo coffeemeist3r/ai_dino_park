@@ -22,17 +22,22 @@ export type FoodPile = Partial<Record<string, number>>;
  */
 export const FOOD_STOCKPILE_CAP = 6;
 
-/** Is this food id's pile at (or over) the per-id cap — i.e. banking more of it would stall? */
-export function foodAtCap(pile: FoodPile, id: string): boolean {
-  return (pile[id] ?? 0) >= FOOD_STOCKPILE_CAP;
+/**
+ * Is this food id's pile at (or over) the cap — i.e. banking more of it would stall? `cap` defaults to the
+ * flat `FOOD_STOCKPILE_CAP` (every existing caller is byte-identical); a zone with a granary (BACKLOG-454)
+ * passes a raised `granaryFoodCap`, so a built-up zone can hold a bigger surplus.
+ */
+export function foodAtCap(pile: FoodPile, id: string, cap: number = FOOD_STOCKPILE_CAP): boolean {
+  return (pile[id] ?? 0) >= cap;
 }
 
 /**
  * Bank one harvested unit of `id` into the zone's food pile. Pure — returns a new map, never mutates `pile`.
- * Clamps at FOOD_STOCKPILE_CAP: an id already at cap returns the pile unchanged (twin of bankResource).
+ * Clamps at `cap` (default `FOOD_STOCKPILE_CAP`; a granary zone passes a higher one, BACKLOG-454): an id
+ * already at cap returns the pile unchanged (twin of bankResource).
  */
-export function bankFood(pile: FoodPile, id: string): FoodPile {
-  if (foodAtCap(pile, id)) return pile;
+export function bankFood(pile: FoodPile, id: string, cap: number = FOOD_STOCKPILE_CAP): FoodPile {
+  if (foodAtCap(pile, id, cap)) return pile;
   return { ...pile, [id]: (pile[id] ?? 0) + 1 };
 }
 
@@ -102,9 +107,14 @@ export function storesFedMemory(zoneName: string): string {
  *  3. `null` when nothing qualifies (src empty, dest fuller of every src id, or all dest-capped) — never lossy.
  * Pure, deterministic: the FOODS-order filter + stable count sort break a tie exactly like `pickCarry`.
  */
-export function pickFoodCarry(src: FoodPile, dest: FoodPile, wantId?: string): string | null {
+export function pickFoodCarry(
+  src: FoodPile,
+  dest: FoodPile,
+  wantId?: string,
+  destCap: number = FOOD_STOCKPILE_CAP, // BACKLOG-454: a granary'd dest accepts up to its raised cap
+): string | null {
   const flows = (id: string) =>
-    (src[id] ?? 0) > 0 && !foodAtCap(dest, id) && (dest[id] ?? 0) < (src[id] ?? 0);
+    (src[id] ?? 0) > 0 && !foodAtCap(dest, id, destCap) && (dest[id] ?? 0) < (src[id] ?? 0);
   if (wantId && flows(wantId)) return wantId;
   const stocked = FOODS.filter((f) => flows(f.id)).map((f) => f.id);
   return [...stocked].sort((a, b) => (src[b] ?? 0) - (src[a] ?? 0))[0] ?? null;

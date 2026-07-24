@@ -31,6 +31,22 @@ describe('food stockpile (BACKLOG-446)', () => {
     expect(bankFood(full, 'berries')).toBe(full); // unchanged reference — no-op
   });
 
+  it('honours a raised cap (BACKLOG-454 granary): a pile at the flat cap banks up to the higher one', () => {
+    const cap = FOOD_STOCKPILE_CAP + 3; // a granary'd zone
+    const atFlat: FoodPile = { berries: FOOD_STOCKPILE_CAP };
+    expect(foodAtCap(atFlat, 'berries', cap)).toBe(false); // room again under the granary
+    expect(bankFood(atFlat, 'berries', cap)).toEqual({ berries: FOOD_STOCKPILE_CAP + 1 });
+    const atRaised: FoodPile = { berries: cap };
+    expect(foodAtCap(atRaised, 'berries', cap)).toBe(true);
+    expect(bankFood(atRaised, 'berries', cap)).toBe(atRaised); // no-op at the raised cap
+  });
+
+  it('pickFoodCarry accepts into a dest below its raised cap (BACKLOG-454)', () => {
+    // dest at the flat cap normally blocks; under a granary cap it can still take the ferried unit.
+    expect(pickFoodCarry({ berries: FOOD_STOCKPILE_CAP + 2 }, { berries: FOOD_STOCKPILE_CAP })).toBeNull();
+    expect(pickFoodCarry({ berries: FOOD_STOCKPILE_CAP + 2 }, { berries: FOOD_STOCKPILE_CAP }, undefined, FOOD_STOCKPILE_CAP + 3)).toBe('berries');
+  });
+
   it('totals across ids', () => {
     expect(foodPileTotal({})).toBe(0);
     expect(foodPileTotal({ berries: 2, greens: 3 })).toBe(5);

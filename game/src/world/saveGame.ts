@@ -99,6 +99,8 @@ export interface SaveData {
   shelters?: { tileX: number; tileY: number; zone?: string }[];
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's landmark. Additive; absent → []. Mirrors `shelters`. */
   thatches?: { tileX: number; tileY: number; zone?: string }[];
+  /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Additive; absent → []. Mirrors `thatches`. */
+  granaries?: { tileX: number; tileY: number; zone?: string }[];
   /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
   groveVisited?: string[];
   /** Dinos that have ever seen the grove pond (BACKLOG-359). Additive; absent → []. Gates the once-ever pond-sight beat. */
@@ -427,6 +429,19 @@ export function deserialize(json: string): SaveData | null {
     thatches = o.thatches as { tileX: number; tileY: number; zone?: string }[];
   }
 
+  // granaries is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors thatches. (BACKLOG-454)
+  let granaries: { tileX: number; tileY: number; zone?: string }[] = [];
+  if (o.granaries !== undefined) {
+    if (!Array.isArray(o.granaries)) return null;
+    for (const g of o.granaries) {
+      if (typeof g !== 'object' || g === null) return null;
+      const r = g as Record<string, unknown>;
+      if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+      if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+    }
+    granaries = o.granaries as { tileX: number; tileY: number; zone?: string }[];
+  }
+
   // groveVisited is additive — absent in older saves (default []); a flat list of dino names. (BACKLOG-339)
   let groveVisited: string[] = [];
   if (o.groveVisited !== undefined) {
@@ -542,6 +557,7 @@ export function deserialize(json: string): SaveData | null {
     cairns,
     shelters,
     thatches,
+    granaries,
     groveVisited,
     pondSeen,
     plot,

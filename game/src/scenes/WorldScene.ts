@@ -104,6 +104,8 @@ import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobble
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
+import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
+import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -409,6 +411,9 @@ export class WorldScene extends Phaser.Scene {
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's own landmark. Persisted; absent → []. Zone-scoped (308). */
   private thatches: { tileX: number; tileY: number; zone: string }[] = [];
   private thatchSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+  /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Persisted; absent → []. Zone-scoped (308). */
+  private granaries: { tileX: number; tileY: number; zone: string }[] = [];
+  private granarySprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Dinos that have ever set foot in the grove (BACKLOG-339). Persisted; absent → []. Gates the once-ever arrival beat. */
   private groveVisited: string[] = [];
   /** Dinos pausing to look around on a first grove arrival (BACKLOG-339) — transient, one forceStep hold. */
@@ -943,6 +948,28 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__thatchIsArt = () =>
       this.thatchSprites.length > 0 && this.thatchSprites[0] instanceof Phaser.GameObjects.Image;
     (window as any).__zoneStructure = (z?: string) => zoneStructure(z ?? this.zoneId); // BACKLOG-377: the zone's landmark type
+    // BACKLOG-454: granaries, whether a zone has one, and its live food cap (6, or 9 with a granary).
+    (window as any).__granaries = () => this.granaries.map((g) => ({ ...g }));
+    (window as any).__hasGranary = (z?: string) => this.hasGranary(z ?? this.zoneId);
+    (window as any).__foodCap = (z?: string) => granaryFoodCap(this.hasGranary(z ?? this.zoneId));
+    // dev-only: seed a zone's pile + landmark count so the granary build is reachable in a test without
+    // gathering it out. Adds `n` cairns tagged to the zone and stocks the pile to the granary recipe.
+    (window as any).__seedGranaryReady = (zone: string, landmarks = GRANARY_AFTER_STRUCTURES) => {
+      for (let i = 0; i < landmarks; i++) this.cairns.push({ tileX: 1 + i, tileY: 1, zone });
+      this.stockpileByZone[zone] = { ...(this.pileFor(zone)), branch: 3, stone: 3 };
+    };
+    // dev-only: run the exact on-gather build decision for a named dino's zone (granary gate vs bias landmark).
+    (window as any).__runBuild = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (d) this.buildOnGather(d);
+    };
+    // dev-only: bank one unit of `food` into a zone's store at that zone's live cap (BACKLOG-454) — returns
+    // the pile total after, so a test can prove a granary'd zone banks past the flat cap. Mirrors the harvest bank.
+    (window as any).__bankFood = (zone: string, food: string) => {
+      const cap = granaryFoodCap(this.hasGranary(zone));
+      this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), food, cap);
+      return foodPileTotal(this.foodStoreFor(zone));
+    };
     // BACKLOG-308: which world-object sprites are currently drawn — the zone-scoping render check.
     (window as any).__objVisible = () => ({
       resource: this.resourceSpriteByZone[this.zoneId]?.visible ?? false,
@@ -1093,8 +1120,10 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-448: the share doesn't put itself away. The nearest resident of the zone hauls it to the
     // store and is credited for it — one of the two honest sources the `provider` role reads (the other is
     // the 447 carry). A pile already at cap banks nothing, so nobody is credited for hauling nothing.
-    const banked = !foodAtCap(this.foodStoreFor(zone), crop.food);
-    this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food);
+    // BACKLOG-454: a standing granary lifts this zone's per-id cap, so a built-up ground banks a bigger surplus.
+    const cap = granaryFoodCap(this.hasGranary(zone));
+    const banked = !foodAtCap(this.foodStoreFor(zone), crop.food, cap);
+    this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food, cap);
     if (banked) this.creditHauler(zone);
     this.logEvent(`${crop.ripe} you harvested the crop`);
     this.refreshPlot();
@@ -1489,15 +1518,7 @@ export class WorldScene extends Phaser.Scene {
     // 🛖 lean-tos (315), the frond-rich Fernreach weaves 🥻 thatches (417). Each zone builds one landmark
     // type, so all three skylines diverge. `buildStructureFor` spends whatever `structureRecipe(zone)`
     // costs (cairn/shelter math byte-identical), then place by kind — else the pile is still climbing.
-    const built = buildStructureFor(this.pileFor(zone), zone);
-    if (built) {
-      this.stockpileByZone[zone] = built;
-      const kind = zoneStructure(zone);
-      if (kind === 'thatch') this.placeThatch(this.tileOf(taker), taker);
-      else if (kind === 'shelter') this.placeShelter(this.tileOf(taker), taker);
-      else this.placeCairn(this.tileOf(taker), taker);
-      this.refreshPlaque();
-    }
+    this.buildOnGather(taker);
     void this.saveGame();
   }
 
@@ -1571,6 +1592,73 @@ export class WorldScene extends Phaser.Scene {
     this.flashFeed(crafter, THATCH_GLYPH);
     this.memory = remember(this.memory, crafter.name, 'wove a frond thatch from gathered fronds');
     this.logEvent(`${THATCH_GLYPH} ${crafter.name} wove a frond thatch`);
+  }
+
+  /**
+   * The build decision on a fresh gather (BACKLOG-377/417/454): a zone that has raised enough base landmarks
+   * and has no granary yet *saves toward one* — it stops auto-draining its pile on bias landmarks so the pile
+   * can climb to GRANARY_RECIPE, then puts up the granary (a food-cap lift). Once it stands, the zone resumes
+   * building its bias landmark. Mirrors the old SHELTER_AFTER_CAIRNS escalation seam: a cheap auto-build can't
+   * be allowed to drain the pile below the richer recipe it's meant to reach.
+   */
+  private buildOnGather(taker: Dino): void {
+    const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
+    if (this.baseLandmarks(zone) >= GRANARY_AFTER_STRUCTURES && !this.hasGranary(zone)) {
+      if (canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false)) {
+        const spent = buildGranary(this.pileFor(zone));
+        if (spent) {
+          this.stockpileByZone[zone] = spent;
+          this.placeGranary(this.tileOf(taker), taker);
+          this.refreshPlaque();
+        }
+      }
+      return;
+    }
+    const built = buildStructureFor(this.pileFor(zone), zone);
+    if (built) {
+      this.stockpileByZone[zone] = built;
+      const kind = zoneStructure(zone);
+      if (kind === 'thatch') this.placeThatch(this.tileOf(taker), taker);
+      else if (kind === 'shelter') this.placeShelter(this.tileOf(taker), taker);
+      else this.placeCairn(this.tileOf(taker), taker);
+      this.refreshPlaque();
+    }
+  }
+
+  /** Draw a granary at a tile (BACKLOG-454). Mirror of drawThatch — the 🏛️ glyph (no rig yet, graceful
+   *  fallback). Shows only in its own zone (308). */
+  private drawGranary(g: { tileX: number; tileY: number; zone: string }): void {
+    const px = g.tileX * TILE + TILE / 2;
+    const py = g.tileY * TILE + TILE / 2;
+    const sprite = this.add.text(px, py, GRANARY_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(g.zone === this.zoneId);
+    this.granarySprites.push(sprite);
+  }
+
+  /** Record + render a freshly raised granary and mark the moment on the builder (BACKLOG-454). */
+  private placeGranary(tile: { tileX: number; tileY: number }, crafter: Dino): void {
+    const g = { ...tile, zone: zoneOf(this.dinoZones, crafter.name, BOWL_ID) };
+    this.granaries.push(g);
+    this.drawGranary(g);
+    this.flashFeed(crafter, GRANARY_GLYPH);
+    this.memory = remember(this.memory, crafter.name, 'raised a granary — the zone can hold a bigger surplus now');
+    this.logEvent(`${GRANARY_GLYPH} ${crafter.name} raised a granary in ${zoneById(g.zone).name}`);
+  }
+
+  /** Base landmarks a zone has raised (cairns + lean-tos + thatches) — the granary gate counts these, not
+   *  granaries themselves (BACKLOG-454). */
+  private baseLandmarks(zone: string): number {
+    return [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === zone).length;
+  }
+
+  /** Does this zone have a standing granary (BACKLOG-454)? One per zone. */
+  private hasGranary(zone: string): boolean {
+    return this.granaries.some((g) => g.zone === zone);
+  }
+
+  /** The zones that currently have a granary (BACKLOG-454) — the lens marker + the raised food cap read off this. */
+  private granaryZones(): string[] {
+    return [...new Set(this.granaries.map((g) => g.zone))];
   }
 
   /** Absolute in-game minute (since Day 1 00:00) — sky-event timing reads the same clock e2e advances. */
@@ -2378,7 +2466,7 @@ export class WorldScene extends Phaser.Scene {
   private zoneSignals(id: string): ZoneSignals {
     const pile = this.pileFor(id);
     const stockpile = Object.values(pile).reduce((sum, n) => sum + (n ?? 0), 0);
-    const structures = [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === id).length;
+    const structures = [...this.cairns, ...this.shelters, ...this.thatches, ...this.granaries].filter((s) => s.zone === id).length;
     const heads = zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID)[id] ?? 0;
     const harvested = this.harvestedByZone[id] ?? 0;
     return { stockpile, structures, heads, harvested };
@@ -2400,6 +2488,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneTiers(),
       this.harvestedByZone, // BACKLOG-433: each zone's farming tally, read on its own on the lens
       this.foodPileByZone, // BACKLOG-446: each zone's banked food, read as a glyph line on the lens
+      this.granaryZones(), // BACKLOG-454: zones that have raised a granary (🏛️ marker + a raised food cap)
     );
   }
 
@@ -2436,7 +2525,8 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
       let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
-      if (e.banked) txt += `\n${e.banked}`; // BACKLOG-446: the zone's banked food, only when it has some
+      if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
+      else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
       this.mapLabels[i]?.setText(txt).setPosition(x + boxW / 2, y + boxH / 2 - 5);
     });
     // A roster bigger than ZONES can't happen (labels are per-zone), but hide any spare label anyway.
@@ -2525,6 +2615,16 @@ export class WorldScene extends Phaser.Scene {
       this.memory = p.store;
       return p.rumor;
     };
+    // BACKLOG-458: word of plenty — spread it (applies to the store), read a dino's primed target, or seed
+    // a thriving zone's residents with first-hand plenty word.
+    (window as any).__spreadPlentyWord = (a: string, b: string) => {
+      const p = spreadPlentyWord(this.memory, a, b);
+      this.memory = p.store;
+      return p.rumor;
+    };
+    (window as any).__plentyTarget = (name: string) =>
+      plentyTarget(recall(this.memory, name), zoneOf(this.dinoZones, name, BOWL_ID));
+    (window as any).__seedPlentyWord = () => this.seedPlentyWord();
     // dev-only: pond-swappers (BACKLOG-346) — two grove-visited dinos trade pond notes (applies it).
     (window as any).__pondSwap = (a: string, b: string) => this.pondSwapBeat(a, b);
     // dev-only: word of the warmth (BACKLOG-223) — a warmed speaker leads with the good news.
@@ -3250,13 +3350,18 @@ export class WorldScene extends Phaser.Scene {
       const pword = grove.rumor
         ? grove
         : spreadProviderWord(this.memory, a.name, b.name, this.providerFor(zone), zoneById(zone).name);
-      const gossip = pword.rumor ? pword : spreadGossip(this.memory, a.name, b.name);
+      // Word of plenty (BACKLOG-458): a dino carrying first-hand word of a thriving zone lets it slip — below
+      // provider-word (who keeps THIS ground fed beats news of another), above generic gossip (a thriving
+      // ground beats an ordinary rumor). The listener is then primed to migrate toward that zone.
+      const plenty = pword.rumor ? pword : spreadPlentyWord(this.memory, a.name, b.name);
+      const gossip = plenty.rumor ? plenty : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
       if (relief.rumor) this.logEvent(`😌 ${b.name} heard the all-clear from ${a.name}`);
       else if (warm.rumor) this.logEvent(`😊 ${b.name} heard the keeper warmed ${a.name}`);
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
       else if (grove.rumor) this.logEvent(`🌿 ${b.name} heard about the grove from ${a.name}`);
       else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`);
+      else if (plenty.rumor) this.logEvent(`🌾 ${b.name} heard plenty is thriving from ${a.name}`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
@@ -4047,6 +4152,7 @@ export class WorldScene extends Phaser.Scene {
     this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
     this.shelterSprites.forEach((s, i) => s.setVisible(this.shelters[i]?.zone === this.zoneId)); // BACKLOG-315
     this.thatchSprites.forEach((s, i) => s.setVisible(this.thatches[i]?.zone === this.zoneId)); // BACKLOG-417
+    this.granarySprites.forEach((s, i) => s.setVisible(this.granaries[i]?.zone === this.zoneId)); // BACKLOG-454
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
   }
@@ -4154,6 +4260,7 @@ export class WorldScene extends Phaser.Scene {
 
   private maybeMigrate(): void {
     this.bumpTenures(); // BACKLOG-341: home-zone tenure accrues on the migrate cadence, migration or not
+    this.seedPlentyWord(); // BACKLOG-458: a thriving zone's residents get first-hand word of plenty to spread
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
@@ -4170,6 +4277,35 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-450: mouths move toward plenty — head for the richest neighbour, not a coin flip.
     this.scarcityMigrate(d);
     this.lastMigrationMs = Date.now();
+  }
+
+  /**
+   * Word of plenty seed (BACKLOG-458): a resident of a zone that currently reads `thriving` has first-hand
+   * knowledge its ground is thriving, so it files a shareable plenty memory it can later let slip on the
+   * gossip spine. Deduped against a plenty memory it already carries for that zone, so it doesn't spam the
+   * ring. Fires on the migration cadence.
+   */
+  private seedPlentyWord(): void {
+    const tiers = this.zoneTiers();
+    for (const d of this.dinos) {
+      const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      if (tiers[home] !== 'thriving') continue;
+      const zoneName = zoneById(home).name;
+      if (recall(this.memory, d.name).some((e) => e.includes(`${zoneName} ${PLENTY_TOKEN}`))) continue;
+      this.memory = remember(this.memory, d.name, plentyMemory(zoneName));
+    }
+  }
+
+  /**
+   * Where word of plenty primes this dino to head (BACKLOG-458): the thriving zone it carries word of, but
+   * only when that zone is a *reachable neighbour* of its home (so the priming can actually cross). null
+   * when it carries no plenty word, or word only of its own / a non-adjacent zone.
+   */
+  private plentyDestOf(d: Dino): string | null {
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const target = plentyTarget(recall(this.memory, d.name), home);
+    if (!target) return null;
+    return zoneNeighbors(home).some((l) => l.to === target) ? target : null;
   }
 
   /** The neighbour a scarcity-driven migrant heads for (BACKLOG-450): the most appealing (richest prosperity
@@ -4190,7 +4326,11 @@ export class WorldScene extends Phaser.Scene {
    *  on a move toward plenty and not on a lateral/downhill shuffle. Shared by `maybeMigrate` + `__maybeMigrate`. */
   private scarcityMigrate(d: Dino): void {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
-    const dest = this.scarcityDestOf(home);
+    // BACKLOG-458: a dino primed by word of plenty heads for the *named* thriving neighbour it heard about,
+    // not the pure richest-neighbour pick — hearsay chooses the destination. Falls back to the scarcity pick.
+    const primed = this.plentyDestOf(d);
+    const dest = primed ?? this.scarcityDestOf(home);
+    if (primed) this.logEvent(`🌾 ${d.name} heard ${zoneById(primed).name} is thriving — heads that way`);
     this.startMigration(d, dest, this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined);
   }
 
@@ -4211,6 +4351,10 @@ export class WorldScene extends Phaser.Scene {
     if (told.length) return told[Math.floor(Math.random() * told.length)];
     const curious = candidates.filter((d) => pull(d) >= 1);
     if (curious.length) return curious[Math.floor(Math.random() * curious.length)];
+    // BACKLOG-458: a dino primed by word of plenty (heard a thriving neighbour) is pulled next — ahead of the
+    // scarcity/random fallback, below the grove tiers so the 076/078 grove-pull picks stay byte-identical.
+    const primed = candidates.filter((d) => this.plentyDestOf(d));
+    if (primed.length) return primed[Math.floor(Math.random() * primed.length)];
     // BACKLOG-450: no news or homesickness pulling anyone — scarcity decides. A resident of the poorest,
     // emptiest-pantry zone is likeliest to walk out (want empties out); random among the equally-poor keeps
     // *which* of them leaves varied. Touches only this fallback tier, so the grove-pull picks above (pinned by
@@ -4275,10 +4419,11 @@ export class WorldScene extends Phaser.Scene {
     // ponytail: one unit per crossing (a lean, like the non-pressured resource carry) — a pressured
     // multi-unit food shed can follow if a zone visibly stays glutted.
     const wantId = zoneWant(dest, this.harvestedByZone)?.food;
-    const foodCarry = pickFoodCarry(this.foodStoreFor(home), this.foodStoreFor(dest), wantId);
+    const destCap = granaryFoodCap(this.hasGranary(dest)); // BACKLOG-454: a granary'd dest accepts a bigger surplus
+    const foodCarry = pickFoodCarry(this.foodStoreFor(home), this.foodStoreFor(dest), wantId, destCap);
     if (foodCarry) {
       this.foodPileByZone[home] = takeFood(this.foodStoreFor(home), foodCarry);
-      this.foodPileByZone[dest] = bankFood(this.foodStoreFor(dest), foodCarry);
+      this.foodPileByZone[dest] = bankFood(this.foodStoreFor(dest), foodCarry, destCap);
       const emoji = FOODS.find((f) => f.id === foodCarry)?.emoji ?? '';
       const destName = zoneById(dest).name;
       this.logEvent(`${emoji} ${d.name} carried food to ${destName}`);
@@ -4961,6 +5106,7 @@ export class WorldScene extends Phaser.Scene {
       cairns: this.cairns,
       shelters: this.shelters,
       thatches: this.thatches, // BACKLOG-417: the Fernreach's frond-thatch landmarks
+      granaries: this.granaries, // BACKLOG-454: food-cap-lifting granaries, one per zone
       groveVisited: this.groveVisited,
       pondSeen: this.pondSeen, // BACKLOG-359
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
@@ -5035,6 +5181,9 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-417: frond thatches restore (additive; new field, so old saves load none). Mirrors shelters.
       this.thatches = (save.thatches ?? []).map((t) => ({ ...t, zone: t.zone ?? BOWL_ID }));
       for (const t of this.thatches) this.drawThatch(t);
+      // BACKLOG-454: granaries restore (additive; new field, so old saves load none). Mirrors thatches.
+      this.granaries = (save.granaries ?? []).map((g) => ({ ...g, zone: g.zone ?? BOWL_ID }));
+      for (const g of this.granaries) this.drawGranary(g);
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).

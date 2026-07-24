@@ -14,6 +14,7 @@ const TILE = 32;
 const dinos = (p: Page) => p.evaluate(() => (window as W).__dinoPositions() as { name: string; x: number; y: number }[]);
 const cairns = (p: Page) => p.evaluate(() => (window as W).__cairns() as { tileX: number; tileY: number; zone: string }[]);
 const shelters = (p: Page) => p.evaluate(() => (window as W).__shelters() as { tileX: number; tileY: number; zone: string }[]);
+const granaries = (p: Page) => p.evaluate(() => (window as W).__granaries() as { tileX: number; tileY: number; zone: string }[]);
 const zonePile = (p: Page, z: string) => p.evaluate((zz) => (window as W).__zoneStockpile(zz) as Record<string, number>, z);
 const exportSave = (p: Page) => p.evaluate(() => (window as W).__exportSave() as string);
 
@@ -35,13 +36,21 @@ test('the bowl stacks cairns and never a lean-to (its bias is stone)', async ({ 
   expect(await page.evaluate(() => (window as W).__zoneStructure('bowl'))).toBe('cairn');
 
   const bowlDino = (await dinos(page))[0].name;
-  // Bank several cairns' worth — the bowl keeps stacking cairns, never escalating to a lean-to.
-  for (let i = 0; i < 4; i++) {
+  // Bank three cairns' worth — the bowl stacks cairns, never escalating to a lean-to.
+  for (let i = 0; i < 3; i++) {
     for (const k of ['branch', 'branch', 'branch', 'stone', 'stone']) await bankOn(page, bowlDino, k);
   }
-  expect((await cairns(page)).length).toBe(4); // a cairn per recipe's worth
+  expect((await cairns(page)).length).toBe(3); // a cairn per recipe's worth
   expect((await shelters(page)).length).toBe(0); // the bowl never raises a lean-to
   expect((await cairns(page)).every((c) => c.zone === 'bowl')).toBe(true);
+
+  // BACKLOG-454: with three landmarks up, the bowl now saves toward a granary — banking the granary recipe
+  // ({branch:3, stone:3}) puts one up, still never a lean-to. Building finally feeds the food economy.
+  for (const k of ['branch', 'branch', 'branch', 'stone', 'stone', 'stone']) await bankOn(page, bowlDino, k);
+  expect((await granaries(page)).length).toBe(1);
+  expect((await granaries(page)).every((g) => g.zone === 'bowl')).toBe(true);
+  expect((await cairns(page)).length).toBe(3); // no fourth cairn — the gather went to the granary
+  expect((await shelters(page)).length).toBe(0);
   expect(errors).toEqual([]);
 });
 
