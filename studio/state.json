@@ -1,6 +1,6 @@
 {
   "cycle": 110,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-458: Word of plenty — a dino that hears a zone is thriving is primed to migrate there",
   "structureItem": "BACKLOG-454: The granary — a zone that has raised enough landmarks builds a granary that lifts its food cap",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-07-24T02:00:00-05:00",
     "structure-smith": "2026-07-24T02:10:00-05:00",
     "designer": "2026-07-24T02:30:00-05:00",
-    "code-planner": "2026-07-23T02:35:00-05:00",
+    "code-planner": "2026-07-24T02:35:00-05:00",
     "coder": "2026-07-23T03:30:00-05:00",
     "qa": "2026-07-23T03:40:00-05:00",
     "validator": "2026-07-23T03:55:00-05:00",

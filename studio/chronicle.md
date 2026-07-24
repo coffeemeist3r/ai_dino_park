@@ -3805,3 +3805,11 @@ named-neighbour destination — grove-pull tiers untouched (076/078 pinned), det
 **454 (The granary):** a fourth structure kind with a fixed `{branch:3,stone:3}` recipe gated on ≥3 base landmarks;
 a standing granary lifts the zone food cap 6→9, threaded through `foodAtCap`/`bankFood`/`pickFoodCarry` with a default
 so every existing caller is byte-identical. Near-zero cross-track file overlap. Marked 458 [~]. phase → codeplan-pending.
+
+## 2026-07-24 02:35 — cycle 110 — code-planner — 458 + 454 planned
+
+File-level plans for both tracks. **458:** new pure `plentyword.ts` (twin of `groveword`/`providerword`) + a plenty
+rung in the gossip cascade + a plenty tier in `pickMigrant` (after grove, before poorest — 076/078 safe) + a named
+dest. **454:** new pure `granary.ts` (recipe/gate/food-cap) + optional cap threaded through `foodstore.ts` with a
+default (byte-identical callers) + a fourth structure array in WorldScene mirroring thatches + `saveGame`/lens wiring.
+Reuse audited: gossip marks, memory, zones, resource spend pattern, structure sprite pattern. ~4 + ~7 files. phase → coder-pending.
