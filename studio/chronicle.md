@@ -3789,3 +3789,10 @@ lastFire.artist updated; phase stays lore-pending.
 Cycle bumps to 110 (109 closed both tracks APPROVED). Milestone 7 stays ACTIVE; next unchecked lore arc is
 **BACKLOG-458 (Word of plenty)** — plenty travels by gossip (019) before a body follows, aiming the grove-news
 pull (345) at the food economy. 236 open lore items (≫ cap 12) — no new lore seeded. Idea Box empty. phase → designer-pending.
+
+## 2026-07-24 02:10 — cycle 110 — structure-smith — The granary (454)
+
+Structure Track held 3 open (< X=4), so seeded one forward foundation item — **BACKLOG-461 (The lean season)**,
+the calendar's first grip on the food economy — then picked the top unblocked M7 arc: **BACKLOG-454 (The
+granary)**. Building and the pantry have never touched; the granary joins them — enough landmarks earns a
+granary, a standing granary lifts the zone's food cap. Near-zero file overlap with the lore pick (458). Marked 454 [~].
