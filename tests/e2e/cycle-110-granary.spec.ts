@@ -32,6 +32,9 @@ test('a zone with enough landmarks and the recipe raises a granary; the cap lift
   expect(g.filter((x) => x.zone === 'bowl').length).toBe(1);
   expect(await hasGranary(page, 'bowl')).toBe(true);
   expect(await foodCap(page, 'bowl')).toBe(9);
+
+  // BACKLOG-454: the granary renders as the baked pixel prop, not the 🏛️ glyph.
+  expect(await page.evaluate(() => (window as W).__granaryIsArt())).toBe(true);
 });
 
 test('below the landmark bar the same pile builds a bias landmark, not a granary', async ({ page }) => {

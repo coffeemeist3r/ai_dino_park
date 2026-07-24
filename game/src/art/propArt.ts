@@ -350,6 +350,43 @@ const THATCH_RIG: PropRig = {
   },
 };
 
+// ── Granary 🏛️ (BACKLOG-454) — the food-cap-lifting landmark a built-up zone raises. Its own silhouette,
+// apart from the cairn's stone tiers, the lean-to's slope, and the thatch's cinched stack: a broad domed
+// storehouse — a plaster-stone body under a warm timber roof-dome, with a dark timber door — reading as a
+// place a zone *stores a bigger surplus*. Neutral plaster/timber (not the frond gold, not the branch wood),
+// so it doesn't read as any one zone's bias landmark: every zone earns the same granary.
+const GRANARY_GRID: ReadonlyArray<string> = [
+  '................',
+  '......oooo......',
+  '.....orrrro.....',
+  '....orrrrrro....',
+  '...orrrrrrrro...',
+  '..orrrrrrrrrro..',
+  '..ohhbbbbbbhho..',
+  '..obbbbbbbbbbo..',
+  '..obbbbhbbbbbo..',
+  '..obbbbbbbbbbo..',
+  '..obbbddddbbbo..',
+  '..obbbdssdbbbo..',
+  '..obbbdssdbbbo..',
+  '..obbbdssdbbbo..',
+  '..obbbdssdbbbo..',
+  '..oobbbbbbbboo..',
+];
+
+const GRANARY_RIG: PropRig = {
+  size: 16,
+  grid: GRANARY_GRID,
+  palette: {
+    o: 0x3a2e20, // dark warm outline (never pure black)
+    r: 0xb06a3a, // timber roof-dome (warm russet)
+    h: 0xe8dcc0, // lit plaster highlight (eave + body fleck)
+    b: 0xcdb890, // plaster-stone body (neutral — not a zone's bias colour)
+    d: 0x6e4a28, // door timber frame
+    s: 0x2c2018, // door interior shadow
+  },
+};
+
 /**
  * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone'|'frond') + 'cairn', plus the
  * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
@@ -366,6 +403,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_ripe_roots: CROP_RIPE_ROOTS_RIG, // BACKLOG-432: the Fernreach's roots crop, so all three ripe crops bake a rig
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
   thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
+  granary: GRANARY_RIG, // BACKLOG-454: the food-cap-lifting granary — a domed plaster storehouse
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

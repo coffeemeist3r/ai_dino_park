@@ -3866,3 +3866,18 @@ why it left (457, done), plenty that travels by rumor (458, done), and a ground 
 pantry (454, done). Two lore arcs and two structure arcs remain (459 come-for-the-plenty, 455 the spoiling
 pantry, 460 the draining zone) — **Milestone 7 stays ACTIVE, now half-shipped.** build clean · vitest
 1295/1295 · e2e 377/377, no flake. phase → lore-pending; cycle bumps to 111 next run.
+
+## 2026-07-24 04:00 — cycle 110-art — artist — drew the granary (BACKLOG-454)
+
+First non-no-op in four fires: 454 shipped a new landmark this same cycle that rendered as a bare 🏛️ glyph,
+so there was finally a renderable subject. Authored `GRANARY_RIG` — a broad **domed storehouse**, a
+plaster-stone body under a warm timber roof-dome with a dark timber door, reading as a place a zone stores a
+bigger surplus. Silhouette held apart from the three existing landmarks (the cairn's stone tiers, the
+lean-to's slope, the thatch's cinched stack), and — the deliberate choice — a **neutral** plaster/timber
+palette, not the frond gold or branch wood a *bias* landmark wears, because every zone earns the *same*
+granary and it must not read as one zone's colour. Wired into `PROP_RIGS['granary']` + `drawGranary` via
+`bakePropArt`; the 🏛️ glyph stays the graceful fallback (`__granaryIsArt` proves the image path, the
+`__hasPropArt` control still holds for an unrigged prop). Renderable-now (authored the cycle its host
+landed), not stash-ahead. build clean; vitest 1304/1304 (new prop test + the PROP_RIGS key-set updated);
+granary e2e green with the render-as-art assert. Cast + ground + all four landmarks now fully drawn.
+lastFire.artist updated; phase stays lore-pending.

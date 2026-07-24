@@ -950,6 +950,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__zoneStructure = (z?: string) => zoneStructure(z ?? this.zoneId); // BACKLOG-377: the zone's landmark type
     // BACKLOG-454: granaries, whether a zone has one, and its live food cap (6, or 9 with a granary).
     (window as any).__granaries = () => this.granaries.map((g) => ({ ...g }));
+    // BACKLOG-454: is the first granary drawn from the baked pixel rig rather than the 🏛️ glyph?
+    (window as any).__granaryIsArt = () =>
+      this.granarySprites.length > 0 && this.granarySprites[0] instanceof Phaser.GameObjects.Image;
     (window as any).__hasGranary = (z?: string) => this.hasGranary(z ?? this.zoneId);
     (window as any).__foodCap = (z?: string) => granaryFoodCap(this.hasGranary(z ?? this.zoneId));
     // dev-only: seed a zone's pile + landmark count so the granary build is reachable in a test without
@@ -1630,7 +1633,10 @@ export class WorldScene extends Phaser.Scene {
   private drawGranary(g: { tileX: number; tileY: number; zone: string }): void {
     const px = g.tileX * TILE + TILE / 2;
     const py = g.tileY * TILE + TILE / 2;
-    const sprite = this.add.text(px, py, GRANARY_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    const tex = bakePropArt(this, 'granary'); // BACKLOG-454: the baked pixel granary where the rig exists, else the 🏛️ glyph
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, GRANARY_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
     sprite.setVisible(g.zone === this.zoneId);
     this.granarySprites.push(sprite);
   }

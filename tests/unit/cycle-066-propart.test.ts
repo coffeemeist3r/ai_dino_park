@@ -12,6 +12,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'crop_seed',
       'crop_sprout',
       'frond',
+      'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'shelter',
       'stone',
       'thatch',
