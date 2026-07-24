@@ -3824,3 +3824,10 @@ harvest + courier carry; 🏛️ on the map lens; additive `granaries` save fiel
 plenty tier in `pickMigrant` (after grove — 076/078 safe) + a named-neighbour destination. build clean · vitest
 1295/1295 · e2e 377/377 (updated cycle-074-shelter to 454's intended behaviour: the bowl saves for a granary after
 3 cairns instead of a 4th). phase → qa-pending.
+
+## 2026-07-24 03:40 — cycle 110 — qa — 16/16 criteria pass
+
+Both tracks verified. 458: 8/8 (seed shareable, 1-hop spread, target read, primed pick + named destination, grove
+tiers safe). 454: 8/8 (gate truth table, cap lift 6→9, harvest banks past 6, persistence round-trip). build clean ·
+vitest 1295/1295 · e2e 377/377, no flake. cycle-074-shelter updated to 454's intended flow (not a masked regression).
+Recommendation APPROVE / APPROVE. phase → validator-pending.
