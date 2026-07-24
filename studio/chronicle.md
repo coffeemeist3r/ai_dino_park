@@ -3796,3 +3796,12 @@ Structure Track held 3 open (< X=4), so seeded one forward foundation item — *
 the calendar's first grip on the food economy — then picked the top unblocked M7 arc: **BACKLOG-454 (The
 granary)**. Building and the pantry have never touched; the granary joins them — enough landmarks earns a
 granary, a standing granary lifts the zone's food cap. Near-zero file overlap with the lore pick (458). Marked 454 [~].
+
+## 2026-07-24 02:30 — cycle 110 — designer — 458 + 454
+
+Specced both M7 tracks. **458 (Word of plenty):** a new pure `plentyword.ts` (first-hand seed + 1-hop rumor +
+`plentyTarget`) slotting into the gossip cascade below provider-word, plus a plenty tier in `pickMigrant` and a
+named-neighbour destination — grove-pull tiers untouched (076/078 pinned), deterministic dest (456 flake family).
+**454 (The granary):** a fourth structure kind with a fixed `{branch:3,stone:3}` recipe gated on ≥3 base landmarks;
+a standing granary lifts the zone food cap 6→9, threaded through `foodAtCap`/`bankFood`/`pickFoodCarry` with a default
+so every existing caller is byte-identical. Near-zero cross-track file overlap. Marked 458 [~]. phase → codeplan-pending.

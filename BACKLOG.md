@@ -744,7 +744,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > milestone-duty override (the body sits far over the 12-item drain floor, but no queued lore item fits the
 > scarcity-migration theme) — the same call cycles 106–108 made.
 
-- [ ] BACKLOG-458 [emergent] Word of plenty — a dino that *hears* (gossip, 019) a neighbour zone is thriving is primed toward migrating there, so scarcity-migration gains a hearsay pull the way grove-news (345) pulls a never-been newcomer across; plenty travels by talk before a body follows it. Builds on 450 / 457 / 019 / 345.
+- [~] BACKLOG-458 [emergent] Word of plenty — a dino that *hears* (gossip, 019) a neighbour zone is thriving is primed toward migrating there, so scarcity-migration gains a hearsay pull the way grove-news (345) pulls a never-been newcomer across; plenty travels by talk before a body follows it. Builds on 450 / 457 / 019 / 345.
 - [ ] BACKLOG-459 [social] Come for the plenty — a scarcity migrant arriving in the richer zone is met by a resident with a wry welcome ("come for the food, have you?") + a small bond, so arriving-for-plenty reads as a social moment, not just a sprite that reappeared on the far edge. Builds on 457 / 452 / 366.
 
 ## Mobile (deferred, do not pick until charter clears)
