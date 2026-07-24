@@ -21,11 +21,11 @@ reach; M7 gives it consequence.
 
 **Lore arcs:**
 - [x] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
-- [ ] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458)
+- [x] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458 — cycle 110)
 - [ ] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459)
 
 **Structure arcs:**
-- [ ] The granary — a zone that has raised enough landmarks puts up a granary, and a standing granary lifts that zone's food cap, so building finally feeds the food economy (BACKLOG-454)
+- [x] The granary — a zone that has raised enough landmarks puts up a granary, and a standing granary lifts that zone's food cap, so building finally feeds the food economy (BACKLOG-454 — cycle 110)
 - [ ] A pantry that spoils — banked food at/near cap slowly decays across in-game days, so a hoard costs something and the flows stay live (BACKLOG-455)
 - [ ] The draining zone — a zone hollowed by scarcity migration reads as declining and its remaining residents lean harder to leave, giving an exodus momentum (BACKLOG-460)
 

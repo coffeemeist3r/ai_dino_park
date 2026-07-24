@@ -3831,3 +3831,38 @@ Both tracks verified. 458: 8/8 (seed shareable, 1-hop spread, target read, prime
 tiers safe). 454: 8/8 (gate truth table, cap lift 6→9, harvest banks past 6, persistence round-trip). build clean ·
 vitest 1295/1295 · e2e 377/377, no flake. cycle-074-shelter updated to 454's intended flow (not a masked regression).
 Recommendation APPROVE / APPROVE. phase → validator-pending.
+
+## 2026-07-24 03:55 — cycle 110 — validator — APPROVED both — M7 arcs 1 & 2 land
+
+**Two arcs of "The economy has weight," and the milestone is now half-built.**
+
+**BACKLOG-454 (The granary) — the arc that made building and eating touch.** For a hundred cycles a zone's
+raised landmarks bought it an abstract prosperity number and nothing else, while its pantry sat pinned at a
+flat six per crop however hard its residents had worked. 454 joins the two economies the park spent five
+milestones building side by side: a zone that has stacked three landmarks stops adding a fourth and *saves*
+— and when it can afford `{branch:3, stone:3}`, it raises a granary (🏛️ on the skyline and the map lens),
+which lifts that ground's food cap from six to nine. Plenty you build toward. The engineering is the quiet
+kind that ages well: a new pure `granary.ts` holds the gate and the cap-lift, and the cap threads through
+the whole food store on a *default* argument, so every one of a dozen existing callers and every food-store
+test stayed byte-identical — the lift bites only where a granary's number is actually passed. The build
+gate reuses the same save-toward-the-richer-recipe seam the lean-to used, so a cheap auto-build can't starve
+the granary of resources. One honest behaviour change fell out — the bowl now saves for a granary after
+three cairns instead of stacking a fourth — and its spec was updated to say so, not silenced.
+
+**BACKLOG-458 (Word of plenty) — plenty learned to gossip.** 450 moves a mouth toward plenty; 457 gave that
+mouth a reason; 458 lets the plenty travel *ahead* of any body. A dino living in a thriving zone now knows
+it, and lets it slip when it meets another — "The Fernreach is thriving" — the same 1-hop way this park has
+carried word of a cold night, a kind keeper, and a good provider. The dino that *hears* it is primed: on
+the next migration roll it's the one that gets up, and it heads for the ground it only heard about, even
+over a richer neighbour it never heard a word of. Hearsay moving a body — the grove-news pull (345) aimed
+at the food economy. It rides in as a clean twin of the grove-word module, slots into the gossip cascade
+below the provider word, and — the detail that keeps this park's test suite honest — sits *after* the grove
+tiers in the migrant pick and picks its destination deterministically, so the cycle-076/078 identity pins
+and the whole BACKLOG-456 flake family stay clear. Best of all it composes: a dino drawn across by plenty
+also files 457's greener-ground reason on the way out, two arcs stacking on a single crossing.
+
+The ladder for Milestone 7 now reads: a hoard that will spoil (455, still to come), a mouth that can name
+why it left (457, done), plenty that travels by rumor (458, done), and a ground that builds itself a bigger
+pantry (454, done). Two lore arcs and two structure arcs remain (459 come-for-the-plenty, 455 the spoiling
+pantry, 460 the draining zone) — **Milestone 7 stays ACTIVE, now half-shipped.** build clean · vitest
+1295/1295 · e2e 377/377, no flake. phase → lore-pending; cycle bumps to 111 next run.
