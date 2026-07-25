@@ -3933,3 +3933,36 @@ control, empty-dest no-throw with greener-ground intact). build clean · vitest 
 the two reds are cycle-077-carry (passes isolated → BACKLOG-456 flake) and mobile-minds:79 (fails isolated →
 BACKLOG-430 pre-existing red), neither touching this diff. NPCBrain boundary clean. Recommendation
 APPROVE / APPROVE. phase → validator-pending.
+
+## 2026-07-25 03:55 — cycle 111 — validator — APPROVED both — M7 arcs land; one arc from shipped
+
+**Two more arcs of "The economy has weight," and the milestone is now one arc from done.**
+
+**BACKLOG-455 (A pantry that spoils) — the sink the economy had been missing.** For a hundred cycles banked
+food was immortal: a zone that stacked a glut sat on it forever, so nothing spent down and — because the
+ferry only flows toward a *lighter* neighbour — two full zones deadlocked and the milestone's flows went
+quietly stagnant. 454 gave the economy a source (build to lift your cap); 455 gives it a cost. A hoard
+sitting at or near its zone's cap now bleeds one unit per in-game day, and the engineering is the
+self-limiting kind that never needs a babysitter: it decays only while a pile is in the near-cap band, so a
+static glut settles at a floor of cap-2 (6→5→4·, a granary's raised 9→8→7·) and holds there, while a pantry
+that is actually circulating — below the band — is never touched at all. Nothing starves; a hoard just
+stops being free. It rides a live-only day hook (a restore or a long-away jump never double-decays), reads
+each zone's granary-aware cap so the floor scales with what a ground has built, and drops a 🥀 line to the
+ticker so a spoilage is never silent. The honest deferrals were seeded, not stubbed — spoilage across a long
+absence to BACKLOG-462, the seasonal rate to 461.
+
+**BACKLOG-459 (Come for the plenty) — the ground answers back.** 450 moved a mouth toward plenty; 457 gave
+it a reason it left; 458 let the plenty gossip ahead of the body. What was missing was the far side — a
+scarcity migrant walked into a richer zone and nobody said a word. 459 makes the arrival a two-sided
+moment: the nearest resident sizes up the newcomer with a wry "Come for the plenty, have you?" and a small
+bond forms over it — the sardonic mirror of 452's homecoming welcome, built on the exact same seam one
+branch down from the greener-ground beat. It composes cleanly with everything around it: a homecoming still
+short-circuits it (you come *home*, you don't get sized up), a plain crossing earns nothing, and arriving
+alone in an empty-but-rich zone simply passes unwitnessed — the crossing still happens, the 🍃 still fires.
+
+The ladder for Milestone 7 now reads: a mouth that names why it left (457 ✅), plenty that travels by rumor
+(458 ✅), a ground that builds itself a bigger pantry (454 ✅), a hoard that costs something (455 ✅), and a
+ground that answers the newcomer (459 ✅). **All three lore arcs closed; one structure arc left —**
+BACKLOG-460, the draining zone. **Milestone 7 stays ACTIVE, one arc from shipped.** build clean · vitest
+1316/1316 · e2e 382/384 (the two reds are the catalogued 077-carry parallel flake, green isolated, and the
+standing BACKLOG-430 dialog-paging red — neither this cycle's). phase → lore-pending; cycle bumps to 112 next run.

@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-455 [core] A pantry that spoils — banked food (446) is immortal: a zone that banks a glut and never spends it sits on it forever, which quietly blunts every flow the milestone builds (447 ferries only toward a *lighter* neighbour, so two full zones deadlock). Give a food pile slow decay when it sits at/near cap across in-game days, so a hoard costs something and the pressure to ferry, spend (444), and eat stays live. Capped, gentle, deterministic — never enough to starve a zone that's actually circulating. Builds on 446 / 447 / 444.
 - [ ] BACKLOG-460 [core] The draining zone — as scarcity migration (450) empties a poor zone, nothing compounds it: the migration bias re-reads prosperity fresh each roll, so a hollowing zone doesn't *spiral*. Let a zone that has lost residents read as **declining** (a downward arrow on the map lens) and bias its remaining residents a touch harder to leave, so an exodus reads as one and plenty-vs-want gains momentum — deathless, capped by a floor that keeps at least one resident so a zone can thin but never vanish. The M7 structural companion to 450. Builds on 450 / 428 / 316.
 - [ ] BACKLOG-461 [emergent] The lean season — the calendar (159) and the food economy (446/455) have never touched: winter is a palette tint and a huddle-pull, but a zone's pantry fills and spoils at the same rate in every season. Give the year a grip on the economy: a park-wide seasonal food modifier that tightens harvest banking and quickens spoilage (455) in the lean season and eases both in the plenty season, so *when* it is finally shapes how much a ground can hold — the season the milestone's weight is felt through. Foundation-first: one pure seasonal multiplier the harvest/spoilage hooks read, deferring per-crop seasonal yield. Builds on 159 / 446 / 455 / 428.
 - [ ] BACKLOG-462 [core] Spoilage while you're away — 455's spoilage rides a live in-game-day hook (`onHour` never fires on a restore/away `clock.set`), so a hoard banked and left through a long absence survives untouched while the away digest (106) fast-forwards everything else. Fold spoilage into the away catch-up: apply N in-game days' worth of the same capped, self-limiting `spoilFood` decay when the clock jumps a long gap, so a glut a keeper walks away from bleeds toward its floor the way a watched one does — and surface it in the "while you were away" digest ("the Fernreach's berries spoiled down"). Deterministic (day-count in, no rolls), never below the safe floor. The honest completion of 455's live-only spine. Builds on 455 / 106 / 446.
@@ -736,16 +735,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
-
-## Cycle 109 lore additions — the herd has reasons (2026-07-23)
-
-> Milestone 6 closes this cycle on its last structure arc (450, scarcity moves the herd). Its three lore
-> arcs are all shipped, so cycle 109 does milestone-boundary work: it opens **Milestone 7 ("The economy has
-> weight")** and takes M7's first lore beat, which rides on 450's brand-new mechanic. Seeded under the
-> milestone-duty override (the body sits far over the 12-item drain floor, but no queued lore item fits the
-> scarcity-migration theme) — the same call cycles 106–108 made.
-
-- [~] BACKLOG-459 [social] Come for the plenty — a scarcity migrant arriving in the richer zone is met by a resident with a wry welcome ("come for the food, have you?") + a small bond, so arriving-for-plenty reads as a social moment, not just a sprite that reappeared on the far edge. Builds on 457 / 452 / 366.
 
 ## Mobile (deferred, do not pick until charter clears)
 
