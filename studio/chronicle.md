@@ -3888,3 +3888,11 @@ Themed the cycle around M7's last voice beat: a scarcity migrant arrives in a ri
 ground it came to *answers* — a wry welcome + a small bond, the arrival mirror of 452's homecoming. Cap rule
 hit (lore backlog ≫ 12) so no new items brainstormed. Suggested next-up **BACKLOG-459 (Come for the plenty)**,
 the one open Lore arc of Milestone 7. Idea Box empty. phase → designer-pending; cycle bumped to 111.
+
+## 2026-07-25 02:10 — cycle 111 — structure-smith — the hoard learns to cost
+
+Queue was 3 open (< X=4), so refilled with 2: **462** (spoilage in the away digest) and **463** (the
+provider's say — first governance seed). Picked **BACKLOG-455 (A pantry that spoils)** — the top unblocked
+M7 structure arc: banked food at/near its zone's cap bleeds one unit per in-game day to a safe floor, so the
+granary's raised ceiling (454) finally *bites*. Barely overlaps the lore track's `crossDino` work. phase
+stays designer-pending.
