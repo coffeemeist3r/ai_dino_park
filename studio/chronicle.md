@@ -3881,3 +3881,10 @@ granary and it must not read as one zone's colour. Wired into `PROP_RIGS['granar
 landed), not stash-ahead. build clean; vitest 1304/1304 (new prop test + the PROP_RIGS key-set updated);
 granary e2e green with the render-as-art assert. Cast + ground + all four landmarks now fully drawn.
 lastFire.artist updated; phase stays lore-pending.
+
+## 2026-07-25 02:00 — cycle 111 — lore-smith — the ground answers back
+
+Themed the cycle around M7's last voice beat: a scarcity migrant arrives in a richer zone and, for once, the
+ground it came to *answers* — a wry welcome + a small bond, the arrival mirror of 452's homecoming. Cap rule
+hit (lore backlog ≫ 12) so no new items brainstormed. Suggested next-up **BACKLOG-459 (Come for the plenty)**,
+the one open Lore arc of Milestone 7. Idea Box empty. phase → designer-pending; cycle bumped to 111.
