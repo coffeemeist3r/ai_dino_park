@@ -104,6 +104,8 @@ import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobble
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
+import { spoilFood, spoiledLine } from '../world/spoilage';
+import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
@@ -318,6 +320,9 @@ export class WorldScene extends Phaser.Scene {
   private seasonOverlay!: Phaser.GameObjects.Rectangle;
   private lastSeasonDay = 1;
   private seasonTurns = 0;
+  /** A pantry that spoils (BACKLOG-455): transient — the last in-game day the spoilage pass ran (0 = none
+   *  yet). Reset on restore/jump so a clock catch-up never fires a spurious pass (mirrors lastSeasonDay). */
+  private lastSpoilDay = 0;
   /** Dawn chorus (BACKLOG-192): transient — the last in-game day a dawn fired (0 = none yet). */
   private lastDawnDay = 0;
   private dawnCount = 0;
@@ -918,6 +923,12 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__setZoneFoodPile = (zone: string, pile: Record<string, number>) => {
       this.foodPileByZone[zone] = { ...pile };
       return { ...this.foodStoreFor(zone) };
+    };
+    // BACKLOG-455: run one in-game-day spoilage pass across all zones now (the same path the day hook drives),
+    // so a test can prove a hoard at/near cap bleeds without waiting on the realtime clock.
+    (window as any).__spoilFood = () => {
+      this.runSpoilage();
+      return Object.fromEntries(zoneChain().map((z) => [z, { ...this.foodStoreFor(z) }]));
     };
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
@@ -4472,6 +4483,22 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, d.name, greenerGroundMemory(leftName));
       this.showBubble(d, greenerGroundLine());
       this.logEvent(`🍃 ${d.name} left ${leftName} for greener ground in ${zoneById(dest).name}`);
+      // Come for the plenty (BACKLOG-459): the far side of the move — the nearest resident of the richer
+      // ground sizes up the newcomer with a wry welcome and a small bond forms. Mirror of the 452 welcome
+      // above (pickNearest + strengthen), but sardonic: come for the food, not come home. Nobody near is a
+      // legitimate read — the crossing still happened, the welcome just goes unwitnessed.
+      const destName = zoneById(dest).name;
+      const nearby = this.dinos
+        .filter((r) => r.name !== d.name && zoneOf(this.dinoZones, r.name, BOWL_ID) === dest)
+        .map((r) => ({ name: r.name, dist: this.chebyTiles(this.tileOf(r), this.tileOf(d)) }));
+      const greeter = pickNearest(nearby);
+      if (greeter) {
+        this.bonds = strengthen(this.bonds, greeter, d.name, PLENTY_WELCOME_BOND);
+        this.memory = remember(this.memory, greeter, plentyWelcomeMemory(d.name, destName));
+        this.memory = remember(this.memory, d.name, plentyWelcomedMemory(destName));
+        this.showBubble(this.dinoByName(greeter)!, plentyWelcomeLine());
+        this.logEvent(plentyWelcomeEvent(greeter, d.name));
+      }
     }
     // First steps in the grove (BACKLOG-339): the first time this dino ever crosses *into* the grove,
     // arrival is a beat — a 🌿 look-around bubble, a "first time across" memory (rides the existing store,
@@ -4903,8 +4930,12 @@ export class WorldScene extends Phaser.Scene {
       .rectangle((TILE * COLS) / 2, (TILE * ROWS) / 2, TILE * COLS, TILE * ROWS, tint.color, tint.alpha)
       .setDepth(4);
     this.lastSeasonDay = clock.now().day;
+    this.lastSpoilDay = clock.now().day; // BACKLOG-455: arm the spoilage day tracker (no pass on day 1)
 
     clock.onHour((t) => this.checkSeasonTurn(t));
+    // A pantry that spoils (BACKLOG-455) — its own live-only onHour listener, so a hoard at/near cap bleeds
+    // one unit per in-game day. Separate from the season turn / dawn chorus so none disturbs the others.
+    clock.onHour((t) => this.checkSpoilage(t));
     // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
     // turn and the hour-6 reflection so neither is disturbed. onHour never fires on clock.set().
     clock.onHour((t) => this.checkDawnChorus(t));
@@ -4938,6 +4969,7 @@ export class WorldScene extends Phaser.Scene {
   private syncSeason(): void {
     const day = getWorldClock().now().day;
     this.lastSeasonDay = day;
+    this.lastSpoilDay = day; // BACKLOG-455: a restore/jump re-arms spoilage too — no spurious catch-up pass
     const tint = SEASON_TINT[seasonFor(day)];
     this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
   }
@@ -4966,6 +4998,38 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(12);
     this.tweens.add({ targets: banner, alpha: 0, delay: 4000, duration: 2500, onComplete: () => banner.destroy() });
     void this.saveGame();
+  }
+
+  /**
+   * A pantry that spoils (BACKLOG-455) — once per in-game day, a zone's hoard at/near cap bleeds one unit.
+   * Live-observed only (onHour never fires on a restore/away clock.set), so a restore never double-decays; a
+   * multi-day jump spoils a single pass (day-count spoilage across a long absence is BACKLOG-462).
+   */
+  private checkSpoilage(t: GameTime): void {
+    if (t.day <= this.lastSpoilDay) return;
+    this.lastSpoilDay = t.day;
+    this.runSpoilage();
+  }
+
+  /** Run one spoilage pass across every zone, using each zone's granary-aware cap. Logs a 🥀 line per id that
+   *  actually lost a unit and persists once if anything changed. Shared by `checkSpoilage` + the `__spoilFood`
+   *  dev hook so production and test drive the exact same path. */
+  private runSpoilage(): void {
+    let changed = false;
+    for (const zone of zoneChain()) {
+      const pile = this.foodStoreFor(zone);
+      const next = spoilFood(pile, granaryFoodCap(this.hasGranary(zone)));
+      if (next === pile) continue;
+      changed = true;
+      const zoneName = zoneById(zone).name;
+      for (const id of Object.keys(pile)) {
+        if ((next[id] ?? 0) < (pile[id] ?? 0)) {
+          this.logEvent(spoiledLine(zoneName, FOODS.find((f) => f.id === id)?.emoji ?? id));
+        }
+      }
+      this.foodPileByZone[zone] = next;
+    }
+    if (changed) void this.saveGame();
   }
 
   /**

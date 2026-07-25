@@ -3914,3 +3914,13 @@ self-limiting at cap-2), fired from a live-only `checkSpoilage` onHour day hook 
 two memories + `PLENTY_WELCOME_BOND`), wired as a sub-beat inside `crossDino`'s existing
 `scarcity && !homecoming` guard, reusing `pickNearest`/`strengthen`/`remember` from the 452 welcome. Both
 touch only WorldScene (different methods); 455 sequenced first. ~7 files. phase → coder-pending.
+
+## 2026-07-25 03:30 — cycle 111 — coder — spoilage sink + wry arrival welcome
+
+Shipped both tracks. **455:** `world/spoilage.ts` (`spoilFood` self-limits a hoard at/near cap down to the
+floor cap-2, granary-aware), fired once per in-game day on a live-only `checkSpoilage` onHour hook; a 🥀
+ticker line per spoiled id; `__spoilFood` dev hook. **459:** `world/plentywelcome.ts` (wry 😏 line + event +
+two memories + `PLENTY_WELCOME_BOND`), wired as a sub-beat in `crossDino`'s existing `scarcity && !homecoming`
+guard reusing the 452 `pickNearest`/`strengthen`/`remember` shape. build clean · vitest 1316/1316 · new e2e
+spoilage 3/3 + plentywelcome 4/4 (single-worker; parallel boot is the catalogued cold-Vite flake) · dev 200.
+phase → qa-pending.

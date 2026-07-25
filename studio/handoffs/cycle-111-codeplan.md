@@ -144,3 +144,29 @@ none.
 ~3 files (2 new plentywelcome + 1 WorldScene) + 1 new e2e = ~4.
 
 **Combined estimated touch count: ~7 files. Well within the arc budget.**
+
+---
+
+## Shipped (Coder)
+
+**Structure track (455) — built first:**
+- Created `game/src/world/spoilage.ts` (`SPOIL_MARGIN`, `spoilsAtCap`, `spoilFood`, `spoiledLine`).
+- Created `game/src/world/spoilage.test.ts` (8 cases: floor, granary floor, purity, multi-id, below-band).
+- `WorldScene.ts`: import; `lastSpoilDay` field; armed in `setupSeasons` + reset in `syncSeason`; third
+  `onHour` listener → `checkSpoilage`; new `runSpoilage()` (granary-aware cap per zone, 🥀 line per dropped
+  id, one save if changed); `__spoilFood` dev hook. Reused existing `__zoneFoodPile` reader for QA.
+
+**Lore track (459) — built second:**
+- Created `game/src/world/plentywelcome.ts` (`PLENTY_WELCOME_BOND`, wry line, event, two memories).
+- Created `game/src/world/plentywelcome.test.ts` (5 cases incl. distinct-from-452, no double article).
+- `WorldScene.ts`: import; wry-welcome sub-beat inside `crossDino`'s existing `scarcity && !homecoming`
+  guard — `pickNearest` greeter, `strengthen` bond, both-side memories, greeter `showBubble`, event line.
+
+**Deviations:** greeter beat uses `showBubble` (readable wry line) rather than `flashFeed` (a squished
+14px glyph) — the migrant already shows the 🍃 bubble on a different sprite, so no collision. No new
+persisted field for either track (memory/bonds already persisted; `lastSpoilDay` transient like
+`lastSeasonDay`).
+
+**Status:** `npm run build` ✅ clean · `npm run test:unit` ✅ 1316/1316 · new e2e ✅ (spoilage 3/3,
+plentywelcome 4/4, single-worker; the parallel-boot flake is the catalogued cold Vite/Phaser one) ·
+dev server renders HTTP 200.
