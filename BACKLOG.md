@@ -745,7 +745,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > milestone-duty override (the body sits far over the 12-item drain floor, but no queued lore item fits the
 > scarcity-migration theme) — the same call cycles 106–108 made.
 
-- [ ] BACKLOG-459 [social] Come for the plenty — a scarcity migrant arriving in the richer zone is met by a resident with a wry welcome ("come for the food, have you?") + a small bond, so arriving-for-plenty reads as a social moment, not just a sprite that reappeared on the far edge. Builds on 457 / 452 / 366.
+- [~] BACKLOG-459 [social] Come for the plenty — a scarcity migrant arriving in the richer zone is met by a resident with a wry welcome ("come for the food, have you?") + a small bond, so arriving-for-plenty reads as a social moment, not just a sprite that reappeared on the far edge. Builds on 457 / 452 / 366.
 
 ## Mobile (deferred, do not pick until charter clears)
 

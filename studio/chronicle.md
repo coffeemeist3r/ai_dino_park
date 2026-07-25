@@ -3896,3 +3896,12 @@ provider's say — first governance seed). Picked **BACKLOG-455 (A pantry that s
 M7 structure arc: banked food at/near its zone's cap bleeds one unit per in-game day to a safe floor, so the
 granary's raised ceiling (454) finally *bites*. Barely overlaps the lore track's `crossDino` work. phase
 stays designer-pending.
+
+## 2026-07-25 02:30 — cycle 111 — designer — 459 arrival welcome + 455 pantry spoilage
+
+Specced both tracks. **459 (lore):** a scarcity migrant arriving in a richer, non-home zone gets a wry 😏
+welcome + small bond from the nearest resident — the 452 homecoming seam mirrored one branch down from the
+457 greener-ground beat, homecoming short-circuits it. **455 (structure):** pure `spoilFood(pile, cap)`
+bleeds one unit from every food id at/near its zone's granary-aware cap, self-limiting to a floor
+(cap-2), fired once per in-game day on a live-only day hook. Overlap: `WorldScene.ts` only, different
+methods, 455 sequenced first. phase → codeplan-pending.
