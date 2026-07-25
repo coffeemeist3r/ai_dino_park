@@ -3905,3 +3905,12 @@ welcome + small bond from the nearest resident — the 452 homecoming seam mirro
 bleeds one unit from every food id at/near its zone's granary-aware cap, self-limiting to a floor
 (cap-2), fired once per in-game day on a live-only day hook. Overlap: `WorldScene.ts` only, different
 methods, 455 sequenced first. phase → codeplan-pending.
+
+## 2026-07-25 02:35 — cycle 111 — codeplan — spoilage.ts + plentywelcome.ts, WorldScene wiring
+
+Planned both tracks against the existing seams. **455:** new pure `world/spoilage.ts` (`spoilFood(pile,cap)`,
+self-limiting at cap-2), fired from a live-only `checkSpoilage` onHour day hook using the granary-aware cap;
+`__spoilFood`/`__foodStore` dev hooks for QA. **459:** new pure `world/plentywelcome.ts` (wry line + event +
+two memories + `PLENTY_WELCOME_BOND`), wired as a sub-beat inside `crossDino`'s existing
+`scarcity && !homecoming` guard, reusing `pickNearest`/`strengthen`/`remember` from the 452 welcome. Both
+touch only WorldScene (different methods); 455 sequenced first. ~7 files. phase → coder-pending.
