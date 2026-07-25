@@ -3924,3 +3924,12 @@ two memories + `PLENTY_WELCOME_BOND`), wired as a sub-beat in `crossDino`'s exis
 guard reusing the 452 `pickNearest`/`strengthen`/`remember` shape. build clean · vitest 1316/1316 · new e2e
 spoilage 3/3 + plentywelcome 4/4 (single-worker; parallel boot is the catalogued cold-Vite flake) · dev 200.
 phase → qa-pending.
+
+## 2026-07-25 03:40 — cycle 111 — qa — 15/15 criteria pass; suite green bar two known reds
+
+Both tracks verified. **455:** 7/7 (floor cap-2, granary floor 9→7, purity, live-only restore guard, 🥀
+ticker). **459:** 8/8 (wry welcome + bond + both memories, distinct-from-452, homecoming-wins, non-scarcity
+control, empty-dest no-throw with greener-ground intact). build clean · vitest 1316/1316 · e2e 382/384 —
+the two reds are cycle-077-carry (passes isolated → BACKLOG-456 flake) and mobile-minds:79 (fails isolated →
+BACKLOG-430 pre-existing red), neither touching this diff. NPCBrain boundary clean. Recommendation
+APPROVE / APPROVE. phase → validator-pending.
