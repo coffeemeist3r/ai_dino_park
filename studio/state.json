@@ -1,8 +1,8 @@
 {
   "cycle": 112,
-  "phase": "structure-pending",
+  "phase": "design-pending",
   "currentItem": "BACKLOG-464",
-  "structureItem": null,
+  "structureItem": "BACKLOG-460",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
