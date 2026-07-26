@@ -47,6 +47,9 @@ export interface ZoneMapEntry {
   banked: string;
   /** Has this zone raised a granary (BACKLOG-454)? Shows a 🏛️ marker; false when unknown (older callers). */
   granary: boolean;
+  /** Is this zone declining (BACKLOG-460) — has it lost residents from its peak? Shows a ⬇ marker; false
+   *  when unknown (older callers). */
+  declining: boolean;
 }
 
 /**
@@ -97,6 +100,7 @@ export function zoneMapModel(
   harvests: Record<string, number> = {},
   foodPiles: Record<string, FoodPile> = {},
   granaryZones: readonly string[] = [],
+  declining: Record<string, boolean> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -108,6 +112,7 @@ export function zoneMapModel(
     want: zoneWant(id, harvests), // BACKLOG-438: what it wants from a neighbour (null until a neighbour has a surplus)
     banked: foodPileLine(foodPiles[id] ?? {}), // BACKLOG-446: the zone's banked food (absent → '')
     granary: granaryZones.includes(id), // BACKLOG-454: a raised granary shows a 🏛️ marker
+    declining: declining[id] ?? false, // BACKLOG-460: a zone hollowed below its peak shows a ⬇ marker
   }));
 }
 

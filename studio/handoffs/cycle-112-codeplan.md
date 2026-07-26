@@ -99,3 +99,35 @@
 
 ## Blockers
 _(none at plan time)_
+
+---
+
+## Shipped (Coder)
+
+**Structure track (460) — built first:**
+- Created `world/decline.ts` (`ZonePeaks`, `ZONE_FLOOR=1`, `DECLINING_MIGRATE_DAMP=0.3`, `bumpPeak`,
+  `isDeclining`, `declineGlyph`) + `world/decline.test.ts` (10 cases: peak raise/no-op/never-lower,
+  declining true/false/floor/zero, knob ordering, glyph).
+- `belonging.ts`: `resistsMigration` gains an optional `damp` param (default `SETTLED_MIGRATE_DAMP` —
+  every existing caller byte-identical).
+- `ui/lenses.ts`: `ZoneMapEntry.declining` + a `declining` map param on `zoneMapModel` (default `{}`).
+- `WorldScene.ts`: import; `zonePeaks` field; `zoneHeads`/`bumpPeaks`/`isZoneDeclining`/`decliningZones`
+  helpers; `bumpPeaks()` on the migrate cadence; the **floor** (`heads <= ZONE_FLOOR → return`, consumes
+  the roll) and the **declining damp** in the settle-resist gate; ⬇ appended on the lens tier line; dev
+  hooks `__zonePeaks`/`__zoneDeclining`/`__bumpPeaks`.
+
+**Lore track (464) — built second (reuses 460's `isDeclining` + peaks):**
+- Created `world/lastone.ts` (`lastoneLine`, `lastoneEvent`, `lastoneMemory`) + `world/lastone.test.ts`
+  (3 cases: 🍂 mood, no double article, both-named event).
+- `WorldScene.ts`: `checkLastOne()` — scans for a declining zone at `heads === 1`, files the memory +
+  🍂 bubble + ticker for the lone resident, deduped against its recall ring; called on the migrate
+  cadence; `__checkLastOne` dev hook.
+
+**Deviations:** none — used `showBubble` (readable wistful line) per plan. `zonePeaks` is transient
+(a live per-session high-water mark, like a peak-of-run), so no save-shape change; a restore reseeds
+the peak to current, which is the honest transient behaviour (persisting decline across reload is a
+natural follow-up, not stubbed).
+
+**Status:** `npm run build` ✅ clean · `npx vitest run` ✅ **1329/1329** (+13) · new e2e ✅ (decline 1/1,
+lastone 1/1, single-worker; decline tripped the catalogued cold Vite/Phaser boot flake once in a shared
+run, green isolated).

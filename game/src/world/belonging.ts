@@ -37,9 +37,15 @@ export function isSettled(rolls: number, threshold: number = SETTLE_ROLLS): bool
   return rolls >= threshold;
 }
 
-/** Does a settled dino resist this ambient migration (stay put)? Only settled dinos ever resist. */
-export function resistsMigration(settled: boolean, rand: () => number = Math.random): boolean {
-  return settled && rand() < SETTLED_MIGRATE_DAMP;
+/** Does a settled dino resist this ambient migration (stay put)? Only settled dinos ever resist. `damp` is
+ *  the resist probability — defaults to `SETTLED_MIGRATE_DAMP` (0.6); a declining zone (BACKLOG-460) passes
+ *  a lower one so its residents lean harder to leave. */
+export function resistsMigration(
+  settled: boolean,
+  rand: () => number = Math.random,
+  damp: number = SETTLED_MIGRATE_DAMP,
+): boolean {
+  return settled && rand() < damp;
 }
 
 /** The collection-book read for a settled dino's home zone (empty caller-side when not settled). */

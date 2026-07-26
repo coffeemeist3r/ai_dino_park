@@ -48,6 +48,7 @@ import {
   tenureOf,
   isSettled,
   resistsMigration,
+  SETTLED_MIGRATE_DAMP,
   settledLine,
   SETTLE_ROLLS,
   rememberRoot,
@@ -103,6 +104,8 @@ import { reactionFor, startleStep, type StartleReaction } from '../world/startle
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
+import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
+import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { spoilFood, spoiledLine } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
@@ -221,6 +224,8 @@ export class WorldScene extends Phaser.Scene {
   private dinoZones: Record<string, string> = {};
   /** Per-dino residence tenure in its current zone (BACKLOG-341) — rolls since it last crossed; settles a home. Persisted. */
   private tenure: Tenure = {};
+  /** Per-zone population high-water mark (BACKLOG-460) — a zone below its peak reads declining. Transient (live per session, like a peak-of-run). */
+  private zonePeaks: ZonePeaks = {};
   /** Wall-clock ms of the last ambient migration (BACKLOG-333) — paces it by a real-time cooldown. */
   private lastMigrationMs = 0;
   /** Wall-clock ms of the last edge-meet barter (BACKLOG-358) — paces the ambient trade by a real-time cooldown. */
@@ -2414,6 +2419,12 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only Playwright hook — the zone map model (BACKLOG-425): chain order, counts, keeper flag
     (window as any).__zoneMap = () => this.zoneMapEntries();
+    // BACKLOG-460: the draining-zone reads — each zone's high-water peak, whether it currently reads
+    // declining, a manual peak-bump pass (seed a peak deterministically), and BACKLOG-464's last-one scan.
+    (window as any).__zonePeaks = () => ({ ...this.zonePeaks });
+    (window as any).__zoneDeclining = () => this.decliningZones();
+    (window as any).__bumpPeaks = () => { this.bumpPeaks(); return { ...this.zonePeaks }; };
+    (window as any).__checkLastOne = () => this.checkLastOne();
     // BACKLOG-428: a zone's prosperity read — the folded signals, score, and tier the map lens shows.
     (window as any).__zoneProsperity = (zone: string) => {
       const signals = this.zoneSignals(zone);
@@ -2506,7 +2517,15 @@ export class WorldScene extends Phaser.Scene {
       this.harvestedByZone, // BACKLOG-433: each zone's farming tally, read on its own on the lens
       this.foodPileByZone, // BACKLOG-446: each zone's banked food, read as a glyph line on the lens
       this.granaryZones(), // BACKLOG-454: zones that have raised a granary (🏛️ marker + a raised food cap)
+      this.decliningZones(), // BACKLOG-460: zones hollowed below their peak (⬇ marker)
     );
+  }
+
+  /** Which zones currently read declining (BACKLOG-460) — the map lens's ⬇ read, keyed by zone id. */
+  private decliningZones(): Record<string, boolean> {
+    const out: Record<string, boolean> = {};
+    for (const z of zoneChain()) out[z] = this.isZoneDeclining(z);
+    return out;
   }
 
   /**
@@ -2540,7 +2559,8 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-428: name + head count + prosperity badge (○/◐/● quiet/growing/thriving).
       // BACKLOG-433: the zone's own harvest tally (🌾N) reads beside the folded tier.
       // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
-      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}  🌾${e.harvested}`;
+      // BACKLOG-460: a zone hollowed below its peak reads a ⬇ beside the tier — an exodus made legible.
+      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
@@ -4277,7 +4297,9 @@ export class WorldScene extends Phaser.Scene {
 
   private maybeMigrate(): void {
     this.bumpTenures(); // BACKLOG-341: home-zone tenure accrues on the migrate cadence, migration or not
+    this.bumpPeaks(); // BACKLOG-460: each zone's population high-water mark tracks before anyone leaves this roll
     this.seedPlentyWord(); // BACKLOG-458: a thriving zone's residents get first-hand word of plenty to spread
+    this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (Math.random() >= MIGRATE_CHANCE) return;
@@ -4289,11 +4311,61 @@ export class WorldScene extends Phaser.Scene {
       this.lastMigrationMs = Date.now();
       return;
     }
-    // BACKLOG-341: a dino settled into its home zone resists the ambient wander (stays put this roll).
-    if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true)) return;
+    // BACKLOG-460: the floor — the ambient wander never drains a zone below its last resident (thin, never
+    // vanish; deathless). Consume the roll so the cooldown still paces.
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    if ((this.zoneHeads()[home] ?? 0) <= ZONE_FLOOR) {
+      this.lastMigrationMs = Date.now();
+      return;
+    }
+    // BACKLOG-341 + 460: a dino settled into its home zone resists the ambient wander — but a *declining*
+    // zone holds its residents more weakly (a lower damp), so a hollowing zone's exodus gains momentum.
+    const damp = this.isZoneDeclining(home) ? DECLINING_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP;
+    if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true, Math.random, damp)) return;
     // BACKLOG-450: mouths move toward plenty — head for the richest neighbour, not a coin flip.
     this.scarcityMigrate(d);
     this.lastMigrationMs = Date.now();
+  }
+
+  /** Live per-zone head counts (BACKLOG-460 helper) — one shared read of `zonePopulations` for the cadence. */
+  private zoneHeads(): Record<string, number> {
+    return zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID);
+  }
+
+  /** Raise every zone's high-water mark to its current head count (BACKLOG-460). Runs on the migrate cadence
+   *  before any migration, so a zone's peak registers before residents start leaving it. */
+  private bumpPeaks(): void {
+    const pop = this.zoneHeads();
+    for (const z of zoneChain()) this.zonePeaks = bumpPeak(this.zonePeaks, z, pop[z] ?? 0);
+  }
+
+  /** Is a zone declining (BACKLOG-460) — below its peak while still holding the floor? */
+  private isZoneDeclining(zone: string): boolean {
+    return isDeclining(this.zonePeaks[zone] ?? 0, this.zoneHeads()[zone] ?? 0);
+  }
+
+  /**
+   * Last one standing (BACKLOG-464): a zone hollowed to its final resident (declining per 460, `heads === 1`)
+   * lets that dino feel the quiet — a wistful 🍂 bubble, a ticker line, and a memory of the emptiness that
+   * rides recall into its next greeting. Deduped against the dino's own memory ring so it reads as a moment,
+   * not a tic (a zone that repopulates and drains again can sound it afresh). Returns the names beat.
+   */
+  private checkLastOne(): string[] {
+    const pop = this.zoneHeads();
+    const beat: string[] = [];
+    for (const z of zoneChain()) {
+      if (!this.isZoneDeclining(z) || (pop[z] ?? 0) !== 1) continue;
+      const d = this.dinos.find((x) => !this.migrating.has(x.name) && zoneOf(this.dinoZones, x.name, BOWL_ID) === z);
+      if (!d) continue;
+      const zoneName = zoneById(z).name;
+      const mem = lastoneMemory(zoneName);
+      if (recall(this.memory, d.name).includes(mem)) continue; // dedup: a moment, not a tic
+      this.memory = remember(this.memory, d.name, mem);
+      this.showBubble(d, lastoneLine());
+      this.logEvent(lastoneEvent(d.name, zoneName));
+      beat.push(d.name);
+    }
+    return beat;
   }
 
   /**
