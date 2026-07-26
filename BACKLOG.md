@@ -736,6 +736,13 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
+## Cycle 112 lore additions — the ground empties (2026-07-26)
+
+> Milestone 7's structure arc 460 mechanizes a scarcity exodus and caps it with a floor (a zone thins
+> but never vanishes — one resident always stays). This lore beat is that floor's *human* read.
+
+- [ ] BACKLOG-464 [emergent] Last one standing — when a zone has hollowed to its final resident (declining per 460, `heads === 1`), that dino feels the quiet: a wistful 🍂 "gone quiet around here…" beat + a `you're the last one left in <zone>` memory that rides recall into its next greeting. The emotional cost of the mouths-move-toward-plenty economy (450); the dino the 460 floor keeps behind *notices* the emptiness. Deduped against its own memory ring so it reads as a moment, not a tic; deathless, deterministic (NPCBrain untouched, the memory colours the LLM line where a device allows). Foundation-first: a private memory + bubble, deferring a gossip channel for the emptiness. Builds on 460 / 450 / 011 / 316.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
