@@ -1,8 +1,8 @@
 {
   "cycle": 112,
-  "phase": "art-pending",
-  "currentItem": "BACKLOG-464",
-  "structureItem": "BACKLOG-460",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,12 +10,12 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-07-26T02:00:00-05:00",
-    "structure-smith": "2026-07-25T02:10:00-05:00",
-    "designer": "2026-07-25T02:30:00-05:00",
-    "code-planner": "2026-07-25T02:35:00-05:00",
-    "coder": "2026-07-25T03:30:00-05:00",
-    "qa": "2026-07-25T03:40:00-05:00",
+    "structure-smith": "2026-07-26T02:10:00-05:00",
+    "designer": "2026-07-26T02:30:00-05:00",
+    "code-planner": "2026-07-26T02:35:00-05:00",
+    "coder": "2026-07-26T03:30:00-05:00",
+    "qa": "2026-07-26T03:40:00-05:00",
     "validator": "2026-07-26T03:55:00-05:00",
-    "artist": "2026-07-25T04:00:00-05:00"
+    "artist": "2026-07-26T04:00:00-05:00"
   }
 }
