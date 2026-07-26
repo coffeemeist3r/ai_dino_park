@@ -8,26 +8,8 @@
 
 ## Current milestone
 
-**Milestone 7: The economy has weight**
-**Status:** ACTIVE (opened cycle 109)
-
-Milestone 6 made the three-zone chain one economy: food and mouths cross the edges. But that economy has no
-*friction* — banked food is immortal (a glut freezes forever), a zone's structures raise a prosperity number
-and nothing else (building and the pantry never touch), and a mouth that leaves does it silently. Milestone 7
-gives the economy weight and voice: a hoard spoils if it just sits (455), a zone that builds earns a bigger
-pantry (454), and a dino that leaves a poor ground for a richer one can **say why** (457, riding 450's
-scarcity migration). Plenty and want stop being static numbers and start *pushing*. M6 gave the economy
-reach; M7 gives it consequence.
-
-**Lore arcs:**
-- [x] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
-- [x] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458 — cycle 110)
-- [x] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459 — cycle 111)
-
-**Structure arcs:**
-- [x] The granary — a zone that has raised enough landmarks puts up a granary, and a standing granary lifts that zone's food cap, so building finally feeds the food economy (BACKLOG-454 — cycle 110)
-- [x] A pantry that spoils — banked food at/near cap slowly decays across in-game days, so a hoard costs something and the flows stay live (BACKLOG-455 — cycle 111)
-- [ ] The draining zone — a zone hollowed by scarcity migration reads as declining and its remaining residents lean harder to leave, giving an exodus momentum (BACKLOG-460)
+**None active — Milestone 7 shipped cycle 112.** The next cycle's smiths draft **Milestone 8** here
+(Lore-smith the headline + feel arcs, Structure-smith the spine arcs) before picking items.
 
 ---
 
@@ -47,6 +29,38 @@ reach; M7 gives it consequence.
 ```
 
 ## Shipped milestones
+
+### Milestone 7: The economy has weight — SHIPPED cycle 112 (opened cycle 109)
+
+Milestone 6 gave the three-zone chain *reach* — food and mouths crossing the edges — but the economy it
+built had no *friction*: banked food was immortal (a glut froze forever and two full zones deadlocked the
+ferry), a zone's structures raised a prosperity number and nothing else (building and the pantry never
+touched), and a mouth that left a poor ground for a rich one did it silently, off a bias that re-levelled
+every roll so no exodus ever gathered. Milestone 7 gave plenty and want *consequence and voice*. The
+economy learned to **cost**: a hoard sitting at or near its zone's cap now bleeds a unit per in-game day
+down to a self-limiting floor (455), so plenty you don't move stops being free and the flows can't
+stagnate. It learned to **grow**: a zone that has raised enough landmarks puts up a granary, and a
+standing granary lifts that zone's food cap (454) — the first time in the project's life the build arc
+(146→417) and the food economy (446→447) touched. And migration stopped being a silent coin-flip: a dino
+that left a dry ground for a richer one keeps and *speaks* the reason it went (457), plenty travels by
+gossip before a body follows it (458), the ground a migrant arrives at answers back with a wry welcome
+(459) — and the ground it *left* now reads its own hollowing (460): a zone below its population peak shows
+a ⬇, its remaining residents lean harder to leave so the exodus gains momentum, capped by a floor that
+lets a zone thin to one but never vanish. The dino that floor keeps behind feels the quiet and says so
+(464). Minds (M1) → a home ground (M2) → a ground that feeds them (M3) → stakes in the eating (M4) → a
+ground that provides for its own (M5) → a ground that no longer stands alone (M6) → **a ground whose
+plenty and want have weight you can feel** (M7). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] Left for greener ground — a dino whose migration carried it toward a richer neighbour keeps a "the pantry ran dry, so I went where the food is" memory naming the ground it left, shows a departure beat, and greets a beat later with it (BACKLOG-457 — cycle 109)
+- [x] Word of plenty — a dino that hears a neighbour zone is thriving is primed to migrate there, so plenty travels by gossip before a body follows (BACKLOG-458 — cycle 110)
+- [x] Come for the plenty — a scarcity migrant arriving in a richer zone is met with a wry welcome and a small bond (BACKLOG-459 — cycle 111)
+- [x] Last one standing — the dino the 460 floor keeps behind in a hollowed zone sounds a wistful "gone quiet around here" beat + a memory of the emptiness (BACKLOG-464 — cycle 112, the close-out companion to 460)
+
+**Structure arcs:**
+- [x] The granary — a zone that has raised enough landmarks puts up a granary, and a standing granary lifts that zone's food cap, so building finally feeds the food economy (BACKLOG-454 — cycle 110)
+- [x] A pantry that spoils — banked food at/near cap slowly decays across in-game days, so a hoard costs something and the flows stay live (BACKLOG-455 — cycle 111)
+- [x] The draining zone — a zone hollowed by scarcity migration reads as declining (⬇) and its remaining residents lean harder to leave, giving an exodus momentum, floored so a zone thins but never vanishes (BACKLOG-460 — cycle 112)
 
 ### Milestone 6: No zone stands alone — SHIPPED cycle 109 (opened cycle 106)
 

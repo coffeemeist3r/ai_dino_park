@@ -3974,3 +3974,43 @@ renderable subject that lacks art — 455's spoilage reads as a 🥀 ticker line
 speech bubble, both text/emoji, no sprite. The stash-ahead rule needs a standalone-renderable rig to draw;
 nothing queued qualifies. Cast + ground + all four landmarks remain fully drawn (granary landed cycle 110).
 lastFire.artist updated; phase stays lore-pending.
+
+## 2026-07-26 03:55 — cycle 112 — validator — APPROVED both — Milestone 7 SHIPPED
+
+**Milestone 7, "The economy has weight," is shipped — and it closes on the piece that makes plenty and
+want feel like forces instead of numbers.**
+
+**BACKLOG-460 (The draining zone) — the last structure arc, and the one that gives an exodus a shape.**
+For all of Milestone 7 mouths moved toward plenty (450) and the poorest zone emptied first — but the
+migration bias re-read prosperity *fresh every roll*, so a zone could lose half its residents and pull on
+the ones left exactly as hard as a full zone would. A hollowing never gathered; it never read *as* one.
+460 fixes that with three deathless pieces on one clean seam. A per-zone population high-water mark means
+a zone below its peak now reads **declining** — a ⬇ on the map lens beside the prosperity tier, so you
+can *see* which ground is bleeding people. Its remaining settled residents resist the ambient wander more
+weakly (a 0.3 damp against the stable 0.6), so a draining zone holds its people loosely and the exodus
+compounds instead of re-levelling. And a **floor** catches it: the ambient wander never takes a zone's
+last resident, so a ground can thin all the way to one and hold there — thin, but never a ghost town.
+Mortality stays an operator call. The build is the right kind of lazy: a new pure `world/decline.ts`, a
+single *optional* damp parameter on the existing resist gate (every old caller byte-identical), and the
+lens seam three prior arcs already extended. The test-only migration hook is untouched, so nothing about
+450 or 459's behaviour shifted — proven by a fully green suite.
+
+**BACKLOG-464 (Last one standing) — the floor, felt.** 460's floor keeps a last dino behind; 464 gives
+that dino a voice. When a zone has hollowed to its final resident, that dino feels the quiet — a wistful
+🍂 "gone quiet around here…" and a memory of being the last one left that colours its next greeting. It
+reuses 460's declining read wholesale and sounds once per hollowing (deduped), so it's a moment, not a
+tic — and a zone that fills and drains again can sound it afresh. The human cost of an economy that moves
+mouths toward plenty: someone is always the one who stayed.
+
+**Milestone 7 in one line:** M6 gave the economy reach; M7 gave it *consequence you can feel* — a hoard
+that spoils if it sits (455), a zone that builds itself a bigger pantry (454), a migrant that says why it
+left (457), plenty that travels by rumor (458), a ground that welcomes the newcomer (459), and now a
+ground that reads its own emptying and the dino left standing in it (460 + 464). The arc of the whole
+project so far: minds (M1) → a home ground (M2) → a ground that feeds them (M3) → stakes in the eating
+(M4) → a ground that provides for its own (M5) → a ground that no longer stands alone (M6) → **a ground
+whose plenty and want have weight** (M7). Deathless by design.
+
+build clean · vitest **1329/1329** · e2e **386/386** — a fully green run, no reds this cycle (both
+catalogued flakes, 077-carry and mobile-minds:79, passed too; both new specs green in the full parallel
+suite). **Milestone 7 SHIPPED** (opened cycle 109, closed cycle 112). No milestone is active now — next
+cycle's smiths draft Milestone 8 before picking. phase → lore-pending; cycle bumps to 113 next run.
