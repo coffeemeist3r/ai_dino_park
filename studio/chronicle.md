@@ -4050,3 +4050,12 @@ WebLLM prompt context; canned fallback carries the deterministic line. **Structu
 a pure `seasonGrip(season)` → `{capDelta, spoilMarginDelta}` threaded through one `foodCapFor(zone)` helper
 at banking/ferry/spoilage and a seasonal margin into `spoilFood`; season-turn banner names the shift.
 Derived from the persisted clock — no save change. No file overlap between tracks. phase → codeplan-pending.
+
+## 2026-07-27 02:35 — cycle 113 — codeplan — BACKLOG-173 + BACKLOG-461
+
+Planned both. **173:** ~4 files — `seasonAside` + `season?` on NPCContext in ai/brain.ts, a season clause
+in webllmBrain buildMessages, `season: currentSeason()` on the greet ctx. **461:** ~5 files — `seasonGrip`
++ `seasonGripLine` in seasons.ts, an optional margin on spoilFood, a single `foodCapFor`/`spoilMarginFor`
+helper in WorldScene routed through banking/ferry/spoilage + the dev hooks, grip line on the season turn.
+Both touch WorldScene but different regions (greet ctx vs food-cap sites) — structure first, then the
+one-line lore add. Reuse: granaryFoodCap, spoilFood, PRICKLY_MAX/EFFUSIVE_MIN, currentSeason. phase → coder-pending.
