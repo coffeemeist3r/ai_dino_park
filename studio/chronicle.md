@@ -4041,3 +4041,12 @@ deferred). Structure-Track open was 3 (< cap X=4), so seeded two follow-ups befo
 (per-crop seasonal yield) and BACKLOG-466 (the dry season — water twin of 461). Added Structure arcs
 (461/462) to MILESTONE.md. Files don't collide with the lore pick (173, dialogue context). phase stays
 designer-pending.
+
+## 2026-07-27 02:30 — cycle 113 — designer — BACKLOG-173 + BACKLOG-461
+
+Specced both tracks. **Lore 173 (Season in the voice):** a temperament-shaded seasonal aside composed onto
+the greeting — winter grumble / spring savour, summer+fall deliberately silent — plus the season in the
+WebLLM prompt context; canned fallback carries the deterministic line. **Structure 461 (The lean season):**
+a pure `seasonGrip(season)` → `{capDelta, spoilMarginDelta}` threaded through one `foodCapFor(zone)` helper
+at banking/ferry/spoilage and a seasonal margin into `spoilFood`; season-turn banner names the shift.
+Derived from the persisted clock — no save change. No file overlap between tracks. phase → codeplan-pending.

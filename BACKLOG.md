@@ -214,7 +214,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > row is enough inward gaze; give the bowl a year. These extend the seasons once the clock turns.
 
 - [ ] BACKLOG-172 [pokemon] Season of hatching — every dino (and every future egg) gets a recorded hatch season shown in the collection book ("hatched in spring"); lineages start carrying birthdays the turning year makes meaningful. Builds on 042 / 021 / 159.
-- [ ] BACKLOG-173 [ai] Season in the voice — the current season joins the dialogue context (like time-of-day in 051), so a dino can grumble about winter or savour spring without being asked. Deterministic fallback line per season. Builds on 051 / 159.
+- [~] BACKLOG-173 [ai] Season in the voice — the current season joins the dialogue context (like time-of-day in 051), so a dino can grumble about winter or savour spring without being asked. Deterministic fallback line per season. Builds on 051 / 159.
 
 ## Cycle 41 lore additions — the year keeps turning (2026-06-10)
 
