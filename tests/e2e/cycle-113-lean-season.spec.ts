@@ -40,11 +40,12 @@ test('winter bleeds a hoard sooner and deeper than spring would', async ({ page 
   await setClock(page, 22); // winter
   await setPile(page, 'grove', { berries: 6 });
 
-  // Winter cap 5, margin 2 → bleeds 6→5→4→3 and settles at the winter floor (3), below the spring floor (4).
+  // Winter cap 5, margin 2 → bleeds 6→5→4→3→2 and settles at the winter floor (2), below the spring floor (4).
   expect((await spoil(page)).grove.berries).toBe(5);
   expect((await spoil(page)).grove.berries).toBe(4);
   expect((await spoil(page)).grove.berries).toBe(3);
-  expect((await spoil(page)).grove.berries).toBe(3); // holds at the deeper winter floor
+  expect((await spoil(page)).grove.berries).toBe(2);
+  expect((await spoil(page)).grove.berries).toBe(2); // holds at the deeper winter floor
   expect((await events(page)).some((e) => e.includes('🥀') && e.includes('spoiled'))).toBe(true);
 });
 
