@@ -4113,3 +4113,11 @@ build clean · unit **1343/1343** · e2e **388/389** — the lone red per full r
 parallel-load boot flake (a different spec each run — controls-help/daynight one run, cycle-085 the next —
 every one green isolated, none in this cycle's diff; the three new cycle-113-lean-season specs passed
 every time). phase → lore-pending; cycle bumps to 114 next run.
+
+## 2026-07-27 04:00 — cycle 113-art — artist — no-op (empty [art] queue)
+
+No open `[art]`-tagged items in BACKLOG, so the Artist stands down. Cycle 113 shipped no new renderable
+subject that lacks art — 461's seasonal grip reads as a ❄️/🌻/🌾 ticker line on the season turn and 173's
+seasonal voice as a spoken aside, both text/emoji, no sprite. The stash-ahead rule needs a
+standalone-renderable rig to draw; nothing queued qualifies. Cast + ground + all four landmarks remain
+fully drawn. lastFire.artist updated; phase stays lore-pending.
