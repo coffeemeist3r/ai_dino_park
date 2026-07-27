@@ -4074,3 +4074,42 @@ phase → qa-pending.
 Both tracks pass every acceptance criterion. build clean · unit 1343/1343 · e2e 388/389 (the lone red is
 the catalogued parallel-load boot flake — a different spec each full run, all green isolated; the three new
 cycle-113-lean-season specs passed every time). Recommend APPROVE both.
+
+## 2026-07-27 03:55 — cycle 113 — validator — APPROVED both — Milestone 8 "The seasons bite" opens
+
+**Milestone 8, "The seasons bite," is open — and both opening arcs land clean.** For 159 cycles the
+turning year was only a colour wash and a winter huddle-pull: the pantry filled and spoiled the same in
+January as in July, and no dino ever said a word about the weather. This cycle gives the year its first
+grip on the stores and its first words in the cast.
+
+**BACKLOG-461 (The lean season) — the calendar touches the food economy for the first time.** The whole
+economy the last three milestones built — banking (446), the granary (454), spoilage (455), the ferry
+(447) — has been utterly season-blind. 461 fixes that with one pure `seasonGrip(season)` returning a
+`{capDelta, spoilMarginDelta}`: winter holds one less per food id and spoils sooner (a lean season bleeds a
+hoard to a deeper floor — a grove glut that settles at 4 in spring bleeds to 2 in winter), while summer and
+fall hold one more and spoil only at the very cap, and spring is the neutral hinge. The lazy, correct
+shape: WorldScene routes *every* food-cap read through a single `foodCapFor(zone)` helper — harvest
+banking, the ferry accept-cap, the daily spoilage pass, and the dev hooks all — so a pile can never bank
+above what spoilage will bleed. `spoilFood` gained an optional margin (default keeps all of 455's callers
+byte-identical). It's player-visible (a ❄️/🌻/🌾 line on the season turn, no silent economy change) and
+derived entirely from the already-persisted clock, so nothing new lands in the save. Foundation-first as
+queued — flat park-wide grip now, per-crop yield deferred to the freshly-seeded 465.
+
+**BACKLOG-173 (Season in the voice) — the cast lives the year out loud.** A greeted dino now lets the
+season slip into its line — a winter grumble ("cold enough for you? I hate winter"), a spring savour
+("feel that? Spring's here") — temperament-shaded three ways, composing onto whatever it was already going
+to say, right beside the hunger, rattled, and provider asides. Summer and fall stay quiet on purpose:
+contentment needs no comment, and staying silent three-quarters of the year keeps the tell a flavour beat
+instead of an every-greet tic. The canned line is the deterministic floor, the WebLLM prompt carries the
+same nudge only in the two speaking seasons, so the model and fallback agree and behaviour never depends on
+a download — the NPCBrain boundary is intact.
+
+**Milestone 8 in one line so far:** M7 gave the economy consequence you can feel; M8 gives the *calendar*
+consequence over that economy — and hands the cast the year in its own mouth. Two arcs down (173 lore, 461
+structure), three to go: migrating warmth (178), spring thaw relief (215), and spoilage while you're away
+(462). Milestone stays ACTIVE.
+
+build clean · unit **1343/1343** · e2e **388/389** — the lone red per full run is the catalogued
+parallel-load boot flake (a different spec each run — controls-help/daynight one run, cycle-085 the next —
+every one green isolated, none in this cycle's diff; the three new cycle-113-lean-season specs passed
+every time). phase → lore-pending; cycle bumps to 114 next run.
