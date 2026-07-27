@@ -4021,3 +4021,13 @@ No open `[art]`-tagged items in BACKLOG, so the Artist stands down. Cycle 112 sh
 subject that lacks art — 460's declining read is a ⬇ lens glyph and 464's beat a 🍂 speech bubble, both
 text/emoji, no sprite. The stash-ahead rule needs a standalone-renderable rig to draw; nothing queued
 qualifies. Cast + ground + all four landmarks remain fully drawn. lastFire.artist updated; phase → lore-pending.
+
+## 2026-07-27 02:00 — cycle 113 — lore-smith — Milestone 8 opens: "The seasons bite"
+
+Milestone 7 shipped last cycle; drafted **Milestone 8 — "The seasons bite"** (headline + 3 lore arcs to
+MILESTONE.md; Structure-smith adds the spine arcs next). The turning year has tinted the bowl since cycle
+40 but never gripped the economy or reached a dino's voice — this milestone gives the seasons teeth in the
+stores and words in the mouths. Lore-track backlog is over the cap (12), so no new items seeded: themed
+the cycle and picked from the deep seasonal queue (172–178, 215). Suggested next-up: **BACKLOG-173 —
+Season in the voice**, pairing with the structure pick 461 (the lean season). Idea Box empty. phase →
+designer-pending.

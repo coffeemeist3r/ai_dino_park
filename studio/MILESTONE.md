@@ -8,8 +8,30 @@
 
 ## Current milestone
 
-**None active — Milestone 7 shipped cycle 112.** The next cycle's smiths draft **Milestone 8** here
-(Lore-smith the headline + feel arcs, Structure-smith the spine arcs) before picking items.
+**Milestone 8: The seasons bite**
+**Status:** ACTIVE (opened cycle 113)
+
+For 159 cycles the turning year was only a colour wash and a winter huddle-pull: the pantry filled and
+spoiled at the same rate in every season, and no dino ever said a word about the weather. Milestone 7 gave
+the economy consequence; Milestone 8 gives the **calendar** consequence over that economy — and gives the
+cast the year in its own mouth. The lean season learns to tighten how much a ground can hold and to quicken
+spoilage while the plenty seasons ease both (461), so *when* it is finally shapes how much you can bank. A
+hoard banked and left through a long absence catches up on the same decay instead of surviving untouched,
+surfaced in the "while you were away" digest (462). And the cast lives the year out loud: a dino grumbles
+through winter and savours spring in its own voice (173), the cold pulls the herd tighter while summer lets
+it spread (178), and a dino that toughed out the cold gets its spring-thaw relief when the year turns kind
+again (215). Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) →
+no longer stands alone (M6) → plenty and want have weight (M7) → **a year whose seasons you feel in the
+stores and hear in the voices** (M8). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [ ] Season in the voice — a dino lets the current season colour its greeting (grumbles through winter, savours spring), temperament-shaded, with a deterministic fallback line per season (BACKLOG-173)
+- [ ] Migrating warmth — winter raises the cluster-drift bias (the den fills earlier) while summer lowers it (they spread out and laze), so the bowl's social density breathes with the year (BACKLOG-178)
+- [ ] Spring thaw relief — when the year turns *out* of winter, a dino that toughed out cold nights gets a one-off "made it through the winter" lift + a relieved line (BACKLOG-215)
+
+**Structure arcs:**
+- [ ] The lean season — one pure park-wide seasonal food modifier the harvest-banking and spoilage hooks read: the lean season tightens banking and quickens spoilage, plenty eases both (BACKLOG-461)
+- [ ] Spoilage while you're away — fold spoilage into the away catch-up so a hoard left through a long absence bleeds toward its floor the way a watched one does, surfaced in the digest (BACKLOG-462)
 
 ---
 
