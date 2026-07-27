@@ -4031,3 +4031,13 @@ stores and words in the mouths. Lore-track backlog is over the cap (12), so no n
 the cycle and picked from the deep seasonal queue (172–178, 215). Suggested next-up: **BACKLOG-173 —
 Season in the voice**, pairing with the structure pick 461 (the lean season). Idea Box empty. phase →
 designer-pending.
+
+## 2026-07-27 02:10 — cycle 113 — structure-smith — BACKLOG-461 The lean season (Milestone 8 spine)
+
+Picked **BACKLOG-461 (The lean season)** — the join the food economy has never had with the calendar: one
+pure park-wide seasonal modifier the harvest-banking and spoilage hooks read, so the lean season tightens
+what a ground can hold while plenty eases it. Foundation-first (flat multiplier now, per-crop yield
+deferred). Structure-Track open was 3 (< cap X=4), so seeded two follow-ups before picking: BACKLOG-465
+(per-crop seasonal yield) and BACKLOG-466 (the dry season — water twin of 461). Added Structure arcs
+(461/462) to MILESTONE.md. Files don't collide with the lore pick (173, dialogue context). phase stays
+designer-pending.
