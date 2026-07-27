@@ -4059,3 +4059,12 @@ in webllmBrain buildMessages, `season: currentSeason()` on the greet ctx. **461:
 helper in WorldScene routed through banking/ferry/spoilage + the dev hooks, grip line on the season turn.
 Both touch WorldScene but different regions (greet ctx vs food-cap sites) — structure first, then the
 one-line lore add. Reuse: granaryFoodCap, spoilFood, PRICKLY_MAX/EFFUSIVE_MIN, currentSeason. phase → coder-pending.
+
+## 2026-07-27 03:30 — cycle 113 — coder — BACKLOG-173 + BACKLOG-461
+
+Built both. **461:** `seasonGrip` in seasons.ts (winter −1cap/+1margin, summer/fall +1/−1, spring 0/0),
+an optional margin on spoilFood, and one `foodCapFor`/`spoilMarginFor` pair in WorldScene routed through
+banking + ferry + spoilage + the dev hooks; season turn now logs the grip. **173:** `seasonAside` (winter
+grumble / spring savour, summer+fall silent, temperament-shaded) composed onto the greeting, a season
+clause in the WebLLM prompt, and `season` on the greet ctx. build clean · unit 1343/1343 · dev 200.
+phase → qa-pending.

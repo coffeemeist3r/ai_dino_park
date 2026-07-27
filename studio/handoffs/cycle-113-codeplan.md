@@ -104,3 +104,24 @@ silent so the aside isn't an every-greet tic.
 clobber. Do structure first (adds the `foodCapFor` helper + imports), then the one-line lore addition.
 
 **Estimated touch count:** ~5 files (2 shared WorldScene regions counted once).
+
+---
+
+## Shipped (Coder)
+
+**Structure track — BACKLOG-461:**
+- `game/src/world/seasons.ts` — added `SeasonGrip`, `seasonGrip(season)`, `seasonGripLine(season)`.
+- `game/src/world/spoilage.ts` — `spoilsAtCap` + `spoilFood` gained an optional `margin` (default `SPOIL_MARGIN`, floored at 0). Existing callers byte-identical.
+- `game/src/scenes/WorldScene.ts` — `foodCapFor(zone)` + `spoilMarginFor()` helpers; routed harvest banking, ferry destCap, `__foodCap`, `__bankFood`, and `runSpoilage` through them; grip line on the season turn.
+- `game/src/world/lean-season.test.ts` — seasonGrip shapes + spoilFood seasonal-margin behaviour (7 tests).
+- `tests/e2e/cycle-113-lean-season.spec.ts` — seasonal cap shift + winter/summer spoilage (3 specs).
+
+**Lore track — BACKLOG-173:**
+- `game/src/ai/brain.ts` — `season?: Season` on `NPCContext`; `seasonAside(season, traits?)`; composed into `cannedReply` (last, `.slice(0,360)`).
+- `game/src/ai/webllmBrain.ts` — season nudge clause in `buildMessages` (winter/spring only).
+- `game/src/scenes/WorldScene.ts` — `season: this.currentSeason()` on the player-greet context.
+- `tests/unit/cycle-113-season-voice.test.ts` — aside per season × temperament, compose, buildMessages clause (7 tests).
+
+**Deviations:** unit test for the lean season co-located in `game/src/world/` (matches its `seasons.test.ts`/`spoilage.test.ts` siblings) rather than `tests/unit/`. No scope creep.
+
+**Status:** `npm run build` ✅ · `npm run test:unit` ✅ 1343/1343 · dev server HTTP 200.

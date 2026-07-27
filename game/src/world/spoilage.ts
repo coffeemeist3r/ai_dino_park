@@ -24,9 +24,11 @@ import { FOOD_STOCKPILE_CAP, type FoodPile } from './foodstore';
 export const SPOIL_MARGIN = 1;
 
 /** Is this id's count a hoard at/near `cap` — i.e. would it lose a unit this pass? Below the near-cap band
- *  (and an empty id) never spoils, which is what keeps a circulating zone untouched. */
-export function spoilsAtCap(count: number, cap: number): boolean {
-  return count > 0 && count >= cap - SPOIL_MARGIN;
+ *  (and an empty id) never spoils, which is what keeps a circulating zone untouched. `margin` defaults to the
+ *  flat `SPOIL_MARGIN` (every existing caller byte-identical); the lean season widens it and plenty narrows
+ *  it (BACKLOG-461), floored at 0 so a narrowed band spoils only at the very cap. */
+export function spoilsAtCap(count: number, cap: number, margin: number = SPOIL_MARGIN): boolean {
+  return count > 0 && count >= cap - Math.max(0, margin);
 }
 
 /**
@@ -35,8 +37,8 @@ export function spoilsAtCap(count: number, cap: number): boolean {
  * so a caller can `if (next !== pile)` to know whether anything changed. Self-limiting: an id bleeds only
  * while it's in the near-cap band, so it settles at `cap - SPOIL_MARGIN - 1` and no lower.
  */
-export function spoilFood(pile: FoodPile, cap: number = FOOD_STOCKPILE_CAP): FoodPile {
-  const spoiling = Object.keys(pile).filter((id) => spoilsAtCap(pile[id] ?? 0, cap));
+export function spoilFood(pile: FoodPile, cap: number = FOOD_STOCKPILE_CAP, margin: number = SPOIL_MARGIN): FoodPile {
+  const spoiling = Object.keys(pile).filter((id) => spoilsAtCap(pile[id] ?? 0, cap, margin));
   if (spoiling.length === 0) return pile;
   const next: FoodPile = { ...pile };
   for (const id of spoiling) next[id] = (next[id] ?? 0) - 1;

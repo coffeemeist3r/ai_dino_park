@@ -51,3 +51,44 @@ export function turnLine(season: Season): string {
 export function turnMemory(season: Season): string {
   return `the season turned to ${season}`;
 }
+
+/**
+ * The lean season (BACKLOG-461) — the turning year's grip on the food economy. For its whole life the season
+ * was a tint and a huddle-pull: a zone banked and spoiled at the same rate in every season (446/455). This is
+ * the one pure park-wide modifier the harvest-banking and spoilage hooks read, so *when* it is finally shapes
+ * how much a ground can hold. Foundation-first: a flat park-wide grip; per-crop seasonal yield stays deferred
+ * (BACKLOG-465).
+ *
+ * - `capDelta` stacks onto a zone's food cap: **−1 in the lean season** (winter — a ground holds one less per
+ *   food id), **+1 in the plenty seasons** (summer/fall — hold one more), 0 in spring (the year's hinge).
+ * - `spoilMarginDelta` stacks onto spoilage's near-cap band (`SPOIL_MARGIN`): **+1 in winter** (the band
+ *   widens, so a hoard bleeds sooner and to a deeper floor), **−1 in summer/fall** (spoils only at the very
+ *   cap), 0 in spring. So the lean season tightens both ends and plenty eases both.
+ */
+export type SeasonGrip = { capDelta: number; spoilMarginDelta: number };
+
+const SEASON_GRIP: Record<Season, SeasonGrip> = {
+  spring: { capDelta: 0, spoilMarginDelta: 0 }, // neutral — the hinge of the year
+  summer: { capDelta: 1, spoilMarginDelta: -1 }, // plenty — hold more, spoil later
+  fall: { capDelta: 1, spoilMarginDelta: -1 }, // harvest — plenty
+  winter: { capDelta: -1, spoilMarginDelta: 1 }, // lean — hold less, spoil sooner
+};
+
+/** The season's grip on the food economy (BACKLOG-461). Pure lookup; WorldScene threads it into the food-cap
+ *  and spoilage-margin reads. */
+export function seasonGrip(season: Season): SeasonGrip {
+  return SEASON_GRIP[season];
+}
+
+const GRIP_LINES: Record<Season, string> = {
+  spring: '', // neutral — nothing to say about the stores
+  summer: '🌻 summer eases the stores — plenty keeps longer.',
+  fall: '🌾 the harvest season eases the stores — plenty keeps longer.',
+  winter: '❄️ winter tightens the stores — the pantry holds less and spoils sooner.',
+};
+
+/** The ticker line for the season turn's economic half (BACKLOG-461); '' in spring (no shift to announce).
+ *  No silent change (CHARTER §Quality bar): a season that changes the pantry says so. */
+export function seasonGripLine(season: Season): string {
+  return GRIP_LINES[season];
+}

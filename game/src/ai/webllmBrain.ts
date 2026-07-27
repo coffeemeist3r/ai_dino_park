@@ -130,13 +130,21 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const provider = ctx.provider
     ? `${ctx.provider.zoneName} eats because of ${ctx.provider.name}, who keeps its food stores full — you might mention it. `
     : '';
+  // BACKLOG-173: the season colours the line — a winter grumble or a spring savour (the canned fallback carries
+  // the deterministic aside, so behaviour never depends on the model reaching this). Summer/fall stay quiet.
+  const seasonal =
+    ctx.season === 'winter'
+      ? `It's winter and the cold is wearing on you — let a grumble about it slip into what you say. `
+      : ctx.season === 'spring'
+        ? `It's spring and the world is greening again — let your delight in it colour what you say. `
+        : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

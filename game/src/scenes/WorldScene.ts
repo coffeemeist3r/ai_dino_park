@@ -82,7 +82,7 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
-import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, type Season } from '../world/seasons';
+import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
@@ -107,7 +107,7 @@ import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
 import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
-import { spoilFood, spoiledLine } from '../world/spoilage';
+import { spoilFood, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
@@ -970,7 +970,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__granaryIsArt = () =>
       this.granarySprites.length > 0 && this.granarySprites[0] instanceof Phaser.GameObjects.Image;
     (window as any).__hasGranary = (z?: string) => this.hasGranary(z ?? this.zoneId);
-    (window as any).__foodCap = (z?: string) => granaryFoodCap(this.hasGranary(z ?? this.zoneId));
+    (window as any).__foodCap = (z?: string) => this.foodCapFor(z ?? this.zoneId); // BACKLOG-461: granary- + season-aware
     // dev-only: seed a zone's pile + landmark count so the granary build is reachable in a test without
     // gathering it out. Adds `n` cairns tagged to the zone and stocks the pile to the granary recipe.
     (window as any).__seedGranaryReady = (zone: string, landmarks = GRANARY_AFTER_STRUCTURES) => {
@@ -985,7 +985,7 @@ export class WorldScene extends Phaser.Scene {
     // dev-only: bank one unit of `food` into a zone's store at that zone's live cap (BACKLOG-454) — returns
     // the pile total after, so a test can prove a granary'd zone banks past the flat cap. Mirrors the harvest bank.
     (window as any).__bankFood = (zone: string, food: string) => {
-      const cap = granaryFoodCap(this.hasGranary(zone));
+      const cap = this.foodCapFor(zone); // BACKLOG-461: granary- + season-aware
       this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), food, cap);
       return foodPileTotal(this.foodStoreFor(zone));
     };
@@ -1140,7 +1140,8 @@ export class WorldScene extends Phaser.Scene {
     // store and is credited for it — one of the two honest sources the `provider` role reads (the other is
     // the 447 carry). A pile already at cap banks nothing, so nobody is credited for hauling nothing.
     // BACKLOG-454: a standing granary lifts this zone's per-id cap, so a built-up ground banks a bigger surplus.
-    const cap = granaryFoodCap(this.hasGranary(zone));
+    // BACKLOG-461: the season shifts it too — a lean-season ground banks one less, a plenty-season ground one more.
+    const cap = this.foodCapFor(zone);
     const banked = !foodAtCap(this.foodStoreFor(zone), crop.food, cap);
     this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food, cap);
     if (banked) this.creditHauler(zone);
@@ -1209,6 +1210,22 @@ export class WorldScene extends Phaser.Scene {
   /** The season the bowl is living in right now, off the live clock day (BACKLOG-170). */
   private currentSeason(): Season {
     return seasonFor(getWorldClock().now().day);
+  }
+
+  /**
+   * A zone's food cap right now (BACKLOG-461): the granary-aware base cap (454), shifted by the season's grip
+   * — the lean season holds one less, plenty one more. The single source every food-cap read routes through
+   * (banking, ferry accept-cap, spoilage) so a pile can never bank above what spoilage will bleed. Floored at
+   * 1 so a lean season can never drop the cap to 0.
+   */
+  private foodCapFor(zone: string): number {
+    return Math.max(1, granaryFoodCap(this.hasGranary(zone)) + seasonGrip(this.currentSeason()).capDelta);
+  }
+
+  /** Spoilage's near-cap band right now (BACKLOG-461): the flat `SPOIL_MARGIN` widened by the lean season and
+   *  narrowed by plenty, floored at 0. */
+  private spoilMarginFor(): number {
+    return Math.max(0, SPOIL_MARGIN + seasonGrip(this.currentSeason()).spoilMarginDelta);
   }
 
   /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
@@ -4508,7 +4525,7 @@ export class WorldScene extends Phaser.Scene {
     // ponytail: one unit per crossing (a lean, like the non-pressured resource carry) — a pressured
     // multi-unit food shed can follow if a zone visibly stays glutted.
     const wantId = zoneWant(dest, this.harvestedByZone)?.food;
-    const destCap = granaryFoodCap(this.hasGranary(dest)); // BACKLOG-454: a granary'd dest accepts a bigger surplus
+    const destCap = this.foodCapFor(dest); // BACKLOG-454/461: granary- and season-aware accept cap
     const foodCarry = pickFoodCarry(this.foodStoreFor(home), this.foodStoreFor(dest), wantId, destCap);
     if (foodCarry) {
       this.foodPileByZone[home] = takeFood(this.foodStoreFor(home), foodCarry);
@@ -4678,6 +4695,8 @@ export class WorldScene extends Phaser.Scene {
       rattled: recentHunter(recall(this.memory, target.name)) ?? undefined,
       // Word of the provider (BACKLOG-453): it names whoever keeps its ground fed — never itself.
       provider: this.providerAsideFor(target.name),
+      // Season in the voice (BACKLOG-173): the turning year colours the line — winter grumble / spring savour.
+      season: this.currentSeason(),
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
@@ -5055,6 +5074,9 @@ export class WorldScene extends Phaser.Scene {
     this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
     this.clockHud.setText(this.fmtClock(t));
     this.logEvent(`🍂 ${turnLine(turned)}`);
+    // BACKLOG-461: the season's grip on the pantry is player-visible — no silent economy change.
+    const gripLine = seasonGripLine(turned);
+    if (gripLine) this.logEvent(gripLine);
     for (const d of this.dinos) this.memory = remember(this.memory, d.name, turnMemory(turned));
     this.seasonTurns++;
     const banner = this.add
@@ -5090,7 +5112,9 @@ export class WorldScene extends Phaser.Scene {
     let changed = false;
     for (const zone of zoneChain()) {
       const pile = this.foodStoreFor(zone);
-      const next = spoilFood(pile, granaryFoodCap(this.hasGranary(zone)));
+      // BACKLOG-461: the season shifts both the cap and the spoil band — a lean season bleeds a hoard sooner
+      // and to a deeper floor, plenty spoils only at the very cap.
+      const next = spoilFood(pile, this.foodCapFor(zone), this.spoilMarginFor());
       if (next === pile) continue;
       changed = true;
       const zoneName = zoneById(zone).name;

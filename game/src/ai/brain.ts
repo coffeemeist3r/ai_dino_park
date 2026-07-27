@@ -10,6 +10,7 @@
  */
 
 import type { Personality } from './personality';
+import type { Season } from '../world/seasons';
 import { WebLLMBrain } from './webllmBrain';
 
 export interface NPCContext {
@@ -32,6 +33,8 @@ export interface NPCContext {
   rattled?: string;
   /** The provider keeping this dino's zone fed — it names them, unprompted (BACKLOG-453). Never itself. */
   provider?: { name: string; zoneName: string };
+  /** The season the bowl is living in (BACKLOG-173): a dino grumbles through winter, savours spring. */
+  season?: Season;
 }
 
 export interface Observation {
@@ -191,6 +194,31 @@ export function providerAside(providerName: string, zoneName: string, traits?: P
   return ` ${zoneName} eats because of ${providerName}, if you're keeping track.`;
 }
 
+/**
+ * Season in the voice (BACKLOG-173) — the turning year slips into a dino's greeting, unprompted. Only the two
+ * emotionally-charged seasons speak: a **winter grumble** and a **spring savour**. Summer and fall return ''
+ * on purpose — contentment needs no comment, and staying quiet three-quarters of the year keeps the tell a
+ * flavour beat, not an every-greet tic. Temperament-shaded like the hunger (368) / rattled (440) / provider
+ * (453) asides: a prickly dino (`agreeableness < PRICKLY_MAX`), a warm one (`> EFFUSIVE_MIN`), and an even
+ * one each get a distinct line. Leads with a space so it appends cleanly onto whatever register produced the
+ * base line. No traits → the even line.
+ */
+export function seasonAside(season: Season, traits?: Personality): string {
+  const prickly = !!traits && traits.agreeableness < PRICKLY_MAX;
+  const warm = !!traits && traits.agreeableness > EFFUSIVE_MIN;
+  if (season === 'winter') {
+    if (prickly) return ` …cold enough for you? I hate winter. don't ask me again.`;
+    if (warm) return ` Brr — winter's really got its teeth in, hasn't it? Stay warm out there, friend!`;
+    return ` …chilly one, this winter. I'll be glad when it passes.`;
+  }
+  if (season === 'spring') {
+    if (prickly) return ` …spring, I suppose. the grass is less awful. that's something.`;
+    if (warm) return ` Oh, feel that? Spring's here — everything's green and new, I could just sing about it!`;
+    return ` spring's come round again — good to feel the warm back.`;
+  }
+  return ''; // summer / fall — deliberately quiet
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -225,6 +253,12 @@ export function cannedReply(ctx: NPCContext): Reply {
       ...reply,
       text: (reply.text + providerAside(ctx.provider.name, ctx.provider.zoneName, ctx.traits)).slice(0, 320),
     };
+  }
+  // Season in the voice (BACKLOG-173): the most ambient tell of all slips in last (winter grumble / spring
+  // savour; summer & fall stay quiet), composing onto every register above it.
+  if (ctx.season) {
+    const aside = seasonAside(ctx.season, ctx.traits);
+    if (aside) reply = { ...reply, text: (reply.text + aside).slice(0, 360) };
   }
   return reply;
 }
