@@ -4198,3 +4198,11 @@ cold season's ending made its own small celebration — and the milestone ships.
 build clean · unit **1353/1353** · e2e **391/392** — the lone red is the catalogued BACKLOG-456 news-pull
 parallel-load flake (a homesick `Math.random()` migrant pick), off this cycle's diff and green isolated on
 re-run. phase → lore-pending; cycle bumps to 115 next run.
+
+## 2026-07-28 04:00 — cycle 114-art — artist — no-op (empty [art] queue)
+
+No open `[art]`-tagged items in BACKLOG (147 is `[infra]`, 212 `[core]` — the `[art]` inside each is a mention,
+not a tag). Cycle 114 shipped nothing renderable: 178's migrating warmth is a probabilistic behavior on the
+socialize roll, 462's away-spoilage a 🥀 digest line — both logic/text, no sprite. The stash-ahead rule needs a
+standalone-renderable rig to draw; nothing queued qualifies. Cast + ground + all four landmarks remain fully
+drawn. lastFire.artist updated; phase stays lore-pending.
