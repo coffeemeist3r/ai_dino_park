@@ -4134,3 +4134,10 @@ Structure Track at 4 open (462/463/465/466) ≥ X=4 → drain mode, no new items
 honest completion of 455's live-only spoilage spine — a hoard left through a long absence should bleed the away
 days on the same capped decay and read it in the homecoming digest. No file overlap with the lore pick (178).
 Milestone 8's final structure arc. Marked [~]; phase stays designer-pending.
+
+## 2026-07-28 02:30 — cycle 114 — designer — 178 + 462
+
+Two-track spec written, no file overlap. Lore 178: a pure per-season social-bias multiplier on the daytime
+socialize roll (winter >1 clusters, summer <1 spreads, spring/fall 1.0 = byte-identical), clamped to [0.05,0.95];
+a __socialBias hook for QA. Structure 462: spoilFoodOverDays folded into the away catch-up (restore + __catchUp),
+per-zone granary/season-aware cap+margin, 🥀 digest lines, re-arms lastSpoilDay. Marked 178 [~]; phase → codeplan-pending.

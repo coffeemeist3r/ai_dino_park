@@ -224,7 +224,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-175 [emergent] Turning-year gossip — the season-turn memory every dino files (159) becomes gossip: a dino can let the change of season slip to the next it meets ("smell that? fall's here"), so the year travels the bowl the way dino news does. Builds on 019 / 159.
 - [ ] BACKLOG-176 [social] Seasonal gift cravings — the mirror of 170 for the gift loop: the same seasonal-craving nudge shifts which *gift* lands best, so generosity reads the calendar too (a flower means more in spring). Builds on 015 / 170.
 - [ ] BACKLOG-177 [emergent] Equinox restlessness — on the single day a season turns, the whole cast wanders a touch wider for that one day, a quiet collective "something's changed" jitter — distinct from the sky-event gather (144). Builds on 159 / 018.
-- [ ] BACKLOG-178 [emergent] Migrating warmth — winter raises the cluster-drift bias (the cast seeks company in the cold and the den fills earlier) while summer lowers it (they spread out and laze); the bowl's social density breathes with the year. Builds on 159 / 018 / 041.
+- [~] BACKLOG-178 [emergent] Migrating warmth — winter raises the cluster-drift bias (the cast seeks company in the cold and the den fills earlier) while summer lowers it (they spread out and laze); the bowl's social density breathes with the year. Builds on 159 / 018 / 041.
 
 ## Cycle 42 lore additions — the year reaches the night (2026-06-10)
 
