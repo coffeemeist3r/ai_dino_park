@@ -4127,3 +4127,10 @@ fully drawn. lastFire.artist updated; phase stays lore-pending.
 Drain mode (≥12 open lore items) — no new items. Themed the cycle on the year reaching the cast's *body
 language*: winter should pull the bowl together, summer let it spread. Next-up BACKLOG-178, Milestone 8's
 fourth arc — the daytime twin of the seasonal den (171). Idea Box empty. Cycle bumps to 114; phase → designer-pending.
+
+## 2026-07-28 02:10 — cycle 114 — structure-smith — Spoilage while you're away (BACKLOG-462)
+
+Structure Track at 4 open (462/463/465/466) ≥ X=4 → drain mode, no new items. Picked top unblocked: 462, the
+honest completion of 455's live-only spoilage spine — a hoard left through a long absence should bleed the away
+days on the same capped decay and read it in the homecoming digest. No file overlap with the lore pick (178).
+Milestone 8's final structure arc. Marked [~]; phase stays designer-pending.
