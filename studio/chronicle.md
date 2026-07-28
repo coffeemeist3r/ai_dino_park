@@ -4121,3 +4121,9 @@ subject that lacks art — 461's seasonal grip reads as a ❄️/🌻/🌾 ticke
 seasonal voice as a spoken aside, both text/emoji, no sprite. The stash-ahead rule needs a
 standalone-renderable rig to draw; nothing queued qualifies. Cast + ground + all four landmarks remain
 fully drawn. lastFire.artist updated; phase stays lore-pending.
+
+## 2026-07-28 02:00 — cycle 114 — lore-smith — Migrating warmth (BACKLOG-178)
+
+Drain mode (≥12 open lore items) — no new items. Themed the cycle on the year reaching the cast's *body
+language*: winter should pull the bowl together, summer let it spread. Next-up BACKLOG-178, Milestone 8's
+fourth arc — the daytime twin of the seasonal den (171). Idea Box empty. Cycle bumps to 114; phase → designer-pending.
