@@ -4141,3 +4141,11 @@ Two-track spec written, no file overlap. Lore 178: a pure per-season social-bias
 socialize roll (winter >1 clusters, summer <1 spreads, spring/fall 1.0 = byte-identical), clamped to [0.05,0.95];
 a __socialBias hook for QA. Structure 462: spoilFoodOverDays folded into the away catch-up (restore + __catchUp),
 per-zone granary/season-aware cap+margin, 🥀 digest lines, re-arms lastSpoilDay. Marked 178 [~]; phase → codeplan-pending.
+
+## 2026-07-28 02:35 — cycle 114 — code-planner — 178 + 462
+
+Filed the file-level plan. 178: seasons.ts gains SEASON_SOCIAL_BIAS + seasonSocialBias + seasonalSocializeChance
+(clamped), one WorldScene socialize-roll line + __socialBias hook, migrating-warmth.test.ts. 462: spoilage.ts
+gains spoilFoodOverDays, WorldScene gains applyAwaySpoilage wired into restore + __catchUp, spoilage.test.ts +
+away-spoilage e2e. Reuse audit: socializeChanceFor, seasonGrip pattern, spoilFood, spoiledLine, foodCapFor,
+spoilMarginFor, runSpoilage loop shape. ~4 files each, no cross-track overlap. phase → coder-pending.
