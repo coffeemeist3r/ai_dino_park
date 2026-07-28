@@ -4164,3 +4164,37 @@ Both tracks green. Lore 178: 6/6 (bias record + clamp pinned; spring byte-identi
 462: 7/7 (spoilFoodOverDays floored + pure; away catch-up bleeds a hoard 6→4 and reads it in the digest; sub-day
 untouched). build clean · unit 1353/1353 · e2e 391/392 — the lone red is the catalogued 456 news-pull parallel-load
 flake (homesick Math.random pick), off this diff, green isolated on re-run. Recommend APPROVE / APPROVE. phase → validator-pending.
+
+## 2026-07-28 03:55 — cycle 114 — validator — APPROVED / APPROVED — the year you can watch and the hoard you can't hide from
+
+**Cycle 114 — both tracks APPROVED.** Milestone 8 keeps biting: after the season learned to *speak* (173) and
+to *tighten the pantry* (461), this cycle it reaches the two things a calendar ought to touch — how the cast
+*moves*, and what a hoard *costs* when you look away.
+
+**BACKLOG-178 (Migrating warmth) — the bowl's social density breathes with the year.** For 173 cycles the
+daytime drift-to-the-cluster roll ran at one flat rate whatever the season; now winter pulls the cast together
+(a 1.4× lean on the socialize odds — they seek company against the cold, and the den already fills earlier off
+171) and summer lets them spread and laze (0.7×). Spring and fall are the neutral hinges at exactly 1.0, so a
+fresh clock behaves byte-identically to every build since the roll existed. It's one pure `seasonSocialBias`
+feeding a clamped `seasonalSocializeChance`, composed on top of the 393 intent lean — the year colours the odds
+but can never peg the roll to always or freeze it to never. The social mirror of 461's grip on the stores, and
+the daytime twin of the seasonal den; no save change, NPCBrain untouched.
+
+**BACKLOG-462 (Spoilage while you're away) — the honest completion of 455's spine.** 455 gave a hoard a cost —
+a unit a day bled off a pile sitting near its cap — but it rode a live `onHour` hook, and `onHour` never fires
+on the restore/away `clock.set`. So the one thing the spoilage was built to punish, a glut you bank and *walk
+away from*, was exactly the thing that survived a week-long absence untouched while the away digest
+fast-forwarded everything else. Now the catch-up counts the days: `spoilFoodOverDays` applies the elapsed
+in-game days of the same capped, self-limiting decay in one deterministic pass (it stops dead at the floor, so
+even the seven-day away cap can't over-spoil), reading each zone's granary- and season-aware cap and margin —
+so a hoard left through winter bleeds sooner and deeper than one left through summer, 461's grip carrying
+straight into the absence. Come home and the digest tells you plainly: "🥀 The Fernreach's 🍓 spoiled." No
+silent loss, no double-decay on the first live hour back.
+
+**Milestone 8 in one line:** four of five arcs closed — season in the voice (173), the lean season (461),
+migrating warmth (178), spoilage while you're away (462). One arc left — **Spring thaw relief (215)**, the
+cold season's ending made its own small celebration — and the milestone ships. Stays ACTIVE.
+
+build clean · unit **1353/1353** · e2e **391/392** — the lone red is the catalogued BACKLOG-456 news-pull
+parallel-load flake (a homesick `Math.random()` migrant pick), off this cycle's diff and green isolated on
+re-run. phase → lore-pending; cycle bumps to 115 next run.

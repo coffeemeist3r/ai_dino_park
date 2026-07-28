@@ -26,12 +26,12 @@ stores and hear in the voices** (M8). Deathless by design; mortality stays an op
 
 **Lore arcs:**
 - [x] Season in the voice — a dino lets the current season colour its greeting (grumbles through winter, savours spring), temperament-shaded, with a deterministic fallback line per season (BACKLOG-173 — cycle 113)
-- [ ] Migrating warmth — winter raises the cluster-drift bias (the den fills earlier) while summer lowers it (they spread out and laze), so the bowl's social density breathes with the year (BACKLOG-178)
+- [x] Migrating warmth — winter raises the cluster-drift bias (the den fills earlier) while summer lowers it (they spread out and laze), so the bowl's social density breathes with the year (BACKLOG-178 — cycle 114)
 - [ ] Spring thaw relief — when the year turns *out* of winter, a dino that toughed out cold nights gets a one-off "made it through the winter" lift + a relieved line (BACKLOG-215)
 
 **Structure arcs:**
 - [x] The lean season — one pure park-wide seasonal food modifier the harvest-banking and spoilage hooks read: the lean season tightens banking and quickens spoilage, plenty eases both (BACKLOG-461 — cycle 113)
-- [ ] Spoilage while you're away — fold spoilage into the away catch-up so a hoard left through a long absence bleeds toward its floor the way a watched one does, surfaced in the digest (BACKLOG-462)
+- [x] Spoilage while you're away — fold spoilage into the away catch-up so a hoard left through a long absence bleeds toward its floor the way a watched one does, surfaced in the digest (BACKLOG-462 — cycle 114)
 
 ---
 
