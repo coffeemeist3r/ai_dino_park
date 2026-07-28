@@ -45,6 +45,31 @@ export function spoilFood(pile: FoodPile, cap: number = FOOD_STOCKPILE_CAP, marg
   return next;
 }
 
+/**
+ * Spoilage while you're away (BACKLOG-462) — the day-counted twin of the live per-day pass. The live spoilage
+ * (455) rides an `onHour` day hook that never fires on a restore/away `clock.set`, so a hoard left through a long
+ * absence used to survive untouched while the away catch-up (106) fast-forwarded everything else. This applies up
+ * to `days` in-game days of the same `spoilFood` decay in one call. Deterministic (day-count in, no rolls) and
+ * self-limiting: because `spoilFood` returns the same reference once nothing is in the near-cap band, the loop
+ * breaks at the floor — so even a capped 7-day absence can never bleed a pile below `cap - margin - 1`, and the
+ * break also bounds the work to at most `margin + 1` real passes.
+ */
+export function spoilFoodOverDays(
+  pile: FoodPile,
+  days: number,
+  cap: number = FOOD_STOCKPILE_CAP,
+  margin: number = SPOIL_MARGIN,
+): FoodPile {
+  if (days <= 0) return pile;
+  let cur = pile;
+  for (let i = 0; i < days; i++) {
+    const next = spoilFood(cur, cap, margin);
+    if (next === cur) break; // settled at the floor — further days are no-ops
+    cur = next;
+  }
+  return cur;
+}
+
 /** The ticker line when a unit of `emoji` spoils out of a zone's stores (BACKLOG-455). No silent change
  *  (CHARTER §Quality bar). No leading article — two of three zone names carry their own ("The Grove"). */
 export function spoiledLine(zoneName: string, emoji: string): string {

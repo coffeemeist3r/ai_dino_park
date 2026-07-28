@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { spoilFood, spoilsAtCap, spoiledLine, SPOIL_MARGIN } from './spoilage';
+import { spoilFood, spoilFoodOverDays, spoilsAtCap, spoiledLine, SPOIL_MARGIN } from './spoilage';
 import { FOOD_STOCKPILE_CAP, type FoodPile } from './foodstore';
 
 describe('spoilsAtCap (BACKLOG-455)', () => {
@@ -50,6 +50,42 @@ describe('spoilFood (BACKLOG-455)', () => {
     expect(p.berries).toBe(6); // input untouched
     const empty = {};
     expect(spoilFood(empty, 6)).toBe(empty);
+  });
+});
+
+describe('spoilFoodOverDays (BACKLOG-462)', () => {
+  const cap = FOOD_STOCKPILE_CAP; // 6
+
+  it('a sub-day span (days <= 0) spoils nothing — same ref', () => {
+    const p: FoodPile = { berries: cap };
+    expect(spoilFoodOverDays(p, 0, cap)).toBe(p);
+    expect(spoilFoodOverDays(p, -3, cap)).toBe(p);
+  });
+
+  it('bleeds a hoard the elapsed days, settling at the floor and no lower', () => {
+    // 3 days: 6→5→4 (the flat-margin floor cap-2 = 4), then holds.
+    expect(spoilFoodOverDays({ berries: cap }, 3, cap).berries).toBe(4);
+    // A week away can never over-spoil past the self-limiting floor.
+    expect(spoilFoodOverDays({ berries: cap }, 7, cap).berries).toBe(4);
+  });
+
+  it('matches spoilFood iterated by hand for the same day count', () => {
+    let hand: FoodPile = { berries: cap, greens: 6, roots: 3 };
+    for (let i = 0; i < 2; i++) hand = spoilFood(hand, cap);
+    expect(spoilFoodOverDays({ berries: cap, greens: 6, roots: 3 }, 2, cap)).toEqual(hand);
+  });
+
+  it('honours a widened (lean-season) margin — bleeds sooner and deeper over the same days', () => {
+    const winterMargin = SPOIL_MARGIN + 1; // 2 — the winter grip
+    // Flat margin over 3 days floors at 4; the winter margin floors deeper (cap-margin-1 = 3).
+    expect(spoilFoodOverDays({ berries: cap }, 3, cap).berries).toBe(4);
+    expect(spoilFoodOverDays({ berries: cap }, 3, cap, winterMargin).berries).toBe(3);
+  });
+
+  it('is pure — never mutates the input pile', () => {
+    const p: FoodPile = { berries: cap };
+    spoilFoodOverDays(p, 5, cap);
+    expect(p.berries).toBe(cap);
   });
 });
 

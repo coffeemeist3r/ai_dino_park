@@ -112,3 +112,22 @@ none.
 
 ### Estimated touch count
 ~4 files (2 modified, 2 test files).
+
+---
+
+## Shipped (Coder)
+
+**Lore track — BACKLOG-178:**
+- `game/src/world/seasons.ts` — added `SEASON_SOCIAL_BIAS`, `seasonSocialBias`, `seasonalSocializeChance` (clamped [0.05,0.95]).
+- `game/src/scenes/WorldScene.ts` — extended the seasons import; socialize roll now `seasonalSocializeChance(socializeChanceFor(intent), season)`; added `__socialBias` dev hook.
+- `game/src/world/migrating-warmth.test.ts` — new (5 tests).
+
+**Structure track — BACKLOG-462:**
+- `game/src/world/spoilage.ts` — added `spoilFoodOverDays` (day-counted, self-limiting, early-out).
+- `game/src/scenes/WorldScene.ts` — extended the spoilage import; added `applyAwaySpoilage(days)` helper; wired into the restore path (after `syncSeason`) and the `__catchUp` dev hook.
+- `game/src/world/spoilage.test.ts` — extended (+5 tests for `spoilFoodOverDays`).
+- `tests/e2e/cycle-114-migrating-warmth.spec.ts` + `tests/e2e/cycle-114-away-spoilage.spec.ts` — new.
+
+**Deviations:** none — built to plan.
+
+**Status:** `npm --prefix game run build` clean · `npm run test:unit` **1353/1353** green (+10) · new e2e specs (3) green on warm run (first run cold-boot-flaked, passed on re-run). Full e2e suite is QA's gate.

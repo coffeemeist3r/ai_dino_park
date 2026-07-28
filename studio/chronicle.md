@@ -4149,3 +4149,11 @@ Filed the file-level plan. 178: seasons.ts gains SEASON_SOCIAL_BIAS + seasonSoci
 gains spoilFoodOverDays, WorldScene gains applyAwaySpoilage wired into restore + __catchUp, spoilage.test.ts +
 away-spoilage e2e. Reuse audit: socializeChanceFor, seasonGrip pattern, spoilFood, spoiledLine, foodCapFor,
 spoilMarginFor, runSpoilage loop shape. ~4 files each, no cross-track overlap. phase → coder-pending.
+
+## 2026-07-28 03:30 — cycle 114 — coder — 178 + 462
+
+Built both tracks to plan. 178: seasons.ts gained the social-bias trio (winter 1.4, summer 0.7, spring/fall 1.0),
+clamped; the socialize roll now reads it; __socialBias hook added. 462: spoilage.ts gained spoilFoodOverDays;
+WorldScene.applyAwaySpoilage folds it into the restore path + __catchUp, reusing the live cap/margin so 461's
+grip carries into the away days, 🥀 lines into the digest, lastSpoilDay re-armed. build clean · unit 1353/1353
+(+10) · 3 new e2e green (cold-boot flake on first pass, green on re-run). phase → qa-pending.

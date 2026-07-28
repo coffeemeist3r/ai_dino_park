@@ -80,6 +80,35 @@ export function seasonGrip(season: Season): SeasonGrip {
   return SEASON_GRIP[season];
 }
 
+/**
+ * Migrating warmth (BACKLOG-178) — the year's grip on the bowl's *daytime* social density, the social twin of
+ * `seasonGrip`'s grip on the pantry. Winter pulls the cast together (they seek company against the cold, so the
+ * ambient "drift to the cluster" roll leans up) and summer lets them spread and laze (it leans down). The night
+ * den already tightens with the season (huddle window + bar, BACKLOG-171); this is its daytime companion.
+ * Spring and fall are exactly 1.0 — the year's hinges, and the 1.0 spring keeps a fresh clock byte-identical to
+ * every build since the socialize roll existed (same compatibility discipline as 461/171).
+ */
+const SEASON_SOCIAL_BIAS: Record<Season, number> = {
+  spring: 1, // the hinge — unchanged
+  summer: 0.7, // spread out and laze
+  fall: 1, // the hinge — unchanged
+  winter: 1.4, // seek company in the cold — the den fills earlier
+};
+
+/** The season's multiplier on the daytime socialize roll (BACKLOG-178). Pure lookup. */
+export function seasonSocialBias(season: Season): number {
+  return SEASON_SOCIAL_BIAS[season];
+}
+
+/**
+ * Apply the season's social bias to a base socialize chance, clamped to the same [0.05, 0.95] band the intent
+ * roll uses (BACKLOG-178), so the year colours the drift-to-the-cluster odds without ever pegging the roll to
+ * always or freezing it to never. Composes on top of `socializeChanceFor` (the 393 intent lean), never replaces it.
+ */
+export function seasonalSocializeChance(base: number, season: Season): number {
+  return Math.min(0.95, Math.max(0.05, base * seasonSocialBias(season)));
+}
+
 const GRIP_LINES: Record<Season, string> = {
   spring: '', // neutral — nothing to say about the stores
   summer: '🌻 summer eases the stores — plenty keeps longer.',

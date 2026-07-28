@@ -82,7 +82,7 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
-import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, type Season } from '../world/seasons';
+import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
@@ -107,7 +107,7 @@ import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
 import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
-import { spoilFood, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
+import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
@@ -3047,7 +3047,10 @@ export class WorldScene extends Phaser.Scene {
       // mark rides loner status, not this roll, so the tell shows the whole time.
       const moping =
         !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
-      const socializing = !huddling && !gathering && !moping && !!other && Math.random() < socializeChanceFor(intent); // BACKLOG-393
+      // BACKLOG-393 intent lean, then BACKLOG-178 season lean: winter tightens the drift-to-the-cluster odds,
+      // summer loosens them, so the bowl's daytime social density breathes with the year (clamped, never pegs).
+      const socializing =
+        !huddling && !gathering && !moping && !!other && Math.random() < seasonalSocializeChance(socializeChanceFor(intent), season);
       // Need pulls the body (BACKLOG-436): a pressing 🍖/💧 leans the wander toward relief (hatch/pond),
       // but only below every ritual above (they still win) and gated so it's a lean, not a compulsion.
       // No reachable target (thirst outside the grove) → seekTarget null → the dino just wanders.
@@ -5033,6 +5036,8 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks — seasons (BACKLOG-159)
     (window as any).__season = () => seasonFor(getWorldClock().now().day);
+    // any: dev-only Playwright hook — the season's grip on the daytime socialize roll (BACKLOG-178)
+    (window as any).__socialBias = () => seasonSocialBias(this.currentSeason());
     (window as any).__seasonCraving = (s: Season) => seasonCraving(s).id;
     (window as any).__seasonTint = () => ({
       color: this.seasonOverlay.fillColor,
@@ -5126,6 +5131,39 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone[zone] = next;
     }
     if (changed) void this.saveGame();
+  }
+
+  /**
+   * Spoilage while you're away (BACKLOG-462) — the day-counted catch-up the live `checkSpoilage` can't do. Its
+   * `onHour` day hook never fires on a restore/away `clock.set`, so a hoard left through a long absence used to
+   * survive untouched while the away digest (106) fast-forwarded everything else. Here each zone bleeds up to
+   * `days` in-game days of the same capped, self-limiting `spoilFood` decay, reading the same granary- and
+   * season-aware cap + margin the live pass uses (so 461's grip carries into the catch-up). Returns a 🥀 digest
+   * line per id that lost a unit (no silent change), and re-arms `lastSpoilDay` to the post-jump day so the next
+   * live hour doesn't double-decay what the catch-up already spoiled. Deterministic — day-count in, no rolls.
+   */
+  private applyAwaySpoilage(days: number): string[] {
+    if (days <= 0) return [];
+    const lines: string[] = [];
+    let changed = false;
+    for (const zone of zoneChain()) {
+      const pile = this.foodStoreFor(zone);
+      const next = spoilFoodOverDays(pile, days, this.foodCapFor(zone), this.spoilMarginFor());
+      if (next === pile) continue;
+      changed = true;
+      const zoneName = zoneById(zone).name;
+      for (const id of Object.keys(pile)) {
+        if ((next[id] ?? 0) < (pile[id] ?? 0)) {
+          lines.push(spoiledLine(zoneName, FOODS.find((f) => f.id === id)?.emoji ?? id));
+        }
+      }
+      this.foodPileByZone[zone] = next;
+    }
+    if (changed) {
+      this.lastSpoilDay = getWorldClock().now().day;
+      void this.saveGame();
+    }
+    return lines;
   }
 
   /**
@@ -5371,6 +5409,13 @@ export class WorldScene extends Phaser.Scene {
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());
       this.syncSeason(); // restore re-derives the season; never a turn beat (BACKLOG-159)
+      // BACKLOG-462: a hoard left through the absence bleeds the elapsed days on the same capped decay a watched
+      // pile does — after syncSeason so the cap/margin read the restored day. Surfaced in the homecoming digest.
+      const awaySpoil = this.applyAwaySpoilage(away.days);
+      if (awaySpoil.length) {
+        away.digest.push(...awaySpoil);
+        this.lastAwayDigest = away.digest;
+      }
       this.refreshHeartsPanel();
       if (away.minutes > 0) {
         this.dialogOpen = true;
@@ -5416,6 +5461,12 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = away.bonds;
       this.memory = away.memory;
       this.lastAwayDigest = away.digest;
+      // BACKLOG-462: mirror the restore path — spoil the away days into the live piles + digest (clock already set).
+      const awaySpoil = this.applyAwaySpoilage(away.days);
+      if (awaySpoil.length) {
+        away.digest.push(...awaySpoil);
+        this.lastAwayDigest = away.digest;
+      }
       this.lastHomecoming = homecoming(this.friendship, away.minutes, (name) => this.dinoQuirkLabel(name));
       if (this.lastHomecoming) {
         this.applyHomecomingMemory(this.lastHomecoming);
