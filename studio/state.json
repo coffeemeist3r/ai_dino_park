@@ -1,6 +1,6 @@
 {
   "cycle": 114,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-178: Migrating warmth",
   "structureItem": "BACKLOG-462: Spoilage while you're away",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-07-28T02:30:00-05:00",
     "code-planner": "2026-07-28T02:35:00-05:00",
     "coder": "2026-07-28T03:30:00-05:00",
-    "qa": "2026-07-27T03:40:00-05:00",
+    "qa": "2026-07-28T03:40:00-05:00",
     "validator": "2026-07-27T03:55:00-05:00",
     "artist": "2026-07-27T04:00:00-05:00"
   }

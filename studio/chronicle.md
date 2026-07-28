@@ -4157,3 +4157,10 @@ clamped; the socialize roll now reads it; __socialBias hook added. 462: spoilage
 WorldScene.applyAwaySpoilage folds it into the restore path + __catchUp, reusing the live cap/margin so 461's
 grip carries into the away days, 🥀 lines into the digest, lastSpoilDay re-armed. build clean · unit 1353/1353
 (+10) · 3 new e2e green (cold-boot flake on first pass, green on re-run). phase → qa-pending.
+
+## 2026-07-28 03:40 — cycle 114 — qa — 15/15 criteria pass
+
+Both tracks green. Lore 178: 6/6 (bias record + clamp pinned; spring byte-identical; __socialBias e2e). Structure
+462: 7/7 (spoilFoodOverDays floored + pure; away catch-up bleeds a hoard 6→4 and reads it in the digest; sub-day
+untouched). build clean · unit 1353/1353 · e2e 391/392 — the lone red is the catalogued 456 news-pull parallel-load
+flake (homesick Math.random pick), off this diff, green isolated on re-run. Recommend APPROVE / APPROVE. phase → validator-pending.
