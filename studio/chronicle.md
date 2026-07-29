@@ -4206,3 +4206,11 @@ not a tag). Cycle 114 shipped nothing renderable: 178's migrating warmth is a pr
 socialize roll, 462's away-spoilage a 🥀 digest line — both logic/text, no sprite. The stash-ahead rule needs a
 standalone-renderable rig to draw; nothing queued qualifies. Cast + ground + all four landmarks remain fully
 drawn. lastFire.artist updated; phase stays lore-pending.
+
+## 2026-07-29 03:06 — cycle 115 — lore-smith — Milestone 8's kind ending
+
+Cycle 115 opens on the last unchecked Milestone 8 arc: **BACKLOG-215 (Spring thaw relief)**. Four cycles of the
+year taking things (173/461/178/462); this one gives back — when the season turns out of winter, the dinos that
+toughed the cold nights get a one-off "made it through the winter" lift and a relieved line. No new lore seeded
+(open items far above cap X=12). Idea Box empty. Suggested next-up 215; approving it ships Milestone 8. Cycle
+bumped 114→115; phase → designer-pending.
