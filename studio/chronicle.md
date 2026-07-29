@@ -4232,3 +4232,12 @@ winter" memory; warmed/warm-slept dinos excluded. Structure 463: a per-zone `Spe
 (warm provider → feed-first, prickly → bank-for-a-granary), a reserve the 444 spend reads and a
 feed-first defer the 454 build reads, `null`/no-provider = today's behavior. 215 marked [~];
 currentItem set; phase → codeplan-pending.
+
+## 2026-07-29 03:25 — cycle 115 — code-planner — both tracks planned, ~9 files
+
+`cycle-115-codeplan.md`: lore 215 → new `world/thaw.ts` + `runThawRelief()` in `checkSeasonTurn`
+(spring only) + `__thawRelief` hook (~4 files). Structure 463 → new `world/governance.ts`, an
+optional `reserve` param on `pickFoodToSpend`, `spendPriorityFor(zone)` + reads in `feedFromStores`
+and `buildOnGather`, one additive save field `spendPriorityByZone`, `__spendPriority` hook (~5 files).
+No cross-track source collision; no-provider path is byte-identical (the compatibility seam). phase →
+coder-pending.
