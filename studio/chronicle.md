@@ -4250,3 +4250,10 @@ hook. Structure 463: `world/governance.ts` (`providerPriority` warm→feed / pri
 `granaryDeferredForFeeding`), an optional `reserve` on `pickFoodToSpend`, `spendPriorityFor(zone)` read by
 `feedFromStores` + `buildOnGather`, additive `spendPriorityByZone` save field, `__spendPriority` hook. Build
 clean; unit 1375/1375; e2e 394/395 (lone red = cycle-094 boot flake, green isolated). phase → qa-pending.
+
+## 2026-07-29 04:10 — cycle 115 — qa — 12/12 criteria pass (lore 5/5, structure 7/7)
+
+Both tracks verified. Lore 215 5/5, structure 463 7/7. Build clean; unit 1375/1375; e2e 394/395 (lone red =
+cycle-094 boot flake, green isolated with both new specs). Reserve/build-defer mechanics unit-covered;
+governance e2e proves the integration seam (policy null↔provider↔stable). Both recommend APPROVE. phase →
+validator-pending.
