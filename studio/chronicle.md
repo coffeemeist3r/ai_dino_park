@@ -4214,3 +4214,12 @@ year taking things (173/461/178/462); this one gives back — when the season tu
 toughed the cold nights get a one-off "made it through the winter" lift and a relieved line. No new lore seeded
 (open items far above cap X=12). Idea Box empty. Suggested next-up 215; approving it ships Milestone 8. Cycle
 bumped 114→115; phase → designer-pending.
+
+## 2026-07-29 03:12 — cycle 115 — structure-smith — governance opens (BACKLOG-463)
+
+Milestone 8's structure spine is closed (461/462), so the track advances the CHARTER's
+resources→…→**governance** arc into its next stage. Chose **BACKLOG-463 (The provider's say)**: one
+persistent per-zone spend priority (feed-first vs. bank-for-a-granary), set by the zone's provider
+from temperament, read by the pantry-spend (444) and the granary auto-build gate (454). Queue was at
+3 (< X=4); refilled with 467 (the say changes hands) + 468 (the priority on the lens). 463 marked
+[~]; structureItem set.
