@@ -92,3 +92,32 @@ None on source files. Both add one additive save field region; thaw adds no save
 
 ### Estimated touch count
 ~5 files (governance.ts, governance.test.ts, foodstore.ts, WorldScene.ts, cycle-115-governance.spec.ts). Combined cycle ~9 files — within the arc cap.
+
+---
+
+## Shipped (Coder)
+
+### Lore track — BACKLOG-215
+Files touched:
+- `game/src/world/thaw.ts` (new) — `thawedThroughWinter`, `thawLine`, `thawMemory`, `THAW_TOKEN`, `THAW_LIFT`.
+- `game/src/world/thaw.test.ts` (new) — 8 unit tests.
+- `game/src/scenes/WorldScene.ts` — imports; `runThawRelief()`; call in `checkSeasonTurn` (spring only); `__thawRelief` dev hook.
+- `tests/e2e/cycle-115-thaw.spec.ts` (new) — 2 specs.
+
+### Structure track — BACKLOG-463
+Files touched:
+- `game/src/world/governance.ts` (new) — `SpendPriority`, `providerPriority`, `feedReserve`, `granaryDeferredForFeeding`, `BANK_RESERVE`, `FEED_BUILD_FLOOR`.
+- `game/src/world/governance.test.ts` (new) — 14 unit tests (incl. `pickFoodToSpend` reserve coverage).
+- `game/src/world/foodstore.ts` — `pickFoodToSpend` gained optional trailing `reserve = 0` (default byte-identical).
+- `game/src/scenes/WorldScene.ts` — imports; `spendPriorityByZone` field; `spendPriorityFor()`; reserve read in `feedFromStores`; defer read in `buildOnGather`; save serialize + restore; `__spendPriority` dev hook.
+- `game/src/world/saveGame.ts` — `spendPriorityByZone?` on `SaveData`, parse validation (rejects non-`feed`/`bank`), returned from parser.
+- `tests/e2e/cycle-115-governance.spec.ts` (new) — 1 spec (integration seam; mechanics unit-covered).
+
+### Deviations from plan
+- None material. Governance e2e kept to the integration seam (null↔provider↔stable) rather than the deterministic reserve/defer behavior, because a resident's temperament (which sets feed vs bank) is name-seeded and not controllable from the spec; the reserve/defer mechanics are fully unit-covered in `governance.test.ts`. Noted for QA.
+
+### Status
+- `npm run build`: ✅ clean (type-check passes).
+- `npx vitest run` (root): ✅ **1375/1375** (was 1353; +22 new).
+- `npx playwright test`: **394/395** — the lone red is `cycle-094-pause-ambient` boot timeout under full parallel load (the catalogued cold Vite/Phaser boot flake, memory `e2e-boot-flake`); it and both new cycle-115 specs pass green isolated on re-run. Off this cycle's diff.
+- Boundary: no `@mlc-ai/web-llm` import added (thaw/governance are pure `world/` modules). Save change additive.

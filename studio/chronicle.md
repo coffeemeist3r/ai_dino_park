@@ -4241,3 +4241,12 @@ optional `reserve` param on `pickFoodToSpend`, `spendPriorityFor(zone)` + reads 
 and `buildOnGather`, one additive save field `spendPriorityByZone`, `__spendPriority` hook (~5 files).
 No cross-track source collision; no-provider path is byte-identical (the compatibility seam). phase →
 coder-pending.
+
+## 2026-07-29 04:00 — cycle 115 — coder — 215 thaw + 463 governance shipped
+
+Built both tracks. Lore 215: `world/thaw.ts` + `runThawRelief()` fired on the winter→spring turn (a first-hand
+cold memory → +4 friendship, 🌱 line, "made it through the winter" memory; warmed dinos excluded) + `__thawRelief`
+hook. Structure 463: `world/governance.ts` (`providerPriority` warm→feed / prickly→bank, `feedReserve`,
+`granaryDeferredForFeeding`), an optional `reserve` on `pickFoodToSpend`, `spendPriorityFor(zone)` read by
+`feedFromStores` + `buildOnGather`, additive `spendPriorityByZone` save field, `__spendPriority` hook. Build
+clean; unit 1375/1375; e2e 394/395 (lone red = cycle-094 boot flake, green isolated). phase → qa-pending.

@@ -93,6 +93,8 @@ export interface SaveData {
   stockpileByZone?: Record<string, Record<string, number>>;
   /** Per-zone banked food (BACKLOG-446) — the food twin of `stockpileByZone`. Additive; absent → {}. zone→foodId→count. */
   foodPileByZone?: Record<string, Record<string, number>>;
+  /** Per-zone provider-set spend priority (BACKLOG-463) — zone→'feed'|'bank'. Additive; absent → {} (no policy). */
+  spendPriorityByZone?: Record<string, 'feed' | 'bank'>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -376,6 +378,20 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // spendPriorityByZone (BACKLOG-463) — zone→'feed'|'bank', the provider-set policy. Additive; absent →
+  // undefined, caller defaults to {} (no zone has a policy until a provider sets one). Any value other than
+  // the two literals is a corrupt save → reject.
+  let spendPriorityByZone: Record<string, 'feed' | 'bank'> | undefined;
+  if (o.spendPriorityByZone !== undefined) {
+    if (typeof o.spendPriorityByZone !== 'object' || o.spendPriorityByZone === null) return null;
+    const zones = o.spendPriorityByZone as Record<string, unknown>;
+    spendPriorityByZone = {};
+    for (const z of Object.keys(zones)) {
+      if (zones[z] !== 'feed' && zones[z] !== 'bank') return null;
+      spendPriorityByZone[z] = zones[z] as 'feed' | 'bank';
+    }
+  }
+
   // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
   // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
   let harvestedByZone: Record<string, number> | undefined;
@@ -554,6 +570,7 @@ export function deserialize(json: string): SaveData | null {
     stockpile,
     stockpileByZone,
     foodPileByZone,
+    spendPriorityByZone,
     cairns,
     shelters,
     thatches,

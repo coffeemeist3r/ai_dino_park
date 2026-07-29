@@ -76,10 +76,14 @@ export function takeFood(pile: FoodPile, id: string): FoodPile {
  * hook (being fed what *you* like out of your own zone's stores reads differently per dino); the
  * most-stocked fallback keeps the pantry draining its glut first. Deterministic — the FOODS-order filter
  * plus a stable sort breaks a count tie the same way pickCarry does.
+ *
+ * `reserve` (BACKLOG-463) is the floor a `'bank'`-priority zone keeps banked: only ids stocked *above*
+ * `reserve` are spendable, so a provider that banks-for-a-granary won't hand out its last unit. Defaults
+ * to 0 — every pre-463 caller is byte-identical (spend anything > 0).
  */
-export function pickFoodToSpend(pile: FoodPile, favoriteId?: string): string | null {
-  if (favoriteId && (pile[favoriteId] ?? 0) > 0) return favoriteId;
-  const stocked = FOODS.filter((f) => (pile[f.id] ?? 0) > 0).map((f) => f.id);
+export function pickFoodToSpend(pile: FoodPile, favoriteId?: string, reserve = 0): string | null {
+  if (favoriteId && (pile[favoriteId] ?? 0) > reserve) return favoriteId;
+  const stocked = FOODS.filter((f) => (pile[f.id] ?? 0) > reserve).map((f) => f.id);
   return [...stocked].sort((a, b) => (pile[b] ?? 0) - (pile[a] ?? 0))[0] ?? null;
 }
 

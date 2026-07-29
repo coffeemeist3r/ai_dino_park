@@ -110,6 +110,8 @@ import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
+import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
+import { providerPriority, feedReserve, granaryDeferredForFeeding, type SpendPriority } from '../world/governance';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
@@ -443,6 +445,23 @@ export class WorldScene extends Phaser.Scene {
   /** The (lazily-created) food pile for a zone (BACKLOG-446) — twin of `pileFor`. */
   private foodStoreFor(zone: string): FoodPile {
     return (this.foodPileByZone[zone] ??= {});
+  }
+  /** Per-zone spend priority (BACKLOG-463), set by the zone's provider from its temperament. Persisted;
+   *  a departed provider's policy lingers here until a new provider re-sets it. Absent → no policy. */
+  private spendPriorityByZone: Record<string, SpendPriority> = {};
+  /**
+   * A zone's spend priority (BACKLOG-463): if it has a standing provider, the priority that provider
+   * sets from its temperament (stored so it persists + reads legibly); else the last provider's lingering
+   * policy, or null if the zone has never had a provider — null → today's behaviour (both hooks inert).
+   */
+  private spendPriorityFor(zone: string): SpendPriority | null {
+    const provider = this.providerFor(zone);
+    if (provider) {
+      const p = providerPriority(this.dinoByName(provider)?.traits);
+      this.spendPriorityByZone[zone] = p;
+      return p;
+    }
+    return this.spendPriorityByZone[zone] ?? null;
   }
   /** Per-dino banked-food tally (BACKLOG-448) — units this dino put into some zone's store, by carrying
    *  (447) or hauling a harvest away. The `provider` role reads it. Persisted; absent → {}. */
@@ -935,6 +954,11 @@ export class WorldScene extends Phaser.Scene {
       this.runSpoilage();
       return Object.fromEntries(zoneChain().map((z) => [z, { ...this.foodStoreFor(z) }]));
     };
+    // BACKLOG-215: run the spring-thaw relief pass directly (mirrors __spoilFood → runSpoilage) so e2e drives the
+    // exact turn path deterministically.
+    (window as any).__thawRelief = () => this.runThawRelief();
+    // BACKLOG-463: a zone's provider-set spend priority ('feed' / 'bank' / null when no provider has emerged).
+    (window as any).__spendPriority = (zone: string) => this.spendPriorityFor(zone ?? this.zoneId);
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
       this.stockpileByZone[zone] = { ...pile };
@@ -1640,7 +1664,10 @@ export class WorldScene extends Phaser.Scene {
   private buildOnGather(taker: Dino): void {
     const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
     if (this.baseLandmarks(zone) >= GRANARY_AFTER_STRUCTURES && !this.hasGranary(zone)) {
-      if (canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false)) {
+      // BACKLOG-463: a 'feed'-priority provider holds off the granary while the store is thin (mouths before
+      // walls); a 'bank' one (or no provider) builds as soon as the recipe is affordable.
+      const deferred = granaryDeferredForFeeding(this.spendPriorityFor(zone), foodPileTotal(this.foodStoreFor(zone)));
+      if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false)) {
         const spent = buildGranary(this.pileFor(zone));
         if (spent) {
           this.stockpileByZone[zone] = spent;
@@ -2262,7 +2289,8 @@ export class WorldScene extends Phaser.Scene {
       if (!isStarving(this.needs[d.name])) continue;
       const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
       const pile = this.foodStoreFor(zone);
-      const id = pickFoodToSpend(pile, favoriteFood(d.traits, this.currentSeason()).id);
+      // BACKLOG-463: a 'bank'-priority provider keeps a reserve banked; a 'feed' one (or no provider) spends to zero.
+      const id = pickFoodToSpend(pile, favoriteFood(d.traits, this.currentSeason()).id, feedReserve(this.spendPriorityFor(zone)));
       if (!id) continue;
       const emoji = FOODS.find((f) => f.id === id)?.emoji ?? NEED_GLYPH.hunger;
       const zoneName = zoneById(zone).name;
@@ -5083,6 +5111,9 @@ export class WorldScene extends Phaser.Scene {
     const gripLine = seasonGripLine(turned);
     if (gripLine) this.logEvent(gripLine);
     for (const d of this.dinos) this.memory = remember(this.memory, d.name, turnMemory(turned));
+    // BACKLOG-215: the year turning OUT of winter (spring is only reached from winter on a live tick) rewards
+    // the dinos that toughed the cold nights — a one-off relief lift + a 🌱 line.
+    if (turned === 'spring') this.runThawRelief();
     this.seasonTurns++;
     const banner = this.add
       .text(TILE * COLS * 0.5, 24, turnLine(turned), {
@@ -5129,6 +5160,26 @@ export class WorldScene extends Phaser.Scene {
         }
       }
       this.foodPileByZone[zone] = next;
+    }
+    if (changed) void this.saveGame();
+  }
+
+  /**
+   * Spring thaw relief (BACKLOG-215) — the winter→spring turn's reward. Every dino carrying a first-hand
+   * cold-night memory (179 shiver / 208 neglect, but not a keeper-warmed 184 rescue) warms a touch to the
+   * keeper (`THAW_LIFT`), floats a 🌱 relief line, and files a "made it through the winter" memory that can
+   * colour its next greeting. Fires only on the turn moment (`checkSeasonTurn`, spring), so it's one-off per
+   * winter with no per-dino flag. Shared with the `__thawRelief` dev hook so production and test drive one path.
+   */
+  private runThawRelief(): void {
+    let changed = false;
+    for (const d of this.dinos) {
+      if (!thawedThroughWinter(this.memory, d.name)) continue;
+      changed = true;
+      this.friendship = bumpPoints(this.friendship, d.name, THAW_LIFT);
+      this.memory = remember(this.memory, d.name, thawMemory());
+      this.flashFeed(d, '🌱');
+      this.logEvent(thawLine(d.name));
     }
     if (changed) void this.saveGame();
   }
@@ -5319,6 +5370,7 @@ export class WorldScene extends Phaser.Scene {
       harvested: this.harvested,
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
+      spendPriorityByZone: this.spendPriorityByZone, // BACKLOG-463: per-zone provider-set spend priority (additive)
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -5395,6 +5447,7 @@ export class WorldScene extends Phaser.Scene {
       this.harvested = save.harvested ?? 0;
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
+      this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
       this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
