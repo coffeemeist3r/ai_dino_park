@@ -4223,3 +4223,12 @@ persistent per-zone spend priority (feed-first vs. bank-for-a-granary), set by t
 from temperament, read by the pantry-spend (444) and the granary auto-build gate (454). Queue was at
 3 (< X=4); refilled with 467 (the say changes hands) + 468 (the priority on the lens). 463 marked
 [~]; structureItem set.
+
+## 2026-07-29 03:20 — cycle 115 — designer — 215 spring-thaw + 463 provider's say specced
+
+Both tracks specced in `cycle-115-design.md`. Lore 215: on the winter→spring turn, a dino carrying a
+first-hand cold memory gets a one-off friendship lift + a 🌱 relieved bubble + a "made it through the
+winter" memory; warmed/warm-slept dinos excluded. Structure 463: a per-zone `SpendPriority`
+(warm provider → feed-first, prickly → bank-for-a-granary), a reserve the 444 spend reads and a
+feed-first defer the 454 build reads, `null`/no-provider = today's behavior. 215 marked [~];
+currentItem set; phase → codeplan-pending.
