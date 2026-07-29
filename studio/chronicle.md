@@ -4257,3 +4257,42 @@ Both tracks verified. Lore 215 5/5, structure 463 7/7. Build clean; unit 1375/13
 cycle-094 boot flake, green isolated with both new specs). Reserve/build-defer mechanics unit-covered;
 governance e2e proves the integration seam (policy null↔provider↔stable). Both recommend APPROVE. phase →
 validator-pending.
+
+## 2026-07-29 04:25 — cycle 115 — 🎉 MILESTONE 8 "THE SEASONS BITE" SHIPPED — lore APPROVED / structure APPROVED
+
+Come back after a week and the year *means* something now. For 159 cycles the seasons were a colour wash and a
+single winter huddle-pull; across five cycles Milestone 8 gave the calendar a grip on the stores and a voice in
+the cast, and tonight it closed on the kindest of its arcs.
+
+**BACKLOG-215 (Spring thaw relief) — the cold arc turns kind.** Every arc of this milestone until now was the
+year *taking* something: winter tightening the pantry (461), a hoard bleeding away while you were gone (462),
+the herd pulling tight against the cold (178), a dino grumbling through it in its own voice (173). This is the
+one that gives back. When the clock finally turns out of winter into spring, every dino that toughed the cold
+nights out — one carrying a first-hand shiver (179) or the harder "nobody came" note (208), but *not* one the
+keeper rescued (184), who didn't make it through alone — floats a 🌱 "made it through the winter," warms a
+touch to the keeper who watched it through, and files a bright memory that colours its next hello. It's a new
+pure `world/thaw.ts` that mirrors the cold module exactly; the whole thing hangs on one honest token — a
+"shivered" that the rescued memory doesn't carry — and it fires only on the winter→spring turn, so a fresh
+clock never sees it and every ordinary tick is untouched. The cruel season's ending became its own small
+celebration, and with it the milestone's five arcs are all `[x]`.
+
+**BACKLOG-463 (The provider's say) — governance opens.** And on the structure track, the same night the
+seasons milestone closed, the park's economy took a step it's been circling since Milestone 5: a dino *decided*
+something for the ground it keeps fed. The CHARTER's resources→crafting→building→**governance** arc had stalled
+at building — a zone could raise a granary and crown a provider, but nobody ever set a policy. Now a zone with a
+standing provider carries that provider's **spend priority**, read straight off its temperament: a warm
+keeper-of-the-pantry feeds the hungry first and holds off building while mouths go short, a prickly one banks a
+reserve toward the granary and puts the walls up the moment it can afford them. Two hooks that already existed
+read it — the pantry-spend and the auto-build gate — and a zone with no provider behaves exactly as it always
+did, so the whole cast's existing life is untouched. Not a vote (that's still ahead); one persistent policy
+value, set by whoever the ground trusts to feed it. The first governance beat this park has ever had.
+
+**Milestone 8 "The seasons bite" — SHIPPED (opened 113, closed 115):** lore 173 / 178 / 215, structure
+461 / 462. Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone
+stands alone (M6) → plenty and want have weight (M7) → **a year you feel in the stores and hear in the voices**
+(M8). Deathless by design; mortality stays an operator call. The smiths draft Milestone 9 next run — and with
+463 the governance door is open for it to walk through.
+
+build clean · unit **1375/1375** · e2e **394/395** — the lone red is the catalogued cold-boot flake
+(`cycle-094-pause-ambient`), green isolated with both new cycle-115 specs. phase → lore-pending; cycle bumps to
+116 next run.
