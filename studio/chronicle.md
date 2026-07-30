@@ -4344,3 +4344,13 @@ clause + the greet-bag wiring in `pickTone`; raise the compose clamp to 400 so b
 Structure 467: new pure `world/handover.ts` `handoverBeat()` + `handover.test.ts`; a persisted
 `lastProviderByZone`, `checkProviderHandover()` at the forceStep tail, save/load + `__ticker`/`__providerHandover`
 hooks; save-envelope type + validator. Unit from repo root (tests/unit + game/src). phase → coder-pending.
+
+## 2026-07-30 03:25 — cycle 116 — coder — built 469 (policy voice) + 467 (handover beat)
+
+Lore 469: `policyAside(policy, traits)` in `ai/brain.ts` (feed → grateful, bank → grumble, three temperament
+bands, silent unless hungry+policy), `NPCContext.groundPolicy`, a matching `buildMessages` clause, wired into
+`pickTone`'s greet bag (set only for a hungry dino from `spendPriorityFor`); compose clamp raised to 400.
+Structure 467: new pure `world/handover.ts` (`handoverBeat`/`priorityPhrase`), a persisted `lastProviderByZone`,
+`checkProviderHandover()` at the forceStep tail logging one ticker beat per genuine turnover, save/load +
+`__ticker`/`__providerHandover` hooks, save-envelope type + validator. Build clean; unit 1389/1389; e2e 397/397
+(full green this run — no flake); web-llm boundary intact. phase → qa-pending.

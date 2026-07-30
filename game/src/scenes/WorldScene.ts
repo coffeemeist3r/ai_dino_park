@@ -112,6 +112,7 @@ import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelco
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import { providerPriority, feedReserve, granaryDeferredForFeeding, type SpendPriority } from '../world/governance';
+import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
@@ -449,6 +450,10 @@ export class WorldScene extends Phaser.Scene {
   /** Per-zone spend priority (BACKLOG-463), set by the zone's provider from its temperament. Persisted;
    *  a departed provider's policy lingers here until a new provider re-sets it. Absent → no policy. */
   private spendPriorityByZone: Record<string, SpendPriority> = {};
+  /** The provider last seen holding each zone's say (BACKLOG-467). Persisted; when it changes to a new,
+   *  non-null provider the handover lands a one-off logged beat. A departure leaves the last name here so
+   *  no false handover fires if the same dino re-emerges. Absent → {} on load. */
+  private lastProviderByZone: Record<string, string> = {};
   /**
    * A zone's spend priority (BACKLOG-463): if it has a standing provider, the priority that provider
    * sets from its temperament (stored so it persists + reads legibly); else the last provider's lingering
@@ -966,6 +971,10 @@ export class WorldScene extends Phaser.Scene {
     };
     // BACKLOG-358: run the ambient edge-meet scan deterministically (like __maybeMigrate) — dwell accumulates
     // per call on the dinos' current tiles, so a test can park two at a shared edge and prove the scan fires.
+    // BACKLOG-467: the keeper's Park News ticker (the eventLog), and who last held each zone's say — the
+    // handover beat lands on the ticker, the tracked holder proves the one-off re-set.
+    (window as any).__ticker = () => [...this.eventLog];
+    (window as any).__providerHandover = () => ({ ...this.lastProviderByZone });
     (window as any).__maybeBarter = () => this.maybeBarter();
     (window as any).__edgeBarter = (a: string, b: string) => {
       const da = this.dinoByName(a);
@@ -2370,6 +2379,26 @@ export class WorldScene extends Phaser.Scene {
     );
   }
 
+  /**
+   * The say changes hands (BACKLOG-467) — the governance turnover beat. Run at the tail of `forceStep`
+   * (after this step's banking has settled). For each zone whose standing provider (448) has changed to a
+   * *new, non-null* dino — the first one a young zone crowns, or one out-banking the incumbent — log a
+   * one-off ticker beat and record the new holder. `spendPriorityFor` re-reads (and persists) the incoming
+   * provider's policy, so the 463 re-set that was silent is now marked. A departure (no provider now) leaves
+   * `lastProviderByZone` untouched, so the say falls vacant without a false handover and no beat fires until
+   * a genuinely different dino takes it.
+   */
+  private checkProviderHandover(): void {
+    for (const z of ZONES) {
+      const cur = this.providerFor(z.id);
+      if (cur && cur !== this.lastProviderByZone[z.id]) {
+        const beat = handoverBeat(this.lastProviderByZone[z.id] ?? null, cur, z.name, this.spendPriorityFor(z.id)!);
+        if (beat) this.logEvent(beat);
+        this.lastProviderByZone[z.id] = cur;
+      }
+    }
+  }
+
   /** The provider a dino would name to the keeper — never itself (BACKLOG-453). */
   private providerAsideFor(name: string): { name: string; zoneName: string } | undefined {
     const zoneId = zoneOf(this.dinoZones, name, BOWL_ID);
@@ -3208,6 +3237,7 @@ export class WorldScene extends Phaser.Scene {
     this.maybeBarter(); // BACKLOG-358: two dinos meeting at a shared zone edge trade what each other's zone needs
     this.maybeLayEggs();
     this.checkHatch();
+    this.checkProviderHandover(); // BACKLOG-467: mark the say changing hands (after this step's banking settled)
   }
 
   /**
@@ -4728,6 +4758,12 @@ export class WorldScene extends Phaser.Scene {
       provider: this.providerAsideFor(target.name),
       // Season in the voice (BACKLOG-173): the turning year colours the line — winter grumble / spring savour.
       season: this.currentSeason(),
+      // Fed first, or left short (BACKLOG-469): a hungry dino voices its ground's spend policy (463) — grateful
+      // on a feed-first ground, grumbling on a bank-first one. Set only when hungry, so it stays a flavour beat.
+      groundPolicy:
+        pressingNeed(this.needs[target.name]) === 'hunger'
+          ? (this.spendPriorityFor(zoneOf(this.dinoZones, target.name, BOWL_ID)) ?? undefined)
+          : undefined,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
@@ -5371,6 +5407,7 @@ export class WorldScene extends Phaser.Scene {
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
       spendPriorityByZone: this.spendPriorityByZone, // BACKLOG-463: per-zone provider-set spend priority (additive)
+      lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
@@ -5448,6 +5485,7 @@ export class WorldScene extends Phaser.Scene {
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
+      this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
       this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove

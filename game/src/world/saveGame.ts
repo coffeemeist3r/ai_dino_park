@@ -95,6 +95,8 @@ export interface SaveData {
   foodPileByZone?: Record<string, Record<string, number>>;
   /** Per-zone provider-set spend priority (BACKLOG-463) — zone→'feed'|'bank'. Additive; absent → {} (no policy). */
   spendPriorityByZone?: Record<string, 'feed' | 'bank'>;
+  /** Who last held each zone's say (BACKLOG-467) — zone→provider name. Additive; absent → {} (no handover tracked yet). */
+  lastProviderByZone?: Record<string, string>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -392,6 +394,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // lastProviderByZone (BACKLOG-467) — zone→provider name, who last held each zone's say. Additive; absent →
+  // undefined, caller defaults to {}. Each value must be a string (a dino name); anything else is corrupt.
+  let lastProviderByZone: Record<string, string> | undefined;
+  if (o.lastProviderByZone !== undefined) {
+    if (typeof o.lastProviderByZone !== 'object' || o.lastProviderByZone === null) return null;
+    const zones = o.lastProviderByZone as Record<string, unknown>;
+    lastProviderByZone = {};
+    for (const z of Object.keys(zones)) {
+      if (typeof zones[z] !== 'string') return null;
+      lastProviderByZone[z] = zones[z] as string;
+    }
+  }
+
   // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
   // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
   let harvestedByZone: Record<string, number> | undefined;
@@ -571,6 +586,7 @@ export function deserialize(json: string): SaveData | null {
     stockpileByZone,
     foodPileByZone,
     spendPriorityByZone,
+    lastProviderByZone,
     cairns,
     shelters,
     thatches,

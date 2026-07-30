@@ -11,6 +11,7 @@
 
 import type { Personality } from './personality';
 import type { Season } from '../world/seasons';
+import type { SpendPriority } from '../world/governance';
 import { WebLLMBrain } from './webllmBrain';
 
 export interface NPCContext {
@@ -35,6 +36,13 @@ export interface NPCContext {
   provider?: { name: string; zoneName: string };
   /** The season the bowl is living in (BACKLOG-173): a dino grumbles through winter, savours spring. */
   season?: Season;
+  /**
+   * The spend policy of the ground this dino lives on (BACKLOG-469), set only for a **hungry** dino on a
+   * zone whose provider has set one (463): it voices how its ground has chosen to feed it — grateful on a
+   * feed-first ground, grumbling on a bank-first one. Absent when the dino isn't hungry or the ground has
+   * no policy, so the tell stays a flavour beat rather than an every-greet tic.
+   */
+  groundPolicy?: SpendPriority;
 }
 
 export interface Observation {
@@ -219,6 +227,27 @@ export function seasonAside(season: Season, traits?: Personality): string {
   return ''; // summer / fall — deliberately quiet
 }
 
+/**
+ * Fed first, or left short (BACKLOG-469) — a hungry dino voices its ground's spend policy (463). The same
+ * hunger lands differently depending on what the ground decided: a **feed-first** ground reassures ("it feeds
+ * its own first — I'll be alright"), a **bank-first** ground stings ("I go short while the walls go up").
+ * Temperament-shaded like the season (173) / provider (453) / hunger (368) asides via `PRICKLY_MAX` /
+ * `EFFUSIVE_MIN`; leads with a space so it appends cleanly; no traits → the even line. The caller only sets
+ * `groundPolicy` for a hungry dino on a policy'd ground, so this always has a real stance to voice.
+ */
+export function policyAside(policy: SpendPriority, traits?: Personality): string {
+  const prickly = !!traits && traits.agreeableness < PRICKLY_MAX;
+  const warm = !!traits && traits.agreeableness > EFFUSIVE_MIN;
+  if (policy === 'feed') {
+    if (prickly) return ` …at least this ground feeds its own before it builds. small mercies.`;
+    if (warm) return ` Oh — but this ground feeds its own first, bless it, so I'll be alright! I always am here.`;
+    return ` good thing this ground feeds its own first — I'll be alright.`;
+  }
+  if (prickly) return ` …and we go short while the walls go up. figures. don't get me started.`;
+  if (warm) return ` …though we do go a bit hungry while the granary fills — for the winter's sake, I know, I know.`;
+  return ` …and we go short a while, mind, so the granary can rise.`;
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -258,7 +287,13 @@ export function cannedReply(ctx: NPCContext): Reply {
   // savour; summer & fall stay quiet), composing onto every register above it.
   if (ctx.season) {
     const aside = seasonAside(ctx.season, ctx.traits);
-    if (aside) reply = { ...reply, text: (reply.text + aside).slice(0, 360) };
+    if (aside) reply = { ...reply, text: (reply.text + aside).slice(0, 400) };
+  }
+  // Fed first, or left short (BACKLOG-469): a hungry dino on a policy'd ground voices how it's chosen to feed
+  // it — grateful (feed) or grumbling (bank). Gated on hunger here too so the module is self-consistent
+  // regardless of caller; composes last, onto every register above it, within the raised cap.
+  if (ctx.hungry && ctx.groundPolicy) {
+    reply = { ...reply, text: (reply.text + policyAside(ctx.groundPolicy, ctx.traits)).slice(0, 400) };
   }
   return reply;
 }

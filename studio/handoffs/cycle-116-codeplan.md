@@ -1,5 +1,14 @@
 # Cycle 116 — Code Plan
 
+**SHIPPED (coder):** both tracks built as planned. Lore 469 — `policyAside` + `NPCContext.groundPolicy` +
+`buildMessages` policy clause + `pickTone` greet-bag wiring; compose clamp raised to 400. Structure 467 — new
+`world/handover.ts` (`handoverBeat`/`priorityPhrase`), `lastProviderByZone` field + `checkProviderHandover()`
+at the `forceStep` tail + save/load + `__ticker`/`__providerHandover` hooks; save-envelope type + validator.
+New tests: `handover.test.ts`, `tests/unit/cycle-116-policy-voice.test.ts`, e2e `cycle-116-handover.spec.ts` +
+`cycle-116-policy-voice.spec.ts`. **Build clean · unit 1389/1389 · e2e 397/397 (full green, no flake this run)
+· web-llm boundary intact.** No blockers.
+
+
 Reuse-first. Both tracks slot into existing patterns; one new pure module per track's testable core.
 
 ## Lore track — BACKLOG-469 (policy voice)

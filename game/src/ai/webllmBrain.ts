@@ -138,13 +138,22 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
       : ctx.season === 'spring'
         ? `It's spring and the world is greening again — let your delight in it colour what you say. `
         : '';
+  // BACKLOG-469: a hungry dino voices how its ground has chosen to spend (463) — grateful on a feed-first
+  // ground, grumbling on a bank-first one (the canned fallback carries the deterministic aside, so behaviour
+  // never depends on the model reaching this). Only set for a hungry dino on a policy'd ground.
+  const policy =
+    ctx.hungry && ctx.groundPolicy === 'feed'
+      ? `Your ground feeds its hungry own before it builds — you're grateful for that, let it colour what you say. `
+      : ctx.hungry && ctx.groundPolicy === 'bank'
+        ? `Your ground is banking food for a granary while you go hungry — let a grumble about that slip into what you say. `
+        : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).
