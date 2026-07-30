@@ -4317,3 +4317,12 @@ Lore pick **BACKLOG-469 — fed first, or left short:** a hungry dino lets its g
 its greeting — grateful on a feed-first ground, grumbling on a bank-first one — temperament-shaded like the
 season/provider/hunger asides, silent when content. Seeded 469/470/471 as milestone-drafting arcs (the
 sanctioned exception to the lore cap; the queue holds no governance beat). phase → structure-pending.
+
+## 2026-07-30 02:46 — cycle 116 — structure — picks BACKLOG-467 (the say changes hands)
+
+Milestone 9's structure spine — governance made transferable. 463 re-sets a zone's spend priority whenever the
+provider changes, but silently. **BACKLOG-467** gives the turnover a beat: when a zone's provider role passes
+to a new dino (448), the handover lands a one-off logged governance beat on the keeper's ticker ("Sunny sets
+the Grove's table now — mouths before walls"), the new priority colouring the line. New pure `world/handover.ts`
++ a persisted `lastProviderByZone` + a `checkProviderHandover()` at the forceStep tail. Queue at cap X=4 → no
+new structural items (drain holds). structureItem=BACKLOG-467; phase → designer-pending.

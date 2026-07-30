@@ -1,8 +1,8 @@
 {
   "cycle": 116,
-  "phase": "structure-pending",
+  "phase": "designer-pending",
   "currentItem": "BACKLOG-469",
-  "structureItem": null,
+  "structureItem": "BACKLOG-467",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-07-30T02:40:00-05:00",
-    "structure-smith": "2026-07-29T03:12:00-05:00",
+    "structure-smith": "2026-07-30T02:46:00-05:00",
     "designer": "2026-07-29T03:20:00-05:00",
     "code-planner": "2026-07-29T03:25:00-05:00",
     "coder": "2026-07-29T04:00:00-05:00",
