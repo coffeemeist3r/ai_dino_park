@@ -4336,3 +4336,11 @@ Structure 467: pure `world/handover.ts` `handoverBeat(prev,next,zone,priority)` 
 change to a non-null provider (first-set or turnover), null otherwise; WorldScene tracks a persisted
 `lastProviderByZone` and fires one `logEvent` per handover at the forceStep tail. 5 acceptance criteria per
 track. phase → codeplan-pending.
+
+## 2026-07-30 03:05 — cycle 116 — code-planner — files, reuse, test plan for 469 + 467
+
+Lore 469: `policyAside` in `ai/brain.ts` (mirrors seasonAside) + `NPCContext.groundPolicy` + a buildMessages
+clause + the greet-bag wiring in `pickTone`; raise the compose clamp to 400 so both hunger + policy fit.
+Structure 467: new pure `world/handover.ts` `handoverBeat()` + `handover.test.ts`; a persisted
+`lastProviderByZone`, `checkProviderHandover()` at the forceStep tail, save/load + `__ticker`/`__providerHandover`
+hooks; save-envelope type + validator. Unit from repo root (tests/unit + game/src). phase → coder-pending.
