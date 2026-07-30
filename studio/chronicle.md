@@ -4304,3 +4304,16 @@ a friendship lift on the season turn, 463's provider spend priority is a per-zon
 both logic/text, no sprite. The stash-ahead rule needs a standalone-renderable rig to draw; nothing queued
 qualifies. Cast + ground + all four landmarks remain fully drawn. lastFire.artist updated; phase stays
 lore-pending.
+
+## 2026-07-30 02:40 — cycle 116 — lore — Milestone 9 drafted; picks BACKLOG-469 (fed first, or left short)
+
+Milestone 8 closed last cycle; the smiths open **Milestone 9 — "A ground that speaks for itself."** Governance
+opened silently at the end of M8 (463 — a provider sets a spend priority read by two hooks, that no dino ever
+mentions and the player can't see). M9 makes it legible, transferable, and lived across five arcs: the say
+changes hands as a logged beat (467), the policy reads on the lens (468), a hungry mouth voices it (469), the
+word of it travels (470), and a ground that banks its own short too long lets the keeper hear the grumble (471).
+
+Lore pick **BACKLOG-469 — fed first, or left short:** a hungry dino lets its ground's spend policy slip into
+its greeting — grateful on a feed-first ground, grumbling on a bank-first one — temperament-shaded like the
+season/provider/hunger asides, silent when content. Seeded 469/470/471 as milestone-drafting arcs (the
+sanctioned exception to the lore cap; the queue holds no governance beat). phase → structure-pending.

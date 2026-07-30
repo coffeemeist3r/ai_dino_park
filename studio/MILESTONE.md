@@ -8,7 +8,34 @@
 
 ## Current milestone
 
-_(none active — the smiths draft Milestone 9 at the next cycle open.)_
+**Milestone 9: A ground that speaks for itself**
+**Status:** ACTIVE (opened cycle 116)
+
+Milestone 8 closed the seasons and, on its last night, cracked a door the CHARTER's
+resources→crafting→building→**governance** arc had been circling since Milestone 5: with BACKLOG-463 a
+zone's provider set a **spend priority** (feed-the-hungry-first vs. bank-toward-a-granary) — the park's
+first governance beat. But it shipped *invisible*: a policy read by two hooks, set silently, that no dino
+ever mentioned and the player could never see. Milestone 9 makes that governance **legible, transferable,
+and lived**. The player learns to *see* each ground's policy on the zone-map lens (468). The say **changes
+hands** as a visible beat — when one dino out-banks the incumbent provider (448) the incoming one re-sets
+the table from its own temperament and the handover is logged, so *who holds the say, and the moment it
+turns over,* stops being silent (467). And the cast **lives** the policy: a hungry dino voices how its
+ground has chosen to feed it — grateful to be fed first, or grumbling it goes short while the walls rise
+(469) — the word of *how the ground decides* travels the bowl the way word of *who* keeps it fed already
+does (470), and a ground that banks its mouths short long enough surfaces a quiet discontent to the keeper
+(471). Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone
+stands alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → **a ground that decides how
+it spends, and speaks for itself** (M9). Not a vote — 031 stays deferred; one policy, made public. Deathless
+by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [ ] Fed first, or left short — a hungry dino voices its ground's spend policy: a feed-first ground's mouth is grateful it's fed before the walls go up, a bank-first ground's mouth grumbles it goes short while the granary rises, temperament-shaded, silent when content (BACKLOG-469)
+- [ ] Word of how the ground decides — the spend policy travels the gossip/greeting spine the way word of the provider (453) does ("the Grove feeds its own first"), so *how* a ground has chosen to spend is something the bowl passes around (BACKLOG-470)
+- [ ] The grumble reaches the keeper — a bank-first ground that has left its mouths short long enough surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), governance discontent made a care signal (BACKLOG-471)
+
+**Structure arcs:**
+- [ ] The say changes hands — when a zone's provider role passes to a new dino (448), the incoming provider re-sets the spend priority (463) from its own temperament and the handover lands a one-off logged governance beat (BACKLOG-467)
+- [ ] The provider's read on the lens — surface each zone's spend priority on the zone-map lens beside the prosperity tier (🍽️ feeds-first / 🏦 banks-toward-plenty) so the player can see how each ground has chosen to spend (BACKLOG-468)
 
 ---
 

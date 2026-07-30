@@ -733,6 +733,22 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
+## Cycle 116 lore additions — the ground speaks its policy (2026-07-30)
+
+> Milestone 9's lore arcs. Governance opened silently at the end of M8 (463 — a provider sets a spend
+> priority read by two hooks, that no dino ever mentions). These give the policy a *voice*: a mouth lives
+> it, the bowl passes word of it, and a ground that banks its own short too long lets the keeper hear the
+> discontent. Seeded as milestone-drafting arcs (the sanctioned exception to the lore drain-before-invent
+> cap) — the existing lore queue holds no governance beat, all of it pre-dates 463. This cycle ships 469.
+>
+> Files these read: `world/governance.ts` (the `SpendPriority` the provider sets), `spendPriorityFor(zone)`
+> (WorldScene), the greet-aside register in `ai/brain.ts` (season/provider/hunger asides), the gossip spine
+> (`world/providerword.ts` mirror), and the ticker/`logEvent` care-signal channel (221/239 mirror).
+
+- [ ] BACKLOG-469 [social] Fed first, or left short — a hungry dino (over the 371 hunger threshold) lets its ground's spend policy (463) slip into its greeting, temperament-shaded like the season (173) / provider (453) / hunger (368) asides: on a **feed-first** ground it's grateful the ground feeds its own before it builds ("good thing this ground feeds its own first — I'll be alright"); on a **bank-first** ground it grumbles it goes short while the granary rises ("and we go short while the walls go up. figures."). Silent when not hungry or when the ground has no provider-set policy — a flavour beat, not an every-greet tic, the way the season aside stays quiet three-quarters of the year. No new save state; reads `spendPriorityFor(zone)` + the existing hunger signal. Builds on 463 / 368 / 173.
+- [ ] BACKLOG-470 [emergent] Word of how the ground decides — a dino lets slip *how* its ground has chosen to spend the way it already lets slip *who* keeps it fed (453): a 1-hop rumor ("the Grove feeds its own first" / "the Grove banks against the winter") carried on the same gossip spine, so the governance policy travels the bowl, not just the provider's name. Reads the zone's `SpendPriority`; a zone with no policy stays silent. Builds on 463 / 453 / 185.
+- [ ] BACKLOG-471 [emergent] The grumble reaches the keeper — a **bank-first** ground that has actually left a resident short (a hungry mouth denied because the reserve was held back) surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), the governance mirror of the cold-word alarm (221) and the draining-zone read (460): policy discontent made a care signal that nudges a keeper drop. Gated so it reads as a standing, not a per-step tic (a freshness gate like 221/226). Builds on 463 / 221 / 469.
+
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
