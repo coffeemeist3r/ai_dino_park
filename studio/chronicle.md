@@ -4361,3 +4361,46 @@ Both tracks verified. Build clean; unit 1389/1389 (+14); e2e 397/397 full green 
 and mobile-minds long-dialog both passed). web-llm boundary intact; save additive (lastProviderByZone, validator
 rejects corrupt, old saves → {}). Lore 469 5/5 (policyAside bands, hunger-gated composition, e2e voice), structure
 467 5/5 (handoverBeat rule + one-off ticker beat + persisted holder). Both recommend APPROVE. phase → validator-pending.
+
+## 2026-07-30 03:45 — cycle 116 — 🏛️ MILESTONE 9 "A GROUND THAT SPEAKS FOR ITSELF" OPENS — lore APPROVED / structure APPROVED
+
+Milestone 8 gave the year weight in the stores and a voice in the cast, and on its last night it cracked a door
+the park has been circling since Milestone 5: with 463 a zone's provider set a **spend policy** — the first time
+any dino *decided* anything for the ground it keeps fed. But it shipped mute: a policy read by two hooks, set
+silently, that nobody mentioned and the player couldn't see. Milestone 9 — **"A ground that speaks for itself"**
+— makes that governance legible, transferable, and lived. Tonight it opens on both tracks at once.
+
+**BACKLOG-469 (Fed first, or left short) — governance finds a voice.** For all of Milestone 5 through 8 a dino
+could tell you *who* keeps its ground fed (453), but never *how* its ground had chosen to feed it. Now a hungry
+mouth says it. Greet a dino that's over its hunger threshold on a ground whose provider has set a policy, and
+the policy slips into its hello — grateful on a **feed-first** ground ("good thing this ground feeds its own
+first — I'll be alright"), grumbling on a **bank-first** one ("…and we go short while the walls go up. figures.")
+— and, like the season grumble and the provider's-standing aside it stands beside, it comes in the dino's own
+temperament: a prickly one concedes it, a warm one makes a whole thing of it. The same hunger, landing
+differently depending on what the ground decided — that's the arc's whole point. It stays quiet unless the dino
+is actually short *and* the ground actually has a policy, so it's a flavour beat you catch, not a line every
+greeting recites. The deterministic aside owns the fact; the model only ever colours it. The first time in this
+park's life that a *policy* — not a feeling, not a need, a decision about how a ground spends — has been spoken
+aloud.
+
+**BACKLOG-467 (The say changes hands) — governance made transferable.** 463 already re-set a zone's policy the
+moment its provider changed; it just never *said* so. Now the turnover is a beat. When one dino out-banks the
+incumbent — or a young zone crowns its very first provider — the keeper's Park News ticker catches it:
+*🧺 Rex sets Pocket Cretaceous's table now — walls before mouths*, the tail reading the incoming provider's own
+stance so you can see, in the very line that announces the new setter, how the ground will spend under them. It
+fires exactly once per handover: a standing provider isn't news every step, and a provider that simply *departs*
+— leaving the say vacant — triggers nothing, because a policy that lingers on an empty chair isn't a handover.
+The whole rule lives in a pure four-line `handoverBeat`; WorldScene tracks who last held each zone's say (a new
+additive save field, validated, old saves loading clean) and checks it at the tail of every world step, after
+the banking has settled. Who holds the say, and the moment it turns over, has stopped being silent.
+
+**Milestone 9 "A ground that speaks for itself" — OPENED (cycle 116):** lore 469 ✅, structure 467 ✅; four arcs
+remain (lore 470 word-of-how-the-ground-decides, 471 the-grumble-reaches-the-keeper; structure 468 the policy on
+the lens). Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone
+stands alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → **a ground that decides how it
+spends, and speaks for itself** (M9). Not a vote — 031 stays deferred; one policy, made public. Deathless by
+design; mortality stays an operator call.
+
+build clean · unit **1389/1389** (+14) · e2e **397/397** — full parallel run, all green this pass (the
+catalogued cold-boot and mobile-minds long-dialog specs both passed). phase → lore-pending; cycle bumps to 117
+next run.
