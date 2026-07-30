@@ -4326,3 +4326,13 @@ to a new dino (448), the handover lands a one-off logged governance beat on the 
 the Grove's table now — mouths before walls"), the new priority colouring the line. New pure `world/handover.ts`
 + a persisted `lastProviderByZone` + a `checkProviderHandover()` at the forceStep tail. Queue at cap X=4 → no
 new structural items (drain holds). structureItem=BACKLOG-467; phase → designer-pending.
+
+## 2026-07-30 02:55 — cycle 116 — designer — both tracks spec'd (lore 469 + structure 467)
+
+Lore 469: a new `policyAside(policy, traits)` in `ai/brain.ts` (mirrors seasonAside/providerAside), a
+`NPCContext.groundPolicy`, appended in `cannedReply` when `hungry && groundPolicy`; WorldScene's greet bag sets
+it only for a hungry dino from `spendPriorityFor(zone)`. Feed → grateful, bank → grumble, silent otherwise.
+Structure 467: pure `world/handover.ts` `handoverBeat(prev,next,zone,priority)` → ticker line on a genuine
+change to a non-null provider (first-set or turnover), null otherwise; WorldScene tracks a persisted
+`lastProviderByZone` and fires one `logEvent` per handover at the forceStep tail. 5 acceptance criteria per
+track. phase → codeplan-pending.
