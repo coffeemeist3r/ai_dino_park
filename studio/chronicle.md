@@ -4534,3 +4534,12 @@ build clean · unit **1404/1404** (+15) · e2e **399/399** (+2) — full paralle
 running clean with no flake. No save-envelope change on either track, the first such cycle of Milestone 9
 and an explicit design assertion rather than an afterthought. phase → art-pending; cycle bumps to 118 next
 run.
+
+## 2026-07-31 04:00 — cycle 117-art — artist — no-op (empty [art] queue)
+
+No open `[art]`-tagged items in BACKLOG. Cycle 117 shipped nothing renderable: 470's policy word is a gossip
+line and a ticker rung, 468's policy read is a 🍽️/🏦 glyph on an existing map label — text in both cases,
+no sprite, prop, or terrain. The stash-ahead rule needs a standalone-renderable rig to draw and nothing
+queued qualifies; the nearest candidate, the freshly-seeded BACKLOG-472 (the fourth ground), wants *terrain*,
+which the rule deliberately benches until a host exists to blit it. Cast + ground + all four landmarks
+remain fully drawn. lastFire.artist updated; phase stays lore-pending.
