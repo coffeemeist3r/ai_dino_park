@@ -4442,3 +4442,15 @@ Queue dropped to 2 open (465/466) under cap X=4, so drain-before-invent released
 generalizes) and **BACKLOG-473** (the ground's second decision — a provider-set *work* priority beside the
 spend priority; governance is only a system once a ground decides more than one thing). Queue back to 4.
 phase → design-pending.
+
+## 2026-07-31 03:20 — cycle 117 — designer — BACKLOG-470 policy word + BACKLOG-468 policy on the lens
+
+Both tracks spec'd with acceptance criteria (5 lore / 5 structure). The cycle has an unusual symmetry: both
+items take the same private thing — a spend policy read by two hooks — and put it somewhere someone else can
+encounter it. The lore track puts it in another dino's memory (`world/policyword.ts`, a deliberate sibling of
+`providerword.ts`: RUMOR_MARK line, 1-hop, silent when the ground has no policy, slotted into the meet
+cascade below the provider word and above the plenty word, with its own 🏛️ ticker rung). The structure track
+puts it on the player's lens (`spendGlyph` in governance.ts, a ninth optional `spends` column on
+`zoneMapModel`, 🍽️/🏦 riding the existing tier line so the box layout is untouched). Neither track adds
+state and — a first for Milestone 9 — neither touches the save envelope, which the design makes an explicit
+QA assertion: any save-shape diff this cycle is a bug. phase → codeplan-pending.
