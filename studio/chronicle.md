@@ -4411,3 +4411,17 @@ No open `[art]`-tagged items in BACKLOG. Cycle 116 shipped nothing renderable: 4
 aside (grateful/grumble), 467's handover is a Park News ticker line — both logic/text, no sprite or prop. The
 stash-ahead rule needs a standalone-renderable rig to draw; nothing queued qualifies. Cast + ground + all four
 landmarks remain fully drawn. lastFire.artist updated; phase stays lore-pending.
+
+## 2026-07-31 03:05 — cycle 117 — lore-smith — next-up BACKLOG-470 (word of how the ground decides)
+
+Milestone 9 stays ACTIVE with three arcs open. 469 let a *hungry* dino say what its ground's spend policy
+means to it — a private feeling, spoken only to the keeper, only while short. 470 makes the policy the
+bowl's: a dino meeting another lets slip how its ground has chosen to spend ("the Grove feeds its own
+first" / "the Grove banks against the winter"), the same 1-hop rumor way it already lets slip *who* keeps
+that ground fed (453). Said by dinos who aren't hungry, about a ground the listener may not live on —
+governance stops being what you're told when you're starving and becomes what the park knows.
+
+Nothing seeded (lore queue far over the drain-before-invent cap; Milestone 9's lore arcs were all seeded
+cycle 116). Idea Box empty. Deliberately out of scope: no "the provider doesn't talk up its own policy"
+exclusion — 453 has that rule because a reputation is what others say about you; a policy is a public fact
+about a ground. phase → structure-pending.
