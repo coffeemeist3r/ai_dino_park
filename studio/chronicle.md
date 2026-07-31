@@ -4479,3 +4479,16 @@ cycle can't copy it across by reflex — a policy is a public fact about a groun
 Build clean; unit 1404/1404 (+15); e2e 399/399 (+2, full parallel run, no flake this pass); web-llm boundary
 intact; `world/saveGame.ts` untouched — no save-envelope change on either track, as designed.
 phase → qa-pending.
+
+## 2026-07-31 03:46 — cycle 117 — qa — 10/10 criteria pass (lore 5/5, structure 5/5)
+
+Both tracks verified. Build clean; unit 1404/1404 (+15); e2e 399/399 (+2) full green — no flake this pass,
+second cycle running clean. web-llm boundary intact; `world/saveGame.ts` absent from the diff, so the
+design's explicit "no save change this cycle" assertion holds. Lore 470 5/5 (wording per stance, listener's
+store, both silence gates, 1-hop, integration seam through `__spreadPolicyWord`), structure 468 5/5 (glyph
+map, per-zone column, back-compat across pre-468 call shapes, tier-line append, live lens read).
+
+One seam noted honestly rather than papered over: the *drawn* Phaser label string isn't pinned — `mapLabels`
+expose no hook, so criterion 4 rests on diff-reading a one-line template append over an asserted model, the
+same route 454's 🏛️ and 460's ⬇ took. A browser screenshot was attempted and abandoned (the pane wasn't
+compositing, so `create()` never reached `__ready`). Both tracks recommend APPROVE. phase → validator-pending.
