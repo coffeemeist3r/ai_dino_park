@@ -30,12 +30,12 @@ by design; mortality stays an operator call.
 
 **Lore arcs:**
 - [x] Fed first, or left short — a hungry dino voices its ground's spend policy: a feed-first ground's mouth is grateful it's fed before the walls go up, a bank-first ground's mouth grumbles it goes short while the granary rises, temperament-shaded, silent when content (BACKLOG-469 — cycle 116)
-- [ ] Word of how the ground decides — the spend policy travels the gossip/greeting spine the way word of the provider (453) does ("the Grove feeds its own first"), so *how* a ground has chosen to spend is something the bowl passes around (BACKLOG-470)
+- [x] Word of how the ground decides — the spend policy travels the gossip/greeting spine the way word of the provider (453) does ("the Grove feeds its own first"), so *how* a ground has chosen to spend is something the bowl passes around (BACKLOG-470 — cycle 117)
 - [ ] The grumble reaches the keeper — a bank-first ground that has left its mouths short long enough surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), governance discontent made a care signal (BACKLOG-471)
 
 **Structure arcs:**
 - [x] The say changes hands — when a zone's provider role passes to a new dino (448), the incoming provider re-sets the spend priority (463) from its own temperament and the handover lands a one-off logged governance beat (BACKLOG-467 — cycle 116)
-- [ ] The provider's read on the lens — surface each zone's spend priority on the zone-map lens beside the prosperity tier (🍽️ feeds-first / 🏦 banks-toward-plenty) so the player can see how each ground has chosen to spend (BACKLOG-468)
+- [x] The provider's read on the lens — surface each zone's spend priority on the zone-map lens beside the prosperity tier (🍽️ feeds-first / 🏦 banks-toward-plenty) so the player can see how each ground has chosen to spend (BACKLOG-468 — cycle 117; **structure track closed**)
 
 ---
 

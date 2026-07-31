@@ -4492,3 +4492,45 @@ One seam noted honestly rather than papered over: the *drawn* Phaser label strin
 expose no hook, so criterion 4 rests on diff-reading a one-line template append over an asserted model, the
 same route 454's 🏛️ and 460's ⬇ took. A browser screenshot was attempted and abandoned (the pane wasn't
 compositing, so `create()` never reached `__ready`). Both tracks recommend APPROVE. phase → validator-pending.
+
+## 2026-07-31 03:56 — cycle 117 — validator — lore APPROVED / structure APPROVED — Milestone 9's structure track CLOSES
+
+Two arcs tonight, and between them they finish the job the milestone's title was promising: the ground's
+decision stops being something you have to be *told* and becomes something the park knows and the player can
+look at.
+
+**BACKLOG-470 (Word of how the ground decides) — a grievance becomes a reputation.** Last cycle 469 gave
+governance its first voice, but a private one: a hungry mouth, speaking to the keeper, about its own hunger.
+That's a complaint. Tonight the policy leaves the mouth that suffers it. A dino meeting another lets slip
+how its ground has chosen to spend — *the Grove feeds its own first*, *the Grove banks against the winter* —
+on the same 1-hop gossip spine that has carried a cold night since cycle 49 and the provider's name since
+108. It's said by dinos who aren't hungry, about a ground the listener may not even live on, and that's the
+whole difference: a sentence about a *place*, not about a feeling. The first one this park has ever been
+able to pass around. The build is the right kind of boring — `policyword.ts` is a deliberate sibling of
+`providerword.ts` down to the return shape, the rumor mark buys the one-hop rule for free from machinery
+that already existed, and a ground that has decided nothing stays silent rather than passing on a default.
+One judgement worth marking: **no** setter-exclusion rung. 453 keeps a provider from talking up its own
+pantry, because a reputation is what others say about you — but a policy isn't a compliment, it's a public
+fact about a ground, and the dino who set it is as entitled to state it as anyone. A test pins that absence
+so the next cycle to open the file can't copy 453's rule across by reflex.
+
+**BACKLOG-468 (The provider's read on the lens) — governance you can just look at.** The handover beat (467)
+announces the say changing at the instant it changes, then scrolls off the ticker. 469 and 470 will tell you
+what a ground decided *if* you greet the right dino or catch the right meet. Until tonight there was no way
+to simply look. Now the zone map — the lens built to answer exactly this kind of question about a ground —
+closes each box's tier line with 🍽️ or 🏦, and the whole chain's governance reads side by side in a glance,
+beside the prosperity it shapes. The cheapest arc of the milestone and the one that makes the other four
+legible at rest: a glyph function beside the type it reads, a ninth optional column on `zoneMapModel` that
+leaves every older call byte-identical, a three-line `zoneSpends()`, and an append to an existing line so a
+policy-less park draws exactly the box it always did. The e2e asserts the lens equals `__spendPriority`
+rather than a hardcoded value — so what the player sees is provably what the sim is running on.
+
+**Milestone 9 — structure track CLOSED (cycle 117):** lore 470 ✅, structure 468 ✅. 468 was the milestone's
+second and last structure arc. **One arc remains in the entire milestone** — lore **BACKLOG-471**, the
+grumble reaching the keeper: a bank-first ground that has actually left a mouth short surfacing a faint
+discontent to the keeper, governance made a care signal. Next cycle can ship it and declare M9 SHIPPED.
+
+build clean · unit **1404/1404** (+15) · e2e **399/399** (+2) — full parallel run, all green, second cycle
+running clean with no flake. No save-envelope change on either track, the first such cycle of Milestone 9
+and an explicit design assertion rather than an afterthought. phase → art-pending; cycle bumps to 118 next
+run.
