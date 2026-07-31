@@ -39,6 +39,11 @@ describe('banked food on the map lens (BACKLOG-446)', () => {
   it('defaults banked to "" for older callers that omit the foodPiles arg', () => {
     expect(zoneMapModel(chain, pops, BOWL_ID).every((e) => e.banked === '')).toBe(true);
   });
+
+  // BACKLOG-468: the spend column is the ninth argument — every pre-468 call shape must survive it.
+  it('defaults spend to null for callers that omit the spends arg', () => {
+    expect(zoneMapModel(chain, pops, BOWL_ID, {}, {}, {}, [], {}).every((e) => e.spend === null)).toBe(true);
+  });
 });
 
 describe('a zone wants what it can\'t grow (BACKLOG-438)', () => {

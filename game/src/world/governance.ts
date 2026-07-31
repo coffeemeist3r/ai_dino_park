@@ -54,3 +54,13 @@ export function feedReserve(p: SpendPriority | null | undefined): number {
 export function granaryDeferredForFeeding(p: SpendPriority | null | undefined, foodTotal: number): boolean {
   return p === 'feed' && foodTotal < FEED_BUILD_FLOOR;
 }
+
+/**
+ * The lens read (BACKLOG-468) — a zone's policy as one glyph for the zone-map box: 🍽️ feeds its own first,
+ * 🏦 banks toward plenty. A ground with no policy (`null`) renders nothing, the same compatibility seam both
+ * hooks above honour, so a young park's map is exactly as it was. Lives here beside the type it reads, the
+ * way `declineGlyph` lives with decline and `GRANARY_GLYPH` with the granary.
+ */
+export function spendGlyph(p: SpendPriority | null | undefined): string {
+  return p === 'feed' ? '🍽️' : p === 'bank' ? '🏦' : '';
+}

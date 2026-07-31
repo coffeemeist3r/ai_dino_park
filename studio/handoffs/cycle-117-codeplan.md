@@ -108,6 +108,29 @@ plan below names the sibling for each so the Coder writes *this* codebase's code
 
 None known. Both tracks are additive reads over shipped state.
 
+## Shipped (Coder, 2026-07-31)
+
+Both tracks landed as planned, no deviations from the plan worth calling out except one deliberate test
+addition: the lore unit suite pins the *absence* of a setter-exclusion rung (a provider may speak of its own
+ground) so a future cycle can't quietly copy 453's rule across without a decision.
+
+- Structure: `spendGlyph` in `world/governance.ts`; `ZoneMapEntry.spend` + the 9th optional `spends` column
+  on `zoneMapModel`; `WorldScene.zoneSpends()` beside `decliningZones()`, passed from `zoneMapEntries()`;
+  the glyph appended to the existing tier line in `drawZoneMap()` (`boxH` untouched).
+- Lore: new `world/policyword.ts` (`policyWordLine` + `spreadPolicyWord`); one rung in the `npc_meet`
+  cascade between the provider word and the plenty word, with the matching `🏛️` ticker rung and the
+  cascade comments extended both sides; `__spreadPolicyWord` dev hook beside `__spreadProviderWord`.
+- Tests: `tests/unit/cycle-117-policy-word.test.ts` (10), `tests/unit/cycle-117-spend-lens.test.ts` (5),
+  one back-compat case added to `game/src/ui/lenses.test.ts`, `tests/e2e/cycle-117-policy-word.spec.ts`,
+  `tests/e2e/cycle-117-spend-lens.spec.ts`.
+- Verification: `npm run build` clean · `npx vitest run` **1404/1404** (+15) · `npx playwright test`
+  **399/399** (+2, full parallel run, no flake this pass) · `@mlc-ai/web-llm` still imported only under
+  `game/src/ai/` · `world/saveGame.ts` untouched — **no save-envelope change**, as designed.
+
+## Blocker
+
+None.
+
 ## Invariants to hold
 
 - No save-envelope change on either track (design makes this a QA assertion — diff `world/saveGame.ts` and

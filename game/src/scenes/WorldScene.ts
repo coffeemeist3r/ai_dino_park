@@ -99,6 +99,7 @@ import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, zoneProvider, ROLE_ICON, type Role } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
+import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
@@ -111,7 +112,7 @@ import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../worl
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
-import { providerPriority, feedReserve, granaryDeferredForFeeding, type SpendPriority } from '../world/governance';
+import { providerPriority, feedReserve, granaryDeferredForFeeding, spendGlyph, type SpendPriority } from '../world/governance';
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
@@ -2592,6 +2593,7 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone, // BACKLOG-446: each zone's banked food, read as a glyph line on the lens
       this.granaryZones(), // BACKLOG-454: zones that have raised a granary (🏛️ marker + a raised food cap)
       this.decliningZones(), // BACKLOG-460: zones hollowed below their peak (⬇ marker)
+      this.zoneSpends(), // BACKLOG-468: how each ground has chosen to spend (🍽️/🏦 marker)
     );
   }
 
@@ -2599,6 +2601,14 @@ export class WorldScene extends Phaser.Scene {
   private decliningZones(): Record<string, boolean> {
     const out: Record<string, boolean> = {};
     for (const z of zoneChain()) out[z] = this.isZoneDeclining(z);
+    return out;
+  }
+
+  /** Each zone's spend policy (BACKLOG-468) — the map lens's 🍽️/🏦 read, keyed by zone id. A pure read
+   *  through the existing `spendPriorityFor`; a ground that has never had a provider stays null. */
+  private zoneSpends(): Record<string, SpendPriority | null> {
+    const out: Record<string, SpendPriority | null> = {};
+    for (const z of zoneChain()) out[z] = this.spendPriorityFor(z);
     return out;
   }
 
@@ -2634,7 +2644,9 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-433: the zone's own harvest tally (🌾N) reads beside the folded tier.
       // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
       // BACKLOG-460: a zone hollowed below its peak reads a ⬇ beside the tier — an exodus made legible.
-      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
+      // BACKLOG-468: and a 🍽️/🏦 closes that same line with how the ground has chosen to spend (463),
+      // so governance reads at a glance beside the prosperity it shapes. No policy → nothing added.
+      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
@@ -2723,6 +2735,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__spreadProviderWord = (a: string, b: string) => {
       const zone = zoneOf(this.dinoZones, a, BOWL_ID);
       const p = spreadProviderWord(this.memory, a, b, this.providerFor(zone), zoneById(zone).name);
+      this.memory = p.store;
+      return p.rumor;
+    };
+    // BACKLOG-470: word of how the ground decides — the speaker's zone's spend policy passing to a listener.
+    (window as any).__spreadPolicyWord = (a: string, b: string) => {
+      const zone = zoneOf(this.dinoZones, a, BOWL_ID);
+      const p = spreadPolicyWord(this.memory, a, b, this.spendPriorityFor(zone), zoneById(zone).name);
       this.memory = p.store;
       return p.rumor;
     };
@@ -3465,10 +3484,16 @@ export class WorldScene extends Phaser.Scene {
       const pword = grove.rumor
         ? grove
         : spreadProviderWord(this.memory, a.name, b.name, this.providerFor(zone), zoneById(zone).name);
+      // Word of how the ground decides (BACKLOG-470): *how* this ground spends its store, under the
+      // provider word (a name beats a stance — who keeps you fed is the sharper news) and over word of
+      // another ground. Silent on a ground with no provider-set policy.
+      const policy = pword.rumor
+        ? pword
+        : spreadPolicyWord(this.memory, a.name, b.name, this.spendPriorityFor(zone), zoneById(zone).name);
       // Word of plenty (BACKLOG-458): a dino carrying first-hand word of a thriving zone lets it slip — below
-      // provider-word (who keeps THIS ground fed beats news of another), above generic gossip (a thriving
+      // policy-word (how THIS ground spends beats news of another), above generic gossip (a thriving
       // ground beats an ordinary rumor). The listener is then primed to migrate toward that zone.
-      const plenty = pword.rumor ? pword : spreadPlentyWord(this.memory, a.name, b.name);
+      const plenty = policy.rumor ? policy : spreadPlentyWord(this.memory, a.name, b.name);
       const gossip = plenty.rumor ? plenty : spreadGossip(this.memory, a.name, b.name);
       this.memory = gossip.store;
       if (relief.rumor) this.logEvent(`😌 ${b.name} heard the all-clear from ${a.name}`);
@@ -3476,6 +3501,7 @@ export class WorldScene extends Phaser.Scene {
       else if (cold.rumor) this.logEvent(`🥶 ${b.name} heard about ${a.name}'s cold night`);
       else if (grove.rumor) this.logEvent(`🌿 ${b.name} heard about the grove from ${a.name}`);
       else if (pword.rumor) this.logEvent(`🧺 ${b.name} heard from ${a.name} who keeps ${zoneById(zone).name} fed`);
+      else if (policy.rumor) this.logEvent(`🏛️ ${b.name} heard from ${a.name} how ${zoneById(zone).name} spends`);
       else if (plenty.rumor) this.logEvent(`🌾 ${b.name} heard plenty is thriving from ${a.name}`);
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)

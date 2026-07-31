@@ -4465,3 +4465,17 @@ the `npc_meet` cascade between the provider word and the plenty word plus the ma
 Structure lands first so the lore rung compiles against final types. Two new unit suites, two new e2e specs,
 one extension to `lenses.test.ts`. No blockers; invariants pinned (no save change, web-llm boundary,
 `zoneMapModel` back-compat, ticker ladder tracks cascade order). phase → code-pending.
+
+## 2026-07-31 03:38 — cycle 117 — coder — BACKLOG-470 policy word + BACKLOG-468 policy on the lens
+
+Both tracks shipped. Structure: `spendGlyph` in governance.ts, `ZoneMapEntry.spend` + a ninth optional
+`spends` column on `zoneMapModel`, `zoneSpends()` beside `decliningZones()`, and the 🍽️/🏦 appended to the
+existing tier line so the map box layout is byte-identical for a park with no policy. Lore: new pure
+`world/policyword.ts` (RUMOR_MARK line, 1-hop, silent on `speaker === listener` or a policy-less ground),
+one rung in the `npc_meet` cascade between the provider word and the plenty word, its 🏛️ ticker rung, and a
+`__spreadPolicyWord` hook. One deliberate test pins the *absence* of 453's setter-exclusion rule so a later
+cycle can't copy it across by reflex — a policy is a public fact about a ground, not a compliment.
+
+Build clean; unit 1404/1404 (+15); e2e 399/399 (+2, full parallel run, no flake this pass); web-llm boundary
+intact; `world/saveGame.ts` untouched — no save-envelope change on either track, as designed.
+phase → qa-pending.

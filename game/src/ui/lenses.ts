@@ -12,6 +12,7 @@ import { zoneById, zoneNeighbors } from '../world/zones';
 import { cropOf } from '../world/plot';
 import type { ProsperityTier } from '../world/prosperity';
 import { foodPileLine, type FoodPile } from '../world/foodstore';
+import type { SpendPriority } from '../world/governance';
 
 export type Lens = 'off' | 'book' | 'bonds' | 'roles' | 'ticker' | 'map';
 // 'map' (BACKLOG-425) is appended at the END so every pre-existing lens keeps its position on the ring.
@@ -50,6 +51,9 @@ export interface ZoneMapEntry {
   /** Is this zone declining (BACKLOG-460) — has it lost residents from its peak? Shows a ⬇ marker; false
    *  when unknown (older callers). */
   declining: boolean;
+  /** How this ground has chosen to spend (BACKLOG-468) — the provider-set policy (463) shown as 🍽️/🏦
+   *  beside the tier; null when the zone has no policy or the caller didn't pass one (older callers). */
+  spend: SpendPriority | null;
 }
 
 /**
@@ -101,6 +105,7 @@ export function zoneMapModel(
   foodPiles: Record<string, FoodPile> = {},
   granaryZones: readonly string[] = [],
   declining: Record<string, boolean> = {},
+  spends: Record<string, SpendPriority | null> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -113,6 +118,7 @@ export function zoneMapModel(
     banked: foodPileLine(foodPiles[id] ?? {}), // BACKLOG-446: the zone's banked food (absent → '')
     granary: granaryZones.includes(id), // BACKLOG-454: a raised granary shows a 🏛️ marker
     declining: declining[id] ?? false, // BACKLOG-460: a zone hollowed below its peak shows a ⬇ marker
+    spend: spends[id] ?? null, // BACKLOG-468: how this ground has chosen to spend (absent → no policy shown)
   }));
 }
 
