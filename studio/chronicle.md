@@ -4454,3 +4454,14 @@ puts it on the player's lens (`spendGlyph` in governance.ts, a ninth optional `s
 `zoneMapModel`, 🍽️/🏦 riding the existing tier line so the box layout is untouched). Neither track adds
 state and — a first for Milestone 9 — neither touches the save envelope, which the design makes an explicit
 QA assertion: any save-shape diff this cycle is a bug. phase → codeplan-pending.
+
+## 2026-07-31 03:28 — cycle 117 — code-planner — policyword.ts + spendGlyph/lens column
+
+Files, reuse table, and test plan for both tracks; every piece names the in-tree sibling to copy rather than
+describing generic code. Lore: new `world/policyword.ts` (providerword.ts's shape), one rung inserted into
+the `npc_meet` cascade between the provider word and the plenty word plus the matching 🏛️ ticker rung,
+`__spreadPolicyWord` hook. Structure: `spendGlyph` in governance.ts, a ninth optional `spends` column on
+`zoneMapModel`, `zoneSpends()` mirroring `decliningZones()`, glyph appended to the existing tier line.
+Structure lands first so the lore rung compiles against final types. Two new unit suites, two new e2e specs,
+one extension to `lenses.test.ts`. No blockers; invariants pinned (no save change, web-llm boundary,
+`zoneMapModel` back-compat, ticker ladder tracks cascade order). phase → code-pending.
