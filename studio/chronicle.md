@@ -4425,3 +4425,20 @@ Nothing seeded (lore queue far over the drain-before-invent cap; Milestone 9's l
 cycle 116). Idea Box empty. Deliberately out of scope: no "the provider doesn't talk up its own policy"
 exclusion — 453 has that rule because a reputation is what others say about you; a policy is a public fact
 about a ground. phase → structure-pending.
+
+## 2026-07-31 03:12 — cycle 117 — structure-smith — BACKLOG-468 (the provider's read on the lens)
+
+Milestone 9's last structure arc. 463 gave a ground a spend policy and 467 gave its turnover a beat, but the
+standing policy still lives only inside two hooks and a ticker line that scrolls away — the player who
+missed the handover has no way to ask "so how does the Fernreach spend?". The zone-map lens, the one lens
+built to answer exactly that kind of question about a ground, says nothing about the decision behind the
+pantry. 468 puts a 🍽️ / 🏦 beside each zone's prosperity badge so the whole chain's governance reads at a
+glance; a ground with no policy shows nothing, the same `null` seam both 463 hooks honour. Pure read off
+already-persisted state — no new state, no save change, no new behaviour. Approving it closes Milestone 9's
+structure track.
+
+Queue dropped to 2 open (465/466) under cap X=4, so drain-before-invent released: seeded **BACKLOG-472**
+(the fourth ground — cash 449's "a fourth zone is a row" cheque and find out whether the chain economy
+generalizes) and **BACKLOG-473** (the ground's second decision — a provider-set *work* priority beside the
+spend priority; governance is only a system once a ground decides more than one thing). Queue back to 4.
+phase → design-pending.
