@@ -4558,3 +4558,12 @@ Queue drained (4 open ≥ X=4), nothing seeded. Chosen: **BACKLOG-465** — per-
 finishing a split spine outranks opening a new one. Each crop gets its own good/lean season so the bowl,
 the Grove and the Fernreach take turns being the rich ground, and the ferry has a reason to run all year.
 Spring stays the hinge for every crop — a fresh boot is byte-identical.
+
+## 2026-08-01 03:20 — cycle 118 — designer — the cost of a policy, and a year that picks sides
+
+**471** specs the silence at the sharpest edge of governance: the bank reserve is the one rule that can look
+at a starving dino with food in the pantry and say no, and until now that refusal made no sound at all. Two
+mouths held short and a faint 😟 reaches the keeper's ticker, once a day, cleared the moment the stores feed
+someone. **465** specs the per-crop season table 461 deferred in its own comment: berries thrive in summer,
+greens in fall, roots in winter, each season with exactly one thriving ground and one thin one, rotating
+around the chain — spring stays the hinge so a fresh boot is byte-identical. 8 + 9 acceptance criteria.
