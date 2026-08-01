@@ -113,6 +113,8 @@ import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelco
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import { providerPriority, feedReserve, granaryDeferredForFeeding, spendGlyph, type SpendPriority } from '../world/governance';
+import { heldShort, soundsDiscontent, discontentLine } from '../world/discontent';
+import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason';
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
@@ -469,6 +471,14 @@ export class WorldScene extends Phaser.Scene {
     }
     return this.spendPriorityByZone[zone] ?? null;
   }
+  /**
+   * The grumble's ledger (BACKLOG-471) — per zone, how many starving mouths the bank reserve (463) has held
+   * short, and the in-game day this ground last sounded its discontent to the keeper. Deliberately **not
+   * persisted**: a live read of a live situation, like the policy it reports. Feeding one of its own resets
+   * the count; the day stamp is the once-a-day freshness gate.
+   */
+  private shortsByZone: Record<string, number> = {};
+  private discontentDayByZone: Record<string, number> = {};
   /** Per-dino banked-food tally (BACKLOG-448) — units this dino put into some zone's store, by carrying
    *  (447) or hauling a harvest away. The `provider` role reads it. Persisted; absent → {}. */
   private foodBanked: Record<string, number> = {};
@@ -965,6 +975,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__thawRelief = () => this.runThawRelief();
     // BACKLOG-463: a zone's provider-set spend priority ('feed' / 'bank' / null when no provider has emerged).
     (window as any).__spendPriority = (zone: string) => this.spendPriorityFor(zone ?? this.zoneId);
+    // BACKLOG-471: the grumble's ledger — mouths each ground has held short, and the day it last sounded.
+    (window as any).__discontent = () => ({
+      shorts: { ...this.shortsByZone },
+      lastDay: { ...this.discontentDayByZone },
+    });
+    // BACKLOG-465: what a harvest of this crop banks right now, so a spec asserts the table the sim runs on.
+    (window as any).__cropYield = (food: string, season?: Season) => cropYield(food, season ?? this.currentSeason());
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
       this.stockpileByZone[zone] = { ...pile };
@@ -1175,11 +1192,20 @@ export class WorldScene extends Phaser.Scene {
     // the 447 carry). A pile already at cap banks nothing, so nobody is credited for hauling nothing.
     // BACKLOG-454: a standing granary lifts this zone's per-id cap, so a built-up ground banks a bigger surplus.
     // BACKLOG-461: the season shifts it too — a lean-season ground banks one less, a plenty-season ground one more.
+    // BACKLOG-465: and the season shifts it *per crop* — this ground's own crop comes in thick in its good
+    // season (two for the stores) and thin in its lean one (nothing to bank), so which ground thrives
+    // rotates with the year. The drop above is untouched: the year shapes what a ground can bank, never
+    // whether its dinos can eat what they just picked.
+    const season = this.currentSeason();
     const cap = this.foodCapFor(zone);
-    const banked = !foodAtCap(this.foodStoreFor(zone), crop.food, cap);
-    this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food, cap);
-    if (banked) this.creditHauler(zone);
+    for (let i = 0; i < cropYield(crop.food, season); i++) {
+      if (foodAtCap(this.foodStoreFor(zone), crop.food, cap)) break;
+      this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food, cap);
+      this.creditHauler(zone);
+    }
     this.logEvent(`${crop.ripe} you harvested the crop`);
+    const yieldLine = harvestYieldLine(crop.ripe, crop.food, season);
+    if (yieldLine) this.logEvent(yieldLine);
     this.refreshPlot();
     void this.saveGame();
   }
@@ -2299,11 +2325,27 @@ export class WorldScene extends Phaser.Scene {
       if (!isStarving(this.needs[d.name])) continue;
       const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
       const pile = this.foodStoreFor(zone);
+      const priority = this.spendPriorityFor(zone);
+      const favorite = favoriteFood(d.traits, this.currentSeason()).id;
       // BACKLOG-463: a 'bank'-priority provider keeps a reserve banked; a 'feed' one (or no provider) spends to zero.
-      const id = pickFoodToSpend(pile, favoriteFood(d.traits, this.currentSeason()).id, feedReserve(this.spendPriorityFor(zone)));
-      if (!id) continue;
+      const id = pickFoodToSpend(pile, favorite, feedReserve(priority));
+      if (!id) {
+        // BACKLOG-471: and when the reserve is the *only* reason this mouth goes unfed, the ground has made
+        // a decision that cost somebody. Enough of those and the keeper hears about it — once a day, so it
+        // reads as a standing rather than a per-step tic.
+        if (heldShort(pile, favorite, priority)) {
+          this.shortsByZone[zone] = (this.shortsByZone[zone] ?? 0) + 1;
+          const day = getWorldClock().now().day;
+          if (soundsDiscontent(this.shortsByZone[zone], this.discontentDayByZone[zone] ?? null, day)) {
+            this.discontentDayByZone[zone] = day;
+            this.logEvent(discontentLine(zoneById(zone).name));
+          }
+        }
+        continue;
+      }
       const emoji = FOODS.find((f) => f.id === id)?.emoji ?? NEED_GLYPH.hunger;
       const zoneName = zoneById(zone).name;
+      this.shortsByZone[zone] = 0; // BACKLOG-471: a ground that feeds its own has nothing to grumble about
       this.foodPileByZone[zone] = takeFood(pile, id);
       this.needs = satisfy(this.needs, d.name, 'hunger');
       this.memory = remember(this.memory, d.name, storesFedMemory(zoneName));
@@ -5172,6 +5214,9 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-461: the season's grip on the pantry is player-visible — no silent economy change.
     const gripLine = seasonGripLine(turned);
     if (gripLine) this.logEvent(gripLine);
+    // BACKLOG-465: and which *ground* the season favours — the per-crop companion to the park-wide grip.
+    const cropLine = seasonCropLine(turned);
+    if (cropLine) this.logEvent(cropLine);
     for (const d of this.dinos) this.memory = remember(this.memory, d.name, turnMemory(turned));
     // BACKLOG-215: the year turning OUT of winter (spring is only reached from winter on a live tick) rewards
     // the dinos that toughed the cold nights — a one-off relief lift + a 🌱 line.

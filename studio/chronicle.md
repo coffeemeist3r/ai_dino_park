@@ -4576,3 +4576,14 @@ plus a pure freshness predicate). WorldScene takes both in disjoint methods — 
 `checkSeasonTurn`), then lore (`feedFromStores`) — so the two edits never share a hunk. Reuse audit found
 no new abstractions worth adding: `bankFood` gets called N times rather than learning to count, and
 `heldShort` refuses to re-implement the reserve comparison. ~7 files, no new dependencies, no save change.
+
+## 2026-08-01 03:40 — cycle 118 — coder — the year picks a favourite ground; the pantry's refusal finds a voice
+
+Both tracks in, structure first. **465**: `harvest()` now banks `cropYield(crop.food, season)` units through
+a cap-guarded loop, crediting the hauler per unit — so summer hands the bowl two berries and a name toward
+provider, fall hands it none, and the season turn says which ground the year favours. **471**: the `!id`
+branch of `feedFromStores` — the silent line where the bank reserve refuses a starving mouth — now asks
+`heldShort` whether the reserve was the reason, counts it, and lets the keeper hear about it once a day.
+Two deviations, both noted: the favourite food had to be hoisted alongside the priority so the short check
+and the spend decision can't disagree, and the e2e needed `__eat` to clear the harvest drop before the
+pantry would open at all. build clean · unit 1423/1423 (+19) · e2e 409/409 (+10) · dev server 200.

@@ -210,3 +210,39 @@ resident short surfaces a faint discontent ticker, governance made a care signal
 `~4 files` (1 new module, 1 modified scene — shared with the structure track — 2 new test files).
 
 **Combined cycle: ~7 files** (2 new modules, 1 shared scene, 4 new test files). Well inside the arc budget.
+
+---
+
+## Shipped
+
+**Files touched (7):**
+- `game/src/world/cropseason.ts` *(new)* — the per-crop year table, `cropYield`, `harvestYieldLine`,
+  `seasonCropLine` (derived from the table, not written beside it).
+- `game/src/world/discontent.ts` *(new)* — `SHORTS_BEFORE_WORD`, `heldShort`, `soundsDiscontent`,
+  `discontentLine`.
+- `game/src/scenes/WorldScene.ts` — structure: `harvest()` banks `cropYield` units in a cap-guarded loop
+  crediting the hauler per unit, logs `harvestYieldLine`; `checkSeasonTurn()` logs `seasonCropLine`; hook
+  `__cropYield`. Lore: two unpersisted fields (`shortsByZone`, `discontentDayByZone`), the short-detect +
+  once-a-day sound in `feedFromStores()`'s `!id` branch, the reset on a successful spend, hook
+  `__discontent`.
+- `tests/unit/cycle-118-crop-season.test.ts` *(new, 10 tests)*
+- `tests/unit/cycle-118-discontent.test.ts` *(new, 9 tests)*
+- `tests/e2e/cycle-118-crop-season.spec.ts` *(new, 6 specs)*
+- `tests/e2e/cycle-118-discontent.spec.ts` *(new, 4 specs)*
+
+**Deviations from the plan:** two, both small.
+1. `feedFromStores` needed the favourite food id hoisted into a local as well as the priority — the plan
+   only called out the priority. Without it the short check would have recomputed `favoriteFood` and could
+   have disagreed with the spend decision it is supposed to be explaining (the plan's own last risk note).
+2. The discontent e2e clears the harvest drop with the existing `__eat('Rex')` hook before driving the
+   pantry. The plan missed that `feedFromStores` returns early while a keeper/harvest food piece is in play
+   (444's "a dino mid-rush to real food is never intercepted"), so without it the pantry never opens at all.
+   No production change — an existing dev hook, used as intended.
+
+**Build + tests:** `npm --prefix game run build` clean. `npx vitest run` — **1423/1423** green (158 files,
++19). `npx playwright test` — **409/409** green (+10), full parallel run. Dev server returns 200. No
+`@mlc-ai/web-llm` import outside `game/src/ai/` (grep clean). No save-shape change on either track.
+
+**Flake note:** the first isolated run of `cycle-118-crop-season.spec.ts` lost one spec to a 30s boot
+timeout on a cold Vite start; it passed on re-run and in the full 409-spec suite. The catalogued cold-boot
+flake, not a regression.
