@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-465 [emergent] Per-crop seasonal yield — the deferred half of 461. Once the flat park-wide seasonal modifier exists (461), give each crop its own good/lean season so *which* zone thrives shifts with the year: the bowl's berry peaks in summer, the grove's greens in spring, the Fernreach's crop in fall — a per-crop season table the harvest hook reads, so a zone can be rich one season and lean the next while its neighbour is the opposite. Turns the flat park-wide grip into a per-zone rhythm that keeps the ferry (447) live year-round. Builds on 461 / 418 / 170.
 - [ ] BACKLOG-466 [core] The dry season — the water twin of 461's food grip. Thirst (371) and the waterholes (445) ignore the year entirely; give the season a grip on drinking: one pure seasonal thirst/water modifier the needs/waterhole hooks read, so summer quickens thirst (the bowl drinks harder in the heat) and winter eases it, the drinking mirror of the lean-season food grip. Foundation-first: one multiplier, deferring a visibly shrinking waterhole sprite. Builds on 461 / 445 / 371.
 - [ ] BACKLOG-472 [core] The fourth ground — 449 folded per-zone terrain into one `ZONE_TERRAIN` table so "a fourth zone is a row, not three branches"; nothing has ever cashed that cheque. Add a fourth zone to the chain: its `ZONES` row + terrain descriptor, an adjacency link, its own crop (418), its own waterhole (445), and its box on the map lens — then let every generalized system (prosperity 428, harvest 433, demand 438, pantry 446, ferry 447, provider 448, migration 450, decline 460, governance 463) meet it untouched. The deliverable is the proof: the chain economy either generalizes or it doesn't, and three zones has been too small a number to tell. Builds on 449 / 418 / 445.
 - [ ] BACKLOG-473 [emergent] The ground's second decision — governance widens past *spending*. A provider currently decides one thing (how the pantry spends, 463); give it a second, orthogonal call: a **work priority** (gather-first vs. build-first) the ambient gathering/building hooks read, so a ground's provider shapes not only how its store is spent but what its residents put their backs into — a build-first ground visibly raises landmarks while a gather-first one visibly fills the pantry. Same shape as 463 (one persistent enum off the provider's temperament, `null` → today's behaviour), which is why it's the honest next spine beat: governance is only a *system* once a ground decides more than one thing. Builds on 463 / 146 / 417 / 454.
@@ -732,20 +731,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 - [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
-
-## Cycle 116 lore additions — the ground speaks its policy (2026-07-30)
-
-> Milestone 9's lore arcs. Governance opened silently at the end of M8 (463 — a provider sets a spend
-> priority read by two hooks, that no dino ever mentions). These give the policy a *voice*: a mouth lives
-> it, the bowl passes word of it, and a ground that banks its own short too long lets the keeper hear the
-> discontent. Seeded as milestone-drafting arcs (the sanctioned exception to the lore drain-before-invent
-> cap) — the existing lore queue holds no governance beat, all of it pre-dates 463. This cycle ships 469.
->
-> Files these read: `world/governance.ts` (the `SpendPriority` the provider sets), `spendPriorityFor(zone)`
-> (WorldScene), the greet-aside register in `ai/brain.ts` (season/provider/hunger asides), the gossip spine
-> (`world/providerword.ts` mirror), and the ticker/`logEvent` care-signal channel (221/239 mirror).
-
-- [~] BACKLOG-471 [emergent] The grumble reaches the keeper — a **bank-first** ground that has actually left a resident short (a hungry mouth denied because the reserve was held back) surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), the governance mirror of the cold-word alarm (221) and the draining-zone read (460): policy discontent made a care signal that nudges a keeper drop. Gated so it reads as a standing, not a per-step tic (a freshness gate like 221/226). Builds on 463 / 221 / 469.
 
 ## Mobile (deferred, do not pick until charter clears)
 

@@ -8,8 +8,29 @@
 
 ## Current milestone
 
-**Milestone 9: A ground that speaks for itself**
-**Status:** ACTIVE (opened cycle 116)
+_(none — Milestone 9 shipped cycle 118. The smiths draft Milestone 10 at the next cycle open:
+Lore-smith writes the headline + feel arcs, Structure-smith adds the spine arcs.)_
+
+---
+
+### Format (use this when drafting)
+
+```markdown
+**Milestone N: <player-visible headline>**
+**Status:** ACTIVE (opened cycle NNN)
+
+**Lore arcs:**
+- [ ] <arc — one sentence of observable behavior> (BACKLOG-NNN, -NNN)
+- [ ] <arc> (BACKLOG-NNN)
+
+**Structure arcs:**
+- [ ] <arc> (BACKLOG-NNN)
+- [ ] <arc> (BACKLOG-NNN)
+```
+
+## Shipped milestones
+
+### Milestone 9: A ground that speaks for itself — SHIPPED cycle 118 (opened cycle 116)
 
 Milestone 8 closed the seasons and, on its last night, cracked a door the CHARTER's
 resources→crafting→building→**governance** arc had been circling since Milestone 5: with BACKLOG-463 a
@@ -31,30 +52,11 @@ by design; mortality stays an operator call.
 **Lore arcs:**
 - [x] Fed first, or left short — a hungry dino voices its ground's spend policy: a feed-first ground's mouth is grateful it's fed before the walls go up, a bank-first ground's mouth grumbles it goes short while the granary rises, temperament-shaded, silent when content (BACKLOG-469 — cycle 116)
 - [x] Word of how the ground decides — the spend policy travels the gossip/greeting spine the way word of the provider (453) does ("the Grove feeds its own first"), so *how* a ground has chosen to spend is something the bowl passes around (BACKLOG-470 — cycle 117)
-- [ ] The grumble reaches the keeper — a bank-first ground that has left its mouths short long enough surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), governance discontent made a care signal (BACKLOG-471)
+- [x] The grumble reaches the keeper — a bank-first ground that has left its mouths short long enough surfaces a faint discontent ticker to the keeper ("the Grove's going hungry while the granary fills"), governance discontent made a care signal (BACKLOG-471 — cycle 118; **milestone SHIPPED**)
 
 **Structure arcs:**
 - [x] The say changes hands — when a zone's provider role passes to a new dino (448), the incoming provider re-sets the spend priority (463) from its own temperament and the handover lands a one-off logged governance beat (BACKLOG-467 — cycle 116)
 - [x] The provider's read on the lens — surface each zone's spend priority on the zone-map lens beside the prosperity tier (🍽️ feeds-first / 🏦 banks-toward-plenty) so the player can see how each ground has chosen to spend (BACKLOG-468 — cycle 117; **structure track closed**)
-
----
-
-### Format (use this when drafting)
-
-```markdown
-**Milestone N: <player-visible headline>**
-**Status:** ACTIVE (opened cycle NNN)
-
-**Lore arcs:**
-- [ ] <arc — one sentence of observable behavior> (BACKLOG-NNN, -NNN)
-- [ ] <arc> (BACKLOG-NNN)
-
-**Structure arcs:**
-- [ ] <arc> (BACKLOG-NNN)
-- [ ] <arc> (BACKLOG-NNN)
-```
-
-## Shipped milestones
 
 ### Milestone 8: The seasons bite — SHIPPED cycle 115 (opened cycle 113)
 
