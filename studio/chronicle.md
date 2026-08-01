@@ -4543,3 +4543,10 @@ no sprite, prop, or terrain. The stash-ahead rule needs a standalone-renderable 
 queued qualifies; the nearest candidate, the freshly-seeded BACKLOG-472 (the fourth ground), wants *terrain*,
 which the rule deliberately benches until a host exists to blit it. Cast + ground + all four landmarks
 remain fully drawn. lastFire.artist updated; phase stays lore-pending.
+
+## 2026-08-01 03:05 — cycle 118 — lore-smith — the last arc of Milestone 9
+
+Cycle bumps to 118 (both tracks APPROVED). Lore queue far over the cap of 12, so nothing new seeded.
+Next-up **BACKLOG-471** — the grumble reaches the keeper: a bank-first ground that has actually left one
+of its own short surfaces a faint discontent ticker, the governance twin of the cold-word alarm (221).
+It is Milestone 9's single remaining unchecked arc; shipping it declares M9. Idea Box empty.
