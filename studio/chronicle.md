@@ -4587,3 +4587,12 @@ branch of `feedFromStores` — the silent line where the bank reserve refuses a 
 Two deviations, both noted: the favourite food had to be hoisted alongside the priority so the short check
 and the spend decision can't disagree, and the e2e needed `__eat` to clear the harvest drop before the
 pantry would open at all. build clean · unit 1423/1423 (+19) · e2e 409/409 (+10) · dev server 200.
+
+## 2026-08-01 03:50 — cycle 118 — qa — 16/16 criteria pass, both tracks APPROVE
+
+build clean · unit **1423/1423** · e2e **409/409** on a full parallel run, no flaky, no retries. Boundary
+grep empty, no save-shape change on either track. Lore 7/7, structure 9/9. One durability note handed to
+the Validator rather than a bug: every existing harvest-driving spec plants day 1 and re-plants on the
+harvest day, so a three-harvest drive lands on days 3, 5 and 7 — the last of those is the **final day of
+spring**, one in-game day short of the summer boundary where a bowl harvest would start banking double.
+Audited all thirteen such specs by hand; none chains a fourth harvest. The margin is real but unbreached.
