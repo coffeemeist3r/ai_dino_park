@@ -4567,3 +4567,12 @@ mouths held short and a faint 😟 reaches the keeper's ticker, once a day, clea
 someone. **465** specs the per-crop season table 461 deferred in its own comment: berries thrive in summer,
 greens in fall, roots in winter, each season with exactly one thriving ground and one thin one, rotating
 around the chain — spring stays the hinge so a fresh boot is byte-identical. 8 + 9 acceptance criteria.
+
+## 2026-08-01 03:28 — cycle 118 — codeplan — two pure modules, one shared scene
+
+`cropseason.ts` (table + `cropYield` + two ticker lines, the season line *derived* from the table so it
+can't drift) and `discontent.ts` (`heldShort` asking the very same `pickFoodToSpend` the spend site asks,
+plus a pure freshness predicate). WorldScene takes both in disjoint methods — structure first (`harvest`,
+`checkSeasonTurn`), then lore (`feedFromStores`) — so the two edits never share a hunk. Reuse audit found
+no new abstractions worth adding: `bankFood` gets called N times rather than learning to count, and
+`heldShort` refuses to re-implement the reserve comparison. ~7 files, no new dependencies, no save change.
