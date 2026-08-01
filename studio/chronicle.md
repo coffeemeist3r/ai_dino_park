@@ -4550,3 +4550,11 @@ Cycle bumps to 118 (both tracks APPROVED). Lore queue far over the cap of 12, so
 Next-up **BACKLOG-471** — the grumble reaches the keeper: a bank-first ground that has actually left one
 of its own short surfaces a faint discontent ticker, the governance twin of the cold-word alarm (221).
 It is Milestone 9's single remaining unchecked arc; shipping it declares M9. Idea Box empty.
+
+## 2026-08-01 03:12 — cycle 118 — structure-smith — the year picks favourites
+
+Queue drained (4 open ≥ X=4), nothing seeded. Chosen: **BACKLOG-465** — per-crop seasonal yield, the half
+461 deferred in its own source comment. Off-milestone by necessity (M9's structure track closed with 468);
+finishing a split spine outranks opening a new one. Each crop gets its own good/lean season so the bowl,
+the Grove and the Fernreach take turns being the rich ground, and the ferry has a reason to run all year.
+Spring stays the hinge for every crop — a fresh boot is byte-identical.
