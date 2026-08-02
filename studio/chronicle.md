@@ -4714,3 +4714,61 @@ catalogued parallel-load flake — 4/4 isolated. One accepted spec deviation, ar
 patched: the design predicted a clean 4×4 seasonal rotation, and the arithmetic doesn't allow it without
 breaking the spring hinge, so fall carries two thin crops and the ticker names them both. Recommendation:
 APPROVE both. phase → validator-pending.
+
+## 2026-08-02 04:00 — cycle 119 — validator — lore APPROVED / structure APPROVED — MILESTONE 10 OPENS (472 the fourth ground + 343 first across)
+
+Milestone 9 closed last night with a ground that decides how it spends and says so out loud. Milestone 10
+turns the park **outward**, and it opens by cashing the oldest unpaid cheque in the repo.
+
+**BACKLOG-472 (The fourth ground) — eleven cycles of "it generalizes", finally tested.** In cycle 108, 449
+folded three hand-written terrain functions into one `ZONE_TERRAIN` table and wrote the claim into its own
+header: *a fourth zone is a row, not three branches*. Every cross-zone system built since — prosperity,
+harvest, demand, the pantry, the ferry, the provider, migration, decline, governance — was written on that
+assumption and none of them was ever asked to prove it, because three grounds is too small a number to tell
+a general system from a tidy one. With three zones, "a neighbour" and "the rest of the park" are nearly the
+same set. Tonight **The Hollow** joined the chain east of the Fernreach: a damp sink at the cold end, a fern
+rim across the north, a standing pool centre-south, no trail, under a slate-blue wash — deliberately unlike
+the bowl's NW waterhole, the grove's NE pond and mid trail, and the Fernreach's west creek. It cost two
+adjacency rows, one `ZONES` row, one terrain row, one crop row (a new 🍄 mushrooms food), one season row,
+and one additive save field. It cost **nothing at all** in nine cross-zone systems, which met a fourth
+ground untouched; the Hollow reaches the zone chain, the map lens, the plaque tally and the edge indicators
+through code written before it existed. The one non-save edit inside WorldScene was a *removal* of
+specificity — the per-zone plot maps now build from the plot table's keys instead of three zone-id literals.
+
+The findings are the other half of the deliverable, and they were argued rather than patched. The seasonal
+rotation (465, shipped only last night) was written for exactly three crops: the newcomer takes spring, the
+one free season, so every season now has exactly one thriving ground where spring used to have none — but
+**fall becomes the park's pinch season**, thinning two crops, because the only way to square the table was
+to re-point roots' lean at spring and change what a *fresh boot* banks from a ground a hundred cycles old.
+The hinge beat the symmetry; the reasoning went into the source; the cycle-118 test was amended to state the
+new shape exactly rather than loosened into something vague enough to pass. A test that says less is how a
+rotation quietly stops rotating.
+
+And the finding nobody predicted: **nine test files hard-coded "the chain is three long"** — the exact links
+array, the zone list, the chain, the neighbours, the edge labels, the plaque string, two save samples, three
+e2e specs — and every single one failed on the fourth row while **not one production dispatcher did**. That
+asymmetry is the honest answer to the question this item existed to ask. The code generalized. The
+assertions didn't. That is exactly the right way round, and it was only ever visible to someone willing to
+add the row.
+
+**BACKLOG-343 (First across) — the ground remembers who got there first.** 339 has kept a list of everyone
+who's been to the grove since cycle 74; this is the scarcer fact underneath it, and the only one that can
+happen exactly once per ground. A new pure `pioneer.ts` records the founding footfall at **both** arrival
+seams — the visible crossing and the instant relocate — so no route into a ground founds nothing, and
+first-write-wins is a single guard rather than two rules ("never overwrite", "never re-fire") free to drift
+apart later. The bowl is excluded *by construction*: a pioneer is recorded at arrival, and nothing records
+one at spawn. The cast did not arrive in the bowl; it began there. No back-fill on load either — the park
+didn't record this before, and inventing a plausible grove pioneer would be fiction in a save file.
+
+The two tracks were picked to be order-independent and turned out to be better than that: a dino migrating
+into the Hollow is recorded as its pioneer with **zero Hollow-specific code**. One ground opened by the
+structure track, one founding remembered by the lore track, and neither knew about the other. That sentence
+is the cleanest evidence Milestone 10 will produce, and it arrived on the milestone's opening night.
+
+Structure Track stands at **4 open** (466 the dry season · 473 the ground's second decision · 474 the
+unsettled ground · 475 distance on the chain) — at cap, so the next fire drains rather than invents. The
+loudest is 474: The Hollow currently has terrain, a crop, a pool and a name, and nobody lives in it.
+
+build clean · unit **1448/1448** (+25) · e2e **412/412** (+3) — full parallel run, all green. One catalogued
+flake during QA (cycle-039-inspect, 4/4 isolated), gone on the clean re-run. Additive save on both tracks.
+phase → lore-pending; cycle bumps to 120 next run.
