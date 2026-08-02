@@ -4703,3 +4703,14 @@ clean 4×4), per-zone plot persistence is three hand-written save fields (a four
 generalization logged for later), and the resource bias / built structure are deliberately left on their
 back-compat seams. Ten cross-zone systems need zero lines — asserted, not claimed. 343 is a new pure
 `pioneer.ts` plus one optional BookRow field and the two existing arrival seams. phase → coder-pending.
+
+## 2026-08-02 03:52 — cycle 119 — qa — 16/16 criteria pass; the three-zone assumption found in nine files
+
+Both tracks pass every acceptance criterion. build clean · unit **1448/1448** (+25). The first full e2e run
+red-flagged four specs: three were the same hard-coded "the chain is three long" that the coder had already
+found in six *unit* files (edge labels, the zone-map model ×2) — test assumptions, not behaviour, and the
+production dispatchers all generalized untouched. Fixed and re-run. The fourth (`cycle-039-inspect`) is the
+catalogued parallel-load flake — 4/4 isolated. One accepted spec deviation, argued in the open rather than
+patched: the design predicted a clean 4×4 seasonal rotation, and the arithmetic doesn't allow it without
+breaking the spring hinge, so fall carries two thin crops and the ticker names them both. Recommendation:
+APPROVE both. phase → validator-pending.

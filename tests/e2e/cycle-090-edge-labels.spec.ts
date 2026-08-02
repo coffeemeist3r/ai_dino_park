@@ -20,14 +20,18 @@ test('the bowl labels its east edge with the grove — and nothing else', async 
   expect(errors).toEqual([]);
 });
 
-test('labels re-render on zone changes — grove shows both neighbours, Fernreach one', async ({ page }) => {
+test('labels re-render on zone changes — grove and Fernreach show both neighbours, the Hollow one', async ({ page }) => {
   await boot(page);
 
   await page.evaluate(() => (window as W).__setZone('grove'));
   expect((await labels(page)).sort()).toEqual(['The Fernreach ▸', '◂ Pocket Cretaceous']);
 
+  // BACKLOG-472: the Fernreach borders two grounds now; the Hollow is the one-edge end of the chain.
   await page.evaluate(() => (window as W).__setZone('fernreach'));
-  expect(await labels(page)).toEqual(['◂ The Grove']);
+  expect((await labels(page)).sort()).toEqual(['The Hollow ▸', '◂ The Grove']);
+
+  await page.evaluate(() => (window as W).__setZone('hollow'));
+  expect(await labels(page)).toEqual(['◂ The Fernreach']);
 
   await page.evaluate(() => (window as W).__setZone('bowl'));
   expect(await labels(page)).toEqual(['The Grove ▸']);

@@ -34,14 +34,15 @@ test('the map shows the whole chain with the roster counted at home', async ({ p
   await boot(page);
 
   const model = await zoneMap(page);
-  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach']);
-  expect(model.map((e) => e.name)).toEqual(['Pocket Cretaceous', 'The Grove', 'The Fernreach']);
+  // BACKLOG-472: the chain is four grounds deep now, ending in The Hollow.
+  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach', 'hollow']);
+  expect(model.map((e) => e.name)).toEqual(['Pocket Cretaceous', 'The Grove', 'The Fernreach', 'The Hollow']);
   // every dino is counted somewhere, and the fresh-boot cast starts in the bowl
   const roster = await page.evaluate(() => ((window as W).__bookRows as () => unknown[])().length);
   expect(model.reduce((s, e) => s + e.count, 0)).toBe(roster);
   expect(model[0].count).toBe(roster);
   // the keeper starts in the bowl
-  expect(model.map((e) => e.keeper)).toEqual([true, false, false]);
+  expect(model.map((e) => e.keeper)).toEqual([true, false, false, false]);
 });
 
 test('the keeper dot follows a real crossing', async ({ page }) => {
@@ -53,5 +54,5 @@ test('the keeper dot follows a real crossing', async ({ page }) => {
   });
   expect(await page.evaluate(() => (window as W).__zone())).toBe('grove');
   const model = await zoneMap(page);
-  expect(model.map((e) => e.keeper)).toEqual([false, true, false]);
+  expect(model.map((e) => e.keeper)).toEqual([false, true, false, false]);
 });
