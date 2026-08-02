@@ -4662,3 +4662,12 @@ in all three cases, no sprite, prop, or terrain. The stash-ahead rule needs a st
 nothing queued qualifies; the nearest candidate is still BACKLOG-472 (the fourth ground), which wants
 *terrain* and stays benched until a host exists to blit it. Cast, ground and all four landmarks remain fully
 drawn. lastFire.artist updated; phase stays lore-pending.
+
+## 2026-08-02 03:05 — cycle 119 — lore-smith — Milestone 10 opens: a fourth ground, and the first feet on it
+
+M9 shipped last night, so both smiths draft. Milestone 10 turns the park **outward**: the chain grows a
+fourth ground (the structure track's job) and the cast *lives* the arrival (the lore track's). Lore arcs
+drafted: first across (343) → the one who knew first (364) → a ground you come to miss (362). No new items
+seeded — the lore queue sits far above the cap of 12 (drain before invent) and all three arcs were already
+queued. Tonight's lore pick is **BACKLOG-343** (pioneer in the book), chosen partly because it's
+order-independent from 472: whichever track lands first, neither blocks the other. phase → structure-pending.
