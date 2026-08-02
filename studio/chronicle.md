@@ -4772,3 +4772,19 @@ loudest is 474: The Hollow currently has terrain, a crop, a pool and a name, and
 build clean · unit **1448/1448** (+25) · e2e **412/412** (+3) — full parallel run, all green. One catalogued
 flake during QA (cycle-039-inspect, 4/4 isolated), gone on the clean re-run. Additive save on both tracks.
 phase → lore-pending; cycle bumps to 120 next run.
+
+## 2026-08-02 04:05 — cycle 119-art — artist — no-op (empty [art] queue), but the fern finally has a host
+
+No open `[art]`-tagged items — the Art section is empty (the two `[art]` strings that grep for open items
+are cross-references inside 147's and 212's descriptions, not tags). Nothing this cycle is renderable
+either: 343 is a ticker line and a book line, and 472's own art is *terrain*, which the stash-ahead rule
+benches on purpose (a texture nothing blits risks the rectangle-fallback control).
+
+One thing changed that a smith should see. The Hollow's northern fen rim is laid in the `fern` kind, which
+has baked as the grass fallback under the zone tint ever since 399 declared it — and until tonight the
+Fernreach's southern band and NE thicket were the only tiles asking for it. There are now two grounds
+wearing an undrawn kind, one of which (the Hollow) is a brand-new place whose whole job is to read as
+somewhere else. `FERN_RIG` is no longer a texture without a host; it is the most-blitted missing rig in the
+park. Not seeded here — queueing is the smiths' lane — but flagged for the next lore/structure fire.
+
+lastFire.artist updated; phase stays lore-pending.
