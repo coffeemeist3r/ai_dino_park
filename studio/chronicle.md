@@ -4693,3 +4693,13 @@ the newcomer takes the empty season (mushrooms good in spring, lean in fall) and
 4×4 — the spring hinge's purpose (the founding three unchanged on a fresh boot) preserved exactly.
 **343** records the single first name ever to set foot in each zone, surfaced in the book as a founding
 standing; the bowl is excluded on purpose (the cast began there, it didn't arrive). phase → codeplan-pending.
+
+## 2026-08-02 03:30 — cycle 119 — code-planner — zones.ts + a new pure pioneer.ts, and three findings
+
+472 is eight files, five of them one-row edits: the `ZONES`/`ZONE_LINKS`/`ZONE_TERRAIN` rows, a mushrooms
+food, a crop row, a season row. Three findings logged up front rather than patched quietly: the seasonal
+rotation was written for exactly three crops (resolved by giving the newcomer spring, making the year a
+clean 4×4), per-zone plot persistence is three hand-written save fields (a fourth added in the local idiom,
+generalization logged for later), and the resource bias / built structure are deliberately left on their
+back-compat seams. Ten cross-zone systems need zero lines — asserted, not claimed. 343 is a new pure
+`pioneer.ts` plus one optional BookRow field and the two existing arrival seams. phase → coder-pending.
