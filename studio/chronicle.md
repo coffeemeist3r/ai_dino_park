@@ -4671,3 +4671,13 @@ drafted: first across (343) → the one who knew first (364) → a ground you co
 seeded — the lore queue sits far above the cap of 12 (drain before invent) and all three arcs were already
 queued. Tonight's lore pick is **BACKLOG-343** (pioneer in the book), chosen partly because it's
 order-independent from 472: whichever track lands first, neither blocks the other. phase → structure-pending.
+
+## 2026-08-02 03:14 — cycle 119 — structure-smith — BACKLOG-472: the fourth ground
+
+Queue was at 3 (below cap X=4), so brainstormed two: **474** the unsettled ground (a zone that opens empty
+and fills by migration — the arc that makes 472 something you *watch*) and **475** distance on the chain (a
+derived hop-distance so the ferry/demand/migration prefer the nearest ground, a distinction only four zones
+makes real). Added the M10 structure arcs (472, 474). Picked **BACKLOG-472** — the cheque 449 wrote in
+cycle 108 and nobody cashed. Deliverable is the row plus the proof: nine generalized systems should need
+zero lines to meet a fourth ground, and any line one *does* need is the finding, not a quiet patch.
+phase → designer-pending.

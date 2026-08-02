@@ -1,8 +1,8 @@
 {
   "cycle": 119,
-  "phase": "structure-pending",
+  "phase": "designer-pending",
   "currentItem": "BACKLOG-343",
-  "structureItem": null,
+  "structureItem": "BACKLOG-472: The fourth ground",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-02T03:05:00-05:00",
-    "structure-smith": "2026-08-01T03:12:00-05:00",
+    "structure-smith": "2026-08-02T03:14:00-05:00",
     "designer": "2026-08-01T03:20:00-05:00",
     "code-planner": "2026-08-01T03:28:00-05:00",
     "coder": "2026-08-01T03:40:00-05:00",
