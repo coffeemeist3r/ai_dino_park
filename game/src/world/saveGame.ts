@@ -97,6 +97,9 @@ export interface SaveData {
   spendPriorityByZone?: Record<string, 'feed' | 'bank'>;
   /** Who last held each zone's say (BACKLOG-467) — zone→provider name. Additive; absent → {} (no handover tracked yet). */
   lastProviderByZone?: Record<string, string>;
+  /** zone → first dino ever to arrive there (BACKLOG-343). Additive; absent → {} (no back-fill: we did
+   *  not record it then and must not invent it). */
+  pioneers?: Record<string, string>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -115,6 +118,10 @@ export interface SaveData {
   grovePlot?: { plantedDay: number } | null;
   /** The Fernreach's planted plot (BACKLOG-432). Additive over `grovePlot`; absent → null (old saves load Fernreach-empty). */
   fernreachPlot?: { plantedDay: number } | null;
+  /** The Hollow's planted plot (BACKLOG-472). Additive; absent → null (old saves load Hollow-empty).
+   *  Note: per-zone plots are still four hand-written fields — logged in the cycle-119 codeplan as the
+   *  one place a fourth ground genuinely cost a line, and left for a future save-shape item. */
+  hollowPlot?: { plantedDay: number } | null;
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
   harvested?: number;
   /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Additive; absent → {}. */
@@ -407,6 +414,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // pioneers (BACKLOG-343) — zone→the first dino ever to arrive there. Same shape and same guard as
+  // lastProviderByZone above; additive, absent → undefined, caller defaults to {}.
+  let pioneers: Record<string, string> | undefined;
+  if (o.pioneers !== undefined) {
+    if (typeof o.pioneers !== 'object' || o.pioneers === null) return null;
+    const zones = o.pioneers as Record<string, unknown>;
+    pioneers = {};
+    for (const z of Object.keys(zones)) {
+      if (typeof zones[z] !== 'string') return null;
+      pioneers[z] = zones[z] as string;
+    }
+  }
+
   // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
   // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
   let harvestedByZone: Record<string, number> | undefined;
@@ -503,6 +523,8 @@ export function deserialize(json: string): SaveData | null {
   if (grovePlot === undefined) return null;
   const fernreachPlot = readPlot(o.fernreachPlot); // BACKLOG-432: additive, absent → null (readPlot)
   if (fernreachPlot === undefined) return null;
+  const hollowPlot = readPlot(o.hollowPlot); // BACKLOG-472: additive, absent → null (readPlot)
+  if (hollowPlot === undefined) return null;
   let harvested = 0;
   if (o.harvested !== undefined) {
     if (!isNum(o.harvested) || (o.harvested as number) < 0) return null;
@@ -587,6 +609,7 @@ export function deserialize(json: string): SaveData | null {
     foodPileByZone,
     spendPriorityByZone,
     lastProviderByZone,
+    pioneers,
     cairns,
     shelters,
     thatches,
@@ -596,6 +619,7 @@ export function deserialize(json: string): SaveData | null {
     plot,
     grovePlot,
     fernreachPlot,
+    hollowPlot,
     harvested,
     harvestedByZone,
     eggs,

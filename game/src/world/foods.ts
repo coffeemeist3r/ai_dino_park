@@ -31,6 +31,10 @@ export const FOODS: ReadonlyArray<Food> = [
   // BACKLOG-432: the Fernreach's farmable crop — a hardy root for a calm, sure-footed dino. Appeal tuned
   // low enough that it flips no roster dino's favorite in any season (061/170/418 verdicts unchanged).
   { id: 'roots', emoji: '🥕', label: 'starchy roots', appeal: { energy: -0.5, bravery: 0.4 }, kind: 'plant' },
+  // BACKLOG-472: the Hollow's farmable crop — pale mushrooms from the damp fen, for a quiet, incurious
+  // dino. Appeal tuned low (same discipline as 432's roots) so it flips no roster dino's favorite in any
+  // season; the cycle-119 test pins that over the roster × all four seasons.
+  { id: 'mushrooms', emoji: '🍄', label: 'pale mushrooms', appeal: { sociability: -0.5, curiosity: -0.3 }, kind: 'plant' },
 ];
 
 /**

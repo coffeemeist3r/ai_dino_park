@@ -12,7 +12,7 @@
  */
 
 import type { Tile } from './movement';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID } from './zones';
 
 export type CropStage = 'seed' | 'sprout' | 'ripe';
 
@@ -44,6 +44,9 @@ export const CROP_BY_ZONE: Record<string, ZoneCrop> = {
   // BACKLOG-432: the Fernreach farms starchy roots — the third zone's own crop, completing the farming
   // divergence. The 🍠 ripe marker is distinct from the sprout 🌿, the roots food's own 🥕, and 🍓/🥬.
   [FERNREACH_ID]: { food: 'roots', ripe: '🍠' },
+  // BACKLOG-472: the Hollow farms pale mushrooms — the fourth ground's own crop. 🍄 is distinct from the
+  // sprout 🌿 and from 🍓/🥬/🍠, so no plot ever reads ambiguously.
+  [HOLLOW_ID]: { food: 'mushrooms', ripe: '🍄' },
 };
 
 /** The crop a zone's plot grows (BACKLOG-418) — its own entry, or the bowl berry as fallback. */
@@ -85,11 +88,18 @@ export const GROVE_PLOT_TILE: Tile = { tileX: 4, tileY: 10 };
  */
 export const FERNREACH_PLOT_TILE: Tile = { tileX: 8, tileY: 8 };
 
-/** Each zone's fixed plot tile (BACKLOG-308/349/432 — zone-scoped). A zone absent here has no plot. */
+/**
+ * The Hollow's plot tile (BACKLOG-472) — Hollow grass, clear of the northern fen rim (y 1–2), the
+ * centre-south standing pool (x 7–11 / y rows−5..rows−4) and the edges (see `hollowTileAt`).
+ */
+export const HOLLOW_PLOT_TILE: Tile = { tileX: 14, tileY: 7 };
+
+/** Each zone's fixed plot tile (BACKLOG-308/349/432/472 — zone-scoped). A zone absent here has no plot. */
 export const PLOT_TILE_BY_ZONE: Record<string, Tile> = {
   [BOWL_ID]: PLOT_TILE,
   [GROVE_ID]: GROVE_PLOT_TILE,
   [FERNREACH_ID]: FERNREACH_PLOT_TILE,
+  [HOLLOW_ID]: HOLLOW_PLOT_TILE,
 };
 
 /** The crop's stage given whole in-game days since it was planted. Negative gaps clamp to seed. */

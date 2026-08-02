@@ -12,6 +12,13 @@
 export const BOWL_ID = 'bowl';
 export const GROVE_ID = 'grove';
 export const FERNREACH_ID = 'fernreach'; // BACKLOG-378: the third zone, east of the grove (first non-bowl-adjacent)
+/**
+ * BACKLOG-472: the fourth zone, east of the Fernreach — the cold, damp end of the chain. 449 folded
+ * terrain into a table and promised "a fourth zone is a row, not three branches"; this is that cheque
+ * being cashed. Everything the Hollow needs is data in this file plus one crop row (plot.ts) and one
+ * season row (cropseason.ts) — no cross-zone system was edited to make room for it.
+ */
+export const HOLLOW_ID = 'hollow';
 
 export interface Zone {
   id: string;
@@ -22,6 +29,7 @@ export const ZONES: Zone[] = [
   { id: BOWL_ID, name: 'Pocket Cretaceous' },
   { id: GROVE_ID, name: 'The Grove' },
   { id: FERNREACH_ID, name: 'The Fernreach' },
+  { id: HOLLOW_ID, name: 'The Hollow' }, // BACKLOG-472
 ];
 
 /** The zone for an id, falling back to the bowl for an unknown id. */
@@ -63,6 +71,11 @@ export const ZONE_LINKS: ZoneLink[] = [
   // after the grove→bowl row so `linkEdge`/`otherZone` (first-match) keep the grove's primary neighbour = bowl.
   { from: GROVE_ID, edge: 'east', to: FERNREACH_ID },
   { from: FERNREACH_ID, edge: 'west', to: GROVE_ID },
+  // BACKLOG-472: the fourth link — the Fernreach's *east* edge opens onto the Hollow (and back west).
+  // Appended after the fernreach→grove row so `linkEdge`/`otherZone` (first-match) keep the Fernreach's
+  // primary neighbour = grove, exactly as 378 did for the grove.
+  { from: FERNREACH_ID, edge: 'east', to: HOLLOW_ID },
+  { from: HOLLOW_ID, edge: 'west', to: FERNREACH_ID },
 ];
 
 /** The zone reached by leaving `zoneId` through `edge`, or null when that edge has no link. */
@@ -167,6 +180,10 @@ export const GROVE_TINT = 0x9fc0b8;
 /** A warm, sunlit tint for the Fernreach (BACKLOG-378) — the open fern flats read distinct from the cool grove. */
 export const FERNREACH_TINT = 0xd9c98c;
 
+/** A cold slate-blue wash for the Hollow (BACKLOG-472) — the damp sink at the cold end of the chain,
+ *  distinct from the grove's cool green and the Fernreach's warm sand. */
+export const HOLLOW_TINT = 0x8fa8c8;
+
 /** The untinted floor — the bowl, and any zone that doesn't ask for a wash. */
 export const NO_TINT = 0xffffff;
 
@@ -234,6 +251,28 @@ export function fernreachCreekTile(rows: number): { tileX: number; tileY: number
 }
 
 /**
+ * The Hollow's ground (BACKLOG-472): the fourth zone, laid out unlike the other three on purpose — the
+ * bowl's waterhole sits NW, the grove's pond NE with a mid trail, the Fernreach's creek runs the west
+ * side. The Hollow is a sink: a **fen rim** of scrub across the north and a **standing pool** in the
+ * centre-south, no trail at all. The rim reuses the `fern` kind (399), which bakes as grass under the
+ * tint until its rig exists — the same seam that has kept the floor whole through three terrain additions.
+ * Pure: (x,y) → tile kind over a cols×rows grid.
+ */
+export function hollowTileAt(x: number, y: number, _cols: number, rows: number): TileKind {
+  // the standing pool: a 5×2 block in the centre-south (vs the bowl's NW, the grove's NE, the creek's west).
+  if (x >= 7 && x <= 11 && y >= rows - 5 && y <= rows - 4) return 'water';
+  // the fen rim: a scrub band across the north, one tile in from the top.
+  if (y >= 1 && y <= 2) return 'fern';
+  return 'grass';
+}
+
+/** The centre of the Hollow's standing pool (BACKLOG-472) — pinned to the water block in `hollowTileAt`
+ *  by the cycle-108 landmark invariant, not by a comment. */
+export function hollowPoolTile(rows: number): { tileX: number; tileY: number } {
+  return { tileX: 9, tileY: rows - 5 };
+}
+
+/**
  * A zone's ground, as data (BACKLOG-449). Terrain used to be three hand-written layout functions reached
  * through an `if` chain, with two more `if` chains beside it — one for the named water landmark, one for
  * the floor tint. Three branch points for what is really *one fact per zone*, so a fourth zone meant an
@@ -264,6 +303,11 @@ export const ZONE_TERRAIN: Record<string, ZoneTerrain> = {
   [BOWL_ID]: { tileAt: bowlTileAt, tint: NO_TINT, water: () => bowlPondTile() },
   [GROVE_ID]: { tileAt: groveTileAt, tint: GROVE_TINT, water: (cols) => grovePondTile(cols) },
   [FERNREACH_ID]: { tileAt: fernreachTileAt, tint: FERNREACH_TINT, water: (_cols, rows) => fernreachCreekTile(rows) },
+  // BACKLOG-472: the fourth ground, added as the row 449 said it would be. Note what is *not* here: no
+  // ZONE_BIAS entry (resource.ts) and no structure kind — the Hollow falls through those two documented
+  // back-compat seams (uniform branch/stone gathering, the default cairn). A fourth resource kind drags in
+  // recipes, barter, craft escalation and an art rig; that is its own item, not a rider on this one.
+  [HOLLOW_ID]: { tileAt: hollowTileAt, tint: HOLLOW_TINT, water: (_cols, rows) => hollowPoolTile(rows) },
 };
 
 /**

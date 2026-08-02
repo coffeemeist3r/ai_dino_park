@@ -11,6 +11,7 @@ import {
   BOWL_ID,
   GROVE_ID,
   FERNREACH_ID,
+  HOLLOW_ID,
 } from '../../game/src/world/zones';
 
 /**
@@ -25,12 +26,14 @@ const TILE = 32;
 const W = COLS * TILE;
 
 describe('ZONE_LINKS table (BACKLOG-383)', () => {
-  it('holds the bowl↔grove pair plus the grove↔Fernreach pair (BACKLOG-378)', () => {
+  it('holds the bowl↔grove, grove↔Fernreach (378) and Fernreach↔Hollow (472) pairs', () => {
     expect(ZONE_LINKS).toEqual([
       { from: BOWL_ID, edge: 'east', to: GROVE_ID },
       { from: GROVE_ID, edge: 'west', to: BOWL_ID },
       { from: GROVE_ID, edge: 'east', to: FERNREACH_ID },
       { from: FERNREACH_ID, edge: 'west', to: GROVE_ID },
+      { from: FERNREACH_ID, edge: 'east', to: HOLLOW_ID },
+      { from: HOLLOW_ID, edge: 'west', to: FERNREACH_ID },
     ]);
   });
 
@@ -40,7 +43,9 @@ describe('ZONE_LINKS table (BACKLOG-383)', () => {
     expect(neighborThrough(GROVE_ID, 'east')).toBe(FERNREACH_ID); // BACKLOG-378: the grove's new east link
     expect(neighborThrough(FERNREACH_ID, 'west')).toBe(GROVE_ID);
     expect(neighborThrough(BOWL_ID, 'west')).toBeNull();
-    expect(neighborThrough(FERNREACH_ID, 'east')).toBeNull();
+    // BACKLOG-472: the Fernreach's east edge is linked now; the Hollow is the chain's unlinked cold end.
+    expect(neighborThrough(FERNREACH_ID, 'east')).toBe(HOLLOW_ID);
+    expect(neighborThrough(HOLLOW_ID, 'east')).toBeNull();
   });
 
   it('linkEdge gives each zone its outbound edge, null for unknown', () => {
@@ -63,7 +68,7 @@ describe('helpers stay byte-identical through the table (BACKLOG-383)', () => {
       zoneId: FERNREACH_ID,
       entry: { x: TILE * 1.5, y: 100 },
     });
-    expect(linkedZone(FERNREACH_ID, 'east', 100, COLS, TILE)).toBeNull(); // the Fernreach's far edge is unlinked
+    expect(linkedZone(HOLLOW_ID, 'east', 100, COLS, TILE)).toBeNull(); // BACKLOG-472: the Hollow's far edge is unlinked
   });
 
   it('otherZone flips the pair and keeps the unknown→grove default', () => {

@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { ZONES, zoneChain, zonePopulations, BOWL_ID, GROVE_ID, FERNREACH_ID } from '../../game/src/world/zones';
+import { ZONES, zoneChain, zonePopulations, BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID } from '../../game/src/world/zones';
 import { zoneMapModel, LENS_ORDER } from '../../game/src/ui/lenses';
 
 describe('zoneChain (BACKLOG-425)', () => {
   it('orders the chain west→east off the adjacency table', () => {
-    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID]);
+    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID]); // BACKLOG-472
   });
 
   it('includes every zone exactly once', () => {
@@ -21,9 +21,9 @@ describe('zoneMapModel (BACKLOG-425)', () => {
   it('mirrors zonePopulations and flags exactly the keeper zone', () => {
     const pops = zonePopulations(homes, names, BOWL_ID);
     const model = zoneMapModel(zoneChain(), pops, GROVE_ID);
-    expect(model.map((e) => e.count)).toEqual([4, 1, 0]);
-    expect(model.map((e) => e.keeper)).toEqual([false, true, false]);
-    expect(model.map((e) => e.name)).toEqual(['Pocket Cretaceous', 'The Grove', 'The Fernreach']);
+    expect(model.map((e) => e.count)).toEqual([4, 1, 0, 0]);
+    expect(model.map((e) => e.keeper)).toEqual([false, true, false, false]);
+    expect(model.map((e) => e.name)).toEqual(['Pocket Cretaceous', 'The Grove', 'The Fernreach', 'The Hollow']);
   });
 
   it('counts every dino somewhere (totals preserved)', () => {

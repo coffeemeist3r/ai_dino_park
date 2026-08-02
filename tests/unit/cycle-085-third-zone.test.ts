@@ -15,6 +15,7 @@ import {
   BOWL_ID,
   GROVE_ID,
   FERNREACH_ID,
+  HOLLOW_ID,
 } from '../../game/src/world/zones';
 
 /**
@@ -27,7 +28,7 @@ const COLS = 20;
 
 describe('The Fernreach is registered (BACKLOG-378)', () => {
   it('is the third ZONES entry, east of the grove', () => {
-    expect(ZONES.map((z) => z.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID]);
+    expect(ZONES.map((z) => z.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID]); // BACKLOG-472
     expect(ZONES.find((z) => z.id === FERNREACH_ID)?.name).toBe('The Fernreach');
   });
 
@@ -47,7 +48,7 @@ describe('a zone can border more than one neighbour (BACKLOG-378)', () => {
       { from: GROVE_ID, edge: 'east', to: FERNREACH_ID },
     ]);
     expect(zoneNeighbors(BOWL_ID).map((l) => l.to)).toEqual([GROVE_ID]); // still one
-    expect(zoneNeighbors(FERNREACH_ID).map((l) => l.to)).toEqual([GROVE_ID]);
+    expect(zoneNeighbors(FERNREACH_ID).map((l) => l.to)).toEqual([GROVE_ID, HOLLOW_ID]); // BACKLOG-472
   });
 
   it('neighborThrough resolves both grove edges', () => {

@@ -34,6 +34,7 @@ const validV2: SaveData = {
   plot: null,
   grovePlot: null,
   fernreachPlot: null,
+  hollowPlot: null, // BACKLOG-472
   harvested: 0,
   eggs: [],
   born: [],

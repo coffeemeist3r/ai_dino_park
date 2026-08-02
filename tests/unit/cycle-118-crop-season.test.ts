@@ -20,6 +20,8 @@ import { FOODS } from '../../game/src/world/foods';
  */
 
 const FARMED = Object.keys(CROP_BY_ZONE).map((z) => CROP_BY_ZONE[z].food);
+/** The three crops that existed before the fourth ground (BACKLOG-472) — what the spring hinge protects. */
+const FOUNDING = ['berries', 'greens', 'roots'];
 
 describe('cropYield (BACKLOG-465)', () => {
   it('is thick in a crop the good season, thin in its lean one, base otherwise', () => {
@@ -33,8 +35,11 @@ describe('cropYield (BACKLOG-465)', () => {
     }
   });
 
-  it('leaves spring the hinge for every crop — a fresh boot banks exactly what it always did', () => {
-    for (const food of Object.keys(CROP_SEASON)) expect(cropYield(food, 'spring')).toBe(YIELD_BASE);
+  // BACKLOG-472 amended this from "every crop" to "the founding three". The hinge exists so that a fresh
+  // boot (day 1, spring) banks exactly what it always banked; that is a statement about the crops that
+  // existed before, and the Hollow's mushrooms did not. Its spring bounty changes nothing retroactively.
+  it('leaves spring the hinge for the founding three — a fresh boot banks exactly what it always did', () => {
+    for (const food of FOUNDING) expect(cropYield(food, 'spring')).toBe(YIELD_BASE);
     expect(cropYield('fish', 'spring')).toBe(YIELD_BASE);
   });
 
@@ -43,13 +48,20 @@ describe('cropYield (BACKLOG-465)', () => {
     for (const s of SEASONS) expect(cropYield('nonesuch', s)).toBe(YIELD_BASE);
   });
 
-  it('rotates: summer/fall/winter each have exactly one thriving crop and exactly one thin one', () => {
-    for (const s of SEASONS.filter((x) => x !== 'spring')) {
+  // BACKLOG-472: with a fourth crop the rotation generalizes to all four seasons on the *good* side —
+  // every season now has exactly one thriving ground, spring included. It does NOT stay one-thin-per-season,
+  // and that is a decision: the founding three hold fall/winter/summer as their lean seasons, so the only
+  // free lean slot was spring, which mushrooms already claims as its good. Squaring the table would have
+  // meant re-pointing roots' lean at spring and breaking the hinge above. Fall carries two thin crops instead.
+  it('rotates: every season has exactly one thriving crop; every season but spring has thin ones', () => {
+    for (const s of SEASONS) {
       const good = FARMED.filter((f) => cropYield(f, s) === YIELD_GOOD);
       const lean = FARMED.filter((f) => cropYield(f, s) === YIELD_LEAN);
-      expect(good).toHaveLength(1);
-      expect(lean).toHaveLength(1);
-      expect(good[0]).not.toBe(lean[0]);
+      expect(good, `${s} thriving`).toHaveLength(1);
+      // Spring is the one season nothing goes thin — the hinge, still doing its job.
+      if (s === 'spring') expect(lean).toHaveLength(0);
+      else expect(lean.length, `${s} thin`).toBeGreaterThanOrEqual(1);
+      expect(lean).not.toContain(good[0]);
     }
   });
 
@@ -86,17 +98,21 @@ describe('harvestYieldLine (BACKLOG-465)', () => {
 });
 
 describe('seasonCropLine (BACKLOG-465)', () => {
-  it('is silent in spring — nobody thrives and nobody goes thin', () => {
+  // BACKLOG-472: spring now has a thriving crop but still no thin one, so the sentence — which names both —
+  // stays silent. The Hollow's spring bounty is announced where it happens, on the harvest line.
+  it('is silent in spring — something thrives, but nothing goes thin', () => {
     expect(seasonCropLine('spring')).toBe('');
   });
 
-  it('names this season winner and loser, straight off the table', () => {
+  it('names this season winner and *every* loser, straight off the table', () => {
     for (const s of SEASONS.filter((x) => x !== 'spring') as Season[]) {
       const line = seasonCropLine(s);
       const good = FARMED.find((f) => cropYield(f, s) === YIELD_GOOD)!;
-      const lean = FARMED.find((f) => cropYield(f, s) === YIELD_LEAN)!;
       expect(line).toContain(FOODS.find((f) => f.id === good)!.label);
-      expect(line).toContain(FOODS.find((f) => f.id === lean)!.label);
+      // BACKLOG-472: fall thins two crops; the line names them all rather than whichever comes first.
+      for (const lean of FARMED.filter((f) => cropYield(f, s) === YIELD_LEAN)) {
+        expect(line).toContain(FOODS.find((f) => f.id === lean)!.label);
+      }
       expect(line).toContain(s);
     }
   });

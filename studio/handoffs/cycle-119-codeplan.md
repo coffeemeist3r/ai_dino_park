@@ -97,3 +97,33 @@ E2E: `__startMigration` a dino into a fresh zone, assert the 🚩 ticker line an
 ### Blockers
 
 None.
+
+---
+
+## Shipped (Coder, cycle 119)
+
+Both tracks built. `npm run build` clean; `npx vitest run` **1448/1448** green (+25).
+
+**472 — the fourth ground.** `zones.ts` gained `HOLLOW_ID`, a `ZONES` row, two `ZONE_LINKS` rows, a
+`HOLLOW_TINT`, `hollowTileAt` + `hollowPoolTile`, and a `ZONE_TERRAIN` row. `plot.ts` gained a crop row and
+a plot tile; `foods.ts` a mushrooms entry; `cropseason.ts` a season row. In `WorldScene` the only edits were
+the two per-zone plot maps (now built from `PLOT_TILE_BY_ZONE`'s keys via `emptyPlots`/`emptyPlotStages`
+instead of three zone-id literals) and the `hollowPlot` save field. **No cross-zone system was touched** —
+prosperity, harvest, demand, pantry, ferry, provider, migration, decline and governance all met the fourth
+ground unedited, and the Hollow appears on the lens, the plaque tally and the zone chain off code that
+predates it.
+
+**Findings, as promised.** Three anticipated (rotation, plot persistence, the bias/structure seams) plus a
+fourth the build surfaced: **six older test files hard-coded "the chain is three long"** — the exact ZONE_LINKS
+array, `ZONES.map(id)`, `zoneChain()`, `zoneNeighbors(fernreach)`, `edgeIndicators(fernreach)`, the plaque
+tally string, and two save-shape samples. Every one of them failed on the fourth row and every one was a
+*test* assumption, not a behaviour break — the production dispatchers all generalized. They are amended to
+name the Hollow as the chain's new cold end. That six files of assertions and zero files of logic needed
+editing is the cleanest possible answer to the question this item asked.
+
+**343 — first across.** New pure `pioneer.ts` (record / read / render / event / `foundedBy`), wired into
+both arrival seams (`crossDino` and `relocate`) through one private `foundZone`, an optional `BookRow.pioneer`,
+an additive `pioneers` save field parsed on the 467 shape, and a `__pioneers()` dev hook.
+
+New tests: `cycle-119-fourth-ground.test.ts` (16), `cycle-119-pioneer.test.ts` (9),
+`tests/e2e/cycle-119-fourth-ground.spec.ts` (3, covering both tracks).

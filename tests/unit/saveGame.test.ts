@@ -28,6 +28,7 @@ const sample: SaveData = {
   plot: null,
   grovePlot: null,
   fernreachPlot: null,
+  hollowPlot: null, // BACKLOG-472: the fourth ground's plot
   harvested: 0,
   eggs: [
     { id: 'Mossback|Rex@3', parentA: 'Rex', parentB: 'Mossback', layedDay: 3, hatchDay: 6, tileX: 11, tileY: 11 },
@@ -421,6 +422,11 @@ describe('saveGame', () => {
     expect(deserialize(serialize(all))).toEqual(all);
     const fernOnly: SaveData = { ...sample, plot: null, grovePlot: null, fernreachPlot: { plantedDay: 9 } };
     expect(deserialize(serialize(fernOnly))).toEqual(fernOnly);
+  });
+
+  it('loads an older save lacking hollowPlot, defaulting it to null (BACKLOG-472)', () => {
+    const old = JSON.stringify({ ...sample, hollowPlot: undefined });
+    expect(deserialize(old)!.hollowPlot).toBeNull();
   });
 
   it('loads an older save lacking fernreachPlot, defaulting it to null (BACKLOG-432)', () => {

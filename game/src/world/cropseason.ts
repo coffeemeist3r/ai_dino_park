@@ -32,6 +32,21 @@ export const CROP_SEASON: Record<string, CropSeason> = {
   berries: { good: 'summer', lean: 'fall' },
   greens: { good: 'fall', lean: 'winter' },
   roots: { good: 'winter', lean: 'summer' },
+  // BACKLOG-472: the Hollow's mushrooms take the one season the founding three left empty, so every
+  // season now has exactly one thriving ground — spring included, where the park used to have none.
+  //
+  // The rotation does NOT stay one-thin-per-season, and that is a decision, not an oversight: with the
+  // founding three holding fall/winter/summer as their lean seasons, the only free *good* slot is spring
+  // and the only free *lean* slot is spring, and one crop cannot take both. Re-pointing roots' lean at
+  // spring would have squared the table at the cost of the hinge below — a fresh boot (day 1, spring)
+  // would stop banking what it always banked. The hinge is worth more than the symmetry, so fall carries
+  // two thin crops instead: greens thrive there while both the bowl's berries and the Hollow's mushrooms
+  // come in thin. Fall is the park's pinch season now, which is a better fact about the year than a tidy
+  // table would have been.
+  //
+  // The hinge itself is untouched: berries/greens/roots still name no spring, so the three founding
+  // grounds bank exactly what they always banked on a fresh boot.
+  mushrooms: { good: 'spring', lean: 'fall' },
 };
 
 export const YIELD_GOOD = 2;
@@ -76,7 +91,10 @@ export function harvestYieldLine(cropGlyph: string, food: string, season: Season
 export function seasonCropLine(season: Season): string {
   const ids = Object.keys(CROP_SEASON);
   const good = ids.find((id) => CROP_SEASON[id].good === season);
-  const lean = ids.find((id) => CROP_SEASON[id].lean === season);
-  if (!good || !lean) return '';
-  return `🌾 ${season} favours the ${labelOf(good)}; the ${labelOf(lean)} come in thin`;
+  // BACKLOG-472: a season may now carry more than one lean crop (fall thins both berries and mushrooms),
+  // so the sentence names all of them rather than whichever the table happens to list first.
+  const lean = ids.filter((id) => CROP_SEASON[id].lean === season);
+  if (!good || lean.length === 0) return '';
+  const thin = lean.map(labelOf).join(' and the ');
+  return `🌾 ${season} favours the ${labelOf(good)}; the ${thin} come in thin`;
 }

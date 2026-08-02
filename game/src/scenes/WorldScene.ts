@@ -41,7 +41,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import {
   bumpTenure,
   resetTenure,
@@ -147,6 +147,7 @@ import {
 import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
+import { recordPioneer, pioneerEvent, pioneerLine, foundedBy, type Pioneers } from '../world/pioneer';
 import { cropStage, plotAdjacent, cropOf, stageGlyph, ripeRigKey, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
@@ -178,6 +179,18 @@ import {
 const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
+
+/**
+ * A fresh per-zone plot map, keyed off `PLOT_TILE_BY_ZONE` (BACKLOG-472) rather than three zone-id
+ * literals — a fourth ground with a plot is a row in that table, not an edit in three places here.
+ */
+function emptyPlots(): Record<string, { plantedDay: number } | null> {
+  return Object.fromEntries(Object.keys(PLOT_TILE_BY_ZONE).map((z) => [z, null]));
+}
+
+function emptyPlotStages(): Record<string, CropStage | 'empty'> {
+  return Object.fromEntries(Object.keys(PLOT_TILE_BY_ZONE).map((z) => [z, 'empty' as const]));
+}
 
 /**
  * Dino migration (BACKLOG-274) rolls on a real-time cadence (like the sky event), NOT in-game hours, so
@@ -436,8 +449,10 @@ export class WorldScene extends Phaser.Scene {
   private arriving = new Set<string>();
   /** Dinos that have ever seen the grove pond (BACKLOG-359). Persisted; absent → []. Gates the once-ever pond-sight beat. */
   private pondSeen: string[] = [];
+  /** zone → the first dino ever to arrive there (BACKLOG-343). Persisted; absent → {}. First write wins. */
+  private pioneers: Pioneers = {};
   /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
-  private plotByZone: Record<string, { plantedDay: number } | null> = { [BOWL_ID]: null, [GROVE_ID]: null, [FERNREACH_ID]: null };
+  private plotByZone: Record<string, { plantedDay: number } | null> = emptyPlots();
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
   /** Lifetime crop harvest tally (BACKLOG-145). Persisted; absent → 0. Shared across both plots. */
   private harvested = 0;
@@ -492,7 +507,7 @@ export class WorldScene extends Phaser.Scene {
    *  moment, not saved state). */
   private lastMeal: { name: string; at: number } | null = null;
   /** Last plot stage drawn per zone — so the ripen note fires once, on the edge into ripe. */
-  private plotStageShownByZone: Record<string, CropStage | 'empty'> = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
+  private plotStageShownByZone: Record<string, CropStage | 'empty'> = emptyPlotStages();
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
   private skyStartAbsMin = 0;
@@ -1057,6 +1072,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-359: which dinos have ever seen the pond; __seePond drives the once-ever beat for the e2e
     // by dropping a dino into the grove beside the pond water and running the check.
     (window as any).__pondSeen = () => [...this.pondSeen];
+    (window as any).__pioneers = () => ({ ...this.pioneers }); // BACKLOG-343
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
       if (d) {
@@ -1247,7 +1263,8 @@ export class WorldScene extends Phaser.Scene {
 
   /** forceStep tail: advance each plot's visible stage as realtime days pass (BACKLOG-145/349). */
   private checkPlot(): void {
-    if (this.plotByZone[BOWL_ID] || this.plotByZone[GROVE_ID]) this.refreshPlot();
+    // BACKLOG-472: every zone that has a plot, not the first two by name.
+    if (Object.keys(PLOT_TILE_BY_ZONE).some((z) => this.plotByZone[z])) this.refreshPlot();
   }
 
   /**
@@ -2449,6 +2466,15 @@ export class WorldScene extends Phaser.Scene {
     return provider && provider !== name ? { name: provider, zoneName: zoneById(zoneId).name } : undefined;
   }
 
+  /**
+   * First across (BACKLOG-343): record the founding footfall of a ground nobody has ever entered, and post
+   * the one-off beat. Called from *both* arrival seams so no route into a zone slips past unrecorded.
+   */
+  private foundZone(name: string, zoneId: string): void {
+    if (!recordPioneer(this.pioneers, zoneId, name)) return;
+    this.logEvent(pioneerEvent(zoneId, name));
+  }
+
   private bookRows(): BookRow[] {
     const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
     return this.dinos.map((d) => ({
@@ -2466,6 +2492,10 @@ export class WorldScene extends Phaser.Scene {
         ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
         : undefined,
       foodweb: foodwebStanding(dietOf(d.species, d.name), recall(this.memory, d.name)) ?? undefined, // BACKLOG-443
+      pioneer: (() => {
+        const z = foundedBy(this.pioneers, d.name); // BACKLOG-343: only the pioneer's own block carries it
+        return z ? pioneerLine(z) : undefined;
+      })(),
     }));
   }
 
@@ -4619,6 +4649,7 @@ export class WorldScene extends Phaser.Scene {
     const dest = cross?.dest ?? otherZone(home); // BACKLOG-378: the destination fixed at startMigration
     const row = this.tileOf(d).tileY;
     setZone(this.dinoZones, d.name, dest);
+    this.foundZone(d.name, dest); // BACKLOG-343: first across — the founding footfall, if this ground is new
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
     const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
@@ -4739,6 +4770,7 @@ export class WorldScene extends Phaser.Scene {
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
   private relocate(d: Dino, destZoneId: string): void {
     setZone(this.dinoZones, d.name, destZoneId);
+    this.foundZone(d.name, destZoneId); // BACKLOG-343: the instant path founds a ground too
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a new zone starts fresh (mirrors crossDino)
     // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
     const tileX = Phaser.Math.Between(2, COLS - 3);
@@ -5471,9 +5503,11 @@ export class WorldScene extends Phaser.Scene {
       granaries: this.granaries, // BACKLOG-454: food-cap-lifting granaries, one per zone
       groveVisited: this.groveVisited,
       pondSeen: this.pondSeen, // BACKLOG-359
+      pioneers: this.pioneers, // BACKLOG-343: who founded each ground (additive)
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
+      hollowPlot: this.plotByZone[HOLLOW_ID], // BACKLOG-472: Hollow plot, additive
       harvested: this.harvested,
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
@@ -5550,14 +5584,21 @@ export class WorldScene extends Phaser.Scene {
       for (const g of this.granaries) this.drawGranary(g);
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
+      this.pioneers = save.pioneers ?? {}; // BACKLOG-343 (absent → {}; no back-fill)
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
-      this.plotByZone = { [BOWL_ID]: save.plot ?? null, [GROVE_ID]: save.grovePlot ?? null, [FERNREACH_ID]: save.fernreachPlot ?? null };
+      this.plotByZone = {
+        ...emptyPlots(),
+        [BOWL_ID]: save.plot ?? null,
+        [GROVE_ID]: save.grovePlot ?? null,
+        [FERNREACH_ID]: save.fernreachPlot ?? null,
+        [HOLLOW_ID]: save.hollowPlot ?? null, // BACKLOG-472
+      };
       this.harvested = save.harvested ?? 0;
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
-      this.plotStageShownByZone = { [BOWL_ID]: 'empty', [GROVE_ID]: 'empty', [FERNREACH_ID]: 'empty' };
+      this.plotStageShownByZone = emptyPlotStages();
       this.refreshPlot();
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
