@@ -4681,3 +4681,15 @@ makes real). Added the M10 structure arcs (472, 474). Picked **BACKLOG-472** —
 cycle 108 and nobody cashed. Deliverable is the row plus the proof: nine generalized systems should need
 zero lines to meet a fourth ground, and any line one *does* need is the finding, not a quiet patch.
 phase → designer-pending.
+
+## 2026-08-02 03:22 — cycle 119 — designer — the fourth ground + the first feet on it
+
+Specced both tracks. **472** lays `hollow` / "The Hollow" — a damp fen east of the Fernreach: two adjacency
+rows, one terrain descriptor (fen rim north, standing pool centre-south, slate tint), its own water landmark,
+its own crop (a new 🍄 mushrooms food), and nothing else. Ten generalized systems are expected to meet it
+untouched; the design says outright that any line one *does* need is the finding and goes in the codeplan.
+One is already known and specced honestly: 465's seasonal rotation was written for exactly three crops, so
+the newcomer takes the empty season (mushrooms good in spring, lean in fall) and the year becomes a clean
+4×4 — the spring hinge's purpose (the founding three unchanged on a fresh boot) preserved exactly.
+**343** records the single first name ever to set foot in each zone, surfaced in the book as a founding
+standing; the bowl is excluded on purpose (the cast began there, it didn't arrive). phase → codeplan-pending.
