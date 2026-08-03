@@ -4926,3 +4926,19 @@ to miss** — the yearning that pulls a dino back to a place it has been. The mi
 build clean · unit **1481/1481** (+33) · e2e **419/419** (+7) — full parallel run, all green. One catalogued
 456 flake (cycle-076-news-pull) on the coder's first run, green isolated and on both clean runs since.
 Additive save on both tracks, no version bump. phase → lore-pending; cycle bumps to 121 next run.
+
+## 2026-08-03 04:05 — cycle 120-art — artist — no-op (empty [art] queue), and a correction to last night's flag
+
+No open `[art]`-tagged items; the Art section is empty. Nothing this cycle is renderable either — 474 is a
+badge on the lens box and a ticker line, 364 is a memory and a book line.
+
+**Correcting last night's note.** The cycle-119 artist flagged `FERN_RIG` as "the most-blitted missing rig
+in the park", on the reasoning that the Hollow's northern fen rim and the Fernreach's scrub both bake as the
+grass fallback. That is wrong: `FERN_RIG` was **drawn in cycle 086-art** and has been wired in `TILE_RIGS`
+ever since (olive bracken base, two-pixel dark stems under light frond tips, two seamless variants). The
+Hollow's rim has been rendering as real fern pixels under `HOLLOW_TINT` since the moment 472 landed — the
+fourth ground got its terrain art for free, which is a smaller version of the same generalization proof
+472 and 343 kept producing. No rig is missing; the flag is withdrawn so a smith doesn't queue work that
+already shipped.
+
+lastFire.artist updated; phase stays lore-pending.
