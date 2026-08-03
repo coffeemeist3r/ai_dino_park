@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { zoneMapModel } from '../../game/src/ui/lenses';
 import { zoneChain, BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID } from '../../game/src/world/zones';
+import { deriveRole, settleRole, PROVIDER_BANKS } from '../../game/src/ai/roles';
 
 /**
  * The unsettled ground on the lens (BACKLOG-474) — Milestone 10's closing structure arc. An empty ground
@@ -33,5 +34,23 @@ describe('zoneMapModel unsettled column (BACKLOG-474)', () => {
     ]) {
       expect(model.every((e) => e.unsettled === false)).toBe(true);
     }
+  });
+});
+
+/**
+ * The other half of 474's text — "the first to bank a harvest becomes its first provider" — needed no code
+ * at all: `deriveRole` reads a per-dino banked tally and knows nothing about zones, so a founder alone on a
+ * new ground emerges as its provider the moment it banks, exactly as a dino on any other ground would.
+ * Pinned here rather than asserted in a handoff.
+ */
+describe('a founder becomes its new ground\'s first provider with no new code (BACKLOG-474/448)', () => {
+  it('emerges as provider off the banked tally alone, wherever it lives', () => {
+    const founder = { meetings: 0, rumorsHeard: 0, topBond: 0, foodBanked: PROVIDER_BANKS };
+    expect(deriveRole(founder)).toBe('provider');
+    expect(settleRole('wanderer', deriveRole(founder))).toBe('provider');
+  });
+
+  it('does not emerge before it has banked enough', () => {
+    expect(deriveRole({ meetings: 0, rumorsHeard: 0, topBond: 0, foodBanked: PROVIDER_BANKS - 1 })).not.toBe('provider');
   });
 });

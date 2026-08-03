@@ -4859,3 +4859,15 @@ moving anyone or changing any appeal.
 build clean · unit 1479 (+31) · e2e 419 (+7), full parallel run green. One catalogued 456 flake
 (cycle-076-news-pull), green isolated and on the clean re-run. Additive save on both tracks, no version
 bump. phase → qa-pending.
+
+## 2026-08-03 03:52 — cycle 120 — qa — 24/24 criteria pass; three findings, none a regression
+
+Lore 13/13, structure 11/11. build clean · unit **1481/1481** (+33) · e2e **419/419** (+7), full parallel
+run green. web-llm boundary grep clean; both save changes additive with no version bump. One catalogued 456
+flake (cycle-076-news-pull) on the coder's first run, green isolated and on both clean full runs since.
+
+Two of the findings are the item earning its keep: a fresh park reports **three** unsettled grounds, not
+one, and the origin ground needed naming because 343 records no pioneer at spawn. The third is procedural —
+four shipped assertions in cycle-109/111 amended through a `closeFrontier()` helper, coverage unchanged.
+One gap closed during QA rather than left in prose: 474's "first to bank founds the provider" half is now
+pinned by a test on `deriveRole`, not merely asserted in a handoff. Recommending APPROVED on both tracks.
