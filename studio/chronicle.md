@@ -4798,3 +4798,15 @@ Seventy cycles of news-spreading (019 → 185 → 223 → 453 → 470) have neve
 does. Picked over 362 (a ground you come to miss) on collision grounds — 362 edits the migration decision
 surface the structure track is about to rewrite, 364 rides the meeting/gossip seam it doesn't touch. No new
 items seeded (lore queue far above the cap of 12). Idea Box empty. phase → designer-pending.
+
+## 2026-08-03 03:14 — cycle 120 — structure-smith — BACKLOG-474: the unsettled ground
+
+Queue at 4 open (466 · 473 · 474 · 475) = cap X=4, so drained rather than invented. Picked **BACKLOG-474**,
+Milestone 10's second and last structure arc. 472 laid the Hollow and left it inert: an empty ground has the
+lowest appeal in the park by construction (0 heads, 0 structures, 0 harvest, 0 pile) and `richestNeighbor`
+picks the highest, so nothing was ever going to walk there. Three deliverables — a **frontier pull** as its
+own tier in the destination pick (not a weight tweak; appeal is monotonic in plenty and always will be), a
+**founding beat** riding 343's existing `foundZone` return value rather than a second arrival seam, and an
+**unsettled read** on the lens so an empty ground stops looking like a merely poor one. Flagged for the
+Designer: pop-0 reads, the decline floor and the last-one beat are all *already* correct here — confirm
+them, don't rebuild them. phase stays designer-pending.
