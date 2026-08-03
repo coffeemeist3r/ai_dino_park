@@ -20,6 +20,18 @@ const names = (p: Page) =>
 const migrate = (p: Page, name: string, zone: string) =>
   p.evaluate(({ name, zone }) => (window as W).__migrate(name, zone), { name, zone });
 
+/**
+ * BACKLOG-474 note: the frontier tier now outranks the appeal pick, and on a fresh save the grove, the
+ * Fernreach and the Hollow have all never been settled. These specs are about the *appeal* pick, so walk
+ * one dino through the far grounds first to close the frontier — it founds them without changing anyone's
+ * final position or any zone's appeal.
+ */
+async function closeFrontier(page: Page, name: string, home: string) {
+  await migrate(page, name, 'fernreach');
+  await migrate(page, name, 'hollow');
+  await migrate(page, name, home);
+}
+
 async function crossUntilArrived(page: Page, name: string) {
   for (let i = 0; i < 40; i++) {
     await step(page);
@@ -37,7 +49,7 @@ test('a scarcity migrant into a populated richer zone gets a wry welcome + a sma
   // Rex alone in the poor grove, everyone else in the richer bowl → the ambient roll sends Rex to the bowl
   // as a scarcity move, and a resident is there to size him up.
   for (const n of roster) if (n !== 'Rex') await migrate(page, n, 'bowl');
-  await migrate(page, 'Rex', 'grove');
+  await closeFrontier(page, 'Rex', 'grove');
 
   const before = await bonds(page);
   expect(await page.evaluate(() => (window as W).__maybeMigrate())).toBe('Rex');
@@ -67,7 +79,7 @@ test('a homecoming crossing fires welcome-home, NOT the wry welcome', async ({ p
   // the poor grove. The scarcity roll sends him back to the bowl — his root — so this is a homecoming.
   await page.evaluate(() => (window as W).__setRoot('Rex', 'bowl'));
   for (const n of roster) if (n !== 'Rex') await migrate(page, n, 'bowl');
-  await migrate(page, 'Rex', 'grove');
+  await closeFrontier(page, 'Rex', 'grove');
 
   expect(await page.evaluate(() => (window as W).__maybeMigrate())).toBe('Rex');
   expect(await crossUntilArrived(page, 'Rex')).toBe(true);
@@ -93,6 +105,7 @@ test('a scarcity crossing into an empty richer zone does not welcome or throw; g
   // Everyone in the grove; the bowl is empty but stocked so its appeal outweighs the crowded grove — a
   // migrant heads for plenty it will arrive at alone.
   for (const n of roster) await migrate(page, n, 'grove');
+  await closeFrontier(page, roster[0], 'grove');
   await page.evaluate(() => (window as W).__setZoneFoodPile('bowl', { berries: 6, greens: 6, roots: 6, fish: 6, meat: 6 }));
 
   const picked = await page.evaluate(() => (window as W).__maybeMigrate() as string | null);

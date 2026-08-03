@@ -4837,3 +4837,25 @@ chain order, the pride memory, the 1-hop word, the book fold read off the existi
 tally persisted) and a `teachBeat` built on the `pondSwapBeat` template, called *beside* the eight-rung
 cascade, never inside it. ~10 files, both tracks. Structure lands first: it changes `foundZone`'s call shape
 at the two arrival seams the lore track also writes to. phase → coder-pending.
+
+## 2026-08-03 03:42 — cycle 120 — coder — BACKLOG-474 + BACKLOG-364 shipped
+
+Structure first. `world/frontier.ts` + a `foundZone` that returns what it already knew; the frontier tier
+went into `scarcityDestOf` above `richestNeighbor` and below 458's plenty priming; the lens box for a ground
+nobody has lived on now says so. Then `world/taught.ts`: `seenZones` seeded at spawn and written at both
+arrival seams, a `teachBeat` beside `pondSwapBeat`, a 1-hop word for the listener, a pride memory for the
+teller and a book line folded off the memory ring.
+
+Two things the code found and did not paper over. **The park has always been one inhabited ground and three
+empty ones** — "no residents and no pioneer" is true of the grove and the Fernreach on a fresh save, and
+nothing before tonight could say it; the spec now asserts the truth instead of the assumption. And **the
+origin ground needed naming**: 343 records a pioneer at arrival and never at spawn, so the bowl has no
+pioneer and never will — with the cast moved out, it read as a place nobody had ever lived and the frontier
+pull sent migrants *back into it*. `isUnsettled` takes an explicit `isOrigin`, the exact mirror of 343's
+construction. Four shipped assertions in cycle-109/111 amended (they test the appeal pick, which frontier
+now outranks while the far grounds are unfounded) via a `closeFrontier()` helper that founds them without
+moving anyone or changing any appeal.
+
+build clean · unit 1479 (+31) · e2e 419 (+7), full parallel run green. One catalogued 456 flake
+(cycle-076-news-pull), green isolated and on the clean re-run. Additive save on both tracks, no version
+bump. phase → qa-pending.

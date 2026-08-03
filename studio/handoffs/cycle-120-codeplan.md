@@ -259,3 +259,31 @@ structure track changes `foundZone`'s call shape and the lore track adds a `mark
 Land structure, run the suite, then land lore.
 
 **Total: ~10 files** (arc-sized, under the 15-file CHARTER v6 ceiling).
+
+---
+
+## Shipped (Coder, 2026-08-03)
+
+Both tracks landed as planned, structure first. Build clean; unit **1479/1479** (+31); e2e **419/419** (+7),
+full parallel run.
+
+**Two findings, argued rather than patched:**
+
+1. **The park has always been one inhabited ground and three empty ones.** `isUnsettled` written as
+   "no residents ∧ no pioneer" reported `['grove','fernreach','hollow']` on a fresh save — correct, and
+   nothing before this arc could say it. The e2e was rewritten to assert the truth rather than the
+   assumption; the chain now fills west→east as the herd walks it, which is what 474 was for.
+2. **The origin ground needed naming.** 343 records a pioneer at *arrival* and nothing records one at
+   spawn, so the bowl has no pioneer and never will. With the cast moved out (as the cycle-109/111 specs
+   deliberately arrange) the bowl read as a place nobody had ever lived, and the frontier tier sent
+   migrants *back into it*. `isUnsettled` takes an explicit `isOrigin` — the mirror of 343's construction,
+   documented as such. An emptied origin is a hollowed ground (460), exactly like an emptied grove.
+
+**Four shipped e2e assertions amended** in `cycle-109-scarcity` (1) and `cycle-111-plentywelcome` (3):
+each is about the *appeal* pick, which the frontier tier now outranks while the far grounds are unfounded.
+Each spec gained a `closeFrontier()` helper that walks one dino through the Fernreach and the Hollow before
+the scenario, founding them without moving anybody's final position or changing any zone's appeal. The
+coverage those specs provide is unchanged.
+
+**One catalogued flake** during the first full run: `cycle-076-news-pull` (BACKLOG-456's homesick-pick
+nondeterminism), 1/1 isolated and green on the clean re-run.

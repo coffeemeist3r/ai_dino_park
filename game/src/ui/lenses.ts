@@ -54,6 +54,9 @@ export interface ZoneMapEntry {
   /** How this ground has chosen to spend (BACKLOG-468) — the provider-set policy (463) shown as 🍽️/🏦
    *  beside the tier; null when the zone has no policy or the caller didn't pass one (older callers). */
   spend: SpendPriority | null;
+  /** Has nobody ever lived here (BACKLOG-474)? An unsettled ground reads as unsettled rather than as a
+   *  poor one — its prosperity is 0 by construction. False when unknown (older callers). */
+  unsettled: boolean;
 }
 
 /**
@@ -106,6 +109,7 @@ export function zoneMapModel(
   granaryZones: readonly string[] = [],
   declining: Record<string, boolean> = {},
   spends: Record<string, SpendPriority | null> = {},
+  unsettled: Record<string, boolean> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -119,6 +123,7 @@ export function zoneMapModel(
     granary: granaryZones.includes(id), // BACKLOG-454: a raised granary shows a 🏛️ marker
     declining: declining[id] ?? false, // BACKLOG-460: a zone hollowed below its peak shows a ⬇ marker
     spend: spends[id] ?? null, // BACKLOG-468: how this ground has chosen to spend (absent → no policy shown)
+    unsettled: unsettled[id] ?? false, // BACKLOG-474: a ground nobody has ever lived on (absent → false)
   }));
 }
 
@@ -164,6 +169,9 @@ export interface BookRow {
   /** Founding standing (BACKLOG-343) — `first across into <Zone>` for the first dino ever to arrive in a
    *  zone, undefined for everyone else (then no line shows). Built by `pioneerLine`. */
   pioneer?: string;
+  /** What this dino has shown others (BACKLOG-364) — the ground it has told the most never-been dinos
+   *  about, and how many tellings it carries. Undefined for a dino that has taught nobody. */
+  taught?: string;
   /** Food-web standing (BACKLOG-443) — a carnivore's catch tally / a herbivore's escape tally, or
    *  undefined when the dino has no food-web history (then no line shows). Built by `foodwebStanding`. */
   foodweb?: string;
@@ -184,6 +192,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
     if (r.pioneer) out.push(`  ${r.pioneer}`); // BACKLOG-343: the founding standing, kept forever
+    if (r.taught) out.push(`  ${r.taught}`); // BACKLOG-364: the grounds it has shown others the way to
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);

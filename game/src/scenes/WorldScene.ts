@@ -147,7 +147,20 @@ import {
 import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
-import { recordPioneer, pioneerEvent, pioneerLine, foundedBy, type Pioneers } from '../world/pioneer';
+import { recordPioneer, pioneerEvent, pioneerLine, foundedBy, pioneerOf, type Pioneers } from '../world/pioneer';
+import { isUnsettled, unsettledNeighbor, settleMemory, settleLine, settleEvent, UNSETTLED_BADGE } from '../world/frontier';
+import {
+  markSeen,
+  teachableZone,
+  taughtMemory,
+  taughtWordLine,
+  taughtLine,
+  taughtEvent,
+  taughtCount,
+  taughtBookLine,
+  TAUGHT_BOND,
+  type SeenZones,
+} from '../world/taught';
 import { cropStage, plotAdjacent, cropOf, stageGlyph, ripeRigKey, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
@@ -451,6 +464,9 @@ export class WorldScene extends Phaser.Scene {
   private pondSeen: string[] = [];
   /** zone → the first dino ever to arrive there (BACKLOG-343). Persisted; absent → {}. First write wins. */
   private pioneers: Pioneers = {};
+  /** Which grounds each dino has actually set foot on (BACKLOG-364) — the general form of `groveVisited`.
+   *  Seeded with a dino's home zone at spawn; added to at both arrival seams. Persisted. */
+  private seenZones: SeenZones = {};
   /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
   private plotByZone: Record<string, { plantedDay: number } | null> = emptyPlots();
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
@@ -1073,6 +1089,11 @@ export class WorldScene extends Phaser.Scene {
     // by dropping a dino into the grove beside the pond water and running the check.
     (window as any).__pondSeen = () => [...this.pondSeen];
     (window as any).__pioneers = () => ({ ...this.pioneers }); // BACKLOG-343
+    // BACKLOG-364: which grounds each dino has set foot on, and a direct drive of one telling.
+    (window as any).__seenZones = () => JSON.parse(JSON.stringify(this.seenZones));
+    (window as any).__teach = (a: string, b: string) => this.teachBeat(a, b);
+    // BACKLOG-474: which grounds nobody has ever lived on, in chain order.
+    (window as any).__unsettled = () => zoneChain().filter((z) => this.isZoneUnsettled(z));
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
       if (d) {
@@ -1959,6 +1980,9 @@ export class WorldScene extends Phaser.Scene {
     });
     this.dinos.push(dino);
     this.dinoZones[cfg.name] ??= BOWL_ID;
+    // BACKLOG-364: a dino has plainly seen the ground it lives on. Seeded here so a fresh save starts every
+    // dino knowing the bowl; the load path re-seeds from restored home zones for a save written before this.
+    markSeen(this.seenZones, cfg.name, this.dinoZones[cfg.name]);
     dino.sprite.setVisible(this.inView(dino));
     dino.label.setVisible(this.inView(dino));
     this.sleepMarks.push(
@@ -2469,10 +2493,41 @@ export class WorldScene extends Phaser.Scene {
   /**
    * First across (BACKLOG-343): record the founding footfall of a ground nobody has ever entered, and post
    * the one-off beat. Called from *both* arrival seams so no route into a zone slips past unrecorded.
+   *
+   * Returns whether this footfall founded the ground (BACKLOG-474) — the fact it has always computed, now
+   * handed back so the settling beat rides the same first-write-wins guard instead of re-deriving it.
    */
-  private foundZone(name: string, zoneId: string): void {
-    if (!recordPioneer(this.pioneers, zoneId, name)) return;
+  private foundZone(name: string, zoneId: string): boolean {
+    if (!recordPioneer(this.pioneers, zoneId, name)) return false;
     this.logEvent(pioneerEvent(zoneId, name));
+    return true;
+  }
+
+  /**
+   * The unsettled ground (BACKLOG-474): the first dino ever to arrive on a ground makes it a *settlement*,
+   * not just a founding — a bubble, a memory it keeps (rides recall into a later greeting), and a ticker
+   * line under 343's flag. One dino, once, per ground, forever; gated by `foundZone`'s return so the two
+   * arrival seams can never disagree about who was first.
+   */
+  private settleZone(d: Dino, zoneId: string): void {
+    const zoneName = zoneById(zoneId).name;
+    this.memory = remember(this.memory, d.name, settleMemory(zoneName));
+    this.showBubble(d, settleLine());
+    this.logEvent(settleEvent(d.name, zoneName));
+  }
+
+  /** Is this ground unsettled (BACKLOG-474) — nobody living there and nobody has ever founded it? */
+  private isZoneUnsettled(zoneId: string): boolean {
+    // BOWL_ID is the ground the cast spawns on — 343 records no pioneer there by construction, so the
+    // origin has to be named here or an emptied bowl would read as never-inhabited.
+    return isUnsettled(this.zoneHeads()[zoneId] ?? 0, pioneerOf(this.pioneers, zoneId), zoneId === BOWL_ID);
+  }
+
+  /** Which grounds currently read unsettled — the map lens's read, and the `__unsettled` hook. */
+  private unsettledZones(): Record<string, boolean> {
+    const out: Record<string, boolean> = {};
+    for (const z of zoneChain()) out[z] = this.isZoneUnsettled(z);
+    return out;
   }
 
   private bookRows(): BookRow[] {
@@ -2495,6 +2550,10 @@ export class WorldScene extends Phaser.Scene {
       pioneer: (() => {
         const z = foundedBy(this.pioneers, d.name); // BACKLOG-343: only the pioneer's own block carries it
         return z ? pioneerLine(z) : undefined;
+      })(),
+      taught: (() => {
+        const t = taughtCount(recall(this.memory, d.name)); // BACKLOG-364: what it has shown others
+        return t ? taughtBookLine(t.zoneName, t.count) : undefined;
       })(),
     }));
   }
@@ -2666,6 +2725,7 @@ export class WorldScene extends Phaser.Scene {
       this.granaryZones(), // BACKLOG-454: zones that have raised a granary (🏛️ marker + a raised food cap)
       this.decliningZones(), // BACKLOG-460: zones hollowed below their peak (⬇ marker)
       this.zoneSpends(), // BACKLOG-468: how each ground has chosen to spend (🍽️/🏦 marker)
+      this.unsettledZones(), // BACKLOG-474: a ground nobody has ever lived on reads as unsettled, not poor
     );
   }
 
@@ -2718,7 +2778,11 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-460: a zone hollowed below its peak reads a ⬇ beside the tier — an exodus made legible.
       // BACKLOG-468: and a 🍽️/🏦 closes that same line with how the ground has chosen to spend (463),
       // so governance reads at a glance beside the prosperity it shapes. No policy → nothing added.
-      let txt = `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}`;
+      // BACKLOG-474: a ground nobody has ever lived on replaces that whole line with the unsettled read —
+      // `○ quiet` beside an empty ground says "poor" when the truth is "nobody has ever been here".
+      let txt = e.unsettled
+        ? `${e.name}\n${e.count} 🦕\n${UNSETTLED_BADGE}`
+        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
@@ -3620,6 +3684,11 @@ export class WorldScene extends Phaser.Scene {
       // small shared-place bond + a memory each. Independent of the cold/grove cascade above, so it can
       // fire alongside any of it; the grove's version of stargazing companions (288).
       this.pondSwapBeat(a.name, b.name);
+      // The one who knew first (BACKLOG-364): if the speaker has stood on a ground the listener never has,
+      // it shows them the way and keeps the telling. Deliberately beside the cascade, not a ninth rung in
+      // it — a rung would make one of the eight shipped beats silently rarer, and a worry and a postcard
+      // are different registers anyway.
+      this.teachBeat(a.name, b.name);
     } finally {
       this.convoInFlight = false;
     }
@@ -3632,6 +3701,27 @@ export class WorldScene extends Phaser.Scene {
     this.memory = remember(this.memory, b, pondSwapMemory(a));
     this.bonds = strengthen(this.bonds, a, b, POND_BOND);
     this.logEvent(`🌿 ${a} and ${b} compared notes on the grove`);
+    return true;
+  }
+
+  /**
+   * The one who knew first (BACKLOG-364): the speaker shows the listener a ground it has never seen — a
+   * pride memory naming both, a 1-hop word for the listener, a small bond, a bubble and a ticker line.
+   * Deduped on the pride memory itself, so a pair that keeps meeting doesn't re-tell the same place, but a
+   * dino that later reaches a *further* ground has something new to show the same friend.
+   */
+  private teachBeat(a: string, b: string): boolean {
+    const zone = teachableZone(this.seenZones, a, b, zoneChain());
+    if (!zone) return false;
+    const zoneName = zoneById(zone).name;
+    const mem = taughtMemory(b, zoneName);
+    if (recall(this.memory, a).includes(mem)) return false;
+    this.memory = remember(this.memory, a, mem);
+    this.memory = remember(this.memory, b, taughtWordLine(a, zoneName));
+    this.bonds = strengthen(this.bonds, a, b, TAUGHT_BOND);
+    const speaker = this.dinoByName(a);
+    if (speaker) this.showBubble(speaker, taughtLine(zoneName));
+    this.logEvent(taughtEvent(a, b, zoneName));
     return true;
   }
 
@@ -4573,11 +4663,22 @@ export class WorldScene extends Phaser.Scene {
     return zoneNeighbors(home).some((l) => l.to === target) ? target : null;
   }
 
-  /** The neighbour a scarcity-driven migrant heads for (BACKLOG-450): the most appealing (richest prosperity
-   *  + fullest pantry) of `home`'s neighbours, falling back to the primary link for an unlinked zone. */
+  /**
+   * The neighbour a scarcity-driven migrant heads for (BACKLOG-450): the most appealing (richest prosperity
+   * + fullest pantry) of `home`'s neighbours, falling back to the primary link for an unlinked zone.
+   *
+   * BACKLOG-474: an **unsettled** neighbour outranks the richest one. A ground nobody has ever lived on is
+   * the poorest place in the park by construction, so the appeal read can never send anyone there; the pull
+   * has to be its own tier. It sits *above* the richest pick and *below* word-of-plenty priming (458) — a
+   * ground a dino has actually heard described as thriving beats an empty one it knows nothing about.
+   */
   private scarcityDestOf(home: string): string {
     const neighbors = zoneNeighbors(home).map((l) => l.to);
-    return richestNeighbor(neighbors, (z) => this.zoneAppeal(z)) ?? otherZone(home);
+    return (
+      unsettledNeighbor(neighbors, (z) => this.isZoneUnsettled(z)) ??
+      richestNeighbor(neighbors, (z) => this.zoneAppeal(z)) ??
+      otherZone(home)
+    );
   }
 
   /** A zone's appeal to a mouth seeking plenty (BACKLOG-450) — its prosperity index (428) + banked food (446),
@@ -4649,7 +4750,10 @@ export class WorldScene extends Phaser.Scene {
     const dest = cross?.dest ?? otherZone(home); // BACKLOG-378: the destination fixed at startMigration
     const row = this.tileOf(d).tileY;
     setZone(this.dinoZones, d.name, dest);
-    this.foundZone(d.name, dest); // BACKLOG-343: first across — the founding footfall, if this ground is new
+    // BACKLOG-343: first across — the founding footfall, if this ground is new.
+    // BACKLOG-474: and if it founded the ground, this dino is settling somewhere nobody has ever lived.
+    if (this.foundZone(d.name, dest)) this.settleZone(d, dest);
+    markSeen(this.seenZones, d.name, dest); // BACKLOG-364: it has now seen this ground, and can show it to others
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
     const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
@@ -4770,7 +4874,9 @@ export class WorldScene extends Phaser.Scene {
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
   private relocate(d: Dino, destZoneId: string): void {
     setZone(this.dinoZones, d.name, destZoneId);
-    this.foundZone(d.name, destZoneId); // BACKLOG-343: the instant path founds a ground too
+    // BACKLOG-343/474: the instant path founds — and settles — a ground too.
+    if (this.foundZone(d.name, destZoneId)) this.settleZone(d, destZoneId);
+    markSeen(this.seenZones, d.name, destZoneId); // BACKLOG-364: the instant path sees a ground too
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a new zone starts fresh (mirrors crossDino)
     // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
     const tileX = Phaser.Math.Between(2, COLS - 3);
@@ -5504,6 +5610,7 @@ export class WorldScene extends Phaser.Scene {
       groveVisited: this.groveVisited,
       pondSeen: this.pondSeen, // BACKLOG-359
       pioneers: this.pioneers, // BACKLOG-343: who founded each ground (additive)
+      seenZones: this.seenZones, // BACKLOG-364: which grounds each dino has set foot on (additive)
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
@@ -5585,6 +5692,10 @@ export class WorldScene extends Phaser.Scene {
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
       this.pioneers = save.pioneers ?? {}; // BACKLOG-343 (absent → {}; no back-fill)
+      // BACKLOG-364: seen-grounds restore, then re-seed from the restored home zones — a save written
+      // before this item knows nothing, and the honest floor is "a dino has seen where it lives".
+      this.seenZones = save.seenZones ?? {};
+      for (const d of this.dinos) markSeen(this.seenZones, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
       this.plotByZone = {
         ...emptyPlots(),

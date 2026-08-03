@@ -23,6 +23,18 @@ const names = (p: import('@playwright/test').Page) =>
 const migrate = (p: import('@playwright/test').Page, name: string, zone: string) =>
   p.evaluate(({ name, zone }) => (window as W).__migrate(name, zone), { name, zone });
 
+/**
+ * BACKLOG-474 note: the frontier tier now outranks the appeal pick, and on a fresh save the grove, the
+ * Fernreach and the Hollow have all never been settled. These specs are about the *appeal* pick, so walk
+ * one dino through the far grounds first to close the frontier — it founds them without changing anyone's
+ * final position or any zone's appeal.
+ */
+async function closeFrontier(page: import('@playwright/test').Page, name: string, home: string) {
+  await migrate(page, name, 'fernreach');
+  await migrate(page, name, 'hollow');
+  await migrate(page, name, home);
+}
+
 async function crossUntilArrived(page: import('@playwright/test').Page, name: string) {
   for (let i = 0; i < 40; i++) {
     await step(page);
@@ -68,7 +80,7 @@ test('a dino that crossed toward plenty files the greener-ground reason it left;
 
   // Rex alone in the grove, everyone else in the richer bowl. The ambient roll sends Rex back to the bowl as
   // a scarcity move (dest richer than home), so the greener-ground beat fires on arrival.
-  await migrate(page, 'Rex', 'grove');
+  await closeFrontier(page, 'Rex', 'grove');
   expect(await page.evaluate(() => (window as W).__maybeMigrate())).toBe('Rex');
   expect(await crossUntilArrived(page, 'Rex')).toBe(true);
 

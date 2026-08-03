@@ -100,6 +100,9 @@ export interface SaveData {
   /** zone → first dino ever to arrive there (BACKLOG-343). Additive; absent → {} (no back-fill: we did
    *  not record it then and must not invent it). */
   pioneers?: Record<string, string>;
+  /** dino → the grounds it has set foot on (BACKLOG-364). Additive; absent → {} (re-seeded from live home
+   *  zones on load, which is all an older save can honestly tell us). */
+  seenZones?: Record<string, string[]>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -427,6 +430,21 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // seenZones (BACKLOG-364) — dino→the grounds it has set foot on. Same object guard as `pioneers` above,
+  // but the values are string *arrays*, not strings: the one line where the two blocks genuinely differ.
+  let seenZones: Record<string, string[]> | undefined;
+  if (o.seenZones !== undefined) {
+    if (typeof o.seenZones !== 'object' || o.seenZones === null) return null;
+    const dinos = o.seenZones as Record<string, unknown>;
+    seenZones = {};
+    for (const n of Object.keys(dinos)) {
+      const zones = dinos[n];
+      if (!Array.isArray(zones)) return null;
+      for (const z of zones) if (typeof z !== 'string') return null;
+      seenZones[n] = zones as string[];
+    }
+  }
+
   // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
   // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
   let harvestedByZone: Record<string, number> | undefined;
@@ -610,6 +628,7 @@ export function deserialize(json: string): SaveData | null {
     spendPriorityByZone,
     lastProviderByZone,
     pioneers,
+    seenZones,
     cairns,
     shelters,
     thatches,
