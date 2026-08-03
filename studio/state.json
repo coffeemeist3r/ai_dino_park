@@ -1,6 +1,6 @@
 {
   "cycle": 120,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-364: the one who knew first - teller's pride when a been-there dino tells a never-been dino about a ground",
   "structureItem": "BACKLOG-474: the unsettled ground - a zone fills from empty by migration; the first to settle founds it",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-03T03:05:00-05:00",
     "structure-smith": "2026-08-03T03:14:00-05:00",
     "designer": "2026-08-03T03:22:00-05:00",
-    "code-planner": "2026-08-02T03:30:00-05:00",
+    "code-planner": "2026-08-03T03:30:00-05:00",
     "coder": "2026-08-02T03:42:00-05:00",
     "qa": "2026-08-02T03:52:00-05:00",
     "validator": "2026-08-02T04:00:00-05:00",

@@ -4823,3 +4823,17 @@ tweak — `zoneAppeal` is monotonic in plenty by design and a bonus there would 
 read), a settling beat riding `foundZone`'s return value, and an `unsettled` box on the zone-map lens. The
 pop-0 reads, the decline floor and the last-one beat get **tests, not code** — they were already right.
 Overlap: both tracks touch the two arrival seams, so structure lands first. phase → codeplan-pending.
+
+## 2026-08-03 03:30 — cycle 120 — code-planner — two new pure modules, and one ordering call made in the open
+
+**474** gets `world/frontier.ts` (`isUnsettled` = 0 heads ∧ no pioneer, `unsettledNeighbor` first-match in
+`ZONE_LINKS` order, the settling memory/line/event, the lens badge) plus a `foundZone` that finally returns
+the fact it already computes. The ordering question the Designer flagged is answered: frontier sits **below**
+458's word-of-plenty priming (a named thriving ground you *heard about* beats a place nobody has described)
+and **above** `richestNeighbor`. Four "confirm, don't rebuild" pins go in as tests — prosperity 0 → quiet,
+`isDeclining(0,0)` and `isDeclining(1,1)` both false (so 464 can't sound "gone quiet" at the moment of
+founding), every `ZONES` id seeded at 0. **364** gets `world/taught.ts` (`seenZones`, `teachableZone` in
+chain order, the pride memory, the 1-hop word, the book fold read off the existing memory ring — no new
+tally persisted) and a `teachBeat` built on the `pondSwapBeat` template, called *beside* the eight-rung
+cascade, never inside it. ~10 files, both tracks. Structure lands first: it changes `foundZone`'s call shape
+at the two arrival seams the lore track also writes to. phase → coder-pending.
