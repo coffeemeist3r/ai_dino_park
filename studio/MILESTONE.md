@@ -28,12 +28,12 @@ operator call.
 
 **Lore arcs:**
 - [x] First across — the first dino ever to set foot in a given zone is remembered as its pioneer, a founding standing surfaced in the collection book (BACKLOG-343 — cycle 119)
-- [ ] The one who knew first — a dino that has seen a ground and tells a never-been dino about it keeps a small teacher's-pride memory, so being the one who knew first becomes part of who it is (BACKLOG-364)
+- [x] The one who knew first — a dino that has seen a ground and tells a never-been dino about it keeps a small teacher's-pride memory, so being the one who knew first becomes part of who it is (BACKLOG-364 — cycle 120)
 - [ ] A ground you come to miss — a dino long back from a ground files a faint yearning that re-primes it to return, so a place can be missed and not merely visited (BACKLOG-362)
 
 **Structure arcs:**
 - [x] The fourth ground — a fourth zone joins the chain as a `ZONES` row + terrain descriptor + adjacency link + its own crop and waterhole + its box on the lens, and every generalized system meets it untouched (BACKLOG-472 — cycle 119)
-- [ ] The unsettled ground — a fresh zone opens with no residents and no provider, filling by migration alone; the first to settle founds it (BACKLOG-474)
+- [x] The unsettled ground — a fresh zone opens with no residents and no provider, filling by migration alone; the first to settle founds it (BACKLOG-474 — cycle 120; **structure track closed**)
 
 ---
 

@@ -4871,3 +4871,58 @@ one, and the origin ground needed naming because 343 records no pioneer at spawn
 four shipped assertions in cycle-109/111 amended through a `closeFrontier()` helper, coverage unchanged.
 One gap closed during QA rather than left in prose: 474's "first to bank founds the provider" half is now
 pinned by a test on `deriveRole`, not merely asserted in a handoff. Recommending APPROVED on both tracks.
+
+## 2026-08-03 04:00 — cycle 120 — validator — lore APPROVED / structure APPROVED — M10 structure track closes (474 the unsettled ground + 364 the one who knew first)
+
+Two nights ago the park grew a fourth ground and nobody could go there. Tonight somebody did.
+
+**BACKLOG-474 (The unsettled ground) — the ground fills.** 472's Hollow had terrain, a crop, a pool and a
+name, and it was unreachable in the only sense that matters: an empty ground's prosperity is zero by
+construction, the destination pick takes the *highest* appeal, so the emptiest place in the park was the one
+place migration would never send a body. The fix is a **tier, not a weight**, and that is the whole
+argument. `zoneAppeal` is monotonic in plenty on purpose, and it is *also* the read that decides **who
+leaves** — a frontier bonus folded in there would have made an empty ground's nonexistent residents look
+rich. So the pull lives in one line of `scarcityDestOf`: above the richest neighbour, below word-of-plenty,
+because a ground someone actually described to you beats one nobody has. And the founding beat needed no
+new record at all — 343's `foundZone` already computed "did this footfall found the ground" and threw the
+answer away; it now returns it, so one guard serves both arrival seams and they cannot drift.
+
+What the item said needed building at population zero was, almost all of it, **already correct**: prosperity
+0, the decline floor, 464's silence at peak 1, the pantry, the two governance hooks. Those got *tests*.
+So did the half of 474's text that read like a feature — "the first to bank a harvest becomes its first
+provider" — because `deriveRole` reads a per-dino tally and has never known what a zone is.
+
+**Two findings the code made and refused to bury.** The first is a fact about this park that has been true
+since cycle 74 and unsayable until tonight: **a fresh save is one inhabited ground and three that nobody has
+ever lived on.** Written honestly, the read returns three ids, not one. The spec now asserts that, and the
+chain fills west→east as the herd walks it. The second is sharper. 343 excluded the bowl *by construction* —
+a pioneer is recorded at arrival, and nothing records one at spawn — and that was correct, and elegant, and
+it could not survive a second reader asking a different question of the same data. "No pioneer" means
+*nobody founded it* to 343; it would have meant *nobody has ever lived here* to 474, which of the bowl is
+the one thing certainly false. With the cast moved out, the frontier pull started sending migrants **back
+into the ancestral home** as though it were virgin ground. `isUnsettled` now takes an explicit `isOrigin`,
+documented as the mirror of 343's rule — the fact stated once, in the open, where the next reader finds it
+instead of rediscovering it as a bug.
+
+**BACKLOG-364 (The one who knew first) — the teller gets a stake.** For seventy cycles every news system in
+this park has moved a fact from a speaker to a listener and handed the *listener* the memory. Gossip, the
+cold word, the warm word, grove news, the provider, the policy, plenty — seven systems, and in every one of
+them the speaker was a pipe. Tonight a dino that has stood somewhere its friend never has shows them the
+way and **keeps the telling**: `showed Sunny The Hollow`, a small pride, and a line in the book. The
+listener gets a rumour-marked word it can't pass on, the pair warm a notch — less than two dinos who have
+both stood at the pond, because a place you were told about is not a place you've been. The beat runs
+*beside* the eight-rung meet cascade rather than becoming a ninth rung, which is the discipline this cycle
+is quietly proudest of: another rung would have made one of eight shipped beats silently rarer, and nobody
+would have noticed for a dozen cycles.
+
+Four shipped e2e assertions were amended (cycle-109 ×1, cycle-111 ×3) — each tests the appeal pick, which
+the frontier tier now outranks while the far grounds stand unfounded. A `closeFrontier()` helper founds them
+first, moving nobody and changing no appeal. Same class as cycle 119's nine files: the production code
+generalized; the assertions encoded an assumption the park had outgrown.
+
+**Milestone 10's structure track closes.** One arc remains in the whole milestone: **362, a ground you come
+to miss** — the yearning that pulls a dino back to a place it has been. The milestone ships when that lands.
+
+build clean · unit **1481/1481** (+33) · e2e **419/419** (+7) — full parallel run, all green. One catalogued
+456 flake (cycle-076-news-pull) on the coder's first run, green isolated and on both clean runs since.
+Additive save on both tracks, no version bump. phase → lore-pending; cycle bumps to 121 next run.

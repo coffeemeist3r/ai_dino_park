@@ -1,8 +1,8 @@
 {
   "cycle": 120,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-364: the one who knew first - teller's pride when a been-there dino tells a never-been dino about a ground",
-  "structureItem": "BACKLOG-474: the unsettled ground - a zone fills from empty by migration; the first to settle founds it",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-08-03T03:30:00-05:00",
     "coder": "2026-08-03T03:42:00-05:00",
     "qa": "2026-08-03T03:52:00-05:00",
-    "validator": "2026-08-02T04:00:00-05:00",
+    "validator": "2026-08-03T04:00:00-05:00",
     "artist": "2026-08-02T04:05:00-05:00"
   }
 }
