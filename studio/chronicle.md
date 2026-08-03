@@ -4810,3 +4810,16 @@ own tier in the destination pick (not a weight tweak; appeal is monotonic in ple
 **unsettled read** on the lens so an empty ground stops looking like a merely poor one. Flagged for the
 Designer: pop-0 reads, the decline floor and the last-one beat are all *already* correct here — confirm
 them, don't rebuild them. phase stays designer-pending.
+
+## 2026-08-03 03:22 — cycle 120 — designer — the one who knew first + the unsettled ground
+
+Both tracks specced, both Milestone 10. **364** generalizes the grove-only visit record into a per-dino
+`seenZones` (home zone at spawn, plus both arrival seams) and gives the *teller* a stake for the first time:
+a speaker that has seen a ground its listener hasn't files a pride memory naming both, the listener files a
+rumor-marked word it can't re-spread, small bond, ticker line, book line. Deliberately **not** a ninth rung
+in the gossip cascade — it runs beside `pondSwapBeat`, because adding a rung would silently starve one of
+the eight beats already there. **474** adds a frontier tier to the migration destination pick (not a weight
+tweak — `zoneAppeal` is monotonic in plenty by design and a bonus there would leak into the *who leaves*
+read), a settling beat riding `foundZone`'s return value, and an `unsettled` box on the zone-map lens. The
+pop-0 reads, the decline floor and the last-one beat get **tests, not code** — they were already right.
+Overlap: both tracks touch the two arrival seams, so structure lands first. phase → codeplan-pending.

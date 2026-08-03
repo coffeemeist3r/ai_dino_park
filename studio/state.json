@@ -1,8 +1,8 @@
 {
   "cycle": 120,
-  "phase": "designer-pending",
-  "currentItem": "BACKLOG-364: the one who knew first \u00e2\u20ac\u201d teller's pride when a been-there dino tells a never-been dino about a ground",
-  "structureItem": "BACKLOG-474: the unsettled ground \u2014 a zone fills from empty by migration; the first to settle founds it",
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-364: the one who knew first - teller's pride when a been-there dino tells a never-been dino about a ground",
+  "structureItem": "BACKLOG-474: the unsettled ground - a zone fills from empty by migration; the first to settle founds it",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-08-03T03:05:00-05:00",
     "structure-smith": "2026-08-03T03:14:00-05:00",
-    "designer": "2026-08-02T03:22:00-05:00",
+    "designer": "2026-08-03T03:22:00-05:00",
     "code-planner": "2026-08-02T03:30:00-05:00",
     "coder": "2026-08-02T03:42:00-05:00",
     "qa": "2026-08-02T03:52:00-05:00",
