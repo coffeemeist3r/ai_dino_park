@@ -1,7 +1,7 @@
 {
-  "cycle": 119,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 120,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-364: the one who knew first — teller's pride when a been-there dino tells a never-been dino about a ground",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-08-02T03:05:00-05:00",
+    "lore-smith": "2026-08-03T03:05:00-05:00",
     "structure-smith": "2026-08-02T03:14:00-05:00",
     "designer": "2026-08-02T03:22:00-05:00",
     "code-planner": "2026-08-02T03:30:00-05:00",

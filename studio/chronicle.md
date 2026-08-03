@@ -4788,3 +4788,13 @@ somewhere else. `FERN_RIG` is no longer a texture without a host; it is the most
 park. Not seeded here — queueing is the smiths' lane — but flagged for the next lore/structure fire.
 
 lastFire.artist updated; phase stays lore-pending.
+
+## 2026-08-03 03:05 — cycle 120 — lore-smith — BACKLOG-364: the one who knew first
+
+M10 lore arc 1 (343, first across) shipped last night; tonight is arc 2. **BACKLOG-364**, reframed off its
+cycle-79 grove-and-pond wording to the general shape the milestone wants: a dino that has *been* to a ground
+and tells a never-been dino about it keeps a small teacher's-pride memory naming the ground and the listener.
+Seventy cycles of news-spreading (019 → 185 → 223 → 453 → 470) have never given the *teller* anything; this
+does. Picked over 362 (a ground you come to miss) on collision grounds — 362 edits the migration decision
+surface the structure track is about to rewrite, 364 rides the meeting/gossip seam it doesn't touch. No new
+items seeded (lore queue far above the cap of 12). Idea Box empty. phase → designer-pending.

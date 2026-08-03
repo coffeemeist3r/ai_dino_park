@@ -634,7 +634,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > extend what a dino *does* once it's seen the water all the rumors were about.
 
 - [ ] BACKLOG-363 [emergent] Pond reflection — a dino lingering alone at the pond water catches its own reflection and files a quiet reflective memory (💧 "saw myself in the water") that can wistfully colour its next line, so solitude at the pond becomes a distinct inner beat. Builds on 359 / 011.
-- [ ] BACKLOG-364 [emergent] Showed them the pond — a dino that has *seen* the pond (359) and then tells a never-been dino about it files a small teacher/pride memory ("showed <other> the pond"), distinct from passively spreading grove news, so being the one who knew first becomes part of who a dino is. Builds on 359 / 342.
+- [~] BACKLOG-364 [emergent] Showed them the pond (reframed cycle 120 → **the one who knew first**, any ground) — a dino that has *seen* the pond (359) and then tells a never-been dino about it files a small teacher/pride memory ("showed <other> the pond"), distinct from passively spreading grove news, so being the one who knew first becomes part of who a dino is. Builds on 359 / 342.
 - [ ] BACKLOG-365 [pokemon] Pond firsts in the book — the collection book surfaces each dino's remembered "firsts" — first time across (339), first sight of the pond (359) — as a little keepsake list, making a dino's milestones legible. Builds on 359 / 339 / 021.
 - [ ] BACKLOG-366 [social] Pondside meeting — two dinos that meet *at the pond* (both within sight of the water) share an extra-warm beat distinct from a meeting anywhere else, so where two dinos run into each other starts to matter. Builds on 359 / 346 / 288.
 
