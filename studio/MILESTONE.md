@@ -8,32 +8,8 @@
 
 ## Current milestone
 
-**Milestone 10: A fourth ground, and the first feet on it**
-**Status:** ACTIVE (opened cycle 119)
-
-For nine milestones this park has been three zones long. Every system built since — prosperity (428),
-harvest (433), demand (438), the pantry (446), the ferry (447), the provider (448), migration (450),
-decline (460), governance (463/467/468) — was written to generalize, and 449 folded the last hand-written
-per-zone terrain into one `ZONE_TERRAIN` table with an explicit promise: *a fourth zone is a row, not
-three branches*. Nothing has ever cashed that cheque, and three has been too small a number to tell
-whether the chain economy is genuinely general or merely tidy. Milestone 10 cashes it — and makes the
-arrival a thing the cast *lives*, not a config change. A fourth ground joins the chain and fills up from
-empty by migration alone; the very first dino to set foot on any ground is remembered as its pioneer; a
-dino that has seen the new place and tells one that hasn't carries the small pride of being the one who
-knew first; and a ground you came home from becomes a ground you can come to miss. Minds (M1) → home
-ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands alone (M6) →
-plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → **a chain that can
-grow, and a new ground the cast discovers for itself** (M10). Deathless by design; mortality stays an
-operator call.
-
-**Lore arcs:**
-- [x] First across — the first dino ever to set foot in a given zone is remembered as its pioneer, a founding standing surfaced in the collection book (BACKLOG-343 — cycle 119)
-- [x] The one who knew first — a dino that has seen a ground and tells a never-been dino about it keeps a small teacher's-pride memory, so being the one who knew first becomes part of who it is (BACKLOG-364 — cycle 120)
-- [ ] A ground you come to miss — a dino long back from a ground files a faint yearning that re-primes it to return, so a place can be missed and not merely visited (BACKLOG-362)
-
-**Structure arcs:**
-- [x] The fourth ground — a fourth zone joins the chain as a `ZONES` row + terrain descriptor + adjacency link + its own crop and waterhole + its box on the lens, and every generalized system meets it untouched (BACKLOG-472 — cycle 119)
-- [x] The unsettled ground — a fresh zone opens with no residents and no provider, filling by migration alone; the first to settle founds it (BACKLOG-474 — cycle 120; **structure track closed**)
+_(none — Milestone 10 shipped cycle 121. The smiths draft Milestone 11 at the next cycle open:
+Lore-smith writes the headline + feel arcs, Structure-smith adds the spine arcs.)_
 
 ---
 
@@ -53,6 +29,40 @@ operator call.
 ```
 
 ## Shipped milestones
+
+### Milestone 10: A fourth ground, and the first feet on it — SHIPPED cycle 121 (opened cycle 119)
+
+For nine milestones this park was three zones long. Every system built since — prosperity (428), harvest (433),
+demand (438), the pantry (446), the ferry (447), the provider (448), migration (450), decline (460), governance
+(463/467/468) — was written to generalize, and 449 folded the last hand-written per-zone terrain into one
+`ZONE_TERRAIN` table with an explicit promise in its own header: *a fourth zone is a row, not three branches*.
+Nothing had ever cashed that cheque, and three was too small a number to tell a genuinely general system from a
+merely tidy one. Milestone 10 cashed it, and the answer was: **the code generalized, the assertions didn't.**
+The Hollow joined the chain as a row of data and met nine cross-zone systems untouched (472) — while nine *test*
+files, and later four more, had to be amended because they had hard-coded "the chain is three long". That
+asymmetry, visible only because someone finally added the row, is the milestone's real finding.
+
+The rest made the arrival something the cast *lives* rather than a config change. The first dino ever to set
+foot on a ground is remembered as its pioneer, forever, one-per-ground (343). A fresh ground opens with nobody
+on it and no provider, and fills by migration alone — which needed a **frontier tier** in the destination pick,
+not a weight, because an unsettled ground is the poorest place in the park by construction and the appeal read
+could never have sent anyone there (474). A dino that has stood somewhere its friend hasn't shows it the way and
+**keeps the telling** — the first beat in seventy cycles of news systems to mark the *speaker* rather than the
+listener (364). And on the last night, the first migration **pull** the park has ever had: a ground you stood on
+and have been away from too long starts calling you back, so a place can be missed and not merely visited (362).
+
+Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands alone
+(M6) → plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → **a chain that can
+grow, and a new ground the cast discovers for itself** (M10). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] First across — the first dino ever to set foot in a given zone is remembered as its pioneer, a founding standing surfaced in the collection book (BACKLOG-343 — cycle 119)
+- [x] The one who knew first — a dino that has seen a ground and tells a never-been dino about it keeps a small teacher's-pride memory, so being the one who knew first becomes part of who it is (BACKLOG-364 — cycle 120)
+- [x] A ground you come to miss — a dino long back from a ground files a faint yearning that re-primes it to return, so a place can be missed and not merely visited (BACKLOG-362 — cycle 121; **milestone SHIPPED**)
+
+**Structure arcs:**
+- [x] The fourth ground — a fourth zone joins the chain as a `ZONES` row + terrain descriptor + adjacency link + its own crop and waterhole + its box on the lens, and every generalized system meets it untouched (BACKLOG-472 — cycle 119)
+- [x] The unsettled ground — a fresh zone opens with no residents and no provider, filling by migration alone; the first to settle founds it (BACKLOG-474 — cycle 120; **structure track closed**)
 
 ### Milestone 9: A ground that speaks for itself — SHIPPED cycle 118 (opened cycle 116)
 

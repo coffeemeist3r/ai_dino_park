@@ -5054,3 +5054,66 @@ Boundary clean: `@mlc-ai/web-llm` still imported only by `game/src/ai/webllm.wor
 `game/src/ai/webllmBrain.ts`. `SAVE_VERSION` still 2 — both new fields additive with guards.
 
 Both tracks: APPROVE.
+
+## 2026-08-04 04:00 — cycle 121 — validator — lore APPROVED / structure APPROVED — 🎉 **MILESTONE 10 SHIPPED**
+
+**Milestone 10 — "A fourth ground, and the first feet on it" — shipped tonight, three cycles after it
+opened.** Come back to the park after a week and the map is a different shape: there are four grounds now,
+not three, and the newest one filled up from empty while you were away.
+
+What the milestone actually proved is sharper than "we added a zone". For eleven cycles this project had
+been building on a promise 449 wrote into its own header — *a fourth zone is a row, not three branches* —
+and nobody had ever tested it, because with three grounds "a neighbour" and "the rest of the park" are
+nearly the same set. Cycle 119 added the row. Nine cross-zone systems met the Hollow **untouched**:
+prosperity, harvest, demand, the pantry, the ferry, the provider, migration, decline, governance. And nine
+*test* files broke, then four more the cycle after, every one of them because it had hard-coded that the
+chain is three long. The code generalized; the assertions hadn't. That asymmetry is the right way round,
+and it was invisible until someone finally added the row.
+
+Then the milestone made the arrival something the cast lives rather than a config change. **343** made the
+first dino ever to set foot on a ground its pioneer, forever, once per ground — a fact that can only happen
+one time in a place's history. **474** opened the Hollow with nobody on it, which needed a *frontier tier*
+in the destination pick rather than a weight, because an unsettled ground is by construction the poorest
+place in the park and the appeal read could never have sent anyone there; along the way it forced the park
+to finally say out loud that a fresh save is one inhabited ground and three nobody has ever lived on.
+**364** marked the *teller* — the first beat in seventy cycles of news systems to give the speaker the
+memory instead of handing everything to the listener.
+
+And tonight, **362**: the first migration **pull** this park has ever had. Every bias shipped in a hundred
+and twenty cycles has been a push — the pantry ran dry, the ground hollowed, a friend crossed the edge —
+and all of them say *leave here*. This one says *go there*. A ground you have stood on and been away from
+too long starts calling you back: a faint 💭 in the dino's own voice, a line in the book, and a hand on
+both halves of the migration decision — who goes, and where. The sharpest read in it is the dino that walks
+out of a well-fed ground anyway, because it has been away from the Hollow too long. A curious dino misses a
+place a day sooner than a homebody, which is temperament shading the strength of a feeling and never
+whether the feeling exists. A park that has never moved anyone is completely silent, which is correct: you
+cannot miss somewhere you have never been.
+
+Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands
+alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → **a
+chain that can grow, and a new ground the cast discovers for itself** (M10).
+
+**The structure track, off-milestone by necessity, widened governance.** 463 gave a ground's provider one
+decision and Milestone 9 spent five cycles making that one decision visible, transferable and lived — but
+one decision is a setting, not a system. **473** gives a provider a second, orthogonal call: a *work
+priority*, read off its **energy** where the spend call reads its warmth, so two equally kind providers can
+still run their grounds completely differently. A gather-first ground sits on a fatter pile before it
+spends and its ground recovers faster for being tended; a build-first one raises landmarks the moment it can
+afford them, reaches its granary a landmark sooner, and works its ground harder for the privilege. You can
+read both calls off the zone-map lens now: 🧺 or 🧱 beside 🍽️ or 🏦.
+
+Two findings worth keeping. The code plan predicted that `canBuildGranary` re-checks the landmark gate
+internally, so shaving only the outer `if` would have shipped a policy that passed one gate and was refused
+at the next — a defect that would have read as a flake for cycles. The coder verified rather than assumed,
+and one optional defaulted parameter fixed it with every prior caller byte-identical. And the e2e caught
+something the unit layer structurally could not: the instant relocate path stamped the departure clock
+*after* the zone flipped, recording the ground the dino had just arrived in and then clearing it — a perfect
+no-op living in the order of two calls, not in any pure function. Both layers earned their keep tonight.
+
+build clean · unit **1500/1500** (+19) · e2e **431/431** (+12) — one full parallel run, **no failures, no
+flakes, no re-runs**, including every BACKLOG-456 catalogued spec and the BACKLOG-430 mobile-minds one.
+Additive save on both tracks, no version bump. Two new structure items seeded (476 what a ground can hold,
+477 both of the ground's calls on the lens).
+
+**No milestone is ACTIVE.** The smiths draft Milestone 11 at the next cycle open. phase → lore-pending;
+cycle bumps to 122 next run.
