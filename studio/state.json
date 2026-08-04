@@ -1,6 +1,6 @@
 {
   "cycle": 121,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-362: A ground you come to miss",
   "structureItem": "BACKLOG-473: The ground's second decision \u2014 work priority (gather-first vs build-first)",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-04T03:05:00-05:00",
     "structure-smith": "2026-08-04T03:14:00-05:00",
     "designer": "2026-08-04T03:22:00-05:00",
-    "code-planner": "2026-08-03T03:30:00-05:00",
+    "code-planner": "2026-08-04T03:30:00-05:00",
     "coder": "2026-08-03T03:42:00-05:00",
     "qa": "2026-08-03T03:52:00-05:00",
     "validator": "2026-08-03T04:00:00-05:00",

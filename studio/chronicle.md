@@ -4989,3 +4989,27 @@ landmark sooner, and works its ground harder for it. `null` is byte-identical to
 13 + 14 acceptance criteria. Cross-track collision is `WorldScene.ts` + `saveGame.ts` only — the code plan
 sequences them. 477's compact two-glyph lens fold is explicitly out of scope; tonight the work glyph just
 sits beside the spend glyph.
+
+## 2026-08-04 03:30 — cycle 121 — code-planner — one new module, one extended module, and three findings
+
+**Structure (473)** extends `governance.ts` rather than forking a second policy module — the 463 shape
+(temperament read → persistent enum → hooks → glyph) is the contract, and a `workPriority.ts` would have
+been the same file with a different name. `workRegrowth(null, y)` is specified to be *bit-identical* to
+`regrowYield(y)`, which is the whole compatibility seam in one line.
+
+**Lore (362)** gets a new pure `yearning.ts`. It deliberately does **not** widen 364's `SeenZones` into
+`{zone: {seen, leftDay}}` — that would touch a shipped parse guard and every 364 spec to buy nothing. Two
+small records beat one clever one.
+
+Three findings worth the ink:
+1. `GRANARY_AFTER_STRUCTURES` has more than one read site. Only the `buildOnGather` gate takes the new
+   `granaryGateFor`; a second site silently keeping the old gate is a half-applied policy that would look
+   like a flake. Grep before editing.
+2. `pickMigrant`'s tier order is load-bearing — the new yearning tier must sit strictly below plenty-primed
+   and strictly above the scarcity fallback, and `cycle-076-news-pull` (the BACKLOG-456 spec that drives 40
+   steps and asserts an exact migrant name) is the single most likely spec to move. Verify by running it.
+3. `seedYearning` fires on the migration cadence, which is where 456's flakes live. It goes inside the
+   `ambientPaused` guard or the `__pauseAmbient` seam stops holding still.
+
+Order: structure first, lore second. Shared files are `WorldScene.ts` + `saveGame.ts` only, and the two
+tracks' edits sit ~4000 lines apart in the scene. ~13 files combined.
