@@ -625,7 +625,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
 - [ ] BACKLOG-361 [pokemon] Grove regulars in the book — the collection book tracks how many times each dino has crossed to the grove ("been to the pond 4×"), making homebody-vs-wanderer a legible standing rather than something you only feel. Builds on 334 / 021.
-- [ ] BACKLOG-362 [emergent] Grove-struck homesickness — a dino back from the grove a long while files a faint "miss the pond" pull that re-primes it to migrate back, so the grove becomes a place a dino can *yearn* for, not somewhere it visits once and forgets. Builds on 334 / 342 / 116.
+- [~] BACKLOG-362 [emergent] Grove-struck homesickness — a dino back from the grove a long while files a faint "miss the pond" pull that re-primes it to migrate back, so the grove becomes a place a dino can *yearn* for, not somewhere it visits once and forgets. Builds on 334 / 342 / 116.
 
 ## Cycle 79 lore additions — the pond as a known place (2026-06-25)
 

@@ -4970,3 +4970,22 @@ clobbers itself. 475 is next cycle's pick and will be cleaner with 362's yearnin
 Queue was at 3 (< X=4), so two new items seeded: **476** (what a ground can hold — derived carrying capacity,
 the counterweight 450/460 never had) and **477** (both of the ground's calls on the lens — the legibility
 beat 473 makes necessary).
+
+## 2026-08-04 03:22 — cycle 121 — designer — a ground you come to miss + the ground's second decision
+
+**Lore (362):** the departure clock. Every migration bias this park owns is a push — scarcity, hollowing, a
+dry pantry, a friend a zone away. 362 is the first pull. Crossing *out* of a ground stamps the day; three
+in-game days later (two for a curious dino) that ground starts calling, files a `💭` memory, and re-primes
+both halves of migration — who goes and where. New tier sits below grove-pull/homesick/plenty-primed and
+above the scarcity fallback, so every pinned pick stays byte-identical. Deterministic throughout: longest
+away wins, chain order breaks ties, no `Math.random()` anywhere in the read.
+
+**Structure (473):** a second, orthogonal governance call. `WorkPriority = 'gather' | 'build'` off the
+provider's **energy** axis (spend reads agreeableness — two providers of equal warmth can now still run
+their grounds differently). Two hooks so both branches bite: a gather-first ground defers its bias landmark
+below a pile floor and its yield regrows faster; a build-first ground never defers, reaches its granary one
+landmark sooner, and works its ground harder for it. `null` is byte-identical to today at both hooks.
+
+13 + 14 acceptance criteria. Cross-track collision is `WorldScene.ts` + `saveGame.ts` only — the code plan
+sequences them. 477's compact two-glyph lens fold is explicitly out of scope; tonight the work glyph just
+sits beside the spend glyph.
