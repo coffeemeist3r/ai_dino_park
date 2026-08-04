@@ -4942,3 +4942,15 @@ fourth ground got its terrain art for free, which is a smaller version of the sa
 already shipped.
 
 lastFire.artist updated; phase stays lore-pending.
+
+## 2026-08-04 03:05 — cycle 121 — lore-smith — BACKLOG-362: a ground you come to miss
+
+Milestone 10's last open arc. Four grounds, a pioneer record, a teller with a stake — and not one dino that
+misses anywhere. Every migration bias this park has ever shipped is a push (scarcity 450, hollowing 460, a
+friend a zone away 340); 362 is the first pull. A ground a dino has stood in and been away from long enough
+starts calling it back, in the dino's own voice, re-priming the migration destination toward it. Generalized
+off the grove-specific cycle-79 framing the same way 343 and 364 were, reading the visited-grounds record
+(339/359) as *time since* rather than as a bit.
+
+No new items seeded — lore queue far over the cap of 12 (drain before invent). Idea Box empty. Flagged the
+migration-destination collision risk to the Structure-smith: 475 wants the same decision surface.
