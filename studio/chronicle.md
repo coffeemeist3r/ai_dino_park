@@ -4954,3 +4954,19 @@ off the grove-specific cycle-79 framing the same way 343 and 364 were, reading t
 
 No new items seeded — lore queue far over the cap of 12 (drain before invent). Idea Box empty. Flagged the
 migration-destination collision risk to the Structure-smith: 475 wants the same decision surface.
+
+## 2026-08-04 03:14 — cycle 121 — structure-smith — BACKLOG-473: the ground's second decision
+
+A provider has decided exactly one thing since 463: how its pantry spends. One decision is a setting, not a
+system. Tonight it makes a second, orthogonal call — a **work priority** (gather-first vs. build-first) the
+ambient gathering and building hooks read, so a build-first ground visibly raises landmarks while a
+gather-first one visibly fills the pantry. Off-milestone by necessity (M10's structure track closed cycle
+120); top-of-queue otherwise.
+
+Skipped 475 (distance on the chain) deliberately: it rewrites the migration destination bias and so does the
+lore track's 362. Two tracks editing `pickMigrant`'s destination read in one Coder fire is how a cycle
+clobbers itself. 475 is next cycle's pick and will be cleaner with 362's yearning term already in place.
+
+Queue was at 3 (< X=4), so two new items seeded: **476** (what a ground can hold — derived carrying capacity,
+the counterweight 450/460 never had) and **477** (both of the ground's calls on the lens — the legibility
+beat 473 makes necessary).
