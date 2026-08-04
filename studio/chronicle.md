@@ -5036,3 +5036,21 @@ The e2e found it in one run. `const from` is read one line earlier now.
 
 Also worth a line: the origin zone is called **Pocket Cretaceous**, not "The Bowl". Cost one spec
 round-trip; written into the codeplan so the next fire doesn't pay it again.
+
+## 2026-08-04 03:52 — cycle 121 — qa — 27/27 criteria pass; a clean run, first time
+
+Lore 13/13, structure 14/14. Build clean · unit **1500/1500** · e2e **431/431** on a single full parallel
+run — **no failures, no flakes, no re-runs**. That is worth naming: the BACKLOG-456 catalogued specs
+(`cycle-076-news-pull`, `cycle-077-carry`, `cycle-097-carry-pressure`) and the BACKLOG-430 mobile-minds
+long-dialog spec all passed first time alongside a cycle that touched `pickMigrant` and the build decision.
+
+One criterion adapted rather than dropped: the "build-first ground reaches its granary a landmark sooner"
+check is proven at the unit layer through the exact composition the scene uses (`granaryGateFor` →
+`canBuildGranary`'s new `gate` param) instead of via three stacked dev-hook seams in a browser. The claim is
+established and the half-applied-gate failure mode is pinned; the reasoning is written out in the QA doc so
+the Validator can disagree with it if it wants to.
+
+Boundary clean: `@mlc-ai/web-llm` still imported only by `game/src/ai/webllm.worker.ts` and
+`game/src/ai/webllmBrain.ts`. `SAVE_VERSION` still 2 — both new fields additive with guards.
+
+Both tracks: APPROVE.
