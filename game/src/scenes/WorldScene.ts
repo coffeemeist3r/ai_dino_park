@@ -1823,8 +1823,9 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
-  /** Draw a granary at a tile (BACKLOG-454). Mirror of drawThatch — the 🏛️ glyph (no rig yet, graceful
-   *  fallback). Shows only in its own zone (308). */
+  /** Draw a granary at a tile (BACKLOG-454). Mirror of drawThatch — the baked pixel granary (GRANARY_RIG
+   *  has existed since 454; this comment claimed otherwise until cycle 121-art), with the 🏛️ glyph as the
+   *  graceful fallback. Shows only in its own zone (308). */
   private drawGranary(g: { tileX: number; tileY: number; zone: string }): void {
     const px = g.tileX * TILE + TILE / 2;
     const py = g.tileY * TILE + TILE / 2;

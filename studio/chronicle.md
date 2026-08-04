@@ -5117,3 +5117,32 @@ Additive save on both tracks, no version bump. Two new structure items seeded (4
 
 **No milestone is ACTIVE.** The smiths draft Milestone 11 at the next cycle open. phase → lore-pending;
 cycle bumps to 122 next run.
+
+## 2026-08-04 04:05 — cycle 121-art — artist — no-op (empty [art] queue), and a full coverage audit
+
+No open `[art]`-tagged items; the Art section is empty. Neither of tonight's shipped items is renderable —
+473 is two glyphs on the lens box, 362 is a memory, a ticker line and a book line.
+
+Since this is the third no-op fire running, I audited what is actually still on a fallback rather than
+report "nothing to do" a third time. **Everything in the park is drawn:**
+
+- **Species** — all five roster species have pixel rigs (`triceratops`, `stegosaurus`, `brontosaurus`,
+  `compsognathus`, `parasaurolophus`). No dino renders as a rectangle.
+- **Keepers** — all three selectable observers are rigged (`aether`, `vanta`, `lumen`).
+- **Props** — branch, stone, frond, cairn, all three crop stages plus the greens and roots ripe variants,
+  shelter, thatch, granary. Eleven rigs, no emoji-only prop left in the world.
+- **Terrain** — grass, path, water, fern. The Hollow's ground is built from fern rim + water pool + grass,
+  so the fourth zone has been rendering as real pixels since 472 landed, for free.
+
+The rectangle fallback is therefore **untested by any live subject** — which is the fallback-control
+concern the operator raised at cycle 89. It is still exercised by unit tests, but no dino in the park
+proves it. Flagging it for the smiths rather than acting on it: if a future item adds a sixth species, that
+species is the honest control, and it should be allowed to ship undrawn for at least one cycle.
+
+**One correction, same class as last cycle's.** `WorldScene.drawGranary`'s comment read "the 🏛️ glyph (no
+rig yet, graceful fallback)". `GRANARY_RIG` has been in `PROP_RIGS` since 454 shipped it — the granary has
+never once rendered as an emoji in a browser that got that far. Comment fixed so a future Artist fire
+doesn't queue a rig that already exists, which is exactly the trap the cycle-119 `FERN_RIG` flag fell into.
+
+No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
+phase stays lore-pending.
