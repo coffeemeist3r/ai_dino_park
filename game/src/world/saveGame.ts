@@ -97,6 +97,11 @@ export interface SaveData {
   spendPriorityByZone?: Record<string, 'feed' | 'bank'>;
   /** Who last held each zone's say (BACKLOG-467) — zone→provider name. Additive; absent → {} (no handover tracked yet). */
   lastProviderByZone?: Record<string, string>;
+  /** Per-zone provider-set work priority (BACKLOG-473) — zone→'gather'|'build'. Additive; absent → {}. */
+  workPriorityByZone?: Record<string, 'gather' | 'build'>;
+  /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
+   *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
+  leftDays?: Record<string, Record<string, number>>;
   /** zone → first dino ever to arrive there (BACKLOG-343). Additive; absent → {} (no back-fill: we did
    *  not record it then and must not invent it). */
   pioneers?: Record<string, string>;
@@ -417,6 +422,39 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // workPriorityByZone (BACKLOG-473) — the second governance call. Same string-valued-object guard as
+  // spendPriorityByZone above; additive, absent → undefined, caller defaults to {}.
+  let workPriorityByZone: Record<string, 'gather' | 'build'> | undefined;
+  if (o.workPriorityByZone !== undefined) {
+    if (typeof o.workPriorityByZone !== 'object' || o.workPriorityByZone === null) return null;
+    const zones = o.workPriorityByZone as Record<string, unknown>;
+    workPriorityByZone = {};
+    for (const z of Object.keys(zones)) {
+      if (zones[z] !== 'gather' && zones[z] !== 'build') return null;
+      workPriorityByZone[z] = zones[z] as 'gather' | 'build';
+    }
+  }
+
+  // leftDays (BACKLOG-362) — dino→zone→the day it last left. Object of objects of finite numbers: the
+  // seenZones nesting with harvestedByZone's numeric leaf.
+  let leftDays: Record<string, Record<string, number>> | undefined;
+  if (o.leftDays !== undefined) {
+    if (typeof o.leftDays !== 'object' || o.leftDays === null) return null;
+    const dinos = o.leftDays as Record<string, unknown>;
+    leftDays = {};
+    for (const n of Object.keys(dinos)) {
+      const zones = dinos[n];
+      if (typeof zones !== 'object' || zones === null || Array.isArray(zones)) return null;
+      const byZone: Record<string, number> = {};
+      for (const z of Object.keys(zones as Record<string, unknown>)) {
+        const day = (zones as Record<string, unknown>)[z];
+        if (typeof day !== 'number' || !Number.isFinite(day)) return null;
+        byZone[z] = day;
+      }
+      leftDays[n] = byZone;
+    }
+  }
+
   // pioneers (BACKLOG-343) — zone→the first dino ever to arrive there. Same shape and same guard as
   // lastProviderByZone above; additive, absent → undefined, caller defaults to {}.
   let pioneers: Record<string, string> | undefined;
@@ -629,6 +667,8 @@ export function deserialize(json: string): SaveData | null {
     lastProviderByZone,
     pioneers,
     seenZones,
+    workPriorityByZone,
+    leftDays,
     cairns,
     shelters,
     thatches,

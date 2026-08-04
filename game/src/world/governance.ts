@@ -11,6 +11,7 @@
  */
 
 import type { Personality } from '../ai/personality';
+import { YIELD_MAX, YIELD_REGROW } from './regrowth';
 
 /**
  * A zone's stance on its banked food, set by its provider:
@@ -63,4 +64,80 @@ export function granaryDeferredForFeeding(p: SpendPriority | null | undefined, f
  */
 export function spendGlyph(p: SpendPriority | null | undefined): string {
   return p === 'feed' ? '🍽️' : p === 'bank' ? '🏦' : '';
+}
+
+/* ---------------------------------------------------------------------------------------------------
+ * The ground's second decision (BACKLOG-473).
+ *
+ * 463 gave a provider one call — how the pantry spends. One call is a setting; governance only becomes a
+ * *system* once a ground decides more than one thing. This is the second, orthogonal call: what the
+ * residents put their backs into. It lives here rather than in a module of its own because the shape is
+ * identical (temperament read → persistent enum → hooks that treat `null` as today's behaviour → a lens
+ * glyph), and a second file would have been this one with a different name.
+ * ------------------------------------------------------------------------------------------------- */
+
+/**
+ * A zone's stance on its residents' labour, set by its provider:
+ * - `'gather'` — fill the stores first: hold off raising a landmark while the pile is thin, and the ground
+ *   itself recovers faster for being worked and tended.
+ * - `'build'` — raise the walls first: never defer a landmark, reach the granary a landmark sooner, and let
+ *   the ground regrow slower for it.
+ */
+export type WorkPriority = 'gather' | 'build';
+
+/** Pile total a `'gather'` zone wants in hand before it spends on a bias landmark. Above the cairn recipe
+ *  and below the granary's, so a gather-first ground visibly banks a while and still builds. */
+export const WORK_BUILD_FLOOR = 6;
+
+/** Regrowth multipliers — a worked-and-tended ground recovers faster, a ground whose backs are on the walls
+ *  slower. The calibration knobs; `null` is exactly 1 and must stay that way (the compatibility seam). */
+export const GATHER_REGROW_MULT = 1.6;
+export const BUILD_REGROW_MULT = 0.6;
+
+/**
+ * The work priority a provider sets, read off its **energy** — deliberately a different axis from the spend
+ * call's agreeableness, so two providers of equal warmth can still run their grounds differently. An
+ * energetic provider puts its ground to work raising landmarks; a calm one has it gather and store. Absent
+ * traits default to `'build'`, which is today's behaviour.
+ */
+export function providerWorkPriority(traits?: Personality): WorkPriority {
+  return (traits?.energy ?? 0.5) >= 0.5 ? 'build' : 'gather';
+}
+
+/**
+ * Hook 1a — the bias-landmark defer. A `'gather'` zone holds off raising its landmark while its pile is
+ * below `WORK_BUILD_FLOOR` (stores before walls), so the pile visibly climbs instead of being auto-drained
+ * on every affordable cairn. `'build'` and `null` never defer — exactly as before 473.
+ */
+export function landmarkDeferredForGathering(p: WorkPriority | null | undefined, pileTotal: number): boolean {
+  return p === 'gather' && pileTotal < WORK_BUILD_FLOOR;
+}
+
+/**
+ * Hook 1b — the granary gate. A `'build'` zone reaches its granary one base landmark sooner (floored at 1,
+ * so the gate never vanishes); `'gather'` and `null` read the gate unchanged.
+ */
+export function granaryGateFor(p: WorkPriority | null | undefined, base: number): number {
+  return p === 'build' ? Math.max(1, base - 1) : base;
+}
+
+/** The regrowth multiplier for a work priority. `null` is exactly 1 — the seam that keeps an unpolicied
+ *  ground bit-identical to `regrowYield`. */
+export function workRegrowMult(p: WorkPriority | null | undefined): number {
+  return p === 'gather' ? GATHER_REGROW_MULT : p === 'build' ? BUILD_REGROW_MULT : 1;
+}
+
+/**
+ * Hook 2 — the ground's recovery (384). One regrow tick scaled by the zone's work priority, clamped to
+ * `[0, YIELD_MAX]`. `workRegrowth(null, y)` is `regrowYield(y)` to the bit.
+ */
+export function workRegrowth(p: WorkPriority | null | undefined, y: number): number {
+  const next = y + YIELD_REGROW * workRegrowMult(p);
+  return Math.max(0, Math.min(YIELD_MAX, next));
+}
+
+/** The lens read (twin of `spendGlyph`): 🧺 fills its stores first, 🧱 raises its walls first. A ground with
+ *  no policy renders nothing. */
+export function workGlyph(p: WorkPriority | null | undefined): string {
+  return p === 'gather' ? '🧺' : p === 'build' ? '🧱' : '';
 }

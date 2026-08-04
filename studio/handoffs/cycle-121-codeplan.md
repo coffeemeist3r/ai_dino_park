@@ -251,3 +251,61 @@ none.
 ### Estimated touch count
 
 ~6 files (3 new, 3 modified). **Combined cycle: ~13 files** — within the CHARTER v6 arc size.
+
+---
+
+## Shipped
+
+**Order followed:** structure track first, then lore track, as planned. No cross-track clobber.
+
+### Files touched (13)
+
+*Structure track (473)*
+- `game/src/world/governance.ts` — `WorkPriority`, `WORK_BUILD_FLOOR`, `GATHER_REGROW_MULT` /
+  `BUILD_REGROW_MULT`, `providerWorkPriority`, `landmarkDeferredForGathering`, `granaryGateFor`,
+  `workRegrowMult`, `workRegrowth`, `workGlyph`.
+- `game/src/world/granary.ts` — `canBuildGranary` gains an optional `gate` param (see deviation 1).
+- `game/src/world/handover.ts` — `workPhrase` + an optional 5th `work` arg on `handoverBeat`.
+- `game/src/ui/lenses.ts` — `ZoneMapEntry.work`, `zoneMapModel(… , works)`.
+- `tests/unit/cycle-121-workpriority.test.ts` (new, 9 tests)
+- `tests/e2e/cycle-121-work-priority.spec.ts` (new, 5 specs)
+
+*Lore track (362)*
+- `game/src/world/yearning.ts` (new) — the whole pure read.
+- `game/src/ui/lenses.ts` — `BookRow.yearn` + its `bookLines` row (same file as above; edited once).
+- `tests/unit/cycle-121-yearning.test.ts` (new, 10 tests)
+- `tests/e2e/cycle-121-yearning.spec.ts` (new, 7 specs)
+
+*Shared*
+- `game/src/scenes/WorldScene.ts` — both tracks' seams.
+- `game/src/world/saveGame.ts` — `workPriorityByZone` + `leftDays` fields and parse guards.
+
+### Deviations from the plan
+
+1. **`canBuildGranary` gained a `gate` param.** The plan's Risk 1 was real: the function re-checks
+   `GRANARY_AFTER_STRUCTURES` internally, so shaving only `buildOnGather`'s outer `if` would have been a
+   half-applied policy. The lazy correct fix is one optional, defaulted parameter — every pre-473 caller
+   and its shipped specs are byte-identical, and a unit test pins all three arms.
+2. **`relocate` needed the source zone captured before `setZone`.** The first draft stamped the departure
+   clock with `zoneOf(...)` *after* the zone flipped, so it stamped the destination and then immediately
+   cleared it — net zero. Caught by the e2e, fixed with a `const from` read one line earlier and a
+   `from !== destZoneId` guard.
+3. **One planned e2e was dropped.** "Two providers of the same warmth run their grounds differently"
+   needed a save reset the scene has no hook for. The axis-independence claim is proven by a unit fixture
+   (`energy 0.9 / agreeableness 0.1` → `build` + `bank`, and its mirror), which is the stronger test
+   anyway; the in-scene spec would only have re-proved the wiring.
+4. **`workRegrowth` reads `workRegrowMult`**, exported separately so a test can pin `null → 1` directly
+   rather than inferring it from a clamped sum.
+
+### Findings
+
+- **Bowl display name.** The origin zone renders as *Pocket Cretaceous*, not "The Bowl". Cost one spec
+  round-trip; noted here so the next fire writing a zone-name assertion doesn't repeat it.
+- **Roster temperaments for the two governance axes** (name-seeded, stable): Mossback `gather+bank`,
+  Twitch `gather+feed`, Sunny `build+feed`, Rex `build+bank`, Glade `build+bank`. Twitch/Sunny is the pair
+  that isolates the work call from the spend call in-scene.
+
+### Status
+
+`npm --prefix game run build` clean · `npx vitest run` **1500/1500** (+19) · new e2e **12/12** green.
+Full parallel e2e run reported below by QA.

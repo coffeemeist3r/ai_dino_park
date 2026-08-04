@@ -10,7 +10,7 @@
  * ticker; this module owns only the wording and the "is it a genuine handover" rule.
  */
 
-import type { SpendPriority } from './governance';
+import type { SpendPriority, WorkPriority } from './governance';
 
 /** The 🧺 mark the beat leads with — the same glyph the `provider` role wears (roles.ts ROLE_ICON). */
 export const HANDOVER_MARK = '🧺';
@@ -22,6 +22,14 @@ export const HANDOVER_MARK = '🧺';
  */
 export function priorityPhrase(priority: SpendPriority): string {
   return priority === 'feed' ? 'mouths before walls' : 'walls before mouths';
+}
+
+/**
+ * The second call's phrase (BACKLOG-473) — what the incoming provider puts its ground's backs into. Twin of
+ * `priorityPhrase`; the handover names both calls now that a ground decides more than one thing.
+ */
+export function workPhrase(work: WorkPriority): string {
+  return work === 'gather' ? 'backs to the stores' : 'backs to the walls';
 }
 
 /**
@@ -37,7 +45,10 @@ export function handoverBeat(
   next: string | null,
   zoneName: string,
   priority: SpendPriority,
+  // BACKLOG-473: optional so every pre-473 4-arg call (and its shipped spec) reads exactly as before.
+  work?: WorkPriority,
 ): string | null {
   if (!next || next === prev) return null;
-  return `${HANDOVER_MARK} ${next} sets ${zoneName}'s table now — ${priorityPhrase(priority)}`;
+  const tail = work ? `${priorityPhrase(priority)} · ${workPhrase(work)}` : priorityPhrase(priority);
+  return `${HANDOVER_MARK} ${next} sets ${zoneName}'s table now — ${tail}`;
 }

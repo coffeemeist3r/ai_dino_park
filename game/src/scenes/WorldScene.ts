@@ -112,7 +112,19 @@ import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../worl
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
-import { providerPriority, feedReserve, granaryDeferredForFeeding, spendGlyph, type SpendPriority } from '../world/governance';
+import {
+  providerPriority,
+  feedReserve,
+  granaryDeferredForFeeding,
+  spendGlyph,
+  providerWorkPriority,
+  landmarkDeferredForGathering,
+  granaryGateFor,
+  workRegrowth,
+  workGlyph,
+  type SpendPriority,
+  type WorkPriority,
+} from '../world/governance';
 import { heldShort, soundsDiscontent, discontentLine } from '../world/discontent';
 import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason';
 import { handoverBeat } from '../world/handover';
@@ -136,6 +148,7 @@ import {
   zoneStructure,
   structureRecipe,
   pressuredCarry,
+  pileTotal,
   takeResource,
   barterSwap,
   resourceFetchable,
@@ -144,11 +157,23 @@ import {
   type ResourceKind,
   type Stockpile,
 } from '../world/resource';
-import { regrowYield, rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
+import { rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { recordPioneer, pioneerEvent, pioneerLine, foundedBy, pioneerOf, type Pioneers } from '../world/pioneer';
 import { isUnsettled, unsettledNeighbor, settleMemory, settleLine, settleEvent, UNSETTLED_BADGE } from '../world/frontier';
+import {
+  markLeft,
+  clearLeft,
+  yearnThreshold,
+  yearnedZone,
+  yearnMemory,
+  yearnLine,
+  yearnEvent,
+  yearnedFor,
+  yearnBookLine,
+  type LeftDays,
+} from '../world/yearning';
 import {
   markSeen,
   teachableZone,
@@ -467,6 +492,9 @@ export class WorldScene extends Phaser.Scene {
   /** Which grounds each dino has actually set foot on (BACKLOG-364) — the general form of `groveVisited`.
    *  Seeded with a dino's home zone at spawn; added to at both arrival seams. Persisted. */
   private seenZones: SeenZones = {};
+  /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). The departure clock
+   *  the yearning reads. Persisted; absent → {}. */
+  private leftDays: LeftDays = {};
   /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
   private plotByZone: Record<string, { plantedDay: number } | null> = emptyPlots();
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
@@ -488,6 +516,9 @@ export class WorldScene extends Phaser.Scene {
    *  non-null provider the handover lands a one-off logged beat. A departure leaves the last name here so
    *  no false handover fires if the same dino re-emerges. Absent → {} on load. */
   private lastProviderByZone: Record<string, string> = {};
+  /** Per-zone provider-set work priority (BACKLOG-473) — the ground's second decision. Persisted and
+   *  lingering exactly like `spendPriorityByZone`. Absent → no policy → today's behaviour at both hooks. */
+  private workPriorityByZone: Record<string, WorkPriority> = {};
   /**
    * A zone's spend priority (BACKLOG-463): if it has a standing provider, the priority that provider
    * sets from its temperament (stored so it persists + reads legibly); else the last provider's lingering
@@ -501,6 +532,20 @@ export class WorldScene extends Phaser.Scene {
       return p;
     }
     return this.spendPriorityByZone[zone] ?? null;
+  }
+  /**
+   * A zone's work priority (BACKLOG-473) — the structural twin of `spendPriorityFor`: the standing
+   * provider's call off its temperament, else the last provider's lingering call, else null (both hooks
+   * inert, today's behaviour).
+   */
+  private workPriorityFor(zone: string): WorkPriority | null {
+    const provider = this.providerFor(zone);
+    if (provider) {
+      const p = providerWorkPriority(this.dinoByName(provider)?.traits);
+      this.workPriorityByZone[zone] = p;
+      return p;
+    }
+    return this.workPriorityByZone[zone] ?? null;
   }
   /**
    * The grumble's ledger (BACKLOG-471) — per zone, how many starving mouths the bank reserve (463) has held
@@ -1006,6 +1051,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__thawRelief = () => this.runThawRelief();
     // BACKLOG-463: a zone's provider-set spend priority ('feed' / 'bank' / null when no provider has emerged).
     (window as any).__spendPriority = (zone: string) => this.spendPriorityFor(zone ?? this.zoneId);
+    (window as any).__workPriority = (zone: string) => this.workPriorityFor(zone ?? this.zoneId); // BACKLOG-473
     // BACKLOG-471: the grumble's ledger — mouths each ground has held short, and the day it last sounded.
     (window as any).__discontent = () => ({
       shorts: { ...this.shortsByZone },
@@ -1091,6 +1137,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__pioneers = () => ({ ...this.pioneers }); // BACKLOG-343
     // BACKLOG-364: which grounds each dino has set foot on, and a direct drive of one telling.
     (window as any).__seenZones = () => JSON.parse(JSON.stringify(this.seenZones));
+    (window as any).__leftDays = () => JSON.parse(JSON.stringify(this.leftDays)); // BACKLOG-362
+    (window as any).__yearnDest = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.yearnDestOf(d) : null;
+    }; // BACKLOG-362
     (window as any).__teach = (a: string, b: string) => this.teachBeat(a, b);
     // BACKLOG-474: which grounds nobody has ever lived on, in chain order.
     (window as any).__unsettled = () => zoneChain().filter((z) => this.isZoneUnsettled(z));
@@ -1595,7 +1646,9 @@ export class WorldScene extends Phaser.Scene {
     for (const zone of this.residentZones()) {
       // BACKLOG-384: a zone's yield regrows a little each tick (even while a resource waits or the keeper's away),
       // and the spawn roll is scaled by it — a worked-out zone spawns rarer until it rests, a full zone unchanged.
-      this.yieldByZone[zone] = regrowYield(this.yieldByZone[zone] ?? YIELD_MAX);
+      // BACKLOG-473: scaled by the ground's work priority — a gather-first ground is worked and tended so it
+      // recovers faster; a build-first one has its backs on the walls. `null` is `regrowYield` to the bit.
+      this.yieldByZone[zone] = workRegrowth(this.workPriorityFor(zone), this.yieldByZone[zone] ?? YIELD_MAX);
       if (this.resourceByZone[zone] || !rollResourceAt(RESOURCE_SPAWN_CHANCE, this.yieldByZone[zone])) continue;
       // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
       const landing = resourceLanding(COLS, ROWS);
@@ -1737,11 +1790,16 @@ export class WorldScene extends Phaser.Scene {
    */
   private buildOnGather(taker: Dino): void {
     const zone = zoneOf(this.dinoZones, taker.name, BOWL_ID);
-    if (this.baseLandmarks(zone) >= GRANARY_AFTER_STRUCTURES && !this.hasGranary(zone)) {
+    // BACKLOG-473: a 'build'-priority ground reaches its granary one base landmark sooner. The gate is
+    // passed to `canBuildGranary` too — it re-checks internally, so shaving only this `if` would be
+    // half-applied and would read as a flake rather than as a policy.
+    const work = this.workPriorityFor(zone);
+    const gate = granaryGateFor(work, GRANARY_AFTER_STRUCTURES);
+    if (this.baseLandmarks(zone) >= gate && !this.hasGranary(zone)) {
       // BACKLOG-463: a 'feed'-priority provider holds off the granary while the store is thin (mouths before
       // walls); a 'bank' one (or no provider) builds as soon as the recipe is affordable.
       const deferred = granaryDeferredForFeeding(this.spendPriorityFor(zone), foodPileTotal(this.foodStoreFor(zone)));
-      if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false)) {
+      if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false, gate)) {
         const spent = buildGranary(this.pileFor(zone));
         if (spent) {
           this.stockpileByZone[zone] = spent;
@@ -1751,6 +1809,9 @@ export class WorldScene extends Phaser.Scene {
       }
       return;
     }
+    // BACKLOG-473: a 'gather'-priority ground holds off its bias landmark while the pile is thin, so the
+    // pile visibly climbs instead of being auto-drained on every affordable cairn.
+    if (landmarkDeferredForGathering(work, pileTotal(this.pileFor(zone)))) return;
     const built = buildStructureFor(this.pileFor(zone), zone);
     if (built) {
       this.stockpileByZone[zone] = built;
@@ -2476,7 +2537,13 @@ export class WorldScene extends Phaser.Scene {
     for (const z of ZONES) {
       const cur = this.providerFor(z.id);
       if (cur && cur !== this.lastProviderByZone[z.id]) {
-        const beat = handoverBeat(this.lastProviderByZone[z.id] ?? null, cur, z.name, this.spendPriorityFor(z.id)!);
+        const beat = handoverBeat(
+          this.lastProviderByZone[z.id] ?? null,
+          cur,
+          z.name,
+          this.spendPriorityFor(z.id)!,
+          this.workPriorityFor(z.id) ?? undefined, // BACKLOG-473: the incoming provider sets *both* calls
+        );
         if (beat) this.logEvent(beat);
         this.lastProviderByZone[z.id] = cur;
       }
@@ -2554,6 +2621,10 @@ export class WorldScene extends Phaser.Scene {
       taught: (() => {
         const t = taughtCount(recall(this.memory, d.name)); // BACKLOG-364: what it has shown others
         return t ? taughtBookLine(t.zoneName, t.count) : undefined;
+      })(),
+      yearn: (() => {
+        const z = yearnedFor(recall(this.memory, d.name)); // BACKLOG-362: the ground it has been away from too long
+        return z ? yearnBookLine(z) : undefined;
       })(),
     }));
   }
@@ -2726,6 +2797,7 @@ export class WorldScene extends Phaser.Scene {
       this.decliningZones(), // BACKLOG-460: zones hollowed below their peak (⬇ marker)
       this.zoneSpends(), // BACKLOG-468: how each ground has chosen to spend (🍽️/🏦 marker)
       this.unsettledZones(), // BACKLOG-474: a ground nobody has ever lived on reads as unsettled, not poor
+      this.zoneWorks(), // BACKLOG-473: what each ground puts its backs into (🧺/🧱 marker)
     );
   }
 
@@ -2741,6 +2813,14 @@ export class WorldScene extends Phaser.Scene {
   private zoneSpends(): Record<string, SpendPriority | null> {
     const out: Record<string, SpendPriority | null> = {};
     for (const z of zoneChain()) out[z] = this.spendPriorityFor(z);
+    return out;
+  }
+
+  /** Each zone's work policy (BACKLOG-473) — the map lens's 🧺/🧱 read, keyed by zone id. Twin of
+   *  `zoneSpends`; a ground that has never had a provider stays null. */
+  private zoneWorks(): Record<string, WorkPriority | null> {
+    const out: Record<string, WorkPriority | null> = {};
+    for (const z of zoneChain()) out[z] = this.workPriorityFor(z);
     return out;
   }
 
@@ -2782,7 +2862,7 @@ export class WorldScene extends Phaser.Scene {
       // `○ quiet` beside an empty ground says "poor" when the truth is "nobody has ever been here".
       let txt = e.unsettled
         ? `${e.name}\n${e.count} 🦕\n${UNSETTLED_BADGE}`
-        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}`;
+        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}${e.work ? ` ${workGlyph(e.work)}` : ''}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
@@ -2891,6 +2971,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__plentyTarget = (name: string) =>
       plentyTarget(recall(this.memory, name), zoneOf(this.dinoZones, name, BOWL_ID));
     (window as any).__seedPlentyWord = () => this.seedPlentyWord();
+    (window as any).__seedYearning = () => this.seedYearning(); // BACKLOG-362
     // dev-only: pond-swappers (BACKLOG-346) — two grove-visited dinos trade pond notes (applies it).
     (window as any).__pondSwap = (a: string, b: string) => this.pondSwapBeat(a, b);
     // dev-only: word of the warmth (BACKLOG-223) — a warmed speaker leads with the good news.
@@ -4565,6 +4646,7 @@ export class WorldScene extends Phaser.Scene {
     this.bumpTenures(); // BACKLOG-341: home-zone tenure accrues on the migrate cadence, migration or not
     this.bumpPeaks(); // BACKLOG-460: each zone's population high-water mark tracks before anyone leaves this roll
     this.seedPlentyWord(); // BACKLOG-458: a thriving zone's residents get first-hand word of plenty to spread
+    this.seedYearning(); // BACKLOG-362: a dino long away from a ground it has stood on starts to miss it
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
@@ -4664,6 +4746,38 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
+   * The ground this dino misses (BACKLOG-362): one it stood on, has been away from past its own threshold,
+   * and can still walk to (a reachable neighbour of its home). null when it longs for nowhere. The first
+   * migration *pull* in the park — every other bias is a push.
+   */
+  private yearnDestOf(d: Dino): string | null {
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    return yearnedZone(
+      this.leftDays,
+      d.name,
+      home,
+      getWorldClock().now().day,
+      zoneNeighbors(home).map((l) => l.to),
+      yearnThreshold(d.traits),
+    );
+  }
+
+  /**
+   * File the longing (BACKLOG-362) — a dino past its threshold for a reachable ground it has left keeps a
+   * faint memory of it. Deduped against the ring the way `seedPlentyWord` dedupes its plenty memory, so the
+   * beat is a feeling and not a tic. Fires on the migration cadence.
+   */
+  private seedYearning(): void {
+    for (const d of this.dinos) {
+      const dest = this.yearnDestOf(d);
+      if (!dest) continue;
+      const line = yearnMemory(zoneById(dest).name);
+      if (recall(this.memory, d.name).includes(line)) continue;
+      this.memory = remember(this.memory, d.name, line);
+    }
+  }
+
+  /**
    * The neighbour a scarcity-driven migrant heads for (BACKLOG-450): the most appealing (richest prosperity
    * + fullest pantry) of `home`'s neighbours, falling back to the primary link for an unlinked zone.
    *
@@ -4695,9 +4809,19 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-458: a dino primed by word of plenty heads for the *named* thriving neighbour it heard about,
     // not the pure richest-neighbour pick — hearsay chooses the destination. Falls back to the scarcity pick.
     const primed = this.plentyDestOf(d);
-    const dest = primed ?? this.scarcityDestOf(home);
+    // BACKLOG-362: below hearsay, above the appeal read — a ground it has actually heard described as
+    // thriving still beats one it merely misses, but a longing beats a spreadsheet.
+    const missed = primed ? null : this.yearnDestOf(d);
+    const dest = primed ?? missed ?? this.scarcityDestOf(home);
     if (primed) this.logEvent(`🌾 ${d.name} heard ${zoneById(primed).name} is thriving — heads that way`);
-    this.startMigration(d, dest, this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined);
+    if (missed) {
+      this.logEvent(yearnEvent(d.name, zoneById(missed).name));
+      this.flashFeed(d, yearnLine());
+    }
+    // A yearning move is not a scarcity move: it must not fire 457's greener-ground beat, whatever the
+    // appeal maths happen to say about where it is going.
+    const reason = missed ? undefined : this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined;
+    this.startMigration(d, dest, reason);
   }
 
   /**
@@ -4721,6 +4845,10 @@ export class WorldScene extends Phaser.Scene {
     // scarcity/random fallback, below the grove tiers so the 076/078 grove-pull picks stay byte-identical.
     const primed = candidates.filter((d) => this.plentyDestOf(d));
     if (primed.length) return primed[Math.floor(Math.random() * primed.length)];
+    // BACKLOG-362: a dino that misses a ground goes next — strictly below the plenty tier and strictly
+    // above the scarcity fallback, so every pinned pick above stays byte-identical.
+    const yearning = candidates.filter((d) => this.yearnDestOf(d));
+    if (yearning.length) return yearning[Math.floor(Math.random() * yearning.length)];
     // BACKLOG-450: no news or homesickness pulling anyone — scarcity decides. A resident of the poorest,
     // emptiest-pantry zone is likeliest to walk out (want empties out); random among the equally-poor keeps
     // *which* of them leaves varied. Touches only this fallback tier, so the grove-pull picks above (pinned by
@@ -4754,6 +4882,10 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-474: and if it founded the ground, this dino is settling somewhere nobody has ever lived.
     if (this.foundZone(d.name, dest)) this.settleZone(d, dest);
     markSeen(this.seenZones, d.name, dest); // BACKLOG-364: it has now seen this ground, and can show it to others
+    // BACKLOG-362: the departure clock — the ground it just left starts counting, the one it arrived at
+    // stops. You cannot miss where you are standing.
+    markLeft(this.leftDays, d.name, home, getWorldClock().now().day);
+    clearLeft(this.leftDays, d.name, dest);
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
     const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
@@ -4873,10 +5005,16 @@ export class WorldScene extends Phaser.Scene {
 
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
   private relocate(d: Dino, destZoneId: string): void {
+    // BACKLOG-362: the ground it is leaving, read *before* the zone flips — after `setZone` this dino is
+    // already standing in the destination and the departure clock would stamp the wrong ground.
+    const from = zoneOf(this.dinoZones, d.name, BOWL_ID);
     setZone(this.dinoZones, d.name, destZoneId);
     // BACKLOG-343/474: the instant path founds — and settles — a ground too.
     if (this.foundZone(d.name, destZoneId)) this.settleZone(d, destZoneId);
     markSeen(this.seenZones, d.name, destZoneId); // BACKLOG-364: the instant path sees a ground too
+    // BACKLOG-362: and stamps the departure clock, so the instant path can be missed from too.
+    if (from !== destZoneId) markLeft(this.leftDays, d.name, from, getWorldClock().now().day);
+    clearLeft(this.leftDays, d.name, destZoneId);
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a new zone starts fresh (mirrors crossDino)
     // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
     const tileX = Phaser.Math.Between(2, COLS - 3);
@@ -5619,6 +5757,8 @@ export class WorldScene extends Phaser.Scene {
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
       spendPriorityByZone: this.spendPriorityByZone, // BACKLOG-463: per-zone provider-set spend priority (additive)
+      workPriorityByZone: this.workPriorityByZone, // BACKLOG-473: per-zone provider-set work priority (additive)
+      leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
       eggs: this.eggs,
       born: this.born,
@@ -5708,6 +5848,8 @@ export class WorldScene extends Phaser.Scene {
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
+      this.workPriorityByZone = (save.workPriorityByZone as Record<string, WorkPriority>) ?? {}; // BACKLOG-473 (absent → {})
+      this.leftDays = save.leftDays ?? {}; // BACKLOG-362 (absent → {}: nothing to miss until it leaves somewhere)
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
       this.plotStageShownByZone = emptyPlotStages();
       this.refreshPlot();

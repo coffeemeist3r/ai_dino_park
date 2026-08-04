@@ -35,8 +35,16 @@ export const GRANARY_FOOD_BONUS = 3;
  * `GRANARY_AFTER_STRUCTURES` base landmarks, and its pile must cover `GRANARY_RECIPE`. The `!hasGranary`
  * guard keeps it one-per-zone; enforced here so no caller can skip it.
  */
-export function canBuildGranary(pile: Stockpile, landmarks: number, hasGranary: boolean): boolean {
-  if (hasGranary || landmarks < GRANARY_AFTER_STRUCTURES) return false;
+export function canBuildGranary(
+  pile: Stockpile,
+  landmarks: number,
+  hasGranary: boolean,
+  // BACKLOG-473: a 'build'-priority ground shaves the gate by one (`granaryGateFor`). Optional and
+  // defaulted, so every pre-473 caller and spec is byte-identical — and the gate is re-checked HERE as well
+  // as at the call site, so a caller that shaved only the outer `if` would have been half-applied.
+  gate: number = GRANARY_AFTER_STRUCTURES,
+): boolean {
+  if (hasGranary || landmarks < gate) return false;
   return (Object.keys(GRANARY_RECIPE) as ResourceKind[]).every((k) => (pile[k] ?? 0) >= (GRANARY_RECIPE[k] ?? 0));
 }
 

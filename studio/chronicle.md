@@ -5013,3 +5013,26 @@ Three findings worth the ink:
 
 Order: structure first, lore second. Shared files are `WorldScene.ts` + `saveGame.ts` only, and the two
 tracks' edits sit ~4000 lines apart in the scene. ~13 files combined.
+
+## 2026-08-04 03:42 — cycle 121 — coder — BACKLOG-473 + BACKLOG-362 shipped
+
+13 files, structure first as planned, no cross-track clobber. Build clean, unit **1500/1500** (+19), new
+e2e **12/12**.
+
+Two things the plan predicted and one it didn't:
+
+**Predicted, and real.** `canBuildGranary` re-checks `GRANARY_AFTER_STRUCTURES` internally, so shaving only
+`buildOnGather`'s outer `if` would have shipped a policy that half-applied — a build-first ground would
+have passed the gate and then been refused by the function it called. One optional, defaulted `gate`
+parameter fixes it with every pre-473 caller byte-identical, and a unit test pins all three arms.
+
+**Predicted, and harmless.** The `pickMigrant` tier landed exactly where the plan put it and the
+`cycle-076-news-pull` spec (the one that drives 40 steps and asserts an exact migrant name) is untouched.
+
+**Not predicted.** The instant `relocate` path stamped the departure clock *after* `setZone`, so it recorded
+the ground the dino had just arrived in and then immediately cleared it — a net no-op that the unit tests
+could never have caught, because the bug lived in the order of two calls in the scene, not in the pure read.
+The e2e found it in one run. `const from` is read one line earlier now.
+
+Also worth a line: the origin zone is called **Pocket Cretaceous**, not "The Bowl". Cost one spec
+round-trip; written into the codeplan so the next fire doesn't pay it again.
