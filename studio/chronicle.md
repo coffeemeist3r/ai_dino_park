@@ -5163,3 +5163,12 @@ Milestone 11 structure arc and 466 isn't. Reading the code first sharpened the i
 read are one-hop by construction, but `plentyDestOf` (458) and `yearnDestOf` (362) are one-hop by *discard* —
 they compute what a dino wants and then return null if it isn't next door. A dino in the bowl cannot miss the
 Hollow. Structure arcs written into MILESTONE.md: 475, 476, 477.
+
+## 2026-08-05 03:26 — cycle 122 — designer — two arcs, one theme: distance, and what it leaves on you
+
+Lore 347 generalized off the grove: a crossing dino records the ground it came from, files a "still full of
+<ground>" memory at arrival, and floats that ground's keepsake glyph on the next roll or two — tenure (341)
+is the clock, so no new counter. Deliberately *not* a bubble at the crossing instant: four beats already
+contend for it. Structure 475: one pure `distance.ts` derived from ZONE_LINKS (hops, `hopToward`,
+`nearestQualifying`), with the identity `hopToward(a, neighbour) === neighbour` doing the back-compat work.
+The two pulls stop discarding a distant target; the demand read prefers the nearest grower. 13 + 14 criteria.
