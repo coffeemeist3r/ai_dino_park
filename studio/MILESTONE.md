@@ -8,8 +8,26 @@
 
 ## Current milestone
 
-_(none — Milestone 10 shipped cycle 121. The smiths draft Milestone 11 at the next cycle open:
-Lore-smith writes the headline + feel arcs, Structure-smith adds the spine arcs.)_
+**Milestone 11: A park you have to cross**
+**Status:** ACTIVE (opened cycle 122)
+
+Milestone 10 added a fourth ground and found that the code generalized while the assertions didn't. It
+left behind a sharper finding in its own closing item: **every cross-zone read in this park is one hop
+deep.** The ferry carries to *a* neighbour, the demand read points at *a* neighbour, migration walks to
+the richest *neighbour* — and the two pulls the last two cycles built (word of plenty, 458; a ground you
+miss, 362) are silently *dropped* when what a dino wants isn't next door. At three grounds "neighbour"
+and "the park" were the same set, so nothing was wrong. At four they aren't, and the far end of the chain
+is a place no desire can reach. Milestone 11 gives the chain **distance**: hops the systems can measure,
+a dino that walks the whole park one ground at a time to answer a longing, a ground that can be too full
+to take another mouth — and a cast that carries where it has been around with it.
+
+**Lore arcs:**
+- [ ] Still full of the place it left — a dino freshly back from another ground carries it a while: a wistful keepsake bubble aimed the way it came and a memory that colours its next greeting, keyed on *whichever* ground it came from (BACKLOG-347)
+- [ ] Homebody or wanderer — how far and how often each dino has actually walked the chain becomes a legible standing in the collection book, so the cast splits into those who cross and those who never do (BACKLOG-361)
+- [ ] Two who go together — two dinos who bonded over a shared place later cross to it *together*, so shared travel joins shared talk (BACKLOG-360)
+
+**Structure arcs:**
+_(the Structure-smith fills these in this cycle)_
 
 ---
 

@@ -5146,3 +5146,12 @@ doesn't queue a rig that already exists, which is exactly the trap the cycle-119
 
 No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
 phase stays lore-pending.
+
+## 2026-08-05 03:05 — cycle 122 — lore-smith — Milestone 11 opened: "A park you have to cross"
+
+Milestone 10 proved the systems generalized to a fourth ground; its closing item named what didn't — every
+cross-zone read in the park is **one hop deep**, so at four grounds the far end is a place no desire can
+reach. Milestone 11 gives the chain distance. Lore arcs: 347 (still full of the place it left), 361
+(homebody or wanderer, in the book), 360 (two who go together). Cap rule held — no new seeds, a themed pick
+from a queue long past 12. Idea Box empty. Cycle 122 picks **BACKLOG-347**, generalized off the grove so the
+beat keys on whichever ground the dino came from.

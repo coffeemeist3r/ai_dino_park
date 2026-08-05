@@ -1,7 +1,7 @@
 {
-  "cycle": 121,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 122,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-347: grove-struck idle (generalized — still full of the place it left)",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-08-04T03:05:00-05:00",
+    "lore-smith": "2026-08-05T03:05:00-05:00",
     "structure-smith": "2026-08-04T03:14:00-05:00",
     "designer": "2026-08-04T03:22:00-05:00",
     "code-planner": "2026-08-04T03:30:00-05:00",

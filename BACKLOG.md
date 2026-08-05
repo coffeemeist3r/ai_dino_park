@@ -600,7 +600,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > it becomes common ground between travelers (346), and it leaves a returning dino visibly grove-struck
 > for a while (347).
 
-- [ ] BACKLOG-347 [emergent] Grove-struck idle — a dino freshly back from the grove occasionally floats a wistful 🌿 idle bubble in the bowl (a glance back the way it came) for a short window after returning, so you can read who's just come home from over there. Builds on 339 / 334 / 325.
+- [~] BACKLOG-347 [emergent] Grove-struck idle — a dino freshly back from the grove occasionally floats a wistful 🌿 idle bubble in the bowl (a glance back the way it came) for a short window after returning, so you can read who's just come home from over there. Builds on 339 / 334 / 325. *(Cycle 122: taken at its **generalized** reading — the beat keys on whichever ground the dino came from, since at four zones "back from the grove" is one case of four. Milestone 11 lore arc 1.)*
 - [ ] BACKLOG-350 [social] Pond rivalry — two grove-visited dinos (339) who meet in the bowl each play up *their* discovery of the pond, a low-stakes status spat ("I saw it first") that warms or needles by temperament. Builds on 339 / 346 / 342.
 - [ ] BACKLOG-351 [emergent] Reluctant returner — a dino pulled groveward by news (345) that arrives to find its closest friend (013) wasn't there shows a brief 😕 on arrival before settling, the gap between the place it imagined and the empty one it found. Builds on 345 / 340 / 013.
 - [ ] BACKLOG-352 [pokemon] Traveler's mark — the collection book shows a small 🌿 beside any dino that has set foot in the grove (339), so the cast's wanderers are legible at a glance (broader than 343's "first across" standing). Builds on 339 / 021.
