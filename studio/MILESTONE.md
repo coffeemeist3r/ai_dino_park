@@ -27,7 +27,9 @@ to take another mouth — and a cast that carries where it has been around with 
 - [ ] Two who go together — two dinos who bonded over a shared place later cross to it *together*, so shared travel joins shared talk (BACKLOG-360)
 
 **Structure arcs:**
-_(the Structure-smith fills these in this cycle)_
+- [ ] Distance on the chain — a derived hop-distance table off the adjacency graph; a pull toward a ground that isn't adjacent becomes a *step toward it* instead of being silently dropped, and the demand read prefers the nearest qualifying ground (BACKLOG-475)
+- [ ] What a ground can hold — a derived carrying capacity per zone; crowding past it damps that ground's appeal and lifts its residents' leave-lean, so the chain settles into a distribution instead of a stampede (BACKLOG-476)
+- [ ] Both of the ground's calls, on the lens — the spend and work priorities folded into one compact per-zone governance line with a legend, so a third call later is a row and not a redesign (BACKLOG-477)
 
 ---
 

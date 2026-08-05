@@ -1,8 +1,8 @@
 {
   "cycle": 122,
   "phase": "designer-pending",
-  "currentItem": "BACKLOG-347: grove-struck idle (generalized — still full of the place it left)",
-  "structureItem": null,
+  "currentItem": "BACKLOG-347: grove-struck idle (generalized \u00e2\u20ac\u201d still full of the place it left)",
+  "structureItem": "BACKLOG-475: distance on the chain",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-05T03:05:00-05:00",
-    "structure-smith": "2026-08-04T03:14:00-05:00",
+    "structure-smith": "2026-08-05T03:14:00-05:00",
     "designer": "2026-08-04T03:22:00-05:00",
     "code-planner": "2026-08-04T03:30:00-05:00",
     "coder": "2026-08-04T03:42:00-05:00",

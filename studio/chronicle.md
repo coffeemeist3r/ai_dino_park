@@ -5155,3 +5155,11 @@ reach. Milestone 11 gives the chain distance. Lore arcs: 347 (still full of the 
 (homebody or wanderer, in the book), 360 (two who go together). Cap rule held — no new seeds, a themed pick
 from a queue long past 12. Idea Box empty. Cycle 122 picks **BACKLOG-347**, generalized off the grove so the
 beat keys on whichever ground the dino came from.
+
+## 2026-08-05 03:14 — cycle 122 — structure-smith — BACKLOG-475: distance on the chain
+
+Queue drained (4 ≥ X=4), no new seeds. Picked 475 over the top pointer (466, the dry season) because it is a
+Milestone 11 structure arc and 466 isn't. Reading the code first sharpened the item: the ferry and demand
+read are one-hop by construction, but `plentyDestOf` (458) and `yearnDestOf` (362) are one-hop by *discard* —
+they compute what a dino wants and then return null if it isn't next door. A dino in the bowl cannot miss the
+Hollow. Structure arcs written into MILESTONE.md: 475, 476, 477.
