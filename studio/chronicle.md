@@ -5172,3 +5172,12 @@ is the clock, so no new counter. Deliberately *not* a bubble at the crossing ins
 contend for it. Structure 475: one pure `distance.ts` derived from ZONE_LINKS (hops, `hopToward`,
 `nearestQualifying`), with the identity `hopToward(a, neighbour) === neighbour` doing the back-compat work.
 The two pulls stop discarding a distant target; the demand read prefers the nearest grower. 13 + 14 criteria.
+
+## 2026-08-05 03:34 — cycle 122 — code-planner — two new pure modules, nine call sites, one predicted finding
+
+347: `world/struck.ts` + 7 WorldScene sites, reusing 341's tenure as the clock. One deviation from the design
+flagged and argued: the book line reads live state, not a memory parse — a parse would strand "just back
+from …" on the dossier forever, the same wart 251 had to fix for spoken gratitude. 475: `world/distance.ts`
+(BFS off ZONE_LINKS, `hopToward` named to avoid shadowing `movement.stepToward`) + 2 sites + `zoneWant`.
+Predicted finding for the Coder to verify, not assume: widening `yearnedZone`'s candidate set can change
+which ground an adjacent-target dino misses, so criterion 9's pin has to be read precisely.

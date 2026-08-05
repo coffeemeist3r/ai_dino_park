@@ -61,7 +61,10 @@ and pinned by a criterion so the two beats never both claim the moment.
 3. A dino with no `cameFrom` never reads struck, at any tenure.
 4. `struckMemory` names the ground, carries `STRUCK_MARK`, and contains **neither** `PLENTY_TOKEN` nor the
    grove-news phrase — the re-spread hazard 362's header names, pinned as a test.
-5. `struckFor` returns the most recent struck memory's zone name; `null` when the ring holds none.
+5. `struckLine` is the ground's keepsake glyph and `struckEvent` names both the dino and the ground it
+   left. *(Revised at code-plan time: the book line reads the **live** `cameFrom` + tenure rather than
+   parsing the memory ring — the ring keeps the memory long after the window, so a `struckFor` parse
+   would strand the line on. See the code plan.)*
 6. e2e: a driven crossing files the struck memory naming the ground the dino left.
 7. The instant path (`__migrate`/`relocate`) records `cameFrom` as well as the walked crossing.
 8. e2e: on the migration roll after arrival, `__struck(name)` returns the left ground and its glyph, and a
