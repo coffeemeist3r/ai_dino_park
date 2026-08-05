@@ -175,6 +175,17 @@ import {
   type LeftDays,
 } from '../world/yearning';
 import {
+  isStruck,
+  keepsakeGlyph,
+  markCameFrom,
+  struckBookLine,
+  struckEvent,
+  struckLine,
+  struckMemory,
+  type CameFrom,
+} from '../world/struck';
+import { hopToward } from '../world/distance';
+import {
   markSeen,
   teachableZone,
   taughtMemory,
@@ -495,6 +506,12 @@ export class WorldScene extends Phaser.Scene {
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). The departure clock
    *  the yearning reads. Persisted; absent → {}. */
   private leftDays: LeftDays = {};
+  /** dino → the ground it last crossed *out* of (BACKLOG-347). The near end of 362's clock: for a roll or
+   *  two after arriving it is still full of that place. Persisted; absent → {}. */
+  private cameFrom: CameFrom = {};
+  /** Dinos whose keepsake glance has already been logged this crossing (BACKLOG-347) — the ticker gets one
+   *  line per crossing, not one per float. Not persisted: a reload is allowed to log it once more. */
+  private struckTold = new Set<string>();
   /** The planted plot per zone (BACKLOG-145/349), or null when empty. Stores the in-game day it was planted. */
   private plotByZone: Record<string, { plantedDay: number } | null> = emptyPlots();
   private plotSpriteByZone: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image | null> = {};
@@ -1142,6 +1159,37 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinoByName(name);
       return d ? this.yearnDestOf(d) : null;
     }; // BACKLOG-362
+    // BACKLOG-475: the ground it wants vs. the neighbour it steps to on the way there — the same pair for
+    // both pulls, so a two-hop longing/hearsay is observable from a spec.
+    (window as any).__yearnTarget = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.yearnTargetOf(d) : null;
+    };
+    (window as any).__plentyDest = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.plentyDestOf(d) : null;
+    };
+    (window as any).__plentyTarget = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.plentyTargetOf(d) : null;
+    };
+    /** Drive the scarcity/hearsay/longing crossing decision for one named dino (BACKLOG-475), the twin of
+     *  `__homesickMigrate`: production and test take the exact same path. Returns the destination it set. */
+    (window as any).__scarcityMigrate = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.scarcityMigrate(d);
+      return this.migrationCross[name]?.dest ?? null;
+    };
+    /** Seed the per-zone harvest tally (BACKLOG-433) directly — the demand read (438/475) is a pure function
+     *  of it, and driving four harvests through the plot clock proves nothing this doesn't. */
+    (window as any).__setHarvests = (harvests: Record<string, number>) => {
+      this.harvestedByZone = { ...this.harvestedByZone, ...harvests };
+      this.refreshPlaque();
+      return { ...this.harvestedByZone };
+    };
+    /** The ground a named dino currently calls home — `__migrate` returns it, but a *walked* crossing had
+     *  no read of its own (BACKLOG-347/475: both arcs need to watch a dino arrive somewhere). */
+    (window as any).__homeZone = (name: string) => zoneOf(this.dinoZones, name, BOWL_ID);
     (window as any).__teach = (a: string, b: string) => this.teachBeat(a, b);
     // BACKLOG-474: which grounds nobody has ever lived on, in chain order.
     (window as any).__unsettled = () => zoneChain().filter((z) => this.isZoneUnsettled(z));
@@ -2626,6 +2674,12 @@ export class WorldScene extends Phaser.Scene {
       yearn: (() => {
         const z = yearnedFor(recall(this.memory, d.name)); // BACKLOG-362: the ground it has been away from too long
         return z ? yearnBookLine(z) : undefined;
+      })(),
+      struck: (() => {
+        // BACKLOG-347: read live (cameFrom + tenure), never parsed back out of the memory ring — the ring
+        // keeps the memory long after the window, so a parse would strand this line on forever (the 251 wart).
+        const s = this.struckOf(d);
+        return s ? struckBookLine(zoneById(s.from).name) : undefined;
       })(),
     }));
   }
@@ -4598,6 +4652,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__settled = (name: string) => isSettled(tenureOf(this.tenure, name));
     // BACKLOG-452: observe/seed where a dino belongs, so a homecoming is drivable without 4 settle rolls.
     (window as any).__roots = () => ({ ...this.roots });
+    // BACKLOG-347: the ground a dino is still full of (null once the window closes).
+    (window as any).__struck = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.struckOf(d) : null;
+    };
     (window as any).__setRoot = (name: string, zone: string) => {
       this.roots = rememberRoot(this.roots, name, zone);
       return this.roots[name];
@@ -4608,6 +4667,10 @@ export class WorldScene extends Phaser.Scene {
   private bumpTenures(): void {
     for (const d of this.dinos) {
       if (this.migrating.has(d.name)) continue;
+      // BACKLOG-347: read *before* the bump, so the first glance back lands on the roll after arrival and the
+      // window is the two rolls the knob names. A homecoming (452) restored tenure to SETTLE_ROLLS, so a dino
+      // walking back into its own ground reads false here — the 🏡 beat owns that moment alone.
+      this.floatKeepsake(d);
       this.tenure = bumpTenure(this.tenure, d.name);
       // BACKLOG-452: settling somewhere makes it this dino's root — the ground a later crossing can come
       // *home* to. Re-recording the same zone is a no-op, so this stays allocation-light on the cadence.
@@ -4615,6 +4678,27 @@ export class WorldScene extends Phaser.Scene {
         this.roots = rememberRoot(this.roots, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
       }
     }
+  }
+
+  /**
+   * The ground a dino is still full of (BACKLOG-347), or null once the window has closed / it never crossed.
+   * The book, the bubble and the dev hook all read this one place.
+   */
+  private struckOf(d: Dino): { from: string; glyph: string } | null {
+    const from = this.cameFrom[d.name];
+    if (!isStruck(tenureOf(this.tenure, d.name), from)) return null;
+    return { from, glyph: keepsakeGlyph(from) };
+  }
+
+  /** Float the keepsake glance of the ground a dino left (BACKLOG-347), logging the ticker line once per
+   *  crossing rather than once per float. */
+  private floatKeepsake(d: Dino): void {
+    const struck = this.struckOf(d);
+    if (!struck) return;
+    this.flashFeed(d, struckLine(struck.glyph));
+    if (this.struckTold.has(d.name)) return;
+    this.struckTold.add(d.name);
+    this.logEvent(struckEvent(d.name, zoneById(struck.from).name, struck.glyph));
   }
 
   /** A dino's homesickness (BACKLOG-340): the neighbour zone + friend to head toward, or null. */
@@ -4736,31 +4820,47 @@ export class WorldScene extends Phaser.Scene {
 
   /**
    * Where word of plenty primes this dino to head (BACKLOG-458): the thriving zone it carries word of, but
-   * only when that zone is a *reachable neighbour* of its home (so the priming can actually cross). null
-   * when it carries no plenty word, or word only of its own / a non-adjacent zone.
+   * anywhere in the park it can reach (BACKLOG-475 — it used to have to *border* home, so a dino could hear
+   * about a ground two hops off and do nothing with it). null when it carries no plenty word, or word only
+   * of its own ground.
    */
-  private plentyDestOf(d: Dino): string | null {
+  private plentyTargetOf(d: Dino): string | null {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
-    const target = plentyTarget(recall(this.memory, d.name), home);
+    return plentyTarget(recall(this.memory, d.name), home);
+  }
+
+  /** The neighbour a plenty-primed dino actually crosses to: one ground closer to what it heard about
+   *  (BACKLOG-475). `hopToward` returns the target itself when it borders home, so every pre-475 pick is
+   *  byte-identical; the dino re-reads the pull on arrival and steps again. */
+  private plentyDestOf(d: Dino): string | null {
+    const target = this.plentyTargetOf(d);
     if (!target) return null;
-    return zoneNeighbors(home).some((l) => l.to === target) ? target : null;
+    return hopToward(zoneOf(this.dinoZones, d.name, BOWL_ID), target);
   }
 
   /**
-   * The ground this dino misses (BACKLOG-362): one it stood on, has been away from past its own threshold,
-   * and can still walk to (a reachable neighbour of its home). null when it longs for nowhere. The first
-   * migration *pull* in the park — every other bias is a push.
+   * The ground this dino misses (BACKLOG-362): one it stood on and has been away from past its own
+   * threshold. null when it longs for nowhere. The first migration *pull* in the park — every other bias
+   * is a push. BACKLOG-475: the candidate set is now the whole park, not the home zone's neighbours; a
+   * longing for the far end of the chain is answered one ground at a time by `yearnDestOf`.
    */
-  private yearnDestOf(d: Dino): string | null {
+  private yearnTargetOf(d: Dino): string | null {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
     return yearnedZone(
       this.leftDays,
       d.name,
       home,
       getWorldClock().now().day,
-      zoneNeighbors(home).map((l) => l.to),
+      ZONES.map((z) => z.id),
       yearnThreshold(d.traits),
     );
+  }
+
+  /** The neighbour a yearning dino crosses to — one ground closer to the one it misses (BACKLOG-475). */
+  private yearnDestOf(d: Dino): string | null {
+    const target = this.yearnTargetOf(d);
+    if (!target) return null;
+    return hopToward(zoneOf(this.dinoZones, d.name, BOWL_ID), target);
   }
 
   /**
@@ -4770,7 +4870,8 @@ export class WorldScene extends Phaser.Scene {
    */
   private seedYearning(): void {
     for (const d of this.dinos) {
-      const dest = this.yearnDestOf(d);
+      // BACKLOG-475: the memory names the ground it *misses*, not the neighbour it would step to on the way.
+      const dest = this.yearnTargetOf(d);
       if (!dest) continue;
       const line = yearnMemory(zoneById(dest).name);
       if (recall(this.memory, d.name).includes(line)) continue;
@@ -4814,9 +4915,11 @@ export class WorldScene extends Phaser.Scene {
     // thriving still beats one it merely misses, but a longing beats a spreadsheet.
     const missed = primed ? null : this.yearnDestOf(d);
     const dest = primed ?? missed ?? this.scarcityDestOf(home);
-    if (primed) this.logEvent(`🌾 ${d.name} heard ${zoneById(primed).name} is thriving — heads that way`);
+    // BACKLOG-475: the ticker names the ground it is *heading for* — which is no longer always the ground it
+    // steps into this crossing. `primed`/`missed` are the next hop; the target is what it actually wants.
+    if (primed) this.logEvent(`🌾 ${d.name} heard ${zoneById(this.plentyTargetOf(d) ?? primed).name} is thriving — heads that way`);
     if (missed) {
-      this.logEvent(yearnEvent(d.name, zoneById(missed).name));
+      this.logEvent(yearnEvent(d.name, zoneById(this.yearnTargetOf(d) ?? missed).name));
       this.flashFeed(d, yearnLine());
     }
     // A yearning move is not a scarcity move: it must not fire 457's greener-ground beat, whatever the
@@ -4887,6 +4990,12 @@ export class WorldScene extends Phaser.Scene {
     // stops. You cannot miss where you are standing.
     markLeft(this.leftDays, d.name, home, getWorldClock().now().day);
     clearLeft(this.leftDays, d.name, dest);
+    // BACKLOG-347: the near end of that same clock — it is still full of the ground it just left. The memory
+    // rides `recall → recentMemory → greet`; the glance back is floated a roll later by `bumpTenures`, not
+    // here, because four beats already contend for the crossing instant (339/451/452/457).
+    markCameFrom(this.cameFrom, d.name, home);
+    this.struckTold.delete(d.name);
+    this.memory = remember(this.memory, d.name, struckMemory(zoneById(home).name));
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
     const entry = crossEntryTile(home, row, COLS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
@@ -5014,7 +5123,13 @@ export class WorldScene extends Phaser.Scene {
     if (this.foundZone(d.name, destZoneId)) this.settleZone(d, destZoneId);
     markSeen(this.seenZones, d.name, destZoneId); // BACKLOG-364: the instant path sees a ground too
     // BACKLOG-362: and stamps the departure clock, so the instant path can be missed from too.
-    if (from !== destZoneId) markLeft(this.leftDays, d.name, from, getWorldClock().now().day);
+    if (from !== destZoneId) {
+      markLeft(this.leftDays, d.name, from, getWorldClock().now().day);
+      // BACKLOG-347: the instant path leaves a ground behind too, so it can be missed *and* carried.
+      markCameFrom(this.cameFrom, d.name, from);
+      this.struckTold.delete(d.name);
+      this.memory = remember(this.memory, d.name, struckMemory(zoneById(from).name));
+    }
     clearLeft(this.leftDays, d.name, destZoneId);
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a new zone starts fresh (mirrors crossDino)
     // an interior tile, away from the linked east/west edges so it doesn't instantly read as a crossing
@@ -5760,6 +5875,7 @@ export class WorldScene extends Phaser.Scene {
       spendPriorityByZone: this.spendPriorityByZone, // BACKLOG-463: per-zone provider-set spend priority (additive)
       workPriorityByZone: this.workPriorityByZone, // BACKLOG-473: per-zone provider-set work priority (additive)
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
+      cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
       eggs: this.eggs,
       born: this.born,
@@ -5851,6 +5967,7 @@ export class WorldScene extends Phaser.Scene {
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
       this.workPriorityByZone = (save.workPriorityByZone as Record<string, WorkPriority>) ?? {}; // BACKLOG-473 (absent → {})
       this.leftDays = save.leftDays ?? {}; // BACKLOG-362 (absent → {}: nothing to miss until it leaves somewhere)
+      this.cameFrom = save.cameFrom ?? {}; // BACKLOG-347 (absent → {}: nothing carried until it crosses)
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
       this.plotStageShownByZone = emptyPlotStages();
       this.refreshPlot();

@@ -102,6 +102,9 @@ export interface SaveData {
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
    *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
   leftDays?: Record<string, Record<string, number>>;
+  /** dino → the ground it last crossed *out* of (BACKLOG-347). Additive; absent → {} (nothing carried
+   *  until it crosses). */
+  cameFrom?: Record<string, string>;
   /** zone → first dino ever to arrive there (BACKLOG-343). Additive; absent → {} (no back-fill: we did
    *  not record it then and must not invent it). */
   pioneers?: Record<string, string>;
@@ -455,6 +458,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // cameFrom (BACKLOG-347) — dino→the ground it last crossed out of. String-valued object, the `pioneers`
+  // guard below with dinos for keys; additive, absent → undefined, caller defaults to {}.
+  let cameFrom: Record<string, string> | undefined;
+  if (o.cameFrom !== undefined) {
+    if (typeof o.cameFrom !== 'object' || o.cameFrom === null) return null;
+    const names = o.cameFrom as Record<string, unknown>;
+    cameFrom = {};
+    for (const n of Object.keys(names)) {
+      if (typeof names[n] !== 'string') return null;
+      cameFrom[n] = names[n] as string;
+    }
+  }
+
   // pioneers (BACKLOG-343) — zone→the first dino ever to arrive there. Same shape and same guard as
   // lastProviderByZone above; additive, absent → undefined, caller defaults to {}.
   let pioneers: Record<string, string> | undefined;
@@ -669,6 +685,7 @@ export function deserialize(json: string): SaveData | null {
     seenZones,
     workPriorityByZone,
     leftDays,
+    cameFrom,
     cairns,
     shelters,
     thatches,

@@ -1,5 +1,21 @@
 # Cycle 122 — Code Plan
 
+**SHIPPED** (Coder, 2026-08-05). Both tracks built as planned. Three notes from the fire:
+
+1. **The predicted finding was real, and bigger than predicted.** Widening `yearnedZone`'s candidate set
+   changes *which* ground a dino misses — but the sharper defect was downstream: `seedYearning` and the
+   `💭 … misses …` ticker both named `yearnDestOf`, which after 475 is the **next hop**, not the ground
+   wanted. Shipped as planned that would have filed "misses The Grove" for a dino that misses the Hollow —
+   a lie in the memory ring, the book line and the ticker, and one no unit test of the pure modules could
+   have caught. Fixed by splitting each pull in two: `yearnTargetOf`/`plentyTargetOf` (what it wants, used
+   for every *word*) and `yearnDestOf`/`plentyDestOf` (where it steps, used for every *move*).
+2. Three dev hooks added rather than driving the beats the long way: `__homeZone` (a walked crossing had no
+   read of its own), `__scarcityMigrate` (the `__homesickMigrate` twin), `__setHarvests` (the demand read is
+   a pure function of the tally; four plot cycles prove nothing extra). Plus `__struck`, `__yearnTarget`,
+   `__plentyTarget`, `__plentyDest` as the specs need.
+3. `linkedZoneIds()` was written into `distance.ts` and then deleted — `WorldScene` already imports `ZONES`,
+   so it was an export with no caller.
+
 ## Lore track — BACKLOG-347 (still full of the place it left)
 
 ### Prior art checked (reuse before adding)

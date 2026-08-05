@@ -1,6 +1,6 @@
 {
   "cycle": 122,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-347: grove-struck idle (generalized - still full of the place it left)",
   "structureItem": "BACKLOG-475: distance on the chain",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-08-05T03:14:00-05:00",
     "designer": "2026-08-05T03:26:00-05:00",
     "code-planner": "2026-08-05T03:34:00-05:00",
-    "coder": "2026-08-04T03:42:00-05:00",
+    "coder": "2026-08-05T03:48:00-05:00",
     "qa": "2026-08-04T03:52:00-05:00",
     "validator": "2026-08-04T04:00:00-05:00",
     "artist": "2026-08-04T04:05:00-05:00"

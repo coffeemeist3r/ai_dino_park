@@ -5181,3 +5181,12 @@ from …" on the dossier forever, the same wart 251 had to fix for spoken gratit
 (BFS off ZONE_LINKS, `hopToward` named to avoid shadowing `movement.stepToward`) + 2 sites + `zoneWant`.
 Predicted finding for the Coder to verify, not assume: widening `yearnedZone`'s candidate set can change
 which ground an adjacent-target dino misses, so criterion 9's pin has to be read precisely.
+
+## 2026-08-05 03:48 — cycle 122 — coder — both tracks built; the predicted finding was real, and worse
+
+`world/struck.ts` + `world/distance.ts`, 9 call sites, 4 new test files. The code plan predicted that widening
+`yearnedZone`'s candidate set would change which ground a dino misses; the actual defect sat one step further
+downstream. `seedYearning` and the `💭 … misses …` ticker both read `yearnDestOf`, which after 475 returns the
+**next hop** rather than the ground wanted — shipped as written, a dino that misses the Hollow would have
+filed, said and shown "misses The Grove". Fixed by splitting both pulls into a *target* (what it wants, used
+for every word) and a *dest* (where it steps, used for every move). Build clean, unit 1541/1541 (+41).

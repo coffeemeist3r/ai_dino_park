@@ -8,7 +8,8 @@
 
 import { pairKey } from '../social/meetings';
 import type { Role } from '../ai/roles';
-import { zoneById, zoneNeighbors } from '../world/zones';
+import { ZONES, zoneById } from '../world/zones';
+import { hopDistances } from '../world/distance';
 import { cropOf } from '../world/plot';
 import type { ProsperityTier } from '../world/prosperity';
 import { foodPileLine, type FoodPile } from '../world/foodstore';
@@ -69,29 +70,41 @@ export interface ZoneMapEntry {
 export interface ZoneWant {
   food: string; // the wanted crop's FOODS id
   glyph: string; // the wanted crop's ripe marker (cropOf(from).ripe)
-  from: string; // the neighbour zone id to request it from
-  fromName: string; // that neighbour's display name
+  from: string; // the zone id to request it from (BACKLOG-475: no longer necessarily a neighbour)
+  fromName: string; // that zone's display name
+  hops?: number; // how far off that grower is (BACKLOG-475); absent on rows built before the distance read
 }
 
 /**
  * A zone wants what it can't grow (BACKLOG-438) — each zone farms exactly one crop (`cropOf`), so it's
- * structurally light on every other. Its carry-request leans toward the linked neighbour producing the most
- * of a crop it can't grow itself: among neighbours whose crop differs from this zone's, the one with the
- * greatest harvest output (`harvests`, the 433 tally) wins — a demand that follows the productive farmer.
- * Strict `>` from a 0 floor: **null** until some neighbour has actually grown a surplus, and the first
- * neighbour in link order wins a tie (deterministic).
+ * structurally light on every other. Its carry-request leans toward the **nearest** ground producing a crop
+ * it can't grow itself; among growers equally far off, the greatest harvest output (`harvests`, the 433
+ * tally) wins — a demand that follows the productive farmer, but not clean across the park to do it
+ * (BACKLOG-475: pre-475 this read neighbours only and ranked by output alone, which was the same thing while
+ * the chain was three long). Strict `>` from a 0 floor: **null** until somebody has actually grown a
+ * surplus, and chain order breaks the last tie (deterministic).
  */
 export function zoneWant(zone: string, harvests: Record<string, number>): ZoneWant | null {
   const own = cropOf(zone).food;
+  const dist = hopDistances(zone);
   let best: ZoneWant | null = null;
   let bestOut = 0;
-  for (const l of zoneNeighbors(zone)) {
-    const crop = cropOf(l.to);
-    if (crop.food === own) continue; // neighbour grows the same crop — no new want
-    const out = harvests[l.to] ?? 0;
-    if (out > bestOut) {
+  let bestHops = Infinity;
+  for (const other of ZONES) {
+    if (other.id === zone) continue;
+    const hops = dist[other.id];
+    if (hops === undefined) continue; // unreachable — a want it could never be answered
+    const crop = cropOf(other.id);
+    if (crop.food === own) continue; // grows the same crop — no new want
+    const out = harvests[other.id] ?? 0;
+    if (out === 0) continue; // the 0 floor: no want until somebody has actually grown a surplus
+    // BACKLOG-475: nearest qualifying grower first; the greater harvest only decides between grounds that
+    // are equally far off, and chain order breaks the last tie. Pre-475 this compared output alone across
+    // the neighbours — which, once the chain grew a far end, pointed a zone's want clean across the park.
+    if (hops < bestHops || (hops === bestHops && out > bestOut)) {
+      bestHops = hops;
       bestOut = out;
-      best = { food: crop.food, glyph: crop.ripe, from: l.to, fromName: zoneById(l.to).name };
+      best = { food: crop.food, glyph: crop.ripe, from: other.id, fromName: zoneById(other.id).name, hops };
     }
   }
   return best;
@@ -180,6 +193,9 @@ export interface BookRow {
   /** The ground this dino currently misses (BACKLOG-362) — `misses <Zone>`, undefined when it longs for
    *  nowhere (then no line shows). Built by `yearnBookLine`. */
   yearn?: string;
+  /** The ground this dino has just come back from (BACKLOG-347) — `just back from <Zone>`, undefined once
+   *  the window closes (then no line shows). Built by `struckBookLine`, read live off tenure + cameFrom. */
+  struck?: string;
   /** Food-web standing (BACKLOG-443) — a carnivore's catch tally / a herbivore's escape tally, or
    *  undefined when the dino has no food-web history (then no line shows). Built by `foodwebStanding`. */
   foodweb?: string;
@@ -202,6 +218,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.pioneer) out.push(`  ${r.pioneer}`); // BACKLOG-343: the founding standing, kept forever
     if (r.taught) out.push(`  ${r.taught}`); // BACKLOG-364: the grounds it has shown others the way to
     if (r.yearn) out.push(`  ${r.yearn}`); // BACKLOG-362: the ground it has been away from too long
+    if (r.struck) out.push(`  ${r.struck}`); // BACKLOG-347: the ground it is still full of
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
