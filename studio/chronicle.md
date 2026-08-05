@@ -5190,3 +5190,11 @@ downstream. `seedYearning` and the `💭 … misses …` ticker both read `yearn
 **next hop** rather than the ground wanted — shipped as written, a dino that misses the Hollow would have
 filed, said and shown "misses The Grove". Fixed by splitting both pulls into a *target* (what it wants, used
 for every word) and a *dest* (where it steps, used for every move). Build clean, unit 1541/1541 (+41).
+
+## 2026-08-05 04:02 — cycle 122 — qa — 27/27 criteria pass; one catalogued flake, off both diffs
+
+Lore 13/13, structure 14/14. Build clean, unit 1541/1541, e2e 446/446 on a fresh full run. The first full run
+lost `cycle-121-work-priority › persists across a reload` (null after reload); it passes 5/5 isolated and the
+fresh full run is green including it — the BACKLOG-456 parallel-load shape, and the first instance of it that
+is a *reload* race rather than a pinned-pile assert. Flagged to the Structure-smith, not treated as a
+regression: cycle 122 touches nothing in the governance save path.
