@@ -5257,3 +5257,25 @@ the first that is a reload racing the save rather than a pinned pile. 456's text
 
 Milestone 11 arcs remaining: 361 and 360 (lore), 476 and 477 (structure). phase -> lore-pending; cycle bumps
 to 123 next run.
+
+## 2026-08-05 04:18 - cycle 122-art - artist - no-op (empty [art] queue); the keepsake glyphs are the right call
+
+No open `[art]`-tagged items; the Art section is still empty, and neither of tonight's items is a rig.
+
+Checked the diff for anything that shipped on a placeholder and should be queued, since that is the only
+thing worth doing on a fourth consecutive no-op fire. **BACKLOG-347 added four new glyphs** - the per-ground
+keepsakes 🌾 / 🌿 / 🍂 / 🌫 - and they are the one thing this cycle that touches what the player *sees*. They
+should stay emoji, and the reasoning is worth writing down so a future Artist fire doesn't queue a rig for
+them by reflex: they are floated through `flashFeed`, the same speech-bubble channel that carries 💭 (362),
+🍃 (457), 📦 (451), 🏡 (452) and every mood tell in the park. That channel has been text since cycle 1 by
+design - it is a *thought*, not an object in the world. The rigs in `game/src/art/` draw things that stand on
+the ground. A bubble is not one of them, and drawing four would be the first crack in a boundary that has
+held for a hundred and twenty cycles.
+
+The standing flag from the cycle-121 audit is unchanged and still the only real art debt: everything in the
+park is drawn (five species, three keepers, eleven props, four terrain kinds), so the rectangle fallback has
+no live subject proving it and is exercised only by unit tests. If a future item adds a sixth species, that
+species is the honest control and should ship undrawn for at least one cycle.
+
+No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
+phase stays lore-pending.
