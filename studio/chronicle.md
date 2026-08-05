@@ -5198,3 +5198,62 @@ lost `cycle-121-work-priority › persists across a reload` (null after reload);
 fresh full run is green including it — the BACKLOG-456 parallel-load shape, and the first instance of it that
 is a *reload* race rather than a pinned-pile assert. Flagged to the Structure-smith, not treated as a
 regression: cycle 122 touches nothing in the governance save path.
+
+## 2026-08-05 04:12 - cycle 122 - validator - APPROVED / APPROVED. Milestone 11 opens, and the park gets a far end
+
+**Both tracks APPROVED. Milestone 11 - "A park you have to cross" - is ACTIVE, two of its six arcs closed
+tonight.**
+
+Milestone 10 ended on a good finding: the code generalized to a fourth ground, the *assertions* didn't.
+Tonight's cycle found the sequel, and it is sharper. Every cross-zone read in this park is one hop deep. For
+the ferry and the demand read that is a design choice you can defend. For the two migration **pulls** built
+in the previous two cycles it was not a choice at all - it was a discard. `plentyDestOf` and `yearnDestOf`
+each worked out what a dino wanted and then returned `null` when the answer wasn't next door. A dino standing
+in the bowl could not miss the Hollow. It could hear the Hollow was thriving and do nothing with the news.
+Both of those shipped APPROVED, both were correct when every ground bordered the middle, and neither was
+wrong until the day a fourth ground existed. Nobody wrote a bug; the map grew past the code's assumptions and
+the code kept quietly answering the old question.
+
+**BACKLOG-475** gives the chain distance, and gives it the lazy way: hops are *derived* from `ZONE_LINKS` by
+breadth-first walk, not tabled beside them, so there is no second source of truth to fall out of sync - the
+449 lesson applied without being reminded. `hopToward(a, b) === b` whenever `b` borders `a`, asserted over
+every link in the table rather than over an example, which turns "every pre-475 caller is byte-identical"
+from a claim into a proof. And the multi-hop journey persists **nothing**: each migration roll re-reads the
+pull and takes one more step, so a dino crossing the whole park is just the per-roll decision it always made,
+made again. If what it wants changes halfway, it changes course. That is a system with a far end now.
+
+The finding inside the finding is the one worth keeping. The code plan predicted that widening the candidate
+set would change *which* ground a dino misses, and told the Coder to verify rather than assume. The real
+defect was one step further down: `seedYearning` and the ticker both read the destination, which after 475 is
+the **next hop**, not the ground wanted. Shipped as written, a dino that missed the Hollow would have filed,
+said and shown "misses The Grove" - a lie in the memory ring, the collection book and the news feed, in three
+places at once, and one that **no unit test of either pure module could have caught**, because both modules
+were correct. The composition was wrong. That is the third cycle running where the defect lived in how two
+correct things were put together rather than in either of them, and it is the standing argument for why this
+studio writes both layers. Each pull now splits into a *target* (what it wants - every word reads this) and a
+*dest* (where it steps - every move reads this).
+
+**BACKLOG-347** is the feeling that belongs to all that walking. A dino that has just crossed carries the
+ground it came from: a memory that colours its next greeting, that ground's own keepsake glyph floated as a
+glance back, `just back from The Hollow` in the book while it lasts. It was queued at cycle 75 as
+"grove-struck", back when the grove was the only other place to come home from, and it shipped generalized -
+the glyph, the memory and the line all key on wherever the dino actually was, so a fifth ground is a row.
+Three things it *didn't* do are why it approved: no second counter (341's tenure already counts rolls in the
+current zone and already resets on a crossing), no bubble at the crossing instant (four beats contend there
+already; the glance lands a roll later, which is also what makes it linger rather than flash), and no memory
+parse for the book line - the code plan caught that the ring outlives the window and would have stranded the
+line on forever, which is precisely the cycle-56 gratitude wart, recognized this time *before* shipping it
+twice. And a homecoming reads not-struck: walking back into the ground you belong to is coming home, not
+visiting, and the 🏡 beat keeps that moment to itself.
+
+Together they make the same point from two directions. 362 taught the park that a ground you left long ago
+can call you back; 475 lets that call reach across three grounds; 347 is what the journey leaves on you when
+you get there. The park now has somewhere far away, a reason to go, and something you carry back.
+
+build clean - unit **1541/1541** (+41) - e2e **446/446** (+15) on a fresh full run. One flake, catalogued and
+not excused: the first full run lost `cycle-121-work-priority > persists across a reload`, which passed 5/5
+isolated and green on the re-run. It is off both diffs, and it is the **fourth** noun on BACKLOG-456's list -
+the first that is a reload racing the save rather than a pinned pile. 456's text now says so.
+
+Milestone 11 arcs remaining: 361 and 360 (lore), 476 and 477 (structure). phase -> lore-pending; cycle bumps
+to 123 next run.

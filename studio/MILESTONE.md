@@ -22,12 +22,12 @@ a dino that walks the whole park one ground at a time to answer a longing, a gro
 to take another mouth — and a cast that carries where it has been around with it.
 
 **Lore arcs:**
-- [ ] Still full of the place it left — a dino freshly back from another ground carries it a while: a wistful keepsake bubble aimed the way it came and a memory that colours its next greeting, keyed on *whichever* ground it came from (BACKLOG-347)
+- [x] Still full of the place it left — a dino freshly back from another ground carries it a while: a wistful keepsake bubble aimed the way it came and a memory that colours its next greeting, keyed on *whichever* ground it came from (BACKLOG-347 — cycle 122)
 - [ ] Homebody or wanderer — how far and how often each dino has actually walked the chain becomes a legible standing in the collection book, so the cast splits into those who cross and those who never do (BACKLOG-361)
 - [ ] Two who go together — two dinos who bonded over a shared place later cross to it *together*, so shared travel joins shared talk (BACKLOG-360)
 
 **Structure arcs:**
-- [ ] Distance on the chain — a derived hop-distance table off the adjacency graph; a pull toward a ground that isn't adjacent becomes a *step toward it* instead of being silently dropped, and the demand read prefers the nearest qualifying ground (BACKLOG-475)
+- [x] Distance on the chain — a derived hop-distance table off the adjacency graph; a pull toward a ground that isn't adjacent becomes a *step toward it* instead of being silently dropped, and the demand read prefers the nearest qualifying ground (BACKLOG-475 — cycle 122)
 - [ ] What a ground can hold — a derived carrying capacity per zone; crowding past it damps that ground's appeal and lifts its residents' leave-lean, so the chain settles into a distribution instead of a stampede (BACKLOG-476)
 - [ ] Both of the ground's calls, on the lens — the spend and work priorities folded into one compact per-zone governance line with a legend, so a third call later is a row and not a redesign (BACKLOG-477)
 
