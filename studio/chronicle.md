@@ -5308,3 +5308,21 @@ residents' hold on it. Calibration is the whole risk: the knob has to leave the 
 state at or under capacity, or the feature becomes a rewrite of the pinned migration specs.
 
 Structure Track now 3 open, below cap X=4 - the next fire's first job is a refill, noted in the handoff.
+
+## 2026-08-06 03:26 - cycle 123 - designer - 361 (13 criteria) + 476 (14 criteria)
+
+**361** takes two dimensions on purpose: crossings (how often, a new counter at both arrival seams) and reach
+(how far, derived every read from `seenZones` through 475's `hopsBetween`, never stored). A dino bouncing
+bowl-grove nine times has moved a lot and gone nowhere; one that walked to the Hollow once has gone as far as
+this park allows. Origin is `seenZones[name][0]` - already the first thing the park ever wrote about a dino,
+so no new record. Deliberately standing-only: no beat, no bubble, no ticker, because four beats already
+contend at the crossing instant.
+
+**476** derives capacity from grass tiles over each zone's `tileAt`, `ceil(grass/60)`, min 1 - bowl 5, grove
+5, Fernreach 4, Hollow 5 (counting *all* non-water tiles puts the four within 6% of each other and makes the
+feature uniform, which is why it counts grass). Founding state is five in the bowl = exactly at capacity, so
+the feature is dormant on a fresh save and every pinned migration spec stays byte-identical; it bites at five
+into the Fernreach or six anywhere else. The crowding penalty folds into the appeal *number* rather than
+sitting above it as a tier - the opposite of 474's frontier call, because a crowded ground is honestly both a
+worse place to arrive at and a likelier place to leave, so both readers of `zoneAppeal` want the same sign.
+Lens glyph deliberately withheld: that is 477's job and a loose third icon now is the redesign 477 prevents.
