@@ -5279,3 +5279,17 @@ species is the honest control and should ship undrawn for at least one cycle.
 
 No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
 phase stays lore-pending.
+
+## 2026-08-06 03:05 - cycle 123 - lore-smith - BACKLOG-361, read as homebody-or-wanderer
+
+Milestone 11's second lore arc. The park records crossings as facts and has never once counted them: it
+knows *where* each dino has stood (`seenZones`), who was first (`pioneers`), and when it last left
+(`leftDays`) - but after a hundred and twenty cycles no dino has a word for whether it is a traveller or a
+stay-at-home. 361 was written as a grove-only tally ("been to the pond 4x"); taken generalized, it becomes
+the two honest dimensions a four-ground chain finally has - how *often* a dino crosses, and how *far* from
+where it began it has ever stood. The second is measurable only because 475 shipped `hopDistances` last
+night, which is the milestone building on itself one cycle later.
+
+Deliberately a **lifetime** read, unlike 347's passing window: the book's first line about a dino's whole
+history of movement rather than its current mood about it. No new BACKLOG seeds (drain cycle, cap holds).
+Idea Box empty. Migration-decision lane left clear for the Structure-smith.
