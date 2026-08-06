@@ -1,6 +1,6 @@
 {
   "cycle": 123,
-  "phase": "art-pending",
+  "phase": "lore-pending",
   "currentItem": "BACKLOG-361",
   "structureItem": "BACKLOG-476",
   "lastVerdict": "APPROVED",
@@ -16,6 +16,6 @@
     "coder": "2026-08-06T03:48:00-05:00",
     "qa": "2026-08-06T04:02:00-05:00",
     "validator": "2026-08-06T04:12:00-05:00",
-    "artist": "2026-08-05T04:18:00-05:00"
+    "artist": "2026-08-06T04:18:00-05:00"
   }
 }
