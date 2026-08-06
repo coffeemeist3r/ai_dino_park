@@ -196,6 +196,9 @@ export interface BookRow {
   /** The ground this dino has just come back from (BACKLOG-347) — `just back from <Zone>`, undefined once
    *  the window closes (then no line shows). Built by `struckBookLine`, read live off tenure + cameFrom. */
   struck?: string;
+  /** The lifetime travel standing (BACKLOG-361) — `a homebody — never left <Zone>` / `a wanderer — 7
+   *  crossings, 3 grounds out`. Always present in-game; optional so older BookRow literals stay valid. */
+  wander?: string;
   /** Food-web standing (BACKLOG-443) — a carnivore's catch tally / a herbivore's escape tally, or
    *  undefined when the dino has no food-web history (then no line shows). Built by `foodwebStanding`. */
   foodweb?: string;
@@ -219,6 +222,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.taught) out.push(`  ${r.taught}`); // BACKLOG-364: the grounds it has shown others the way to
     if (r.yearn) out.push(`  ${r.yearn}`); // BACKLOG-362: the ground it has been away from too long
     if (r.struck) out.push(`  ${r.struck}`); // BACKLOG-347: the ground it is still full of
+    if (r.wander) out.push(`  ${r.wander}`); // BACKLOG-361: the lifetime read — homebody, rambler, wanderer
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);

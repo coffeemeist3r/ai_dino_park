@@ -111,6 +111,10 @@ export interface SaveData {
   /** dino → the grounds it has set foot on (BACKLOG-364). Additive; absent → {} (re-seeded from live home
    *  zones on load, which is all an older save can honestly tell us). */
   seenZones?: Record<string, string[]>;
+  /** dino → how many times it has ever arrived on a new ground (BACKLOG-361). Additive; absent → {}: an
+   *  older save never counted, so every dino reads homebody until it next crosses. No back-fill — inventing
+   *  a tally from `seenZones` would claim journeys we did not watch. */
+  crossings?: Record<string, number>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
   cairns?: { tileX: number; tileY: number; zone?: string }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
@@ -499,6 +503,19 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // crossings (BACKLOG-361) — dino→lifetime arrival count. Same guard shape as harvestedByZone below:
+  // an object of non-negative finite numbers.
+  let crossings: Record<string, number> | undefined;
+  if (o.crossings !== undefined) {
+    if (typeof o.crossings !== 'object' || o.crossings === null) return null;
+    const names = o.crossings as Record<string, unknown>;
+    crossings = {};
+    for (const n of Object.keys(names)) {
+      if (!isNum(names[n]) || (names[n] as number) < 0) return null;
+      crossings[n] = names[n] as number;
+    }
+  }
+
   // harvestedByZone is additive over the global `harvested` (BACKLOG-428) — zone→harvest count. Absent in
   // pre-428 saves (left undefined; WorldScene defaults it to {}). Non-negative integers only.
   let harvestedByZone: Record<string, number> | undefined;
@@ -683,6 +700,7 @@ export function deserialize(json: string): SaveData | null {
     lastProviderByZone,
     pioneers,
     seenZones,
+    crossings,
     workPriorityByZone,
     leftDays,
     cameFrom,

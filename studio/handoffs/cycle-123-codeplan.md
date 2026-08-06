@@ -86,3 +86,28 @@ line set (L12) — locate by grepping for `struck` in `tests/unit`.
 ## Blocker section
 
 _(empty — the Coder fills this if build or tests fail)_
+
+---
+
+## Shipped
+
+Both tracks built as planned, no deviations from the file list.
+
+- New: `world/capacity.ts` + test (16), `world/wandering.ts` + test (17), `tests/unit/cycle-123-wandering.test.ts` (10),
+  `tests/e2e/cycle-123-wandering.spec.ts` (6), `tests/e2e/cycle-123-capacity.spec.ts` (6).
+- Edited: `WorldScene.ts` (both tracks), `ui/lenses.ts` (`BookRow.wander` + one render line), `world/saveGame.ts`
+  (`crossings`, additive).
+
+Build clean. Unit **1584/1584** (+43). e2e **458/458** (+12) on a fresh full run.
+
+The first full run lost two specs — `cycle-077-carry` (pinned-pile) and `cycle-121-work-priority > persists
+across a reload` (the reload/IndexedDB race). Both passed isolated (6/6 together) and the fresh full run was
+green including both. Both are already catalogued nouns on BACKLOG-456; neither is off this cycle's diff, and
+neither is new.
+
+The calibration held exactly as the plan required: **no pinned migration spec moved.** `TILES_PER_HEAD` was
+not re-tuned.
+
+## Blocker section
+
+_(empty — build and both suites green)_

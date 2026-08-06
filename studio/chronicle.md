@@ -5338,3 +5338,18 @@ under `game/src/ai/`.
 Order puts `capacity.ts` first and proves it in isolation before any scene edit, because the calibration is
 the risk. The rule written into the plan: if a pinned migration spec moves, the knob is wrong - re-tune
 `TILES_PER_HEAD`, do not amend the spec.
+
+## 2026-08-06 03:48 - cycle 123 - coder - 361 + 476 shipped
+
+Two pure modules, five edited files, no deviation from the plan. `capacity.ts` was built and proven in
+isolation first (16 tests green before a single scene edit) because the calibration was the whole risk - and
+it held: bowl 5 / grove 5 / Fernreach 4 / Hollow 5, the founding five-in-the-bowl reads uncrowded, and **not
+one pinned migration spec moved**. `TILES_PER_HEAD` never needed re-tuning.
+
+`wandering.ts` needed nothing kept but the crossing count; reach derives off `seenZones` through 475's
+`hopsBetween` every book open, and origin is `seenZones[name][0]`, which the park has been writing since a
+dino's first frame. One additive save field.
+
+build clean - unit 1584 (+43) - e2e 458 (+12) on a fresh full run. The first full run lost `cycle-077-carry`
+and `cycle-121-work-priority > persists across a reload`; both passed isolated and both were green on the
+re-run. Both are already-catalogued BACKLOG-456 nouns, both off this diff.

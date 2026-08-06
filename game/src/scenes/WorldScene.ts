@@ -186,6 +186,16 @@ import {
 } from '../world/struck';
 import { hopToward } from '../world/distance';
 import {
+  recordCrossing,
+  crossingsOf,
+  originOf,
+  reachOf,
+  wanderStanding,
+  wanderBookLine,
+  type Crossings,
+} from '../world/wandering';
+import { zoneCapacity, isCrowded, crowdedAppeal, CROWDED_MIGRATE_DAMP } from '../world/capacity';
+import {
   markSeen,
   teachableZone,
   taughtMemory,
@@ -509,6 +519,12 @@ export class WorldScene extends Phaser.Scene {
   /** dino → the ground it last crossed *out* of (BACKLOG-347). The near end of 362's clock: for a roll or
    *  two after arriving it is still full of that place. Persisted; absent → {}. */
   private cameFrom: CameFrom = {};
+  /** dino → how many times it has ever arrived on a new ground (BACKLOG-361). The one dimension of the
+   *  wander standing that has to be *kept*; reach is derived off `seenZones` every read. Persisted. */
+  private crossings: Crossings = {};
+  /** zone → how many mouths it can hold (BACKLOG-476). Derived from terrain and the grid, neither of which
+   *  changes at runtime, so it is computed once in `create` rather than scanning 300 tiles per appeal read. */
+  private zoneCaps: Record<string, number> = {};
   /** Dinos whose keepsake glance has already been logged this crossing (BACKLOG-347) — the ticker gets one
    *  line per crossing, not one per float. Not persisted: a reload is allowed to log it once more. */
   private struckTold = new Set<string>();
@@ -636,6 +652,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   create(): void {
+    // BACKLOG-476: each ground's carrying capacity, derived once from its own terrain.
+    for (const z of zoneChain()) this.zoneCaps[z] = zoneCapacity(z, COLS, ROWS);
     this.drawFloor();
     this.drawDen(); // drawn before dinos so they nap on top of it
 
@@ -1154,6 +1172,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__pioneers = () => ({ ...this.pioneers }); // BACKLOG-343
     // BACKLOG-364: which grounds each dino has set foot on, and a direct drive of one telling.
     (window as any).__seenZones = () => JSON.parse(JSON.stringify(this.seenZones));
+    (window as any).__crossings = () => JSON.parse(JSON.stringify(this.crossings)); // BACKLOG-361
     (window as any).__leftDays = () => JSON.parse(JSON.stringify(this.leftDays)); // BACKLOG-362
     (window as any).__yearnDest = (name: string) => {
       const d = this.dinoByName(name);
@@ -2680,6 +2699,15 @@ export class WorldScene extends Phaser.Scene {
         // keeps the memory long after the window, so a parse would strand this line on forever (the 251 wart).
         const s = this.struckOf(d);
         return s ? struckBookLine(zoneById(s.from).name) : undefined;
+      })(),
+      wander: (() => {
+        // BACKLOG-361: the lifetime read — crossings kept, reach derived off `seenZones` every open, so a
+        // re-linked map re-reads instead of carrying a stale number. Shows on every dino, always.
+        const seen = this.seenZones[d.name];
+        const origin = originOf(seen) ?? zoneOf(this.dinoZones, d.name, BOWL_ID);
+        const crossings = crossingsOf(this.crossings, d.name);
+        const reach = reachOf(seen, origin);
+        return wanderBookLine(wanderStanding(crossings, reach), crossings, reach, zoneById(origin).name);
       })(),
     }));
   }
@@ -4633,6 +4661,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__migrating = () => [...this.migrating];
     // BACKLOG-450: a zone's scarcity appeal (prosperity + banked food), and where its residents would head.
     (window as any).__zoneAppeal = (zone: string) => this.zoneAppeal(zone);
+    // BACKLOG-476: what each ground can hold, and which are currently over it.
+    (window as any).__zoneCapacity = () => ({ ...this.zoneCaps });
+    (window as any).__crowded = () => {
+      const out: Record<string, boolean> = {};
+      for (const z of zoneChain()) out[z] = this.isZoneCrowded(z);
+      return out;
+    };
     (window as any).__scarcityDest = (name: string) => {
       const d = this.dinoByName(name);
       return d ? this.scarcityDestOf(zoneOf(this.dinoZones, d.name, BOWL_ID)) : null;
@@ -4753,7 +4788,12 @@ export class WorldScene extends Phaser.Scene {
     }
     // BACKLOG-341 + 460: a dino settled into its home zone resists the ambient wander — but a *declining*
     // zone holds its residents more weakly (a lower damp), so a hollowing zone's exodus gains momentum.
-    const damp = this.isZoneDeclining(home) ? DECLINING_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP;
+    // BACKLOG-476: and a *crowded* ground holds them weakly too. A ground under both stresses takes the
+    // weaker of the two holds rather than compounding them — one reason to leave is enough.
+    const damp = Math.min(
+      this.isZoneDeclining(home) ? DECLINING_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP,
+      this.isZoneCrowded(home) ? CROWDED_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP,
+    );
     if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true, Math.random, damp)) return;
     // BACKLOG-450: mouths move toward plenty — head for the richest neighbour, not a coin flip.
     this.scarcityMigrate(d);
@@ -4900,7 +4940,19 @@ export class WorldScene extends Phaser.Scene {
   /** A zone's appeal to a mouth seeking plenty (BACKLOG-450) — its prosperity index (428) + banked food (446),
    *  the live reads folded by `world/scarcity.ts`. */
   private zoneAppeal(zoneId: string): number {
-    return zoneAppeal(zoneProsperity(this.zoneSignals(zoneId)), foodPileTotal(this.foodStoreFor(zoneId)));
+    // BACKLOG-476: and damped once per surplus mouth when the ground is holding more than it can. Not a tier
+    // above the number (474's frontier shape) because crowding's two readers — `richestNeighbor` asking
+    // where to go and `poorestResidents` asking who leaves — want the same sign from it.
+    return crowdedAppeal(
+      zoneAppeal(zoneProsperity(this.zoneSignals(zoneId)), foodPileTotal(this.foodStoreFor(zoneId))),
+      this.zoneHeads()[zoneId] ?? 0,
+      this.zoneCaps[zoneId] ?? 1,
+    );
+  }
+
+  /** Is this ground holding more mouths than it can (BACKLOG-476)? */
+  private isZoneCrowded(zone: string): boolean {
+    return isCrowded(this.zoneHeads()[zone] ?? 0, this.zoneCaps[zone] ?? 1);
   }
 
   /** Begin a scarcity-biased crossing (BACKLOG-450/457): head for the richest neighbour, tagging it
@@ -4994,6 +5046,9 @@ export class WorldScene extends Phaser.Scene {
     // rides `recall → recentMemory → greet`; the glance back is floated a roll later by `bumpTenures`, not
     // here, because four beats already contend for the crossing instant (339/451/452/457).
     markCameFrom(this.cameFrom, d.name, home);
+    // BACKLOG-361: one more crossing on this dino's life. Counted at *arrival* (after `setZone`), the same
+    // moment `markSeen` counts the ground — a crossing that never lands is not a crossing.
+    recordCrossing(this.crossings, d.name);
     this.struckTold.delete(d.name);
     this.memory = remember(this.memory, d.name, struckMemory(zoneById(home).name));
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
@@ -5127,6 +5182,10 @@ export class WorldScene extends Phaser.Scene {
       markLeft(this.leftDays, d.name, from, getWorldClock().now().day);
       // BACKLOG-347: the instant path leaves a ground behind too, so it can be missed *and* carried.
       markCameFrom(this.cameFrom, d.name, from);
+      // BACKLOG-361: the instant path counts too — but only inside this guard, unlike `crossDino`. A walked
+      // crossing always lands on a *linked neighbour* and so can never be a same-zone move; `__migrate` can
+      // be told to send a dino to the ground it is already standing on, and that is not a journey.
+      recordCrossing(this.crossings, d.name);
       this.struckTold.delete(d.name);
       this.memory = remember(this.memory, d.name, struckMemory(zoneById(from).name));
     }
@@ -5865,6 +5924,7 @@ export class WorldScene extends Phaser.Scene {
       pondSeen: this.pondSeen, // BACKLOG-359
       pioneers: this.pioneers, // BACKLOG-343: who founded each ground (additive)
       seenZones: this.seenZones, // BACKLOG-364: which grounds each dino has set foot on (additive)
+      crossings: this.crossings, // BACKLOG-361: lifetime arrivals per dino (additive)
       plot: this.plotByZone[BOWL_ID], // BACKLOG-349: bowl plot kept under the legacy `plot` field (back-compat)
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
@@ -5952,6 +6012,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-364: seen-grounds restore, then re-seed from the restored home zones — a save written
       // before this item knows nothing, and the honest floor is "a dino has seen where it lives".
       this.seenZones = save.seenZones ?? {};
+      this.crossings = save.crossings ?? {}; // BACKLOG-361 (absent → {}: an older save never counted)
       for (const d of this.dinos) markSeen(this.seenZones, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
       // BACKLOG-145/349: per-zone plots restore (bowl from the legacy `plot`, grove from `grovePlot`; old saves → grove-empty).
       this.plotByZone = {
