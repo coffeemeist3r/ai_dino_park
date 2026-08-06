@@ -5353,3 +5353,21 @@ dino's first frame. One additive save field.
 build clean - unit 1584 (+43) - e2e 458 (+12) on a fresh full run. The first full run lost `cycle-077-carry`
 and `cycle-121-work-priority > persists across a reload`; both passed isolated and both were green on the
 re-run. Both are already-catalogued BACKLOG-456 nouns, both off this diff.
+
+## 2026-08-06 04:02 - cycle 123 - qa - 27/27 criteria pass
+
+Lore 13/13, structure 14/14. build clean, unit 1584, e2e 458 on a fresh full run. `@mlc-ai/web-llm` still
+imported only under `game/src/ai/`; neither new module reaches outside `game/src/world/` or calls
+`Math.random()`. Save version unchanged, one additive optional field.
+
+Two things QA checked beyond the criteria. First, that 361's two dimensions genuinely separate in-game and
+not just in a unit test: Sunny takes four crossings and stays a rambler one ground out, Twitch takes three
+and reads a wanderer three grounds out - fewer journeys, higher standing. On a crossing count alone Sunny
+would outrank Twitch, which is backwards, and that inversion is the item's whole argument for taking two
+numbers. Second, the calibration verdict for 476: **no pinned migration spec moved**, and no test file
+outside this cycle's two new ones was touched. The suite staying still is the evidence that the ceiling is
+dormant at the founding state, which is the M10 finding read the right way round.
+
+First full run lost `cycle-077-carry` and `cycle-121-work-priority > persists across a reload`; 6/6 isolated,
+458/458 on the re-run. Both are catalogued BACKLOG-456 nouns (the original pinned-pile one and last cycle's
+reload race) and both are off this cycle's diffs.
