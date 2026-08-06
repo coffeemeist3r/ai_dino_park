@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-466 [core] The dry season — the water twin of 461's food grip. Thirst (371) and the waterholes (445) ignore the year entirely; give the season a grip on drinking: one pure seasonal thirst/water modifier the needs/waterhole hooks read, so summer quickens thirst (the bowl drinks harder in the heat) and winter eases it, the drinking mirror of the lean-season food grip. Foundation-first: one multiplier, deferring a visibly shrinking waterhole sprite. Builds on 461 / 445 / 371.
-- [ ] BACKLOG-476 [core] What a ground can hold — migration reads pull (prosperity, food store, 450) and push (hollowing, 460) but nothing ever reads *fullness*: a rich ground can absorb the entire cast and the only thing that stops it is the 460 floor on the ground being emptied. Give each zone a derived **carrying capacity** off its terrain descriptor (`ZONE_TERRAIN`, 449) and let crowding past it damp that ground's appeal and lift its residents' own leave-lean, so the chain settles into a distribution instead of a stampede toward whichever ground is currently richest. The structural counterweight 450/460 has been missing since the day it shipped, and it only became visible at four grounds. Builds on 449 / 450 / 460 / 428.
 - [ ] BACKLOG-477 [core] Both of the ground's calls, on the lens — 468 put a zone's spend priority on the zone-map lens beside its prosperity tier. Once a ground decides a second thing (work priority, 473), the lens box has to carry two governance reads without becoming a wall of glyphs: fold the spend and work calls into one compact per-zone governance line with a legend the `[?]` panel explains, so a player can read *how each ground has chosen to live* at a glance rather than learning two unrelated icons. The generalization beat 473 makes necessary — a third call later is then a row, not a redesign. Builds on 468 / 473 / 463 / 425.
 
 ---
@@ -621,7 +620,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > weirdest — a place a dino who came home can quietly come to miss.
 
 - [ ] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
-- [ ] BACKLOG-361 [pokemon] Grove regulars in the book — the collection book tracks how many times each dino has crossed to the grove ("been to the pond 4×"), making homebody-vs-wanderer a legible standing rather than something you only feel. Builds on 334 / 021.
 
 ## Cycle 79 lore additions — the pond as a known place (2026-06-25)
 

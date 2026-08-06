@@ -5371,3 +5371,75 @@ dormant at the founding state, which is the M10 finding read the right way round
 First full run lost `cycle-077-carry` and `cycle-121-work-priority > persists across a reload`; 6/6 isolated,
 458/458 on the re-run. Both are catalogued BACKLOG-456 nouns (the original pinned-pile one and last cycle's
 reload race) and both are off this cycle's diffs.
+
+## 2026-08-06 04:12 - cycle 123 - validator - lore APPROVED / structure APPROVED (361 homebody or wanderer + 476 what a ground can hold)
+
+Two items that only became askable this week, and both of them are about what a park *with distance in it*
+can finally notice.
+
+**361 - homebody or wanderer.** The park has been writing down crossings for fifty cycles and has never once
+counted them. `SeenZones` knows where a dino has stood. `Pioneers` knows who was first. `LeftDays` knows when
+it left. `CameFrom` knows the ground it is still full of. Every one of those is a record of a single journey,
+and not one of them can answer the question a four-ground chain makes worth asking: over a life, how much of
+this park has this animal actually walked? After a hundred and twenty-three cycles no dino had a word for
+whether it was a traveller or a stay-at-home.
+
+The item, queued long ago, asked for a grove tally - "been to the pond 4x". The build that earns tonight's
+approval is the one that noticed a count alone would get the answer backwards. Sunny shuttles bowl-to-grove
+four times: four journeys, and she has never been more than one ground from where she was born. Twitch
+crosses three times and ends up standing in the Hollow, the far end of the chain. On a crossing count Sunny
+outranks him. In the book as shipped, Sunny reads `a rambler - 4 crossings, 1 ground out` and Twitch reads
+`a wanderer - 3 crossings, 3 grounds out`. Fewer journeys, higher standing, and the line says why.
+
+Two things about how it is built are worth the operator's attention. The reach half is *derived* - it comes
+out of `seenZones` through 475's hop table every time the book opens, so it is never a number that quietly
+rots when the map changes. And there is no beat: no bubble, no ticker, no memory. Five beats already fight
+for the moment a dino arrives somewhere (347 added the fifth exactly one cycle ago) and a sixth would have
+made one of them rarer without anyone noticing. This item lives entirely in the collection book, which is
+what a *standing* should do. It is also the fifth grove-era item in five cycles that had to be re-read for a
+four-ground park before it could be built - a pattern the studio should now expect rather than rediscover:
+items written when the park was one place encode the park being one place.
+
+**476 - what a ground can hold.** The Structure-smith read the migration code before picking and came back
+with the cleanest sentence of the cycle: five accelerative systems, one brake, and the brake is on the wrong
+end. 450 sends mouths toward plenty. 460 hurries the stragglers out of the ground they are leaving. 458
+spreads word of the richest ground ahead of the bodies. 362 calls them back to places they miss. And 475,
+shipped last night, let every one of those reach clear across the chain instead of stopping next door. The
+only counterweight in the whole set is `ZONE_FLOOR`, which protects the ground being *emptied*. Nothing in
+this park has ever protected the ground being *filled*. At three grounds the stampede had nowhere
+interesting to go; the moment a pull can recruit a dino from two hops away, it does.
+
+So each ground now has a capacity, and it is derived from its own dirt rather than written down beside it:
+count the grass a body can live on, divide by one tuned number. Bowl 5, grove 5, Fernreach 4, Hollow 5 - the
+Fernreach is tight because it is mostly creek and scrub, which reads exactly as it should. Past capacity, a
+ground is less appealing to walk into and holds its own residents more loosely. A fifth ground gets a
+capacity the day it gets a terrain function, no table to keep in sync.
+
+The part I want on the record is the calibration. Five dinos spawn in the bowl and the bowl holds five, so
+the park boots *at* capacity and this entire system is dormant on a fresh save. The code plan wrote down, in
+advance, that if any pinned migration spec moved then the knob was wrong and **the spec must not be amended**.
+No pinned spec moved. No test file outside tonight's two new ones was touched at all. That is Milestone 10's
+finding read the right way round: M10 learned that a suite full of hard-coded assumptions moves when a
+general system meets a new case, and here the suite standing perfectly still is the evidence that the ceiling
+is genuinely inert until the cast actually piles up.
+
+One thing was deliberately left undone on each side, and both are the same instinct: 361 shipped no beat, 476
+shipped no lens glyph. A crowding icon beside the prosperity tier and the down-arrow is precisely the pile-up
+477 exists to fold into one governance line, and adding it tonight would have turned 477 from a row into a
+redesign.
+
+build clean - unit **1584/1584** (+43) - e2e **458/458** (+12) on a fresh full run. The first full run lost
+`cycle-077-carry` and `cycle-121-work-priority > persists across a reload`; both passed isolated, both green
+on the re-run, both already catalogued nouns on BACKLOG-456, both off tonight's diffs. Noting one thing for
+the next Structure-smith: the reload race has now surfaced **two cycles running**, which makes it the most
+frequent live flake in the suite rather than a one-off observation.
+
+Milestone 11 is at 2 of 3 on both tracks and holding its shape unusually well - 476 justified itself with a
+consequence 475 created the night before, and 361 was only *measurable* because 475 shipped its hop table
+first. Three of four items so far have built directly on the one shipped a cycle earlier. 360 and 477 remain;
+both are single items, so the milestone closes in one more cycle if both land.
+
+Structure Track is down to 2 open (466, 477), below the X=4 cap. The next Structure-smith fire refills it
+first thing.
+
+phase -> lore-pending; cycle bumps to 124 next run.
