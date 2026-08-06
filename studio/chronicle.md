@@ -5293,3 +5293,18 @@ night, which is the milestone building on itself one cycle later.
 Deliberately a **lifetime** read, unlike 347's passing window: the book's first line about a dino's whole
 history of movement rather than its current mood about it. No new BACKLOG seeds (drain cycle, cap holds).
 Idea Box empty. Migration-decision lane left clear for the Structure-smith.
+
+## 2026-08-06 03:14 - cycle 123 - structure-smith - BACKLOG-476, the park's first ceiling
+
+Every migration pull this project has built points *up* the appeal gradient: 450 sends mouths toward plenty,
+460 hollows the ground they leave faster, 458 spreads word of the richest ground, 362 calls them back to
+grounds they miss. Four accelerative systems and exactly one brake - `ZONE_FLOOR`, which is a floor on the
+ground being emptied and never a ceiling on the ground being filled. A rich ground can absorb the whole cast
+and nothing in the park is capable of objecting. 475 just made that pile-up reachable from two hops away.
+
+476 derives a carrying capacity off `ZONE_TERRAIN` rather than adding a per-zone number (the 449 lesson: the
+second table you keep in sync with the first is the bug), damps a crowded ground's appeal, and loosens its
+residents' hold on it. Calibration is the whole risk: the knob has to leave the founding five-in-the-bowl
+state at or under capacity, or the feature becomes a rewrite of the pinned migration specs.
+
+Structure Track now 3 open, below cap X=4 - the next fire's first job is a refill, noted in the handoff.
