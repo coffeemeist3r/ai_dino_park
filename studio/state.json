@@ -1,6 +1,6 @@
 {
   "cycle": 123,
-  "phase": "codeplan-pending",
+  "phase": "code-pending",
   "currentItem": "BACKLOG-361",
   "structureItem": "BACKLOG-476",
   "lastVerdict": null,
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-06T03:05:00-05:00",
     "structure-smith": "2026-08-06T03:14:00-05:00",
     "designer": "2026-08-06T03:26:00-05:00",
-    "code-planner": "2026-08-05T03:34:00-05:00",
+    "code-planner": "2026-08-06T03:34:00-05:00",
     "coder": "2026-08-05T03:48:00-05:00",
     "qa": "2026-08-05T04:02:00-05:00",
     "validator": "2026-08-05T04:12:00-05:00",

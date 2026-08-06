@@ -5326,3 +5326,15 @@ into the Fernreach or six anywhere else. The crowding penalty folds into the app
 sitting above it as a tier - the opposite of 474's frontier call, because a crowded ground is honestly both a
 worse place to arrive at and a likelier place to leave, so both readers of `zoneAppeal` want the same sign.
 Lens glyph deliberately withheld: that is 477's job and a loose third icon now is the redesign 477 prevents.
+
+## 2026-08-06 03:34 - cycle 123 - code-planner - 4 new files, 5 edited
+
+Reuse list came back long: 361's "how far" *is* 475's `hopsBetween`, its "where has it stood" is 364's
+`SeenZones` read-only, and its counter hangs on the `markSeen`/`markCameFrom` seam pair that already exists in
+both arrival paths. 476's capacity derives from 449's `zoneTileAt` and borrows 460's resist-damp lever
+wholesale, taking the `min` of the two holds. Two new pure modules, no new table, no new dependency, nothing
+under `game/src/ai/`.
+
+Order puts `capacity.ts` first and proves it in isolation before any scene edit, because the calibration is
+the risk. The rule written into the plan: if a pinned migration spec moves, the knob is wrong - re-tune
+`TILES_PER_HEAD`, do not amend the spec.
