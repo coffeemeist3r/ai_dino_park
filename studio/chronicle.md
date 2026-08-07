@@ -5552,3 +5552,20 @@ assert against stale text. The first was caught by the empty-park control in the
 that control exists for.
 
 build clean; unit **1602/1602** (+18).
+
+## 2026-08-07 04:05 — cycle 124 — qa — 27/27 criteria pass (lore 13/13, structure 14/14)
+
+build clean; unit **1602/1602** (+18). E2E run twice: 462/463 then 461/463.
+
+Both runs lost only catalogued BACKLOG-456 nouns — `cycle-121-work-priority > persists across a reload`
+(both runs) and `cycle-077-carry` (the second). Isolated: 5/5 and 1/1. Recorded plainly rather than rounded
+up: **neither full run was all-green.** What makes them flakes rather than regressions is not the isolated
+pass alone but that this exact pair failed on the cycle-123 run off a completely different diff, and that
+neither track can reach them — 477 lives in the lens draw and the `[?]` panel, and 360's seam is provably
+inert inside `cycle-077-carry` (that spec runs under `__pauseAmbient`, so no meeting fires, so no pond-swap
+memory exists, so the pull returns null on both crossings).
+
+Three consecutive cycles with 456 in the run is worth the next Structure-smith weighing against the
+milestone rule. No pinned spec was amended on either track.
+
+phase → validator-pending.
