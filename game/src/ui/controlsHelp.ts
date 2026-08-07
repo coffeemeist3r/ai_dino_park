@@ -8,6 +8,8 @@
  * bottom bar keeps three short pieces (gift left · plaque centre · chip right).
  */
 
+import { governanceLegend } from '../world/governance';
+
 /** The bottom-right chip that summons the panel. Click it, or press ? or /. */
 export const HELP_CHIP = '[?] controls';
 
@@ -38,8 +40,17 @@ export const HELP_ROWS: ReadonlyArray<HelpRow> = [
   { keys: '?', action: 'close this' },
 ];
 
-/** The rendered panel lines: a title, then keys padded into a tidy column. */
+/**
+ * The rendered panel lines: a title, then keys padded into a tidy column, then the governance legend
+ * (BACKLOG-477) — the map lens's per-zone call row is glyphs, and a glyph a player can't decode is
+ * decoration. Derived from `GOVERNANCE_CALLS`, so it can never drift from what the map actually draws.
+ */
 export function helpLines(rows: ReadonlyArray<HelpRow> = HELP_ROWS): string[] {
   const pad = Math.max(...rows.map((r) => r.keys.length));
-  return ['— Controls —', ...rows.map((r) => `${r.keys.padEnd(pad)}  ${r.action}`)];
+  return [
+    '— Controls —',
+    ...rows.map((r) => `${r.keys.padEnd(pad)}  ${r.action}`),
+    '',
+    ...governanceLegend(),
+  ];
 }

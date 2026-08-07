@@ -67,6 +67,7 @@ import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFo
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
+import { travelsTogether, togetherMemory, togetherLine, togetherEvent, TOGETHER_BOND } from '../world/together';
 import { FETCH_BOND, FETCH_STEPS, FETCH_GLYPH, fetchEventLine, fetchLine, fetchedMemory, fetcher, fetcherMemory, missingTheMeal, type Escort } from '../world/fetch';
 import { grovePull } from '../world/curiosity';
 import { loadFromDb, saveToDb } from '../world/saveStore';
@@ -116,12 +117,11 @@ import {
   providerPriority,
   feedReserve,
   granaryDeferredForFeeding,
-  spendGlyph,
+  governanceLine,
   providerWorkPriority,
   landmarkDeferredForGathering,
   granaryGateFor,
   workRegrowth,
-  workGlyph,
   type SpendPriority,
   type WorkPriority,
 } from '../world/governance';
@@ -2779,6 +2779,11 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only Playwright hook — the zone map model (BACKLOG-425): chain order, counts, keeper flag
     (window as any).__zoneMap = () => this.zoneMapEntries();
+    // BACKLOG-477: the *drawn* box text, so an e2e can prove the rendered governance row and not just the model.
+    (window as any).__zoneMapText = () => {
+      this.drawZoneMap(); // draw on demand so the hook reads the live box text whatever lens is up
+      return this.mapLabels.map((t) => t.text);
+    };
     // BACKLOG-460: the draining-zone reads — each zone's high-water peak, whether it currently reads
     // declining, a manual peak-bump pass (seed a peak deterministically), and BACKLOG-464's last-one scan.
     (window as any).__zonePeaks = () => ({ ...this.zonePeaks });
@@ -2915,7 +2920,7 @@ export class WorldScene extends Phaser.Scene {
   private drawZoneMap(): void {
     const entries = this.zoneMapEntries();
     const boxW = 118;
-    const boxH = 92; // BACKLOG-428/438: prosperity + want lines; BACKLOG-446: room for the banked-food line
+    const boxH = 104; // BACKLOG-428/438: prosperity + want lines; -446 banked food; -477 the governance row
     const gap = 26;
     const totalW = entries.length * boxW + (entries.length - 1) * gap;
     const x0 = ((TILE * COLS) - totalW) / 2;
@@ -2939,13 +2944,16 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-433: the zone's own harvest tally (🌾N) reads beside the folded tier.
       // BACKLOG-438: a fourth line names what the zone wants from a neighbour, only when it has a demand.
       // BACKLOG-460: a zone hollowed below its peak reads a ⬇ beside the tier — an exodus made legible.
-      // BACKLOG-468: and a 🍽️/🏦 closes that same line with how the ground has chosen to spend (463),
-      // so governance reads at a glance beside the prosperity it shapes. No policy → nothing added.
       // BACKLOG-474: a ground nobody has ever lived on replaces that whole line with the unsettled read —
       // `○ quiet` beside an empty ground says "poor" when the truth is "nobody has ever been here".
+      // BACKLOG-477: the two governance glyphs (468's 🍽️/🏦, 473's 🧺/🧱) come *off* this line — they were
+      // the fourth and fifth reads on it, and they are the same kind of fact — and land on their own row
+      // below, in one table-driven order with a legend in the [?] panel.
       let txt = e.unsettled
         ? `${e.name}\n${e.count} 🦕\n${UNSETTLED_BADGE}`
-        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}${e.spend ? ` ${spendGlyph(e.spend)}` : ''}${e.work ? ` ${workGlyph(e.work)}` : ''}`;
+        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
+      const gov = e.unsettled ? '' : governanceLine([e.spend, e.work]); // BACKLOG-477
+      if (gov) txt += `\n${gov}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
@@ -4000,6 +4008,7 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hook — is the help panel up?
     (window as any).__helpOpen = () => this.helpPanel.visible;
+    (window as any).__helpText = () => this.helpPanel.text; // BACKLOG-477: the panel's rendered text (controls + legend)
   }
 
   private toggleHelp(): void {
@@ -4659,6 +4668,11 @@ export class WorldScene extends Phaser.Scene {
       return d?.name ?? null;
     };
     (window as any).__migrating = () => [...this.migrating];
+    // BACKLOG-360: drive the companion pull for a dino already mid-crossing; returns the companion or null.
+    (window as any).__together = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.tryTogether(d) : null;
+    };
     // BACKLOG-450: a zone's scarcity appeal (prosperity + banked food), and where its residents would head.
     (window as any).__zoneAppeal = (zone: string) => this.zoneAppeal(zone);
     // BACKLOG-476: what each ground can hold, and which are currently over it.
@@ -4759,7 +4773,37 @@ export class WorldScene extends Phaser.Scene {
     this.startMigration(d, h.dest);
     this.memory = remember(this.memory, d.name, homesickMemory(h.friend));
     this.logEvent(`🧭 ${d.name} misses ${h.friend} — drifts back toward ${zoneById(h.dest).name}`);
+    this.tryTogether(d); // BACKLOG-360: a pond-swap companion falls in beside it if this is the grove
     return true;
+  }
+
+  /**
+   * Two who go together (BACKLOG-360) — the companion pull. A crossing already bound for the ground this
+   * dino once traded pond stories about takes its pond-swap partner along, if that partner lives on the
+   * same ground and isn't already crossing. Rides the destination `startMigration` fixed a moment ago; it
+   * never chooses one, so no destination read and no migrant tier is touched. Returns the companion, or null.
+   */
+  private tryTogether(leader: Dino): string | null {
+    const cross = this.migrationCross[leader.name];
+    if (!cross) return null;
+    const home = zoneOf(this.dinoZones, leader.name, BOWL_ID);
+    const candidates = this.dinos
+      .filter((x) => x.name !== leader.name && !this.migrating.has(x.name) && zoneOf(this.dinoZones, x.name, BOWL_ID) === home)
+      .map((x) => x.name);
+    // The grove is the one place 346 records a shared-place bond for; the module takes it as a parameter
+    // so a second such bond is a change here and not a rewrite there.
+    const mate = travelsTogether(cross.dest, GROVE_ID, recall(this.memory, leader.name), candidates);
+    if (!mate) return null;
+    const companion = this.dinoByName(mate);
+    if (!companion) return null;
+    this.startMigration(companion, cross.dest);
+    const zoneName = zoneById(cross.dest).name;
+    this.memory = remember(this.memory, leader.name, togetherMemory(mate, zoneName));
+    this.memory = remember(this.memory, mate, togetherMemory(leader.name, zoneName));
+    this.bonds = strengthen(this.bonds, leader.name, mate, TOGETHER_BOND);
+    this.showBubble(companion, togetherLine());
+    this.logEvent(togetherEvent(leader.name, mate, zoneName));
+    return mate;
   }
 
   private maybeMigrate(): void {
@@ -4978,6 +5022,7 @@ export class WorldScene extends Phaser.Scene {
     // appeal maths happen to say about where it is going.
     const reason = missed ? undefined : this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined;
     this.startMigration(d, dest, reason);
+    this.tryTogether(d); // BACKLOG-360: shared travel, off the shared-place bond 346 has been filing since c76
   }
 
   /**

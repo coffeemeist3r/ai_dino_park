@@ -144,3 +144,43 @@ diff is a table plus two derivations off it, which is the whole point of the ite
 - Watch specifically: `cycle-076-news-pull`, `cycle-077-carry`, `cycle-078-*`, `cycle-097-carry-pressure`,
   `cycle-123-capacity` (the pinned migration set), and `cycle-117-spend-lens` / `cycle-121-work-priority`
   (the pinned lens set). None may be amended.
+
+---
+
+## Shipped
+
+**Files touched (9):**
+
+Lore track (BACKLOG-360):
+- `game/src/world/together.ts` (new) — `TOGETHER_BOND`, `togetherMemory/Line/Event`, `pondCompanion`, `travelsTogether`.
+- `game/src/world/together.test.ts` (new) — 11 cases.
+- `tests/e2e/cycle-124-together.spec.ts` (new) — 3 specs.
+- `game/src/scenes/WorldScene.ts` — import, `tryTogether()`, calls at the tail of `tryHomesick` + `scarcityMigrate`, `__together` hook.
+
+Structure track (BACKLOG-477):
+- `game/src/world/governance.ts` — appended the call table (`GovernanceOption`/`GovernanceCall`, `UNSET_GLYPH`, `SPEND_CALL`, `WORK_CALL`, `GOVERNANCE_CALLS`) + `governanceLine` + `governanceLegend`. Nothing existing changed.
+- `game/src/world/governance.test.ts` — 6 new cases.
+- `game/src/ui/controlsHelp.ts` — `helpLines()` appends the legend.
+- `tests/unit/controlsHelp.test.ts` — the panel-shape case now asserts controls block + blank + legend.
+- `game/src/scenes/WorldScene.ts` — governance glyphs off the prosperity line, `governanceLine` row added, `boxH` 92 → 104, `__zoneMapText` + `__helpText` hooks.
+- `tests/e2e/cycle-124-governance-lens.spec.ts` (new) — 2 specs.
+
+**Deviations from the plan (2, both forced by what the code actually contains):**
+
+1. **`UNSET_GLYPH` is `▫`, not `·`.** The plan didn't name a character. `·` was the obvious pick and it is
+   *already in this very box*: 474's `UNSETTLED_BADGE` is `'· unsettled ·'`, so three of four grounds carry
+   it on a fresh save. A placeholder that collides with another read on the same panel is worse than none.
+   Caught by the e2e's empty-park assertion, which is exactly what that control is for. Noted in the source.
+2. **`__zoneMapText` draws before reading.** The plan had it return the label texts; the labels are only
+   refreshed while the map lens is up, so a spec that never opened the lens would read stale text. The hook
+   calls `drawZoneMap()` first and then returns, so it reads the live render whatever lens is showing.
+
+Also: the governance row is suppressed for an **unsettled** ground, matching 474's existing rule that an
+unsettled box replaces its whole read rather than annotating it.
+
+**Scope creep:** none. `tests/unit/controlsHelp.test.ts` was amended, which is a spec change the item
+requires (the panel gained a section) and not a hidden assertion move — the controls rows are still asserted
+exactly as before, and the legend is asserted against `governanceLegend()` itself.
+
+**Build + tests:** `npm run build` clean. `npx vitest run` (root) **1602/1602** green, up from 1584 (+18).
+E2E: see the QA handoff.

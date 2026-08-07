@@ -141,3 +141,80 @@ export function workRegrowth(p: WorkPriority | null | undefined, y: number): num
 export function workGlyph(p: WorkPriority | null | undefined): string {
   return p === 'gather' ? '🧺' : p === 'build' ? '🧱' : '';
 }
+
+/* ---------------------------------------------------------------------------------------------------
+ * Both of the ground's calls, on the lens (BACKLOG-477).
+ *
+ * 468 hung 🍽️/🏦 off the end of the lens box's prosperity line because at the time there was one
+ * governance call and the end of a line was a fine place for it. 473 added 🧺/🧱 by copying that. The line
+ * now carries five independent reads, two of which are the same *kind* of fact, and nothing anywhere told
+ * the player what any of the four glyphs meant.
+ *
+ * So the calls become a **table**, and the lens row and the `[?]` legend are both derived from it. A third
+ * call (479 is queued) is then a new entry here and no function below changes — which is the item's own
+ * stated ask: a row, not a redesign. It also means the legend cannot drift from the glyphs it explains,
+ * because they are the same data read twice.
+ * ------------------------------------------------------------------------------------------------- */
+
+export interface GovernanceOption {
+  /** The enum value, as the sim stores it. */
+  value: string;
+  glyph: string;
+  /** One plain line for the legend — what this ground has chosen, in the player's words. */
+  meaning: string;
+}
+
+export interface GovernanceCall {
+  /** What this ground is deciding about, for the legend. */
+  name: string;
+  options: readonly GovernanceOption[];
+}
+
+/**
+ * A call this ground has not made yet. The row keeps the position rather than closing up, so a
+ * half-decided ground can never be misread as a fully decided one. Deliberately not `·`: the unsettled
+ * badge (474) already draws that character in this very box, and a placeholder that collides with another
+ * read is worse than no placeholder.
+ */
+export const UNSET_GLYPH = '▫';
+
+export const SPEND_CALL: GovernanceCall = {
+  name: 'pantry',
+  options: [
+    { value: 'feed', glyph: '🍽️', meaning: 'feeds its own first' },
+    { value: 'bank', glyph: '🏦', meaning: 'banks toward plenty' },
+  ],
+};
+
+export const WORK_CALL: GovernanceCall = {
+  name: 'labour',
+  options: [
+    { value: 'gather', glyph: '🧺', meaning: 'fills its stores first' },
+    { value: 'build', glyph: '🧱', meaning: 'raises its walls first' },
+  ],
+};
+
+/** Every call a ground makes, in the order the lens row and the legend read them. */
+export const GOVERNANCE_CALLS: readonly GovernanceCall[] = [SPEND_CALL, WORK_CALL];
+
+/**
+ * The lens row: one glyph per call in table order, `UNSET_GLYPH` for a call this ground hasn't made.
+ * A ground that has decided *nothing* renders `''` — the same `null` seam every hook above honours, so a
+ * young park's map is exactly as it was. `values` is positional against `GOVERNANCE_CALLS`.
+ */
+export function governanceLine(values: ReadonlyArray<string | null | undefined>): string {
+  if (!values.some((v) => v)) return '';
+  return GOVERNANCE_CALLS.map((call, i) => {
+    const v = values[i];
+    return call.options.find((o) => o.value === v)?.glyph ?? UNSET_GLYPH;
+  }).join(' ');
+}
+
+/** The same table rendered for the `[?]` panel, so a glyph on the map is decodable in-game. */
+export function governanceLegend(): string[] {
+  return [
+    '— How a ground decides —',
+    ...GOVERNANCE_CALLS.flatMap((c) => c.options.map((o) => `${o.glyph} ${c.name}: ${o.meaning}`)),
+    `${UNSET_GLYPH} not yet decided`,
+  ];
+}

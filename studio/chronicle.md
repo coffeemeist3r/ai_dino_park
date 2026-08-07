@@ -5539,3 +5539,16 @@ the panel text, so the e2e proves the drawn line rather than the model — the m
 so the cycle-117/121 lens specs pass unamended.
 
 phase → coder-pending.
+
+## 2026-08-07 03:47 — cycle 124 — coder — BACKLOG-360 + BACKLOG-477
+
+Both tracks built, 9 files, no save-shape change on either.
+
+Two deviations, both the same species of thing — a plan meeting the code it described. The governance row's
+placeholder for an undecided call could not be `·`, because 474's unsettled badge already draws that
+character *in the same box*; it is `▫`. And the new `__zoneMapText` hook has to draw before it reads, since
+the map labels only refresh while the map lens is up and a spec that never opened the lens would otherwise
+assert against stale text. The first was caught by the empty-park control in the new spec, which is what
+that control exists for.
+
+build clean; unit **1602/1602** (+18).

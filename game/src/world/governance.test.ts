@@ -5,7 +5,16 @@ import {
   granaryDeferredForFeeding,
   BANK_RESERVE,
   FEED_BUILD_FLOOR,
+  spendGlyph,
+  workGlyph,
+  governanceLine,
+  governanceLegend,
+  GOVERNANCE_CALLS,
+  SPEND_CALL,
+  WORK_CALL,
+  UNSET_GLYPH,
   type SpendPriority,
+  type WorkPriority,
 } from './governance';
 import type { Personality } from '../ai/personality';
 import { pickFoodToSpend } from './foodstore';
@@ -88,5 +97,56 @@ describe('the provider\'s say (BACKLOG-463)', () => {
     // bank: holds a reserve but builds eagerly
     expect(feedReserve(bank)).toBe(BANK_RESERVE);
     expect(granaryDeferredForFeeding(bank, 1)).toBe(false);
+  });
+});
+
+describe("both of the ground's calls, on the lens (BACKLOG-477)", () => {
+  it('the table describes exactly the glyphs the two shipped readers already use', () => {
+    // the descriptors are the data spendGlyph/workGlyph were hand-writing — pinned so they cannot drift
+    for (const o of SPEND_CALL.options) expect(spendGlyph(o.value as SpendPriority)).toBe(o.glyph);
+    for (const o of WORK_CALL.options) expect(workGlyph(o.value as WorkPriority)).toBe(o.glyph);
+    expect(GOVERNANCE_CALLS).toEqual([SPEND_CALL, WORK_CALL]); // pantry before labour
+  });
+
+  it('folds both calls into one row, in table order', () => {
+    const line = governanceLine(['feed', 'build']);
+    expect(line).toContain(spendGlyph('feed'));
+    expect(line).toContain(workGlyph('build'));
+    expect(line.indexOf(spendGlyph('feed'))).toBeLessThan(line.indexOf(workGlyph('build')));
+  });
+
+  it('keeps the position of a call the ground has not made yet', () => {
+    const line = governanceLine(['bank', null]);
+    expect(line).toContain(spendGlyph('bank'));
+    expect(line).toContain(UNSET_GLYPH);
+    // and the other way round — the labour call alone still reads as the *second* position
+    const other = governanceLine([null, 'gather']);
+    expect(other.indexOf(UNSET_GLYPH)).toBeLessThan(other.indexOf(workGlyph('gather')));
+  });
+
+  it('renders nothing at all for a ground that has decided nothing — the null seam, unchanged', () => {
+    expect(governanceLine([null, null])).toBe('');
+    expect(governanceLine([undefined, undefined])).toBe('');
+    expect(governanceLine([])).toBe('');
+  });
+
+  it('the legend explains every glyph the row can draw, including the placeholder', () => {
+    const legend = governanceLegend().join('\n');
+    for (const call of GOVERNANCE_CALLS) {
+      for (const o of call.options) {
+        expect(legend).toContain(o.glyph);
+        expect(legend).toContain(o.meaning);
+      }
+      expect(legend).toContain(call.name);
+    }
+    expect(legend).toContain(UNSET_GLYPH);
+  });
+
+  it('is table-driven: a third call would add a position without touching either function', () => {
+    const third = governanceLine(['feed', 'build', 'whatever']);
+    expect(third).toBe(governanceLine(['feed', 'build'])); // extra values beyond the table are ignored
+    // title + one row per option + the placeholder row
+    const options = GOVERNANCE_CALLS.reduce((n, c) => n + c.options.length, 0);
+    expect(governanceLegend().length).toBe(options + 2);
   });
 });

@@ -1,6 +1,6 @@
 {
   "cycle": 124,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-360: Pond pilgrimage",
   "structureItem": "BACKLOG-477: Both of the ground's calls, on the lens",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-08-07T03:13:00-05:00",
     "designer": "2026-08-07T03:25:00-05:00",
     "code-planner": "2026-08-07T03:33:00-05:00",
-    "coder": "2026-08-06T03:48:00-05:00",
+    "coder": "2026-08-07T03:47:00-05:00",
     "qa": "2026-08-06T04:02:00-05:00",
     "validator": "2026-08-06T04:12:00-05:00",
     "artist": "2026-08-06T04:18:00-05:00"
