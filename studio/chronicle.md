@@ -5482,3 +5482,21 @@ pond-swap memory 346 filed in cycle 76 has been sitting in the ring since, a per
 two dinos who bonded over a place that nothing has ever read.
 
 phase → designer-pending.
+
+## 2026-08-07 03:13 — cycle 124 — structure-smith — BACKLOG-477 (both of the ground's calls, on the lens)
+
+Queue refilled first, as the last handoff said it must: 2 open was below the X=4 cap, so **478** (the chain
+forks — a fifth ground off the middle of the chain, because the 475 hop table has only ever been walked
+against a straight line), **479** (more than one voice on the call — a derived per-zone council, the seam
+031's deferred vote plugs into), and **480** (a landmark that has to be kept up — the build arc is the one
+economy in the park with no running cost) join it. Queue now stands at 4.
+
+Picked 477, off-order past 466 for the third cycle running on the same one-line justification: it is
+Milestone 11's last structure arc. 466 should be the pick the cycle after this milestone closes.
+
+The item exists to stop an accretion rather than start one. The lens box's prosperity line now carries five
+independent reads, two of them governance, each appended by the cycle that invented it — and both of last
+cycle's closing stages flagged it independently. The deliverable is a table (one descriptor per call, glyphs
+and legend derived from it) so a third call is a literal new entry.
+
+phase unchanged (designer-pending).
