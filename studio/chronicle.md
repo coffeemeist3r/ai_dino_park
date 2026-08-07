@@ -5500,3 +5500,23 @@ cycle's closing stages flagged it independently. The deliverable is a table (one
 and legend derived from it) so a third call is a literal new entry.
 
 phase unchanged (designer-pending).
+
+## 2026-08-07 03:25 — cycle 124 — designer — BACKLOG-360 + BACKLOG-477
+
+Took the Lore-smith's next-up unchanged. Both tracks are Milestone 11's last arcs, so the cycle closes the
+milestone if both land.
+
+360 is specced as a **companion pull**, deliberately not a second decision: the companion rides the
+destination the leader already chose and must not touch `pickMigrant` or any of the four destination reads.
+The hook goes inside `scarcityMigrate`/`tryHomesick` rather than `maybeMigrate`, because the dev hooks call
+those two directly and production and test must walk the same path. No save-shape change — the memory ring
+and `bonds` are already persisted.
+
+477 is specced as a **table**, since the item's own text asks for "a row, not a redesign": one descriptor per
+governance call, with the folded lens line and the `[?]` legend both derived from it so they cannot drift
+apart. Ruled on the one real design question the Structure-smith flagged — a partly-decided ground renders a
+placeholder for the unset call, so position one is always the pantry and position two always the labour.
+Explicitly out of scope: a crowding glyph (476 withheld it on purpose) and any rework of `zoneMapModel`'s
+argument list.
+
+phase → codeplan-pending.

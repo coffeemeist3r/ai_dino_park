@@ -622,7 +622,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > hundredth, a place two friends return to together, a tally of who keeps going back, and — the
 > weirdest — a place a dino who came home can quietly come to miss.
 
-- [ ] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
+- [~] BACKLOG-360 [social] Pond pilgrimage — two pond-swap companions (346) may later cross to the grove *together* (a near-simultaneous migration) to revisit the place they bonded over, so shared-place friendship becomes shared travel, not just shared talk. Builds on 346 / 334 / 288.
 
 ## Cycle 79 lore additions — the pond as a known place (2026-06-25)
 
