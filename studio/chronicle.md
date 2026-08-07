@@ -5631,3 +5631,34 @@ that decides → a chain that can grow → **and now a park with distance in it,
 purpose, and not cross alone.** The smiths draft Milestone 12 next cycle.
 
 phase → lore-pending; cycle bumps to 125 next run.
+
+## 2026-08-07 04:22 — cycle 124-art — artist — no-op (empty [art] queue); the sixth, but the first with a real visual change in the diff
+
+No open `[art]`-tagged items. The two BACKLOG entries that match a naive grep for "[art]" are 147 (infra,
+the HUD typography pass) and 212 (core, the non-robot keeper) — both merely *mention* art in their prose.
+The Art section itself is still empty.
+
+Unlike the last five fires, this cycle *does* touch the visual surface: 477 restructures a panel, adds a
+glyph (`▫`) the park has never drawn, and puts a legend section into the `[?]` overlay. So the question is
+live for once rather than rhetorical — and the answer is still no rig. Every one of those is a monospace
+text row in an existing `Phaser.GameObjects.Text`, not a baked texture; the glyphs are the four the sim
+already used plus one placeholder. Nothing here has a shape a rig could author.
+
+Two things worth an artist's eye, recorded for whoever takes the HUD pass (147):
+
+1. **The zone-map box grew a line** (`boxH` 92 → 104) and now runs name / heads / prosperity / governance /
+   wants / banked — six potential rows in a 118×104 black box at four boxes across. It is not crowded yet,
+   and 477's whole point was to stop it accreting sideways, but the box is now the tallest chrome element on
+   a 480px canvas and that is a framing question rather than a code one.
+2. **The `[?]` panel is 21 lines** where it was 14, at 12px monospace on a 480px-tall canvas — roughly 330px
+   of a 480px height, still comfortably inside, but it has stopped being a short reference card and become a
+   two-section document. If a third governance call lands (479 is queued), that panel wants a real layout
+   rather than another appended block.
+
+The standing flag from the cycle-121 audit is unchanged and still the only real art debt: everything in the
+park is drawn, so the rectangle fallback has no live subject and is exercised only by unit tests.
+BACKLOG-212 remains the item that would supply an honest control, and it is `[core]` — a Lore-smith pick,
+not an Artist fire.
+
+No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
+phase stays lore-pending.
