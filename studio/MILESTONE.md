@@ -8,28 +8,10 @@
 
 ## Current milestone
 
-**Milestone 11: A park you have to cross**
-**Status:** ACTIVE (opened cycle 122)
+**None — Milestone 11 shipped cycle 124.**
 
-Milestone 10 added a fourth ground and found that the code generalized while the assertions didn't. It
-left behind a sharper finding in its own closing item: **every cross-zone read in this park is one hop
-deep.** The ferry carries to *a* neighbour, the demand read points at *a* neighbour, migration walks to
-the richest *neighbour* — and the two pulls the last two cycles built (word of plenty, 458; a ground you
-miss, 362) are silently *dropped* when what a dino wants isn't next door. At three grounds "neighbour"
-and "the park" were the same set, so nothing was wrong. At four they aren't, and the far end of the chain
-is a place no desire can reach. Milestone 11 gives the chain **distance**: hops the systems can measure,
-a dino that walks the whole park one ground at a time to answer a longing, a ground that can be too full
-to take another mouth — and a cast that carries where it has been around with it.
-
-**Lore arcs:**
-- [x] Still full of the place it left — a dino freshly back from another ground carries it a while: a wistful keepsake bubble aimed the way it came and a memory that colours its next greeting, keyed on *whichever* ground it came from (BACKLOG-347 — cycle 122)
-- [x] Homebody or wanderer — how far and how often each dino has actually walked the chain becomes a legible standing in the collection book, so the cast splits into those who cross and those who never do (BACKLOG-361 — cycle 123)
-- [ ] Two who go together — two dinos who bonded over a shared place later cross to it *together*, so shared travel joins shared talk (BACKLOG-360)
-
-**Structure arcs:**
-- [x] Distance on the chain — a derived hop-distance table off the adjacency graph; a pull toward a ground that isn't adjacent becomes a *step toward it* instead of being silently dropped, and the demand read prefers the nearest qualifying ground (BACKLOG-475 — cycle 122)
-- [x] What a ground can hold — a derived carrying capacity per zone; crowding past it damps that ground's appeal and lifts its residents' leave-lean, so the chain settles into a distribution instead of a stampede (BACKLOG-476 — cycle 123)
-- [ ] Both of the ground's calls, on the lens — the spend and work priorities folded into one compact per-zone governance line with a legend, so a third call later is a row and not a redesign (BACKLOG-477)
+The smiths draft Milestone 12 at the next cycle open: the Lore-smith writes the headline + the lore arcs,
+the Structure-smith adds the structure arcs right after.
 
 ---
 
@@ -49,6 +31,59 @@ to take another mouth — and a cast that carries where it has been around with 
 ```
 
 ## Shipped milestones
+
+### Milestone 11: A park you have to cross — SHIPPED cycle 124 (opened cycle 122)
+
+Milestone 10 grew the chain to four grounds and found that the code generalized while the assertions didn't.
+It left a sharper finding in its own closing item: **every cross-zone read in this park was one hop deep.**
+The ferry carried to *a* neighbour, the demand read pointed at *a* neighbour, migration walked to the richest
+*neighbour* — and the two pulls M10 built last, word of plenty (458) and a ground you miss (362), silently
+*dropped* whatever a dino wanted when it wasn't next door. At three grounds "neighbour" and "the park" were
+the same set, so nothing was wrong. At four they weren't, and the far end of the chain was a place no desire
+could reach.
+
+Milestone 11 gave the chain **distance**, and then spent four cycles discovering what distance makes possible.
+475 derived a hop table off the adjacency graph — no second table to fall out of sync — and turned a pull
+toward a far ground into a *step toward it*, one ground per roll, so crossing the park became the existing
+per-roll decision applied again. Its finding was not in either pure module: both were correct, and the defect
+sat downstream, where the ticker and the memory ring read the *next hop* and would have had a dino announce
+it missed the Grove while it was walking to the Hollow. Splitting every pull into a **target** (what it wants,
+which every word reads) and a **dest** (where it steps, which every move reads) is the shape the rest of the
+milestone inherited.
+
+Then the consequences arrived in order, each item standing on the one shipped the night before. A dino comes
+back **still full of the ground it left** (347), keyed on whichever ground that was rather than on the grove,
+with the keepsake glance deliberately floated a roll *after* arrival because four beats already contend at the
+crossing instant. **What a life of crossings adds up to** became legible (361) — and needed two dimensions,
+because on a crossing count alone a dino pacing between two adjacent grounds outranks one that walked the
+whole chain; reach was only measurable at all because 475 shipped the hop table first. A ground learned it
+could be **too full** (476), the first brake in a set of five accelerative systems and the first thing in the
+park's life to protect the ground being *filled* rather than the one being emptied — calibrated so the park
+boots *at* capacity and the whole system is inert on a fresh save, with the suite standing perfectly still as
+the evidence. And on the last night, **two dinos went somewhere together** (360): the first crossing in the
+project's life to move two bodies, off a shared-place bond the park had been quietly recording since cycle 76
+and had never once read.
+
+The structure track closed by cleaning up after itself. 477 folded the two governance calls off the end of an
+accreting prosperity line into one table-driven row with a legend the `[?]` panel generates from the same
+data — the third call, when it comes, is a row and not a redesign. Its finding is the milestone in miniature:
+the obvious placeholder character was already being drawn in the same box by an earlier feature, visible only
+because a spec bothered to assert that a fresh park shows *nothing*.
+
+Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands
+alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → a chain
+that can grow (M10) → **a park with distance in it, that a dino can cross on purpose and not cross alone**
+(M11). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] Still full of the place it left — a dino freshly back from another ground carries it a while: a wistful keepsake bubble aimed the way it came and a memory that colours its next greeting, keyed on *whichever* ground it came from (BACKLOG-347 — cycle 122)
+- [x] Homebody or wanderer — how far and how often each dino has actually walked the chain becomes a legible standing in the collection book, so the cast splits into those who cross and those who never do (BACKLOG-361 — cycle 123)
+- [x] Two who go together — two dinos who bonded over a shared place later cross to it *together*, so shared travel joins shared talk (BACKLOG-360 — cycle 124; **milestone SHIPPED**)
+
+**Structure arcs:**
+- [x] Distance on the chain — a derived hop-distance table off the adjacency graph; a pull toward a ground that isn't adjacent becomes a *step toward it* instead of being silently dropped, and the demand read prefers the nearest qualifying ground (BACKLOG-475 — cycle 122)
+- [x] What a ground can hold — a derived carrying capacity per zone; crowding past it damps that ground's appeal and lifts its residents' leave-lean, so the chain settles into a distribution instead of a stampede (BACKLOG-476 — cycle 123)
+- [x] Both of the ground's calls, on the lens — the spend and work priorities folded into one compact per-zone governance line with a legend, so a third call later is a row and not a redesign (BACKLOG-477 — cycle 124; **structure track closed**)
 
 ### Milestone 10: A fourth ground, and the first feet on it — SHIPPED cycle 121 (opened cycle 119)
 

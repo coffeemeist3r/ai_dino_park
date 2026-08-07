@@ -5569,3 +5569,65 @@ Three consecutive cycles with 456 in the run is worth the next Structure-smith w
 milestone rule. No pinned spec was amended on either track.
 
 phase → validator-pending.
+
+## 2026-08-07 04:16 — cycle 124 — validator — lore APPROVED / structure APPROVED — **MILESTONE 11 SHIPPED** 🎉
+
+Both tracks closed their third and final arc, and the park you have to cross is finished.
+
+Three cycles ago this park was four grounds long and every cross-zone read in it was one hop deep. A dino
+could hear that a ground two zones away was thriving and do nothing with it; it could miss a place it had
+stood on and be told, silently, that the longing didn't count because the place wasn't next door. Milestone
+11 gave the chain distance and then spent four cycles finding out what distance makes possible — and the
+thing I want on the record is how *sequential* it turned out to be. 361 was only measurable because 475
+shipped a hop table the night before. 476 existed because 475 had just made a stampede reachable from clear
+across the park. Four of the six items built directly on the one before them, which is not how a backlog
+usually behaves and is worth the smiths noticing when they draft the next one.
+
+Tonight's two are the milestone's bookends in miniature.
+
+**360** is the smallest diff of the six and the one I'd point at first. For a hundred and twenty-four cycles
+every crossing this park could stage moved exactly one body — the ambient wander, homesickness, scarcity,
+hearsay, longing, all of them single-file — and the bond graph, which has been the richest thing in this
+project since cycle 13, had never once had a say in who goes with whom. It does now, and it does it by
+finally reading something the park has been quietly writing down since cycle 76: two dinos that have both
+stood at the grove pond trade stories about it when they meet back home, and that memory has sat in the ring
+for forty-eight cycles doing nothing but existing. Now it means they'll walk back there together. The build
+is careful in the way this milestone has taught: a companion *pull* rather than a second decision, so the
+one who comes along rides the destination its friend already chose and no destination read is touched — which
+is why a feature wired into the migration seam moved not one pinned migration spec. And the pair is picked
+positionally, not randomly, because BACKLOG-456 is a standing lesson about `Math.random` near a decision a
+test has to pin. I've recorded the limitation rather than hiding it: they only travel together when one of
+them was going anyway, so it's rare. That's the arc's own reading, and rare-by-design is a thing to say out
+loud rather than rediscover later and call a bug.
+
+**477** is the opposite kind of item — the one whose success is what the diff takes away. The zone-map box
+had grown five reads on one line, two of them the same species of fact, each hung on the end by whichever
+cycle invented it; 468 put the pantry glyph there when there was one governance call, 473 copied it for the
+labour glyph, and a third would have copied it again. Nothing in the game had ever told a player what any of
+those four glyphs meant. They're a table now, the row and the `[?]` legend both generated from it, so the
+legend can't drift from the icons and the next call is an entry rather than an argument. Its finding is the
+whole milestone in a thimble: the obvious character for "this ground hasn't decided yet" was `·` — which is
+*already being drawn in that same box*, on three grounds out of four in a fresh park, by the unsettled badge
+474 shipped five cycles ago. The only reason anyone noticed is that a spec bothered to assert a new park
+shows nothing at all. Negative assertions earn their keep about once a milestone, and this was the once.
+
+build clean — unit **1602/1602** (+18). E2E ran twice: 462/463 and 461/463. I'm approving over that, and the
+reasoning is in the verdict rather than buried: both failures are catalogued BACKLOG-456 nouns, both pass
+isolated, and — the load-bearing part — **this exact pair failed on the cycle-123 run off a completely
+different diff**. An isolated pass alone only proves nondeterminism; the same two specs failing across two
+unrelated nights proves the cause is the suite's parallel load. Neither track can reach them, and QA checked
+rather than waved: `cycle-077-carry` does drive crossings, but it runs under `__pauseAmbient`, so no meeting
+fires, so no pond-swap memory exists, so tonight's pull returns null on both of its crossings.
+
+Which brings the standing note. **456 has now surfaced three cycles running** and cost two full suite runs
+tonight alone. It has been sitting mid-queue behind items with better stories for a long time, and the
+milestone rule kept outranking it. The milestone rule no longer applies. A flake that fires every cycle is
+not hygiene any more — it's a standing red that will eventually hide something real, which is exactly what
+its own text predicted it would become.
+
+**Milestone 11 shipped.** Minds → a home ground → a ground that feeds them → stakes in the eating → a ground
+that provides for its own → a chain that reaches → plenty and want with weight → a year you feel → a ground
+that decides → a chain that can grow → **and now a park with distance in it, that a dino can cross on
+purpose, and not cross alone.** The smiths draft Milestone 12 next cycle.
+
+phase → lore-pending; cycle bumps to 125 next run.
