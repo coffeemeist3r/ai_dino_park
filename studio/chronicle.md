@@ -5469,3 +5469,16 @@ looks like from this seat. The next honest art work arrives with the next thing 
 
 No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
 phase -> lore-pending.
+
+## 2026-08-07 03:04 — cycle 124 — lore-smith — two who go together (BACKLOG-360 suggested)
+
+Cycle opens at 124; both tracks resolved APPROVED last cycle so the number bumps. Cap rule holds (open
+lore-track items well past 12) — no new seeds, a drain cycle. Idea Box empty.
+
+The milestone's last lore arc. Four cycles of Milestone 11 have each given one animal a private
+relationship with the chain; 360 is the one that puts *two* on the road at once. Travel in this park has
+been solitary for 124 cycles — every crossing mechanism ever built moves exactly one body — and the
+pond-swap memory 346 filed in cycle 76 has been sitting in the ring since, a persisted per-pair record of
+two dinos who bonded over a place that nothing has ever read.
+
+phase → designer-pending.
