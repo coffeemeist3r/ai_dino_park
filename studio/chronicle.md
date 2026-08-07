@@ -5520,3 +5520,22 @@ Explicitly out of scope: a crowding glyph (476 withheld it on purpose) and any r
 argument list.
 
 phase → codeplan-pending.
+
+## 2026-08-07 03:33 — cycle 124 — code-planner — BACKLOG-360 + BACKLOG-477
+
+Two tracks, zero shared files — they meet only in `WorldScene.ts`, in different methods.
+
+360: one new pure module (`world/together.ts`), one private method, two call sites, one dev hook. Reuse
+table checked first: every primitive it needs already exists (`pondSwapMemory`, `recall`/`remember`,
+`startMigration`, `strengthen`, `showBubble`, `logEvent`), so the module is the pair read and the strings
+and nothing else. The call sites are `scarcityMigrate` and `tryHomesick` rather than `maybeMigrate`, because
+the dev hooks enter through those two — production and test then walk the same path. Wrote the containment
+rule into the plan in advance, the way 476's plan did: if a pinned migration spec moves, the gate is wrong
+and the spec must not be amended.
+
+477: append-only in `governance.ts` (a descriptor table plus two derivations off it), one line each in
+`controlsHelp.ts` and `drawZoneMap`, box height +12. Two new dev hooks read the *rendered* label text and
+the panel text, so the e2e proves the drawn line rather than the model — the model is deliberately unchanged
+so the cycle-117/121 lens specs pass unamended.
+
+phase → coder-pending.
