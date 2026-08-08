@@ -5783,3 +5783,28 @@ outcome: a real regression, in a genuinely general system, hiding inside a red e
 past. Seam first, fork second — and tonight's two runs are the receipt.
 
 phase → artist-pending, then lore-pending; cycle bumps to 126 next run.
+
+## 2026-08-08 04:02 — cycle 125-art — artist — no-op (empty [art] queue); the seventh, and the diff is invisible by construction
+
+The Art section is still empty. Nothing tagged `[art]` is open; 147 (the HUD typography pass) and 212 (the
+non-robot keeper) still merely mention art in their prose and belong to other routines.
+
+Unlike cycle 124, this cycle's diff has no visual surface at all to weigh. 456 is a test harness — a flag,
+three guards, one promise handed back — and produces zero pixels by design. 370 changes *where* a moping
+loner walks and adds no glyph, no bubble and no panel: it reuses 135's 🥀, which has ridden loner status
+since cycle 80. That is a deliberate design call worth an artist's endorsement rather than a complaint. The
+tell for "this dino is alone" already exists and already shows the whole time; a second mark for "…and it is
+coming to you about it" would compete with the first at the exact moment the player is meant to read the
+first. The beat is legible through *motion* — a lone dino crossing the bowl toward where you are standing —
+which is the cheapest and least cluttered register the park has.
+
+One thing recorded for whoever takes 147: 370 makes the keeper's position meaningful to a dino's pathing for
+the first time. If the HUD pass ever moves or reframes the glass rim, the wall a leaning loner walks to is
+now something a player is meant to *notice*, not just chrome.
+
+The standing flag from the cycle-121 audit is unchanged and still the only real art debt: everything in the
+park is drawn, so the rectangle fallback has no live subject and is exercised only by unit tests.
+BACKLOG-212 remains the item that would supply an honest control, and it is `[core]` — a Lore-smith pick.
+
+No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
+phase → lore-pending.
