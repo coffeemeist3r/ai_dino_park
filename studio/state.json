@@ -1,7 +1,7 @@
 {
-  "cycle": 124,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 125,
+  "phase": "structure-pending",
+  "currentItem": "BACKLOG-370",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-08-07T03:04:00-05:00",
+    "lore-smith": "2026-08-08T02:40:00-05:00",
     "structure-smith": "2026-08-07T03:13:00-05:00",
     "designer": "2026-08-07T03:25:00-05:00",
     "code-planner": "2026-08-07T03:33:00-05:00",

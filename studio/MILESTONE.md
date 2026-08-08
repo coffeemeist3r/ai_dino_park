@@ -8,10 +8,29 @@
 
 ## Current milestone
 
-**None — Milestone 11 shipped cycle 124.**
+**Milestone 12: A park that branches, and a cast that doesn't blur**
+**Status:** ACTIVE (opened cycle 125)
 
-The smiths draft Milestone 12 at the next cycle open: the Lore-smith writes the headline + the lore arcs,
-the Structure-smith adds the structure arcs right after.
+Eleven milestones built a *line*. Every ground in this park has at most one east neighbour, so the
+"adjacency graph" (383) has only ever been walked as a list — `zoneChain` derives the drawing order by
+following east links from the westmost zone, and 475's `hopDistances` runs a general breadth-first search
+over data that has never once branched. M10's finding was that the code generalizes and the assertions
+don't; M11 built a whole distance layer on top of a graph with no forks in it. Milestone 12 puts a fork in
+it, gives a ground more than one voice on its own calls, and makes what's been built cost something to keep.
+
+The lore half answers a different blur. The cast has accumulated tallies for eleven milestones — yields,
+gobbles, stands, tics, crossings — and a dino is still easiest to tell apart by its name. These three arcs
+are about a dino being *somebody in particular*: the one with nobody who leans on you instead, the one whose
+private ritual leaves a mark another can stumble on, and the manner at the hatch that finally reads as one
+character note instead of four counters.
+
+**Lore arcs:**
+- [ ] The one with nobody leans on you — a loner with no dino-friends but high keeper-friendship drifts to the glass toward *you* rather than a random edge, so loneliness becomes a bid for the keeper's attention (BACKLOG-370)
+- [ ] Traces of your pacing — a dino that arrives where another was lately ticcing files a faint "someone was pacing here", so a private ritual leaves a mark a friend can stumble on (BACKLOG-424)
+- [ ] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402)
+
+**Structure arcs:**
+- _(the Structure-smith adds these in routine 1.5 this cycle)_
 
 ---
 

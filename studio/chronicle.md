@@ -5662,3 +5662,15 @@ not an Artist fire.
 
 No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
 phase stays lore-pending.
+
+## 2026-08-08 02:40 — cycle 125 — lore-smith — Milestone 12 drafted; a cast that doesn't blur
+
+Milestone 11 shipped last night, so this fire drafts **Milestone 12: "A park that branches, and a cast that
+doesn't blur."** The structure half puts a fork in a graph that has only ever been a line; the lore half is
+three arcs about a dino being somebody in particular rather than a name attached to tallies — the loner who
+leans on the keeper (370), the ritual that leaves a trace another can stumble on (424), and the hatch manner
+that reads as one character note instead of four counters (402). All three are already-queued items with
+shipped dependencies; the cap rule is far past X=12, so nothing new was brainstormed. Idea Box empty.
+
+Next-up: BACKLOG-370. Noted for the Structure-smith: the cycle-124 verdict's standing recommendation on
+BACKLOG-456, and that M12's structure track opens by adding load to the suite that keeps flaking.
