@@ -93,3 +93,26 @@ the fresh-park negative assertion.
 ## Blockers
 
 _(none at plan time)_
+
+---
+
+## Shipped (Coder, 2026-08-08)
+
+**456.** `ambientHeld` + `__holdAmbient`/`__releaseAmbient`/`__ambientHeld`; three guards in `forceStep`
+(meet loop, `maybeSpawnResource`, `checkGather`); `pickMigrant` homesick tier `homesick[0]`; `__flushSave`.
+Four catalogued specs moved onto the seam; new `cycle-125-ambient-hold.spec.ts` (7 specs) pins the seam.
+
+**370.** `LEAN_HEARTS`/`leansOnKeeper`/`keeperEdgeTarget`/`leanMemory` in `world/loner.ts`; `leanTargetFor`
++ the mope-branch target swap + the once-per-bout memory; hooks `__leanTarget`, `__setFriendship`,
+`__leanFiled`, `__playerTile`. +5 unit, +5 e2e.
+
+**One finding, and the plan was wrong about it.** The plan said to hang the lean memory's once-per-stretch
+guard off `resetTic`, reusing 408's `ticCaughtFiled` seam. Shipped that way it filed the memory **six times**
+— the ring's entire capacity — because `resetTic` tracks the *tic* stretch, which any company within
+`TIC_COMPANY_RANGE` breaks every few steps, while a loner standing at the keeper's wall is still very much
+waiting. The two stretches are not the same stretch. The guard now clears in `checkLonerLift` instead: the
+bout of waiting ends when the dino stops being a loner, which is the only event that actually ends it. Caught
+by the e2e asserting `toBe(1)`; an assertion of `toBeLessThanOrEqual(1)` would have passed on a broken build
+*and* on a build where the memory never fired at all.
+
+Build clean. Unit 1607/1607. `@mlc-ai/web-llm` still imported only under `game/src/ai/`. No save-shape change.

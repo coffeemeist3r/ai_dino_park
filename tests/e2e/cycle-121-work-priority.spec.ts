@@ -90,6 +90,9 @@ test('the work policy persists across a reload', async ({ page }) => {
   await soleProvider(page, 'Mossback');
   expect(await workPriority(page)).toBe('gather');
 
+  // BACKLOG-456: the auto-save is fire-and-forget (`void this.saveGame()`), so under parallel load the
+  // reload can beat the IndexedDB write. Settle it first — this is the race, not the persistence.
+  await page.evaluate(() => (window as W).__flushSave());
   await page.reload();
   await page.waitForFunction(() => typeof (window as W).__workPriority === 'function');
   expect(await workPriority(page)).toBe('gather');

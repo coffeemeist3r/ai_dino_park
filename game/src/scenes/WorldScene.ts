@@ -94,7 +94,7 @@ import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
-import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine } from '../world/loner';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
@@ -326,10 +326,28 @@ export class WorldScene extends Phaser.Scene {
    *  `__pauseAmbient` dev hook from the e2e boot() so 300+ parallel specs don't race the ambient world tick.
    *  Never set in normal play (defaults false); explicit dev hooks (`__stepWorld` etc.) bypass it. */
   private ambientPaused = false;
+  /**
+   * BACKLOG-456: one level down from `ambientPaused`. That flag gates the wall-clock *timers*; this one
+   * gates the ambient work that rides a **driven** `forceStep` — the pairwise meeting loop, resource spawn,
+   * and gathering — for the length of a spec's driven crossing, so a pinned pile or a pinned bond graph
+   * can't be mutated out from under an assert.
+   *
+   * It holds those three things and NOTHING else: movement, crossings, needs, feeding, plots, barter, eggs
+   * and the governance hooks all still run, because every spec this exists for is *driving* one of those.
+   * Do not widen it into a blanket freeze. Never set in normal play (defaults false).
+   */
+  private ambientHeld = false;
   /** Caught mid-tic (BACKLOG-408): the dino this greet caught mid-ritual (bashful reply), + a once-per-stretch
    *  memory guard. Both transient — cleared by resetTic (company/need ends the stretch) and on greet cancel. */
   private caughtTic: string | null = null;
   private ticCaughtFiled = new Set<string>();
+  /**
+   * BACKLOG-370: leaning loners that have already filed their "waited by the glass" memory. Transient,
+   * and deliberately NOT cleared by resetTic: that guard tracks the *tic* stretch, which company breaks
+   * every few steps while a loner at the wall is still very much waiting. The spell of waiting ends when
+   * the dino stops being a loner at all (checkLonerLift) — one memory per bout of loneliness.
+   */
+  private leanFiled = new Set<string>();
   /** Dinos mid zone-crossing (BACKLOG-334): walking to their linked edge before the home zone flips. Transient. */
   private migrating = new Set<string>();
   /**
@@ -729,6 +747,16 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__pauseAmbient = () => { this.ambientPaused = true; };
     (window as any).__resumeAmbient = () => { this.ambientPaused = false; };
     (window as any).__ambientPaused = () => this.ambientPaused;
+
+    // BACKLOG-456: hold/release the ambient work that rides a driven forceStep (meetings, resource spawn,
+    // gathering). A spec wraps its driven crossing in these so the pile/bond state it pinned stays pinned.
+    (window as any).__holdAmbient = () => { this.ambientHeld = true; };
+    (window as any).__releaseAmbient = () => { this.ambientHeld = false; };
+    (window as any).__ambientHeld = () => this.ambientHeld;
+    // BACKLOG-456: the save is fire-and-forget everywhere in play (`void this.saveGame()`), which is right
+    // for the game and is exactly what races a spec's page.reload(). This hands the promise back so a spec
+    // can await the write settling before it reloads. No production call site changed.
+    (window as any).__flushSave = () => this.saveGame();
 
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
     // avoid the parallel-load flake of reading a hook before create() finishes.
@@ -2449,6 +2477,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.lonerFriended.has(name)) return;
     if (!liftsLoner(before, this.bonds, name, this.dinoNames(), LONER_FLOOR)) return;
     this.lonerFriended.add(name);
+    this.leanFiled.delete(name); // BACKLOG-370: the waiting is over — a later bout can be remembered afresh
     this.memory = remember(this.memory, name, foundFriendMemory());
     const d = this.dinoByName(name);
     if (d) this.showBubble(d, foundFriendLine(name));
@@ -3000,6 +3029,19 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only: tone state (BACKLOG-142) — friendship points, last-tone map, and live menu.
     (window as any).__friendship = () => ({ ...this.friendship });
+    // BACKLOG-370: set a dino's keeper-friendship points outright (the e2e needs ≥ LEAN_HEARTS hearts
+    // without greeting it a dozen times, which would also lift it out of loner status via LONER_BONUS).
+    (window as any).__setFriendship = (name: string, points: number) => {
+      this.friendship = { ...this.friendship, [name]: points };
+    };
+    // BACKLOG-370: the wall this dino's mope branch would aim at right now, or null when it isn't a
+    // leaning loner. Same three predicates the branch itself uses, so hook and behaviour cannot drift.
+    (window as any).__leanTarget = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.leanTargetFor(d) : null;
+    };
+    (window as any).__leanFiled = () => [...this.leanFiled];
+    (window as any).__playerTile = () => this.playerTile(); // BACKLOG-370: what wall the keeper is by
     (window as any).__lastTone = () => ({ ...this.lastTone });
     (window as any).__toneMenuOpen = () => this.toneMenuOpen;
     (window as any).__toneMenuText = () => (this.toneMenuOpen ? this.toneMenuText : null);
@@ -3164,6 +3206,18 @@ export class WorldScene extends Phaser.Scene {
         zoneOf(this.dinoZones, o.name, BOWL_ID) === zone &&
         this.chebyTiles(this.tileOf(o), cur) <= TIC_COMPANY_RANGE,
     );
+  }
+
+  /**
+   * The wall a leaning loner (BACKLOG-370) withdraws toward, or null when this dino isn't one — it isn't a
+   * loner, it's out of the keeper's view, or its hearts are under LEAN_HEARTS. Deliberately does NOT roll
+   * MOPE_CHANCE: that roll decides *whether* a loner mopes this step, this decides *where* it mopes to.
+   */
+  private leanTargetFor(d: Dino): { tileX: number; tileY: number } | null {
+    if (!isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR)) return null;
+    if (!this.inView(d)) return null;
+    if (!leansOnKeeper(heartsFromPoints(this.friendship[d.name] ?? 0))) return null;
+    return keeperEdgeTarget(this.playerTile(), COLS, ROWS);
   }
 
   /** Company or a need returned (BACKLOG-405): drop the solitary streak so the ritual can re-form fresh later. */
@@ -3469,7 +3523,15 @@ export class WorldScene extends Phaser.Scene {
       } else if (gathering) {
         next = stepToward(cur, dres!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
       } else if (moping) {
-        next = stepToward(cur, edgeTarget(cur, COLS, ROWS), COLS, ROWS); // withdraw to the nearest wall
+        // Lonely lean on the keeper (BACKLOG-370): a loner with real hearts withdraws toward the wall the
+        // *keeper* is by rather than its own nearest one — the one relationship it has left finally has a
+        // bearing on where it goes. In-view only: a dino aiming at a keeper it can't see isn't a bid.
+        const target = this.leanTargetFor(d);
+        next = stepToward(cur, target ?? edgeTarget(cur, COLS, ROWS), COLS, ROWS);
+        if (target && next.tileX === target.tileX && next.tileY === target.tileY && !this.leanFiled.has(d.name)) {
+          this.memory = remember(this.memory, d.name, leanMemory());
+          this.leanFiled.add(d.name);
+        }
       } else if (ticcing) {
         // BACKLOG-414: on the first ticcing step, if this dino's closest friend has crossed to another zone,
         // aim the ritual at the edge they left by (walked toward, below); else settle where the ritual began (405).
@@ -3507,7 +3569,8 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    for (let i = 0; i < this.dinos.length; i++) {
+    // BACKLOG-456: held, no meeting fires — bonds/meetings stay exactly as the spec pinned them.
+    if (!this.ambientHeld) for (let i = 0; i < this.dinos.length; i++) {
       for (let j = i + 1; j < this.dinos.length; j++) {
         const a = this.dinos[i];
         const b = this.dinos[j];
@@ -3559,8 +3622,8 @@ export class WorldScene extends Phaser.Scene {
     this.checkPlot();
     this.checkPondSight(); // BACKLOG-359: a grove dino reaching the pond for the first time
     this.checkNeeds(); // BACKLOG-371: hunger/thirst build; a dino at the pond drinks
-    this.maybeSpawnResource();
-    this.checkGather();
+    if (!this.ambientHeld) this.maybeSpawnResource(); // BACKLOG-456: no new resource lands mid-crossing
+    if (!this.ambientHeld) this.checkGather(); // BACKLOG-456: nothing re-banks into a pinned pile
     this.maybeBarter(); // BACKLOG-358: two dinos meeting at a shared zone edge trade what each other's zone needs
     this.maybeLayEggs();
     this.checkHatch();
@@ -5035,7 +5098,11 @@ export class WorldScene extends Phaser.Scene {
     const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
     // BACKLOG-340: a dino homesick for a friend a zone away is the first the wander picks up (company > scenery).
     const homesick = candidates.filter((d) => this.homesickOf(d));
-    if (homesick.length) return homesick[Math.floor(Math.random() * homesick.length)];
+    // BACKLOG-456: positional, not random. This was the last `Math.random()` left in a pickable set, and
+    // it is the mechanism behind cycle-076-news-pull's identity flake: an ambient meeting mid-drive turns a
+    // dino homesick and the pick lands on someone else. First-in-list-order-wins is the same rule
+    // richestNeighbor (450), unsettledNeighbor (474), hopToward (475) and pondCompanion (360) all use.
+    if (homesick.length) return homesick[0];
     const pull = (d: Dino) =>
       grovePull(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
     const told = candidates.filter((d) => pull(d) === 2);

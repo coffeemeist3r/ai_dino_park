@@ -12,11 +12,18 @@ const migrating = (p: Page) => p.evaluate(() => (window as W).__migrating() as s
 const step = (p: Page) => p.evaluate(() => (window as W).__stepWorld());
 
 async function crossOnce(p: Page, name: string) {
+  // BACKLOG-456: hold the ambient work that rides a driven forceStep (meetings, resource spawn, gathering)
+  // for the length of the crossing, so what this spec pinned before the walk is still pinned after it.
+  await p.evaluate(() => (window as W).__holdAmbient());
   await p.evaluate((n) => (window as W).__startMigration(n), name);
   for (let i = 0; i < 40; i++) {
     await step(p);
-    if (!(await migrating(p)).includes(name)) return;
+    if (!(await migrating(p)).includes(name)) {
+      await p.evaluate(() => (window as W).__releaseAmbient());
+      return;
+    }
   }
+  await p.evaluate(() => (window as W).__releaseAmbient());
   throw new Error(`${name} never finished crossing`);
 }
 

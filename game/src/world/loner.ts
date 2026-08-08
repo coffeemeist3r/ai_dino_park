@@ -52,6 +52,37 @@ export function edgeTarget(tile: Tile, cols: number, rows: number): Tile {
   return { tileX: tile.tileX, tileY: rows - 1 };
 }
 
+/**
+ * Hearts at which a loner withdraws toward the *keeper* rather than the nearest wall (BACKLOG-370).
+ * Four of ten: a real relationship, and far above a fresh park — every dino spawns at 0 hearts and is
+ * also a loner by construction, so this whole beat is dormant on a new save.
+ */
+export const LEAN_HEARTS = 4;
+
+/**
+ * Does this loner lean on the keeper (BACKLOG-370)? `edgeTarget` has sent a moping loner to the nearest
+ * wall since cycle 80, which is right for a dino with nothing left — and wrong for the one whose every
+ * dino-bond is under the floor but whose keeper friendship is deep. That one has a relationship left, and
+ * withdrawal toward it is a bid for attention rather than avoidance.
+ */
+export function leansOnKeeper(hearts: number, floor = LEAN_HEARTS): boolean {
+  return hearts >= floor;
+}
+
+/**
+ * The wall tile the *keeper* is by (BACKLOG-370) — where a leaning loner withdraws to instead of its own
+ * nearest wall. Delegates to `edgeTarget` so the wall choice and its tie-break order can never drift
+ * between the two reads; the value here is the name and the argument, not a second algorithm.
+ */
+export function keeperEdgeTarget(keeper: Tile, cols: number, rows: number): Tile {
+  return edgeTarget(keeper, cols, rows);
+}
+
+/** The memory a leaning loner files on reaching the keeper's wall (BACKLOG-370). Once per solitary stretch. */
+export function leanMemory(): string {
+  return 'waited by the glass for the keeper';
+}
+
 /** The one-shot beat floated when the keeper's notice lifts a loner. */
 export function perkUpLine(name: string): string {
   return `${name} perks up 💐`;
