@@ -5699,3 +5699,13 @@ migrant pick becomes positional; it is the last `Math.random()` in a pickable se
 since cycle 109 cites this very item for being deterministic. (c) `__flushSave()` for the reload race, which
 is a different failure entirely and would not have been fixed by any amount of ambient holding. Fourteen
 criteria, including two consecutive green full runs.
+
+## 2026-08-08 03:14 — cycle 125 — code-planner — build 456 first, then 370
+
+Files named, prior art checked. 456: one new scene flag + three guards inside `forceStep`, one positional
+pick, one promise stopped being discarded — plus four specs moved onto the seam and a new one that pins the
+seam itself. 370: three pure functions in `world/loner.ts` (with `keeperEdgeTarget` **delegating** to
+`edgeTarget` so the wall choice and tie-break can never drift) and one branch in the mope step. Build order
+matters: 456 supplies the quiet park 370's e2e wants. One flagged risk, to verify rather than assume — the
+homesick pick is the single production behaviour change in 456, and the cycle-076/078 identity pins live in
+neighbouring tiers.
