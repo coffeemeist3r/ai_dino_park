@@ -5684,3 +5684,18 @@ nouns on BACKLOG-456, both flaking off diffs that could not reach them. Three co
 a standing red, not hygiene. So the milestone opens with the seam: promote 456 out of `## Infra` into the
 Structure Track and build it first. Queue was at cap (4 open), so nothing was invented. Lore track (370,
 `world/loner.ts`) shares no file with it.
+
+## 2026-08-08 03:05 — cycle 125 — designer — 370 leans on the keeper; 456 gets three seams, not one
+
+Lore: `edgeTarget` has picked the wall nearest the *dino* since cycle 80, so a loner with deep keeper-hearts
+and no dino-friends withdraws away from the only relationship it has. 370 makes a well-befriended loner mope
+at the wall the **keeper** is by — same-zone only, dormant on a fresh park by construction (every dino is a
+loner at 0 hearts at spawn, and the floor is 4). Twelve criteria.
+
+Structure: read the code and 456 is three mechanisms wearing one item number, not one bug. (a) A *second*
+hold, `ambientHeld`, skipping exactly the meet loop, `maybeSpawnResource` and `checkGather` inside a driven
+`forceStep` — 431's `__pauseAmbient` only ever gated wall-clock timers and stays untouched. (b) The homesick
+migrant pick becomes positional; it is the last `Math.random()` in a pickable set, and every migration pick
+since cycle 109 cites this very item for being deterministic. (c) `__flushSave()` for the reload race, which
+is a different failure entirely and would not have been fixed by any amount of ambient holding. Fourteen
+criteria, including two consecutive green full runs.
