@@ -30,7 +30,10 @@ character note instead of four counters.
 - [ ] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402)
 
 **Structure arcs:**
-- _(the Structure-smith adds these in routine 1.5 this cycle)_
+- [ ] A suite you can trust before you load it further — the parallel-load e2e seam: a dev hold for a zone's ambient spawn/gather/meeting for the length of a driven crossing, a deterministic homesick pick, and a settle helper for the reload race, with the four catalogued specs moved onto it (BACKLOG-456)
+- [ ] The chain forks — a fifth ground hanging off the *middle* of the chain, so a zone genuinely has two onward neighbours and every general read (the hop table, nearest-qualifying, the lens row, the demand read, migration destination) is finally exercised against a graph rather than a line (BACKLOG-478)
+- [ ] More than one voice on the call — a derived per-zone council (the top few food-bankers, not only the single top banker) as a persistent standing beside `provider`, the seam a vote (031) plugs into later (BACKLOG-479)
+- [ ] A landmark that has to be kept up — a standing structure draws a small upkeep from its zone's pile and falls into reversible disrepair when the ground can't pay, so the one economy with no running cost gets one (BACKLOG-480)
 
 ---
 

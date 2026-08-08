@@ -5674,3 +5674,13 @@ shipped dependencies; the cap rule is far past X=12, so nothing new was brainsto
 
 Next-up: BACKLOG-370. Noted for the Structure-smith: the cycle-124 verdict's standing recommendation on
 BACKLOG-456, and that M12's structure track opens by adding load to the suite that keeps flaking.
+
+## 2026-08-08 02:52 — cycle 125 — structure-smith — BACKLOG-456: fix the harness before loading it further
+
+Milestone 12's structure arcs written: 456 (the seam) → 478 (the fork) → 479 (the council) → 480 (upkeep).
+The order is the whole argument. M12's headline beat is a fifth ground hanging off the middle of the chain,
+which is a lot of new e2e load — and the suite it lands on failed two specs per run last cycle, both named
+nouns on BACKLOG-456, both flaking off diffs that could not reach them. Three consecutive cycles of that is
+a standing red, not hygiene. So the milestone opens with the seam: promote 456 out of `## Infra` into the
+Structure Track and build it first. Queue was at cap (4 open), so nothing was invented. Lore track (370,
+`world/loner.ts`) shares no file with it.
