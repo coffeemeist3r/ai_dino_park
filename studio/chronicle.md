@@ -5709,3 +5709,19 @@ seam itself. 370: three pure functions in `world/loner.ts` (with `keeperEdgeTarg
 matters: 456 supplies the quiet park 370's e2e wants. One flagged risk, to verify rather than assume — the
 homesick pick is the single production behaviour change in 456, and the cycle-076/078 identity pins live in
 neighbouring tiers.
+
+## 2026-08-08 03:48 — cycle 125 — qa — 24 criteria, 24 pass / 2 partial; the flake family did not fire
+
+Build clean; unit 1607/1607. Lore 12/12. Structure 12 pass + 2 honest partials (the homesick pick's 20-call
+repetition wasn't constructible without a `pickMigrant` hook, and run 1 of two full e2e runs was not green).
+
+The number that matters: **none of BACKLOG-456's four catalogued specs failed in either full run**, where
+two of them failed on each of the previous two nights off diffs that couldn't reach them. Run 1's two
+failures were cold-boot timeouts in `boot()` — a different family — and both passed isolated; run 2 was
+**475/475 green**. Also recorded, not claimed: `mobile-minds`' long-dialog spec (BACKLOG-430, catalogued as
+a standing red on clean HEAD since cycle 93) passed in run 2. Nothing this cycle touched the dialog input
+path, so that is a note for whoever picks 430 up, not a closure.
+
+One process finding from the lore track: the memory-once assertion was first written
+`toBeLessThanOrEqual(1)`, which passes on a build that files six *and* on one that files none. Tightening it
+to `toBe(1)` is what turned a green run red and surfaced a real bug.

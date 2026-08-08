@@ -1,6 +1,6 @@
 {
   "cycle": 125,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-370",
   "structureItem": "BACKLOG-456: parallel-load e2e seam (ambient hold + deterministic homesick pick + settle helper)",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-08-08T03:05:00-05:00",
     "code-planner": "2026-08-08T03:14:00-05:00",
     "coder": "2026-08-08T03:15:00-05:00",
-    "qa": "2026-08-07T04:05:00-05:00",
+    "qa": "2026-08-08T03:48:00-05:00",
     "validator": "2026-08-07T04:16:00-05:00",
     "artist": "2026-08-07T04:22:00-05:00"
   }
