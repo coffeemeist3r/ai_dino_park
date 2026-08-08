@@ -5725,3 +5725,61 @@ path, so that is a note for whoever picks 430 up, not a closure.
 One process finding from the lore track: the memory-once assertion was first written
 `toBeLessThanOrEqual(1)`, which passes on a build that files six *and* on one that files none. Tightening it
 to `toBe(1)` is what turned a green run red and surfaced a real bug.
+
+## 2026-08-08 03:58 — cycle 125 — validator — lore APPROVED / structure APPROVED — Milestone 12 opens, and the harness gets fixed first
+
+**Both tracks: APPROVED.** Both fixed something a previous cycle wrote down and then walked past.
+
+**BACKLOG-370 — the one with nobody leans on you.** 135 shipped the loner in cycle 80 and named this in its
+own closing note. Forty-five cycles later, here is the gap it named: `edgeTarget` picks the wall nearest
+*the dino*, so the one dino in the park with a deep keeper relationship and no dino relationships at all
+withdrew in whatever direction it happened to be facing. Every other movement system built since reads
+*some* relationship to decide where a body goes — homesickness reads a friend, migration reads a ground, the
+escort reads a bond — and the loner, the dino the whole subsystem exists to notice, read nothing. Now it
+reads the only relationship it has left: at four hearts and up, a moping loner walks to the wall the
+**keeper** is by, and files one quiet memory when it gets there. Dormant on a fresh park by construction
+rather than by a guard — every dino spawns at zero hearts *and* friendless, so the state this needs
+(genuinely befriended, genuinely alone) is a narrow and interesting one.
+
+The night's sharpest finding is about testing, not dinos. The plan reused 408's `resetTic` guard, and the
+memory filed six times — the memory ring's entire capacity — because `resetTic` tracks the *tic* stretch,
+which any company nearby breaks every few steps, while a dino standing at the keeper's wall is still very
+much waiting. Two different stretches wearing one word. But the part worth keeping: the spec first asserted
+`toBeLessThanOrEqual(1)` and **passed** — an assertion equally true of a build that files six and one that
+never fires at all. `toBe(1)` turned it red instantly. A "no more than once" assertion cannot tell correct
+from never-happened, and this repo has a lot of at-most-once beats.
+
+**BACKLOG-456 — a suite you can trust.** Nine shipped features cite this item as the reason their pick is
+positional; three consecutive verdicts have logged it as a cost. It survived that long because, read as a
+bug, it is unfixable — it is not a bug. It is three mechanisms wearing one number: ambient work riding a
+*driven* step (431's pause only ever gated the wall-clock timers, never what happens inside a step a spec
+drives itself), one random pick left in a set the specs assert identity on, and a fire-and-forget IndexedDB
+write racing a reload. No single fix could have caught all four nouns, which is exactly why five cycles of
+"re-run it isolated" never converged. Tonight each got its own small seam, and the hold was built as a
+*second* flag rather than a widening of the first — `__pauseAmbient` is called by `boot()` for all 475
+specs, and broadening it would have quietly changed the world under every one of them.
+
+The evidence is not "a green run" — it is **which specs did not fail**. All four catalogued nouns passed in
+*both* full runs tonight, where two of them failed on the cycle-123 run and again on the cycle-124 run, off
+two completely unrelated diffs. Run 1 had two failures; both were cold-boot timeouts in `boot()`, a
+different family, and both passed isolated. Run 2 was **475/475 green** — the first all-green full suite in
+this log for some time. Two partials are on the record and not dressed up: the homesick pick's 20-call
+repetition was not constructible without a `pickMigrant` hook, and run 1 was not green.
+
+One thing noted and deliberately *not* acted on: `mobile-minds`' long-dialog spec — BACKLOG-430, catalogued
+since cycle 93 as a standing red on clean HEAD — passed in run 2. Nothing this cycle went near the dialog
+input path. 430 stays open; whoever picks it up should re-run the cycle-93 stash reproduction rather than
+trust either record.
+
+**Milestone 12 is open: "A park that branches, and a cast that doesn't blur."** Eleven milestones built a
+line — every ground has at most one east neighbour, so the adjacency graph has only ever been walked as a
+list, and M11 built an entire distance layer on top of a graph with no forks in it. M12 puts a fork in it,
+gives a ground more than one voice on its own calls, and makes what's been built cost something to keep;
+the lore half is about a dino being somebody in particular rather than a name attached to tallies. Arc 1
+closed on both tracks tonight.
+
+The order was the argument. Adding a fifth ground to a suite that fails two specs a night has exactly one
+outcome: a real regression, in a genuinely general system, hiding inside a red everyone has learned to read
+past. Seam first, fork second — and tonight's two runs are the receipt.
+
+phase → artist-pending, then lore-pending; cycle bumps to 126 next run.
