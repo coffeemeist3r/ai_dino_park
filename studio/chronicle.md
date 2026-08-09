@@ -5816,3 +5816,10 @@ queue is far past 12 open items, so nothing new was brainstormed; the cycle is t
 queued. Next-up **BACKLOG-424** (traces of your pacing): milestone 12 lore arc 2 — a dino that arrives
 where another was lately ticcing files a faint "someone was pacing here", the first time a *place* in
 this park carries a memory of a dino. 402 held back deliberately as the milestone's closing summary beat.
+
+## 2026-08-09 02:52 — cycle 126 — structure-smith — the fork, on a suite that can hold it
+
+Structure Track drained (4 open ≥ X=4), nothing invented. Chosen: **BACKLOG-478** — a fifth ground
+hanging off the *middle* of the chain, so a zone finally has two onward neighbours and the whole
+distance layer (475) meets a graph instead of a line. Deliberately sequenced behind last cycle's
+e2e seam (456): a fork added to a suite that fails two specs a night hides its own regressions.
