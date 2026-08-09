@@ -5864,3 +5864,72 @@ files, each with one line on what it assumed — including two that failed for *
 and welcome specs were measuring appeal in a park that had just grown a frontier next door). Nine cross-zone
 systems took the branch untouched. Three partials on 424: the organic path is hook-proven not observed, the
 memory line has no temperament shading, and the notice scan is the first new per-step cast scan in a while.
+
+## 2026-08-09 04:02 — cycle 126 — validator — APPROVED / APPROVED: the graph was a path, and now it isn't
+
+Build clean, unit 1641/1641, e2e 478/478, brain boundary intact, save additive, tree clean. Both tracks ship.
+
+**The chain forks (478).** For eleven milestones this park has called `ZONE_LINKS` an adjacency *graph*
+while only ever putting a *path* in it. `zoneChain` derives its order by following east links from the
+westmost ground. 475 wrote a breadth-first search and a deterministic tie-break "for a future branching map"
+and shipped it against data with no branch and no tie to break. Milestone 11 built an entire distance layer
+on top of that. Tonight the Grove got a third neighbour — The Sunward Ridge, reached by walking **north**,
+the first link in the project's life that is not east or west — and the park found out what it had actually
+built.
+
+The code held. The assertions did not, and that was the point. Nine cross-zone systems — prosperity,
+harvest, demand, the pantry, the ferry, the provider, migration, decline, governance — plus capacity,
+frontier and the lens met a genuinely branching graph with **zero edits**; the Ridge's carrying capacity
+fell out of its own terrain the day it had terrain, exactly as 476 promised. Against that: **twenty amended
+assertions across sixteen files.** That is the M10 finding reproduced on a different axis, which upgrades it
+from an anecdote about the fourth ground to a property of this codebase.
+
+Three of those twenty are worth more than the other seventeen.
+
+One was a real defect, predicted by name before a line of code existed. `griefEdge` (414) worked out which
+way a departed friend went by comparing positions in `zoneChain()`. On a line that is correct. On a fork it
+is nonsense: a branch zone is appended to the chain by 425's unreached-fallback, so a Grove dino grieving a
+friend up on the Ridge would have walked to the **east** wall — a direction its friend did not go, and from
+the Ridge's own side an edge that does not exist. The structure handoff flagged `zoneChain` as suspect
+before the Coder started; the Code-planner routed the fix through `hopToward` before the fork existed to
+break it. Predicting the defect and confirming it beats not having it.
+
+One was an assertion that could never have been a rule. Two specs pinned *every season has exactly one
+thriving crop*. With four crops and four seasons a rotation cannot be anything else — that is arithmetic
+wearing the clothes of design, and it cannot tell a deliberate rotation from a counting coincidence. At five
+crops it is unsatisfiable. It relaxes to *no season is barren*. Its neighbour, *a new crop must declare a
+year*, was kept — and bit, catching the instinct to leave the Ridge out of the season table and let a compat
+seam quietly hand it a base yield. One of those two rules encoded a fact about the world; the other encoded
+the number four. Nothing in the suite could tell them apart until a fifth ground arrived.
+
+Two failed for correct reasons, and that is the subtlest thing tonight surfaced. The scarcity and
+wry-welcome specs both stage "one dino alone in the poor Grove" and assert where *appeal* sends it. They
+went red because the Grove now borders an **unsettled** ground, and the frontier tier (474) outranks appeal
+by design, so the migrant correctly aimed at the Ridge. No product behaviour changed. Their *premise*
+expired the moment a frontier opened next door. A spec can rot without anyone touching it or the code it
+guards.
+
+**Traces of your pacing (424).** 405 gave every dino a private ritual; 408, 413 and 414 gave the keeper
+three ways to catch one. In all of it exactly one observer has ever known a dino paces: the player. 407 was
+seeded to fix that by having a dino *watch* another mid-ritual, and it is unbuildable by construction —
+405's own gate requires nobody in range, so a witness ends the thing it would witness. Tonight's re-shape
+respects the gate instead of arguing with it. Nobody watches. The ground remembers. A dino that falls into
+its ritual scuffs the spot, and one that wanders across the mark while it is still fresh files a faint,
+*unnamed* trace.
+
+The anonymity is the design. "Someone was pacing here" is precisely as much as a patch of trodden grass can
+honestly say, and it is what makes the beat buildable where 407 was not. What the park gains is a first: a
+**place holding a memory of a dino**. For 126 cycles memory has only ever run the other way — the keepsake
+glance, the ground you come to miss, the pioneer's footfall are all a mind remembering a ground. This is a
+ground remembering a mind, and the mind that reads it never learns whose.
+
+Three limitations on the record rather than dressed up: the organic path is hook-proven but never observed
+end to end, the memory is one fixed line so a curious dino reads the ground exactly like an incurious one
+(the obvious follow-up, and a real Living-minds gap in a milestone about a cast that doesn't blur), and the
+notice scan is the first new per-step cast-wide scan since the food-web pairing.
+
+Milestone 12 is halfway: arc 2 of 3 on the lore track, arc 2 of 4 on the structure track. Left standing are
+402 (the manner at the hatch), 479 (more than one voice on the call) and 480 (a landmark that has to be kept
+up). BACKLOG-430 passed again — its second consecutive green — and stays open on principle.
+
+phase → artist-pending; cycle bumps to 127 next run.
