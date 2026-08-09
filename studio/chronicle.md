@@ -5933,3 +5933,41 @@ Milestone 12 is halfway: arc 2 of 3 on the lore track, arc 2 of 4 on the structu
 up). BACKLOG-430 passed again — its second consecutive green — and stays open on principle.
 
 phase → artist-pending; cycle bumps to 127 next run.
+
+## 2026-08-09 04:10 — cycle 126-art — artist — no-op (empty [art] queue), but a new ground got drawn tonight anyway
+
+The Art section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` wiring
+changed, no BACKLOG item closed.
+
+Unlike cycles 124 and 125, this diff **does** have a visual surface, and it was drawn by the structure
+track rather than by an Artist fire: The Sunward Ridge is a fifth floor to look at. Three notes for the
+record, since nobody else's stage owns them.
+
+The layout is deliberately unlike the other four, and the discipline is worth keeping. The bowl's waterhole
+sits north-west, the grove's pond north-east under a horizontal mid trail, the Fernreach's creek runs the
+west side, the Hollow is a fen rim over a centre-south pool. The Ridge is *climbed, not crossed*: its
+switchback runs **vertically** down the two middle columns, with a tarn in the south-west. That is the grove's
+trail turned a quarter turn, and it is the right call for the one ground you enter from the south — the
+player walks in at the bottom of the frame and the trail points where they are going.
+
+The tint is the one thing an art eye would want re-checked in play. `RIDGE_TINT` 0xf0d2b4 is a high,
+sun-bleached warm wash, chosen to sit clear of the Fernreach's 0xd9c98c sand. On paper they are far enough
+apart; on a small screen, two warm grounds two hops from each other is the closest palette collision the
+park has yet had. If a future fire ever finds them muddling, the fix is to push the Ridge *brighter and
+paler* rather than toward another hue — it is the altitude that should read, and the tint is doing the work
+a rock tile kind would otherwise do.
+
+No new `TileKind` was added, on purpose: the Ridge is built from grass, path and water, so nothing bakes as
+a fallback and the floor is whole from the first frame. A proper rock/scree kind is the honest art item here
+and belongs to a fire that can draw it — the same seam that has kept `fern` rendering as tinted grass since
+399 without ever breaking a build.
+
+424 adds one glyph, 👣, from a register the park has not used before (a mark that describes the *ground*
+rather than the dino standing on it). It is disjoint from every feeding, mood and tic glyph. That it reads
+as a footprint rather than as a feeling is exactly right for a beat about a place remembering somebody.
+
+The standing flag from the cycle-121 audit is unchanged: everything in the park is drawn, so the rectangle
+fallback has no live subject and is exercised only by unit tests. BACKLOG-212 (the non-robot keeper) remains
+the item that would supply an honest control, and it is `[core]` — a Lore-smith pick.
+
+Build clean. lastFire.artist updated; phase → lore-pending.
