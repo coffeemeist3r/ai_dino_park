@@ -714,7 +714,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
-- [ ] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
+- [~] BACKLOG-424 [emergent] Traces of your pacing — the re-shape of the unbuildable 407: a dino that arrives where another was *lately* ticcing files a faint "someone was pacing here" trace via memory (not live-watching, which 405 forbids by construction), so a ritual leaves a mark a friend can stumble on. Builds on 405 / 407 / 011.
 
 ## Mobile (deferred, do not pick until charter clears)
 

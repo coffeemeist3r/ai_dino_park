@@ -5808,3 +5808,11 @@ BACKLOG-212 remains the item that would supply an honest control, and it is `[co
 
 No rig authored, no `bake.ts` wiring changed, no BACKLOG item closed. Build clean. lastFire.artist updated;
 phase → lore-pending.
+
+## 2026-08-09 02:40 — cycle 126 — lore-smith — a ritual leaves a mark
+
+Cycle bumps to 126 (both tracks APPROVED last cycle). Idea Box empty. Cap rule bites — the lore body
+queue is far past 12 open items, so nothing new was brainstormed; the cycle is themed from what is
+queued. Next-up **BACKLOG-424** (traces of your pacing): milestone 12 lore arc 2 — a dino that arrives
+where another was lately ticcing files a faint "someone was pacing here", the first time a *place* in
+this park carries a memory of a dino. 402 held back deliberately as the milestone's closing summary beat.
