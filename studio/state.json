@@ -1,6 +1,6 @@
 {
   "cycle": 126,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-424: Traces of your pacing",
   "structureItem": "BACKLOG-478: The chain forks",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-08-09T02:40:00-05:00",
     "structure-smith": "2026-08-09T02:52:00-05:00",
-    "designer": "2026-08-08T03:05:00-05:00",
+    "designer": "2026-08-09T03:05:00-05:00",
     "code-planner": "2026-08-08T03:14:00-05:00",
     "coder": "2026-08-08T03:15:00-05:00",
     "qa": "2026-08-08T03:48:00-05:00",

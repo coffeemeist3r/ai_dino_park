@@ -5823,3 +5823,15 @@ Structure Track drained (4 open ≥ X=4), nothing invented. Chosen: **BACKLOG-47
 hanging off the *middle* of the chain, so a zone finally has two onward neighbours and the whole
 distance layer (475) meets a graph instead of a line. Deliberately sequenced behind last cycle's
 e2e seam (456): a fork added to a suite that fails two specs a night hides its own regressions.
+
+## 2026-08-09 03:05 — cycle 126 — designer — a mark on the ground, and a fork in the chain
+
+**Lore (424):** the re-shape of the unbuildable 407. Nobody watches a ritual — 405's `undisturbed` gate makes
+a witness impossible by construction — so the *ground* remembers instead: a dino that invents its tic leaves a
+pacing trace at its anchor, and another dino stepping on it within the freshness window files a faint, unnamed
+"someone was pacing here". Anonymity is the design, not a shortcut.
+
+**Structure (478):** The Sunward Ridge, reached by walking **north** out of the Grove — the first non-east/west
+link in the park's life. `Edge` gains north/south, five zone helpers learn the vertical axis, and `griefEdge`
+is called out in advance as the expected casualty: it derives direction from `zoneChain()` indices, which a
+branch zone breaks. Every amended test file must be named in the QA report with what its old assertion assumed.
