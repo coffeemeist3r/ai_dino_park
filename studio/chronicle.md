@@ -5835,3 +5835,12 @@ pacing trace at its anchor, and another dino stepping on it within the freshness
 link in the park's life. `Edge` gains north/south, five zone helpers learn the vertical axis, and `griefEdge`
 is called out in advance as the expected casualty: it derives direction from `zoneChain()` indices, which a
 branch zone breaks. Every amended test file must be named in the QA report with what its old assertion assumed.
+
+## 2026-08-09 03:14 — cycle 126 — code-planner — five signatures and one new pure module
+
+478 is mostly `zones.ts`: a fifth id, two link rows, `Edge` gaining north/south, and five helpers learning the
+vertical axis (`crossing`, `linkedZone`, `nearLinkEdge`, and the migration trio — the last three switched from
+taking a bare row to taking the dino's tile, since a vertical crossing preserves the *column*). `griefEdge` is
+rewritten off `hopToward` instead of `zoneChain` indices. `zoneChain` itself keeps its logic and loses its
+misleading comment. 424 is one new pure module (`world/traces.ts`) plus one region of the ambient step handler.
+Amended test files are to be logged by name, not silently rewritten.
