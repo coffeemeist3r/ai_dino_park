@@ -19,37 +19,38 @@ import { serialize, deserialize, SAVE_VERSION } from '../../game/src/world/saveG
 
 const COLS = 20;
 const TILE = 32;
+const ROWS = 15; // BACKLOG-478: crossing/linkedZone read both axes now
 const W = COLS * TILE; // 640
 
 describe('crossing (BACKLOG-143)', () => {
   it('returns east past the east edge, null inside', () => {
-    expect(crossing(W, COLS, TILE)).toBe('east'); // past max (640 > 640-16)
-    expect(crossing(W / 2, COLS, TILE)).toBeNull();
+    expect(crossing(W, 200, COLS, ROWS, TILE)).toBe('east'); // past max (640 > 640-16)
+    expect(crossing(W / 2, 200, COLS, ROWS, TILE)).toBeNull();
   });
 
   it('returns west past the west edge', () => {
-    expect(crossing(0, COLS, TILE)).toBe('west'); // 0 < 16
-    expect(crossing(TILE, COLS, TILE)).toBeNull(); // 32 is well inside
+    expect(crossing(0, 200, COLS, ROWS, TILE)).toBe('west'); // 0 < 16
+    expect(crossing(TILE, 200, COLS, ROWS, TILE)).toBeNull(); // 32 is well inside
   });
 });
 
 describe('linkedZone (BACKLOG-143)', () => {
   it('bowl east → grove, entry on the west side, y preserved', () => {
-    const link = linkedZone(BOWL_ID, 'east', 200, COLS, TILE);
+    const link = linkedZone(BOWL_ID, 'east', 100, 200, COLS, ROWS, TILE);
     expect(link?.zoneId).toBe(GROVE_ID);
     expect(link!.entry.x).toBeLessThan(W / 2);
     expect(link!.entry.y).toBe(200);
   });
 
   it('grove west → bowl, entry on the east side, y preserved', () => {
-    const link = linkedZone(GROVE_ID, 'west', 120, COLS, TILE);
+    const link = linkedZone(GROVE_ID, 'west', 100, 120, COLS, ROWS, TILE);
     expect(link?.zoneId).toBe(BOWL_ID);
     expect(link!.entry.x).toBeGreaterThan(W / 2);
     expect(link!.entry.y).toBe(120);
   });
 
   it('returns null for an unlinked edge (bowl west clamps normally)', () => {
-    expect(linkedZone(BOWL_ID, 'west', 100, COLS, TILE)).toBeNull();
+    expect(linkedZone(BOWL_ID, 'west', 100, 100, COLS, ROWS, TILE)).toBeNull();
     // (grove east used to be unlinked here too; BACKLOG-378 links it to the Fernreach — see cycle-085-third-zone.)
   });
 });

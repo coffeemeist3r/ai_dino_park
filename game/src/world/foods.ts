@@ -35,6 +35,10 @@ export const FOODS: ReadonlyArray<Food> = [
   // dino. Appeal tuned low (same discipline as 432's roots) so it flips no roster dino's favorite in any
   // season; the cycle-119 test pins that over the roster × all four seasons.
   { id: 'mushrooms', emoji: '🍄', label: 'pale mushrooms', appeal: { sociability: -0.5, curiosity: -0.3 }, kind: 'plant' },
+  // BACKLOG-478: the Ridge's farmable crop — hard little pine seeds off the high ground, for a restless,
+  // self-contained dino. Appeal tuned low (the 432/472 discipline) so it flips no roster dino's favorite in
+  // any season; the cycle-119 roster × season test pins that and now covers five crops.
+  { id: 'seeds', emoji: '🌰', label: 'hard pine seeds', appeal: { energy: 0.3, sociability: -0.4 }, kind: 'plant' },
 ];
 
 /**

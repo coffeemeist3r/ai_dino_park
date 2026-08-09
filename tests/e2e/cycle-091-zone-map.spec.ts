@@ -35,14 +35,21 @@ test('the map shows the whole chain with the roster counted at home', async ({ p
 
   const model = await zoneMap(page);
   // BACKLOG-472: the chain is four grounds deep now, ending in The Hollow.
-  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach', 'hollow']);
-  expect(model.map((e) => e.name)).toEqual(['Pocket Cretaceous', 'The Grove', 'The Fernreach', 'The Hollow']);
+  // BACKLOG-478: the branch is appended after the trunk — chain order is iteration order, not geography.
+  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach', 'hollow', 'ridge']);
+  expect(model.map((e) => e.name)).toEqual([
+    'Pocket Cretaceous',
+    'The Grove',
+    'The Fernreach',
+    'The Hollow',
+    'The Sunward Ridge',
+  ]);
   // every dino is counted somewhere, and the fresh-boot cast starts in the bowl
   const roster = await page.evaluate(() => ((window as W).__bookRows as () => unknown[])().length);
   expect(model.reduce((s, e) => s + e.count, 0)).toBe(roster);
   expect(model[0].count).toBe(roster);
   // the keeper starts in the bowl
-  expect(model.map((e) => e.keeper)).toEqual([true, false, false, false]);
+  expect(model.map((e) => e.keeper)).toEqual([true, false, false, false, false]); // BACKLOG-478
 });
 
 test('the keeper dot follows a real crossing', async ({ page }) => {
@@ -54,5 +61,5 @@ test('the keeper dot follows a real crossing', async ({ page }) => {
   });
   expect(await page.evaluate(() => (window as W).__zone())).toBe('grove');
   const model = await zoneMap(page);
-  expect(model.map((e) => e.keeper)).toEqual([false, true, false, false]);
+  expect(model.map((e) => e.keeper)).toEqual([false, true, false, false, false]); // BACKLOG-478
 });

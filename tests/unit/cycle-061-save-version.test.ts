@@ -35,6 +35,7 @@ const validV2: SaveData = {
   grovePlot: null,
   fernreachPlot: null,
   hollowPlot: null, // BACKLOG-472
+  ridgePlot: null, // BACKLOG-478: the fifth ground's plot
   harvested: 0,
   eggs: [],
   born: [],

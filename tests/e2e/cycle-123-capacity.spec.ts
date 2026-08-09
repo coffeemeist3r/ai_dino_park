@@ -18,12 +18,12 @@ const appeal = (p: Page, zone: string) => p.evaluate((z) => (window as W).__zone
 
 test('each ground has a capacity derived from its own terrain', async ({ page }) => {
   await boot(page);
-  expect(await caps(page)).toEqual({ bowl: 5, grove: 5, fernreach: 4, hollow: 5 });
+  expect(await caps(page)).toEqual({ bowl: 5, grove: 5, fernreach: 4, hollow: 5, ridge: 5 }); // BACKLOG-478: derived, no capacity.ts edit
 });
 
 test('the founding park is at capacity, not over it', async ({ page }) => {
   await boot(page);
-  expect(await crowded(page)).toEqual({ bowl: false, grove: false, fernreach: false, hollow: false });
+  expect(await crowded(page)).toEqual({ bowl: false, grove: false, fernreach: false, hollow: false, ridge: false }); // BACKLOG-478
 });
 
 test('piling the cast onto one ground crowds it', async ({ page }) => {

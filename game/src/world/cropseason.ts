@@ -47,6 +47,16 @@ export const CROP_SEASON: Record<string, CropSeason> = {
   // The hinge itself is untouched: berries/greens/roots still name no spring, so the three founding
   // grounds bank exactly what they always banked on a fresh boot.
   mushrooms: { good: 'spring', lean: 'fall' },
+  // BACKLOG-478: the Ridge's seeds. All four seasons were already spoken for as somebody's `good`, and the
+  // first instinct was to leave this crop out of the table entirely and let the compat seam below hand it
+  // the base yield every season — "the one ground the year doesn't move". The cycle-118 invariant refused
+  // that, and it was right to: **a new crop must declare a year**, precisely so a silent fall-through can
+  // never masquerade as a design decision. So the Ridge declares one and doubles up instead. It is the high
+  // sunward ground — seeds come in thick under the summer sun beside the bowl's berries, and the frozen top
+  // of the park gives nothing in winter. Summer now has two thriving grounds and winter two thin ones,
+  // which is a fact about altitude rather than a defect in the rotation. The hinge is untouched: seeds name
+  // no spring either, so a fresh boot still banks exactly what it always banked.
+  seeds: { good: 'summer', lean: 'winter' },
 };
 
 export const YIELD_GOOD = 2;

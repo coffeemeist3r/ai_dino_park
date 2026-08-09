@@ -20,9 +20,9 @@ const unsettled = (p: Page) => p.evaluate(() => (window as W).__unsettled() as s
 const zoneMap = (p: Page) =>
   p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean }>);
 
-test('a fresh park is one inhabited ground and three nobody has ever lived on', async ({ page }) => {
+test('a fresh park is one inhabited ground and four nobody has ever lived on', async ({ page }) => {
   await boot(page);
-  expect(await unsettled(page)).toEqual(['grove', 'fernreach', 'hollow']);
+  expect(await unsettled(page)).toEqual(['grove', 'fernreach', 'hollow', 'ridge']); // BACKLOG-478
 
   const model = await zoneMap(page);
   expect(model.find((e) => e.id === 'hollow')!.unsettled).toBe(true);
@@ -35,7 +35,9 @@ test('a migrant aims at the unsettled ground over an inhabited neighbour', async
   // richer by every read) and the Hollow (still nobody). The frontier tier must take the Hollow.
   await page.evaluate(() => (window as W).__migrate('Sunny', 'grove'));
   await page.evaluate(() => (window as W).__migrate('Twitch', 'fernreach'));
-  expect(await unsettled(page)).toEqual(['hollow']);
+  // BACKLOG-478: the Ridge is unsettled too, and two hops off — so this is now a real test of the frontier
+  // tier's *nearest*-qualifying read rather than a one-candidate walkover.
+  expect(await unsettled(page)).toEqual(['hollow', 'ridge']);
   expect(await page.evaluate(() => (window as W).__scarcityDest('Twitch') as string)).toBe('hollow');
 });
 

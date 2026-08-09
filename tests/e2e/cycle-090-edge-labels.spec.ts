@@ -24,7 +24,7 @@ test('labels re-render on zone changes — grove and Fernreach show both neighbo
   await boot(page);
 
   await page.evaluate(() => (window as W).__setZone('grove'));
-  expect((await labels(page)).sort()).toEqual(['The Fernreach ▸', '◂ Pocket Cretaceous']);
+  expect((await labels(page)).sort()).toEqual(['The Fernreach ▸', '▴ The Sunward Ridge', '◂ Pocket Cretaceous']); // BACKLOG-478: the Grove is the fork — three labels, the third vertical
 
   // BACKLOG-472: the Fernreach borders two grounds now; the Hollow is the one-edge end of the chain.
   await page.evaluate(() => (window as W).__setZone('fernreach'));
@@ -44,5 +44,5 @@ test('a real keeper crossing relabels the edges (BACKLOG-398 rides the same redr
     (window as W).__tryCross();
   });
   expect(await page.evaluate(() => (window as W).__zone())).toBe('grove');
-  expect((await labels(page)).sort()).toEqual(['The Fernreach ▸', '◂ Pocket Cretaceous']);
+  expect((await labels(page)).sort()).toEqual(['The Fernreach ▸', '▴ The Sunward Ridge', '◂ Pocket Cretaceous']); // BACKLOG-478: the Grove is the fork — three labels, the third vertical
 });

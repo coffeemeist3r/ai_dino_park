@@ -12,7 +12,7 @@
  */
 
 import type { Tile } from './movement';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID } from './zones';
 
 export type CropStage = 'seed' | 'sprout' | 'ripe';
 
@@ -47,6 +47,8 @@ export const CROP_BY_ZONE: Record<string, ZoneCrop> = {
   // BACKLOG-472: the Hollow farms pale mushrooms — the fourth ground's own crop. 🍄 is distinct from the
   // sprout 🌿 and from 🍓/🥬/🍠, so no plot ever reads ambiguously.
   [HOLLOW_ID]: { food: 'mushrooms', ripe: '🍄' },
+  // BACKLOG-478: the Ridge farms hard pine seeds. 🌰 is distinct from the sprout 🌿 and from 🍓/🥬/🍠/🍄.
+  [RIDGE_ID]: { food: 'seeds', ripe: '🌰' },
 };
 
 /** The crop a zone's plot grows (BACKLOG-418) — its own entry, or the bowl berry as fallback. */
@@ -94,12 +96,19 @@ export const FERNREACH_PLOT_TILE: Tile = { tileX: 8, tileY: 8 };
  */
 export const HOLLOW_PLOT_TILE: Tile = { tileX: 14, tileY: 7 };
 
+/**
+ * The Ridge's plot tile (BACKLOG-478) — Ridge grass, clear of the central switchback (the two middle
+ * columns), the south-west tarn (x 2–4 / y rows−4..rows−3) and the edges (see `ridgeTileAt`).
+ */
+export const RIDGE_PLOT_TILE: Tile = { tileX: 14, tileY: 3 };
+
 /** Each zone's fixed plot tile (BACKLOG-308/349/432/472 — zone-scoped). A zone absent here has no plot. */
 export const PLOT_TILE_BY_ZONE: Record<string, Tile> = {
   [BOWL_ID]: PLOT_TILE,
   [GROVE_ID]: GROVE_PLOT_TILE,
   [FERNREACH_ID]: FERNREACH_PLOT_TILE,
   [HOLLOW_ID]: HOLLOW_PLOT_TILE,
+  [RIDGE_ID]: RIDGE_PLOT_TILE,
 };
 
 /** The crop's stage given whole in-game days since it was planted. Negative gaps clamp to seed. */

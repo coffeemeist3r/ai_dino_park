@@ -41,7 +41,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import {
   bumpTenure,
   resetTenure,
@@ -129,6 +129,7 @@ import { heldShort, soundsDiscontent, discontentLine } from '../world/discontent
 import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason';
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
+import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
 import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
@@ -322,6 +323,15 @@ export class WorldScene extends Phaser.Scene {
   /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
    *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
   private ticGrief: Record<string, string | null> = {};
+  /**
+   * Traces of your pacing (BACKLOG-424). `worldSteps` is the monotonic ambient-step counter a trace is
+   * stamped with (the same units 405's solitude threshold counts in). `paceTraces` holds one live mark per
+   * pacer; `noticedTraces` is the `<finder>|<traceKey>` guard so a discovery fires once and does not become
+   * a tic of the finder's own. All three transient — never saved, exactly like the rest of the 405 state.
+   */
+  private worldSteps = 0;
+  private paceTraces: PaceTrace[] = [];
+  private noticedTraces = new Set<string>();
   /** BACKLOG-431: when true, the wall-clock background timers (wander/sky/migration rolls) no-op — set by the
    *  `__pauseAmbient` dev hook from the e2e boot() so 300+ parallel specs don't race the ambient world tick.
    *  Never set in normal play (defaults false); explicit dev hooks (`__stepWorld` etc.) bypass it. */
@@ -1078,6 +1088,16 @@ export class WorldScene extends Phaser.Scene {
     };
     // BACKLOG-408: force a dino into its invented-tic state (mid-ritual) so the caught-mid-tic greet is
     // deterministic — no 20-step solitude loop a stray wanderer could perturb. Mirrors what forceStep does.
+    // BACKLOG-424: the live pacing traces, a forced mark at a dino's current tile, and one deterministic
+    // pass of the notice scan — the e2e drives the beat without waiting on a 20-step solitude stretch.
+    (window as any).__traces = () => this.paceTraces.map((t) => ({ ...t }));
+    (window as any).__leaveTrace = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return false;
+      this.leaveTrace(d);
+      return true;
+    };
+    (window as any).__noticeTraces = () => this.noticeTraces();
     (window as any).__inventTic = (name: string) => {
       const d = this.dinos.find((x) => x.name === name);
       if (!d) return false;
@@ -3268,13 +3288,56 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, d.name, grieved ? griefTicMemory(tic.label, grieved) : ticMemory(tic.label));
       this.flashFeed(d, tic.glyph);
       this.logEvent(`${tic.glyph} ${d.name} ${grieved ? `${tic.label} at the edge ${grieved} left by` : tic.label}`);
+      this.leaveTrace(d); // BACKLOG-424: the ritual scuffs the ground it happens on
     } else if ((this.soloSteps[d.name] ?? 0) % 6 === 0) {
       this.flashFeed(d, tic.glyph);
     }
   }
 
+  /**
+   * Leave a pacing trace (BACKLOG-424) — the mark a ritual makes on the ground, at the tic's anchor (the
+   * grief edge for a 414 ache, the spot it settled on otherwise) and in the zone it happened in.
+   */
+  private leaveTrace(d: Dino): void {
+    const at = this.ticAnchor[d.name] ?? this.tileOf(d);
+    this.paceTraces = recordTrace(this.paceTraces, {
+      zone: zoneOf(this.dinoZones, d.name, BOWL_ID),
+      tileX: at.tileX,
+      tileY: at.tileY,
+      by: d.name,
+      at: this.worldSteps,
+    });
+  }
+
+  /**
+   * Read the ground (BACKLOG-424) — any dino standing on someone else's fresh scuff floats 👣 and files the
+   * faint, unnamed memory, once per trace. Held by the ambient pause (456) like every other ambient beat.
+   * Returns who filed what, for the dev hook.
+   */
+  private noticeTraces(): Array<{ name: string; filed: boolean }> {
+    const out: Array<{ name: string; filed: boolean }> = [];
+    if (this.ambientHeld) return out;
+    for (const d of this.dinos) {
+      const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      const t = traceNear(this.paceTraces, zone, this.tileOf(d), d.name, this.worldSteps);
+      if (!t) continue;
+      const key = `${d.name}|${traceKey(t)}`;
+      if (this.noticedTraces.has(key)) {
+        out.push({ name: d.name, filed: false });
+        continue;
+      }
+      this.noticedTraces.add(key);
+      this.memory = remember(this.memory, d.name, traceMemory());
+      this.flashFeed(d, TRACE_GLYPH);
+      this.logEvent(`${TRACE_GLYPH} ${d.name} finds the ground scuffed — someone was pacing here`);
+      out.push({ name: d.name, filed: true });
+    }
+    return out;
+  }
+
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
+    this.worldSteps++; // BACKLOG-424: the stamp a pacing trace ages against
     if (this.convoCooldown > 0) this.convoCooldown--;
 
     // A world-scale night event (BACKLOG-144) overrides all wandering: the whole cast gathers to
@@ -3366,10 +3429,10 @@ export class WorldScene extends Phaser.Scene {
       if (this.migrating.has(d.name)) {
         const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
         const edge = this.migrationCross[d.name]?.edge; // BACKLOG-378: the chosen crossing's edge (grove → bowl|Fernreach)
-        if (atMigrationEdge(home, cur, COLS, edge)) {
+        if (atMigrationEdge(home, cur, COLS, ROWS, edge)) {
           this.crossDino(d);
         } else {
-          const step = stepToward(cur, migrationStepTarget(home, cur.tileY, COLS, edge), COLS, ROWS);
+          const step = stepToward(cur, migrationStepTarget(home, cur, COLS, ROWS, edge), COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           this.activityById[d.name] = 'wandering'; // BACKLOG-295: the journey reads in motion, not a glyph
         }
@@ -3538,7 +3601,7 @@ export class WorldScene extends Phaser.Scene {
         if (this.ticAnchor[d.name] === undefined) {
           const grief = this.griefFor(d);
           this.ticGrief[d.name] = grief?.friend ?? null;
-          this.ticAnchor[d.name] = grief ? griefAnchor(grief.edge, cur.tileY, COLS) : cur;
+          this.ticAnchor[d.name] = grief ? griefAnchor(grief.edge, cur, COLS, ROWS) : cur;
         }
         const anchor = this.ticAnchor[d.name];
         const tic = signatureTic(d.traits);
@@ -3617,6 +3680,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.refreshSleepMarks();
     this.refreshActivityMarks();
+    this.noticeTraces(); // BACKLOG-424: whoever wandered onto a fresh scuff this step reads it
     this.maybeMurmur();
     this.checkFeeding();
     this.checkPlot();
@@ -3643,7 +3707,7 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) {
       const to = this.migrating.has(d.name)
         ? null
-        : nearLinkEdge(zoneOf(this.dinoZones, d.name, BOWL_ID), this.tileOf(d), COLS, 0); // band 0: the edge column itself
+        : nearLinkEdge(zoneOf(this.dinoZones, d.name, BOWL_ID), this.tileOf(d), COLS, ROWS, 0); // band 0: the edge column/row itself
       facing[d.name] = to;
       this.edgeDwell[d.name] = to === null ? 0 : (this.edgeDwell[d.name] ?? 0) + 1;
     }
@@ -4654,8 +4718,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private tryCrossZone(): boolean {
-    const edge = crossing(this.player.x, COLS, TILE);
-    const link = edge ? linkedZone(this.zoneId, edge, this.player.y, COLS, TILE) : null;
+    const edge = crossing(this.player.x, this.player.y, COLS, ROWS, TILE);
+    const link = edge ? linkedZone(this.zoneId, edge, this.player.x, this.player.y, COLS, ROWS, TILE) : null;
     if (!link) return false;
     this.zoneId = link.zoneId;
     this.player.setPosition(link.entry.x, link.entry.y);
@@ -5144,7 +5208,7 @@ export class WorldScene extends Phaser.Scene {
     const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
     const cross = this.migrationCross[d.name];
     const dest = cross?.dest ?? otherZone(home); // BACKLOG-378: the destination fixed at startMigration
-    const row = this.tileOf(d).tileY;
+    const from = this.tileOf(d); // BACKLOG-478: the whole tile — a vertical crossing preserves the column, not the row
     setZone(this.dinoZones, d.name, dest);
     // BACKLOG-343: first across — the founding footfall, if this ground is new.
     // BACKLOG-474: and if it founded the ground, this dino is settling somewhere nobody has ever lived.
@@ -5164,7 +5228,7 @@ export class WorldScene extends Phaser.Scene {
     this.struckTold.delete(d.name);
     this.memory = remember(this.memory, d.name, struckMemory(zoneById(home).name));
     this.tenure = resetTenure(this.tenure, d.name); // BACKLOG-341: a fresh zone starts fresh — no longer "at home"
-    const entry = crossEntryTile(home, row, COLS, cross?.edge);
+    const entry = crossEntryTile(home, from, COLS, ROWS, cross?.edge);
     d.setPosition(entry.tileX * TILE + TILE / 2, entry.tileY * TILE + TILE / 2);
     this.migrating.delete(d.name);
     delete this.migrationCross[d.name];
@@ -6041,6 +6105,7 @@ export class WorldScene extends Phaser.Scene {
       grovePlot: this.plotByZone[GROVE_ID], // BACKLOG-349: grove plot, additive
       fernreachPlot: this.plotByZone[FERNREACH_ID], // BACKLOG-432: Fernreach plot, additive
       hollowPlot: this.plotByZone[HOLLOW_ID], // BACKLOG-472: Hollow plot, additive
+      ridgePlot: this.plotByZone[RIDGE_ID], // BACKLOG-478: Ridge plot, additive
       harvested: this.harvested,
       harvestedByZone: this.harvestedByZone, // BACKLOG-428: per-zone farming term (additive)
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
@@ -6133,6 +6198,7 @@ export class WorldScene extends Phaser.Scene {
         [GROVE_ID]: save.grovePlot ?? null,
         [FERNREACH_ID]: save.fernreachPlot ?? null,
         [HOLLOW_ID]: save.hollowPlot ?? null, // BACKLOG-472
+        [RIDGE_ID]: save.ridgePlot ?? null, // BACKLOG-478
       };
       this.harvested = save.harvested ?? 0;
       this.harvestedByZone = (save.harvestedByZone as Record<string, number>) ?? {}; // BACKLOG-428 (absent → {})
@@ -6451,7 +6517,22 @@ export class WorldScene extends Phaser.Scene {
   private drawEdgeLabels(): void {
     for (const t of this.edgeLabelTexts) t.destroy();
     this.edgeLabelTexts = edgeIndicators(this.zoneId).map((ind) => {
+      // BACKLOG-478: vertical links label the top/bottom centre; horizontal ones keep the mid-height sides.
+      const vertical = ind.edge === 'north' || ind.edge === 'south';
       const west = ind.edge === 'west';
+      if (vertical) {
+        const north = ind.edge === 'north';
+        return this.add
+          .text((COLS * TILE) / 2, north ? 6 : ROWS * TILE - 6, ind.text, {
+            fontFamily: 'monospace',
+            fontSize: '10px',
+            color: '#ffe9c0',
+            shadow: { offsetX: 1, offsetY: 1, color: '#000000', fill: true },
+          })
+          .setOrigin(0.5, north ? 0 : 1)
+          .setAlpha(0.85)
+          .setDepth(7);
+      }
       return this.add
         .text(west ? 6 : COLS * TILE - 6, (ROWS * TILE) / 2, ind.text, {
           fontFamily: 'monospace',

@@ -5844,3 +5844,14 @@ taking a bare row to taking the dino's tile, since a vertical crossing preserves
 rewritten off `hopToward` instead of `zoneChain` indices. `zoneChain` itself keeps its logic and loses its
 misleading comment. 424 is one new pure module (`world/traces.ts`) plus one region of the ambient step handler.
 Amended test files are to be logged by name, not silently rewritten.
+
+## 2026-08-09 03:40 — cycle 126 — coder — the Ridge stands, the ground remembers
+
+Both tracks shipped. Build clean, unit 1641/1641, e2e 478/478 (one cold-start boot flake on the first
+parallel run of the new specs, green isolated and green in the full run).
+
+The fork cost eight source files and **twenty amended assertions across sixteen test files** — the M10
+finding repeating exactly on schedule. Two amendments are findings rather than chores: `griefEdge` derived
+compass directions from `zoneChain()` indices and would have sent a Grove dino grieving a Ridge friend to
+pace at the *east* wall; and two specs asserted "every season has exactly one thriving crop", which with
+four crops and four seasons is arithmetic rather than design and is unsatisfiable at five.

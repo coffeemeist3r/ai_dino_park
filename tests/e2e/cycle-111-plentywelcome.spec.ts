@@ -29,6 +29,7 @@ const migrate = (p: Page, name: string, zone: string) =>
 async function closeFrontier(page: Page, name: string, home: string) {
   await migrate(page, name, 'fernreach');
   await migrate(page, name, 'hollow');
+  await migrate(page, name, 'ridge'); // BACKLOG-478: the fork is frontier ground too until somebody has stood on it
   await migrate(page, name, home);
 }
 

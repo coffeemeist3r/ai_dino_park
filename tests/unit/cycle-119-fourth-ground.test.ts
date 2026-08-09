@@ -4,6 +4,7 @@ import {
   GROVE_ID,
   FERNREACH_ID,
   HOLLOW_ID,
+  RIDGE_ID,
   HOLLOW_TINT,
   ZONES,
   ZONE_TERRAIN,
@@ -41,8 +42,10 @@ const ROWS = 15;
 
 describe('the chain grows a fourth link (BACKLOG-472)', () => {
   it('runs bowl → grove → fernreach → hollow, west to east', () => {
-    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID]);
-    expect(ZONES).toHaveLength(4);
+    // BACKLOG-478: the trunk still runs west→east and ends at the Hollow; the Ridge is appended after it
+    // because no east walk reaches a north branch. Chain order is iteration order, not geography.
+    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]);
+    expect(ZONES).toHaveLength(5);
     expect(zoneById(HOLLOW_ID).name).toBe('The Hollow');
   });
 
@@ -119,11 +122,22 @@ describe('the Hollow farms its own crop (BACKLOG-472)', () => {
     for (const zone of Object.keys(CROP_BY_ZONE)) expect(CROP_SEASON[cropOf(zone).food]).toBeDefined();
   });
 
-  it('gives every season exactly one thriving crop — spring no longer excepted', () => {
+  // BACKLOG-478: relaxed from "exactly one" to "at least one" for the reason spelled out in the cycle-118
+  // spec — five crops cannot each own one of four seasons. Spring being covered at all is what 472 bought,
+  // and that still holds.
+  it('gives every season a thriving crop — spring no longer excepted', () => {
     for (const s of SEASONS) {
       const good = Object.keys(CROP_SEASON).filter((f) => cropYield(f, s) === YIELD_GOOD);
-      expect(good, `${s} should have exactly one thriving crop`).toHaveLength(1);
+      expect(good.length, `${s} should have a thriving crop`).toBeGreaterThanOrEqual(1);
     }
+  });
+
+  it('the fifth crop doubles up on summer rather than displacing anyone (BACKLOG-478)', () => {
+    expect(Object.keys(CROP_SEASON).filter((f) => cropYield(f, 'summer') === YIELD_GOOD).sort()).toEqual([
+      'berries',
+      'seeds',
+    ]);
+    expect(cropYield('seeds', 'spring')).toBe(YIELD_BASE); // the hinge holds for the newcomer too
   });
 
   it('keeps the spring hinge for the founding three — a fresh boot banks what it always banked', () => {
@@ -156,7 +170,11 @@ describe('the generalized systems meet it untouched (BACKLOG-472)', () => {
   });
 
   it('renders four boxes on the zone-map lens straight off the chain', () => {
-    const model = zoneMapModel(zoneChain(), { [BOWL_ID]: 2, [GROVE_ID]: 1, [FERNREACH_ID]: 1, [HOLLOW_ID]: 0 }, BOWL_ID);
-    expect(model.map((e) => e.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID]);
+    const model = zoneMapModel(
+      zoneChain(),
+      { [BOWL_ID]: 2, [GROVE_ID]: 1, [FERNREACH_ID]: 1, [HOLLOW_ID]: 0, [RIDGE_ID]: 0 },
+      BOWL_ID,
+    );
+    expect(model.map((e) => e.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]); // BACKLOG-478
   });
 });

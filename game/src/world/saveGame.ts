@@ -137,6 +137,7 @@ export interface SaveData {
    *  Note: per-zone plots are still four hand-written fields — logged in the cycle-119 codeplan as the
    *  one place a fourth ground genuinely cost a line, and left for a future save-shape item. */
   hollowPlot?: { plantedDay: number } | null;
+  ridgePlot?: { plantedDay: number } | null; // BACKLOG-478
   /** Lifetime crop harvest tally (BACKLOG-145). Additive; absent → 0. */
   harvested?: number;
   /** Per-zone crop harvest tally (BACKLOG-428) — the prosperity index's farming term. Additive; absent → {}. */
@@ -614,6 +615,8 @@ export function deserialize(json: string): SaveData | null {
   if (fernreachPlot === undefined) return null;
   const hollowPlot = readPlot(o.hollowPlot); // BACKLOG-472: additive, absent → null (readPlot)
   if (hollowPlot === undefined) return null;
+  const ridgePlot = readPlot(o.ridgePlot); // BACKLOG-478: additive, absent → null (readPlot)
+  if (ridgePlot === undefined) return null;
   let harvested = 0;
   if (o.harvested !== undefined) {
     if (!isNum(o.harvested) || (o.harvested as number) < 0) return null;
@@ -714,6 +717,7 @@ export function deserialize(json: string): SaveData | null {
     grovePlot,
     fernreachPlot,
     hollowPlot,
+    ridgePlot,
     harvested,
     harvestedByZone,
     eggs,

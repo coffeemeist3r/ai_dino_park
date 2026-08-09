@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { hopDistances, hopsBetween, hopToward, nearestQualifying } from './distance';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, ZONES, zoneNeighbors } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, zoneNeighbors } from './zones';
 
 /** BACKLOG-475 — distance on the chain. */
 describe('hopDistances', () => {
@@ -10,6 +10,9 @@ describe('hopDistances', () => {
       [GROVE_ID]: 1,
       [FERNREACH_ID]: 2,
       [HOLLOW_ID]: 3,
+      // BACKLOG-478: this assertion assumed every ground sat at its own depth, which is only true of a line.
+      // The Ridge branches north off the Grove, so it ties the Fernreach at two hops from the bowl.
+      [RIDGE_ID]: 2,
     });
   });
 
@@ -19,6 +22,7 @@ describe('hopDistances', () => {
       [FERNREACH_ID]: 1,
       [GROVE_ID]: 2,
       [BOWL_ID]: 3,
+      [RIDGE_ID]: 3, // BACKLOG-478: the branch is as far from the Hollow as the bowl is
     });
   });
 

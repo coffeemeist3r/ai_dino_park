@@ -32,6 +32,7 @@ const migrate = (p: import('@playwright/test').Page, name: string, zone: string)
 async function closeFrontier(page: import('@playwright/test').Page, name: string, home: string) {
   await migrate(page, name, 'fernreach');
   await migrate(page, name, 'hollow');
+  await migrate(page, name, 'ridge'); // BACKLOG-478: the fork is frontier ground too until somebody has stood on it
   await migrate(page, name, home);
 }
 
@@ -50,6 +51,9 @@ test('a migrant heads for the richest neighbour — destination tracks appeal, n
   // Rex alone in the grove; everyone else in the Fernreach → the grove's east neighbour (Fernreach) far
   // outweighs its west/primary neighbour (the empty bowl). The scarcity dest must be the Fernreach, NOT the
   // bowl (the first link in ZONE_LINKS order) — proving the pick reads appeal, not adjacency.
+  // BACKLOG-478: the Grove borders the unsettled Ridge now, and the frontier tier (474) outranks appeal by
+  // design — so this appeal test has to close the frontier first or it measures the wrong system.
+  await closeFrontier(page, 'Rex', 'grove');
   for (const n of roster) if (n !== 'Rex') await migrate(page, n, 'fernreach');
   await migrate(page, 'Rex', 'grove');
   expect(await scarcityDest(page, 'Rex')).toBe('fernreach');

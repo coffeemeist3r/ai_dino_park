@@ -15,6 +15,8 @@ describe('edgeIndicators', () => {
     expect(edgeIndicators(GROVE_ID)).toEqual([
       { edge: 'west', text: '◂ Pocket Cretaceous' },
       { edge: 'east', text: 'The Fernreach ▸' },
+      // BACKLOG-478: three edges now, and the first vertical label the park has ever drawn.
+      { edge: 'north', text: '▴ The Sunward Ridge' },
     ]);
   });
 

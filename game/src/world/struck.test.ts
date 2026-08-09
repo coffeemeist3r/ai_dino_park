@@ -21,7 +21,8 @@ import { groveNewsMemory } from './groveword';
 describe('keepsakeGlyph', () => {
   it('gives every ground its own glyph', () => {
     const glyphs = ZONES.map((z) => keepsakeGlyph(z.id));
-    expect(glyphs).toEqual([KEEPSAKE[BOWL_ID], KEEPSAKE[GROVE_ID], KEEPSAKE[FERNREACH_ID], KEEPSAKE[HOLLOW_ID]]);
+    // BACKLOG-478: this listed the four grounds by hand, so a fifth ZONES row failed it by construction.
+    expect(glyphs).toEqual(ZONES.map((z) => KEEPSAKE[z.id]));
     expect(new Set(glyphs).size).toBe(ZONES.length); // all distinct — the ground is legible from the bubble
   });
 

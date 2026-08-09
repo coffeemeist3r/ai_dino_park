@@ -16,7 +16,8 @@
 import { AXES, type Personality } from '../ai/personality';
 import { FOND_MIN } from '../ai/brain';
 import type { Tile } from './movement';
-import { zoneChain, type Edge } from './zones';
+import { ZONE_LINKS, type Edge } from './zones';
+import { hopToward } from './distance';
 
 export type TicKind = 'pace' | 'fuss' | 'circle';
 
@@ -161,26 +162,33 @@ export function fondCaughtMemory(label: string): string {
 export const GRIEF_BOND_FLOOR = 8;
 
 /**
- * The edge a departed friend left by (BACKLOG-414) — the direction, along the west→east zone chain, from
- * the grieving dino's zone toward the zone its closest friend has crossed to. A friend further east in the
- * chain left by the 'east' edge; further west, by 'west'. null when the friend shares the dino's zone (no
- * ache) or either zone is off the chain. Reads `zoneChain` so a fourth zone needs no change here.
+ * The edge a departed friend left by (BACKLOG-414) — the direction from the grieving dino's zone toward the
+ * zone its closest friend has crossed to. null when the friend shares the dino's zone (no ache) or is
+ * unreachable.
+ *
+ * **BACKLOG-478 rewrote this.** It used to compare `zoneChain()` indices and answer 'east' when the friend
+ * sat later in the chain. That was correct only because the park was a line: with the Ridge branching north
+ * off the Grove, the branch lands at the *end* of the chain via the append-the-unreached fallback, so a
+ * Grove dino grieving a friend on the Ridge would have been sent to pace at the east wall — a direction its
+ * friend did not go and, from the Ridge's own side, an edge that does not exist. The honest read is the
+ * graph: take the first hop toward the friend (475) and answer with that link's own edge. Every pre-478
+ * east/west answer is unchanged, because on a line the next hop *is* the chain direction.
  */
 export function griefEdge(dinoZone: string, friendZone: string): Edge | null {
-  if (dinoZone === friendZone) return null;
-  const chain = zoneChain();
-  const di = chain.indexOf(dinoZone);
-  const fi = chain.indexOf(friendZone);
-  if (di < 0 || fi < 0 || di === fi) return null;
-  return fi > di ? 'east' : 'west';
+  const next = hopToward(dinoZone, friendZone);
+  if (!next) return null;
+  return ZONE_LINKS.find((l) => l.from === dinoZone && l.to === next)?.edge ?? null;
 }
 
 /**
- * The tile a grieving dino aims its ritual at (BACKLOG-414): the mid-height (its own row) tile on the edge
- * its friend left by, so the tic faces the way they went. West edge → column 0, east edge → last column.
+ * The tile a grieving dino aims its ritual at (BACKLOG-414): the tile on the edge its friend left by, so the
+ * tic faces the way they went. West → column 0, east → last column, both holding the dino's own row; north →
+ * row 0, south → last row, both holding its column (BACKLOG-478 — a vertical edge preserves the other axis).
  */
-export function griefAnchor(edge: Edge, row: number, cols: number): Tile {
-  return { tileX: edge === 'west' ? 0 : cols - 1, tileY: row };
+export function griefAnchor(edge: Edge, from: Tile, cols: number, rows: number): Tile {
+  if (edge === 'north') return { tileX: from.tileX, tileY: 0 };
+  if (edge === 'south') return { tileX: from.tileX, tileY: rows - 1 };
+  return { tileX: edge === 'west' ? 0 : cols - 1, tileY: from.tileY };
 }
 
 /** The one-time memory a grieving dino files (BACKLOG-414) — names the friend + the ritual, so the ache is legible in talk. */

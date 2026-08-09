@@ -37,6 +37,7 @@ export const KEEPSAKE: Record<string, string> = {
   grove: '🌿',
   fernreach: '🍂',
   hollow: '🌫',
+  ridge: '🪨', // BACKLOG-478 — a chip of the high ground
 };
 
 /** The glyph for a ground; an unknown id falls back to the leaf — the "floor is always whole" seam every

@@ -12,6 +12,7 @@ import {
   GROVE_ID,
   FERNREACH_ID,
   HOLLOW_ID,
+  RIDGE_ID,
 } from '../../game/src/world/zones';
 
 /**
@@ -23,6 +24,7 @@ import {
 
 const COLS = 20;
 const TILE = 32;
+const ROWS = 15; // BACKLOG-478: crossing/linkedZone read both axes now
 const W = COLS * TILE;
 
 describe('ZONE_LINKS table (BACKLOG-383)', () => {
@@ -34,6 +36,10 @@ describe('ZONE_LINKS table (BACKLOG-383)', () => {
       { from: FERNREACH_ID, edge: 'west', to: GROVE_ID },
       { from: FERNREACH_ID, edge: 'east', to: HOLLOW_ID },
       { from: HOLLOW_ID, edge: 'west', to: FERNREACH_ID },
+      // BACKLOG-478: this listed a path and called it a graph. The fork is appended last, on purpose —
+      // that is what keeps the grove's first-match primary neighbour (and every default path) unchanged.
+      { from: GROVE_ID, edge: 'north', to: RIDGE_ID },
+      { from: RIDGE_ID, edge: 'south', to: GROVE_ID },
     ]);
   });
 
@@ -57,18 +63,18 @@ describe('ZONE_LINKS table (BACKLOG-383)', () => {
 
 describe('helpers stay byte-identical through the table (BACKLOG-383)', () => {
   it('linkedZone matches the pre-refactor entries', () => {
-    expect(linkedZone(BOWL_ID, 'east', 200, COLS, TILE)).toEqual({ zoneId: GROVE_ID, entry: { x: TILE * 1.5, y: 200 } });
-    expect(linkedZone(GROVE_ID, 'west', 120, COLS, TILE)).toEqual({
+    expect(linkedZone(BOWL_ID, 'east', 100, 200, COLS, ROWS, TILE)).toEqual({ zoneId: GROVE_ID, entry: { x: TILE * 1.5, y: 200 } });
+    expect(linkedZone(GROVE_ID, 'west', 100, 120, COLS, ROWS, TILE)).toEqual({
       zoneId: BOWL_ID,
       entry: { x: W - TILE * 1.5, y: 120 },
     });
-    expect(linkedZone(BOWL_ID, 'west', 100, COLS, TILE)).toBeNull();
+    expect(linkedZone(BOWL_ID, 'west', 100, 100, COLS, ROWS, TILE)).toBeNull();
     // BACKLOG-378: the grove's east edge now opens onto the Fernreach (was null pre-third-zone).
-    expect(linkedZone(GROVE_ID, 'east', 100, COLS, TILE)).toEqual({
+    expect(linkedZone(GROVE_ID, 'east', 100, 100, COLS, ROWS, TILE)).toEqual({
       zoneId: FERNREACH_ID,
       entry: { x: TILE * 1.5, y: 100 },
     });
-    expect(linkedZone(HOLLOW_ID, 'east', 100, COLS, TILE)).toBeNull(); // BACKLOG-472: the Hollow's far edge is unlinked
+    expect(linkedZone(HOLLOW_ID, 'east', 100, 100, COLS, ROWS, TILE)).toBeNull(); // BACKLOG-472: the Hollow's far edge is unlinked
   });
 
   it('otherZone flips the pair and keeps the unknown→grove default', () => {
@@ -78,11 +84,13 @@ describe('helpers stay byte-identical through the table (BACKLOG-383)', () => {
   });
 
   it('migration helpers match the pre-refactor columns', () => {
-    expect(migrationStepTarget(BOWL_ID, 7, COLS)).toEqual({ tileX: COLS - 1, tileY: 7 });
-    expect(migrationStepTarget(GROVE_ID, 3, COLS)).toEqual({ tileX: 0, tileY: 3 });
-    expect(atMigrationEdge(BOWL_ID, { tileX: COLS - 1 }, COLS)).toBe(true);
-    expect(atMigrationEdge(GROVE_ID, { tileX: 0 }, COLS)).toBe(true);
-    expect(crossEntryTile(BOWL_ID, 9, COLS)).toEqual({ tileX: 1, tileY: 9 });
-    expect(crossEntryTile(GROVE_ID, 2, COLS)).toEqual({ tileX: COLS - 2, tileY: 2 });
+    // BACKLOG-478: these passed a bare *row*, which was only ever enough because every edge was
+    // horizontal. A vertical crossing preserves the column instead, so the helpers take the whole tile.
+    expect(migrationStepTarget(BOWL_ID, { tileX: 4, tileY: 7 }, COLS, ROWS)).toEqual({ tileX: COLS - 1, tileY: 7 });
+    expect(migrationStepTarget(GROVE_ID, { tileX: 4, tileY: 3 }, COLS, ROWS)).toEqual({ tileX: 0, tileY: 3 });
+    expect(atMigrationEdge(BOWL_ID, { tileX: COLS - 1, tileY: 7 }, COLS, ROWS)).toBe(true);
+    expect(atMigrationEdge(GROVE_ID, { tileX: 0, tileY: 3 }, COLS, ROWS)).toBe(true);
+    expect(crossEntryTile(BOWL_ID, { tileX: 4, tileY: 9 }, COLS, ROWS)).toEqual({ tileX: 1, tileY: 9 });
+    expect(crossEntryTile(GROVE_ID, { tileX: 4, tileY: 2 }, COLS, ROWS)).toEqual({ tileX: COLS - 2, tileY: 2 });
   });
 });

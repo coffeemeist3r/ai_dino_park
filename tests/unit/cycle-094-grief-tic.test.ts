@@ -32,9 +32,9 @@ describe('griefEdge — the direction a departed friend left by', () => {
 
 describe('griefAnchor — the edge tile the ritual faces', () => {
   it('west → column 0, east → last column, preserving the row', () => {
-    expect(griefAnchor('west', 7, 20)).toEqual({ tileX: 0, tileY: 7 });
-    expect(griefAnchor('east', 7, 20)).toEqual({ tileX: 19, tileY: 7 });
-    expect(griefAnchor('east', 3, 12)).toEqual({ tileX: 11, tileY: 3 });
+    expect(griefAnchor('west', { tileX: 4, tileY: 7 }, 20, 15)).toEqual({ tileX: 0, tileY: 7 });
+    expect(griefAnchor('east', { tileX: 4, tileY: 7 }, 20, 15)).toEqual({ tileX: 19, tileY: 7 });
+    expect(griefAnchor('east', { tileX: 4, tileY: 3 }, 12, 15)).toEqual({ tileX: 11, tileY: 3 });
   });
 });
 

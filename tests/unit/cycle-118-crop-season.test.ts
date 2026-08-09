@@ -53,15 +53,20 @@ describe('cropYield (BACKLOG-465)', () => {
   // and that is a decision: the founding three hold fall/winter/summer as their lean seasons, so the only
   // free lean slot was spring, which mushrooms already claims as its good. Squaring the table would have
   // meant re-pointing roots' lean at spring and breaking the hinge above. Fall carries two thin crops instead.
-  it('rotates: every season has exactly one thriving crop; every season but spring has thin ones', () => {
+  // BACKLOG-478: `toHaveLength(1)` was arithmetic, not design — with four crops and four seasons "exactly
+  // one thriving" is the only shape a rotation can take, so the assertion could not tell a *rule* from a
+  // coincidence of counting. The Ridge is the fifth farmed ground and the pigeonhole breaks: some season
+  // must carry two. The rule worth keeping is that **no season is barren** — every season still feeds
+  // somebody thick — plus the pins below that name which crop wins each one.
+  it('rotates: every season has a thriving crop; every season but spring has thin ones', () => {
     for (const s of SEASONS) {
       const good = FARMED.filter((f) => cropYield(f, s) === YIELD_GOOD);
       const lean = FARMED.filter((f) => cropYield(f, s) === YIELD_LEAN);
-      expect(good, `${s} thriving`).toHaveLength(1);
+      expect(good.length, `${s} thriving`).toBeGreaterThanOrEqual(1);
       // Spring is the one season nothing goes thin — the hinge, still doing its job.
       if (s === 'spring') expect(lean).toHaveLength(0);
       else expect(lean.length, `${s} thin`).toBeGreaterThanOrEqual(1);
-      expect(lean).not.toContain(good[0]);
+      for (const g of good) expect(lean).not.toContain(g);
     }
   });
 

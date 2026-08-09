@@ -168,3 +168,36 @@ positioning hook; `__noticeTraces()` → B filed; call again → no second file;
 ## Blockers
 
 _(none at plan time)_
+
+---
+
+## Shipped (Coder, 2026-08-09)
+
+**Source touched (8):** `world/zones.ts`, `world/tic.ts`, `world/traces.ts` (new), `world/plot.ts`,
+`world/foods.ts`, `world/cropseason.ts`, `world/struck.ts`, `world/saveGame.ts`, plus
+`scenes/WorldScene.ts` glue. New specs: `tests/unit/cycle-126-fork.test.ts`,
+`tests/unit/cycle-126-traces.test.ts`, `tests/e2e/cycle-126-fork.spec.ts`,
+`tests/e2e/cycle-126-traces.spec.ts`.
+
+**Deviations from the plan, and why:**
+
+1. **The Ridge's crop declares a season after all.** The plan said "no `CROP_SEASON` row — the Ridge is
+   the one ground the year doesn't move", reasoning that all four seasons were already spoken for. The
+   cycle-118 invariant (*a new crop must declare a year*) refused it, and was right to: that rule exists so
+   a silent fall-through can never pass itself off as a design decision. Seeds now declare
+   `{ good: 'summer', lean: 'winter' }` — the high sunward ground thrives under the same sun as the bowl's
+   berries and gives nothing off a frozen summit.
+2. **…which broke a different invariant, and that is the second finding.** Two specs asserted *every season
+   has **exactly one** thriving crop*. With four crops and four seasons that is arithmetic, not design — a
+   rotation of four cannot be anything else, so the assertion could never distinguish a rule from a counting
+   coincidence. Five crops make it unsatisfiable. Relaxed to *every season has **a** thriving crop* (no
+   season is barren), with the specific per-season winners still pinned, plus a new assertion naming summer
+   as the doubled-up season.
+3. **`zoneChain()` needed no logic change** — 425's append-the-unreached fallback, written for a
+   hypothetical orphan zone, is exactly what carries a genuine branch onto the lens. Its doc comment and
+   three specs now say out loud that it is an iteration order, never a direction.
+4. `griefEdge` landed as planned (graph read via `hopToward`), and it was a real defect: on a forked map the
+   old chain-index comparison would have sent a Grove dino grieving a Ridge friend to pace at the **east**
+   wall.
+
+**Blockers:** none.
