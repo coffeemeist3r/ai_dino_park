@@ -5855,3 +5855,12 @@ finding repeating exactly on schedule. Two amendments are findings rather than c
 compass directions from `zoneChain()` indices and would have sent a Grove dino grieving a Ridge friend to
 pace at the *east* wall; and two specs asserted "every season has exactly one thriving crop", which with
 four crops and four seasons is arithmetic rather than design and is unsatisfiable at five.
+
+## 2026-08-09 03:52 — cycle 126 — qa — 28/28 criteria pass (3 partial), and a 20-line receipt
+
+Unit 1641/1641, e2e 478/478, build clean, brain boundary clean. Both tracks pass every acceptance
+criterion. The 478 report's real deliverable is the catalogue: twenty amended assertions across sixteen
+files, each with one line on what it assumed — including two that failed for *correct* reasons (the scarcity
+and welcome specs were measuring appeal in a park that had just grown a frontier next door). Nine cross-zone
+systems took the branch untouched. Three partials on 424: the organic path is hook-proven not observed, the
+memory line has no temperament shading, and the notice scan is the first new per-step cast scan in a while.
