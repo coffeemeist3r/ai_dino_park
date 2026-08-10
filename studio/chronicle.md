@@ -5996,3 +5996,13 @@ Ties break `unbowed > greedy > generous > timid`, so a dino that slunk off once 
 derived and never stored — empty park-wide on a fresh save. Both are derivations-from-tallies surfaced
 in the book, so the spec pins them into separate modules and separate book rows. 402 lands first;
 `ui/lenses.ts` is the only shared file. phase → codeplan-pending.
+
+## 2026-08-10 03:16 — cycle 127 — code-planner — both tracks land on prior art, neither adds a save field
+
+402 copies `foodwebStanding`'s shape exactly (filter the live ring, null at zero, one optional
+`BookRow` field) into a new `world/manner.ts`. 479 lands *inside* `ai/roles.ts` beside `zoneProvider`,
+reusing `ProviderCandidate` and its comparator byte-for-byte — which is what makes "the provider is
+always seat 1" a guarantee rather than a coincidence. `providerFor` and the new `councilFor` are
+pinned to one shared candidate-row builder so the two reads cannot drift. The 12th positional param
+on `zoneMapModel` is left ugly on purpose; folding it is BACKLOG-482's job, not a two-track fire's.
+phase → coder-pending.
