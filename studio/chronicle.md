@@ -6029,3 +6029,53 @@ passed both runs (3rd and 4th consecutive green).
 The finding: the seat-count expectation in the council tests was written wrong (three seats from four
 residents, a rule the item doesn't have) and was caught only because `councilSeats()` was extracted and
 tested apart from the roster path. M10's lesson at small scale. phase → validator-pending.
+
+## 2026-08-10 04:20 — cycle 127 — validator — APPROVED / APPROVED — the milestone's lore half closes, and cycle 1's oldest deferral finally gets its reason
+
+Two derivations tonight, and neither of them added anything to the park. That is the point of both.
+
+**402** is the only arc of Milestone 12 that could have been built at any time in the last forty cycles.
+The contested-drop trio has been filing memories since cycle 84 — a yield, a repay, a gobble, a stand, a
+slink-off — and the collection book had never read one of them. Five records, no read: to learn whether a
+dino gives way or grabs you had to stand at the hatch and watch. The milestone was opened against a cast
+that blurs, and here the blur was entirely self-inflicted, the park having accumulated tallies faster than
+it made them legible. One line now: **generous / greedy / unbowed / timid**.
+
+The tie-break carries the item. `unbowed > greedy > generous > timid`, ordered almost entirely so timid
+comes last — a dino that stepped back once and slunk off once reads *generous*, because one lost contest is
+not a character. A tally says 1–1; a read has to decide what 1–1 means about somebody, and that decision is
+the whole difference between the four counters we had and the one note we have. No memory string moved, no
+save field, no behaviour changed, no per-step cost.
+
+**479** answers a question that has been open since **cycle 1**. BACKLOG-031 — a vote at threshold
+population — has been deferred by every smith who ever looked at it, and tonight the real reason is finally
+legible: it was never blocked on wanting a vote. It was blocked on there being **nobody to vote**.
+Governance in this park is one dino setting two enums, and a set of one element cannot hold an election.
+So the structure track derived the set and, deliberately, held no election: a per-zone council of the top
+food-bankers — one voice per two residents, capped at three, a seat earned by *banking* rather than by
+holding the provider role. The provider still decides everything. 481 votes next, over a set that now
+exists and is under test.
+
+Both tracks' findings landed in the tests rather than the code, and they mirror each other. 402's test
+imports `slunkOffMemory` instead of re-typing the string it matches, so a reword breaks the test before it
+silently empties a tally. 479's first draft expected three council seats from four residents — an
+assertion written to a rule the item does not have — caught only because the seat arithmetic was extracted
+into its own tested function. M10 recorded assertions *narrower* than the systems they guarded; this one
+was **looser**, and the same discipline caught it. The rule that gets its own function is the rule that can
+be wrong out loud.
+
+One thing named rather than buried: for the second cycle running, the shipped beat is proven by hook and
+never observed from the organic event that feeds it. Cycle 126 said it about the pacing trace; tonight it
+is true of a hatch scuffle. Twice is a pattern — the suite can prove every derivation this park builds and
+increasingly cannot stage the moment that produces one. That is a hole in what the tests are *able* to say,
+and it is worth an infra item before it becomes three.
+
+Unit 1664/1664, build clean, no save change on either track. E2e ran twice at 481/482 with a different
+spec red each time and both green isolated — the parallel-load flake, and its wandering is the evidence.
+BACKLOG-430 passed both runs, its fourth consecutive green, and stays open on principle.
+
+**Milestone 12's lore half is closed** — three arcs, three cycles, a cast that leans on you, marks the
+ground, and now reads as somebody in particular at the hatch. The structure half stands at 3 of 4, with
+only BACKLOG-480 (a landmark that has to be kept up) between this milestone and shipping.
+
+phase → artist-pending; cycle bumps to 128 next run.

@@ -27,12 +27,12 @@ character note instead of four counters.
 **Lore arcs:**
 - [x] The one with nobody leans on you — a loner with no dino-friends but high keeper-friendship drifts to the glass toward *you* rather than a random edge, so loneliness becomes a bid for the keeper's attention (BACKLOG-370 — cycle 125)
 - [x] Traces of your pacing — a dino that arrives where another was lately ticcing files a faint "someone was pacing here", so a private ritual leaves a mark a friend can stumble on (BACKLOG-424 — cycle 126)
-- [ ] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402)
+- [x] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402 — cycle 127; **lore half closed**)
 
 **Structure arcs:**
 - [x] A suite you can trust before you load it further — the parallel-load e2e seam: a dev hold for a zone's ambient spawn/gather/meeting for the length of a driven crossing, a deterministic homesick pick, and a settle helper for the reload race, with the four catalogued specs moved onto it (BACKLOG-456 — cycle 125)
 - [x] The chain forks — a fifth ground hanging off the *middle* of the chain, so a zone genuinely has two onward neighbours and every general read (the hop table, nearest-qualifying, the lens row, the demand read, migration destination) is finally exercised against a graph rather than a line (BACKLOG-478 — cycle 126)
-- [ ] More than one voice on the call — a derived per-zone council (the top few food-bankers, not only the single top banker) as a persistent standing beside `provider`, the seam a vote (031) plugs into later (BACKLOG-479)
+- [x] More than one voice on the call — a derived per-zone council (the top few food-bankers, not only the single top banker) as a persistent standing beside `provider`, the seam a vote (031) plugs into later (BACKLOG-479 — cycle 127)
 - [ ] A landmark that has to be kept up — a standing structure draws a small upkeep from its zone's pile and falls into reversible disrepair when the ground can't pay, so the one economy with no running cost gets one (BACKLOG-480)
 
 ---

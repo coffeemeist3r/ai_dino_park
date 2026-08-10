@@ -1,8 +1,8 @@
 {
   "cycle": 127,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-402: Hatch temperament in the book",
-  "structureItem": "BACKLOG-479: More than one voice on the call (per-zone council)",
+  "phase": "artist-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-08-10T03:16:00-05:00",
     "coder": "2026-08-10T03:40:00-05:00",
     "qa": "2026-08-10T04:05:00-05:00",
-    "validator": "2026-08-09T04:02:00-05:00",
+    "validator": "2026-08-10T04:20:00-05:00",
     "artist": "2026-08-09T04:10:00-05:00"
   }
 }
