@@ -5978,3 +5978,11 @@ Milestone 12's closing lore arc picked: **BACKLOG-402**, the table manner. Three
 dino (yields, grabs, stands) become one legible character note — generous / greedy / unbowed / timid.
 The arc that adds nothing and reads what eleven milestones already recorded. No new lore seeded (cap
 rule; ~110 open). Idea Box empty. phase → designer-pending.
+
+## 2026-08-10 02:44 — cycle 127 — structure-smith — break the monarchy open
+
+**BACKLOG-479** picked: a per-zone council derived from the same banking tallies that already crown a
+`provider`, as a persistent standing beside it. Nothing votes yet — this is the seam BACKLOG-031 has
+been waiting on since cycle 1, which was never blocked on wanting a vote but on there being no *set of
+deciders*. Queue was at 3 (< X=4), so two seeded behind it: 481 (the council actually decides) and 482
+(one place the standings are derived). Milestone 12 structure arc 3 of 4.
