@@ -5971,3 +5971,10 @@ fallback has no live subject and is exercised only by unit tests. BACKLOG-212 (t
 the item that would supply an honest control, and it is `[core]` — a Lore-smith pick.
 
 Build clean. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-10 02:30 — cycle 127 — lore-smith — the last blur at the hatch
+
+Milestone 12's closing lore arc picked: **BACKLOG-402**, the table manner. Three feeding counters per
+dino (yields, grabs, stands) become one legible character note — generous / greedy / unbowed / timid.
+The arc that adds nothing and reads what eleven milestones already recorded. No new lore seeded (cap
+rule; ~110 open). Idea Box empty. phase → designer-pending.
