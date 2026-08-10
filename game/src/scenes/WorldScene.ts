@@ -90,6 +90,7 @@ import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/
 import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
+import { mannerLine } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -98,7 +99,7 @@ import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget,
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
-import { deriveRole, settleRole, zoneProvider, ROLE_ICON, type Role } from '../ai/roles';
+import { deriveRole, settleRole, zoneProvider, zoneCouncil, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
 import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
@@ -2630,15 +2631,28 @@ export class WorldScene extends Phaser.Scene {
    * banked tally. Goes through `roleOf` so the answer can never disagree with the roles lens or the book.
    */
   private providerFor(zoneId: string): string | null {
-    return zoneProvider(
-      this.dinos.map((d) => ({
-        name: d.name,
-        zoneId: zoneOf(this.dinoZones, d.name, BOWL_ID),
-        role: this.roleOf(d.name),
-        foodBanked: this.foodBanked[d.name] ?? 0,
-      })),
-      zoneId,
-    );
+    return zoneProvider(this.zoneCandidates(), zoneId);
+  }
+
+  /** The roster as the standings reads see it — where each dino lives, what it settled into, what it has
+   *  banked. One builder so `providerFor` (453) and `councilFor` (479) can never drift apart. */
+  private zoneCandidates(): ProviderCandidate[] {
+    return this.dinos.map((d) => ({
+      name: d.name,
+      zoneId: zoneOf(this.dinoZones, d.name, BOWL_ID),
+      role: this.roleOf(d.name),
+      foodBanked: this.foodBanked[d.name] ?? 0,
+    }));
+  }
+
+  /** Each zone's council (BACKLOG-479) — the map lens's 👥 read and the book's seat line, keyed by zone id.
+   *  Twin of `zoneSpends` / `zoneWorks`; a ground where nobody has banked seats nobody. Derived per read,
+   *  never stored, so a reload re-derives the same seats from the same banked tallies. */
+  private zoneCouncils(): Record<string, string[]> {
+    const candidates = this.zoneCandidates(); // built once — a 40-dino roster shouldn't rebuild per zone
+    const out: Record<string, string[]> = {};
+    for (const z of zoneChain()) out[z] = zoneCouncil(candidates, z);
+    return out;
   }
 
   /**
@@ -2716,6 +2730,7 @@ export class WorldScene extends Phaser.Scene {
 
   private bookRows(): BookRow[] {
     const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
+    const councils = this.zoneCouncils(); // BACKLOG-479: derived once per open, not once per dino
     return this.dinos.map((d) => ({
       name: d.name,
       species: d.species,
@@ -2731,6 +2746,14 @@ export class WorldScene extends Phaser.Scene {
         ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
         : undefined,
       foodweb: foodwebStanding(dietOf(d.species, d.name), recall(this.memory, d.name)) ?? undefined, // BACKLOG-443
+      manner: mannerLine(recall(this.memory, d.name)) ?? undefined, // BACKLOG-402: how it behaves at a contested drop
+      council: (() => {
+        // BACKLOG-479: a seat is a standing about the ground you live on, so it reads off that ground's council.
+        const z = zoneOf(this.dinoZones, d.name, BOWL_ID);
+        const seats = councils[z] ?? [];
+        if (!seats.includes(d.name)) return undefined;
+        return `👥 one of ${zoneById(z).name}'s ${seats.length} voice${seats.length === 1 ? '' : 's'}`;
+      })(),
       pioneer: (() => {
         const z = foundedBy(this.pioneers, d.name); // BACKLOG-343: only the pioneer's own block carries it
         return z ? pioneerLine(z) : undefined;
@@ -2852,6 +2875,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__roleStore = () => ({ ...this.roles });
     // BACKLOG-448: the per-dino banked-food tally the provider role reads.
     (window as any).__foodBanked = () => ({ ...this.foodBanked });
+    // BACKLOG-479: each ground's seated council — derived, never stored, so this is a live read.
+    (window as any).__councils = () => this.zoneCouncils();
+    // dev-only: credit banked food to a dino without staging a whole harvest haul, so a spec can seat a council.
+    (window as any).__creditBank = (name: string, n = 1) => {
+      for (let i = 0; i < n; i++) this.creditFoodBank(name);
+      return this.foodBanked[name] ?? 0;
+    };
 
     this.refreshLens();
   }
@@ -2935,6 +2965,7 @@ export class WorldScene extends Phaser.Scene {
       this.zoneSpends(), // BACKLOG-468: how each ground has chosen to spend (🍽️/🏦 marker)
       this.unsettledZones(), // BACKLOG-474: a ground nobody has ever lived on reads as unsettled, not poor
       this.zoneWorks(), // BACKLOG-473: what each ground puts its backs into (🧺/🧱 marker)
+      this.zoneCouncils(), // BACKLOG-479: the ground's seated voices (👥N beside the head count)
     );
   }
 
@@ -3000,7 +3031,9 @@ export class WorldScene extends Phaser.Scene {
       // below, in one table-driven order with a legend in the [?] panel.
       let txt = e.unsettled
         ? `${e.name}\n${e.count} 🦕\n${UNSETTLED_BADGE}`
-        : `${e.name}\n${e.count} 🦕\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
+        : `${e.name}\n${e.count} 🦕${e.council.length ? `  👥${e.council.length}` : ''}\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
+      // BACKLOG-479: the council rides the head-count line — it *is* a fact about who lives here, and it
+      // costs no new row, so the box height (and the 477 governance row below it) is untouched.
       const gov = e.unsettled ? '' : governanceLine([e.spend, e.work]); // BACKLOG-477
       if (gov) txt += `\n${gov}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;

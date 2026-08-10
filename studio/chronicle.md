@@ -6006,3 +6006,14 @@ always seat 1" a guarantee rather than a coincidence. `providerFor` and the new 
 pinned to one shared candidate-row builder so the two reads cannot drift. The 12th positional param
 on `zoneMapModel` is left ugly on purpose; folding it is BACKLOG-482's job, not a two-track fire's.
 phase → coder-pending.
+
+## 2026-08-10 03:40 — cycle 127 — coder — two derivations, zero new state
+
+**402** ships `world/manner.ts`: the four contested-drop memory strings folded into one table manner, the
+book row rendered beside the food-web line. **479** ships `zoneCouncil` inside `ai/roles.ts`, sharing
+`ProviderCandidate` and `zoneProvider`'s comparator — which is what makes "the provider is seat 1" a
+guarantee — plus `👥N` on the map box and a seat line in the book. Neither track adds a save field, a
+tally, or a behaviour change; both read what the park has been recording for a hundred cycles.
+
+Build clean, 1664 unit green, e2e 481/482 with the one failure being the catalogued boot flake (green
+isolated). phase → qa-pending.

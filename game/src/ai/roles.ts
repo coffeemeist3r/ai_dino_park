@@ -78,3 +78,39 @@ export function zoneProvider(residents: readonly ProviderCandidate[], zoneId: st
       .sort((a, b) => b.foodBanked - a.foodBanked || a.name.localeCompare(b.name))[0]?.name ?? null
   );
 }
+
+/**
+ * More than one voice on the call (BACKLOG-479) — governance in this park has been one dino setting two
+ * enums (463/473), handed over whole when the provider changes (467). That is a monarchy, and BACKLOG-031
+ * ("at threshold population, NPCs vote on a simple rule") has been deferred since cycle 1 for one reason:
+ * there has never been a *set of deciders*. This derives one — a per-zone **council** of the ground's top
+ * food-bankers, a standing beside `provider` rather than a replacement for it.
+ *
+ * Deliberately broader than the role: `zoneProvider` filters on the settled `provider` role, this does
+ * **not**. A seat is earned by banking (`COUNCIL_MIN_BANKS`, one unit), not by holding the role, which
+ * needs `PROVIDER_BANKS` (three) — that gap is the whole content of the item. The comparator is byte-
+ * identical to `zoneProvider`'s, which is what makes "the provider is always seat 1" a guarantee and not
+ * a coincidence, and what stops a reload from reseating the council.
+ *
+ * Derived, never stored — no save field, the way the provider role and the hop table (475) are derived.
+ * Empty for a ground nobody lives on (474), for a ground whose one remaining resident (the 460 floor) has
+ * banked nothing, and park-wide on a fresh save: the whole feature is inert until somebody fills a pantry.
+ */
+export const COUNCIL_MIN_BANKS = 1; // banked at least this much to have a claim on the ground's say
+export const COUNCIL_PER_HEADS = 2; // one voice per this many residents...
+export const COUNCIL_SEATS_MAX = 3; // ...capped here, so a crowded ground still speaks with a few voices
+
+/** How many seats a ground of `residents` fills, given `eligible` dinos have banked anything at all. */
+export function councilSeats(residents: number, eligible: number): number {
+  if (eligible <= 0) return 0;
+  return Math.min(COUNCIL_SEATS_MAX, Math.max(1, Math.floor(residents / COUNCIL_PER_HEADS)));
+}
+
+/** The dinos seated on `zoneId`'s council, most-banked first; `[]` when the ground seats nobody. */
+export function zoneCouncil(residents: readonly ProviderCandidate[], zoneId: string): string[] {
+  const here = residents.filter((r) => r.zoneId === zoneId);
+  const eligible = here
+    .filter((r) => r.foodBanked >= COUNCIL_MIN_BANKS)
+    .sort((a, b) => b.foodBanked - a.foodBanked || a.name.localeCompare(b.name));
+  return eligible.slice(0, councilSeats(here.length, eligible.length)).map((r) => r.name);
+}

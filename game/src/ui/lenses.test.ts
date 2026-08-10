@@ -94,3 +94,48 @@ describe('food-web standing in the book (BACKLOG-443)', () => {
     expect(lines.some((l) => l.includes('brought down') || l.includes('slipped'))).toBe(false);
   });
 });
+
+describe('the manner at the hatch in the book (BACKLOG-402)', () => {
+  const base: BookRow = { name: 'Twitch', species: 'compsognathus', hearts: 3, topBond: 10, role: 'wanderer', rumorsHeard: 0 };
+
+  it('renders the manner line when set', () => {
+    const lines = bookLines([{ ...base, manner: '🍽️ at the hatch: unbowed — holds its ground and keeps its food' }]);
+    expect(lines.some((l) => l.includes('at the hatch: unbowed'))).toBe(true);
+  });
+
+  it('omits the line for a dino that has never contested a drop', () => {
+    expect(bookLines([{ ...base }]).some((l) => l.includes('at the hatch'))).toBe(false);
+  });
+
+  it('leaves a row without a manner byte-identical to the pre-402 render', () => {
+    expect(bookLines([{ ...base, foodweb: '💨 slipped 1 hunt' }])).toEqual([
+      '— Collection Book —',
+      'Twitch  (compsognathus)  [wanderer]',
+      '  ♥♥♥·······  bond:10',
+      '  💨 slipped 1 hunt',
+    ]);
+  });
+});
+
+describe('the council on the map lens and in the book (BACKLOG-479)', () => {
+  const chain = zoneChain();
+  const pops = { [BOWL_ID]: 3, [GROVE_ID]: 1, [FERNREACH_ID]: 1 };
+
+  it('reads each ground its own seated council', () => {
+    const model = zoneMapModel(chain, pops, BOWL_ID, {}, {}, {}, [], {}, {}, {}, {}, {
+      [BOWL_ID]: ['Rex', 'Sunny'],
+    });
+    expect(model.find((e) => e.id === BOWL_ID)!.council).toEqual(['Rex', 'Sunny']);
+    expect(model.find((e) => e.id === GROVE_ID)!.council).toEqual([]);
+  });
+
+  it('seats nobody for callers built before 479 — a fresh park has no councils', () => {
+    expect(zoneMapModel(chain, pops, BOWL_ID).every((e) => e.council.length === 0)).toBe(true);
+  });
+
+  it('renders the seat line in the book only when the dino holds one', () => {
+    const base: BookRow = { name: 'Rex', species: 'tyrannosaurus', hearts: 1, topBond: 0, role: 'wanderer', rumorsHeard: 0 };
+    expect(bookLines([{ ...base, council: "👥 one of The Grove's 2 voices" }]).some((l) => l.includes('👥'))).toBe(true);
+    expect(bookLines([{ ...base }]).some((l) => l.includes('👥'))).toBe(false);
+  });
+});

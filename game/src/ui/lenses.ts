@@ -61,6 +61,9 @@ export interface ZoneMapEntry {
   /** Has nobody ever lived here (BACKLOG-474)? An unsettled ground reads as unsettled rather than as a
    *  poor one — its prosperity is 0 by construction. False when unknown (older callers). */
   unsettled: boolean;
+  /** This ground's council (BACKLOG-479) — its top food-bankers, most-banked first. `[]` when the ground
+   *  seats nobody, which is every ground on a fresh save (nobody has banked yet). Built by `zoneCouncil`. */
+  council: string[];
 }
 
 /**
@@ -127,6 +130,7 @@ export function zoneMapModel(
   spends: Record<string, SpendPriority | null> = {},
   unsettled: Record<string, boolean> = {},
   works: Record<string, WorkPriority | null> = {},
+  councils: Record<string, string[]> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -142,6 +146,7 @@ export function zoneMapModel(
     spend: spends[id] ?? null, // BACKLOG-468: how this ground has chosen to spend (absent → no policy shown)
     unsettled: unsettled[id] ?? false, // BACKLOG-474: a ground nobody has ever lived on (absent → false)
     work: works[id] ?? null, // BACKLOG-473: what this ground puts its backs into (absent → no policy shown)
+    council: councils[id] ?? [], // BACKLOG-479: the ground's seated voices (absent → seats nobody)
   }));
 }
 
@@ -184,6 +189,9 @@ export interface BookRow {
   plans?: string;
   /** Where the dino has settled (BACKLOG-341) — `at home in <zone>`, set only once it belongs. */
   home?: string;
+  /** A seat on the ground's council (BACKLOG-479) — `👥 one of the Grove's 2 voices`, undefined for a dino
+   *  that holds no seat (then no line shows). The same 👥 the zone-map lens marks the ground with. */
+  council?: string;
   /** Founding standing (BACKLOG-343) — `first across into <Zone>` for the first dino ever to arrive in a
    *  zone, undefined for everyone else (then no line shows). Built by `pioneerLine`. */
   pioneer?: string;
@@ -202,6 +210,10 @@ export interface BookRow {
   /** Food-web standing (BACKLOG-443) — a carnivore's catch tally / a herbivore's escape tally, or
    *  undefined when the dino has no food-web history (then no line shows). Built by `foodwebStanding`. */
   foodweb?: string;
+  /** The manner at the hatch (BACKLOG-402) — `🍽️ at the hatch: generous — …`, the contested-drop trio
+   *  folded into one character note, or undefined when this dino has never contested a drop (then no
+   *  line shows). Built by `mannerLine`. */
+  manner?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -218,6 +230,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
+    if (r.council) out.push(`  ${r.council}`); // BACKLOG-479: a seat on the ground's council, beside where it lives
     if (r.pioneer) out.push(`  ${r.pioneer}`); // BACKLOG-343: the founding standing, kept forever
     if (r.taught) out.push(`  ${r.taught}`); // BACKLOG-364: the grounds it has shown others the way to
     if (r.yearn) out.push(`  ${r.yearn}`); // BACKLOG-362: the ground it has been away from too long
@@ -225,6 +238,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.wander) out.push(`  ${r.wander}`); // BACKLOG-361: the lifetime read — homebody, rambler, wanderer
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
+    if (r.manner) out.push(`  ${r.manner}`); // BACKLOG-402: the manner at the hatch, beside the other food read
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }
   return out;

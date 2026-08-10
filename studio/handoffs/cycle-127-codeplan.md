@@ -162,3 +162,33 @@ None known at plan time.
 Land 402 completely (module + test + lens field + scene field + e2e) and run `npx vitest run` before
 starting 479. The two lens edits are in different symbols but the same file; a green checkpoint between
 them makes a bisect trivial if the suite turns.
+
+---
+
+## Shipped (Coder, 2026-08-10)
+
+**402** — `game/src/world/manner.ts` (new, pure) + `manner.test.ts` (7 cases); `BookRow.manner` and one
+row in `bookLines`; one field in `WorldScene.bookRows()`. No behaviour, no memory string and no save
+field touched — the derivation adapted to the strings, as planned. `manner.test.ts` imports
+`slunkOffMemory` from `feeding.ts` rather than re-typing the 394 string, so a reworded memory breaks the
+test before it silently breaks the read.
+
+**479** — `zoneCouncil` / `councilSeats` / the three constants in `ai/roles.ts` beside `zoneProvider`,
+sharing `ProviderCandidate` and its comparator; `ZoneMapEntry.council` + a trailing `councils` param on
+`zoneMapModel`; `BookRow.council`; `WorldScene.zoneCandidates()` (the shared row builder both standings
+reads go through) + `zoneCouncils()`; `👥N` on the map box head-count line; the book seat line; dev hooks
+`__councils` / `__creditBank`. No save field.
+
+**Deviation from plan:** `councilFor(zoneId)` was planned and then deleted — `zoneCouncils()` covers both
+callers and the singular wrapper was dead code the type-check caught. `zoneCandidates()` (the reuse that
+actually matters, and the one that keeps `providerFor` and the council from drifting) shipped as planned.
+
+**Test fix during the fire:** the first draft of the alphabetical-tie test expected three seats from four
+residents. The seat rule is one voice per two residents — the *test* was wrong, not the rule, and the
+expectation was corrected to two seats. Worth recording because it is the same class of thing the
+structure handoff predicted: an assertion written narrower than the rule it guards.
+
+**Verification:** `npm run build` clean; `npx vitest run` 1664/1664 green (177 files); `npx playwright
+test` 481/482, the single failure `cycle-122-distance.spec.ts:41` timing out in `boot()` at `page.goto`
+— the catalogued parallel-load flake — and green (7/7) when re-run isolated. `@mlc-ai/web-llm` grep
+outside `game/src/ai/`: no hits.
