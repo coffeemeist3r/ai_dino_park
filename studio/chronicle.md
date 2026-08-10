@@ -6017,3 +6017,15 @@ tally, or a behaviour change; both read what the park has been recording for a h
 
 Build clean, 1664 unit green, e2e 481/482 with the one failure being the catalogued boot flake (green
 isolated). phase → qa-pending.
+
+## 2026-08-10 04:05 — cycle 127 — qa — 25/25 criteria, and a wrong assertion caught by an extracted rule
+
+Both tracks pass every criterion. Unit 1664/1664 (+13), build clean, no web-llm leak, no save change.
+E2e ran twice: 481/482 both times, a **different** spec red each time (122-distance, then 062-resource),
+both green isolated, neither touched by this diff — the parallel-load flake, and its moving between runs
+is the evidence. Recorded plainly: no single fully-green 482 pass was observed tonight. BACKLOG-430
+passed both runs (3rd and 4th consecutive green).
+
+The finding: the seat-count expectation in the council tests was written wrong (three seats from four
+residents, a rule the item doesn't have) and was caught only because `councilSeats()` was extracted and
+tested apart from the roster path. M10's lesson at small scale. phase → validator-pending.
