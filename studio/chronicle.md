@@ -5986,3 +5986,13 @@ rule; ~110 open). Idea Box empty. phase → designer-pending.
 been waiting on since cycle 1, which was never blocked on wanting a vote but on there being no *set of
 deciders*. Queue was at 3 (< X=4), so two seeded behind it: 481 (the council actually decides) and 482
 (one place the standings are derived). Milestone 12 structure arc 3 of 4.
+
+## 2026-08-10 03:02 — cycle 127 — designer — two derivations, kept apart
+
+**402** (lore): a table manner — generous / greedy / unbowed / timid — derived from the four
+contested-drop memory strings the feeding trio has been filing since cycle 84 and nobody has ever read.
+Ties break `unbowed > greedy > generous > timid`, so a dino that slunk off once is not thereby timid.
+**479** (structure): a per-zone council, one voice per 2 residents, capped at 3, eligible at ≥1 banked,
+derived and never stored — empty park-wide on a fresh save. Both are derivations-from-tallies surfaced
+in the book, so the spec pins them into separate modules and separate book rows. 402 lands first;
+`ui/lenses.ts` is the only shared file. phase → codeplan-pending.
