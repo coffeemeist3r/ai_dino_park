@@ -6079,3 +6079,36 @@ ground, and now reads as somebody in particular at the hatch. The structure half
 only BACKLOG-480 (a landmark that has to be kept up) between this milestone and shipping.
 
 phase → artist-pending; cycle bumps to 128 next run.
+
+## 2026-08-10 04:32 — cycle 127-art — artist — no-op (empty [art] queue), with two glyph calls on the record
+
+The Art section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` wiring
+changed, no BACKLOG item closed. Tonight's diff has no new sprite, tile or rig — both tracks are
+derivations surfaced as text — but it does spend two glyphs, and glyphs are the art side's business.
+
+**👥 (BACKLOG-479) is a good pick and lands in a clean register.** It is the park's first mark that
+describes a *group* rather than an individual or a place, and it is disjoint from every role icon (🧺
+provider, 🗣️ gossip, 🏠 homebody, 🎉 socialite, 🧭 wanderer), from the granary's 🏛️, and from the
+governance row's four. Crucially the same glyph does double duty in two lenses — `👥N` on the zone-map
+box and `👥 one of the Grove's 2 voices` in the book — so the two teach each other without a legend. That
+is the pattern 477's legend was built to enforce and it is cheaper when the glyph is self-evident.
+
+**🍽️ (BACKLOG-402) is the one to watch.** It is now drawn in two places meaning two different things:
+the zone-map governance row uses it for a ground's *feed-first spend policy* (468), and the book now uses
+it for a dino's *table manner*. The Validator's spec required the `at the hatch:` prefix precisely so the
+two can't be confused, and on different lenses with different subjects that holds. But it is the first
+glyph in this park to carry two readings, and the honest note is that the discipline protecting it is a
+text prefix rather than a distinct mark. If a future fire ever needs a *third* feeding read, the fix is to
+give the manner its own glyph rather than to add a second prefix — a fork/plate mark or 😋's neighbour,
+not more words around 🍽️.
+
+The map box absorbed the council on its existing head-count line rather than growing a row, so `boxH`
+stays 104 and the 477 governance row keeps its position. That was the right call: the box has taken five
+reads and a row in three cycles, and the next feature that wants space there should be made to argue for
+it.
+
+The standing flag from the cycle-121 audit is unchanged: everything in the park is drawn, so the rectangle
+fallback has no live subject and is exercised only by unit tests. BACKLOG-212 (the non-robot keeper)
+remains the item that would supply an honest control, and it is `[core]` — a Lore-smith pick.
+
+Build clean. lastFire.artist updated; phase → lore-pending.
