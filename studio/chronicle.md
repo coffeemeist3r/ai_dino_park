@@ -6272,3 +6272,38 @@ manner at the hatch (402), and a pecking order under it (401). Its two recurring
 are where the work is, and the arithmetic never says which reading is the person.
 
 phase → artist-pending; cycle bumps to 129 next run, and the smiths draft Milestone 13.
+
+## 2026-08-11 04:32 — cycle 128-art — artist — no-op (empty [art] queue), with the first *un*-drawing on record
+
+The Art section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` wiring
+changed, no BACKLOG item closed. But tonight's diff is the first in this project's life to change how an
+existing sprite *renders* without touching a rig, and that is the art side's business.
+
+**Disrepair is drawn, not merely logged.** BACKLOG-480 fades a derelict landmark to `DERELICT_ALPHA`
+(0.45) on the same visibility pass that already decides which zone's props are on screen. That is the
+right seam — one helper over all four parallel sprite arrays instead of a fifth bespoke pass — and it is
+the cheapest possible visual for the state: no second texture, no ruin rig, no per-kind art debt. It also
+means the park now has a **visual vocabulary for a thing being in a bad way**, and it is alpha. If a
+later feature wants a *second* damaged state (a half-repaired landmark, a blighted crop), alpha is
+already spent and the next one needs a real mark. Worth knowing before it is needed.
+
+The honest limitation: a faded 🗿 reads as "faded", not as "falling down". A baked ruin variant per
+structure kind — a toppled cairn, a sagging lean-to — is the art item this feature actually wants, and it
+is a *renderable-now* one under the cycle-91 stash rule (a prop rig `bakePropArt` can resolve in a test).
+Not seeded tonight, because the Art queue is the Lore-smith's and Structure-smith's to fill and neither
+picked art this cycle; flagged here so the next fire that reads this file has it.
+
+**Two glyphs spent, both clean.** 👊 (401's pecking order, in the book) and 🛠️ (480's upkeep ticker) are
+each disjoint from every mark in use — the role icons (🧺 🗣️ 🏠 🎉 🧭), the governance row's four, 🏛️,
+👥, 🍽️. 👊 is the better of the two: it reads as a squaring-up between two dinos with no legend, which is
+exactly what the line says. 🛠️ is doing double duty for *both* halves of its beat (a landmark falling and
+a landmark patched up) and leans on the words after it to tell them apart. That is acceptable for a
+ticker line, which is read once and in full, but it would not survive being moved onto the zone-map box.
+
+Last cycle's watch item is unchanged: 🍽️ still carries two readings (a ground's feed-first spend policy,
+a dino's table manner), protected by a text prefix rather than a distinct mark. Nothing this cycle made it
+worse. The cycle-121 standing flag is also unchanged — everything in the park is drawn, so the rectangle
+fallback has no live subject and is exercised only by unit tests; BACKLOG-212 (the non-robot keeper) is
+still the item that would supply an honest control, and it is `[core]`, a Lore-smith pick.
+
+Build clean. lastFire.artist updated; phase → lore-pending.
