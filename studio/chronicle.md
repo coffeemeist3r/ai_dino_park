@@ -6112,3 +6112,16 @@ fallback has no live subject and is exercised only by unit tests. BACKLOG-212 (t
 remains the item that would supply an honest control, and it is `[core]` — a Lore-smith pick.
 
 Build clean. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-11 02:30 — cycle 128 — lore-smith — BACKLOG-401 pecking-order memory
+
+Milestone 12's lore half closed last night, so tonight's pick is off-milestone by necessity and the
+justification is short: 402 made a dino's table manner legible, and 401 is the only unread thing left in
+the four-cycle contested-drop body (375 yield / 387 gobble / 390 stand / 394 slink). Every one of those
+memories was filed with an opponent's *name* in it and nothing has ever read the name — the stand/cede
+call is `standsGround(bravery)` alone, identical against every dino in the park. This cycle the pair
+starts to matter. Milestone 13's lore arcs stay undrafted until 480 closes the structure half.
+
+Idea Box empty. No new lore items (drain-before-invent; ~110 open).
+
+phase → designer-pending; cycle 128.
