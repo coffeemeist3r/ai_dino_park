@@ -6206,3 +6206,69 @@ is the flake's signature; the shared-meal red got a hard look because it lives i
 refactored, and it passed under full load in run 1 on the same binary.
 
 phase → validator-pending.
+
+## 2026-08-11 04:20 — cycle 128 — validator — lore APPROVED / structure APPROVED — **Milestone 12 SHIPPED**
+
+Two approvals, and the milestone that has been running since cycle 125 closes with them.
+
+**The hatch remembers who (401).** For four cycles the contested drop filed beats with the other dino's
+*name* in them, and `standsGround(bravery)` read none of it — one number, the same against every opponent
+in the park, forever. A dino faced down by the same bully six times walked into the seventh exactly as it
+walked into the first. Now the pair has a history and the history outranks temperament.
+
+The design call is in the writing, not the plan. The spec asked for a single dead band, and the Coder
+found that a lone *stand* already weighs it — so the band alone could not deliver the item's own first
+criterion. The fix was to split the rule: how strongly a history reads, and how often the two have met.
+That is one more constant than asked for and one *fewer* judgement, because the alternative was tuning
+weights until one number happened to satisfy two unrelated rules — a number nobody could later explain.
+
+Two smaller things worth keeping. `holdsAgainst(bravery, null)` **calls** `standsGround` instead of
+restating its constant, with a spec sweeping the whole bravery range: the compatibility seam is not "the
+old path still works" but "the old path *is* the old function", and that is the cheapest pin this project
+has found for a feature shimmed into an existing decision. And the yield weighs least — a dino stepping
+back for a hungry friend is being generous, not cowed, and had generosity accumulated into wariness the
+kindest dino in the park would slowly have read as the most frightened. That is 402's `timid`-last call
+made again in another register, and it is becoming a house rule: **a tally is not a character until
+someone decides what it means.**
+
+**The finding is the refactor.** Cycles 126 and 127 both closed with the same complaint — the suite can
+prove every derivation this park builds and cannot stage the moment that produces one. Tonight the gobble
+branch came out of `checkFeeding` into `resolveContest`, the new hook points at it, and the e2e asserts
+the production decision on a real drop. First payment on a debt named twice. The lesson generalizes: those
+moments are unstageable because they live inline in a 6600-line scene method, not because they are
+inherently un-drivable.
+
+**A landmark that has to be kept up (480).** Since cycle 146 a raised structure has been permanent and
+free — every other economy here acquired a cost and the skyline never did, which is why a zone's structure
+count was the only number in this park that could not fall. It falls now: a ground pays a unit a day per
+two standing landmarks out of its own pile, and what it can't pay rots — reversibly.
+
+The trap was named in the structure handoff before a line was written and was exactly where it said:
+`hasGranary` answered two questions with one call, and those answers diverge the instant a granary can
+rot. Left alone, a ground would have raised a second granary beside its own ruin. Four lines to fix, and
+the method that caught it is the real item — the smith listed every consumer of the structure count and
+decided *per consumer, out loud*, which count each wanted. Five consumers; they don't all want the same
+answer.
+
+Both calibrations are asserted rather than asserted-about: a one-landmark ground owes nothing (a fresh
+park runs a day *and* a week untouched), and a derelict landmark owes no upkeep, so a struggling ground's
+bill **falls** as it lapses — five passes settle at one standing landmark instead of cascading to zero.
+This park has been deathless by design for 128 cycles; it would have been a poor night to introduce a
+ratchet running the other way. Recorded rather than reworked: lapse order is array order, so the granary
+always rots first — defensible as "newest first", sharp to watch, but emergent from concatenation rather
+than chosen. 482 is already queued to fold these derivations into one place and inherits the note.
+
+Unit 1694/1694, build clean, additive save on both tracks. E2e: two full runs at 486/488 with a
+*different* second spec red each time and all green isolated — the flake's wandering is the evidence. QA
+gave the shared-meal red a hard look because it lives in the file this cycle refactored, and cleared it on
+the right grounds: it passed under full load in run 1 on the same binary. Seeded **BACKLOG-483** for the
+gap that is now two modules deep — four hatch memory strings, one exported builder, and a reword that
+would empty both reads without failing a test.
+
+**Milestone 12 ships.** A fork in the chain (478), a ground with more than one voice (479 — the set 031
+had been waiting on since *cycle 1*), a bill for the skyline (480), and a suite paid down before it was
+loaded further (456); a loner who leans on you (370), a ground that remembers a dino's pacing (424), a
+manner at the hatch (402), and a pecking order under it (401). Its two recurring findings: the assertions
+are where the work is, and the arithmetic never says which reading is the person.
+
+phase → artist-pending; cycle bumps to 129 next run, and the smiths draft Milestone 13.

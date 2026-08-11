@@ -8,32 +8,8 @@
 
 ## Current milestone
 
-**Milestone 12: A park that branches, and a cast that doesn't blur**
-**Status:** ACTIVE (opened cycle 125)
-
-Eleven milestones built a *line*. Every ground in this park has at most one east neighbour, so the
-"adjacency graph" (383) has only ever been walked as a list — `zoneChain` derives the drawing order by
-following east links from the westmost zone, and 475's `hopDistances` runs a general breadth-first search
-over data that has never once branched. M10's finding was that the code generalizes and the assertions
-don't; M11 built a whole distance layer on top of a graph with no forks in it. Milestone 12 puts a fork in
-it, gives a ground more than one voice on its own calls, and makes what's been built cost something to keep.
-
-The lore half answers a different blur. The cast has accumulated tallies for eleven milestones — yields,
-gobbles, stands, tics, crossings — and a dino is still easiest to tell apart by its name. These three arcs
-are about a dino being *somebody in particular*: the one with nobody who leans on you instead, the one whose
-private ritual leaves a mark another can stumble on, and the manner at the hatch that finally reads as one
-character note instead of four counters.
-
-**Lore arcs:**
-- [x] The one with nobody leans on you — a loner with no dino-friends but high keeper-friendship drifts to the glass toward *you* rather than a random edge, so loneliness becomes a bid for the keeper's attention (BACKLOG-370 — cycle 125)
-- [x] Traces of your pacing — a dino that arrives where another was lately ticcing files a faint "someone was pacing here", so a private ritual leaves a mark a friend can stumble on (BACKLOG-424 — cycle 126)
-- [x] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402 — cycle 127; **lore half closed**)
-
-**Structure arcs:**
-- [x] A suite you can trust before you load it further — the parallel-load e2e seam: a dev hold for a zone's ambient spawn/gather/meeting for the length of a driven crossing, a deterministic homesick pick, and a settle helper for the reload race, with the four catalogued specs moved onto it (BACKLOG-456 — cycle 125)
-- [x] The chain forks — a fifth ground hanging off the *middle* of the chain, so a zone genuinely has two onward neighbours and every general read (the hop table, nearest-qualifying, the lens row, the demand read, migration destination) is finally exercised against a graph rather than a line (BACKLOG-478 — cycle 126)
-- [x] More than one voice on the call — a derived per-zone council (the top few food-bankers, not only the single top banker) as a persistent standing beside `provider`, the seam a vote (031) plugs into later (BACKLOG-479 — cycle 127)
-- [ ] A landmark that has to be kept up — a standing structure draws a small upkeep from its zone's pile and falls into reversible disrepair when the ground can't pay, so the one economy with no running cost gets one (BACKLOG-480)
+_(none — Milestone 12 shipped cycle 128. The Lore-smith drafts the next headline + feel arcs and the
+Structure-smith the spine arcs on the next fire.)_
 
 ---
 
@@ -53,6 +29,51 @@ character note instead of four counters.
 ```
 
 ## Shipped milestones
+
+### Milestone 12: A park that branches, and a cast that doesn't blur — SHIPPED cycle 128 (opened cycle 125)
+
+Eleven milestones built a *line*. Every ground in this park had at most one east neighbour, so the adjacency
+graph (383) had only ever been walked as a list, and M11 built a whole distance layer on top of a graph with
+no forks in it. Milestone 12 put a fork in it (478 — the Sunward Ridge hangs **north** off the Grove, the first
+non-east/west link in the project's life), gave a ground more than one voice on its own calls (479 — a derived
+per-zone council, the set BACKLOG-031 had been waiting on since **cycle 1**, not because nobody wanted a vote
+but because a monarchy of one has nobody to hold one), and made what has been built **cost something to keep**
+(480 — a standing landmark draws upkeep from its ground's pile and falls into reversible disrepair when the
+ground can't pay). It opened by finally paying down the e2e seam the suite had been flaking on for twenty
+cycles (456).
+
+The lore half answered a different blur: the cast had accumulated tallies for eleven milestones and a dino was
+still easiest to tell apart by its name. Three arcs made a dino *somebody in particular* — the loner with no
+dino-friends who leans on **you** rather than a random wall (370), the private ritual that leaves a mark on the
+ground for a friend to stumble on (424, the first time in this park's life a *place* holds a memory of a dino),
+and the manner at the hatch that finally reads as one character note instead of four counters (402). The
+milestone's off-arc closer (401) then read those same beats *per opponent*, so the pecking order at a drop is
+a history between two dinos rather than one number applied to everyone.
+
+Two findings recur across the whole milestone and are worth carrying forward. **The assertions are where the
+work is.** 478's branching graph met nine cross-zone systems with zero code edits and twenty amended
+assertions across sixteen test files; 479's first draft expected a council size its own rule never promised;
+402 and 401 both parse memory strings and are one reword away from emptying silently (483). M10 recorded
+assertions *narrower* than their systems; M12 kept finding them *looser*. And **a tally is not a character
+until someone decides what it means** — 402's `timid`-last precedence and 401's featherweight yield are the
+same judgement twice: the arithmetic never says which reading is the person.
+
+Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands
+alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → a chain
+that can grow (M10) → a park you cross (M11) → **a park that branches, a ground with more than one voice and
+a bill to pay, and a cast you can tell apart** (M12). Deathless by design; mortality stays an operator call.
+
+**Lore arcs:**
+- [x] The one with nobody leans on you — a loner with no dino-friends but high keeper-friendship drifts to the glass toward *you* rather than a random edge, so loneliness becomes a bid for the keeper's attention (BACKLOG-370 — cycle 125)
+- [x] Traces of your pacing — a dino that arrives where another was lately ticcing files a faint "someone was pacing here", so a private ritual leaves a mark a friend can stumble on (BACKLOG-424 — cycle 126)
+- [x] The manner at the hatch — the collection book folds each dino's feeding tallies into one legible table-manner note (generous / greedy / unbowed / timid) instead of three separate counters (BACKLOG-402 — cycle 127; **lore half closed**)
+- [x] *(off-milestone closer)* The hatch remembers who — the same contested-drop beats read per opponent, so who a dino gives way to and who it faces down is a history between those two rather than one bravery number (BACKLOG-401 — cycle 128)
+
+**Structure arcs:**
+- [x] A suite you can trust before you load it further — the parallel-load e2e seam: a dev hold for a zone's ambient spawn/gather/meeting for the length of a driven crossing, a deterministic homesick pick, and a settle helper for the reload race, with the four catalogued specs moved onto it (BACKLOG-456 — cycle 125)
+- [x] The chain forks — a fifth ground hanging off the *middle* of the chain, so a zone genuinely has two onward neighbours and every general read (the hop table, nearest-qualifying, the lens row, the demand read, migration destination) is finally exercised against a graph rather than a line (BACKLOG-478 — cycle 126)
+- [x] More than one voice on the call — a derived per-zone council (the top few food-bankers, not only the single top banker) as a persistent standing beside `provider`, the seam a vote (031) plugs into later (BACKLOG-479 — cycle 127)
+- [x] A landmark that has to be kept up — a standing structure draws a small upkeep from its zone's pile and falls into reversible disrepair when the ground can't pay, so the one economy with no running cost gets one (BACKLOG-480 — cycle 128; **structure track closed, milestone SHIPPED**)
 
 ### Milestone 11: A park you have to cross — SHIPPED cycle 124 (opened cycle 122)
 
