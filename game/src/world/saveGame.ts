@@ -116,13 +116,13 @@ export interface SaveData {
    *  a tally from `seenZones` would claim journeys we did not watch. */
   crossings?: Record<string, number>;
   /** Crafted cairns (BACKLOG-286). Additive over v2; absent → []. `zone` additive (BACKLOG-308; absent → bowl). */
-  cairns?: { tileX: number; tileY: number; zone?: string }[];
+  cairns?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Dino-built shelters (BACKLOG-315). Additive; absent → []. Zone-scoped (308); mirrors `cairns`. */
-  shelters?: { tileX: number; tileY: number; zone?: string }[];
+  shelters?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's landmark. Additive; absent → []. Mirrors `shelters`. */
-  thatches?: { tileX: number; tileY: number; zone?: string }[];
+  thatches?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Additive; absent → []. Mirrors `thatches`. */
-  granaries?: { tileX: number; tileY: number; zone?: string }[];
+  granaries?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
   groveVisited?: string[];
   /** Dinos that have ever seen the grove pond (BACKLOG-359). Additive; absent → []. Gates the once-ever pond-sight beat. */
@@ -532,7 +532,7 @@ export function deserialize(json: string): SaveData | null {
 
   // cairns is additive over v2 — absent in older saves (default []); array of {tileX,tileY}. (BACKLOG-286)
   // `zone` is additive over that (BACKLOG-308); absent → bowl, backfilled on restore.
-  let cairns: { tileX: number; tileY: number; zone?: string }[] = [];
+  let cairns: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
   if (o.cairns !== undefined) {
     if (!Array.isArray(o.cairns)) return null;
     for (const c of o.cairns) {
@@ -540,12 +540,15 @@ export function deserialize(json: string): SaveData | null {
       const r = c as Record<string, unknown>;
       if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
       if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+      // BACKLOG-480: `derelict` is additive over that; absent → maintained, so a pre-480 save restores
+      // with its whole skyline standing.
+      if (r.derelict !== undefined && typeof r.derelict !== 'boolean') return null;
     }
-    cairns = o.cairns as { tileX: number; tileY: number; zone?: string }[];
+    cairns = o.cairns as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   }
 
   // shelters is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors cairns. (BACKLOG-315)
-  let shelters: { tileX: number; tileY: number; zone?: string }[] = [];
+  let shelters: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
   if (o.shelters !== undefined) {
     if (!Array.isArray(o.shelters)) return null;
     for (const s of o.shelters) {
@@ -553,12 +556,15 @@ export function deserialize(json: string): SaveData | null {
       const r = s as Record<string, unknown>;
       if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
       if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+      // BACKLOG-480: `derelict` is additive over that; absent → maintained, so a pre-480 save restores
+      // with its whole skyline standing.
+      if (r.derelict !== undefined && typeof r.derelict !== 'boolean') return null;
     }
-    shelters = o.shelters as { tileX: number; tileY: number; zone?: string }[];
+    shelters = o.shelters as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   }
 
   // thatches is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors shelters. (BACKLOG-417)
-  let thatches: { tileX: number; tileY: number; zone?: string }[] = [];
+  let thatches: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
   if (o.thatches !== undefined) {
     if (!Array.isArray(o.thatches)) return null;
     for (const t of o.thatches) {
@@ -566,12 +572,15 @@ export function deserialize(json: string): SaveData | null {
       const r = t as Record<string, unknown>;
       if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
       if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+      // BACKLOG-480: `derelict` is additive over that; absent → maintained, so a pre-480 save restores
+      // with its whole skyline standing.
+      if (r.derelict !== undefined && typeof r.derelict !== 'boolean') return null;
     }
-    thatches = o.thatches as { tileX: number; tileY: number; zone?: string }[];
+    thatches = o.thatches as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   }
 
   // granaries is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors thatches. (BACKLOG-454)
-  let granaries: { tileX: number; tileY: number; zone?: string }[] = [];
+  let granaries: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
   if (o.granaries !== undefined) {
     if (!Array.isArray(o.granaries)) return null;
     for (const g of o.granaries) {
@@ -579,8 +588,11 @@ export function deserialize(json: string): SaveData | null {
       const r = g as Record<string, unknown>;
       if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
       if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+      // BACKLOG-480: `derelict` is additive over that; absent → maintained, so a pre-480 save restores
+      // with its whole skyline standing.
+      if (r.derelict !== undefined && typeof r.derelict !== 'boolean') return null;
     }
-    granaries = o.granaries as { tileX: number; tileY: number; zone?: string }[];
+    granaries = o.granaries as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   }
 
   // groveVisited is additive — absent in older saves (default []); a flat list of dino names. (BACKLOG-339)

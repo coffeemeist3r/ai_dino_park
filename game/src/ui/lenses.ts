@@ -214,6 +214,10 @@ export interface BookRow {
    *  folded into one character note, or undefined when this dino has never contested a drop (then no
    *  line shows). Built by `mannerLine`. */
   manner?: string;
+  /** The pecking order (BACKLOG-401) — `👊 pecking order: faced down Rex · wary of Sunny`, the same
+   *  contested-drop beats read *per opponent*, or undefined when this dino holds no disposition toward
+   *  anyone (then no line shows). Built by `peckingLine`. */
+  pecking?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -239,6 +243,7 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.manner) out.push(`  ${r.manner}`); // BACKLOG-402: the manner at the hatch, beside the other food read
+    if (r.pecking) out.push(`  ${r.pecking}`); // BACKLOG-401: who it has faced down and who it gives way to
     if (r.rumorsHeard > 0) out.push(`  knows ${r.rumorsHeard} rumor${r.rumorsHeard === 1 ? '' : 's'}`);
   }
   return out;

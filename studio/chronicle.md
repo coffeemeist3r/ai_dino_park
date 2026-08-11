@@ -6166,3 +6166,27 @@ one-per-zone gate), which is the trap the Structure-smith called out; a single m
 `hasGranary` would have let a ground raise a second granary beside its rotting first.
 
 phase → coder-pending.
+
+## 2026-08-11 03:40 — cycle 128 — coder — BACKLOG-401 + BACKLOG-480
+
+Two pure modules, one refactor, one additive save field.
+
+`world/pecking.ts` reads the same recall ring `manner.ts` does, but split by opponent, and its rule needed
+two constants rather than one: a lone *stand* already weighs the bar, so "one contest is not a history"
+had to be a beat count, not a heavier threshold. `holdsAgainst(bravery, null)` calls the imported
+`standsGround` rather than restating it, and a spec walks the whole bravery range to pin that the
+no-history path is the pre-401 game exactly.
+
+The gobble branch of `checkFeeding` came out into `resolveContest`, which the new `__forceContest` hook
+drives — so cycle 128's lore e2e stages the actual contested drop and asserts the production decision.
+That is the hole cycles 126 and 127 both named.
+
+`world/upkeep.ts` owns the arithmetic; WorldScene owns *which* landmark lapses (the newest standing) and
+which is patched (the oldest derelict). `hasGranary` split into the maintained read (the cap lift) and
+`granaryRaised` (the one-per-zone gate) — the trap the Structure-smith flagged, and the reason a ground
+with a rotting granary can't raise a second. `baseLandmarks` and the prosperity fold moved to the
+maintained count; the away catch-up runs the same pure function over the elapsed days.
+
+Build clean. Unit 1694/1694. E2e handed to QA.
+
+phase → qa-pending.

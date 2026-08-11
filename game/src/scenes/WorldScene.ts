@@ -91,6 +91,7 @@ import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -104,7 +105,7 @@ import { spreadProviderWord } from '../world/providerword';
 import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, standsGround, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
@@ -113,6 +114,16 @@ import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
 import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
+// BACKLOG-480: a standing landmark costs its ground something, and one it can't pay for falls into
+// reversible disrepair.
+import {
+  runUpkeep,
+  runUpkeepOverDays,
+  lapsedLine,
+  patchedLine,
+  DERELICT_ALPHA,
+  type Landmark,
+} from '../world/upkeep';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
   providerPriority,
@@ -435,6 +446,9 @@ export class WorldScene extends Phaser.Scene {
   /** A pantry that spoils (BACKLOG-455): transient — the last in-game day the spoilage pass ran (0 = none
    *  yet). Reset on restore/jump so a clock catch-up never fires a spurious pass (mirrors lastSeasonDay). */
   private lastSpoilDay = 0;
+  /** BACKLOG-480: the day the last upkeep pass ran. Armed on boot/restore like `lastSpoilDay`, so a jump
+   *  never fires a spurious live pass — the away days go through `runUpkeepPass(days)` instead. */
+  private lastUpkeepDay = 0;
   /** Dawn chorus (BACKLOG-192): transient — the last in-game day a dawn fired (0 = none yet). */
   private lastDawnDay = 0;
   private dawnCount = 0;
@@ -520,16 +534,16 @@ export class WorldScene extends Phaser.Scene {
     return (this.stockpileByZone[zone] ??= {});
   }
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
-  private cairns: { tileX: number; tileY: number; zone: string }[] = [];
+  private cairns: Landmark[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Dino-built shelters (BACKLOG-315) — the larger landmark beyond the cairn. Persisted; absent → []. Zone-scoped (308). */
-  private shelters: { tileX: number; tileY: number; zone: string }[] = [];
+  private shelters: Landmark[] = [];
   private shelterSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's own landmark. Persisted; absent → []. Zone-scoped (308). */
-  private thatches: { tileX: number; tileY: number; zone: string }[] = [];
+  private thatches: Landmark[] = [];
   private thatchSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Persisted; absent → []. Zone-scoped (308). */
-  private granaries: { tileX: number; tileY: number; zone: string }[] = [];
+  private granaries: Landmark[] = [];
   private granarySprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Dinos that have ever set foot in the grove (BACKLOG-339). Persisted; absent → []. Gates the once-ever arrival beat. */
   private groveVisited: string[] = [];
@@ -1054,6 +1068,18 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
     // BACKLOG-390: the last stand-up beat (a bold winner that held its ground against a gobbler) or null.
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
+    // BACKLOG-401: run the *production* contested-drop resolution for a named pair (the branch checkFeeding
+    // calls), so a spec can stage the moment instead of asserting a derivation the game never reached.
+    (window as any).__forceContest = (winner: string, gobbler: string) => {
+      const eater = this.dinos.find((d) => d.name === winner);
+      // A contest is over a real drop — the resolution eats it. No food on the ground, no contest.
+      if (!eater || !this.foodKind || !this.dinos.some((d) => d.name === gobbler)) return null;
+      this.resolveContest(eater, gobbler);
+      return { stand: this.lastStand, gobble: this.lastGobble };
+    };
+    // BACKLOG-401: the live per-opponent disposition, so a spec can read what the hatch will act on.
+    (window as any).__disposition = (name: string, other: string) =>
+      dispositionToward(recall(this.memory, name), other);
     // BACKLOG-386/385: the last grateful-nuzzle beat, and the live "who owes whom a meal back" ledger.
     (window as any).__nuzzle = () => (this.lastNuzzle ? { ...this.lastNuzzle } : null);
     (window as any).__owesFood = () => JSON.parse(JSON.stringify(this.owesFood)) as Record<string, string[]>;
@@ -1182,6 +1208,14 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__granaryIsArt = () =>
       this.granarySprites.length > 0 && this.granarySprites[0] instanceof Phaser.GameObjects.Image;
     (window as any).__hasGranary = (z?: string) => this.hasGranary(z ?? this.zoneId);
+    // BACKLOG-480: the raised read (incl. a derelict granary) — the one-per-zone build gate, not the cap lift.
+    (window as any).__granaryRaised = (z?: string) => this.granaryRaised(z ?? this.zoneId);
+    // BACKLOG-480: run the production upkeep pass (a live day, or `days` of away catch-up) and read the
+    // per-zone standing/derelict counts. Mirrors __spoilFood — one path for the game and the spec.
+    (window as any).__runUpkeep = (days = 1) => this.runUpkeepPass(days);
+    (window as any).__landmarks = (z?: string) =>
+      this.landmarksIn(z ?? this.zoneId).map((l) => ({ ...l, derelict: !!l.derelict }));
+    (window as any).__standing = (z?: string) => this.standingIn(z ?? this.zoneId);
     (window as any).__foodCap = (z?: string) => this.foodCapFor(z ?? this.zoneId); // BACKLOG-461: granary- + season-aware
     // dev-only: seed a zone's pile + landmark count so the granary build is reachable in a test without
     // gathering it out. Adds `n` cairns tagged to the zone and stocks the pile to the granary recipe.
@@ -1641,14 +1675,35 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
     const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
-    if (gobblerName && standsGround(eater.traits.bravery)) {
-      // BACKLOG-390: the winner is bold — it holds its tile and the gobbler backs down (😠), so who gets
-      // pushed around at the hatch is a bravery read (the timid cede, the bold don't). The winner eats.
+    if (gobblerName) {
+      this.resolveContest(eater, gobblerName);
+    } else {
+      this.lastStand = null;
+      this.lastGobble = null;
+      this.eatFood(eater);
+    }
+  }
+
+  /**
+   * The contested drop, resolved (387/390/394 — extracted intact in cycle 128 so the e2e can drive the
+   * *production* decision rather than a hook that re-implements it).
+   *
+   * BACKLOG-401: who holds and who cedes is no longer bravery alone. The winner reads its own recent
+   * history with *this* gobbler — a stand it won, a grab it lost — and that per-pair disposition outranks
+   * temperament when there is one. With no history `holdsAgainst` is exactly `standsGround(bravery)`, so a
+   * fresh park behaves as it did before this existed.
+   */
+  private resolveContest(eater: Dino, gobblerName: string): void {
+    const disposition = dispositionToward(recall(this.memory, eater.name), gobblerName);
+    const because = disposition ? becauseOf(disposition, gobblerName) : ''; // no silent change
+    if (holdsAgainst(eater.traits.bravery, disposition)) {
+      // BACKLOG-390: the winner holds its tile and the gobbler backs down (😠), so who gets pushed around
+      // at the hatch is a bravery read (the timid cede, the bold don't) — now shaded by who it is facing.
       this.lastStand = { winner: eater.name, gobbler: gobblerName };
       this.lastGobble = null;
       this.memory = remember(this.memory, eater.name, `you stood your ground and kept your food from ${gobblerName}`);
       this.flashFeed(eater, '😠');
-      this.logEvent(`😠 ${eater.name} held its ground against ${gobblerName}`);
+      this.logEvent(`😠 ${eater.name} held its ground against ${gobblerName}${because}`);
       // BACKLOG-394: the denied gobbler slinks off (😖) and remembers who wouldn't budge — the failed grab
       // has a visible cost. The bold winner still eats; no bond change (395 owns the social ripple).
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
@@ -1656,18 +1711,14 @@ export class WorldScene extends Phaser.Scene {
       this.flashFeed(gobbler, '😖');
       this.logEvent(`😖 ${gobblerName} slunk off — ${eater.name} wouldn't budge`);
       this.eatFood(eater);
-    } else if (gobblerName) {
+    } else {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
       this.lastStand = null;
       this.lastGobble = { winner: eater.name, gobbler: gobblerName };
       this.memory = remember(this.memory, gobblerName, `you shouldered past ${eater.name} and snatched the food first`);
       this.flashFeed(gobbler, '😤');
-      this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food`);
+      this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food${because}`);
       this.eatFood(gobbler);
-    } else {
-      this.lastStand = null;
-      this.lastGobble = null;
-      this.eatFood(eater);
     }
   }
 
@@ -1911,11 +1962,13 @@ export class WorldScene extends Phaser.Scene {
     // half-applied and would read as a flake rather than as a policy.
     const work = this.workPriorityFor(zone);
     const gate = granaryGateFor(work, GRANARY_AFTER_STRUCTURES);
-    if (this.baseLandmarks(zone) >= gate && !this.hasGranary(zone)) {
+    // BACKLOG-480: the *raised* read here, never the maintained one — a rotting granary still fills the
+    // ground's one slot, or a zone would rebuild beside its own ruin every time it recovered a pile.
+    if (this.baseLandmarks(zone) >= gate && !this.granaryRaised(zone)) {
       // BACKLOG-463: a 'feed'-priority provider holds off the granary while the store is thin (mouths before
       // walls); a 'bank' one (or no provider) builds as soon as the recipe is affordable.
       const deferred = granaryDeferredForFeeding(this.spendPriorityFor(zone), foodPileTotal(this.foodStoreFor(zone)));
-      if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), false, gate)) {
+      if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), this.granaryRaised(zone), gate)) {
         const spent = buildGranary(this.pileFor(zone));
         if (spent) {
           this.stockpileByZone[zone] = spent;
@@ -1963,14 +2016,44 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(`${GRANARY_GLYPH} ${crafter.name} raised a granary in ${zoneById(g.zone).name}`);
   }
 
-  /** Base landmarks a zone has raised (cairns + lean-tos + thatches) — the granary gate counts these, not
-   *  granaries themselves (BACKLOG-454). */
+  /** Base landmarks a zone is *keeping up* (cairns + lean-tos + thatches) — the granary gate counts these,
+   *  not granaries themselves (BACKLOG-454). BACKLOG-480: derelict landmarks don't count, so a ground must
+   *  hold three up to earn the fourth; a skyline it can't maintain doesn't buy it a granary. */
   private baseLandmarks(zone: string): number {
-    return [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === zone).length;
+    return [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === zone && !s.derelict)
+      .length;
   }
 
-  /** Does this zone have a standing granary (BACKLOG-454)? One per zone. */
+  /** Every landmark in a zone, maintained or not (BACKLOG-480) — the four arrays as one list. */
+  private landmarksIn(zone: string): Landmark[] {
+    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.granaries].filter((s) => s.zone === zone);
+  }
+
+  /** How many of a zone's landmarks are standing (BACKLOG-480) — what upkeep is owed on. */
+  private standingIn(zone: string): number {
+    return this.landmarksIn(zone).filter((s) => !s.derelict).length;
+  }
+
+  /** How many of a zone's landmarks have fallen into disrepair (BACKLOG-480). */
+  private derelictIn(zone: string): number {
+    return this.landmarksIn(zone).filter((s) => s.derelict).length;
+  }
+
+  /**
+   * Does this zone have a granary *in working order* (BACKLOG-454)? Feeds the food-cap lift only.
+   *
+   * BACKLOG-480 split this in two on purpose. It used to answer two different questions with one call —
+   * *does this ground get the +3 cap?* and *has this ground already used its one granary slot?* — and the
+   * moment a granary can fall into disrepair those answers diverge. A maintained-only read on the build
+   * gate would let a ground raise a second granary beside its rotting first; that gate reads
+   * `granaryRaised` instead.
+   */
   private hasGranary(zone: string): boolean {
+    return this.granaries.some((g) => g.zone === zone && !g.derelict);
+  }
+
+  /** Has this zone ever raised a granary, derelict or not (BACKLOG-480)? The one-per-zone build gate. */
+  private granaryRaised(zone: string): boolean {
     return this.granaries.some((g) => g.zone === zone);
   }
 
@@ -2747,6 +2830,8 @@ export class WorldScene extends Phaser.Scene {
         : undefined,
       foodweb: foodwebStanding(dietOf(d.species, d.name), recall(this.memory, d.name)) ?? undefined, // BACKLOG-443
       manner: mannerLine(recall(this.memory, d.name)) ?? undefined, // BACKLOG-402: how it behaves at a contested drop
+      // BACKLOG-401: the same beats read per opponent — who it has faced down and who has beaten it.
+      pecking: peckingLine(recall(this.memory, d.name), this.dinos.map((o) => o.name)) ?? undefined,
       council: (() => {
         // BACKLOG-479: a seat is a standing about the ground you live on, so it reads off that ground's council.
         const z = zoneOf(this.dinoZones, d.name, BOWL_ID);
@@ -2938,7 +3023,8 @@ export class WorldScene extends Phaser.Scene {
   private zoneSignals(id: string): ZoneSignals {
     const pile = this.pileFor(id);
     const stockpile = Object.values(pile).reduce((sum, n) => sum + (n ?? 0), 0);
-    const structures = [...this.cairns, ...this.shelters, ...this.thatches, ...this.granaries].filter((s) => s.zone === id).length;
+    // BACKLOG-480: the *maintained* count, so the one term of the index that could never fall now can.
+    const structures = this.standingIn(id);
     const heads = zonePopulations(this.dinoZones, this.dinos.map((d) => d.name), BOWL_ID)[id] ?? 0;
     const harvested = this.harvestedByZone[id] ?? 0;
     return { stockpile, structures, heads, harvested };
@@ -4785,10 +4871,19 @@ export class WorldScene extends Phaser.Scene {
   private applyObjectVisibility(): void {
     // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
-    this.cairnSprites.forEach((s, i) => s.setVisible(this.cairns[i]?.zone === this.zoneId));
-    this.shelterSprites.forEach((s, i) => s.setVisible(this.shelters[i]?.zone === this.zoneId)); // BACKLOG-315
-    this.thatchSprites.forEach((s, i) => s.setVisible(this.thatches[i]?.zone === this.zoneId)); // BACKLOG-417
-    this.granarySprites.forEach((s, i) => s.setVisible(this.granaries[i]?.zone === this.zoneId)); // BACKLOG-454
+    // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
+    // rather than only on the ticker. One helper over all four parallel sprite arrays.
+    const showLandmarks = (sprites: Phaser.GameObjects.GameObject[], recs: Landmark[]) =>
+      sprites.forEach((sp, i) => {
+        const rec = recs[i];
+        const s = sp as Phaser.GameObjects.Text;
+        s.setVisible(rec?.zone === this.zoneId);
+        s.setAlpha(rec?.derelict ? DERELICT_ALPHA : 1);
+      });
+    showLandmarks(this.cairnSprites, this.cairns);
+    showLandmarks(this.shelterSprites, this.shelters); // BACKLOG-315
+    showLandmarks(this.thatchSprites, this.thatches); // BACKLOG-417
+    showLandmarks(this.granarySprites, this.granaries); // BACKLOG-454
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
   }
@@ -5817,11 +5912,13 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(4);
     this.lastSeasonDay = clock.now().day;
     this.lastSpoilDay = clock.now().day; // BACKLOG-455: arm the spoilage day tracker (no pass on day 1)
+    this.lastUpkeepDay = clock.now().day; // BACKLOG-480: same arming for upkeep
 
     clock.onHour((t) => this.checkSeasonTurn(t));
     // A pantry that spoils (BACKLOG-455) — its own live-only onHour listener, so a hoard at/near cap bleeds
     // one unit per in-game day. Separate from the season turn / dawn chorus so none disturbs the others.
     clock.onHour((t) => this.checkSpoilage(t));
+    clock.onHour((t) => this.checkUpkeep(t)); // BACKLOG-480: a landmark costs its ground a unit a day
     // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
     // turn and the hour-6 reflection so neither is disturbed. onHour never fires on clock.set().
     clock.onHour((t) => this.checkDawnChorus(t));
@@ -5858,6 +5955,7 @@ export class WorldScene extends Phaser.Scene {
     const day = getWorldClock().now().day;
     this.lastSeasonDay = day;
     this.lastSpoilDay = day; // BACKLOG-455: a restore/jump re-arms spoilage too — no spurious catch-up pass
+    this.lastUpkeepDay = day; // BACKLOG-480: and upkeep
     const tint = SEASON_TINT[seasonFor(day)];
     this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
   }
@@ -5929,6 +6027,72 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone[zone] = next;
     }
     if (changed) void this.saveGame();
+  }
+
+  /**
+   * A landmark that has to be kept up (BACKLOG-480). Once per in-game day each ground pays
+   * `upkeepDue(standing)` out of its own resource pile; every unit it can't cover drops one standing
+   * landmark into disrepair, and a ground that has met its bill with a unit to spare patches one back up.
+   *
+   * The *which* lives here because only the scene holds the arrays: the **newest** standing landmark
+   * lapses first (so a ground's founding cairn is the last thing to fall, and a granary — always the last
+   * thing raised — is the first to rot, losing the ground its cap lift immediately), and the **oldest**
+   * derelict is patched first, the exact inverse. The arithmetic lives in `world/upkeep.ts`.
+   *
+   * Shared by the live day hook and the `__runUpkeep` dev hook, so production and test drive one path.
+   * `days > 1` runs the away catch-up form (the 455 → 462 shape) and returns its digest lines.
+   */
+  private runUpkeepPass(days = 1): string[] {
+    const lines: string[] = [];
+    let changed = false;
+    for (const zone of zoneChain()) {
+      const pile = this.pileFor(zone);
+      const plan =
+        days > 1
+          ? runUpkeepOverDays(pile, days, this.standingIn(zone), this.derelictIn(zone))
+          : runUpkeep(pile, this.standingIn(zone), this.derelictIn(zone));
+      if (plan.pile === pile && plan.lapsed === 0 && plan.repaired === 0) continue;
+      changed = true;
+      this.stockpileByZone[zone] = plan.pile;
+      const zoneName = zoneById(zone).name;
+      for (let i = 0; i < plan.lapsed; i++) {
+        const hit = this.landmarkRecords(zone).filter((r) => !r.rec.derelict).pop();
+        if (!hit) break;
+        hit.rec.derelict = true;
+        lines.push(lapsedLine(zoneName, hit.glyph));
+      }
+      for (let i = 0; i < plan.repaired; i++) {
+        const hit = this.landmarkRecords(zone).find((r) => r.rec.derelict);
+        if (!hit) break;
+        hit.rec.derelict = false;
+        lines.push(patchedLine(zoneName, hit.glyph));
+      }
+    }
+    if (changed) {
+      this.applyObjectVisibility(); // BACKLOG-480: the alpha pass — disrepair reads in the world, not only the log
+      for (const l of lines) this.logEvent(l);
+      void this.saveGame();
+    }
+    return lines;
+  }
+
+  /** A zone's landmarks in raise order, each with the glyph it draws as (BACKLOG-480). Oldest first. */
+  private landmarkRecords(zone: string): { rec: Landmark; glyph: string }[] {
+    const of = (recs: Landmark[], glyph: string) => recs.filter((r) => r.zone === zone).map((rec) => ({ rec, glyph }));
+    return [
+      ...of(this.cairns, CAIRN_GLYPH),
+      ...of(this.shelters, SHELTER_GLYPH),
+      ...of(this.thatches, THATCH_GLYPH),
+      ...of(this.granaries, GRANARY_GLYPH),
+    ];
+  }
+
+  /** The once-a-day upkeep hook (BACKLOG-480) — live-observed only, the exact shape of `checkSpoilage`, so a
+   *  restore or an away jump never fires a spurious pass (that catch-up is `runUpkeepPass(days)`). */
+  private checkUpkeep(t: GameTime): void {
+    if (t.day <= this.lastUpkeepDay) return;
+    this.lastUpkeepDay = t.day;
+    this.runUpkeepPass();
   }
 
   /**
@@ -6257,7 +6421,7 @@ export class WorldScene extends Phaser.Scene {
       this.syncSeason(); // restore re-derives the season; never a turn beat (BACKLOG-159)
       // BACKLOG-462: a hoard left through the absence bleeds the elapsed days on the same capped decay a watched
       // pile does — after syncSeason so the cap/margin read the restored day. Surfaced in the homecoming digest.
-      const awaySpoil = this.applyAwaySpoilage(away.days);
+      const awaySpoil = [...this.applyAwaySpoilage(away.days), ...this.runUpkeepPass(away.days)]; // BACKLOG-462/480
       if (awaySpoil.length) {
         away.digest.push(...awaySpoil);
         this.lastAwayDigest = away.digest;
@@ -6308,7 +6472,7 @@ export class WorldScene extends Phaser.Scene {
       this.memory = away.memory;
       this.lastAwayDigest = away.digest;
       // BACKLOG-462: mirror the restore path — spoil the away days into the live piles + digest (clock already set).
-      const awaySpoil = this.applyAwaySpoilage(away.days);
+      const awaySpoil = [...this.applyAwaySpoilage(away.days), ...this.runUpkeepPass(away.days)]; // BACKLOG-462/480
       if (awaySpoil.length) {
         away.digest.push(...awaySpoil);
         this.lastAwayDigest = away.digest;

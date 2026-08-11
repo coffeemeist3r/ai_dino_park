@@ -1,0 +1,126 @@
+/**
+ * Pecking-order memory (BACKLOG-401) — the hatch remembers *who*. Four cycles of contested-drop beats
+ * (375 yield, 387 gobble, 390 stand, 394 slink-off) file memories that name the other dino, and until now
+ * nothing read the name: the stand/cede call was `standsGround(bravery)` alone, identical against every
+ * opponent forever, so a dino faced down by the same bully six times walked into the seventh unchanged.
+ *
+ * Here a dino's own memories become a running, *per-opponent* disposition — a little confidence toward one
+ * it has faced down, a quiet wariness toward one that has out-grabbed it — which then decides the next
+ * contest between exactly those two.
+ *
+ * Derived, never counted (the `manner.ts` / 402 discipline): this reads the live 6-slot recall ring, so a
+ * disposition is *recent* history that fades as the ring rolls, and no second tally is persisted. The
+ * memory strings are the interface — they belong to WorldScene and feeding.ts, and this module adapts.
+ *
+ * Split from manner on purpose: `manner.ts` folds every contested beat into one character note about the
+ * dino; this reads the same beats *split by opponent*. Same source, orthogonal questions.
+ */
+
+import { standsGround } from './feeding';
+
+export type Disposition = 'confident' | 'wary';
+
+/**
+ * The weights, as one table rather than a chain of ifs. Positive is confidence toward the named dino,
+ * negative is wariness. A *yield* (375) is deliberately the lightest: stepping back for a hungry friend is
+ * generosity, not fear, and must not read as being cowed — it only tilts, and only in numbers.
+ */
+const WEIGHTS: readonly { re: RegExp; weight: number }[] = [
+  { re: /^you stood your ground and kept your food from (.+)$/, weight: 2 }, // 390
+  { re: /^you shouldered past (.+) and snatched the food first$/, weight: 1 }, // 387
+  { re: /^you stepped back and let (.+) eat first$/, weight: -1 }, // 375
+  { re: /^(.+) wouldn't budge — you slunk off$/, weight: -2 }, // 394 (slunkOffMemory)
+];
+
+/**
+ * Score at which a run of beats becomes a disposition. At 2 a single beat of any kind is never enough —
+ * one lost contest is not a history — so a fresh park (and any dino with one beat on its ring) reads null
+ * and behaves exactly as it did before this feature existed. The calibration knob; tune here.
+ */
+export const PECKING_BAR = 2;
+
+/** How many beats with the same dino it takes before any of this is a *history* rather than one bad day.
+ *  Held separately from the score on purpose: a single stand already weighs the bar, and a lone contest
+ *  must not be a disposition. Two rules, each statable in a sentence, instead of one tuned constant. */
+export const PECKING_MIN_BEATS = 2;
+
+/** This dino's recent hatch history toward one named other: the net score, and how many beats produced it. */
+export function peckingRead(memories: readonly string[], other: string): { score: number; beats: number } {
+  let score = 0;
+  let beats = 0;
+  for (const m of memories) {
+    for (const { re, weight } of WEIGHTS) {
+      const hit = re.exec(m);
+      if (hit && hit[1] === other) {
+        score += weight;
+        beats++;
+        break;
+      }
+    }
+  }
+  return { score, beats };
+}
+
+/** How this dino's recent hatch history nets out toward one named other: >0 confident, <0 wary. */
+export function peckingScore(memories: readonly string[], other: string): number {
+  return peckingRead(memories, other).score;
+}
+
+/** This dino's standing disposition toward one named other, or **null** inside the dead band — or when
+ *  they have only met over one drop, however that drop went. */
+export function dispositionToward(memories: readonly string[], other: string): Disposition | null {
+  const { score, beats } = peckingRead(memories, other);
+  if (beats < PECKING_MIN_BEATS) return null;
+  if (score >= PECKING_BAR) return 'confident';
+  if (score <= -PECKING_BAR) return 'wary';
+  return null;
+}
+
+/**
+ * Does the winner hold its tile against this particular gobbler? With no disposition this is exactly
+ * `standsGround(bravery)` — the pre-401 rule, imported rather than restated, so the unchanged path can
+ * never drift. A dino that has faced this one down holds even below the bravery bar; one this dino has
+ * lost to before cedes even above it. History outranks temperament, but only once there *is* a history.
+ */
+export function holdsAgainst(bravery: number, disposition: Disposition | null): boolean {
+  if (disposition === 'confident') return true;
+  if (disposition === 'wary') return false;
+  return standsGround(bravery);
+}
+
+/** How many names each side of the book line will list. */
+const BOOK_NAMES = 2;
+
+/**
+ * The book's pecking-order line (or null when this dino holds no disposition toward anyone). Names are
+ * ranked by how strongly they read, capped at `BOOK_NAMES` a side, so the line stays one line as the ring
+ * fills. `names` is the live roster — the only place a name can come from, so a departed dino's old
+ * memories can't strand a stale name in the book.
+ */
+export function peckingLine(memories: readonly string[], names: readonly string[]): string | null {
+  // Filtered through `dispositionToward` rather than the raw score, so the book can never name a
+  // disposition the hatch itself wouldn't act on.
+  const scored = names
+    .map((n) => ({ name: n, score: peckingScore(memories, n), disp: dispositionToward(memories, n) }))
+    .filter((s) => s.disp !== null);
+  const faced = scored
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
+    .slice(0, BOOK_NAMES)
+    .map((s) => s.name);
+  const wary = scored
+    .filter((s) => s.score < 0)
+    .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name))
+    .slice(0, BOOK_NAMES)
+    .map((s) => s.name);
+  const parts: string[] = [];
+  if (faced.length) parts.push(`faced down ${faced.join(' & ')}`);
+  if (wary.length) parts.push(`wary of ${wary.join(' & ')}`);
+  return parts.length ? `👊 pecking order: ${parts.join(' · ')}` : null;
+}
+
+/** The because-clause appended to the hatch event line when history — not bravery — decided the contest.
+ *  No silent change (CHARTER §Quality bar): if the disposition flipped the outcome, the ticker says so. */
+export function becauseOf(disposition: Disposition, other: string): string {
+  return disposition === 'confident' ? ` — it has faced ${other} down before` : ` — ${other} has beaten it here before`;
+}
