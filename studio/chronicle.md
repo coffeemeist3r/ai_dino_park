@@ -6190,3 +6190,19 @@ maintained count; the away catch-up runs the same pure function over the elapsed
 Build clean. Unit 1694/1694. E2e handed to QA.
 
 phase → qa-pending.
+
+## 2026-08-11 04:05 — cycle 128 — qa — 24/24 criteria pass
+
+Build clean, unit 1694/1694, both tracks pass every acceptance criterion. Two things named rather than
+buried. First, a spec deviation: the lore item's single dead band could not satisfy its own criterion 1,
+because a stand weighs the bar on its own — the Coder split the rule into a strength bar and a beat
+count instead of tuning weights until one number covered both, and criterion 4 is only satisfiable with
+the split. Second, criterion 7 is partial: only one of the four hatch memory strings has an exported
+builder, so the spec still re-declares three of them and the cycle-127 exposure is reduced, not closed.
+
+E2e: two full runs, 486 passed / 2 failed each time — and a *different* second spec each time
+(grass-tiles, then shared-meal), with BACKLOG-430 the only constant. All green isolated. The wandering
+is the flake's signature; the shared-meal red got a hard look because it lives in the file this cycle
+refactored, and it passed under full load in run 1 on the same binary.
+
+phase → validator-pending.
