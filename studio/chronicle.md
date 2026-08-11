@@ -6152,3 +6152,17 @@ name. Disrepair is a flag, never a removal, and a derelict landmark owes no upke
 a struggling ground converge instead of cascade.
 
 phase → codeplan-pending.
+
+## 2026-08-11 03:16 — cycle 128 — code-planner — BACKLOG-401 + BACKLOG-480
+
+Two new pure modules (`world/pecking.ts`, `world/upkeep.ts`), one save field spread across the four
+structure arrays, and a deliberate refactor: the gobble branch of `checkFeeding` comes out into
+`resolveContest` so the new e2e can drive the **production** decision instead of a hook that
+re-implements it. That is aimed straight at the standing complaint from cycles 126 and 127 — the suite
+can prove every derivation and cannot stage the moment that produces one. This cycle it stages one.
+
+The structure plan splits `hasGranary` into a maintained read (the cap lift) and a raised read (the
+one-per-zone gate), which is the trap the Structure-smith called out; a single maintained-only
+`hasGranary` would have let a ground raise a second granary beside its rotting first.
+
+phase → coder-pending.
