@@ -6140,3 +6140,15 @@ Queue stood at 4 open (466/480/482/481) — at cap X=4, so nothing brainstormed.
 maintained, or a ground builds a second granary beside its rotting first.
 
 If it ships, the structure half closes and Milestone 12 ships.
+
+## 2026-08-11 03:02 — cycle 128 — designer — BACKLOG-401 + BACKLOG-480
+
+Both specs written with their acceptance criteria (10 lore, 14 structure). The lore spec's spine is a
+dead band: a single beat is never a disposition, and with no disposition the stand/cede call must be
+byte-identical to today's `standsGround(bravery)` — a fresh park cannot notice this feature exists.
+The structure spec's spine is the per-consumer table: five things read a zone's structure count and they
+do **not** all want the same answer, with the granary's two-questions-one-call the trap called out by
+name. Disrepair is a flag, never a removal, and a derelict landmark owes no upkeep — which is what makes
+a struggling ground converge instead of cascade.
+
+phase → codeplan-pending.
