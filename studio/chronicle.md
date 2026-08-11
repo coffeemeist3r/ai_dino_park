@@ -6125,3 +6125,18 @@ starts to matter. Milestone 13's lore arcs stay undrafted until 480 closes the s
 Idea Box empty. No new lore items (drain-before-invent; ~110 open).
 
 phase → designer-pending; cycle 128.
+
+## 2026-08-11 02:44 — cycle 128 — structure-smith — BACKLOG-480 a landmark that has to be kept up
+
+The last unchecked arc of Milestone 12, and the one that makes the build arc an economy rather than a
+ratchet. Food spoils, a plot can be worked flat, a pile drains — but a raised landmark has been
+permanent and free since cycle 146, which is why a zone's structure count is the only number in the park
+that cannot fall. A standing landmark now draws a small daily upkeep from its ground's resource pile;
+a ground that can't pay lets one fall into reversible disrepair, and the granary's cap lift and the
+prosperity index move onto the *maintained* count.
+
+Queue stood at 4 open (466/480/482/481) — at cap X=4, so nothing brainstormed. Flagged for the Coder:
+`hasGranary` currently answers two questions with one call, and only the cap-lift half may move to
+maintained, or a ground builds a second granary beside its rotting first.
+
+If it ships, the structure half closes and Milestone 12 ships.
