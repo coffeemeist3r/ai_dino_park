@@ -659,7 +659,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > friend to a contested drop (😤), so giving way reads as a *trait*, not a universal. These extend the
 > scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
 
-- [ ] BACKLOG-389 [emergent] Bullied dino remembers — a dino shouldered past at the hatch (387) files who grabbed its meal; repeated, it gives that gobbler a wider berth at future drops (drifts to a different food tile rather than contest it). Builds on 387 / 011.
+- [~] BACKLOG-389 [emergent] Bullied dino remembers — a dino shouldered past at the hatch (387) files who grabbed its meal; repeated, it gives that gobbler a wider berth at future drops (drifts to a different food tile rather than contest it). Builds on 387 / 011.
 - [ ] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
 - [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
 

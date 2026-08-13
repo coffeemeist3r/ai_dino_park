@@ -6307,3 +6307,14 @@ fallback has no live subject and is exercised only by unit tests; BACKLOG-212 (t
 still the item that would supply an honest control, and it is `[core]`, a Lore-smith pick.
 
 Build clean. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-13 02:30 — cycle 129 — lore-smith — Milestone 13 drafted; the hatch's history leaves the tile
+
+No milestone was ACTIVE (12 shipped last cycle), so the lore half of **Milestone 13 — "The hatch is a
+society, and the ground votes"** is drafted: three arcs that take 401's per-opponent hatch history out of
+the one instant it currently decides (two dinos already nose to nose over a drop) and into the feet (389),
+the grace (403), and the voice (404). Cap rule bit hard — the lore backlog is dozens deep, so nothing new
+was brainstormed; the cycle is themed and picked from the queue. Idea Box empty. Next-up **BACKLOG-389**:
+a dino wary of a rival already nearer the drop hangs back instead of contesting it, so the pecking order
+becomes something you watch rather than a line in the book. Noted for the Structure-smith that 481's
+"blocked on 479" tag is stale — 479 shipped cycle 127.
