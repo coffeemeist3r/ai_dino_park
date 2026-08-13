@@ -6368,3 +6368,43 @@ majority spec hatches a sixth. That is a real property of the feature — the vo
 ground has grown — arrived at by arithmetic rather than chosen. And `mobile-minds`' long-dialog spec
 (BACKLOG-430), standing red since cycle 93 and catalogued as a genuine break, **passed** under full load
 with nothing this cycle near it. Not closed on one run; flagged for re-diagnosis.
+
+## 2026-08-13 04:20 — cycle 129 — validator — APPROVED / APPROVED; the oldest item in the backlog closes
+
+**Milestone 13 opens** — *The hatch is a society, and the ground votes* — and its first night closes
+**BACKLOG-031**, seeded in **cycle 1** and deferred for 128 of them. Worth saying why it closed now: two
+cycles ago 479 shipped a council that **changed nothing** and was approved on exactly that basis. Tonight
+spent it. The vote is not a new subsystem — it is `providerWorkPriority`, the same energy read a provider
+has always used, applied to three dinos instead of one with a majority over the top, the provider breaking
+ties and a ground that seats nobody falling through to the old rule verbatim. That is what a foundation
+item is for, and this is the cleanest instance the pipeline has produced of one shipping inert on purpose
+and being cashed on schedule.
+
+Two limitations, both surfaced by QA rather than found afterward. **The tie-break is unreachable:** 479
+made "the provider is seat 1" a *guarantee* so a reload couldn't reseat a council, which means `tieBreak`
+and `votes[0]` are the same dino in every reachable state and the parameter has no branch you can get to.
+Kept, documented, tested both sides, because 484 is the item that separates them. The pattern is worth a
+name — *a guarantee made for one feature quietly removes a degree of freedom from the next*, which is
+477's finding a cycle ago in a different coat. And **the vote only becomes a vote once the ground has
+grown:** one seat per two residents, five founders, so a fresh park seats two, and at two a tie always
+falls to the provider. A council cannot outvote its provider until a sixth dino hatches. Defensible as
+031's own "at threshold population" — but arrived at by arithmetic, not chosen, and now load-bearing.
+
+**389** is the milestone's thesis in one gate. 401 decided what the hatch tally *meant* and spent it in a
+single instant, two dinos already nose to nose; this asks the earlier and cheaper question — does the dino
+walk over there at all — and the answer costs a wary one a real meal, which is what makes it character
+rather than display. It files **no memory**, and that is why it's buildable: the six-slot ring is the very
+thing the wariness is parsed from, so a "you hung back" note would erase its own input. The gate sits
+*around* `reactionToFood` so the escort's rush read and the swarm's stay one function, and no `continue`
+is taken — the dino goes on wandering. QA's first assertion failed on exactly that (it asserted the dino
+didn't move; it wandered off) and rewriting it against *distance to the food* is the better artifact of
+the two. The 381 escort can still fetch a dino that hung back: the one thing that outranks a grudge is a
+friend coming to get you.
+
+Unit 1709, build clean, **493/493 e2e in one run** — and `mobile-minds`' long-dialog spec, red since cycle
+93 and catalogued as a real break, **passed** with nothing this cycle near it. Not closed on one run;
+BACKLOG-430 amended to say its own description no longer matches the evidence and re-diagnosis comes
+first.
+
+Next: 403 (victor's mercy) and 482 (one place the standings are derived — which inherits both of tonight's
+findings). phase → artist-pending.

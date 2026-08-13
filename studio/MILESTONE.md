@@ -21,12 +21,12 @@ than something you read in the book. The structure half hands the ground's secon
 after 128 cycles, and then pays down the standings sprawl three derived roles have accreted.
 
 **Lore arcs:**
-- [ ] The berth — a dino that has been shouldered aside at the hatch gives that one a wide berth: seeing its rival already nearer the drop, it hangs back rather than contest it, so the pecking order moves feet and not just outcomes (BACKLOG-389)
+- [x] The berth — a dino that has been shouldered aside at the hatch gives that one a wide berth: seeing its rival already nearer the drop, it hangs back rather than contest it, so the pecking order moves feet and not just outcomes (BACKLOG-389 — cycle 129)
 - [ ] Victor's mercy — a dino that stood its ground and ate, meeting the same denied gobbler still hungry, may let it have the next scrap, so defiance and grace live in the same dino (BACKLOG-403)
 - [ ] Mealtime mood in the voice — the last hatch outcome tints a dino's next line: the gobbler smug, the yielder wistful, the one that held its ground proud (BACKLOG-404)
 
 **Structure arcs:**
-- [ ] The council actually decides — the work priority (473) set by council majority off the members' temperaments, the provider breaking ties; BACKLOG-031 plugged in at the one place in the park where a set of deciders exists (BACKLOG-481)
+- [x] The council actually decides — the work priority (473) set by council majority off the members' temperaments, the provider breaking ties; BACKLOG-031 plugged in at the one place in the park where a set of deciders exists (BACKLOG-481 — cycle 129)
 - [ ] One place the standings are derived — `pioneer` / `provider` / council folded into one pure per-zone standings module the book, the lens and the save all read (BACKLOG-482)
 - [ ] The dry season — one pure seasonal thirst/water modifier the needs and waterhole hooks read, the drinking mirror of 461's lean-season grip on food (BACKLOG-466)
 
