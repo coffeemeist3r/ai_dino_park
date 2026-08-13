@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-466 [core] The dry season — the water twin of 461's food grip. Thirst (371) and the waterholes (445) ignore the year entirely; give the season a grip on drinking: one pure seasonal thirst/water modifier the needs/waterhole hooks read, so summer quickens thirst (the bowl drinks harder in the heat) and winter eases it, the drinking mirror of the lean-season food grip. Foundation-first: one multiplier, deferring a visibly shrinking waterhole sprite. Builds on 461 / 445 / 371.
-- [x] BACKLOG-481 [emergent] The council actually decides — hand the work priority (473) to a council-majority vote, provider breaking ties; BACKLOG-031 plugged in at last. *(Unblocked: 479 shipped cycle 127.)*
 - [ ] BACKLOG-482 [infra] One place the standings are derived — fold `pioneer` / `provider` / council into one pure per-zone standings module the book, the lens and the save all read (full text in the cycle-127 block below).
 - [ ] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).
 - [ ] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
@@ -661,7 +660,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > friend to a contested drop (😤), so giving way reads as a *trait*, not a universal. These extend the
 > scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
 
-- [x] BACKLOG-389 [emergent] Bullied dino remembers — a dino shouldered past at the hatch (387) files who grabbed its meal; repeated, it gives that gobbler a wider berth at future drops (drifts to a different food tile rather than contest it). Builds on 387 / 011.
 - [ ] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
 - [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
 
@@ -721,7 +719,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
 > park will owe once a third derived per-zone standing exists.
 
-- [x] BACKLOG-481 [emergent] The council actually decides — with a council derived (479), hand it one of the two governance calls (473's work priority is the safer of the pair; the spend priority stays the provider's for now) and set it by **council majority** off the members' temperaments, the provider breaking ties. This is BACKLOG-031 ("at threshold population, NPCs vote on a simple rule") finally plugged in at the only place in the park where a *set of deciders* exists, and it turns the handover beat (467) from a swap of one dino's whole table into a change of one seat. Blocked on 479. Builds on 479 / 473 / 467 / 031.
 - [ ] BACKLOG-482 [infra] One place the standings are derived — `pioneer` (343), `provider` (448) and now the council (479) are each a per-zone standing derived from a different tally in a different module, recomputed on different hooks, and the collection book reads all three by hand. Fold the derivations into one pure per-zone standings module with a single shape (`{ zone, kind, dinoId(s), since }`) that the book, the lens and the save all read, so a fourth standing is a row and not a fourth code path — the `ZONE_TERRAIN` (449) lesson applied to roles. Additive save only. Builds on 343 / 448 / 479 / 449.
 
 ## Cycle 129 structure additions — after the vote (2026-08-13)
