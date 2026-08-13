@@ -3676,12 +3676,13 @@ export class WorldScene extends Phaser.Scene {
           })
           .map((o) => o.name);
         const feared = nearer.length ? givesBerthTo(recall(this.memory, d.name), nearer) : null;
-        if (feared) {
+        if (feared) {  // 😬 and not 👀: 👀 is already the `inspecting` activity mark (295) and the
+          // first-contact beat (161), both floating marks over a dino — the same register this draws in.
           if (!this.berthedThisDrop.has(d.name)) {
             this.berthedThisDrop.add(d.name); // once per dino per drop — a hesitation, not a chant
             this.lastBerth = { name: d.name, rival: feared };
-            this.flashFeed(d, '👀');
-            this.logEvent(`👀 ${d.name} hung back — ${feared} got to the food first`);
+            this.flashFeed(d, '😬');
+            this.logEvent(`😬 ${d.name} hung back — ${feared} got to the food first`);
           }
           // No `continue`: it isn't doing a thing, it's *not* doing one. Control falls through to the rest
           // of the step and it goes on wandering / ticcing / huddling as it would have with no drop at all.

@@ -33,8 +33,8 @@ On a food drop, before a dino rushes:
 2. If it holds a `wary` disposition (401's `dispositionToward`, off the live recall ring) toward any of
    them, it **gives that one a berth**: it does not rush. It goes on doing whatever it would otherwise do
    — wander, tic, huddle — and never joins the swarm for that drop.
-3. The moment it declines, once per drop per dino, it flashes 👀 and the ticker reads
-   `👀 <name> hung back — <rival> got to the food first`.
+3. The moment it declines, once per drop per dino, it flashes 😬 and the ticker reads
+   `😬 <name> hung back — <rival> got to the food first`.
 4. When more than one nearer dino is feared, the **most feared** (most negative pecking score) is the one
    named; ties break lexicographically, the `topBy` convention used everywhere else in this park.
 
@@ -56,7 +56,7 @@ would forget why it was hanging back. The berth is behaviour plus a ticker line;
 - [ ] With two feared names, the one with the more negative `peckingScore` is returned; on an exact tie the lexicographically first is returned.
 - [ ] `givesBerthTo` returns `null` for any name whose disposition is `null` — it is filtered through `dispositionToward`, never the raw score, so the feet can never act on a disposition the hatch itself would not act on (the `peckingLine` discipline).
 - [ ] In-game: with a staged wary history, a drop placed so the rival is nearer leaves the wary dino out of the swarm — it does not move toward the food while the rival does.
-- [ ] The ticker shows `👀 <name> hung back — <rival> got to the food first` exactly once for that dino for that drop (a second tick does not repeat it).
+- [ ] The ticker shows `😬 <name> hung back — <rival> got to the food first` exactly once for that dino for that drop (a second tick does not repeat it).
 - [ ] A dev hook `__berth()` returns the last berth beat `{ name, rival }` or `null`, and `__berth` is reset to `null` on a new drop.
 - [ ] Unit suite and e2e suite green; `npm run build` clean.
 - [ ] A dino with no wary disposition toward anyone rushes exactly as before (regression: the existing feeding/escort specs pass untouched).

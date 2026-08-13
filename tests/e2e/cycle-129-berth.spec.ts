@@ -64,7 +64,7 @@ test('a dino keeps clear of the rival that has out-grabbed it here before', asyn
   expect(toFood(await posOf(page, bully))).toBeLessThan(bullyBefore);
   expect(toFood(await posOf(page, shy))).toBeGreaterThanOrEqual(shyBefore - 0.001);
 
-  const line = `👀 ${shy} hung back — ${bully} got to the food first`;
+  const line = `😬 ${shy} hung back — ${bully} got to the food first`;
   expect(await ticker(page)).toContain(line);
 
   // A hesitation, not a chant: standing there another step doesn't repeat it.

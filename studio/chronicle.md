@@ -6408,3 +6408,35 @@ first.
 
 Next: 403 (victor's mercy) and 482 (one place the standings are derived — which inherits both of tonight's
 findings). phase → artist-pending.
+
+## 2026-08-13 04:32 — cycle 129-art — artist — no-op on the queue, one glyph collision caught and fixed
+
+The Art section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` wiring
+touched, no BACKLOG item closed. But two new marks landed in tonight's diff and one of them was **already
+taken**.
+
+**👀 → 😬 on the berth (389).** The berth flashed 👀 over the hanging-back dino. 👀 is the `inspecting`
+activity glyph (295) and the first-contact beat's mark (161) — and all three draw in the *same register*,
+a mark floating over a dino's head. A player watching a drop would have seen the same character say
+"inspecting", "the new watcher is being looked over", and "keeping clear of a bully" with one glyph.
+Swapped to 😬, which is unused anywhere in `game/src` and reads correctly on its own: a wince, not a
+stare. The ticker line and the spec moved with it, and the reason is now a comment at the branch so the
+next fire doesn't undo it. This is the first time the art side has *changed* a mark rather than flagged
+one, and it was cheap only because it was caught the same night it was drawn.
+
+**🗳️ on the vote (481) is clean** — disjoint from every mark in service (the governance row's four
+🍽️🏦🧺🧱, 🏛️, 👥, 🍽️'s double duty, the role icons 🧺🗣️🏠🎉🧭, and this milestone's 👊). It is also the
+right *kind* of glyph for where it lives: a ticker line read once and in full, with the legend's own words
+after it. Worth noting it is the first mark in the park that means *a group did something*, and if a
+second collective beat ever wants a mark, 🗳️ should stay reserved for a vote specifically.
+
+Standing flags unchanged from cycle 128: 🍽️ still carries two readings (a ground's feed-first policy, a
+dino's table manner), protected by a text prefix rather than a distinct mark; 🛠️ still does double duty
+for a landmark falling and a landmark patched up; the rectangle fallback still has no live subject because
+everything in the park is drawn, and BACKLOG-212 (the non-robot keeper) is still the item that would give
+it an honest control. And the ruin-variant art 480 actually wants — a toppled cairn, a sagging lean-to,
+instead of a faded 🗿 — is still unseeded and still renderable-now under the cycle-91 stash rule. Two
+fires in a row have now flagged it; the smiths own the Art queue, and it is the obvious first entry
+whenever one of them wants a subject.
+
+Build clean, both cycle-129 specs green after the swap. lastFire.artist updated; phase → lore-pending.
