@@ -119,6 +119,38 @@ export function peckingLine(memories: readonly string[], names: readonly string[
   return parts.length ? `👊 pecking order: ${parts.join(' · ')}` : null;
 }
 
+/**
+ * The berth (BACKLOG-389) — the disposition gets **feet**.
+ *
+ * 401 wired the per-opponent history into exactly one decision, at the last instant of an encounter: two
+ * dinos already nose to nose over a drop, who holds and who cedes. Everything *before* that — whether a
+ * dino walks over there at all — was `reactionToFood(energy, distance, favorite)`, blind to who else was
+ * coming, so a dino out-grabbed by the same rival three times still trotted into the fourth losing
+ * contest.
+ *
+ * Here it doesn't. Given the dinos already *nearer the food than this one* (the ones who will reach it
+ * first), a dino that reads `wary` toward any of them gives that one a berth and stays out of the swarm.
+ * The most feared name (most negative score) is the one it keeps clear of; exact ties go lexicographic,
+ * the `topBy` convention this park uses everywhere a deterministic pick is needed.
+ *
+ * Filtered through `dispositionToward`, never the raw score — the `peckingLine` discipline: the feet can
+ * never act on a history the hatch itself wouldn't act on, so one lost contest is not enough to keep a
+ * dino from dinner.
+ *
+ * **Files no memory, on purpose.** The recall ring is six slots and this module *parses that ring* to
+ * derive the disposition. A "you hung back" memory per declined drop would roll the very beats the
+ * wariness is derived from off the end of the ring, and a dino that hung back twice would forget why. The
+ * berth is behaviour and one ticker line; the ring is left alone.
+ */
+export function givesBerthTo(memories: readonly string[], nearer: readonly string[]): string | null {
+  return (
+    nearer
+      .map((name) => ({ name, score: peckingScore(memories, name), disp: dispositionToward(memories, name) }))
+      .filter((c) => c.disp === 'wary')
+      .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name))[0]?.name ?? null
+  );
+}
+
 /** The because-clause appended to the hatch event line when history — not bravery — decided the contest.
  *  No silent change (CHARTER §Quality bar): if the disposition flipped the outcome, the ticker says so. */
 export function becauseOf(disposition: Disposition, other: string): string {

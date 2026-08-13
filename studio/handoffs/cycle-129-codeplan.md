@@ -181,3 +181,23 @@ disposition-null filtered).
 ## Blockers
 
 None.
+
+---
+
+## Shipped (Coder, 2026-08-13)
+
+**481** — `councilWorkPriority(votes, tieBreak)` + `workCallMeaning(p)` in `world/governance.ts`;
+`councilFor(zone)` and a council branch at the head of `workPriorityFor` in `WorldScene`, falling through
+to the pre-481 provider rule verbatim when nobody is seated; `checkCouncilCall()` on the step tail beside
+`checkProviderHandover()`, with the first-seating guard; `__councilVotes` hook. The stale 467 comment
+about the incoming provider setting both calls is corrected. Recorded in the function header: the
+provider tie-break and the `votes[0]` fallback name the same dino in every state this park can reach,
+because `zoneCouncil` and `zoneProvider` sort identically — kept as two branches for 484's sake, and
+unit-tested on both sides.
+
+**389** — `givesBerthTo(memories, nearer)` in `world/pecking.ts`; a gate *around* `reactionToFood` in the
+food branch of `stepDinos` (never inside it, so the escort's rush read stays the same function), plus
+`berthedThisDrop` / `lastBerth` and the `__berth` hook. No memory is filed, no `continue` is taken — the
+dino simply falls through to the rest of its step and goes on with its life.
+
+Build clean; unit 1709/1709; both new e2e specs green.

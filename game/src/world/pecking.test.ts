@@ -4,6 +4,7 @@ import {
   dispositionToward,
   holdsAgainst,
   peckingLine,
+  givesBerthTo,
   becauseOf,
   PECKING_BAR,
   PECKING_MIN_BEATS,
@@ -124,5 +125,52 @@ describe('becauseOf', () => {
   it('says which history decided it', () => {
     expect(becauseOf('confident', 'Rex')).toBe(' — it has faced Rex down before');
     expect(becauseOf('wary', 'Rex')).toBe(' — Rex has beaten it here before');
+  });
+});
+
+describe('givesBerthTo (BACKLOG-389)', () => {
+  const wary = [slunk('Rex'), slunk('Rex')]; // two lost contests with Rex → wary of Rex
+
+  it('yields no berth on an empty history — a fresh park is inert', () => {
+    expect(givesBerthTo([], ['Rex', 'Sunny'])).toBeNull();
+  });
+
+  it('names the rival it is wary of when that rival is already nearer the food', () => {
+    expect(givesBerthTo(wary, ['Rex'])).toBe('Rex');
+  });
+
+  it('gives no berth when the feared rival is not among the nearer dinos', () => {
+    expect(givesBerthTo(wary, ['Sunny', 'Mossback'])).toBeNull();
+  });
+
+  it('never gives a berth to a dino it is confident against', () => {
+    const bold = [stood('Rex'), stood('Rex')];
+    expect(dispositionToward(bold, 'Rex')).toBe('confident');
+    expect(givesBerthTo(bold, ['Rex'])).toBeNull();
+  });
+
+  it('keeps clear of the most feared of several nearer rivals', () => {
+    const ring = [slunk('Rex'), slunk('Rex'), steppedBack('Sunny'), steppedBack('Sunny')];
+    expect(dispositionToward(ring, 'Sunny')).toBe('wary'); // both qualify...
+    expect(givesBerthTo(ring, ['Sunny', 'Rex'])).toBe('Rex'); // ...Rex reads worse (-4 vs -2)
+  });
+
+  it('breaks an exact tie lexicographically, like every other deterministic pick here', () => {
+    const ring = [slunk('Rex'), slunk('Rex'), slunk('Ash'), slunk('Ash')];
+    expect(peckingScore(ring, 'Rex')).toBe(peckingScore(ring, 'Ash'));
+    expect(givesBerthTo(ring, ['Rex', 'Ash'])).toBe('Ash');
+  });
+
+  it('is filtered through the disposition, not the raw score: one bad drop is not a berth', () => {
+    const once = [slunk('Rex')]; // score -2 clears PECKING_BAR, but it is one beat
+    expect(peckingScore(once, 'Rex')).toBe(-PECKING_BAR);
+    expect(dispositionToward(once, 'Rex')).toBeNull(); // PECKING_MIN_BEATS
+    expect(givesBerthTo(once, ['Rex'])).toBeNull();
+  });
+
+  it('gives no berth when a snatch is answered by a stand — a mixed history is not fear', () => {
+    const even = [slunk('Rex'), stood('Rex')];
+    expect(dispositionToward(even, 'Rex')).toBeNull();
+    expect(givesBerthTo(even, ['Rex'])).toBeNull();
   });
 });

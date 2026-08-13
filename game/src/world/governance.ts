@@ -105,6 +105,51 @@ export function providerWorkPriority(traits?: Personality): WorkPriority {
 }
 
 /**
+ * The council actually decides (BACKLOG-481) — **BACKLOG-031**, "at threshold population, NPCs vote on a
+ * simple rule", queued since cycle 1 and deferred every cycle since for exactly one reason: there was no
+ * *set of deciders* to hold a vote. 479 derived one (`zoneCouncil`) and gave it nothing to do. This hands
+ * it the ground's second call.
+ *
+ * The work priority and not the spend priority, deliberately: its three hooks (the landmark defer, the
+ * granary gate, the regrowth multiplier) can none of them leave a dino hungry, and leaving 463 with the
+ * provider means the unchanged call sits beside the changed one as a live control.
+ *
+ * Each seat votes with `providerWorkPriority(traits)` — the same energy read the provider always used, so
+ * a council of one behaves exactly as that one dino did alone. Majority wins. An even split falls to the
+ * `tieBreak` (WorldScene passes the provider's own vote — the say still counts for something), and with
+ * no provider to break it, to `votes[0]`: `zoneCouncil` orders most-banked first, so the tie goes to the
+ * ground's biggest contributor. Deterministic in every branch; no RNG anywhere near a vote.
+ *
+ * A note on the tie-break, recorded rather than hidden: `zoneCouncil`'s comparator is byte-identical to
+ * `zoneProvider`'s, so **the provider is always seat 1** (479 states that as a guarantee). Today, then,
+ * `tieBreak` and `votes[0]` name the same dino in every reachable state, and the parameter is a statement
+ * of intent rather than a branch you can reach. It is kept separate because the two stop coinciding the
+ * moment seats get terms (484) or a seat is earned any way other than banking — at which point the rule
+ * "the say breaks a tie" must already be written down, not invented under pressure.
+ *
+ * `[]` → `null` is the compatibility seam every governance function here honours: a ground that seats
+ * nobody has decided nothing *by council*, and the caller falls through to the pre-481 provider rule.
+ */
+export function councilWorkPriority(
+  votes: readonly WorkPriority[],
+  tieBreak: WorkPriority | null,
+): WorkPriority | null {
+  if (votes.length === 0) return null;
+  const build = votes.filter((v) => v === 'build').length;
+  const gather = votes.length - build;
+  if (build > gather) return 'build';
+  if (gather > build) return 'gather';
+  return tieBreak ?? votes[0];
+}
+
+/** The ground's call in the player's words, read off the same table the lens glyph and the `[?]` legend
+ *  read (477). The ticker beat uses this so a vote can never be announced in words the legend disagrees
+ *  with — one table, three readers. */
+export function workCallMeaning(p: WorkPriority): string {
+  return WORK_CALL.options.find((o) => o.value === p)!.meaning;
+}
+
+/**
  * Hook 1a — the bias-landmark defer. A `'gather'` zone holds off raising its landmark while its pile is
  * below `WORK_BUILD_FLOOR` (stores before walls), so the pile visibly climbs instead of being auto-drained
  * on every affordable cairn. `'build'` and `null` never defer — exactly as before 473.

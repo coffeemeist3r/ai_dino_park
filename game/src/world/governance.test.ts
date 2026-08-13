@@ -13,6 +13,8 @@ import {
   SPEND_CALL,
   WORK_CALL,
   UNSET_GLYPH,
+  councilWorkPriority,
+  workCallMeaning,
   type SpendPriority,
   type WorkPriority,
 } from './governance';
@@ -148,5 +150,42 @@ describe("both of the ground's calls, on the lens (BACKLOG-477)", () => {
     // title + one row per option + the placeholder row
     const options = GOVERNANCE_CALLS.reduce((n, c) => n + c.options.length, 0);
     expect(governanceLegend().length).toBe(options + 2);
+  });
+});
+
+describe('councilWorkPriority (BACKLOG-481 / 031)', () => {
+  it('is null with no seats — a ground that seats nobody has decided nothing by council', () => {
+    expect(councilWorkPriority([], 'build')).toBeNull();
+    expect(councilWorkPriority([], null)).toBeNull();
+  });
+
+  it('a single seat is that seat, so a council of one behaves as that dino did alone (pre-481)', () => {
+    expect(councilWorkPriority(['gather'], 'build')).toBe('gather');
+    expect(councilWorkPriority(['build'], 'gather')).toBe('build');
+  });
+
+  it('majority wins', () => {
+    expect(councilWorkPriority(['build', 'build', 'gather'], 'gather')).toBe('build');
+    expect(councilWorkPriority(['gather', 'gather', 'build'], 'build')).toBe('gather');
+  });
+
+  it('the provider breaks an even split', () => {
+    expect(councilWorkPriority(['build', 'gather'], 'gather')).toBe('gather');
+    expect(councilWorkPriority(['build', 'gather'], 'build')).toBe('build');
+  });
+
+  it('with no provider, the biggest contributor breaks it — never null once anyone has voted', () => {
+    expect(councilWorkPriority(['build', 'gather'], null)).toBe('build'); // votes[0], seats are most-banked first
+    expect(councilWorkPriority(['gather', 'build'], null)).toBe('gather');
+  });
+
+  it('a unanimous council does not need the tie-break at all', () => {
+    expect(councilWorkPriority(['gather', 'gather'], 'build')).toBe('gather');
+  });
+
+  it('the ticker reads the same table the lens glyph and the legend read', () => {
+    for (const o of WORK_CALL.options) {
+      expect(workCallMeaning(o.value as WorkPriority)).toBe(o.meaning);
+    }
   });
 });

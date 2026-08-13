@@ -91,7 +91,7 @@ import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note
-import { dispositionToward, holdsAgainst, becauseOf, peckingLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -131,6 +131,8 @@ import {
   granaryDeferredForFeeding,
   governanceLine,
   providerWorkPriority,
+  councilWorkPriority, // BACKLOG-481: the seats vote; the provider only breaks a tie
+  workCallMeaning,
   landmarkDeferredForGathering,
   granaryGateFor,
   workRegrowth,
@@ -616,12 +618,54 @@ export class WorldScene extends Phaser.Scene {
    */
   private workPriorityFor(zone: string): WorkPriority | null {
     const provider = this.providerFor(zone);
+    // BACKLOG-481: the ground's second call is the council's, not the provider's. Each seat votes its own
+    // temperament; the provider only breaks a tie. A ground that seats nobody falls through to the rule
+    // below untouched, which is what keeps a young park bit-identical to its pre-481 self.
+    const council = this.councilFor(zone);
+    if (council.length) {
+      const votes = council.map((n) => providerWorkPriority(this.dinoByName(n)?.traits));
+      const tieBreak = provider ? providerWorkPriority(this.dinoByName(provider)?.traits) : null;
+      const decided = councilWorkPriority(votes, tieBreak);
+      if (decided) {
+        this.workPriorityByZone[zone] = decided;
+        return decided;
+      }
+    }
     if (provider) {
       const p = providerWorkPriority(this.dinoByName(provider)?.traits);
       this.workPriorityByZone[zone] = p;
       return p;
     }
     return this.workPriorityByZone[zone] ?? null;
+  }
+  /**
+   * The ground's last announced call (BACKLOG-481). Deliberately **not persisted** — a live read of a live
+   * situation, the `shortsByZone` precedent. A reload starts it empty, and the first council step after a
+   * reload therefore *seeds* rather than announces (see `checkCouncilCall`'s first-seating guard).
+   */
+  private lastWorkCallByZone: Record<string, WorkPriority> = {};
+  /** The berth (BACKLOG-389) — who has already hung back from *this* drop (so the hesitation reads once,
+   *  not every step it stands there), and the last one for the dev hook. Both are per-drop and transient;
+   *  neither is persisted, since the wariness they come from is derived from the memory ring that is. */
+  private berthedThisDrop = new Set<string>();
+  private lastBerth: { name: string; rival: string } | null = null;
+  /**
+   * The vote lands a beat (BACKLOG-481). Runs once per step from `forceStep`'s tail beside the handover
+   * beat (467) — **never** from inside `workPriorityFor`, which several hooks call several times a tick and
+   * which would announce the same vote four times a step.
+   *
+   * Only a *change* is news. The first seating a ground ever holds is not a turnover, so it is recorded
+   * silently; every flip after it is announced in the legend's own words (`workCallMeaning`).
+   */
+  private checkCouncilCall(): void {
+    for (const z of ZONES) {
+      if (!this.councilFor(z.id).length) continue;
+      const call = this.workPriorityFor(z.id);
+      if (!call || this.lastWorkCallByZone[z.id] === call) continue;
+      const seeding = this.lastWorkCallByZone[z.id] === undefined;
+      this.lastWorkCallByZone[z.id] = call;
+      if (!seeding) this.logEvent(`🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`);
+    }
   }
   /**
    * The grumble's ledger (BACKLOG-471) — per zone, how many starving mouths the bank reserve (463) has held
@@ -1068,6 +1112,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
     // BACKLOG-390: the last stand-up beat (a bold winner that held its ground against a gobbler) or null.
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
+    // BACKLOG-389: the last berth beat (who hung back from whom at this drop) or null.
+    (window as any).__berth = () => (this.lastBerth ? { ...this.lastBerth } : null);
     // BACKLOG-401: run the *production* contested-drop resolution for a named pair (the branch checkFeeding
     // calls), so a spec can stage the moment instead of asserting a derivation the game never reached.
     (window as any).__forceContest = (winner: string, gobbler: string) => {
@@ -1537,6 +1583,8 @@ export class WorldScene extends Phaser.Scene {
     this.food = landing;
     this.foodKind = kind;
     this.foodLanded = false;
+    this.berthedThisDrop.clear(); // BACKLOG-389: a new drop is a fresh chance to hang back
+    this.lastBerth = null;
     const px = landing.tileX * TILE + TILE / 2;
     const landY = landing.tileY * TILE + TILE / 2;
     this.foodSprite = this.add.text(px, TILE * 0.4, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
@@ -2731,6 +2779,13 @@ export class WorldScene extends Phaser.Scene {
   /** Each zone's council (BACKLOG-479) — the map lens's 👥 read and the book's seat line, keyed by zone id.
    *  Twin of `zoneSpends` / `zoneWorks`; a ground where nobody has banked seats nobody. Derived per read,
    *  never stored, so a reload re-derives the same seats from the same banked tallies. */
+  /** One ground's seated council (BACKLOG-479), for the callers that want a single zone rather than the
+   *  whole chain — the vote (481) reads this on the regrowth tick, so it builds the roster once and no
+   *  per-zone loop. Same `zoneCouncil` the lens and the book go through; the seats can't drift. */
+  private councilFor(zoneId: string): string[] {
+    return zoneCouncil(this.zoneCandidates(), zoneId);
+  }
+
   private zoneCouncils(): Record<string, string[]> {
     const candidates = this.zoneCandidates(); // built once — a 40-dino roster shouldn't rebuild per zone
     const out: Record<string, string[]> = {};
@@ -2756,7 +2811,10 @@ export class WorldScene extends Phaser.Scene {
           cur,
           z.name,
           this.spendPriorityFor(z.id)!,
-          this.workPriorityFor(z.id) ?? undefined, // BACKLOG-473: the incoming provider sets *both* calls
+          // BACKLOG-473: the beat reports both of the ground's calls. Since 481 the work call is the
+          // *council's* rather than the incoming provider's — still this ground's current call, so the
+          // line stays true; only whose mouth it came out of changed.
+          this.workPriorityFor(z.id) ?? undefined,
         );
         if (beat) this.logEvent(beat);
         this.lastProviderByZone[z.id] = cur;
@@ -2962,6 +3020,18 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__foodBanked = () => ({ ...this.foodBanked });
     // BACKLOG-479: each ground's seated council — derived, never stored, so this is a live read.
     (window as any).__councils = () => this.zoneCouncils();
+    // BACKLOG-481: the vote itself, not just its outcome — who sat, how each voted, who'd break a tie.
+    (window as any).__councilVotes = (zone: string) => {
+      const z = zone ?? this.zoneId;
+      const seats = this.councilFor(z);
+      const provider = this.providerFor(z);
+      return {
+        seats,
+        votes: seats.map((n) => providerWorkPriority(this.dinoByName(n)?.traits)),
+        tieBreak: provider ? providerWorkPriority(this.dinoByName(provider)?.traits) : null,
+        call: this.workPriorityFor(z),
+      };
+    };
     // dev-only: credit banked food to a dino without staging a whole harvest haul, so a spec can seat a council.
     (window as any).__creditBank = (name: string, n = 1) => {
       for (let i = 0; i < n; i++) this.creditFoodBank(name);
@@ -3591,9 +3661,31 @@ export class WorldScene extends Phaser.Scene {
       // Food on the ground pulls eager, nearby dinos toward it (BACKLOG-059) — overrides
       // wandering. A dino rushes its favorite harder: wider range, lower bar (BACKLOG-061).
       if (this.food && this.foodLanded) {
-        const dist = Math.hypot(cur.tileX - this.food.tileX, cur.tileY - this.food.tileY);
+        const food = this.food;
+        const dist = Math.hypot(cur.tileX - food.tileX, cur.tileY - food.tileY);
         const isFav = !!this.foodKind && this.foodKind.id === favoriteFood(d.traits, this.currentSeason()).id;
-        if (reactionToFood(d.traits.energy, dist, isFav) === 'rush') {
+        // BACKLOG-389: before it rushes, a dino looks at who is already closer than it is. One of them it
+        // has lost to here before and it stays out of the swarm — the pecking order moving feet rather
+        // than only outcomes. A gate *around* `reactionToFood`, never inside it, so the escort's rush read
+        // (381) and this one remain the same function.
+        const nearer = this.dinos
+          .filter((o) => o.name !== d.name && this.inView(o))
+          .filter((o) => {
+            const t = this.tileOf(o);
+            return Math.hypot(t.tileX - food.tileX, t.tileY - food.tileY) < dist;
+          })
+          .map((o) => o.name);
+        const feared = nearer.length ? givesBerthTo(recall(this.memory, d.name), nearer) : null;
+        if (feared) {
+          if (!this.berthedThisDrop.has(d.name)) {
+            this.berthedThisDrop.add(d.name); // once per dino per drop — a hesitation, not a chant
+            this.lastBerth = { name: d.name, rival: feared };
+            this.flashFeed(d, '👀');
+            this.logEvent(`👀 ${d.name} hung back — ${feared} got to the food first`);
+          }
+          // No `continue`: it isn't doing a thing, it's *not* doing one. Control falls through to the rest
+          // of the step and it goes on wandering / ticcing / huddling as it would have with no drop at all.
+        } else if (reactionToFood(d.traits.energy, dist, isFav) === 'rush') {
           const step = feedStep(cur, this.food, COLS, ROWS);
           d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
           this.activityById[d.name] = 'feeding'; // BACKLOG-295
@@ -3811,6 +3903,7 @@ export class WorldScene extends Phaser.Scene {
     this.maybeLayEggs();
     this.checkHatch();
     this.checkProviderHandover(); // BACKLOG-467: mark the say changing hands (after this step's banking settled)
+    this.checkCouncilCall(); // BACKLOG-481: ...and mark the council changing the ground's call
   }
 
   /**
