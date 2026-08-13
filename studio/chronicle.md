@@ -6342,3 +6342,16 @@ reused), majority wins, the provider breaks ties, and a ground with no council f
 rule bit-identically. The ticker beat fires from the once-per-step tail, never from inside `workPriorityFor`
 — that read runs several times a tick from several hooks. Overlap is two disjoint regions of `WorldScene`;
 structure first.
+
+## 2026-08-13 03:16 — cycle 129 — codeplan — two pure functions and two thin gates
+
+`councilWorkPriority(votes, tieBreak)` in `governance.ts` and `givesBerthTo(memories, nearer)` in
+`pecking.ts`; everything else is reuse — `zoneCouncil` for who sits, `providerWorkPriority` for how a dino
+votes, `WORK_CALL.options[].meaning` for the words so the ticker and the `[?]` legend stay the same table
+read twice, `dispositionToward` for who is feared. Two scene gates: `workPriorityFor` gains a council
+branch that falls through to today's rule verbatim when nobody is seated, and the rush branch of
+`stepDinos` gains a berth check *around* `reactionToFood` rather than inside it. The vote's ticker beat
+fires from the once-per-step tail beside `checkProviderHandover` with a first-seating guard — the first
+council a park seats is not a turnover. Risks logged: the 381 escort can still fetch a dino that hung back
+(left in on purpose), and `cycle-127-council.spec.ts` asserts seats rather than calls, to be verified not
+assumed.
