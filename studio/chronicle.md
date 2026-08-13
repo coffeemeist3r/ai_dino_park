@@ -6329,3 +6329,16 @@ priority (473) set by council majority off the seated members' temperaments, pro
 spend priority stays the provider's, deliberately — one call moves so the unchanged one is the control.
 No collision with the lore pick (389 is `pecking.ts` + the rush branch; 481 is `governance.ts` +
 `workPriorityFor`).
+
+## 2026-08-13 03:02 — cycle 129 — designer — the berth, and the vote
+
+Both tracks specced. **389** gives 401's per-opponent disposition *feet*: at a drop, a dino wary of a
+rival already nearer the food declines the rush entirely (👀 + one ticker line, once per drop), so the
+pecking order becomes something you watch instead of something you read. The spec's sharpest constraint is
+a negative one — **no memory is filed**, because the 6-slot ring is the very thing `pecking.ts` parses to
+derive the disposition, and a berth memory would roll the beats it was derived from off the ring.
+**481** hands the work priority to the council: each seat votes its own temperament (`providerWorkPriority`
+reused), majority wins, the provider breaks ties, and a ground with no council falls through to today's
+rule bit-identically. The ticker beat fires from the once-per-step tail, never from inside `workPriorityFor`
+— that read runs several times a tick from several hooks. Overlap is two disjoint regions of `WorldScene`;
+structure first.
