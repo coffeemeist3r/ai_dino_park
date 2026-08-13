@@ -6355,3 +6355,16 @@ fires from the once-per-step tail beside `checkProviderHandover` with a first-se
 council a park seats is not a turnover. Risks logged: the 381 escort can still fetch a dino that hung back
 (left in on purpose), and `cycle-127-council.spec.ts` asserts seats rather than calls, to be verified not
 assumed.
+
+## 2026-08-13 04:05 — cycle 129 — qa — 24/24 criteria pass; the standing red went green on its own
+
+Build clean, unit **1709/1709**, e2e **493/493 in one full parallel run** — no flake, no isolated re-run,
+no retry. Both tracks pass every acceptance criterion. Two findings recorded rather than reworked. **The
+tie-break is unreachable:** `zoneCouncil` and `zoneProvider` sort identically, so the provider is always
+seat 1 and `tieBreak` and `votes[0]` name the same dino in every state this park can reach — kept as two
+branches, documented, unit-tested on both sides, because 484 separates them. **Three seats needs six
+residents** and the park ships with five, so on a fresh save a council can never outvote its provider; the
+majority spec hatches a sixth. That is a real property of the feature — the vote becomes a vote once the
+ground has grown — arrived at by arithmetic rather than chosen. And `mobile-minds`' long-dialog spec
+(BACKLOG-430), standing red since cycle 93 and catalogued as a genuine break, **passed** under full load
+with nothing this cycle near it. Not closed on one run; flagged for re-diagnosis.

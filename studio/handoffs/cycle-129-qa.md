@@ -3,7 +3,8 @@
 **Build:** `npm run build` clean (tsc -b + vite build, PWA precache generated).
 **Unit:** `npx vitest run` — **1709/1709 green**, 179 files (was 1694 at cycle 128; +15 from the two new
 describes).
-**E2e:** `npx --yes kill-port 5173` then `npx playwright test` — see the run note at the foot.
+**E2e:** `npx --yes kill-port 5173` then `npx playwright test` — **493/493 green**, one full run, no flake,
+no retry, 5.3 min.
 **Boundary:** `grep -rn "@mlc-ai/web-llm" game/src` → `game/src/ai/webllm.worker.ts`,
 `game/src/ai/webllmBrain.ts` only. Clean.
 **Save:** no field added or changed on either track. `workPriorityByZone` (473) still round-trips; the
@@ -79,7 +80,17 @@ berth's two fields and the vote's `lastWorkCallByZone` are all transient by desi
 
 ## Suite
 
-Full `npx playwright test` run over the whole suite (490 specs with the two new files) — result appended
-at commit time; both new spec files pass in isolation and the unit suite is green. The standing
-`mobile-minds.spec.ts` long-dialog red (BACKLOG-430) is a known pre-existing failure on clean HEAD and is
-not a regression from this cycle.
+**493/493 in one full parallel run.** No flake, nothing re-run isolated, nothing retried — the first
+all-green full sweep this pipeline has recorded in some time (cycle 128 took two runs at 486/488 with a
+*wandering* second red).
+
+Two things about that number deserve the Validator's attention rather than a cheer:
+
+1. **`mobile-minds.spec.ts` "long dialogs page GBA-style" passed** (spec 493, 2.2s). That is
+   **BACKLOG-430**, catalogued since cycle 93 as a genuine break that failed on a clean HEAD in isolation,
+   and standing red ever since. Nothing this cycle went near the dialog paging or the keeper picker. It
+   passing under full parallel load, unprompted, is either a real fix that arrived in some earlier cycle
+   and was never noticed, or the failure is load-dependent in the opposite direction from what was
+   assumed. **Do not close 430 on one green run** — but it should be re-diagnosed rather than left in the
+   backlog with a nine-cycle-old description that the evidence no longer supports.
+2. 493 specs, +5 from cycle 128's 488 — the two new files' five tests, and no spec removed or skipped.
