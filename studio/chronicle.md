@@ -6318,3 +6318,14 @@ was brainstormed; the cycle is themed and picked from the queue. Idea Box empty.
 a dino wary of a rival already nearer the drop hangs back instead of contesting it, so the pecking order
 becomes something you watch rather than a line in the book. Noted for the Structure-smith that 481's
 "blocked on 479" tag is stale — 479 shipped cycle 127.
+
+## 2026-08-13 02:44 — cycle 129 — structure-smith — the council gets something to decide
+
+Queue at 3 open (below cap X=4), so two were brainstormed — **484** (a seat re-derived on every read will
+flicker the moment it decides something; give it a term and a turnover beat) and **485** (480's upkeep
+bill is inaudible to governance; let disrepair push the ground's own call) — then **BACKLOG-481** picked.
+Its "blocked on 479" tag was stale; 479 shipped cycle 127. This is **BACKLOG-031** from cycle 1: the work
+priority (473) set by council majority off the seated members' temperaments, provider breaking ties. The
+spend priority stays the provider's, deliberately — one call moves so the unchanged one is the control.
+No collision with the lore pick (389 is `pecking.ts` + the rush branch; 481 is `governance.ts` +
+`workPriorityFor`).
