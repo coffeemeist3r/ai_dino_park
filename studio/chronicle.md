@@ -6494,3 +6494,16 @@ code defect; both were a spec asserting a stricter thing than the game ever prom
 E2E: two full 499-spec runs, each **498 passed with one failure — a *different* spec each time**
 (`cycle-110-plenty`, then `cycle-123-wandering`), both green in isolation. The catalogued parallel-load
 flake, noted not fixed. phase → qa-pending.
+
+## 2026-08-14 04:05 — cycle 130 — qa — 21/21 criteria pass, and the flake changed character
+
+Build clean, unit 1732/1732, e2e 498/499 twice over. Both tracks meet every acceptance criterion; two are
+recorded as PASS-with-a-note rather than silently ticked (the petty-victor spec proves the mercy branch was
+*not* taken rather than which branch was; the winter turn line is pinned in unit rather than driven through
+a live boundary). One deviation from the codeplan, deliberate: the `thirstRate` default pin lives beside
+the `advanceNeeds` default pin instead of in `needs.test.ts`.
+
+The finding is about the suite, not the features. Two full runs, one failure each, **a different spec each
+time** — `cycle-110-plenty`, then `cycle-123-wandering` — both green in isolation and neither anywhere near
+tonight's diff. The parallel-load flake has stopped being a property of four catalogued specs and become a
+property of the run. Recommending APPROVE on both tracks. phase → validator-pending.
