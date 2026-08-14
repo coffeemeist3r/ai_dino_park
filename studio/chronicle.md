@@ -6588,3 +6588,11 @@ rule, and now flagged by **three** consecutive fires. The smiths own the Art que
 entry whenever one of them wants a subject.
 
 Build clean, both cycle-130 specs green after the swap. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-14 04:40 — cycle 130 — housekeeping
+
+BACKLOG.md carries no closed bullets. Two body sections whose last open item had closed — the cycle-74 and
+cycle-78 "the grove becomes a place" blocks — moved to `BACKLOG-archive.md` with their header notes intact.
+The `## Art` section stays in the working file despite being empty: its header carries the stash-ahead rule
+the Artist reads every fire. Structure Track is at **3 open** (466 closed), below the X=4 cap, so the next
+Structure-smith brainstorms before it picks.

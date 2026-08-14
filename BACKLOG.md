@@ -582,15 +582,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-337 [emergent] Shared dream — two high-bond dinos huddled together may murmur echoing lines (one names the other), so the den's dreams reflect the bond graph the way the waking bowl does. Builds on 181 / 013.
 - [ ] BACKLOG-338 [social] Don't wake them — tapping the glass (057) near the den while a dino murmurs *stirs* it (it shifts, a brief 👀) instead of the usual startle-bolt; the keeper learns the den is for quiet. Builds on 181 / 057.
 
-## Cycle 74 lore additions — the grove becomes a place (2026-06-24)
-
-> Cycle 73 made the crossing a walk you can watch (334) and gave the den a voice (181). Cycle 74
-> picks **BACKLOG-339** (first steps in the grove) — arrival as a beat, the cast reacting to a new
-> place — and seeds what the second zone *means* once dinos live in it: homesickness, a settling-in
-> lean, news of the grove travelling the bowl, the pioneer's standing, and (riding the structure
-> track's 315 shelter) the lean-to's pixel prop.
-
-
 ## Cycle 75 lore additions — the grove travels home (2026-06-24)
 
 > Cycle 74 made the grove a place a dino arrives in (339) and builds in (315). Cycle 75 picks
@@ -609,17 +600,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-353 [pokemon] Pond-swap in the book — once two dinos have swapped pond notes (346), the collection book reads the tie ("compared groves with Twitch") beside the closest-friend line, so the second zone's social ties are legible, not just felt. Builds on 346 / 013 / 021.
 - [ ] BACKLOG-354 [emergent] Pond note in their own voice — the line a dino leads with when it swaps pond notes (346) is coloured by temperament: a bold one brags up its find, a timid one murmurs it, a warm one gushes — the same favour, said like whoever's saying it (the gratitude-voice shape, 268, applied to scenery). Builds on 346 / 268 / 010.
-
-## Cycle 78 lore additions — the grove is a place you can miss (2026-06-25)
-
-> Cycle 77 made the grove common ground between two travelers who'd both seen it (346). Cycle 78's
-> next-up is the already-queued **BACKLOG-355** (drew them across): being *told to your face* about
-> the pond by a dino who's actually been there pulls a non-visited listener harder than ambient
-> hearsay overheard secondhand — a direct telling jumps the migration queue ahead of a faint rumor.
-> These four extend what the grove *is* once a dino knows it: a first sight worth more than the
-> hundredth, a place two friends return to together, a tally of who keeps going back, and — the
-> weirdest — a place a dino who came home can quietly come to miss.
-
 
 ## Cycle 79 lore additions — the pond as a known place (2026-06-25)
 
