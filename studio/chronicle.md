@@ -6467,3 +6467,13 @@ memories through exported builders, and by construction matches none of `WEIGHTS
 the history it was granted from. **466** adds `seasonThirst` + `slakeFloor` to `seasons.ts` beside
 `seasonGrip`, threaded in as plain numbers so `seasons.ts` and `needs.ts` stay independent; spring and fall
 at exactly 1.0 and both new parameters defaulted, so a fresh save is byte-identical. phase → codeplan-pending.
+
+## 2026-08-14 03:16 — cycle 130 — code-planner — two branches, no shared line
+
+**403**: `showsMercyTo` in `pecking.ts` reusing `WELL_FED` (375's bar) and `GOBBLE_HUNGER` (387's bar)
+rather than inventing thresholds — the mercy is calibrated against the same numbers as the beats it reads.
+One branch in `checkFeeding` between the yield and the gobble check, reusing the swarm array already built
+there. Glyph 🤲 (verified unused). **466**: three trailing optional parameters (`thirstRate` mul,
+`advanceNeeds` thirstMul, `satisfy` to) so every existing call site is untouched and `seasons.ts` and
+`needs.ts` never import each other. Flagged the trap in the e2e: 20 steps at 1.5× is 0.15, so the spec
+asserts a numeric inequality, not the appearance of the 💧. ~9 files. phase → coder-pending.
