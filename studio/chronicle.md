@@ -6555,3 +6555,36 @@ fix is a Structure-Track item somebody should seed, not a note somebody should r
 Unit 1732, build clean, save format untouched by both tracks. Next: **404** (mealtime mood in the voice —
 the third register of the same hatch history, and the one that finally says it out loud) and **482** (one
 place the standings are derived). phase → artist-pending.
+
+## 2026-08-14 04:32 — cycle 130-art — artist — no-op on the queue, one glyph collision caught and fixed
+
+The Art section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` touched, no
+BACKLOG item closed. Two new marks in tonight's diff, and — for the second fire running — **one of them
+was already taken**.
+
+**❄️ → 🧊 on the dry season's winter line (466).** The new thirst line led with ❄️, which is exactly what
+461's *grip* line already leads with. They are not merely in the same register: they fire on the **same
+turn**, one after the other, so a winter boundary would have printed two ❄️ lines back to back on the
+ticker — the year's grip on the pantry and its grip on drinking, visually indistinguishable at the one
+moment the player is being told they are two different things. Swapped to 🧊 (unused anywhere in
+`game/src`), reason left as a comment at the table so the next fire doesn't undo it. Its summer twin ☀️ is
+clean and disjoint from everything in service.
+
+**🤲 on the mercy (403) is clean** — unused, and correctly distinct from the three marks nearest it: 🤝 is
+the 375 friend-yield (a kindness *between friends*), 😠/😖/😤 the contest trio, 😬 last night's berth. It is
+also the right *kind* of mark for what it means: open hands, offered, where 🤝 is two dinos already agreed.
+
+Note the pattern in two consecutive fires: both collisions came from a **second** feature reading the same
+world-fact as an earlier one and reaching for the same obvious glyph. 129's was 👀 (three ways to say
+"being looked at"), tonight's is ❄️ (two ways to say "winter"). Cheap to fix the same night, and both would
+have been near-impossible to notice a month later — which is the argument for this fire existing at all
+when the queue is empty.
+
+Standing flags unchanged: 🍽️ still carries two readings behind a text prefix; 🛠️ still double-duties for a
+landmark falling and one patched up; the rectangle fallback still has no live subject (BACKLOG-212 remains
+the item that would give it an honest control); and the ruin-variant art 480 wants — a toppled cairn, a
+sagging lean-to, instead of a faded 🗿 — is still unseeded, still renderable-now under the cycle-91 stash
+rule, and now flagged by **three** consecutive fires. The smiths own the Art queue; it is the obvious first
+entry whenever one of them wants a subject.
+
+Build clean, both cycle-130 specs green after the swap. lastFire.artist updated; phase → lore-pending.

@@ -150,7 +150,9 @@ const THIRST_LINES: Record<Season, string> = {
   spring: '', // the hinge — nothing to say about the drinking
   summer: '☀️ the dry season parches the bowl — thirst builds faster and a drink doesn’t hold.',
   fall: '', // the hinge — nothing to say about the drinking
-  winter: '❄️ winter eases the thirst — a drink goes further.',
+  // 🧊 not ❄️: the winter *grip* line (461) already leads with ❄️ and both fire on the same turn, so a
+  // winter boundary would have read as two identical marks in a row on the ticker.
+  winter: '🧊 winter eases the thirst — a drink goes further.',
 };
 
 /** The ticker line for the season turn's drinking half (BACKLOG-466); '' on the hinges. The twin of
