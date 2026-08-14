@@ -6456,3 +6456,14 @@ yield, and has never touched thirst: `THIRST_RATE` is one number all year and th
 seasonless. One pure `seasonThirst` multiplier beside `seasonGrip`, threaded through the trait-scaled rate,
 spring/fall at exactly 1.0 so a fresh clock stays byte-identical. Queue at 4 — nothing invented. No file
 overlap with 403.
+
+## 2026-08-14 03:02 — cycle 130 — designer — grace at the hatch, and a season you can taste
+
+Both tracks specced. **403** is 389 read from the other end: the confident half of `dispositionToward`,
+spent at the drop instead of on the approach. A well-fed victor that faced a dino down, meeting it still
+hungry, steps off the scrap — agreeableness is the split, so bold-and-generous and bold-and-petty finally
+part company. The branch sits *ahead* of the gobble check (the grace is offered, not extracted), files two
+memories through exported builders, and by construction matches none of `WEIGHTS`, so a mercy can't rewrite
+the history it was granted from. **466** adds `seasonThirst` + `slakeFloor` to `seasons.ts` beside
+`seasonGrip`, threaded in as plain numbers so `seasons.ts` and `needs.ts` stay independent; spring and fall
+at exactly 1.0 and both new parameters defaulted, so a fresh save is byte-identical. phase → codeplan-pending.
