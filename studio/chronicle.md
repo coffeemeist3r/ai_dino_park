@@ -6440,3 +6440,10 @@ fires in a row have now flagged it; the smiths own the Art queue, and it is the 
 whenever one of them wants a subject.
 
 Build clean, both cycle-129 specs green after the swap. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-14 02:30 — cycle 130 — lore-smith — the other side of the hatch ledger
+
+Cycle 129 gave the pecking order feet; cycle 130 takes the grace. **BACKLOG-403 (victor's mercy)** picked —
+lore arc 2 of Milestone 13, the bold end of the same `dispositionToward` reading 389 used at its wary end. A
+dino that stood its ground and ate, meeting the gobbler it denied still hungry, may step off the next scrap.
+No new items (cap rule, backlog ≫ 12). Idea Box empty. phase → designer-pending.
