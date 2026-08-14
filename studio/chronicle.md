@@ -6447,3 +6447,12 @@ Cycle 129 gave the pecking order feet; cycle 130 takes the grace. **BACKLOG-403 
 lore arc 2 of Milestone 13, the bold end of the same `dispositionToward` reading 389 used at its wary end. A
 dino that stood its ground and ate, meeting the gobbler it denied still hungry, may step off the next scrap.
 No new items (cap rule, backlog ≫ 12). Idea Box empty. phase → designer-pending.
+
+## 2026-08-14 02:44 — cycle 130 — structure-smith — the year finally reaches a drink
+
+**BACKLOG-466 (the dry season)** picked — Milestone 13's third structure arc and the last unpaid half of
+Milestone 8. The turning year grips the pantry, the spoilage band, the den, the daytime cluster and the crop
+yield, and has never touched thirst: `THIRST_RATE` is one number all year and the waterholes (445) are
+seasonless. One pure `seasonThirst` multiplier beside `seasonGrip`, threaded through the trait-scaled rate,
+spring/fall at exactly 1.0 so a fresh clock stays byte-identical. Queue at 4 — nothing invented. No file
+overlap with 403.
