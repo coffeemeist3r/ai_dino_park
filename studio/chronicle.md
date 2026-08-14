@@ -6507,3 +6507,51 @@ The finding is about the suite, not the features. Two full runs, one failure eac
 time** — `cycle-110-plenty`, then `cycle-123-wandering` — both green in isolation and neither anywhere near
 tonight's diff. The parallel-load flake has stopped being a property of four catalogued specs and become a
 property of the run. Recommending APPROVE on both tracks. phase → validator-pending.
+
+## 2026-08-14 04:20 — cycle 130 — validator — APPROVED / APPROVED — the victor gives the scrap away, and the year reaches a drink
+
+**Both tracks ship.** Milestone 13 stands at two arcs of three on each side.
+
+**403 is 389 turned around.** Last night a dino that had been shouldered aside read `wary` and *stayed
+away from dinner*; tonight a dino that faced someone down reads `confident` and *hands dinner over*. Same
+six-slot ring, same pure function, opposite ends — and the thing that decides which of them a dino is at
+the drop is neither bravery nor history but **agreeableness**, which is the point. Two dinos with identical
+records, both bold enough to have earned them, part company: one steps off the scrap (🤲), one takes its
+winnings again. The item borrowed both its thresholds instead of inventing them (`WELL_FED` from the 375
+yield, `GOBBLE_HUNGER` from the 387 gobble), so the only new number in the feature is the one that *is* the
+feature.
+
+The branch sits deliberately **before** the gobble check, so a magnanimous victor never reaches the standoff
+it would have won — the grace is offered, not extracted. That reading can't be proved from the code, so it
+is bracketed by two e2e tests that differ in exactly one trait: in both the rival qualifies as a gobbler,
+and one drop becomes a mercy while the other becomes a contest. And the invariant underneath is asserted
+rather than assumed — neither new memory string is matched by any `WEIGHTS` regex, so a gift is not a
+defeat, both dispositions survive it, and a **second** mercy is still reachable from the same ring. 389
+answered the same problem by filing nothing at all; 403 can file, because a mercy is an *outcome* rather
+than a decision about whether to walk over there, and 404 will want to read it.
+
+**466 closes a hole in a milestone that shipped fifteen cycles ago.** Milestone 8 was declared complete at
+cycle 115 with the seasons gripping the pantry, the spoilage band, the crops, the den and the daytime
+cluster — and never, not once, a **drink**. Thirst built at the same rate in August and January and a
+waterhole slaked identically in both. `seasonThirst` fixes the rate; `slakeFloor` is the half worth having,
+because thirst is the slowest need in the game and 1.5× of very slow is still very slow, whereas *a summer
+drink that doesn't hold* is a different kind of consequence and it lands at the moment the player is
+watching a dino at the water. It is what the deferred shrinking-waterhole sprite would have *meant*, done
+as one number instead of art. Three defaulted parameters, spring and fall pinned at exactly 1.0, and the
+two pure modules still refusing to import each other — a fresh clock is byte-identical to every build since
+the need-drive shipped at cycle 80.
+
+Worth sitting with: **a milestone can close its checklist and still leave a hole this plainly shaped.** M8
+ticked every box it wrote for itself. The box it never wrote was the one a body actually feels.
+
+**The suite is the night's real finding.** Two consecutive full runs, 498 of 499 each time, and a
+*different* victim each run — `cycle-110-plenty`, then `cycle-123-wandering` — both green in isolation,
+neither anywhere near this cycle's diff. That clears the quality bar's flake test on every count, and both
+tracks approve on it. But cycle 125 treated this as four named specs with a shared seam and put them on a
+dev hold; at 499 specs it is no longer a property of particular specs at all. It is a property of the run,
+and the next two-track cycle rolls the same die. BACKLOG-430's note carries tonight's evidence; a general
+fix is a Structure-Track item somebody should seed, not a note somebody should read.
+
+Unit 1732, build clean, save format untouched by both tracks. Next: **404** (mealtime mood in the voice —
+the third register of the same hatch history, and the one that finally says it out loud) and **482** (one
+place the standings are derived). phase → artist-pending.
