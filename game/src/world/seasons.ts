@@ -109,6 +109,56 @@ export function seasonalSocializeChance(base: number, season: Season): number {
   return Math.min(0.95, Math.max(0.05, base * seasonSocialBias(season)));
 }
 
+/**
+ * The dry season (BACKLOG-466) — the year's grip on *drinking*, the water twin of `seasonGrip`'s grip on
+ * the pantry. For its whole life thirst (371) was one constant in every season and a waterhole (445) slaked
+ * identically in August and January: the season reached the stores, the crops, the den and the daytime
+ * cluster, and never once reached a drink. Two numbers close that.
+ *
+ * - `seasonThirst` multiplies the trait-scaled thirst build rate: summer parches (the bowl drinks harder in
+ *   the heat), winter eases it.
+ * - `slakeFloor` is what a drink resets thirst *to*: in the dry season a drink doesn't hold, so thirst
+ *   settles at a small floor rather than 0. This is what the deferred shrinking-waterhole sprite would have
+ *   meant, done as one number instead of art.
+ *
+ * Spring and fall are exactly 1.0 / 0 — the year's hinges, and the reason a fresh clock behaves exactly as
+ * it did before this existed (the 461/178/171 compatibility discipline). Both are threaded into `needs.ts`
+ * as plain numbers rather than imported there, so the two pure modules stay independent.
+ */
+const SEASON_THIRST: Record<Season, number> = {
+  spring: 1, // the hinge — unchanged
+  summer: 1.5, // the dry season — thirst builds half again as fast
+  fall: 1, // the hinge — unchanged
+  winter: 0.7, // the cold eases it
+};
+
+/** The season's multiplier on the thirst build rate (BACKLOG-466). Pure lookup. */
+export function seasonThirst(season: Season): number {
+  return SEASON_THIRST[season];
+}
+
+/** How much thirst a summer drink leaves behind (BACKLOG-466). The calibration knob for the dry season's
+ *  waterhole half; small enough that a drink is still worth taking. */
+export const SUMMER_SLAKE_FLOOR = 0.15;
+
+/** The thirst level a drink at the water resets to this season — the floor in the dry season, 0 otherwise. */
+export function slakeFloor(season: Season): number {
+  return season === 'summer' ? SUMMER_SLAKE_FLOOR : 0;
+}
+
+const THIRST_LINES: Record<Season, string> = {
+  spring: '', // the hinge — nothing to say about the drinking
+  summer: '☀️ the dry season parches the bowl — thirst builds faster and a drink doesn’t hold.',
+  fall: '', // the hinge — nothing to say about the drinking
+  winter: '❄️ winter eases the thirst — a drink goes further.',
+};
+
+/** The ticker line for the season turn's drinking half (BACKLOG-466); '' on the hinges. The twin of
+ *  `seasonGripLine` — no silent change (CHARTER §Quality bar). */
+export function seasonThirstLine(season: Season): string {
+  return THIRST_LINES[season];
+}
+
 const GRIP_LINES: Record<Season, string> = {
   spring: '', // neutral — nothing to say about the stores
   summer: '🌻 summer eases the stores — plenty keeps longer.',

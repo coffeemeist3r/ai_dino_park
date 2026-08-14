@@ -6477,3 +6477,20 @@ there. Glyph 🤲 (verified unused). **466**: three trailing optional parameters
 `advanceNeeds` thirstMul, `satisfy` to) so every existing call site is untouched and `seasons.ts` and
 `needs.ts` never import each other. Flagged the trap in the e2e: 20 steps at 1.5× is 0.15, so the spec
 asserts a numeric inequality, not the appearance of the 💧. ~9 files. phase → coder-pending.
+
+## 2026-08-14 03:40 — cycle 130 — coder — both tracks shipped, one assertion rewritten
+
+**403**: `showsMercyTo` + `MERCY_AGREE` + two memory builders + `mercyLine` in `pecking.ts`; one branch in
+`checkFeeding` between the yield and the gobble check, reusing the swarm array already built there. 🤲.
+**466**: `seasonThirst` / `slakeFloor` / `seasonThirstLine` in `seasons.ts`; three trailing optional
+parameters in `needs.ts` so no existing call site moved. Build clean, unit **1732** (was 1709).
+
+Two spec corrections, both mine and both the same shape — **exact equality against a need**. The mercy spec
+asserted the fed dino's hunger was `0`; it is `0.0079`, because `__stepWorld` advances every dino's needs
+after the meal. And the turn-line spec drove `__setClock`, which is a restore *sync* and deliberately fires
+no beat — crossing the boundary needs `__advanceWall` over midnight, the cycle-118 harness. Neither was a
+code defect; both were a spec asserting a stricter thing than the game ever promised.
+
+E2E: two full 499-spec runs, each **498 passed with one failure — a *different* spec each time**
+(`cycle-110-plenty`, then `cycle-123-wandering`), both green in isolation. The catalogued parallel-load
+flake, noted not fixed. phase → qa-pending.

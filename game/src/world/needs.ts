@@ -53,7 +53,9 @@ function scaled(base: number, traits?: Personality): number {
   return base * (0.6 + 0.8 * (traits?.energy ?? 0.5));
 }
 export const hungerRate = (traits?: Personality): number => scaled(HUNGER_RATE, traits);
-export const thirstRate = (traits?: Personality): number => scaled(THIRST_RATE, traits);
+/** `mul` is the season's grip on drinking (BACKLOG-466 `seasonThirst`), passed in as a plain number so this
+ *  module never imports the calendar. Defaulting to 1 keeps every pre-466 caller identical. */
+export const thirstRate = (traits?: Personality, mul = 1): number => scaled(THIRST_RATE, traits) * mul;
 
 const clamp01 = (n: number): number => Math.max(0, Math.min(1, n));
 
@@ -66,13 +68,14 @@ export function advanceNeeds(
   needs: Needs,
   entries: ReadonlyArray<{ name: string; traits?: Personality }>,
   steps = 1,
+  thirstMul = 1,
 ): Needs {
   const next: Needs = { ...needs };
   for (const { name, traits } of entries) {
     const cur = next[name] ?? { hunger: 0, thirst: 0 };
     next[name] = {
       hunger: clamp01(cur.hunger + hungerRate(traits) * steps),
-      thirst: clamp01(cur.thirst + thirstRate(traits) * steps),
+      thirst: clamp01(cur.thirst + thirstRate(traits, thirstMul) * steps),
     };
   }
   return next;
@@ -88,10 +91,16 @@ export function pressingNeed(n: Need | undefined): NeedKind | null {
   return overH ? 'hunger' : 'thirst';
 }
 
-/** Reset one of a dino's needs to 0 (eating sates hunger; drinking sates thirst). Returns a new map. */
-export function satisfy(needs: Needs, name: string, which: NeedKind): Needs {
+/**
+ * Reset one of a dino's needs (eating sates hunger; drinking sates thirst). Returns a new map.
+ *
+ * `to` is the level the need settles at — 0 by default, and the drink hook passes the dry season's floor
+ * (BACKLOG-466 `slakeFloor`) so a summer drink doesn't hold. Hunger has no seasonal floor; every hunger
+ * caller uses the default.
+ */
+export function satisfy(needs: Needs, name: string, which: NeedKind, to = 0): Needs {
   const cur = needs[name] ?? { hunger: 0, thirst: 0 };
-  return { ...needs, [name]: { ...cur, [which]: 0 } };
+  return { ...needs, [name]: { ...cur, [which]: to } };
 }
 
 /**

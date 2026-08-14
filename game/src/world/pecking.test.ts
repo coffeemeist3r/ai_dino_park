@@ -6,10 +6,16 @@ import {
   peckingLine,
   givesBerthTo,
   becauseOf,
+  showsMercyTo,
+  mercyMemory,
+  sparedMemory,
+  mercyLine,
+  peckingRead,
+  MERCY_AGREE,
   PECKING_BAR,
   PECKING_MIN_BEATS,
 } from './pecking';
-import { standsGround, slunkOffMemory } from './feeding';
+import { standsGround, slunkOffMemory, WELL_FED, GOBBLE_HUNGER } from './feeding';
 
 // The memory strings are built the way WorldScene builds them, never re-typed (the cycle-127 finding:
 // a spec that re-types the string it matches lets a reword silently empty the read).
@@ -172,5 +178,80 @@ describe('givesBerthTo (BACKLOG-389)', () => {
     const even = [slunk('Rex'), stood('Rex')];
     expect(dispositionToward(even, 'Rex')).toBeNull();
     expect(givesBerthTo(even, ['Rex'])).toBeNull();
+  });
+});
+
+/**
+ * Victor's mercy (BACKLOG-403) — the confident end of the same history, spent at the drop. Every gate gets
+ * its own case: the whole feature is a conjunction, and a conjunction is only pinned one term at a time.
+ */
+describe('showsMercyTo', () => {
+  const faced = [stood('Rex'), stood('Rex')]; // a history, not one good day
+  const hungryRex = [{ name: 'Rex', hunger: GOBBLE_HUNGER }];
+
+  it('lets a rival it has faced down have the scrap', () => {
+    expect(dispositionToward(faced, 'Rex')).toBe('confident');
+    expect(showsMercyTo(faced, 0, MERCY_AGREE, hungryRex, 'Moss')).toBe('Rex');
+  });
+
+  it('keeps the meal when the victor is hungry itself', () => {
+    expect(showsMercyTo(faced, WELL_FED + 0.01, 1, hungryRex, 'Moss')).toBeNull();
+    expect(showsMercyTo(faced, WELL_FED, 1, hungryRex, 'Moss')).toBe('Rex'); // the bar itself is generous
+  });
+
+  it('keeps the meal when the victor is petty — the same history, the other temperament', () => {
+    expect(showsMercyTo(faced, 0, MERCY_AGREE - 0.01, hungryRex, 'Moss')).toBeNull();
+  });
+
+  it('offers nothing to a rival that is not still hungry', () => {
+    expect(showsMercyTo(faced, 0, 1, [{ name: 'Rex', hunger: GOBBLE_HUNGER - 0.01 }], 'Moss')).toBeNull();
+  });
+
+  it('offers nothing to a dino it is wary of, or holds no disposition toward', () => {
+    const wary = [slunk('Rex'), slunk('Rex')];
+    expect(showsMercyTo(wary, 0, 1, hungryRex, 'Moss')).toBeNull();
+    expect(showsMercyTo([], 0, 1, hungryRex, 'Moss')).toBeNull();
+  });
+
+  it('is filtered through the disposition, not the raw score: one won drop is not a history', () => {
+    const once = [stood('Rex')]; // score 2 clears PECKING_BAR, but it is one beat
+    expect(peckingScore(once, 'Rex')).toBe(PECKING_BAR);
+    expect(dispositionToward(once, 'Rex')).toBeNull(); // PECKING_MIN_BEATS
+    expect(showsMercyTo(once, 0, 1, hungryRex, 'Moss')).toBeNull();
+  });
+
+  it('never yields the scrap to itself', () => {
+    const self = [stood('Moss'), stood('Moss')];
+    expect(showsMercyTo(self, 0, 1, [{ name: 'Moss', hunger: 1 }], 'Moss')).toBeNull();
+  });
+
+  it('picks the most thoroughly beaten rival, then the hungriest, then lexicographically', () => {
+    const many = [stood('Rex'), stood('Rex'), stood('Ash'), snatched('Ash')];
+    expect(peckingScore(many, 'Rex')).toBeGreaterThan(peckingScore(many, 'Ash'));
+    expect(showsMercyTo(many, 0, 1, [{ name: 'Ash', hunger: 1 }, { name: 'Rex', hunger: 0.6 }], 'Moss')).toBe('Rex');
+
+    const even = [stood('Rex'), stood('Rex'), stood('Ash'), stood('Ash')];
+    expect(peckingScore(even, 'Rex')).toBe(peckingScore(even, 'Ash'));
+    expect(showsMercyTo(even, 0, 1, [{ name: 'Rex', hunger: 0.9 }, { name: 'Ash', hunger: 0.7 }], 'Moss')).toBe('Rex');
+    expect(showsMercyTo(even, 0, 1, [{ name: 'Rex', hunger: 0.9 }, { name: 'Ash', hunger: 0.9 }], 'Moss')).toBe('Ash');
+  });
+
+  it('leaves both dispositions exactly as it found them — a gift is not a defeat', () => {
+    const victorBefore = peckingRead(faced, 'Rex');
+    const victorAfter = peckingRead([...faced, mercyMemory('Rex')], 'Rex');
+    expect(victorAfter).toEqual(victorBefore);
+
+    const rivalRing = [slunk('Moss'), slunk('Moss')];
+    const rivalBefore = peckingRead(rivalRing, 'Moss');
+    expect(peckingRead([...rivalRing, sparedMemory('Moss')], 'Moss')).toEqual(rivalBefore);
+    // ...so a second mercy is still reachable from the same ring.
+    expect(showsMercyTo([...faced, mercyMemory('Rex')], 0, 1, hungryRex, 'Moss')).toBe('Rex');
+  });
+
+  it('says why on the ticker, in the same words the contest uses', () => {
+    const line = mercyLine('Moss', 'Rex');
+    expect(line).toContain('Moss');
+    expect(line).toContain('Rex');
+    expect(line).toContain(becauseOf('confident', 'Rex'));
   });
 });

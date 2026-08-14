@@ -16,7 +16,7 @@
  * dino; this reads the same beats *split by opponent*. Same source, orthogonal questions.
  */
 
-import { standsGround } from './feeding';
+import { GOBBLE_HUNGER, standsGround, WELL_FED } from './feeding';
 
 export type Disposition = 'confident' | 'wary';
 
@@ -149,6 +149,67 @@ export function givesBerthTo(memories: readonly string[], nearer: readonly strin
       .filter((c) => c.disp === 'wary')
       .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name))[0]?.name ?? null
   );
+}
+
+/**
+ * Victor's mercy (BACKLOG-403) — the disposition gets **grace**.
+ *
+ * 389 read the `wary` end of the same per-opponent history and spent it on the approach: a dino that has
+ * been shouldered aside hangs back. This reads the `confident` end and spends it at the drop. A dino that
+ * faced a rival down here before, meeting that rival still hungry while itself well fed, steps off the
+ * scrap and lets it eat — so defiance and grace live in the same dino, and *bold* stops being one thing.
+ *
+ * Agreeableness is the split, and it is the whole point: two dinos with identical hatch histories, both
+ * bold enough to have won them, part company here. The magnanimous one gives way; the petty one takes its
+ * winnings again.
+ *
+ * The bars are borrowed, never re-invented: `WELL_FED` is the same "doesn't need this meal" line the 375
+ * yield uses, and `GOBBLE_HUNGER` is the same "hungry enough to shoulder in" line that made the rival a
+ * gobbler in the first place. Calibrating the mercy against the beats it reads is what keeps it from
+ * drifting away from them.
+ *
+ * Filtered through `dispositionToward` rather than the raw score (the `peckingLine` / `givesBerthTo`
+ * discipline), so one won contest is not yet a history and a fresh park never reaches this at all.
+ */
+export const MERCY_AGREE = 0.55; // agreeableness at/above which a victor is magnanimous rather than petty
+
+export function showsMercyTo(
+  memories: readonly string[],
+  winnerHunger: number,
+  winnerAgreeableness: number,
+  candidates: ReadonlyArray<{ name: string; hunger: number }>,
+  winner?: string,
+): string | null {
+  if (winnerHunger > WELL_FED) return null; // it needs this meal itself
+  if (winnerAgreeableness < MERCY_AGREE) return null; // a petty victor keeps its winnings
+  return (
+    candidates
+      .filter((c) => c.name !== winner && c.hunger >= GOBBLE_HUNGER)
+      .map((c) => ({ ...c, score: peckingScore(memories, c.name), disp: dispositionToward(memories, c.name) }))
+      .filter((c) => c.disp === 'confident')
+      .sort((a, b) => b.score - a.score || b.hunger - a.hunger || a.name.localeCompare(b.name))[0]?.name ?? null
+  );
+}
+
+/**
+ * The two sides of the mercy, as exported builders rather than literals at the call site (BACKLOG-483's
+ * finding, applied to the strings this cycle writes). Neither is matched by any `WEIGHTS` regex above, on
+ * purpose: a gift is not a defeat, so the mercy leaves both dinos' dispositions exactly as it found them —
+ * the victor stays confident, the rival stays wary. A beat that rewrote its own input would make the
+ * *second* mercy unreachable.
+ */
+export function mercyMemory(rival: string): string {
+  return `you let ${rival} have the scrap this time`;
+}
+
+export function sparedMemory(victor: string): string {
+  return `${victor} let you have the scrap this time`;
+}
+
+/** The hatch ticker line for a mercy, sharing `becauseOf`'s wording so the two branches can never phrase
+ *  the same fact differently. */
+export function mercyLine(victor: string, rival: string): string {
+  return `🤲 ${victor} let ${rival} have the scrap${becauseOf('confident', rival)}`;
 }
 
 /** The because-clause appended to the hatch event line when history — not bravery — decided the contest.

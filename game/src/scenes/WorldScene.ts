@@ -83,7 +83,7 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
-import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
+import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
@@ -91,7 +91,7 @@ import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note
-import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -418,6 +418,8 @@ export class WorldScene extends Phaser.Scene {
   private lastGobble: { winner: string; gobbler: string } | null = null;
   /** The last stand-up beat (BACKLOG-390): a bold winner that held its food against a gobbler, or null. Transient. */
   private lastStand: { winner: string; gobbler: string } | null = null;
+  /** The last mercy beat (BACKLOG-403): a well-fed victor that gave a rival it had faced down the scrap. Transient. */
+  private lastMercy: { victor: string; rival: string } | null = null;
   /** The last grateful-nuzzle beat (BACKLOG-386): who threw a 💛 at whom on a yield, or null. Transient. */
   private lastNuzzle: { from: string; to: string } | null = null;
   /** Who each dino remembers being fed by (BACKLOG-385): a live per-session ledger of generosity owed
@@ -1114,6 +1116,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
     // BACKLOG-389: the last berth beat (who hung back from whom at this drop) or null.
     (window as any).__berth = () => (this.lastBerth ? { ...this.lastBerth } : null);
+    // BACKLOG-403: the last mercy beat (a victor that let a rival it had faced down have the scrap) or null.
+    (window as any).__mercy = () => (this.lastMercy ? { ...this.lastMercy } : null);
     // BACKLOG-401: run the *production* contested-drop resolution for a named pair (the branch checkFeeding
     // calls), so a spec can stage the moment instead of asserting a derivation the game never reached.
     (window as any).__forceContest = (winner: string, gobbler: string) => {
@@ -1699,6 +1703,7 @@ export class WorldScene extends Phaser.Scene {
       this.lastYield = { giver: eater.name, eater: friendName };
       this.lastGobble = null;
       this.lastStand = null;
+      this.lastMercy = null;
       this.bonds = strengthen(this.bonds, eater.name, friendName, GENEROUS_BOND_BUMP); // kindness deepens the tie
       this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
       this.flashFeed(eater, '🤝');
@@ -1720,6 +1725,30 @@ export class WorldScene extends Phaser.Scene {
     }
     this.lastYield = null;
     this.lastNuzzle = null;
+    // BACKLOG-403: before the contest is even reached, the *victor's* half of the pecking order gets its
+    // say. A well-fed, magnanimous winner that faced one of these dinos down here before, finding it still
+    // hungry, steps off the scrap. Ahead of `gobblerAmong` on purpose: the grace is offered, not extracted
+    // — a magnanimous victor never reaches the standoff it would win again.
+    const rivalName = showsMercyTo(
+      recall(this.memory, eater.name),
+      eaterHunger,
+      eater.traits.agreeableness,
+      candidates,
+      eater.name,
+    );
+    if (rivalName) {
+      const rival = this.dinos.find((d) => d.name === rivalName)!;
+      this.lastMercy = { victor: eater.name, rival: rivalName };
+      this.lastStand = null;
+      this.lastGobble = null;
+      this.memory = remember(this.memory, eater.name, mercyMemory(rivalName));
+      this.memory = remember(this.memory, rivalName, sparedMemory(eater.name));
+      this.flashFeed(eater, '🤲');
+      this.logEvent(mercyLine(eater.name, rivalName));
+      this.eatFood(rival); // the rival eats — `eatFood` flashes its own reaction and sates *its* hunger
+      return;
+    }
+    this.lastMercy = null;
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
     const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
@@ -2403,7 +2432,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__fleeFrom = () => ({ ...this.lastFlee }); // BACKLOG-442: prey → the hunter it flees
     (window as any).__diet = (species: string) => dietOf(species);
     (window as any).__advanceNeeds = (steps = 1) => {
-      this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })), steps);
+      // BACKLOG-466: threaded, so the hook drives the *production* seasonal rate rather than the default.
+      this.needs = advanceNeeds(
+        this.needs,
+        this.dinos.map((d) => ({ name: d.name, traits: d.traits })),
+        steps,
+        seasonThirst(this.currentSeason()),
+      );
       this.refreshNeedMarks();
       return JSON.parse(JSON.stringify(this.needs));
     };
@@ -2654,10 +2689,20 @@ export class WorldScene extends Phaser.Scene {
    * thirst the same way the grove pond always has. (`nearPond` stays grove-only for the 359 sight beat.)
    */
   private checkNeeds(): void {
-    this.needs = advanceNeeds(this.needs, this.dinos.map((d) => ({ name: d.name, traits: d.traits })));
+    // BACKLOG-466: the season's grip on drinking — thirst builds faster in the dry season, and a drink taken
+    // in it doesn't hold (it settles at a floor rather than 0). Spring and fall are 1.0 / 0: no change.
+    const season = this.currentSeason();
+    this.needs = advanceNeeds(
+      this.needs,
+      this.dinos.map((d) => ({ name: d.name, traits: d.traits })),
+      1,
+      seasonThirst(season),
+    );
     for (const d of this.dinos) {
       const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
-      if (atWater(zone, this.tileOf(d), COLS, ROWS)) this.needs = satisfy(this.needs, d.name, 'thirst');
+      if (atWater(zone, this.tileOf(d), COLS, ROWS)) {
+        this.needs = satisfy(this.needs, d.name, 'thirst', slakeFloor(season));
+      }
     }
     this.feedFromStores();
     this.refreshNeedMarks();
@@ -6066,6 +6111,9 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-461: the season's grip on the pantry is player-visible — no silent economy change.
     const gripLine = seasonGripLine(turned);
     if (gripLine) this.logEvent(gripLine);
+    // BACKLOG-466: ...and its grip on drinking, the water twin of the grip line.
+    const thirstLine = seasonThirstLine(turned);
+    if (thirstLine) this.logEvent(thirstLine);
     // BACKLOG-465: and which *ground* the season favours — the per-crop companion to the park-wide grip.
     const cropLine = seasonCropLine(turned);
     if (cropLine) this.logEvent(cropLine);
