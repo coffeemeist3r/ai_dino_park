@@ -6647,3 +6647,18 @@ standing's book line is `null` on purpose — the provider's book presence is th
 is what makes the fold behaviour-preserving. `__councils` is kept untouched beside a new `__standings`.
 If any existing spec's *expectation* needs editing, the fold is wrong. Order: 404's one line first, then 482.
 phase → coder-pending.
+
+## 2026-08-15 04:05 — cycle 131 — qa — 24/24 criteria pass, and a suite that did not move
+
+Build clean. Unit **1753/1753** (+21). E2E **504/504 on the first full run, zero retries** — the first data
+point since cycle 130 concluded the parallel-load failure had become a property of the run rather than of
+particular specs. One clean roll does not settle it; BACKLOG-486 would.
+
+404: all twelve asides distinct, the 385 repay correctly not an outcome, the 403 mercy pair correctly not an
+outcome, and the recency read proven live — seed a stand then a slink-off and the dino sounds sore, not proud.
+The 6-slot ring is the only freshness gate and nothing anywhere decides when the mood stops.
+
+482: the agreement pin holds (the folded read equals `zoneProvider`/`zoneCouncil` for every zone on the same
+input), and the item's real claim — *nothing changes* — was tested by 504 e2e specs and 1753 unit tests
+written by thirty other cycles against the exact strings it rewired. Two assertion edits, both field-shape,
+zero expectation edits. phase → validator-pending.
