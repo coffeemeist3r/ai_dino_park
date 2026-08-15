@@ -666,7 +666,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > voice (404), grow a victor's-mercy grace note (403), and — off the feeding treadmill — let a dino
 > alone too long invent a tic of its very own (405).
 
-- [ ] BACKLOG-404 [social] Mealtime mood in the voice — a dino's most recent hatch outcome tints its next dialogue line: a gobbler that just grabbed sounds smug, a dino that yielded sounds wistful, one that stood its ground sounds proud — layering the feeding trait (375/387/390) into speech the way mood and time-of-day already do (051). Builds on 375 / 387 / 390 / 051.
+- [~] BACKLOG-404 [social] Mealtime mood in the voice — a dino's most recent hatch outcome tints its next dialogue line: a gobbler that just grabbed sounds smug, a dino that yielded sounds wistful, one that stood its ground sounds proud — layering the feeding trait (375/387/390) into speech the way mood and time-of-day already do (051). Builds on 375 / 387 / 390 / 051.
 
 ## Cycle 87 — the tic spreads
 

@@ -6616,3 +6616,18 @@ left the *spend* priority a monarchy). Queue now 5. Chosen: **BACKLOG-482**, the
 the 449 terrain lesson applied to roles, and the thing both 484 and 487 want under them first. Picked to close
 Milestone 13's structure half. No behavior change intended; a still suite is the evidence. Collision with the
 lore track is one file (the collection book) in non-overlapping sections.
+
+## 2026-08-15 03:02 — cycle 131 — designer — both tracks close Milestone 13
+
+**Lore (404):** the contested-drop ledger read for *recency* instead of career — the latest of the four hatch
+memories on the ring tints the next greeting as a temperament-shaded aside, four outcomes × three bands,
+naming the other dino. Same `hungryAside`/`seasonAside` shape the park has proved five times. Gate is the
+6-slot ring itself: the mood goes quiet when the memory rolls off, so no timestamp and no 251-style permanent
+script. Mercy (403) deliberately excluded and the reason written down. The reader lives *in* `manner.ts` and
+reuses its regexes — 404 is the third consumer of those four strings and must not become a third copy of them.
+
+**Structure (482):** one `world/standings.ts`, one shape `{ zone, kind, holders }`, one derivation the book,
+the lens and `providerFor` all read. The council's book line — today an inline IIFE inside `bookRows()` with
+no module and no test — gets both. `since` is **not** built: the council re-derives every read, so a date
+computed now would say "now"; that field is 484's, and 484 is next in the queue. No behavior change intended;
+a suite that doesn't move is the acceptance test. phase → codeplan-pending.
