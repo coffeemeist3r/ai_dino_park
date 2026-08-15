@@ -6631,3 +6631,19 @@ the lens and `providerFor` all read. The council's book line — today an inline
 no module and no test — gets both. `since` is **not** built: the council re-derives every read, so a date
 computed now would say "now"; that field is 484's, and 484 is next in the queue. No behavior change intended;
 a suite that doesn't move is the acceptance test. phase → codeplan-pending.
+
+## 2026-08-15 03:16 — cycle 131 — code-planner — ~13 files, one shared file, an explicit order
+
+**404:** `lastHatchOutcome` goes *into* `manner.ts` and reuses its four regexes — which have to gain capture
+groups for the other dino's name, and `SLUNK` needs a `^` anchor it never had. Flagged as the cycle's sharpest
+risk: `pecking.ts` keeps its own capture-group copies of the same four patterns, so the new manner captures
+must match 401's exactly or the two modules will disagree about who a dino gobbled from. A regression pin on
+`mannerTallies` goes in before the regexes move. Then one `mealtimeAside` (12 lines, three bands) in
+`brain.ts`, composed last, and one line at the greet call site.
+
+**482:** `world/standings.ts` composes `zoneProvider`/`zoneCouncil`/`pioneerOf` rather than re-implementing
+them, `BookRow.council` + `BookRow.pioneer` collapse to one ordered `standings?: string[]`, and the provider
+standing's book line is `null` on purpose — the provider's book presence is the 🧺 *role*, and keeping it out
+is what makes the fold behaviour-preserving. `__councils` is kept untouched beside a new `__standings`.
+If any existing spec's *expectation* needs editing, the fold is wrong. Order: 404's one line first, then 482.
+phase → coder-pending.
