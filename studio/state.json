@@ -2,7 +2,7 @@
   "cycle": 131,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-482: One place the standings are derived \u2014 fold pioneer/provider/council into one pure per-zone standings module",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-15T02:30:00-05:00",
-    "structure-smith": "2026-08-14T02:44:00-05:00",
+    "structure-smith": "2026-08-15T02:44:00-05:00",
     "designer": "2026-08-14T03:02:00-05:00",
     "code-planner": "2026-08-14T03:16:00-05:00",
     "coder": "2026-08-14T03:40:00-05:00",

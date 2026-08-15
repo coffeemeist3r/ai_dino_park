@@ -6605,3 +6605,14 @@ read for *recency* instead of career, tinting the next greeting smug / wistful /
 temperament so the same outcome sounds different out of a prickly mouth and a warm one. Cap rule: lore-track
 open items ≫ 12, so no new items brainstormed. Idea Box empty. Flagged for the Structure-smith: 404 is the
 **third** consumer of the four hatch memory strings, which sharpens BACKLOG-483. phase → designer-pending.
+
+## 2026-08-15 02:44 — cycle 131 — structure-smith — one place the standings are derived
+
+Structure Track was at 3 open (below cap X=4), so two were brainstormed before picking: **BACKLOG-486** (the
+run, not the spec — the general e2e parallel-load fix last night's validator explicitly refused to leave as a
+note inside 430) and **BACKLOG-487** (the other call goes to the council — 481 voted the *work* priority and
+left the *spend* priority a monarchy). Queue now 5. Chosen: **BACKLOG-482**, the standings fold — `pioneer`,
+`provider` and the council collapsed into one pure per-zone module the book, the lens and the save all read,
+the 449 terrain lesson applied to roles, and the thing both 484 and 487 want under them first. Picked to close
+Milestone 13's structure half. No behavior change intended; a still suite is the evidence. Collision with the
+lore track is one file (the collection book) in non-overlapping sections.

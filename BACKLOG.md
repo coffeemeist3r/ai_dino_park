@@ -20,9 +20,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-482 [infra] One place the standings are derived — fold `pioneer` / `provider` / council into one pure per-zone standings module the book, the lens and the save all read (full text in the cycle-127 block below).
+- [~] BACKLOG-482 [infra] One place the standings are derived — fold `pioneer` / `provider` / council into one pure per-zone standings module the book, the lens and the save all read (full text in the cycle-127 block below).
 - [ ] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).
 - [ ] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
+- [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
+- [ ] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
 
 ---
 
@@ -697,7 +699,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
 > park will owe once a third derived per-zone standing exists.
 
-- [ ] BACKLOG-482 [infra] One place the standings are derived — `pioneer` (343), `provider` (448) and now the council (479) are each a per-zone standing derived from a different tally in a different module, recomputed on different hooks, and the collection book reads all three by hand. Fold the derivations into one pure per-zone standings module with a single shape (`{ zone, kind, dinoId(s), since }`) that the book, the lens and the save all read, so a fourth standing is a row and not a fourth code path — the `ZONE_TERRAIN` (449) lesson applied to roles. Additive save only. Builds on 343 / 448 / 479 / 449.
+- [~] BACKLOG-482 [infra] One place the standings are derived — `pioneer` (343), `provider` (448) and now the council (479) are each a per-zone standing derived from a different tally in a different module, recomputed on different hooks, and the collection book reads all three by hand. Fold the derivations into one pure per-zone standings module with a single shape (`{ zone, kind, dinoId(s), since }`) that the book, the lens and the save all read, so a fourth standing is a row and not a fourth code path — the `ZONE_TERRAIN` (449) lesson applied to roles. Additive save only. Builds on 343 / 448 / 479 / 449.
 
 ## Cycle 129 structure additions — after the vote (2026-08-13)
 
@@ -707,6 +709,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-484 [core] The seat has a term — the council (479) is re-derived from live banked tallies on every read, which was harmless while a seat was only a badge on the lens. Once the seats **decide** (481), one dino banking one unit can flip a ground's work priority between two ticks, with nothing in the world marking that it happened. Give a seat a term: re-derive the council on a cadence (the in-game day boundary the discontent gate and spoilage already use), hold the seating between, and land a one-off ticker beat when the membership actually turns over — so a ground's electorate changes on a date rather than flickering. Persisted like the calls it sets, additive; a park whose council never changes reads exactly as it does today. Builds on 479 / 481 / 467.
 - [ ] BACKLOG-485 [core] The bill reaches the call — 480 gave the skyline a running cost and a reversible disrepair, and governance cannot hear any of it: a ground whose landmarks are rotting for want of upkeep sets its work priority off its deciders' temperaments alone, exactly as a thriving one does. Let the bill talk: a zone carrying a derelict landmark biases its own call (a standing lean toward `'gather'` while anything of its is in disrepair), so the ground answers its own emergency instead of raising more walls it can't keep. One pure modifier over the existing call, `null`-safe so a park with nothing derelict is bit-identical. The first feedback loop in the park from a *building* back into a *decision*. Builds on 480 / 481 / 473.
+
+## Cycle 131 structure additions — after the fold (2026-08-15)
+
+> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 482. One is the
+> item the cycle-130 validator explicitly declined to file under BACKLOG-430 ("a general fix is a Structure-Track
+> item somebody should seed, not a note somebody should read"); the other is the half of governance the vote
+> (481) did not reach.
+
+- [ ] BACKLOG-486 [infra] The run, not the spec — for twenty cycles the e2e suite's occasional single-spec failure was catalogued per spec, and cycle 125 (456) put the four known victims on a dev hold. Cycle 130 ended that reading: two consecutive full runs, 498/499 each, with a **different** victim each time (`cycle-110-plenty`, then `cycle-123-wandering`), neither near that cycle's diff, both green in isolation. At 499 specs the failure is a property of the **run** — contention between parallel workers over the shared dev server, the WebGPU-less browser, and boot — not of any spec's assertions, and the next two-track cycle rolls the same die. Bound the load instead of chasing victims: set an explicit worker cap / shard in `playwright.config.ts` calibrated against a measured run, give the boot path the same settle discipline 456 built for the crossing race, and land the evidence (three consecutive clean full runs) in the QA handoff. Success is a suite whose green is information again. Builds on 456 / 430 / 431.
+- [ ] BACKLOG-487 [core] The other call goes to the council — 481 handed a ground's **work** priority (473) to its council by majority off the members' temperaments, the provider breaking ties. The ground's **spend** priority (463) — feed-the-hungry-first vs. bank-toward-a-granary, the older and more player-visible of the two calls, on the lens since 468 and in the cast's mouths since 469/470/471 — is still set unilaterally by whoever out-banks everyone else, and re-set silently on every handover (467). Run it through the same decision the work call now uses, so a ground's two calls are made the same way by the same seats, the handover beat (467) fires on a *vote* rather than one dino's temperament, and the discontent ticker (471) is finally answering a decision the ground actually made together. Reuses 481's tally wholesale; additive save. Builds on 481 / 473 / 463 / 467.
 
 ## Mobile (deferred, do not pick until charter clears)
 
