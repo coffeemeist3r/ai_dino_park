@@ -135,7 +135,10 @@ describe('the council on the map lens and in the book (BACKLOG-479)', () => {
 
   it('renders the seat line in the book only when the dino holds one', () => {
     const base: BookRow = { name: 'Rex', species: 'tyrannosaurus', hearts: 1, topBond: 0, role: 'wanderer', rumorsHeard: 0 };
-    expect(bookLines([{ ...base, council: "👥 one of The Grove's 2 voices" }]).some((l) => l.includes('👥'))).toBe(true);
+    // BACKLOG-482: the seat arrives via the folded `standings` list now; the rendered line is unchanged.
+    expect(bookLines([{ ...base, standings: ["👥 one of The Grove's 2 voices"] }]).some((l) => l.includes('👥'))).toBe(
+      true,
+    );
     expect(bookLines([{ ...base }]).some((l) => l.includes('👥'))).toBe(false);
   });
 });

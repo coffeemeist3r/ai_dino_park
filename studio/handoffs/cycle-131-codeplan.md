@@ -216,3 +216,27 @@ none.
 ### Estimated touch count
 
 ~7 files. Combined cycle: **~13 files** — within the CHARTER v6 arc size.
+
+---
+
+## SHIPPED (Coder, 2026-08-15)
+
+Both tracks landed as planned; no blockers, no plan deviations worth a rework note.
+
+**404** — `manner.ts` gained capture groups on all five patterns (`SLUNK` gained the `^` anchor the plan
+flagged) plus `OUTCOMES` + `lastHatchOutcome`, scanning the ring backwards. The captures were diffed against
+`pecking.ts`'s `WEIGHTS` copies and match. `brain.ts` gained `NPCContext.mealtime`, `mealtimeAside` (12 lines),
+and a final compose step capped at 460. `webllmBrain.ts` gained the matching prompt clause. `WorldScene`
+passes `lastHatchOutcome(recall(...))` at the greet site. 11 unit tests, 3 e2e.
+
+**482** — new `world/standings.ts` (composes `zoneProvider`/`zoneCouncil`/`pioneerOf`, never re-implements).
+`BookRow.council` + `BookRow.pioneer` → `standings?: string[]`; `bookLines` renders the list in the council's
+old slot. `WorldScene.standings()` is the one derivation; `providerFor`, `councilFor`, `zoneCouncils` and
+`bookRows` all read it. `__councils` untouched, `__standings` added. 10 unit tests, 2 e2e.
+
+**Assertion edits:** two, both shape-only, exactly as the plan permitted — `ui/lenses.test.ts` and
+`tests/unit/cycle-119-pioneer.test.ts` construct `standings: [...]` instead of `council:`/`pioneer:`. No
+expectation changed anywhere in the suite.
+
+**Gates:** `npm run build` clean · `npx vitest run` 1753/1753 · `npx playwright test` **504/504 on the first
+full run** · `@mlc-ai/web-llm` imported only in `ai/webllm.worker.ts` + `ai/webllmBrain.ts` · no save change.

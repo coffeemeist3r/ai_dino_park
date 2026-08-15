@@ -147,13 +147,22 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
       : ctx.hungry && ctx.groundPolicy === 'bank'
         ? `Your ground is banking food for a granary while you go hungry — let a grumble about that slip into what you say. `
         : '';
+  // BACKLOG-404: how the last contested drop went, and who with — the model gets the same fact the canned
+  // `mealtimeAside` says deterministically, so a loaded model phrases it and an unloaded one still says it.
+  const MEALTIME: Record<string, string> = {
+    gobbled: `You got to the last food drop ahead of NAME and ate it — you're a little smug about that. `,
+    yielded: `You stepped back at the last food drop and let NAME eat first — you're wistful about it. `,
+    stood: `You held your ground at the last food drop when NAME tried to take your food, and kept it — you're proud. `,
+    slunk: `NAME wouldn't budge off the last food drop and you gave up and slunk away — it still stings. `,
+  };
+  const mealtime = ctx.mealtime ? MEALTIME[ctx.mealtime.outcome].replaceAll('NAME', ctx.mealtime.other) : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

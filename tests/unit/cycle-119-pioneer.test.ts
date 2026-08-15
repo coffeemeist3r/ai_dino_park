@@ -60,7 +60,7 @@ describe('the lines it reads as (BACKLOG-343)', () => {
   });
 
   it('shows in the collection book on the pioneer’s block and on no other', () => {
-    const lines = bookLines([row('Mossback', { pioneer: pioneerLine(GROVE_ID) }), row('Sunny')]).join('\n');
+    const lines = bookLines([row('Mossback', { standings: [pioneerLine(GROVE_ID)] }), row('Sunny')]).join('\n');
     expect(lines).toContain('first across into The Grove');
     expect(lines.match(/first across/g)).toHaveLength(1);
   });
@@ -75,7 +75,7 @@ describe('the fourth ground is founded with no code written for it (BACKLOG-343 
     const map = {};
     expect(recordPioneer(map, HOLLOW_ID, 'Twitch')).toBe(true);
     expect(pioneerLine(HOLLOW_ID)).toBe('first across into The Hollow');
-    expect(bookLines([row('Twitch', { pioneer: pioneerLine(HOLLOW_ID) })]).join('\n')).toContain(
+    expect(bookLines([row('Twitch', { standings: [pioneerLine(HOLLOW_ID)] })]).join('\n')).toContain(
       'first across into The Hollow',
     );
   });

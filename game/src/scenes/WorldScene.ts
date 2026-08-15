@@ -90,7 +90,7 @@ import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/
 import { wanderStep, stepToward, pickNearest } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
-import { mannerLine } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note
+import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
 import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
 import { pickMurmurMemory, murmurLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
@@ -100,7 +100,7 @@ import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget,
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
-import { deriveRole, settleRole, zoneProvider, zoneCouncil, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
+import { deriveRole, settleRole, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
 import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
@@ -175,7 +175,9 @@ import {
 import { rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
-import { recordPioneer, pioneerEvent, pioneerLine, foundedBy, pioneerOf, type Pioneers } from '../world/pioneer';
+import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
+// BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
+import { zoneStandings, providerOf, councilOf, standingLines, type Standing } from '../world/standings';
 import { isUnsettled, unsettledNeighbor, settleMemory, settleLine, settleEvent, UNSETTLED_BADGE } from '../world/frontier';
 import {
   markLeft,
@@ -2807,7 +2809,14 @@ export class WorldScene extends Phaser.Scene {
    * banked tally. Goes through `roleOf` so the answer can never disagree with the roles lens or the book.
    */
   private providerFor(zoneId: string): string | null {
-    return zoneProvider(this.zoneCandidates(), zoneId);
+    return providerOf(this.standings(), zoneId);
+  }
+
+  /** Every per-zone standing on every ground (BACKLOG-482) — pioneer, provider and council, derived in one
+   *  place off the one roster. Every consumer below goes through this, so the book, the lens, the handover
+   *  beat and the greeting aside can never disagree about who holds what. Derived per read, never stored. */
+  private standings(): Standing[] {
+    return zoneStandings(this.zoneCandidates(), this.pioneers);
   }
 
   /** The roster as the standings reads see it — where each dino lives, what it settled into, what it has
@@ -2828,13 +2837,13 @@ export class WorldScene extends Phaser.Scene {
    *  whole chain — the vote (481) reads this on the regrowth tick, so it builds the roster once and no
    *  per-zone loop. Same `zoneCouncil` the lens and the book go through; the seats can't drift. */
   private councilFor(zoneId: string): string[] {
-    return zoneCouncil(this.zoneCandidates(), zoneId);
+    return councilOf(this.standings(), zoneId);
   }
 
   private zoneCouncils(): Record<string, string[]> {
-    const candidates = this.zoneCandidates(); // built once — a 40-dino roster shouldn't rebuild per zone
+    const all = this.standings(); // derived once — a 40-dino roster shouldn't rebuild per zone
     const out: Record<string, string[]> = {};
-    for (const z of zoneChain()) out[z] = zoneCouncil(candidates, z);
+    for (const z of zoneChain()) out[z] = councilOf(all, z);
     return out;
   }
 
@@ -2916,7 +2925,7 @@ export class WorldScene extends Phaser.Scene {
 
   private bookRows(): BookRow[] {
     const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
-    const councils = this.zoneCouncils(); // BACKLOG-479: derived once per open, not once per dino
+    const standings = this.standings(); // BACKLOG-482: derived once per open, not once per dino
     return this.dinos.map((d) => ({
       name: d.name,
       species: d.species,
@@ -2935,17 +2944,9 @@ export class WorldScene extends Phaser.Scene {
       manner: mannerLine(recall(this.memory, d.name)) ?? undefined, // BACKLOG-402: how it behaves at a contested drop
       // BACKLOG-401: the same beats read per opponent — who it has faced down and who has beaten it.
       pecking: peckingLine(recall(this.memory, d.name), this.dinos.map((o) => o.name)) ?? undefined,
-      council: (() => {
-        // BACKLOG-479: a seat is a standing about the ground you live on, so it reads off that ground's council.
-        const z = zoneOf(this.dinoZones, d.name, BOWL_ID);
-        const seats = councils[z] ?? [];
-        if (!seats.includes(d.name)) return undefined;
-        return `👥 one of ${zoneById(z).name}'s ${seats.length} voice${seats.length === 1 ? '' : 's'}`;
-      })(),
-      pioneer: (() => {
-        const z = foundedBy(this.pioneers, d.name); // BACKLOG-343: only the pioneer's own block carries it
-        return z ? pioneerLine(z) : undefined;
-      })(),
+      // BACKLOG-482: the council seat (479) and the founding (343) both come out of the one standings read,
+      // wording and order owned by `standingLines` rather than by a closure in here.
+      standings: standingLines(standings, d.name),
       taught: (() => {
         const t = taughtCount(recall(this.memory, d.name)); // BACKLOG-364: what it has shown others
         return t ? taughtBookLine(t.zoneName, t.count) : undefined;
@@ -3065,6 +3066,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__foodBanked = () => ({ ...this.foodBanked });
     // BACKLOG-479: each ground's seated council — derived, never stored, so this is a live read.
     (window as any).__councils = () => this.zoneCouncils();
+    // BACKLOG-482: the folded read behind __councils and the book's standing lines.
+    (window as any).__standings = () => this.standings();
     // BACKLOG-481: the vote itself, not just its outcome — who sat, how each voted, who'd break a tie.
     (window as any).__councilVotes = (zone: string) => {
       const z = zone ?? this.zoneId;
@@ -5726,6 +5729,9 @@ export class WorldScene extends Phaser.Scene {
         pressingNeed(this.needs[target.name]) === 'hunger'
           ? (this.spendPriorityFor(zoneOf(this.dinoZones, target.name, BOWL_ID)) ?? undefined)
           : undefined,
+      // Mealtime mood in the voice (BACKLOG-404): how its last contested drop went, while that beat is still
+      // on the ring. The ring is the freshness gate — when the memory rolls off, the dino stops mentioning it.
+      mealtime: lastHatchOutcome(recall(this.memory, target.name)) ?? undefined,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed

@@ -12,6 +12,7 @@
 import type { Personality } from './personality';
 import type { Season } from '../world/seasons';
 import type { SpendPriority } from '../world/governance';
+import type { HatchOutcome } from '../world/manner';
 import { WebLLMBrain } from './webllmBrain';
 
 export interface NPCContext {
@@ -43,6 +44,12 @@ export interface NPCContext {
    * no policy, so the tell stays a flavour beat rather than an every-greet tic.
    */
   groundPolicy?: SpendPriority;
+  /**
+   * How this dino's last contested drop went, and who it was with (BACKLOG-404). Set only while the beat is
+   * still on the 6-slot recall ring, so the mood is a passing feeling rather than a standing fact — the
+   * career read lives in the collection book (402), and this is the one the player hears.
+   */
+  mealtime?: { outcome: HatchOutcome; other: string };
 }
 
 export interface Observation {
@@ -248,6 +255,46 @@ export function policyAside(policy: SpendPriority, traits?: Personality): string
   return ` …and we go short a while, mind, so the granary can rise.`;
 }
 
+/**
+ * Mealtime mood in the voice (BACKLOG-404) — the last contested drop, said out loud.
+ *
+ * The park has kept a hatch ledger since cycle 84 and read it two ways, both as *history*: a career folded
+ * into a book note (402) and a per-opponent disposition spent on the next contest (401/389/403). This is the
+ * third register and the only one that is a **feeling** — a dino greeted a beat after the drop tells you how
+ * it went, unprompted, and stops mentioning it once the memory rolls off its ring.
+ *
+ * Temperament-shaded like every aside above it (`PRICKLY_MAX` / `EFFUSIVE_MIN`, leading space, no traits →
+ * the even line). The grid is deliberately **not** uniform: a prickly dino that stood its ground is flinty
+ * about it while a warm one is almost sorry it came to that, and a warm dino that gobbled is sheepish where
+ * a prickly one gloats. Same four facts, twelve different people.
+ *
+ * It always names the other dino, because the ledger always has — 401's whole finding was that a drop is a
+ * history between *two* dinos, and a line that said "I got the last one" without saying who from would throw
+ * that away.
+ */
+export function mealtimeAside(outcome: HatchOutcome, other: string, traits?: Personality): string {
+  const prickly = !!traits && traits.agreeableness < PRICKLY_MAX;
+  const warm = !!traits && traits.agreeableness > EFFUSIVE_MIN;
+  switch (outcome) {
+    case 'gobbled':
+      if (prickly) return ` …and I got in ahead of ${other} at the hatch. they were too slow. that's all there is to it.`;
+      if (warm) return ` …oh, and I did rather snatch that last one out from under ${other}. I'll make it up to them.`;
+      return ` …got to the drop before ${other} did, if you're counting.`;
+    case 'yielded':
+      if (prickly) return ` …let ${other} have the last one. don't read anything into it.`;
+      if (warm) return ` …I let ${other} eat first — they needed it more than me. I'm sure something else will come along.`;
+      return ` …${other} got the last one. I stepped back. it's fine.`;
+    case 'stood':
+      if (prickly) return ` …${other} tried to take my food. ${other} did not take my food. remember that.`;
+      if (warm) return ` …I did have to hold my ground against ${other}, which I hated, but it *was* mine.`;
+      return ` …stood my ground against ${other} at the hatch. felt good, honestly.`;
+    case 'slunk':
+      if (prickly) return ` …${other} wouldn't shift. wasn't worth the trouble. I wasn't hungry anyway.`;
+      if (warm) return ` …${other} wouldn't budge and I just… went away. I hate it when it goes like that.`;
+      return ` …${other} wouldn't move off the drop. I let it go.`;
+  }
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -294,6 +341,16 @@ export function cannedReply(ctx: NPCContext): Reply {
   // regardless of caller; composes last, onto every register above it, within the raised cap.
   if (ctx.hungry && ctx.groundPolicy) {
     reply = { ...reply, text: (reply.text + policyAside(ctx.groundPolicy, ctx.traits)).slice(0, 400) };
+  }
+  // Mealtime mood in the voice (BACKLOG-404): how the last contested drop went, composed last of all — it is
+  // the most recent thing that happened to this dino but the least *urgent* thing it has to say, and putting
+  // it after the policy aside keeps every earlier cap exactly where it was. The final cap is the only one
+  // raised, and only enough to hold the longest of the twelve lines.
+  if (ctx.mealtime) {
+    reply = {
+      ...reply,
+      text: (reply.text + mealtimeAside(ctx.mealtime.outcome, ctx.mealtime.other, ctx.traits)).slice(0, 460),
+    };
   }
   return reply;
 }

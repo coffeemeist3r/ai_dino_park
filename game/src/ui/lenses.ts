@@ -189,12 +189,11 @@ export interface BookRow {
   plans?: string;
   /** Where the dino has settled (BACKLOG-341) — `at home in <zone>`, set only once it belongs. */
   home?: string;
-  /** A seat on the ground's council (BACKLOG-479) — `👥 one of the Grove's 2 voices`, undefined for a dino
-   *  that holds no seat (then no line shows). The same 👥 the zone-map lens marks the ground with. */
-  council?: string;
-  /** Founding standing (BACKLOG-343) — `first across into <Zone>` for the first dino ever to arrive in a
-   *  zone, undefined for everyone else (then no line shows). Built by `pioneerLine`. */
-  pioneer?: string;
+  /** The per-zone standings this dino holds (BACKLOG-482) — a council seat (479, `👥 one of the Grove's 2
+   *  voices`), a founding (343, `first across into <Zone>`), in derivation order. Empty/undefined for a dino
+   *  that holds none (then no line shows). Built by `standingLines` — one module now derives all three, so a
+   *  fourth standing is a row here and not a fourth field. */
+  standings?: string[];
   /** What this dino has shown others (BACKLOG-364) — the ground it has told the most never-been dinos
    *  about, and how many tellings it carries. Undefined for a dino that has taught nobody. */
   taught?: string;
@@ -234,8 +233,9 @@ export function bookLines(rows: BookRow[]): string[] {
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
-    if (r.council) out.push(`  ${r.council}`); // BACKLOG-479: a seat on the ground's council, beside where it lives
-    if (r.pioneer) out.push(`  ${r.pioneer}`); // BACKLOG-343: the founding standing, kept forever
+    // BACKLOG-482: the per-zone standings, all three derived in one place. Same slot and same order the
+    // council (479) and pioneer (343) lines occupied when they were two fields — the fold moves no line.
+    for (const s of r.standings ?? []) out.push(`  ${s}`);
     if (r.taught) out.push(`  ${r.taught}`); // BACKLOG-364: the grounds it has shown others the way to
     if (r.yearn) out.push(`  ${r.yearn}`); // BACKLOG-362: the ground it has been away from too long
     if (r.struck) out.push(`  ${r.struck}`); // BACKLOG-347: the ground it is still full of

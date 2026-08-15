@@ -18,11 +18,15 @@ export interface MannerTallies {
   timid: number;
 }
 
-const YIELDED = /^you stepped back and let .+ eat first$/; // BACKLOG-375
-const REPAID = /^you repaid .+'s kindness at the hatch$/; // BACKLOG-385 — repaying a meal is generosity too
-const SNATCHED = /^you shouldered past .+ and snatched the food first$/; // BACKLOG-387
-const STOOD = /^you stood your ground and kept your food from .+$/; // BACKLOG-390
-const SLUNK = / wouldn't budge — you slunk off$/; // BACKLOG-394 — a *suffix*: slunkOffMemory prefixes a name
+// Each pattern captures the *other* dino's name in group 1 — `mannerTallies` only asks whether a beat
+// happened, but `lastHatchOutcome` (404) has to name who it happened with, and one pattern per beat is the
+// whole point of this module. The captures are byte-identical to `pecking.ts`'s `WEIGHTS` copies (401), so
+// the two modules can never disagree about who a dino gobbled from.
+const YIELDED = /^you stepped back and let (.+) eat first$/; // BACKLOG-375
+const REPAID = /^you repaid (.+)'s kindness at the hatch$/; // BACKLOG-385 — repaying a meal is generosity too
+const SNATCHED = /^you shouldered past (.+) and snatched the food first$/; // BACKLOG-387
+const STOOD = /^you stood your ground and kept your food from (.+)$/; // BACKLOG-390
+const SLUNK = /^(.+) wouldn't budge — you slunk off$/; // BACKLOG-394 — slunkOffMemory prefixes a name
 
 /** How many of each contested-drop beat this dino currently carries. */
 export function mannerTallies(memories: readonly string[]): MannerTallies {
@@ -69,4 +73,40 @@ const BLURB: Record<TableManner, string> = {
 export function mannerLine(memories: readonly string[]): string | null {
   const m = hatchManner(memories);
   return m ? `🍽️ at the hatch: ${m} — ${BLURB[m]}` : null;
+}
+
+/**
+ * Mealtime mood in the voice (BACKLOG-404) — the same ledger, read for **recency** instead of career.
+ *
+ * `hatchManner` above folds every contested beat a dino carries into one character note, and `pecking.ts`
+ * (401) splits the same beats by opponent. Neither asks the question a *voice* wants answered: how did the
+ * last meal go, and is the dino still carrying it. That is this — the latest contested beat on the ring, and
+ * who it was with, handed to `mealtimeAside` (ai/brain.ts) to be said out loud.
+ *
+ * The 6-slot ring is the entire freshness gate. A mood speaks while its memory is still on the ring and goes
+ * quiet on its own as the ring rolls — no timestamp, no second mechanism, and none of the 251 wart where a
+ * spoken feeling became a permanent script.
+ *
+ * `REPAID` (385) is deliberately not an outcome: repaying a kindness later is generosity after the fact, not
+ * a drop that was contested. It stays a `generous` tally for the book and nothing more.
+ */
+export type HatchOutcome = 'gobbled' | 'yielded' | 'stood' | 'slunk';
+
+const OUTCOMES: readonly { re: RegExp; outcome: HatchOutcome }[] = [
+  { re: SNATCHED, outcome: 'gobbled' },
+  { re: YIELDED, outcome: 'yielded' },
+  { re: STOOD, outcome: 'stood' },
+  { re: SLUNK, outcome: 'slunk' },
+];
+
+/** The most recent contested-drop beat this dino carries, and who it was with — or null if it carries none.
+ *  `remember` appends and keeps the last six, so the newest memory is the *last* element: scan backwards. */
+export function lastHatchOutcome(memories: readonly string[]): { outcome: HatchOutcome; other: string } | null {
+  for (let i = memories.length - 1; i >= 0; i--) {
+    for (const { re, outcome } of OUTCOMES) {
+      const hit = re.exec(memories[i]);
+      if (hit) return { outcome, other: hit[1] };
+    }
+  }
+  return null;
 }
