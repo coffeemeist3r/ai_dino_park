@@ -8,27 +8,8 @@
 
 ## Current milestone
 
-**Milestone 13: The hatch is a society, and the ground votes**
-**Status:** ACTIVE (opened cycle 129)
-
-Milestone 12 gave the park a fork, a council, a bill, and a cast you can tell apart — and closed on two
-findings. One of them: *a tally is not a character until someone decides what it means.* This milestone
-spends both halves cashing that. The lore half takes 401's per-opponent hatch history — which today
-decides exactly one thing, at the instant two dinos are already nose to nose over a drop — and lets it
-reach the **feet**, the **grace**, and the **voice**, so a pecking order is something you watch rather
-than something you read in the book. The structure half hands the ground's second call to its **council**
-(479), which is BACKLOG-031 — "at threshold population, NPCs vote on a simple rule" — finally plugged in
-after 128 cycles, and then pays down the standings sprawl three derived roles have accreted.
-
-**Lore arcs:**
-- [x] The berth — a dino that has been shouldered aside at the hatch gives that one a wide berth: seeing its rival already nearer the drop, it hangs back rather than contest it, so the pecking order moves feet and not just outcomes (BACKLOG-389 — cycle 129)
-- [x] Victor's mercy — a dino that stood its ground and ate, meeting the same denied gobbler still hungry, may let it have the next scrap, so defiance and grace live in the same dino (BACKLOG-403 — cycle 130)
-- [ ] Mealtime mood in the voice — the last hatch outcome tints a dino's next line: the gobbler smug, the yielder wistful, the one that held its ground proud (BACKLOG-404)
-
-**Structure arcs:**
-- [x] The council actually decides — the work priority (473) set by council majority off the members' temperaments, the provider breaking ties; BACKLOG-031 plugged in at the one place in the park where a set of deciders exists (BACKLOG-481 — cycle 129)
-- [ ] One place the standings are derived — `pioneer` / `provider` / council folded into one pure per-zone standings module the book, the lens and the save all read (BACKLOG-482)
-- [x] The dry season — one pure seasonal thirst/water modifier the needs and waterhole hooks read, the drinking mirror of 461's lean-season grip on food (BACKLOG-466 — cycle 130; **the last unpaid half of Milestone 8**)
+_(none — Milestone 13 shipped cycle 131. The smiths draft Milestone 14 at the next cycle open:
+Lore-smith writes the headline + feel arcs, Structure-smith the spine arcs.)_
 
 ---
 
@@ -48,6 +29,66 @@ after 128 cycles, and then pays down the standings sprawl three derived roles ha
 ```
 
 ## Shipped milestones
+
+### Milestone 13: The hatch is a society, and the ground votes — SHIPPED cycle 131 (opened cycle 129)
+
+Milestone 12 closed on a line it meant as a warning: *a tally is not a character until someone decides what it
+means.* Milestone 13 spent three cycles cashing it on the smallest, oldest ledger in the park. Since cycle 84
+four beats at a contested drop have filed memories that name the other dino — a yield, a gobble, a stand, a
+slink-off — and for forty cycles they were counters. 401 read them per opponent and used the result in exactly
+one place: the last instant of an encounter, two dinos already nose to nose over a scrap. This milestone gave
+that history **feet**, **grace**, and a **voice**.
+
+The feet came first (389): a dino that reads `wary` toward someone already nearer the food does not walk over
+there at all, so a pecking order moves bodies instead of only deciding outcomes — and it deliberately **files
+no memory**, because `pecking.ts` parses the very ring a "you hung back" note would push its own evidence off
+the end of. Then the grace (403): the *confident* end of the same read, spent at the drop rather than on the
+approach — a dino that faced this rival down, well fed, meeting it hungry, steps off the scrap. The bars are
+borrowed from the beats they read (`WELL_FED`, `GOBBLE_HUNGER`), the one new constant is agreeableness, and
+that constant is the whole feature: two dinos with identical hatch histories, both bold enough to have won
+them, part company on whether winning again is what they want. And last, the voice (404): the same ledger read
+for **recency** instead of career, twelve lines, non-uniform by temperament, always naming who — the register
+that reaches the player without a book being opened. The 6-slot ring is its only freshness gate; nothing in
+the codebase decides when a dino stops talking about its last meal.
+
+The structure half handed the ground's second call to its **council** and then paid down what three derived
+standings had accreted. 481 plugged in BACKLOG-031 — *"at threshold population, NPCs vote on a simple rule"* —
+**128 cycles after it was written**, and the reason for the wait turned out to be a fact rather than an
+oversight: a monarchy of one has nobody to hold an election, so 479 had to derive a set of deciders first. The
+vote's own arithmetic then produced 031's threshold without anyone choosing one — three seats need six
+residents, the park ships with five, so a council *cannot* outvote its provider until the ground has grown.
+466 paid the last unpaid half of **Milestone 8** fifteen cycles after M8 was declared shipped: the turning year
+had reached the pantry, the spoilage band, the crop yield, the den and the daytime cluster, and had never once
+reached a drink. Its finding is the milestone's second: **a milestone can close its checklist and still leave a
+hole this plainly shaped.** And 482 folded `pioneer`, `provider` and the council into one per-zone standings
+module — the `ZONE_TERRAIN` (449) lesson applied to roles — declining, in the module header, to build the
+`since` field its own BACKLOG text asked for, because a live-derived council can only ever answer "now".
+
+Three findings worth carrying. **The refusals were the design.** 389 files no memory; 403's strings are matched
+by no disposition regex, so a gift is not a defeat and a second mercy stays reachable; 404 leaves the mercy pair
+unread and adds no book line; 482 renders no provider line and builds no `since`. Every one of them was a thing
+that would have been easy to add and would have quietly broken something a cycle or two later. **A tally is
+still not a character.** 402's `timid`-last precedence, 401's featherweight yield, 403's `MERCY_AGREE`, 404's
+non-uniform grid: four cycles, four places where the arithmetic could not say which reading was the person.
+**And BACKLOG-483 is the debt this milestone kept naming and never paid** — three modules now parse those four
+memory strings and two write them, only three of the strings have exported builders, and a reword empties three
+reads with no test failing.
+
+Minds (M1) → home ground (M2) → feeds them (M3) → stakes (M4) → provides for its own (M5) → no zone stands
+alone (M6) → plenty and want have weight (M7) → a year you feel (M8) → a ground that decides (M9) → a chain
+that can grow (M10) → a park you cross (M11) → a park that branches (M12) → **a hatch with a history that has
+feet, grace and a voice, and a ground whose council actually decides** (M13). Deathless by design; mortality
+stays an operator call.
+
+**Lore arcs:**
+- [x] The berth — a dino that has been shouldered aside at the hatch gives that one a wide berth: seeing its rival already nearer the drop, it hangs back rather than contest it, so the pecking order moves feet and not just outcomes (BACKLOG-389 — cycle 129)
+- [x] Victor's mercy — a dino that stood its ground and ate, meeting the same denied gobbler still hungry, may let it have the next scrap, so defiance and grace live in the same dino (BACKLOG-403 — cycle 130)
+- [x] Mealtime mood in the voice — the last hatch outcome tints a dino's next line: the gobbler smug, the yielder wistful, the one that held its ground proud, the one that slunk off sore — and it goes quiet on its own when the memory rolls off the ring (BACKLOG-404 — cycle 131; **lore half closed**)
+
+**Structure arcs:**
+- [x] The council actually decides — the work priority (473) set by council majority off the members' temperaments, the provider breaking ties; BACKLOG-031 plugged in at the one place in the park where a set of deciders exists (BACKLOG-481 — cycle 129)
+- [x] The dry season — one pure seasonal thirst/water modifier the needs and waterhole hooks read, the drinking mirror of 461's lean-season grip on food (BACKLOG-466 — cycle 130; **the last unpaid half of Milestone 8**)
+- [x] One place the standings are derived — `pioneer` / `provider` / council folded into one pure per-zone standings module the book, the lens and the save all read (BACKLOG-482 — cycle 131; **structure track closed, milestone SHIPPED**)
 
 ### Milestone 12: A park that branches, and a cast that doesn't blur — SHIPPED cycle 128 (opened cycle 125)
 

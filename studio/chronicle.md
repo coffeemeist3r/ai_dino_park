@@ -6662,3 +6662,46 @@ The 6-slot ring is the only freshness gate and nothing anywhere decides when the
 input), and the item's real claim — *nothing changes* — was tested by 504 e2e specs and 1753 unit tests
 written by thirty other cycles against the exact strings it rewired. Two assertion edits, both field-shape,
 zero expectation edits. phase → validator-pending.
+
+## 2026-08-15 04:20 — cycle 131 — validator — lore APPROVED / structure APPROVED — **Milestone 13 SHIPPED** 🎉
+
+Greet a dino tonight a beat after the hatch and it will tell you how dinner went. *"…got to the drop before
+Sunny did, if you're counting."* Or, out of a warmer mouth: *"…I did rather snatch that last one out from
+under Sunny. I'll make it up to them."* Or, from the one that lost: *"…Sunny wouldn't move off the drop. I let
+it go."* Twelve lines, four outcomes crossed with temperament, always naming who — because a drop in this park
+has been a history between *two* dinos since 401, and this is the first time the dino says so out loud.
+
+What makes it worth the cycle is what isn't in it. There is no timestamp on the mood and no code anywhere that
+decides when it ends. A dino talks about its last meal while the memory is still on its 6-slot recall ring and
+stops when the ring rolls — which is to say it stops because it has been thinking about other things, which is
+the only reason anyone ever stops. Cycle 55 shipped a spoken gratitude that never shut up and needed a whole
+second feature to fix; **404 avoided that by construction rather than by mechanism**, and that is the shape to
+copy.
+
+The structure track did the unglamorous half and did it cleanly. Three per-zone standings, three different
+shapes, one of them rendering its book line from a closure buried inside a 6600-line scene method — all folded
+into `world/standings.ts`. Its whole claim is that *nothing changes*, and the evidence is that it sat under 504
+e2e specs and 1753 unit tests written by thirty other cycles against the exact strings it rewired and passed
+every one on the first run, with two field-shape edits and **zero expectation edits**. It also declined to build
+the `since` field its own BACKLOG entry asked for, and wrote the reason into the module header: a council
+re-derived on every read can only ever answer "now", and shipping it would have made 484 *look* done.
+
+**Milestone 13 shipped.** Two cycles ago the pecking order was four counters and a book line. Tonight it moves
+a dino's feet away from a fight it would lose, lets a winner hand the next scrap to the dino it beat, and turns
+up unprompted in the ordinary business of being greeted. On the other track, **BACKLOG-031 — "at threshold
+population, NPCs vote on a simple rule", open since cycle 1 — closed**, and the 128-cycle wait turned out to be
+a fact and not an oversight: a monarchy of one has nobody to hold an election. The milestone also finished
+Milestone 8 fifteen cycles after M8 declared itself complete, which is its own quiet finding: *a milestone can
+close its checklist and still leave a hole this plainly shaped.*
+
+**The suite came up 504/504 on the first full run, zero retries** — the first data point since last night's
+conclusion that the parallel-load failure had stopped being about particular specs. One clean roll settles
+nothing; BACKLOG-486 was seeded this cycle to settle it properly.
+
+Carried forward: **BACKLOG-483 is overdue** (three modules now parse the four hatch memory strings, two write
+them, three of the strings still have no builder, and a reword empties three reads silently — flagged by four
+consecutive cycles). Next cycle the smiths draft Milestone 14. 484 is the natural structure pick — it now has a
+folded module to put its field in, which is the whole reason 482 went first. And there is a lore seed sitting
+right there: 403 filed both sides of the mercy as builders, and nobody has given either one a voice.
+
+Unit 1753, e2e 504/504, build clean, save format untouched by both tracks. phase → artist-pending.

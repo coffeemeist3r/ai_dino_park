@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-482 [infra] One place the standings are derived — fold `pioneer` / `provider` / council into one pure per-zone standings module the book, the lens and the save all read (full text in the cycle-127 block below).
 - [ ] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).
 - [ ] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
 - [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
@@ -666,7 +665,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > voice (404), grow a victor's-mercy grace note (403), and — off the feeding treadmill — let a dino
 > alone too long invent a tic of its very own (405).
 
-- [~] BACKLOG-404 [social] Mealtime mood in the voice — a dino's most recent hatch outcome tints its next dialogue line: a gobbler that just grabbed sounds smug, a dino that yielded sounds wistful, one that stood its ground sounds proud — layering the feeding trait (375/387/390) into speech the way mood and time-of-day already do (051). Builds on 375 / 387 / 390 / 051.
 
 ## Cycle 87 — the tic spreads
 
@@ -699,7 +697,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
 > park will owe once a third derived per-zone standing exists.
 
-- [~] BACKLOG-482 [infra] One place the standings are derived — `pioneer` (343), `provider` (448) and now the council (479) are each a per-zone standing derived from a different tally in a different module, recomputed on different hooks, and the collection book reads all three by hand. Fold the derivations into one pure per-zone standings module with a single shape (`{ zone, kind, dinoId(s), since }`) that the book, the lens and the save all read, so a fourth standing is a row and not a fourth code path — the `ZONE_TERRAIN` (449) lesson applied to roles. Additive save only. Builds on 343 / 448 / 479 / 449.
 
 ## Cycle 129 structure additions — after the vote (2026-08-13)
 
