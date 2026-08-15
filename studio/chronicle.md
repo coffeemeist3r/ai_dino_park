@@ -6705,3 +6705,41 @@ folded module to put its field in, which is the whole reason 482 went first. And
 right there: 403 filed both sides of the mercy as builders, and nobody has given either one a voice.
 
 Unit 1753, e2e 504/504, build clean, save format untouched by both tracks. phase → artist-pending.
+
+## 2026-08-15 04:32 — cycle 131-art — artist — no-op on an empty queue, and the first fire in three with nothing to fix
+
+The `## Art` section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` touched,
+no BACKLOG item closed.
+
+**And, unusually, no collision to catch.** The two previous fires each found one — cycle 129's 👀 (a third way
+to say "being looked at"), cycle 130's ❄️ (a second way to say "winter", firing on the same turn as the first).
+Tonight's diff introduces **zero new marks**: a scan of every added line under `game/src` turns up no symbol
+character at all. That is a property of what shipped, not luck. 404 is twelve lines of *speech* — the whole
+point of the item is that the hatch history reaches the player through a voice rather than through another
+badge — and 482 is a fold that was forbidden from rendering anything new by its own acceptance criteria. A
+cycle whose lore half is dialogue and whose structure half is a refactor is the one cycle that cannot collide.
+
+Worth noting as a pattern for the smiths: the glyph space is where this park's features quietly overlap,
+because a second feature reading the same world-fact as an earlier one reaches for the same obvious symbol.
+Two consecutive fires proved that. Tonight suggests the cheaper answer is sometimes to pick a register that
+isn't a glyph at all — 404 says four different things about the hatch without asking for a single new mark,
+where 402 (the same facts, in the book) had to borrow 🍽️ and carry a text prefix to keep it apart from the
+lens's feed-first policy.
+
+Standing flags unchanged: 🍽️ still carries two readings behind that prefix; 🛠️ still double-duties for a
+landmark falling and one patched up; the rectangle fallback still has no live subject (BACKLOG-212 remains the
+item that would give it an honest control); and the ruin-variant art 480 wants — a toppled cairn, a sagging
+lean-to, instead of a faded 🗿 — is still unseeded, still renderable-now under the cycle-91 stash rule, and now
+flagged by **four** consecutive fires. The smiths own the Art queue; it is the obvious first entry the moment
+one of them wants a subject.
+
+Build clean, unit 1753 green. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-15 04:40 — cycle 131 — housekeeping
+
+BACKLOG.md carries no closed bullets. Two body sections whose last open item had closed — the cycle-86 "the
+hatch remembers your face" block and the cycle-127 "after the council" structure block (drained by 482's
+close) — moved to `BACKLOG-archive.md` with their header notes intact. The `## Art` section stays in the
+working file despite being empty: its header carries the stash-ahead rule the Artist reads every fire.
+Structure Track is back at **4 open** (482 closed, 486 + 487 seeded), exactly at the X=4 cap, so the next
+Structure-smith drains rather than invents.

@@ -655,17 +655,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
 - [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
 
-## Cycle 86 lore additions — the hatch remembers your face (2026-06-30)
-
-> Cycle 86 turns the contested-drop trio (yield 375 / gobble 387 / stand 390) from three isolated
-> moments into a *remembered* pecking order. The suggested pick is the already-queued **BACKLOG-394**
-> (the backed-down gobbler slinks off, 😖) — the smallest clean reply that gives the failed grab a
-> visible cost, completing the 390 standoff's emotional arc. The new seeds carry the thread further:
-> the outcomes congeal into a per-dino disposition (401), become legible in the book (402) and the
-> voice (404), grow a victor's-mercy grace note (403), and — off the feeding treadmill — let a dino
-> alone too long invent a tic of its very own (405).
-
-
 ## Cycle 87 — the tic spreads
 
 > The solitary tic (405) turns a lone dino's idleness into a signature ritual. These shade it outward:
@@ -690,13 +679,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
-
-## Cycle 127 structure additions — after the council (2026-08-10)
-
-> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 479.
-> Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
-> park will owe once a third derived per-zone standing exists.
-
 
 ## Cycle 129 structure additions — after the vote (2026-08-13)
 

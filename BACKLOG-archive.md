@@ -711,3 +711,22 @@ Sections whose last open item closed. Kept for the context notes in their header
 > These four extend what the grove *is* once a dino knows it: a first sight worth more than the
 > hundredth, a place two friends return to together, a tally of who keeps going back, and — the
 > weirdest — a place a dino who came home can quietly come to miss.
+
+## Drained sections (moved cycle 131, 2026-08-15) — every item in these blocks has closed
+
+## Cycle 86 lore additions — the hatch remembers your face (2026-06-30)
+
+> Cycle 86 turns the contested-drop trio (yield 375 / gobble 387 / stand 390) from three isolated
+> moments into a *remembered* pecking order. The suggested pick is the already-queued **BACKLOG-394**
+> (the backed-down gobbler slinks off, 😖) — the smallest clean reply that gives the failed grab a
+> visible cost, completing the 390 standoff's emotional arc. The new seeds carry the thread further:
+> the outcomes congeal into a per-dino disposition (401), become legible in the book (402) and the
+> voice (404), grow a victor's-mercy grace note (403), and — off the feeding treadmill — let a dino
+> alone too long invent a tic of its very own (405).
+
+## Cycle 127 structure additions — after the council (2026-08-10)
+
+> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 479.
+> Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
+> park will owe once a third derived per-zone standing exists.
+
