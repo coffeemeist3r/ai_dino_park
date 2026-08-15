@@ -6596,3 +6596,12 @@ cycle-78 "the grove becomes a place" blocks — moved to `BACKLOG-archive.md` wi
 The `## Art` section stays in the working file despite being empty: its header carries the stash-ahead rule
 the Artist reads every fire. Structure Track is at **3 open** (466 closed), below the X=4 cap, so the next
 Structure-smith brainstorms before it picks.
+
+## 2026-08-15 02:30 — cycle 131 — lore-smith — the hatch gets a voice
+
+Cycle bumped to 131 (both cycle-130 tracks APPROVED). Milestone 13 ACTIVE; lore arcs 389 and 403 are `[x]`,
+so tonight takes the third and last: **BACKLOG-404**, mealtime mood in the voice — the contested-drop ledger
+read for *recency* instead of career, tinting the next greeting smug / wistful / proud / sore, crossed with
+temperament so the same outcome sounds different out of a prickly mouth and a warm one. Cap rule: lore-track
+open items ≫ 12, so no new items brainstormed. Idea Box empty. Flagged for the Structure-smith: 404 is the
+**third** consumer of the four hatch memory strings, which sharpens BACKLOG-483. phase → designer-pending.
