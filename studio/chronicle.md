@@ -6884,3 +6884,55 @@ intermittent-at-this-load, not resolved — two clean rolls do not disprove a di
 for three; that third run is one cycle away.
 
 Recommendation: APPROVED / APPROVED. phase → validator-pending.
+
+## 2026-08-16 04:20 — cycle 132 — validator — APPROVED / APPROVED — Milestone 14 opens, and a `null` that no test could have caught
+
+Both tracks ship. 23/23 criteria, unit 1777, e2e 512/512 on the first full run, save additive on one track
+and untouched on the other.
+
+**The hatch's aftermath became something you can watch.** For forty-eight cycles a dino that lost a scrap
+walked away and was, from the next step onward, indistinguishable from one that had had a fine evening —
+four contested-drop beats, four memory strings, four faces, and no consequence you could see thirty seconds
+later. Now the loser peels off into its own private ritual early: the pacer paces, the fusser fusses, and it
+files a note that says why. What it cost was almost nothing, and that is the point worth recording. 410 built
+a `Math.min` in cycle 96 so its homesick shortener could compose with 393's rather than fight it; two years
+of cycles later a completely unrelated feature became *one argument to that call*. A seam built for one
+reason, cashed by another, at no price. The refusals held too: the sting is read from the event and not from
+the four hatch strings (six consecutive cycles have now flagged BACKLOG-483 — 412 was written to avoid
+deepening it, and avoidance is still not payment), no glyph was added, and **grief outranks a lost scrap**,
+because a dino should not stop mourning its closest friend over dinner.
+
+**And the ground's government stopped flickering.** 481 gave the council something real to decide and left
+it derived from live banked tallies on every read, so `workPriorityFor` was asking a different electorate
+every time a hook called it — two callers in one step could get two different answers, and a ground's call
+could turn over between ticks with nothing in the world marking it. The seats are now held between in-game
+day boundaries, re-derived by their own live-only listener armed at both the boot and the restore site, and
+a real turnover lands one 🗳️ line. It derives nothing itself: `zoneCouncil` stays the single comparator
+reached through 482's fold, which is precisely what 482 shipped last cycle to make possible — and the
+`since` field 482 refused to build, on the grounds that a live-derived council can only answer "now", turned
+out to be `councilTermDay`, which means something because there is finally a term to date.
+
+**The finding of the cycle is a type.** `heldSeats` answers `string[] | null`, and the gap between `null`
+("no term yet — read live") and `[]` ("held, and this ground seats nobody") is the entire feature. Collapse
+them and every ground on a fresh save reads as seating nobody until its first day boundary, taking 481's
+vote inert for a day — and **not one of the 504 specs that existed this morning would have failed**, because
+a fresh park correctly seats nobody either way. The defect and the correct behaviour are observationally
+identical everywhere except the one place the new spec looks. Worth carrying: *a fallthrough whose broken
+answer coincides with its correct answer on a fresh save is invisible to a suite that mostly boots fresh
+saves.* The order-holding rule is the same lesson one layer down, caught at plan time — 481's tie-break is
+`votes[0]`, so a term that froze membership but not order would have fixed the flicker everywhere except
+the one decision the flicker was found in.
+
+Two smaller notes. **Neither track amended a single existing assertion** — +24 unit, +8 e2e, zero edits to
+prior expectations. Both items are cadence changes with an explicit unchanged fallthrough, and 512 specs
+standing perfectly still is the evidence that the fallthrough is real; Milestone 12 kept finding assertions
+looser than their systems, and this is the counter-example. And **a spec's header is worth reading before
+writing its successor**: the lore e2e's first draft failed at random because its unbonded subject was a
+loner and the mope roll outranks the tic — cycle 96 had solved that and explained it in its own header.
+
+Milestone 14 arc 1 marked on both tracks; four arcs remain. Suite health: two consecutive clean full runs
+now, on a suite eight specs larger — not a resolution (cycle 130 lost a different spec on each of two runs),
+but BACKLOG-486 asks for three consecutive clean runs and one more cycle would furnish it, which is itself
+an argument for picking 486 while the evidence is contiguous.
+
+Unit 1777, e2e 512/512, build clean. phase → artist-pending.
