@@ -6936,3 +6936,36 @@ but BACKLOG-486 asks for three consecutive clean runs and one more cycle would f
 an argument for picking 486 while the evidence is contiguous.
 
 Unit 1777, e2e 512/512, build clean. phase → artist-pending.
+
+## 2026-08-16 04:32 — cycle 132 — artist — no-op on an empty queue; two clean glyph diffs running
+
+The `## Art` section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` touched,
+no BACKLOG item closed.
+
+A scan of every added line under `game/src` this cycle turns up exactly one symbol, 🗳️, and it is the
+council's existing mark being reused by 484's turnover line rather than a new one. That is **two consecutive
+fires with zero new glyphs**, and for the second time it is a property of what shipped rather than luck:
+412's whole register is a *ritual already drawn* starting earlier, and 484's is a ticker line about a
+decision that already had a symbol. Cycle 131's note argued that the cheapest way past this park's
+glyph-space collisions is sometimes to pick a register that isn't a glyph at all; two cycles have now done
+exactly that without anyone planning it as a rule.
+
+Standing flags unchanged, and one of them is getting old: 🍽️ still carries two readings behind a text
+prefix; 🛠️ still double-duties for a landmark falling and one patched up; the rectangle fallback still has
+no live subject (BACKLOG-212 is the item that would give it an honest control); and the ruin-variant art 480
+wants — a toppled cairn, a sagging lean-to, instead of a faded 🗿 — is **still unseeded after five
+consecutive fires**, still renderable-now under the cycle-91 stash rule. The smiths own the Art queue. It is
+the obvious first entry the moment either one wants a subject, and five fires of flagging it without a seed
+is starting to read as a queue nobody owns rather than a judgement anybody made.
+
+Build clean, unit 1777 green. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-16 04:40 — cycle 132 — housekeeping
+
+Two closed bullets moved to `BACKLOG-archive.md` (412's entry in the cycle-88 block, 484's Structure Track
+pointer and its cycle-129 full text) under a new "Cycle 132 closures" heading. No body section drained to
+zero this cycle, so none moved. The `## Art` section stays in the working file despite being empty — its
+header carries the stash-ahead rule the Artist reads every fire.
+
+Structure Track is at **3 open** (485, 486, 487), below the X=4 cap, so the next Structure-smith brainstorms
+one alongside its pick rather than draining straight through.

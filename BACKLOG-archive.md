@@ -730,3 +730,9 @@ Sections whose last open item closed. Kept for the context notes in their header
 > Both stand *behind* the council: one is the seam 479 exists to open, the other is the cleanup the
 > park will owe once a third derived per-zone standing exists.
 
+
+## Cycle 132 closures (2026-08-16)
+
+- [x] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).
+- [x] BACKLOG-412 [emergent] Self-soothing tic — a dino that's just had a bad moment at the hatch (slunk off 394, or lost a scrap) falls into its signature tic *sooner* than usual, so the private ritual reads as visible self-comfort after a sting, not only idle-time distinctness. Builds on 405 / 394 / 387.
+- [x] BACKLOG-484 [core] The seat has a term — the council (479) is re-derived from live banked tallies on every read, which was harmless while a seat was only a badge on the lens. Once the seats **decide** (481), one dino banking one unit can flip a ground's work priority between two ticks, with nothing in the world marking that it happened. Give a seat a term: re-derive the council on a cadence (the in-game day boundary the discontent gate and spoilage already use), hold the seating between, and land a one-off ticker beat when the membership actually turns over — so a ground's electorate changes on a date rather than flickering. Persisted like the calls it sets, additive; a park whose council never changes reads exactly as it does today. Builds on 479 / 481 / 467.

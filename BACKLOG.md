@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [x] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).
 - [ ] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
 - [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
 - [ ] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
@@ -672,7 +671,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > dino to it sooner (412), grief points it at a departed friend's edge (414), the book counts how *often*
 > a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
 
-- [x] BACKLOG-412 [emergent] Self-soothing tic — a dino that's just had a bad moment at the hatch (slunk off 394, or lost a scrap) falls into its signature tic *sooner* than usual, so the private ritual reads as visible self-comfort after a sting, not only idle-time distinctness. Builds on 405 / 394 / 387.
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
 - [ ] BACKLOG-416 [emergent] Not the only one — when two solitary dinos happen to tic within sight of each other (just past company range, so neither breaks), each files a faint "not the only one out here" — a wordless kinship between loners without contact or a bond change. Builds on 405 / 135.
 - [ ] BACKLOG-420 [social] Caught again — greet a fond dino mid-tic (413) a second time in the same solitary stretch and its pleasure turns to playful teasing ("you again? spying on me?"), so a repeat catch reads different from the first warm one. Builds on 413 / 408.
@@ -686,7 +684,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > stand *behind* the vote: one is the wobble a live-derived electorate will show the moment it decides
 > something, the other is the one economy (upkeep, 480) that governance still cannot hear.
 
-- [x] BACKLOG-484 [core] The seat has a term — the council (479) is re-derived from live banked tallies on every read, which was harmless while a seat was only a badge on the lens. Once the seats **decide** (481), one dino banking one unit can flip a ground's work priority between two ticks, with nothing in the world marking that it happened. Give a seat a term: re-derive the council on a cadence (the in-game day boundary the discontent gate and spoilage already use), hold the seating between, and land a one-off ticker beat when the membership actually turns over — so a ground's electorate changes on a date rather than flickering. Persisted like the calls it sets, additive; a park whose council never changes reads exactly as it does today. Builds on 479 / 481 / 467.
 - [ ] BACKLOG-485 [core] The bill reaches the call — 480 gave the skyline a running cost and a reversible disrepair, and governance cannot hear any of it: a ground whose landmarks are rotting for want of upkeep sets its work priority off its deciders' temperaments alone, exactly as a thriving one does. Let the bill talk: a zone carrying a derelict landmark biases its own call (a standing lean toward `'gather'` while anything of its is in disrepair), so the ground answers its own emergency instead of raising more walls it can't keep. One pure modifier over the existing call, `null`-safe so a park with nothing derelict is bit-identical. The first feedback loop in the park from a *building* back into a *decision*. Builds on 480 / 481 / 473.
 
 ## Cycle 131 structure additions — after the fold (2026-08-15)
