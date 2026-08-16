@@ -6767,3 +6767,23 @@ cycles for it, and adding a fourth parser in the same cycle we complain about th
 sites where a dino comes away empty sit inside `resolveContest`, ten lines apart, with the loser in hand.
 
 Idea Box empty. phase → structure-pending.
+
+## 2026-08-16 02:44 — cycle 132 — structure-smith — the seat gets a term
+
+Structure Track sits at 4 open, exactly at cap X=4 — drain, no invent. Nothing brainstormed.
+
+Milestone 14's spine half is the other thing Milestone 13 left standing. 481 handed the council a real
+decision; the council is still re-derived from live banked tallies on **every read**. Three queued arcs
+close that out: the seat gets a term (484, this cycle), the second call joins the first (487), and a
+derelict landmark finally pushes its own ground's decision (485). 484 goes first because the other two
+add *load* to the flicker — a second decision and a third input — and because 482 shipped last cycle
+expressly to give this item a folded module to put its field in.
+
+The defect stated plainly: `workPriorityFor` asks `councilFor` for an electorate that changes on every
+harvest bank, so two callers in one step can get two different answers and a 🗳️ line can fire twice in
+ten seconds from nobody doing anything but gathering. The fix holds a seating at the one choke point every
+consumer already routes through, re-derived on the in-game day boundary with the same live-only discipline
+spoilage (455) and upkeep (480) use, so a restore or an away-jump never fakes a turnover. A ground with no
+seating yet seats live, so boot is bit-identical to today.
+
+structureItem → BACKLOG-484. phase → design-pending.
