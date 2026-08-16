@@ -108,6 +108,12 @@ export interface SaveData {
   /** zone → first dino ever to arrive there (BACKLOG-343). Additive; absent → {} (no back-fill: we did
    *  not record it then and must not invent it). */
   pioneers?: Record<string, string>;
+  /** zone → its held council seating, most-banked first (BACKLOG-484). Additive; absent → no term held yet,
+   *  so every ground reads live until the next in-game day boundary — which is exactly the fresh-save path. */
+  councilSeats?: Record<string, string[]>;
+  /** The in-game day the current council term began (BACKLOG-484). Additive; absent → 0, re-armed to the
+   *  current day on restore so a reload never holds a term against a day it did not watch. */
+  councilTermDay?: number;
   /** dino → the grounds it has set foot on (BACKLOG-364). Additive; absent → {} (re-seeded from live home
    *  zones on load, which is all an older save can honestly tell us). */
   seenZones?: Record<string, string[]>;
@@ -504,6 +510,28 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // councilSeats (BACKLOG-484) — zone→its held seating. Same string-array guard as seenZones above; the
+  // absent case is meaningful (no term held yet → read live), so it stays `undefined` rather than {}.
+  let councilSeats: Record<string, string[]> | undefined;
+  if (o.councilSeats !== undefined) {
+    if (typeof o.councilSeats !== 'object' || o.councilSeats === null) return null;
+    const zones = o.councilSeats as Record<string, unknown>;
+    councilSeats = {};
+    for (const z of Object.keys(zones)) {
+      const seats = zones[z];
+      if (!Array.isArray(seats)) return null;
+      for (const n of seats) if (typeof n !== 'string') return null;
+      councilSeats[z] = seats as string[];
+    }
+  }
+
+  // councilTermDay (BACKLOG-484) — the day the held term began. A plain non-negative finite day number.
+  let councilTermDay: number | undefined;
+  if (o.councilTermDay !== undefined) {
+    if (typeof o.councilTermDay !== 'number' || !Number.isFinite(o.councilTermDay) || o.councilTermDay < 0) return null;
+    councilTermDay = o.councilTermDay;
+  }
+
   // crossings (BACKLOG-361) — dino→lifetime arrival count. Same guard shape as harvestedByZone below:
   // an object of non-negative finite numbers.
   let crossings: Record<string, number> | undefined;
@@ -715,6 +743,8 @@ export function deserialize(json: string): SaveData | null {
     lastProviderByZone,
     pioneers,
     seenZones,
+    councilSeats,
+    councilTermDay,
     crossings,
     workPriorityByZone,
     leftDays,

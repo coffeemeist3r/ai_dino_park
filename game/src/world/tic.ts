@@ -77,6 +77,36 @@ export function aloneInStrangeZone(settled: boolean, hasFriendInZone: boolean): 
   return !settled && !hasFriendInZone;
 }
 
+/**
+ * Self-soothing onset (BACKLOG-412) — a dino that came away from a contested drop with nothing (it slunk off
+ * from a winner that wouldn't budge, 394, or it was the winner that ceded to a gobbler, 387) takes up its
+ * ritual far sooner than a contented one, so the sting has a visible aftermath instead of vanishing the
+ * moment the food does. Below `TIC_AFTER_STEPS_HOMESICK`: a fresh wound reads faster than unfamiliar ground.
+ *
+ * Composes by `Math.min` with the other two shorteners, like 410 does — no branch outranks another, and the
+ * lowest applicable threshold wins.
+ */
+export const TIC_AFTER_STEPS_STUNG = 6;
+
+/** How many of the dino's own wander steps a sting stays fresh. Past this the onset returns to normal — a
+ *  bad moment at the hatch is a mood, not a state. Deliberately short enough that a fed or accompanied dino
+ *  is over it well within a play session. */
+export const STING_FADES_AFTER_STEPS = 24;
+
+/** Is a sting still fresh, given how many wander steps have passed since it (BACKLOG-412)? */
+export function stingIsFresh(stepsSince: number): boolean {
+  return stepsSince >= 0 && stepsSince < STING_FADES_AFTER_STEPS;
+}
+
+/**
+ * The memory a *stung* dino files when its ritual forms (BACKLOG-412) — the self-soothing twin of
+ * `ticMemory`. Names the ritual and says why it started, so the aftermath is legible in talk and not only
+ * in the body. Filed once per sting, never alongside the plain 405 note.
+ */
+export function soothingTicMemory(label: string): string {
+  return `it went badly at the hatch — you ${label} until it stopped smarting`;
+}
+
 /** Tiles within which another dino in the same zone counts as company (so no tic forms). */
 export const TIC_COMPANY_RANGE = 3;
 

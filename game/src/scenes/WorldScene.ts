@@ -144,7 +144,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
+import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -178,6 +178,7 @@ import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
 import { zoneStandings, providerOf, councilOf, standingLines, type Standing } from '../world/standings';
+import { heldSeats, reseat, turnoverLine, type Seating } from '../world/term';
 import { isUnsettled, unsettledNeighbor, settleMemory, settleLine, settleEvent, UNSETTLED_BADGE } from '../world/frontier';
 import {
   markLeft,
@@ -336,6 +337,11 @@ export class WorldScene extends Phaser.Scene {
   private ticAnchor: Record<string, { tileX: number; tileY: number }> = {};
   private ticPhase: Record<string, number> = {};
   private ticInvented = new Set<string>();
+  /** BACKLOG-412: dino → the `worldSteps` count at which a contested drop left it with nothing, and the
+   *  once-per-sting guard on the self-soothing memory. Neither is persisted: like `berthedThisDrop` and
+   *  `lastWorkCallByZone`, a sting is a live read of a live moment, and a reload starts everyone unstung. */
+  private stungAt: Record<string, number> = {};
+  private soothedFiled = new Set<string>();
   /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
    *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
   private ticGrief: Record<string, string | null> = {};
@@ -648,6 +654,10 @@ export class WorldScene extends Phaser.Scene {
    * reload therefore *seeds* rather than announces (see `checkCouncilCall`'s first-seating guard).
    */
   private lastWorkCallByZone: Record<string, WorkPriority> = {};
+  /** BACKLOG-484: the held council seating and the in-game day its term began. `null` seats means no term
+   *  has been held yet — every ground reads live, exactly the pre-484 park. Persisted additively. */
+  private councilSeats: Record<string, string[]> | null = null;
+  private councilTermDay = 0;
   /** The berth (BACKLOG-389) — who has already hung back from *this* drop (so the hesitation reads once,
    *  not every step it stands there), and the last one for the dev hook. Both are per-drop and transient;
    *  neither is persisted, since the wariness they come from is derived from the memory ring that is. */
@@ -1789,6 +1799,7 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, gobblerName, slunkOffMemory(eater.name));
       this.flashFeed(gobbler, '😖');
       this.logEvent(`😖 ${gobblerName} slunk off — ${eater.name} wouldn't budge`);
+      this.sting(gobblerName); // BACKLOG-412: it came away with nothing, and takes to its ritual sooner for it
       this.eatFood(eater);
     } else {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
@@ -1797,8 +1808,25 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, gobblerName, `you shouldered past ${eater.name} and snatched the food first`);
       this.flashFeed(gobbler, '😤');
       this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food${because}`);
+      this.sting(eater.name); // BACKLOG-412: the ceding winner is the one left with nothing here
       this.eatFood(gobbler);
     }
+  }
+
+  /**
+   * Take the sting (BACKLOG-412) — a dino came away from a contested drop with nothing. Recorded from the
+   * *event*, never re-read out of a memory string: three modules already parse the four hatch strings back
+   * out (BACKLOG-483) and a fourth parser here would deepen exactly the debt this park keeps flagging.
+   */
+  private sting(name: string): void {
+    this.stungAt[name] = this.worldSteps;
+    this.soothedFiled.delete(name); // a fresh sting earns a fresh note
+  }
+
+  /** Is this dino still smarting (BACKLOG-412)? A dino never stung has no entry and reads false. */
+  private stungNow(name: string): boolean {
+    const at = this.stungAt[name];
+    return at !== undefined && stingIsFresh(this.worldSteps - at);
   }
 
   /** Chebyshev distance in tiles (king's-move). Used by the feeding swarm (BACKLOG-375). */
@@ -2837,14 +2865,56 @@ export class WorldScene extends Phaser.Scene {
    *  whole chain — the vote (481) reads this on the regrowth tick, so it builds the roster once and no
    *  per-zone loop. Same `zoneCouncil` the lens and the book go through; the seats can't drift. */
   private councilFor(zoneId: string): string[] {
-    return councilOf(this.standings(), zoneId);
+    // BACKLOG-484: a ground with a held seating reads it; one without (a fresh save, before its first day
+    // boundary) reads live, so boot and the first in-game day are exactly the pre-484 park.
+    return heldSeats(this.seating(), zoneId) ?? councilOf(this.standings(), zoneId);
+  }
+
+  /** The held seating (BACKLOG-484), or null before the first term. */
+  private seating(): Seating | null {
+    return this.councilSeats ? { seats: this.councilSeats, day: this.councilTermDay } : null;
   }
 
   private zoneCouncils(): Record<string, string[]> {
-    const all = this.standings(); // derived once — a 40-dino roster shouldn't rebuild per zone
+    const held = this.seating();
     const out: Record<string, string[]> = {};
-    for (const z of zoneChain()) out[z] = councilOf(all, z);
+    let all: Standing[] | null = null; // derived at most once, and only if some ground falls through to live
+    for (const z of zoneChain()) {
+      const seats = heldSeats(held, z);
+      if (seats) {
+        out[z] = seats;
+        continue;
+      }
+      all ??= this.standings();
+      out[z] = councilOf(all, z);
+    }
     return out;
+  }
+
+  /**
+   * The term (BACKLOG-484) — re-derive every ground's council and hold it until the next in-game day.
+   * Live-observed only: registered as its own `clock.onHour` listener beside `checkSpoilage` (455) and
+   * `checkUpkeep` (480), and `onHour` never fires on a restore/away `clock.set`, so a jump never holds a
+   * term against a day it did not watch.
+   */
+  private checkTerm(t: GameTime): void {
+    if (t.day <= this.councilTermDay) return;
+    this.runTerm(t.day);
+  }
+
+  /** Run one term. Logs a beat per ground whose membership actually moved — never for a ground seated for
+   *  the first time, which is recorded silently (the `checkCouncilCall` precedent). */
+  private runTerm(day: number): void {
+    const all = this.standings();
+    const fresh: Record<string, string[]> = {};
+    for (const z of zoneChain()) fresh[z] = councilOf(all, z);
+    const { seating, changes } = reseat(this.seating(), fresh, day);
+    this.councilSeats = seating.seats;
+    this.councilTermDay = seating.day;
+    for (const c of changes) {
+      if (c.kind === 'turnover') this.logEvent(turnoverLine(zoneById(c.zone).name, c.seated));
+    }
+    void this.saveGame();
   }
 
   /**
@@ -3064,8 +3134,28 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__roleStore = () => ({ ...this.roles });
     // BACKLOG-448: the per-dino banked-food tally the provider role reads.
     (window as any).__foodBanked = () => ({ ...this.foodBanked });
+    // BACKLOG-412: each dino's sting state — steps since it came away empty, or null if it never has.
+    // Called with a name, it stings that dino, so a spec can drive the aftermath without staging a standoff.
+    (window as any).__sting = (name?: string) => {
+      if (name) {
+        this.sting(name);
+        return true;
+      }
+      const out: Record<string, number | null> = {};
+      for (const d of this.dinos) {
+        const at = this.stungAt[d.name];
+        out[d.name] = at === undefined ? null : this.worldSteps - at;
+      }
+      return out;
+    };
     // BACKLOG-479: each ground's seated council — derived, never stored, so this is a live read.
     (window as any).__councils = () => this.zoneCouncils();
+    // BACKLOG-484: the held seating and its term day, plus a forced term so a spec needn't wait a day.
+    (window as any).__seating = () => ({ seats: this.councilSeats, day: this.councilTermDay });
+    (window as any).__forceTerm = () => {
+      this.runTerm(getWorldClock().now().day);
+      return this.councilSeats;
+    };
     // BACKLOG-482: the folded read behind __councils and the book's standing lines.
     (window as any).__standings = () => this.standings();
     // BACKLOG-481: the vote itself, not just its outcome — who sat, how each voted, who'd break a tie.
@@ -3521,8 +3611,17 @@ export class WorldScene extends Phaser.Scene {
     if (!this.ticInvented.has(d.name)) {
       this.ticInvented.add(d.name);
       // BACKLOG-414: a dino grieving a departed friend files the directional ache; else the plain 405 ritual.
+      // BACKLOG-412: a dino still smarting from a contested drop files the self-soothing note instead —
+      // the same ritual, started for a reason. Grief outranks it: a departed friend is the larger ache, and
+      // a dino carrying both should read as grieving, not as sore about a scrap.
       const grieved = this.ticGrief[d.name];
-      this.memory = remember(this.memory, d.name, grieved ? griefTicMemory(tic.label, grieved) : ticMemory(tic.label));
+      const soothing = !grieved && this.stungNow(d.name) && !this.soothedFiled.has(d.name);
+      if (soothing) this.soothedFiled.add(d.name);
+      this.memory = remember(
+        this.memory,
+        d.name,
+        grieved ? griefTicMemory(tic.label, grieved) : soothing ? soothingTicMemory(tic.label) : ticMemory(tic.label),
+      );
       this.flashFeed(d, tic.glyph);
       this.logEvent(`${tic.glyph} ${d.name} ${grieved ? `${tic.label} at the edge ${grieved} left by` : tic.label}`);
       this.leaveTrace(d); // BACKLOG-424: the ritual scuffs the ground it happens on
@@ -3839,6 +3938,9 @@ export class WorldScene extends Phaser.Scene {
       );
       let ticAfter = ticAfterFor(intent, TIC_AFTER_STEPS); // BACKLOG-393: a solitary day settles into the ritual sooner
       if (strange) ticAfter = Math.min(ticAfter, TIC_AFTER_STEPS_HOMESICK);
+      // BACKLOG-412: a fresh sting at the hatch shortens the onset further still — one more `Math.min`, so
+      // the three shorteners compose and the lowest applicable threshold wins rather than one overriding.
+      if (this.stungNow(d.name)) ticAfter = Math.min(ticAfter, TIC_AFTER_STEPS_STUNG);
       const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0, ticAfter);
       let next;
       if (huddling) {
@@ -6058,12 +6160,14 @@ export class WorldScene extends Phaser.Scene {
     this.lastSeasonDay = clock.now().day;
     this.lastSpoilDay = clock.now().day; // BACKLOG-455: arm the spoilage day tracker (no pass on day 1)
     this.lastUpkeepDay = clock.now().day; // BACKLOG-480: same arming for upkeep
+    this.councilTermDay = Math.max(this.councilTermDay, clock.now().day); // BACKLOG-484: same arming for the term
 
     clock.onHour((t) => this.checkSeasonTurn(t));
     // A pantry that spoils (BACKLOG-455) — its own live-only onHour listener, so a hoard at/near cap bleeds
     // one unit per in-game day. Separate from the season turn / dawn chorus so none disturbs the others.
     clock.onHour((t) => this.checkSpoilage(t));
     clock.onHour((t) => this.checkUpkeep(t)); // BACKLOG-480: a landmark costs its ground a unit a day
+    clock.onHour((t) => this.checkTerm(t)); // BACKLOG-484: the council's seats are re-held once a day
     // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
     // turn and the hour-6 reflection so neither is disturbed. onHour never fires on clock.set().
     clock.onHour((t) => this.checkDawnChorus(t));
@@ -6101,6 +6205,7 @@ export class WorldScene extends Phaser.Scene {
     this.lastSeasonDay = day;
     this.lastSpoilDay = day; // BACKLOG-455: a restore/jump re-arms spoilage too — no spurious catch-up pass
     this.lastUpkeepDay = day; // BACKLOG-480: and upkeep
+    this.councilTermDay = Math.max(this.councilTermDay, day); // BACKLOG-484: and the term — a jump holds no election
     const tint = SEASON_TINT[seasonFor(day)];
     this.seasonOverlay.setFillStyle(tint.color, tint.alpha);
   }
@@ -6456,6 +6561,10 @@ export class WorldScene extends Phaser.Scene {
       foodPileByZone: this.foodPileByZone as Record<string, Record<string, number>>, // BACKLOG-446: per-zone banked food (additive)
       spendPriorityByZone: this.spendPriorityByZone, // BACKLOG-463: per-zone provider-set spend priority (additive)
       workPriorityByZone: this.workPriorityByZone, // BACKLOG-473: per-zone provider-set work priority (additive)
+      // BACKLOG-484: the held seating + its term day. `undefined` while no term has been held, so an
+      // untouched park writes no field and an older save keeps reading live.
+      councilSeats: this.councilSeats ?? undefined,
+      councilTermDay: this.councilTermDay,
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -6550,6 +6659,10 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
       this.workPriorityByZone = (save.workPriorityByZone as Record<string, WorkPriority>) ?? {}; // BACKLOG-473 (absent → {})
+      // BACKLOG-484: absent seats mean *no term yet*, so `null` (read live) — never `{}`, which would say
+      // "held, and every ground seats nobody" and take the 481 vote inert for a day.
+      this.councilSeats = save.councilSeats ?? null;
+      this.councilTermDay = save.councilTermDay ?? 0;
       this.leftDays = save.leftDays ?? {}; // BACKLOG-362 (absent → {}: nothing to miss until it leaves somewhere)
       this.cameFrom = save.cameFrom ?? {}; // BACKLOG-347 (absent → {}: nothing carried until it crosses)
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})

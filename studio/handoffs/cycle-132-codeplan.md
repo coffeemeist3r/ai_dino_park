@@ -150,3 +150,43 @@ turnover; the day is carried; `heldSeats` null-vs-empty; the line names the grou
 
 No file is touched by both tracks except `WorldScene.ts` (disjoint regions: the feeding/tic block vs. the
 governance block) and `saveGame.ts` (structure only). ~10 files.
+
+---
+
+## Shipped (coder, 2026-08-16 03:40)
+
+Both tracks landed as planned, 8 files:
+
+- `game/src/world/tic.ts` — `TIC_AFTER_STEPS_STUNG` (6), `STING_FADES_AFTER_STEPS` (24), `stingIsFresh`,
+  `soothingTicMemory`.
+- `game/src/world/term.ts` (new) — `Seating`, `heldSeats`, `sameSeats`, `reseat`, `turnoverLine`.
+- `game/src/world/term.test.ts` (new, 14) + `tests/unit/cycle-132-soothing-tic.test.ts` (new, 10).
+- `game/src/world/saveGame.ts` — `councilSeats` + `councilTermDay`, both guarded, both additive.
+- `game/src/scenes/WorldScene.ts` — `sting` / `stungNow` / the third `Math.min` / the soothing branch in
+  `performTic`; `seating` / `checkTerm` / `runTerm` and the held-seating fallthrough in `councilFor` +
+  `zoneCouncils`; the term armed at both the boot and restore sites; save + restore; hooks `__sting`,
+  `__seating`, `__forceTerm`.
+- `tests/e2e/cycle-132-soothing-tic.spec.ts` (new, 4) + `tests/e2e/cycle-132-term.spec.ts` (new, 4).
+
+**Two departures from the plan, both discovered by a failing spec.**
+
+1. **The `worldSteps` counter already existed**, so the planned `stepTicks` field was not added — the sting
+   is timestamped against `this.worldSteps`, the same counter `leaveTrace` (424) stamps a pace trace with.
+   One fewer field for the same behaviour.
+
+2. **The lore e2e had to bond its subject.** The first draft isolated the stung dino by trait alone and both
+   its specs failed nondeterministically — a dino with no bonds is a *loner* (135), and the mope roll
+   (`MOPE_CHANCE`) outranks the tic in the wander branch, so the ritual formed a step or two late at random.
+   Bonding the subject to a zone-mate fixes it and does a second job: it makes `strange` false, which takes
+   410's homesick shortener out of the picture too, so the only thing shortening the onset in that spec is
+   the sting. The control test is honest for the same reason — an unstung, bonded, non-strange dino carries
+   the full 20.
+
+**Risk register outcome.** (1) `null` vs `[]` held — the first term spec asserts a fresh park reads live and
+seats live on banking. (2) Order is held: `reseat` always stores the fresh order, unit-pinned. (3) Both arm
+sites done (`create` and `syncSeason`), and the reload spec asserts no term fires after a restore. (4) Zero
+`recall(` in the tic path; the sting is taken from the event at both `resolveContest` sites — 483 not grown.
+(5) Ordering asserted rather than the value. (6) Suite load: QA's call.
+
+`npm run build` clean. `npx vitest run` 1777/1777 (was 1753; +24). The eight new e2e specs pass on their
+own; the full run is QA's.

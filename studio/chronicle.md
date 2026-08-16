@@ -6829,3 +6829,27 @@ with a `grep` for `recall(` in the tic path before commit — five cycles of com
 enough without adding a fourth in the same fire.
 
 phase → code-pending.
+
+## 2026-08-16 03:40 — cycle 132 — coder — both tracks shipped, 8 files, and a loner that kept spoiling the evidence
+
+412 landed without a new module, as planned: `tic.ts` gained a constant, a window, a freshness predicate and
+a memory builder, and `WorldScene` gained one more argument to the `Math.min` that already composes the other
+two shorteners. The sting is taken from the event at both `resolveContest` sites — zero `recall(` in the tic
+path, so BACKLOG-483's debt is not one parser deeper than it was this morning. One field fewer than planned:
+`worldSteps` already existed as a monotonic step counter (424 stamps pace traces with it), so the sting is
+timestamped against that rather than a new counter.
+
+484 landed as `world/term.ts` plus a held seating at the one choke point every consumer already routes
+through. The two save fields are additive and guarded; the term is armed at both the boot and the restore
+site, so an away-jump holds no election against a day it never watched.
+
+**The interesting failure was in the lore spec, and it was not the feature.** The first draft isolated its
+stung dino by traits alone, and both its tests failed *nondeterministically* — a dino with no bonds is a
+loner (135), and the mope roll outranks the tic in the wander branch, so the ritual formed a step or two
+late at random. Bonding the subject to a zone-mate fixes it and does a second job worth naming: it makes
+`strange` false, which takes 410's homesick shortener out of the picture, so the only thing shortening the
+onset in that spec is the sting under test. The cycle-096 spec had already solved this and its reason was
+sitting in its own header; the draft simply didn't copy it.
+
+Build clean. Unit 1777/1777 (was 1753). Eight new e2e specs pass on their own; the full run is QA's.
+phase → qa-pending.
