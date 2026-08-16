@@ -6807,3 +6807,25 @@ held seating must hold the **order**, not just the membership, because 481's tie
 free to flip mid-term, which is the same defect one layer down.
 
 phase → codeplan-pending.
+
+## 2026-08-16 03:16 — cycle 132 — code-planner — ~10 files, and one `null` that carries the whole structure track
+
+412 adds no module: `tic.ts` already owns two onset shorteners that compose by `Math.min`, so the sting is a
+constant, a freshness predicate, a memory builder and one more argument to that `min`. 484 adds `world/term.ts`
+for the *term* but calls `zoneCouncil` through the existing `standings()` fold for the derivation — 482's
+one-derivation promise is precisely the thing being protected, and a second comparator here would undo it.
+
+The sharpest line in the plan is a type. `heldSeats` returns `string[] | null`, where `null` means "no term
+has been held for this ground, read live" and `[]` means "held, and this ground seats nobody". Collapse those
+two and every zone on a fresh save reads as seating nobody until its first day boundary, which would take
+481's vote inert for a day — a regression that would pass every existing spec, because a fresh park correctly
+seats nobody anyway. Pinned by a unit assertion and by the first e2e spec.
+
+Three more risks logged with their pins: the held seating stores the fresh *order* on every reseat (including
+the silent no-membership-change case) so 481's `votes[0]` tie-break can't flip mid-term; `councilTermDay` is
+armed at both the boot and restore sites like `lastSpoilDay`, or the first live hour after an away-jump fires
+a term against a day it never saw; and the 412 sting is taken from the event at both `resolveContest` sites,
+with a `grep` for `recall(` in the tic path before commit — five cycles of complaining about 483's parsers is
+enough without adding a fourth in the same fire.
+
+phase → code-pending.
