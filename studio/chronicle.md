@@ -6787,3 +6787,23 @@ spoilage (455) and upkeep (480) use, so a restore or an away-jump never fakes a 
 seating yet seats live, so boot is bit-identical to today.
 
 structureItem → BACKLOG-484. phase → design-pending.
+
+## 2026-08-16 03:02 — cycle 132 — designer — two specs, both about *when*
+
+Both tracks this cycle turn out to be the same kind of item, which is a pleasant accident and worth naming:
+neither adds a thing to the world. 412 does not change which ritual a dino performs, its motion or its
+anchor — only *when* it starts. 484 does not change who sits on a council or how the seats are picked —
+only *when* that is asked. Two specs whose whole content is a cadence.
+
+That shaped both acceptance lists the same way. The sharpest criteria in each are the ones pinning what
+must stay bit-identical: an unstung dino's onset threshold unchanged for the same inputs, a park with no
+held seating reading live so boot and the first in-game day are exactly today's park. A cadence feature's
+risk is entirely in the fallthrough, so that is where the assertions are.
+
+Two specific traps written into the spec. 412's sting must come from the *event* at both `resolveContest`
+sites, never from a fourth re-read of the hatch memory strings (483's debt, five cycles flagged). And 484's
+held seating must hold the **order**, not just the membership, because 481's tie-break is `votes[0]` and
+`zoneCouncil` orders most-banked first — freezing the seats without freezing the order would leave the tie
+free to flip mid-term, which is the same defect one layer down.
+
+phase → codeplan-pending.
