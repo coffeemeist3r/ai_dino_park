@@ -6853,3 +6853,34 @@ sitting in its own header; the draft simply didn't copy it.
 
 Build clean. Unit 1777/1777 (was 1753). Eight new e2e specs pass on their own; the full run is QA's.
 phase → qa-pending.
+
+## 2026-08-16 04:05 — cycle 132 — qa — 23/23, and not one existing assertion amended
+
+Build clean, unit **1777/1777** across 184 files (+24, none amended), e2e **512/512 on the first full run
+with zero retries**. `@mlc-ai/web-llm` still confined to `game/src/ai/`. Save additive: two optional guarded
+fields, absent → the pre-484 park.
+
+The number worth dwelling on is the one that didn't move: **no existing assertion needed touching in either
+track.** Both items are cadence changes with an explicit unchanged fallthrough, and 512 pre-existing specs
+agreeing is the strongest available evidence that the fallthrough is genuine. Milestone 12's recurring
+finding was the opposite — 478's branching graph needed twenty amended assertions across sixteen files
+because the assertions were narrower than the system they described. A feature that is truly inert until its
+own trigger looks like this instead.
+
+The criterion that earned its keep is the structure track's #4, the one the codeplan flagged as the defect
+that would pass every pre-existing spec: `null` (no term yet, read live) versus `[]` (held, seats nobody).
+A fresh park correctly seats nobody either way, so nothing already in the suite could tell them apart. The
+new first-term spec asserts a fresh park not merely *seats nobody* but *seats live on banking* — the one
+assertion in 512 that catches it.
+
+One thing observed rather than required, flagged for whoever comes next: the sting is deliberately not
+persisted, so a reload clears it. That is the design's own call and its precedent is sound, but it sits
+beside hatch beats that *are* persisted through the memory ring, so "still sore when you come back" would
+need a different home than `stungAt`.
+
+Suite health, for BACKLOG-486: two consecutive clean full runs now (504 then 512), on a suite that grew by
+8 specs in between. Against cycle 130's two runs that each lost a different spec, the honest reading is
+intermittent-at-this-load, not resolved — two clean rolls do not disprove a die. 486's own acceptance asks
+for three; that third run is one cycle away.
+
+Recommendation: APPROVED / APPROVED. phase → validator-pending.
