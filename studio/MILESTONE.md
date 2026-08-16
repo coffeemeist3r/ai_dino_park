@@ -8,8 +8,25 @@
 
 ## Current milestone
 
-_(none — Milestone 13 shipped cycle 131. The smiths draft Milestone 14 at the next cycle open:
-Lore-smith writes the headline + feel arcs, Structure-smith the spine arcs.)_
+**Milestone 14: A ritual that spreads, and a government with a term**
+**Status:** ACTIVE (opened cycle 132)
+
+The tic (405) has been pure idleness for forty-five cycles: a dino alone long enough invents a little
+ritual and nothing in the park ever *causes* one or ever *notices* one. The council (479/481) has the
+opposite problem — it decides real things now, and it is re-derived from live banked tallies on every
+read, so a ground's electorate flickers rather than changing on a date. This milestone gives the
+ritual a cause, a witness and a name, and gives the ground's government a term, a second call, and
+a way to hear its own unpaid bills.
+
+**Lore arcs:**
+- [ ] A ritual you fall into after a sting — a dino that came away empty from a contested drop takes up its signature tic sooner than a contented one, so the hatch's aftermath is something you can watch (BACKLOG-412)
+- [ ] A ritual that spreads — a dino that watches a close friend at its tic often enough picks up a faint echo of it, so a private ritual becomes the first thing in this park to travel by imitation (BACKLOG-407)
+- [ ] A ritual with a name — the collection book names each dino's signature tic, the distinctness the player collects at a glance (BACKLOG-409)
+
+**Structure arcs:**
+- [ ] The seat has a term — the council is re-derived on the in-game day boundary and held between, with a beat when the membership actually turns over, so a ground's electorate changes on a date instead of flickering (BACKLOG-484)
+- [ ] The other call goes to the council — the spend priority (463), still the provider's alone, runs through the same vote the work call now uses (BACKLOG-487)
+- [ ] The bill reaches the call — a ground carrying a derelict landmark (480) leans its own call toward gathering, the first feedback loop from a building back into a decision (BACKLOG-485)
 
 ---
 

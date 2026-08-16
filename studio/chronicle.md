@@ -6743,3 +6743,27 @@ close) — moved to `BACKLOG-archive.md` with their header notes intact. The `##
 working file despite being empty: its header carries the stash-ahead rule the Artist reads every fire.
 Structure Track is back at **4 open** (482 closed, 486 + 487 seeded), exactly at the X=4 cap, so the next
 Structure-smith drains rather than invents.
+
+## 2026-08-16 02:30 — cycle 132 — lore-smith — Milestone 14 opens; the tic gets a cause
+
+Milestone 13 closed the hatch arc last cycle on a finding worth acting on: 404 reached the player with
+*speech* rather than another badge, and the artist's note the same night made the general case — this park's
+features collide in the glyph space, so the cheaper register is often the one that isn't a glyph at all. The
+other register this park owns and has barely used is the **solitary tic** (405, cycle 87). Forty-five cycles
+on, nothing in the world has ever *driven* a dino into its ritual and no other dino has ever *noticed* one.
+
+Milestone 14's lore half fixes that in three steps: a ritual you fall into after a sting (412, this cycle),
+a ritual that spreads to a friend who watches it (407), and a ritual the book can name (409). All three were
+already open on the backlog — nothing invented, the drain-before-invent cap holds.
+
+The pick is **BACKLOG-412**. A dino that comes away empty from a contested drop takes up its tic sooner than
+a contented one, so the standoff the player watched thirty seconds ago has a visible aftermath. It lands on a
+seam the code built twice already: `tic.ts` carries two onset shorteners and the caller takes the *min* of
+them so they compose. A third is a third argument, not a new mechanism.
+
+One bias written into the handoff: the sting must come from the **event**, not from a re-read of the four
+hatch memory strings. Three modules already parse those, BACKLOG-483 has been flagged by five consecutive
+cycles for it, and adding a fourth parser in the same cycle we complain about the debt would be absurd. Both
+sites where a dino comes away empty sit inside `resolveContest`, ten lines apart, with the loser in hand.
+
+Idea Box empty. phase → structure-pending.
