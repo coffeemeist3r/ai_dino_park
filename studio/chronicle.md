@@ -6976,3 +6976,13 @@ Milestone 14 arc 2 suggested: **BACKLOG-407** (shared tic). Forty-six cycles of 
 this park has ever acquired a behaviour from another living dino — traits are seeded at birth, blended at a
 hatch, or self-nudged; none of them travel sideways. 407 makes the tic the first thing that does. No new items
 seeded: the lore queue is far past the cap of 12 open. Idea Box empty.
+
+## 2026-08-17 02:44 — cycle 133 — structure-smith — the bill reaches the call
+
+Picked **BACKLOG-485** (Milestone 14 structure arc 2): a ground carrying a derelict landmark leans its own
+work call toward gathering, the first feedback loop in the park from a *building* back into a *decision*. One
+pure modifier over the existing call, null-safe, so a park with nothing derelict is bit-identical. Queue was
+at 3 open (below cap X=4) so one item was brainstormed alongside: **BACKLOG-488**, hands on the derelict —
+make the patch-up a job a resident performs rather than arithmetic the day tick does. 486 deliberately left
+for a later cycle: its success condition (three consecutive clean e2e runs) is better served by this cycle
+collecting the third run honestly than by the item that means to fix it collecting its own evidence.

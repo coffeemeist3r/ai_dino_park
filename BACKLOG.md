@@ -20,7 +20,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
+- [~] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
+- [ ] BACKLOG-488 [core] Hands on the derelict — the patch-up (480) is pile arithmetic nobody performs; make repair a *job* a resident does (full text in the cycle-133 block below).
 - [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
 - [ ] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
 
@@ -684,7 +685,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > stand *behind* the vote: one is the wobble a live-derived electorate will show the moment it decides
 > something, the other is the one economy (upkeep, 480) that governance still cannot hear.
 
-- [ ] BACKLOG-485 [core] The bill reaches the call — 480 gave the skyline a running cost and a reversible disrepair, and governance cannot hear any of it: a ground whose landmarks are rotting for want of upkeep sets its work priority off its deciders' temperaments alone, exactly as a thriving one does. Let the bill talk: a zone carrying a derelict landmark biases its own call (a standing lean toward `'gather'` while anything of its is in disrepair), so the ground answers its own emergency instead of raising more walls it can't keep. One pure modifier over the existing call, `null`-safe so a park with nothing derelict is bit-identical. The first feedback loop in the park from a *building* back into a *decision*. Builds on 480 / 481 / 473.
+- [~] BACKLOG-485 [core] The bill reaches the call — 480 gave the skyline a running cost and a reversible disrepair, and governance cannot hear any of it: a ground whose landmarks are rotting for want of upkeep sets its work priority off its deciders' temperaments alone, exactly as a thriving one does. Let the bill talk: a zone carrying a derelict landmark biases its own call (a standing lean toward `'gather'` while anything of its is in disrepair), so the ground answers its own emergency instead of raising more walls it can't keep. One pure modifier over the existing call, `null`-safe so a park with nothing derelict is bit-identical. The first feedback loop in the park from a *building* back into a *decision*. Builds on 480 / 481 / 473.
 
 ## Cycle 131 structure additions — after the fold (2026-08-15)
 
@@ -695,6 +696,14 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-486 [infra] The run, not the spec — for twenty cycles the e2e suite's occasional single-spec failure was catalogued per spec, and cycle 125 (456) put the four known victims on a dev hold. Cycle 130 ended that reading: two consecutive full runs, 498/499 each, with a **different** victim each time (`cycle-110-plenty`, then `cycle-123-wandering`), neither near that cycle's diff, both green in isolation. At 499 specs the failure is a property of the **run** — contention between parallel workers over the shared dev server, the WebGPU-less browser, and boot — not of any spec's assertions, and the next two-track cycle rolls the same die. Bound the load instead of chasing victims: set an explicit worker cap / shard in `playwright.config.ts` calibrated against a measured run, give the boot path the same settle discipline 456 built for the crossing race, and land the evidence (three consecutive clean full runs) in the QA handoff. Success is a suite whose green is information again. Builds on 456 / 430 / 431.
 - [ ] BACKLOG-487 [core] The other call goes to the council — 481 handed a ground's **work** priority (473) to its council by majority off the members' temperaments, the provider breaking ties. The ground's **spend** priority (463) — feed-the-hungry-first vs. bank-toward-a-granary, the older and more player-visible of the two calls, on the lens since 468 and in the cast's mouths since 469/470/471 — is still set unilaterally by whoever out-banks everyone else, and re-set silently on every handover (467). Run it through the same decision the work call now uses, so a ground's two calls are made the same way by the same seats, the handover beat (467) fires on a *vote* rather than one dino's temperament, and the discontent ticker (471) is finally answering a decision the ground actually made together. Reuses 481's tally wholesale; additive save. Builds on 481 / 473 / 463 / 467.
+
+## Cycle 133 structure additions — after the bill (2026-08-17)
+
+> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 485. It is the
+> half of the upkeep economy 485 makes conspicuous: once a ground's *decision* answers its falling-down
+> skyline, the fact that nobody in the park ever lifts a finger to patch it starts to read as a hole.
+
+- [ ] BACKLOG-488 [core] Hands on the derelict — 480 made a landmark cost something to keep and gave disrepair a reversible cure, but the cure is arithmetic: `runUpkeep` patches the oldest derelict the instant the pile can spare `REPAIR_COST`, with no dino anywhere near it. Every other economy in this park is *performed* — a harvest is hauled (446), a unit is ferried across an edge by a body that remembers carrying it (447/451), a landmark is raised where a dino stood. Repair alone happens to a ground rather than in it. Make it a job: a resident of a ground carrying a derelict landmark (and, once 485 lands, a ground whose call has turned to gathering because of it) walks to that landmark, and the patch-up resolves *on arrival* rather than on the day tick — the fixer keeping a small "put the Grove's cairn back up" memory the way the courier keeps its pride. The pure arithmetic in `upkeep.ts` is unchanged; what moves is *who* triggers `repaired` and *where* they are standing when it happens. The first time in the park's life that a building is mended by somebody. Builds on 480 / 485 / 447 / 451.
 
 ## Mobile (deferred, do not pick until charter clears)
 
