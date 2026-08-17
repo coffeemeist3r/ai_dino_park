@@ -18,6 +18,11 @@ import type { MemoryStore } from '../ai/memory';
 import type { Bonds } from '../social/bonds';
 import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
+import { AXES } from '../ai/personality';
+
+/** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
+ *  validation can never drift from the axes that exist. */
+const TIC_AXES: string[] = AXES.map((a) => a.key);
 
 export const SAVE_VERSION = 2;
 
@@ -99,6 +104,11 @@ export interface SaveData {
   lastProviderByZone?: Record<string, string>;
   /** Per-zone provider-set work priority (BACKLOG-473) — zone→'gather'|'build'. Additive; absent → {}. */
   workPriorityByZone?: Record<string, 'gather' | 'build'>;
+  /** BACKLOG-407: dino → the personality axis whose ritual it has picked up off a friend. The *key*, never
+   *  the rendered tic, so a reworded glyph or label can't invalidate a save. */
+  ticEchoes?: Record<string, string>;
+  /** BACKLOG-407: `watcher>performer` → how many of that friend's solitary rituals this dino has watched. */
+  ticWatches?: Record<string, number>;
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
    *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
   leftDays?: Record<string, Record<string, number>>;
@@ -449,6 +459,31 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // ticEchoes / ticWatches (BACKLOG-407) — the picked-up ritual and the watches building toward one. The
+  // echo is validated against the axis names themselves, so a save naming an axis this build doesn't have
+  // is rejected rather than restoring a dino with no ritual at all. Additive; absent → undefined.
+  let ticEchoes: Record<string, string> | undefined;
+  if (o.ticEchoes !== undefined) {
+    if (typeof o.ticEchoes !== 'object' || o.ticEchoes === null) return null;
+    const byDino = o.ticEchoes as Record<string, unknown>;
+    ticEchoes = {};
+    for (const n of Object.keys(byDino)) {
+      if (typeof byDino[n] !== 'string' || !TIC_AXES.includes(byDino[n] as string)) return null;
+      ticEchoes[n] = byDino[n] as string;
+    }
+  }
+  let ticWatches: Record<string, number> | undefined;
+  if (o.ticWatches !== undefined) {
+    if (typeof o.ticWatches !== 'object' || o.ticWatches === null) return null;
+    const byPair = o.ticWatches as Record<string, unknown>;
+    ticWatches = {};
+    for (const k of Object.keys(byPair)) {
+      const n = byPair[k];
+      if (typeof n !== 'number' || !Number.isFinite(n)) return null;
+      ticWatches[k] = n;
+    }
+  }
+
   // leftDays (BACKLOG-362) — dino→zone→the day it last left. Object of objects of finite numbers: the
   // seenZones nesting with harvestedByZone's numeric leaf.
   let leftDays: Record<string, Record<string, number>> | undefined;
@@ -747,6 +782,8 @@ export function deserialize(json: string): SaveData | null {
     councilTermDay,
     crossings,
     workPriorityByZone,
+    ticEchoes,
+    ticWatches,
     leftDays,
     cameFrom,
     cairns,

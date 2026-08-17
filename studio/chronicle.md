@@ -7009,3 +7009,23 @@ off `performTic`'s **invention branch only**: the re-float fires every six steps
 only the return of `workPriorityFor`, leaving the council/provider ladder — and the stored decision it writes
 — untouched, which is what lets a patched-up ground go back to its own call. Both tracks sequenced lore-first
 so their save hunks land apart.
+
+## 2026-08-17 03:42 — cycle 133 — coder — a ritual crosses between two dinos, and a skyline answers back
+
+8 files. **407**: `signatureAxis` split out of `signatureTic` (mechanical, its own spec is the net), the
+watching band, and one `ticFor(dino)` that all three former `signatureTic` call sites now go through — so
+the player, the book and the keeper can never be shown different rituals for the same dino. The echo persists
+as an axis key; `saveGame` validates it against `AXES` itself, so a save naming an axis this build lacks is
+rejected instead of quietly restoring a dino with no ritual. **485**: `workPriorityFor` became two functions —
+`decideWork` is the pre-485 ladder byte-for-byte, including what it stores, and the public read wraps it in
+`calledWork(base, derelictIn(zone))`.
+
+One thing the specs found rather than the plan: the 481 first-seating guard swallowed the bill's beat
+entirely. A ground with no council never records a call, so the flip to gathering read as a seeding and
+announced nothing — and grounds with no council are exactly the ones most likely to be letting their walls
+fall down. The guard now applies only when a *vote* is what changed; a bill-driven turn is news the first
+time. The cost, recorded at the call site: one line after a reload of a park left in disrepair, which is a
+true statement about that park.
+
+Build clean. Unit 1803 green (+26, zero existing assertions amended). Both new e2e specs green in isolation
+(10 tests).

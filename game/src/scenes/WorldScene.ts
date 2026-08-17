@@ -132,6 +132,9 @@ import {
   governanceLine,
   providerWorkPriority,
   councilWorkPriority, // BACKLOG-481: the seats vote; the provider only breaks a tie
+  billLean, // BACKLOG-485: what a ground's own disrepair asks of it
+  calledWork,
+  billCallLine,
   workCallMeaning,
   landmarkDeferredForGathering,
   granaryGateFor,
@@ -144,7 +147,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -241,6 +244,7 @@ import {
   type Vec2,
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, type Bonds } from '../social/bonds';
+import type { Personality } from '../ai/personality';
 import {
   shouldLay,
   makeEgg,
@@ -342,6 +346,16 @@ export class WorldScene extends Phaser.Scene {
    *  `lastWorkCallByZone`, a sting is a live read of a live moment, and a reload starts everyone unstung. */
   private stungAt: Record<string, number> = {};
   private soothedFiled = new Set<string>();
+  /**
+   * A ritual that spreads (BACKLOG-407). Unlike every other tic field above, **both of these are persisted**:
+   * a ritual you learned off a friend is a fact about who you are now, not about this solitary stretch.
+   *
+   * `ticEchoes` holds the *axis key* rather than the `Tic` — a save that stored the glyph or the label would
+   * rot the first time either was reworded, and `TIC_BY_AXIS` derives both from the key.
+   * `ticWatches` is keyed `watcher>performer`, so a dino builds toward one friend's ritual at a time.
+   */
+  private ticEchoes: Record<string, keyof Personality> = {};
+  private ticWatches: Record<string, number> = {};
   /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
    *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
   private ticGrief: Record<string, string | null> = {};
@@ -627,6 +641,12 @@ export class WorldScene extends Phaser.Scene {
    * inert, today's behaviour).
    */
   private workPriorityFor(zone: string): WorkPriority | null {
+    // BACKLOG-485: the ground's own bill leans the answer, but never the *decision*. `decide()` below is the
+    // pre-485 ladder untouched, including what it stores — so a ground that patches its skyline back up
+    // returns to the call its council actually made rather than staying on the emergency footing.
+    return calledWork(this.decideWork(zone), this.derelictIn(zone));
+  }
+  private decideWork(zone: string): WorkPriority | null {
     const provider = this.providerFor(zone);
     // BACKLOG-481: the ground's second call is the council's, not the provider's. Each seat votes its own
     // temperament; the provider only breaks a tie. A ground that seats nobody falls through to the rule
@@ -673,12 +693,22 @@ export class WorldScene extends Phaser.Scene {
    */
   private checkCouncilCall(): void {
     for (const z of ZONES) {
-      if (!this.councilFor(z.id).length) continue;
+      // BACKLOG-485: a ground with nothing derelict and nobody seated still announces nothing. A ground
+      // whose walls are coming down has something to say whether or not it has seats to say it with.
+      const lean = billLean(this.derelictIn(z.id));
+      if (!this.councilFor(z.id).length && !lean) continue;
       const call = this.workPriorityFor(z.id);
       if (!call || this.lastWorkCallByZone[z.id] === call) continue;
       const seeding = this.lastWorkCallByZone[z.id] === undefined;
       this.lastWorkCallByZone[z.id] = call;
-      if (!seeding) this.logEvent(`🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`);
+      // The first *vote* a ground records is not a turnover, so it seeds silently (481). A ground turning to
+      // gathering because its own walls are down is news the first time regardless — most such grounds have
+      // never announced a call at all, having never seated a council, and swallowing it would mean the beat
+      // only ever fires for grounds that happen to have had a vote first. The cost is one line after a reload
+      // of a park left in disrepair, which is a true statement about that park.
+      if (seeding && lean !== call) continue;
+      // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
+      this.logEvent(lean === call ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`);
     }
   }
   /**
@@ -1166,7 +1196,7 @@ export class WorldScene extends Phaser.Scene {
         isSettled(tenureOf(this.tenure, name)),
         closestFriend(name, this.bonds, this.zoneMates(d), GRIEF_BOND_FLOOR) !== null,
       );
-      return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: signatureTic(d.traits), strange };
+      return { solo: this.soloSteps[name] ?? 0, invented: this.ticInvented.has(name), tic: this.ticFor(d), strange };
     };
     // BACKLOG-414: the grief a dino's tic carries — its computed grief (closest cross-zone friend + edge), the
     // anchor its ritual settled on, and the friend it's grieving this stretch — so the e2e can prove the aim.
@@ -1194,6 +1224,20 @@ export class WorldScene extends Phaser.Scene {
       this.ticInvented.add(name);
       this.ticAnchor[name] ??= this.tileOf(d);
       return true;
+    };
+    // BACKLOG-407: the ritual a dino has picked up off a friend (null when it still performs its own), the
+    // per-pair watch tally, and one deterministic pass of the watch scan — the `__noticeTraces` precedent, so
+    // the spec and the game drive the same path rather than the spec driving a second one.
+    (window as any).__ticEcho = (name: string) => {
+      const axis = this.ticEchoes[name];
+      const d = this.dinos.find((x) => x.name === name);
+      return axis && d ? { axis, tic: this.ticFor(d) } : null;
+    };
+    (window as any).__ticWatches = (watcher: string, performer: string) =>
+      this.ticWatches[`${watcher}>${performer}`] ?? 0;
+    (window as any).__watchTic = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.watchTic(d) : [];
     };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
@@ -3607,6 +3651,58 @@ export class WorldScene extends Phaser.Scene {
    * the glyph, log it, and file the one-time memory (which the greeting/reflection path can later surface).
    * Afterward it re-floats the glyph every few steps so an ongoing ritual stays visible without spamming.
    */
+  /**
+   * The ritual this dino actually performs (BACKLOG-407) — the one it picked up off a friend if it has one,
+   * else the one its own temperament gave it. Every reader of a tic goes through here, so the player can
+   * never be shown one ritual while the book or the keeper reads another. `signatureTic` still answers what
+   * a dino was *born* with, which is a different question and stays available.
+   */
+  private ticFor(d: Dino): Tic {
+    const axis = this.ticEchoes[d.name];
+    return axis ? echoedTic(TIC_BY_AXIS[axis]) : signatureTic(d.traits);
+  }
+
+  /**
+   * Watching a friend at its ritual (BACKLOG-407). Called once per *solitary stretch* from `performTic`'s
+   * invention branch — never from the every-six-steps re-float, which would turn three watches into three
+   * steps and have the whole park echoing inside a minute.
+   *
+   * A watcher must be in the **band**: further than `TIC_COMPANY_RANGE` (any nearer and the ritual would not
+   * have formed at all) and no further than `ECHO_WATCH_RANGE`. That is the beat's whole shape — the friend
+   * who learns your ritual is the one who left you alone to have it.
+   *
+   * One echo per dino, ever: a dino already carrying a ritual is done learning, so imitation never chains
+   * beyond a single hop per learner. What it teaches onward, though, is what it *performs* — so a ritual
+   * genuinely travels rather than every echo tracing back to one dino's temperament.
+   */
+  private watchTic(performer: Dino): Array<{ name: string; watches: number; echoed: boolean }> {
+    const out: Array<{ name: string; watches: number; echoed: boolean }> = [];
+    if (this.ambientHeld) return out;
+    const zone = zoneOf(this.dinoZones, performer.name, BOWL_ID);
+    const at = this.tileOf(performer);
+    for (const o of this.dinos) {
+      if (o.name === performer.name) continue;
+      if (zoneOf(this.dinoZones, o.name, BOWL_ID) !== zone) continue;
+      if (this.ticEchoes[o.name]) continue; // already carries a ritual of someone else's
+      if (!watchingTic(this.chebyTiles(this.tileOf(o), at))) continue;
+      const bond = bondPoints(this.bonds, o.name, performer.name);
+      if (bond < ECHO_BOND_FLOOR) continue;
+      const key = `${o.name}>${performer.name}`;
+      const watches = (this.ticWatches[key] ?? 0) + 1;
+      this.ticWatches[key] = watches;
+      const echoed = picksUpTic(watches, bond);
+      if (echoed) {
+        this.ticEchoes[o.name] = this.ticEchoes[performer.name] ?? signatureAxis(performer.traits);
+        const tic = this.ticFor(o);
+        this.memory = remember(this.memory, o.name, echoTicMemory(tic.label, performer.name));
+        this.flashFeed(o, tic.glyph);
+        this.logEvent(echoedLine(o.name, performer.name, tic.glyph));
+      }
+      out.push({ name: o.name, watches, echoed });
+    }
+    return out;
+  }
+
   private performTic(d: Dino, tic: Tic): void {
     if (!this.ticInvented.has(d.name)) {
       this.ticInvented.add(d.name);
@@ -3625,6 +3721,7 @@ export class WorldScene extends Phaser.Scene {
       this.flashFeed(d, tic.glyph);
       this.logEvent(`${tic.glyph} ${d.name} ${grieved ? `${tic.label} at the edge ${grieved} left by` : tic.label}`);
       this.leaveTrace(d); // BACKLOG-424: the ritual scuffs the ground it happens on
+      this.watchTic(d); // BACKLOG-407: whoever is watching from the band gets one watch of this stretch
     } else if ((this.soloSteps[d.name] ?? 0) % 6 === 0) {
       this.flashFeed(d, tic.glyph);
     }
@@ -3966,7 +4063,7 @@ export class WorldScene extends Phaser.Scene {
           this.ticAnchor[d.name] = grief ? griefAnchor(grief.edge, cur, COLS, ROWS) : cur;
         }
         const anchor = this.ticAnchor[d.name];
-        const tic = signatureTic(d.traits);
+        const tic = this.ticFor(d); // BACKLOG-407: a picked-up ritual if it has one, else its own
         this.ticPhase[d.name] = (this.ticPhase[d.name] ?? 0) + 1;
         const atAnchor = cur.tileX === anchor.tileX && cur.tileY === anchor.tileY;
         // Walk to the grief edge first (the ache with a direction), then perform the ritual there. For a
@@ -5844,7 +5941,7 @@ export class WorldScene extends Phaser.Scene {
     const fond = caught && fondOfBeingCaught(heartsFromPoints(this.friendship[target.name] ?? 0));
     const text = caught ? `${fond ? fondOpener() : bashfulOpener()} ${reply.text}` : reply.text;
     if (caught && !this.ticCaughtFiled.has(target.name)) {
-      const label = signatureTic(target.traits).label;
+      const label = this.ticFor(target).label; // BACKLOG-407: it names the ritual it actually performs
       this.memory = remember(this.memory, target.name, fond ? fondCaughtMemory(label) : caughtMemory(label));
       this.ticCaughtFiled.add(target.name);
     }
@@ -6565,6 +6662,10 @@ export class WorldScene extends Phaser.Scene {
       // untouched park writes no field and an older save keeps reading live.
       councilSeats: this.councilSeats ?? undefined,
       councilTermDay: this.councilTermDay,
+      // BACKLOG-407: a ritual picked up off a friend, and the watches building toward one. Additive; the
+      // echo is stored as an axis key so a reworded glyph or label can never invalidate an old save.
+      ticEchoes: this.ticEchoes,
+      ticWatches: this.ticWatches,
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -6659,6 +6760,9 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone = (save.foodPileByZone as Record<string, FoodPile>) ?? {}; // BACKLOG-446 (absent → {})
       this.spendPriorityByZone = (save.spendPriorityByZone as Record<string, SpendPriority>) ?? {}; // BACKLOG-463 (absent → {})
       this.workPriorityByZone = (save.workPriorityByZone as Record<string, WorkPriority>) ?? {}; // BACKLOG-473 (absent → {})
+      // BACKLOG-407 (absent → {}): a pre-407 save restores with every dino on the ritual it was born with.
+      this.ticEchoes = (save.ticEchoes as Record<string, keyof Personality>) ?? {};
+      this.ticWatches = (save.ticWatches as Record<string, number>) ?? {};
       // BACKLOG-484: absent seats mean *no term yet*, so `null` (read live) — never `{}`, which would say
       // "held, and every ground seats nobody" and take the 481 vote inert for a day.
       this.councilSeats = save.councilSeats ?? null;

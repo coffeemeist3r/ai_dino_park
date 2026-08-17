@@ -41,10 +41,13 @@ export const TIC_BY_AXIS: Record<keyof Personality, Tic> = {
 };
 
 /**
- * A dino's signature tic: the ritual of its most-pronounced trait — the axis furthest from neutral (0.5),
- * ties resolved by AXES order (the same dominant-axis read `fidget` uses). Deterministic per dino.
+ * The axis a dino's ritual comes from: the one furthest from neutral (0.5), ties resolved by AXES order (the
+ * same dominant-axis read `fidget` uses). Deterministic per dino.
+ *
+ * Split out of `signatureTic` for BACKLOG-407: the *key* is what a save can hold and a friend can pick up,
+ * where the `Tic` is a rendering of it. Persist the key, derive the glyph.
  */
-export function signatureTic(p: Personality): Tic {
+export function signatureAxis(p: Personality): keyof Personality {
   let bestAxis: keyof Personality = AXES[0].key;
   let bestDev = -1;
   for (const axis of AXES) {
@@ -54,7 +57,15 @@ export function signatureTic(p: Personality): Tic {
       bestAxis = axis.key;
     }
   }
-  return TIC_BY_AXIS[bestAxis];
+  return bestAxis;
+}
+
+/**
+ * A dino's signature tic: the ritual of its most-pronounced trait. What this dino was *born* with — a dino
+ * that has picked one up from a friend (407) performs that one instead, and the caller reads the echo first.
+ */
+export function signatureTic(p: Personality): Tic {
+  return TIC_BY_AXIS[signatureAxis(p)];
 }
 
 /** Solitary force-steps before a dino falls into its tic (~a long real stretch at WANDER_STEP_MS). */
@@ -224,4 +235,58 @@ export function griefAnchor(edge: Edge, from: Tile, cols: number, rows: number):
 /** The one-time memory a grieving dino files (BACKLOG-414) — names the friend + the ritual, so the ache is legible in talk. */
 export function griefTicMemory(label: string, friend: string): string {
   return `your closest friend ${friend} crossed away — you ${label} at the edge they left by`;
+}
+
+/* ---------------------------------------------------------------------------------------------------
+ * A ritual that spreads (BACKLOG-407).
+ *
+ * Forty-six cycles of private ritual, and nothing in this park had ever acquired a behaviour from another
+ * living dino: traits are name-seeded at birth (010), blended from two parents at a hatch (042), or nudged
+ * within a capped band by a dino's own experience (043/187). None of them travel sideways. This is the first
+ * thing that does — watch a close friend at its ritual often enough and you pick up a faint echo of it.
+ *
+ * The **band** is the design, not the tally. A tic only forms when nobody is within `TIC_COMPANY_RANGE`, so
+ * the dino near enough to learn from you is by construction the one that did *not* walk over and break the
+ * solitude the ritual needs. Company and watching are mutually exclusive by the same number, which is why
+ * that number is read here rather than a second one being invented.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** Outer edge of the watching band — further than company, close enough to see what a friend is doing. */
+export const ECHO_WATCH_RANGE = 8;
+
+/** How close a pair must be for one to pick up the other's ritual. The same bar the ache (414) and the
+ *  comfort visit (013) already use for "a real friend" — aliased, never a second number. */
+export const ECHO_BOND_FLOOR = GRIEF_BOND_FLOOR;
+
+/** How many separate solitary stretches of a friend's ritual it takes before the watcher picks it up. */
+export const ECHO_WATCHES_NEEDED = 3;
+
+/** Is this dino watching, rather than interrupting? Strictly outside company range, inside the band. */
+export function watchingTic(dist: number): boolean {
+  return dist > TIC_COMPANY_RANGE && dist <= ECHO_WATCH_RANGE;
+}
+
+/** Has a watcher seen enough of a close-enough friend's ritual to take it up? Both bars, never one. */
+export function picksUpTic(watches: number, bond: number): boolean {
+  return watches >= ECHO_WATCHES_NEEDED && bond >= ECHO_BOND_FLOOR;
+}
+
+/**
+ * The borrowed ritual: the same motion and the same mark, described as the second-hand thing it is. Keeping
+ * `kind` and `glyph` is what makes the echo free downstream — the sting note (412), the ache (414), the
+ * caught-mid-ritual openers (408/413) and the pacing trace (424) all read a `Tic` and none of them learn a
+ * new branch.
+ */
+export function echoedTic(t: Tic): Tic {
+  return { ...t, label: `${t.label}, picked up from a friend` };
+}
+
+/** The one-time memory a watcher files when a friend's ritual takes — names both, so the mimicry is legible in talk. */
+export function echoTicMemory(label: string, friend: string): string {
+  return `you have started to ${label} — you caught it off ${friend}, watching them at it alone`;
+}
+
+/** The ticker beat the moment a ritual crosses between two dinos. */
+export function echoedLine(watcher: string, friend: string, glyph: string): string {
+  return `${glyph} ${watcher} has picked up ${friend}'s little ritual`;
 }

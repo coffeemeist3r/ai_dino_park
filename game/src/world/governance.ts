@@ -12,6 +12,7 @@
 
 import type { Personality } from '../ai/personality';
 import { YIELD_MAX, YIELD_REGROW } from './regrowth';
+import { UPKEEP_GLYPH } from './upkeep';
 
 /**
  * A zone's stance on its banked food, set by its provider:
@@ -179,6 +180,48 @@ export function workRegrowMult(p: WorkPriority | null | undefined): number {
 export function workRegrowth(p: WorkPriority | null | undefined, y: number): number {
   const next = y + YIELD_REGROW * workRegrowMult(p);
   return Math.max(0, Math.min(YIELD_MAX, next));
+}
+
+/* ---------------------------------------------------------------------------------------------------
+ * The bill reaches the call (BACKLOG-485).
+ *
+ * 480 gave the skyline a running cost and a reversible disrepair; 481 handed the ground's work call to its
+ * council; 484 gave that council a term. None of the three can hear each other. A ground whose landmarks are
+ * falling down for want of upkeep sets its labour policy off its seats' temperaments alone, exactly as a
+ * thriving one does — and if those seats are energetic, it answers a collapsing skyline by resolving to raise
+ * *more* walls it cannot keep.
+ *
+ * So the bill talks. A ground carrying anything derelict leans to `'gather'` for as long as the disrepair
+ * stands, and that lean reaches all three work hooks at once: it stops spending a thin pile on new cairns
+ * (`landmarkDeferredForGathering`), it loses the build-first granary shortcut (`granaryGateFor`), and its
+ * ground recovers faster for being worked (`workRegrowth`). Which fills the pile, which pays the upkeep,
+ * which patches the landmark, which releases the lean — the first loop in this park that runs from a
+ * *building* back into a *decision* and then back out to the building again.
+ *
+ * A lean is deliberately not a decision. The caller applies it *over* the stored call rather than into it,
+ * so a ground that gets its skyline back returns to what its council actually voted instead of being stuck
+ * on an emergency footing nobody chose to leave. `calledWork(x, 0) === x` for every input is the whole
+ * compatibility argument: a park with nothing derelict is bit-identical, which is the same `null` seam
+ * 463, 473 and 481 each honoured.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** What a ground's own disrepair asks of it: gather, or (with nothing derelict) nothing at all. */
+export function billLean(derelict: number): WorkPriority | null {
+  return derelict > 0 ? 'gather' : null;
+}
+
+/** The call as the ground actually lives it: its own decision, overridden by its bill while one is unpaid. */
+export function calledWork(
+  voted: WorkPriority | null | undefined,
+  derelict: number,
+): WorkPriority | null {
+  return billLean(derelict) ?? voted ?? null;
+}
+
+/** The ticker beat when disrepair — not a vote — is what turned a ground to gathering. Marked with the
+ *  upkeep glyph rather than the ballot one, because no council decided this and the line shouldn't say it did. */
+export function billCallLine(zoneName: string): string {
+  return `${UPKEEP_GLYPH} the ${zoneName} turns to gathering — its own walls are coming down`;
 }
 
 /** The lens read (twin of `spendGlyph`): 🧺 fills its stores first, 🧱 raises its walls first. A ground with
