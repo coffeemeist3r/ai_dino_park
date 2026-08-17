@@ -6986,3 +6986,15 @@ at 3 open (below cap X=4) so one item was brainstormed alongside: **BACKLOG-488*
 make the patch-up a job a resident performs rather than arithmetic the day tick does. 486 deliberately left
 for a later cycle: its success condition (three consecutive clean e2e runs) is better served by this cycle
 collecting the third run honestly than by the item that means to fix it collecting its own evidence.
+
+## 2026-08-17 03:04 — cycle 133 — designer — a ritual that travels, and a skyline that talks back
+
+Both tracks specced, Milestone 14 arc 2 on each. **Lore BACKLOG-407:** a watch is counted in a *band* —
+further than company range (3 tiles, or the ritual would never have formed) and within 8 — so the friend near
+enough to learn from you is by construction the one who did not walk over and interrupt you. Three watches of
+the same close friend (bond ≥ 8) and the ritual is picked up: the watcher performs the friend's tic from then
+on, one hop, one echo per dino, permanent, additive in the save. **Structure BACKLOG-485:** one pure modifier
+over the existing work call — anything derelict in a ground leans it to `'gather'` — applied *after* the
+stored decision so a patched-up ground returns to its council's own call rather than being stuck on an
+emergency footing. `calledWork(x, 0) === x` is the seam, and the evidence for it is the existing suite
+passing unamended. 23 acceptance criteria. phase → codeplan-pending.
