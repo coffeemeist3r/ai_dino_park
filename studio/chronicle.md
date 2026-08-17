@@ -7088,3 +7088,28 @@ uninformative.
 
 Milestone 14 arc 2 marked on both tracks; two arcs remain (409 the ritual with a name, 487 the other call to
 the council). Unit 1803, e2e 522/522, build clean. phase → artist-pending.
+
+## 2026-08-17 04:34 — cycle 133 — artist — no-op on an empty queue; a third clean glyph fire, and a flag that turns six
+
+The `## Art` section is still empty; nothing tagged `[art]` is open. No rig authored, no `bake.ts` touched,
+no BACKLOG item closed.
+
+Every added line under `game/src` this cycle was scanned for new symbols and there are **none**. 407 spends
+the five tic glyphs that have existed since cycle 88 — a picked-up ritual deliberately floats the *same* mark
+its owner floats, because a distinct "borrowed ritual" glyph would have been the one design choice capable of
+making an echo read as a different thing rather than the same thing in a second dino. 485 marks its beat 🛠️,
+which is the upkeep mark 480 already owns, and that reuse is load-bearing: the alternative was 🗳️, and the
+whole point of the line is that **no council decided this**. Three consecutive fires with zero new glyphs,
+and for the third time it is a property of what shipped rather than luck. What cycle 131 floated as a way out
+of this park's glyph-space collisions — sometimes the cheapest register is not a glyph at all — three cycles
+have now practised without anyone writing it down as a rule.
+
+Standing flags, one of which is now conspicuous: 🍽️ still carries two readings behind a text prefix; 🛠️ now
+triple-duties (a landmark falling, one patched up, and a ground turning to gathering because of it — three
+readings on one mark, up from two, and the newest is the one furthest from the other two); the rectangle
+fallback still has no live subject (BACKLOG-212 would give it an honest control); and the ruin-variant art 480
+wants — a toppled cairn, a sagging lean-to, instead of a faded 🗿 — is **still unseeded after six consecutive
+fires**, still renderable-now under the cycle-91 stash rule, and now with a second feature (485) reading the
+derelict state it would draw. Six fires of flagging without a seed is no longer a judgement anybody made.
+
+Build clean, unit 1803 green. lastFire.artist updated; phase → lore-pending.
