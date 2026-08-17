@@ -7029,3 +7029,14 @@ true statement about that park.
 
 Build clean. Unit 1803 green (+26, zero existing assertions amended). Both new e2e specs green in isolation
 (10 tests).
+
+## 2026-08-17 04:06 — cycle 133 — qa — 23/23 criteria pass; the third victim in four cycles
+
+Build clean, unit **1803** (+26, zero existing assertions amended for the second cycle running), e2e
+**522/522** on the second full run. The first full run lost `mobile-minds` "long dialogs page GBA-style",
+which then passed 5/5 isolated in five seconds — the catalogued parallel-load failure, nothing in this
+cycle's diff within reach of the dialog path. That makes **three distinct victims in four cycles**
+(cycle-110-plenty, cycle-123-wandering, now mobile-minds), and cycle 132's two consecutive clean runs did not
+extend to three. BACKLOG-486's success condition is not going to arrive by waiting for it.
+
+Both tracks recommended APPROVE.
