@@ -6969,3 +6969,10 @@ header carries the stash-ahead rule the Artist reads every fire.
 
 Structure Track is at **3 open** (485, 486, 487), below the X=4 cap, so the next Structure-smith brainstorms
 one alongside its pick rather than draining straight through.
+
+## 2026-08-17 02:30 — cycle 133 — lore-smith — the ritual travels
+
+Milestone 14 arc 2 suggested: **BACKLOG-407** (shared tic). Forty-six cycles of private ritual and nothing in
+this park has ever acquired a behaviour from another living dino — traits are seeded at birth, blended at a
+hatch, or self-nudged; none of them travel sideways. 407 makes the tic the first thing that does. No new items
+seeded: the lore queue is far past the cap of 12 open. Idea Box empty.
