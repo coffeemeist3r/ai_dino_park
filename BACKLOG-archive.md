@@ -731,6 +731,20 @@ Sections whose last open item closed. Kept for the context notes in their header
 > park will owe once a third derived per-zone standing exists.
 
 
+## Cycle 133 closures (2026-08-17)
+
+- [x] BACKLOG-485 [core] The bill reaches the call — a ground that can't pay its upkeep (480) has no way to say so in its own governance; let disrepair push the ground's call (full text in the cycle-129 block below).
+- [x] BACKLOG-407 [emergent] Shared tic — a dino that watches a close friend perform its solitary tic (405) enough times picks up a faint echo of it, so a personal ritual can *spread* between friends (mimicry as quiet bonding). Builds on 405 / 013.
+- [x] BACKLOG-485 [core] The bill reaches the call — 480 gave the skyline a running cost and a reversible disrepair, and governance cannot hear any of it: a ground whose landmarks are rotting for want of upkeep sets its work priority off its deciders' temperaments alone, exactly as a thriving one does. Let the bill talk: a zone carrying a derelict landmark biases its own call (a standing lean toward `'gather'` while anything of its is in disrepair), so the ground answers its own emergency instead of raising more walls it can't keep. One pure modifier over the existing call, `null`-safe so a park with nothing derelict is bit-identical. The first feedback loop in the park from a *building* back into a *decision*. Builds on 480 / 481 / 473.
+
+## Cycle 129 structure additions — after the vote (2026-08-13)
+
+> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 481. Both
+> stand *behind* the vote: one is the wobble a live-derived electorate will show the moment it decides
+> something, the other is the one economy (upkeep, 480) that governance still cannot hear.
+
+_(section drained — moved here cycle 133)_
+
 ## Cycle 132 closures (2026-08-16)
 
 - [x] BACKLOG-484 [core] The seat has a term — a council seat is re-derived on every read, so one harvest can reseat a ground mid-decision and a vote (481) can flip between two ticks with nothing to mark it (full text in the cycle-129 block below).

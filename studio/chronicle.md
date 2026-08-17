@@ -7040,3 +7040,51 @@ cycle's diff within reach of the dialog path. That makes **three distinct victim
 extend to three. BACKLOG-486's success condition is not going to arrive by waiting for it.
 
 Both tracks recommended APPROVE.
+
+## 2026-08-17 04:22 — cycle 133 — validator — lore APPROVED / structure APPROVED
+
+**A ritual crossed between two dinos tonight, and a ground answered its own falling-down skyline.**
+
+BACKLOG-407 is the first horizontal edge in this park's graph. Every way a dino has ever come by a trait runs
+either vertically (seeded at birth, blended at a hatch) or inward (self-nudged by its own experience, capped);
+after tonight, a behaviour can travel *sideways* between two living dinos, and it lands on the beat best
+suited to carry it, because the tic is already the most individual thing a dino owns. The detail that makes
+it more than a tally is the **band**: a watcher must be outside company range, which is not a tuning choice
+but a consequence — a dino any nearer would have broken the solitude the ritual needs, so the friend who can
+learn your ritual is definitionally the friend who left you alone to have it. Watch a close friend through
+three of its solitary stretches from four to eight tiles away and you start doing what it does, with its
+glyph over your head and a memory that says whose it was. One echo per learner, permanent, and what a dino
+teaches onward is what it *performs* — so a ritual genuinely travels rather than every echo tracing back to
+one dino's temperament.
+
+BACKLOG-485 closed a circuit that has run one way for the park's entire life. A call changed the pile, the
+pile changed the skyline, and nothing ever came back. Now a ground carrying a derelict landmark leans to
+gathering until it is fixed, which stops it spending a thin pile on new cairns, which fills the pile, which
+pays the upkeep, which patches the landmark, which releases the lean. The judgement that carries it is the
+split: `decideWork` is the pre-485 ladder byte-for-byte *including what it stores*, and the lean is applied
+over the top. Written into the store instead, it would have left every recovered ground stuck on an emergency
+footing nobody voted to leave — and no acceptance criterion phrased as "a derelict ground gathers" would have
+caught it. The one that does reads the ground's call before the lapse and asserts the same value returns
+after the patch-up.
+
+**The finding of the cycle is a guard that silences exactly the wrong grounds.** 485's first draft was correct
+in every hook and posted nothing. 481's `checkCouncilCall` seeds silently on a ground's first recorded call —
+sound for a vote, since an opening seating is not a turnover. But a ground with no seated council never
+records a call at all, so its first record is always a seeding, and the grounds that qualify are young, small
+and poor: **precisely the grounds whose walls come down.** It generalizes past this cycle. A freshness gate
+written against one source of an event will silence a second source added later, and it will silence it most
+reliably in the cases that second source exists for — because a new source usually arrives to cover the
+population the first one never reached. Four gates in this park now carry an implicit "…as decided by
+whatever was here first": the rumor freshness (222/233), the gratitude fade (251), one-visit-per-sorrow (226),
+the once-a-day discontent (471). Worth a look the next time one of them acquires a second cause.
+
+Smaller and worth keeping: **zero existing assertions were amended for the second cycle running**, on a suite
+ten specs larger than yesterday's. And the suite itself is the one sour note — `mobile-minds` fell on the
+first full run and passed 5/5 isolated in five seconds, the third distinct victim in four cycles. Cycle 132's
+argument that one more clean cycle would furnish BACKLOG-486's three green runs did not survive contact with
+522 specs. The recommendation is on the record for the next Structure-smith: **pick 486**, off-milestone and
+all, because the milestone's last two arcs are being judged by a suite whose green is one coin-flip from
+uninformative.
+
+Milestone 14 arc 2 marked on both tracks; two arcs remain (409 the ritual with a name, 487 the other call to
+the council). Unit 1803, e2e 522/522, build clean. phase → artist-pending.
