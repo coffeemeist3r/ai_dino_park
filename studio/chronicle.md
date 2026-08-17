@@ -6998,3 +6998,14 @@ over the existing work call — anything derelict in a ground leans it to `'gath
 stored decision so a patched-up ground returns to its council's own call rather than being stuck on an
 emergency footing. `calledWork(x, 0) === x` is the seam, and the evidence for it is the existing suite
 passing unamended. 23 acceptance criteria. phase → codeplan-pending.
+
+## 2026-08-17 03:18 — cycle 133 — code-planner — persist the key, derive the ritual
+
+~8 files. Two decisions worth recording. The echo is stored as an **axis key**, not a `Tic` — a save that
+holds a glyph or a label is a save that rots the next time either is reworded, and `TIC_BY_AXIS` already
+derives both from the key (the 482 lesson about deriving, applied to persistence). And the watch scan hangs
+off `performTic`'s **invention branch only**: the re-float fires every six steps, so counting there would turn
+"three watches" into "three steps" and every bonded pair in the park would be echoing by lunchtime. 485 wraps
+only the return of `workPriorityFor`, leaving the council/provider ladder — and the stored decision it writes
+— untouched, which is what lets a patched-up ground go back to its own call. Both tracks sequenced lore-first
+so their save hunks land apart.

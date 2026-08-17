@@ -1,6 +1,6 @@
 {
   "cycle": 133,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-407: Shared tic — a ritual picked up from a close friend by watching it",
   "structureItem": "BACKLOG-485: The bill reaches the call — disrepair leans a ground's work priority toward gathering",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-17T02:30:00-05:00",
     "structure-smith": "2026-08-17T02:44:00-05:00",
     "designer": "2026-08-17T03:04:00-05:00",
-    "code-planner": "2026-08-16T03:16:00-05:00",
+    "code-planner": "2026-08-17T03:18:00-05:00",
     "coder": "2026-08-16T03:40:00-05:00",
     "qa": "2026-08-16T04:05:00-05:00",
     "validator": "2026-08-16T04:20:00-05:00",
