@@ -31,6 +31,11 @@ export async function boot(page: Page): Promise<void> {
   // BACKLOG-486: `__ready` is a flag create() sets on its last line — it says the hooks are attached, not
   // that the scene has drawn. Give it one frame, so a spec reads a world that has actually stepped once.
   await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => r())));
+  // BACKLOG-486 (rework): put the world on seeded dice. Capping the workers and lifting the per-test budget
+  // did not stop the one-victim-per-run pattern, and the failures were never timeouts — `cycle-129-berth`
+  // fell by exactly one tile, a wander step that happened to go toward the food. A spec asserting over a
+  // live coin flip cannot be re-run into information. Every spec boots on the same sequence.
+  await page.evaluate(() => (window as Record<string, (s: number) => boolean>).__seedRandom?.(20260818));
   // BACKLOG-431: freeze the wall-clock ambient timers (wander/sky/migration rolls) for every spec, so the
   // background world tick can't mutate pinned state mid-assert. Specs drive beats via explicit hooks
   // (__stepWorld, __triggerSky, __migrate, __maybeBarter, __advanceWall), which bypass the pause. A spec

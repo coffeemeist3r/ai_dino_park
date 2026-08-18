@@ -9,6 +9,7 @@
 
 import type { Tile } from './movement';
 import { stepToward } from './movement';
+import { rand as worldRand } from './rng';
 
 export type FeedReaction = 'rush' | 'ignore';
 
@@ -172,7 +173,7 @@ export function sharedMeal(
  * given; otherwise a column is picked from `rand`. It always settles in the
  * upper-middle feeding zone so it falls into the cast rather than onto the rim.
  */
-export function foodLanding(cols: number, rows: number, col?: number, rand: () => number = Math.random): Tile {
+export function foodLanding(cols: number, rows: number, col?: number, rand: () => number = worldRand): Tile {
   const tileX =
     col === undefined ? Math.floor(rand() * cols) : Math.max(0, Math.min(cols - 1, Math.round(col)));
   return { tileX, tileY: Math.floor(rows * 0.45) };

@@ -11,6 +11,8 @@
  * (so 384 needs no SAVE_VERSION bump).
  */
 
+import { rand as worldRand } from './rng';
+
 export const YIELD_MAX = 1;
 export const YIELD_DEPLETE = 0.34; // a pickup thins the zone's yield (~3 back-to-back gathers empty it)
 export const YIELD_REGROW = 0.02; // restored per spawn-roll tick (slow — a worked-out zone stays thin a while)
@@ -36,6 +38,6 @@ export function yieldSpawnChance(base: number, y: number): number {
 }
 
 /** Whether a resource spawns this roll in a zone of the given yield (base scaled by yield). */
-export function rollResourceAt(base: number, y: number, rand: () => number = Math.random): boolean {
+export function rollResourceAt(base: number, y: number, rand: () => number = worldRand): boolean {
   return rand() < yieldSpawnChance(base, y);
 }

@@ -245,6 +245,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, type Bonds } from '../social/bonds';
 import type { Personality } from '../ai/personality';
+import { rand, seedRandom, isSeeded } from '../world/rng';
 import {
   shouldLay,
   makeEgg,
@@ -1648,7 +1649,7 @@ export class WorldScene extends Phaser.Scene {
     if (this.food) return this.food; // already a piece in play — ignore the drop
     const kind = foodId
       ? FOODS.find((f) => f.id === foodId) ?? FOODS[0]
-      : FOODS[Math.floor(Math.random() * FOODS.length)];
+      : FOODS[Math.floor(rand() * FOODS.length)];
     const landing = foodLanding(COLS, ROWS, col);
     this.food = landing;
     this.foodKind = kind;
@@ -1980,7 +1981,7 @@ export class WorldScene extends Phaser.Scene {
       if (this.resourceByZone[zone] || !rollResourceAt(RESOURCE_SPAWN_CHANCE, this.yieldByZone[zone])) continue;
       // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
       const landing = resourceLanding(COLS, ROWS);
-      const kind = pickKind(Math.random, zone); // BACKLOG-348: each zone leans its own resource mix
+      const kind = pickKind(rand, zone); // BACKLOG-348: each zone leans its own resource mix
       this.spawnResource(kind, landing.tileX, landing.tileY, zone);
       this.resourceAgeByZone[zone] = 0;
       if (zone === this.zoneId) this.logEvent(`${RESOURCE_GLYPH[kind]} a ${kind} fell`);
@@ -2268,8 +2269,8 @@ export class WorldScene extends Phaser.Scene {
     const ev = rollSkyEvent({
       isClearNight: this.isClearNight(),
       active: false,
-      chanceRoll: Math.random(),
-      pickRoll: Math.random(),
+      chanceRoll: rand(),
+      pickRoll: rand(),
     });
     if (ev) this.startSky(ev);
   }
@@ -3182,6 +3183,12 @@ export class WorldScene extends Phaser.Scene {
       const score = zoneProsperity(signals);
       return { signals, score, tier: prosperityTier(score) };
     };
+    // BACKLOG-486 (rework): seed the world's dice so a spec asserts over a fixed sequence rather than a coin.
+    // Production never calls this — unseeded, `rand()` is `Math.random()`. `null` hands the dice back.
+    (window as any).__seedRandom = (seed: number | null) => {
+      seedRandom(seed);
+      return isSeeded();
+    };
     (window as any).__bookRows = () => this.bookRows();
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
@@ -3984,7 +3991,7 @@ export class WorldScene extends Phaser.Scene {
             this.huntCooldownUntil[d.name] = Date.now() + HUNT_COOLDOWN_MS;
             this.flashFeed(prey, '💨');
             this.memory = remember(this.memory, preyName, `you slipped ${d.name}'s hunt`);
-            if (huntSucceeds(Math.random())) {
+            if (huntSucceeds(rand())) {
               this.needs = satisfy(this.needs, d.name, 'hunger'); // BACKLOG-437: hunger resolves through hunting
               this.flashFeed(d, '🍖');
               this.logEvent(`🦖 ${d.name} made its catch — a lean meal`);
@@ -4034,18 +4041,18 @@ export class WorldScene extends Phaser.Scene {
       // meet someone and grow out of it (no all-unbonded deadlock). Activity stays 'wandering' — the 🥀
       // mark rides loner status, not this roll, so the tell shows the whole time.
       const moping =
-        !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && Math.random() < MOPE_CHANCE;
+        !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && rand() < MOPE_CHANCE;
       // BACKLOG-393 intent lean, then BACKLOG-178 season lean: winter tightens the drift-to-the-cluster odds,
       // summer loosens them, so the bowl's daytime social density breathes with the year (clamped, never pegs).
       const socializing =
-        !huddling && !gathering && !moping && !!other && Math.random() < seasonalSocializeChance(socializeChanceFor(intent), season);
+        !huddling && !gathering && !moping && !!other && rand() < seasonalSocializeChance(socializeChanceFor(intent), season);
       // Need pulls the body (BACKLOG-436): a pressing 🍖/💧 leans the wander toward relief (hatch/pond),
       // but only below every ritual above (they still win) and gated so it's a lean, not a compulsion.
       // No reachable target (thirst outside the grove) → seekTarget null → the dino just wanders.
       const need = pressingNeed(this.needs[d.name]);
       const seekTarget =
         !huddling && !gathering && !moping && !socializing && need ? this.needTargetFor(d, need) : null;
-      const seeking = !!seekTarget && needSeeks(Math.random());
+      const seeking = !!seekTarget && needSeeks(rand());
       // Solitary tic (BACKLOG-405): a dino truly alone — nothing pressing, nobody in its zone within range,
       // and nothing to do (not huddling/gathering) — accrues a solitary streak and, past TIC_AFTER_STEPS,
       // falls into a small ritual of its own. Only *company or a need* breaks the streak (`resetTic`); moping
@@ -4107,7 +4114,7 @@ export class WorldScene extends Phaser.Scene {
         next = stepToward(cur, seekTarget!, COLS, ROWS); // BACKLOG-436: lean toward the hatch (hunger) / pond (thirst)
       } else {
         // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.
-        const dir = rerollStay(intent, Math.floor(Math.random() * 5), () => Math.floor(Math.random() * 5));
+        const dir = rerollStay(intent, Math.floor(rand() * 5), () => Math.floor(rand() * 5));
         next = wanderStep(cur, dir, COLS, ROWS);
       }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
@@ -4250,7 +4257,7 @@ export class WorldScene extends Phaser.Scene {
    * out-of-view huddlers (the other zone) stay silent. The LLM-coloured murmur is a 181 follow-up.
    */
   private maybeMurmur(): void {
-    if (Math.random() >= MURMUR_CHANCE) return;
+    if (rand() >= MURMUR_CHANCE) return;
     const d = this.pickMurmurer();
     if (d) this.showBubble(d, murmurLine(pickMurmurMemory(recall(this.memory, d.name))));
   }
@@ -4258,7 +4265,7 @@ export class WorldScene extends Phaser.Scene {
   /** A random huddling, in-view dino (BACKLOG-181), or null when the den is empty / out of view. */
   private pickMurmurer(): Dino | undefined {
     const sleepers = this.dinos.filter((d) => this.isHuddling(d) && this.inView(d));
-    return sleepers[Math.floor(Math.random() * sleepers.length)];
+    return sleepers[Math.floor(rand() * sleepers.length)];
   }
 
   /** Show each awake dino's current-activity glyph (BACKLOG-295). The 💤 sleep mark owns the sleeping state. */
@@ -5441,7 +5448,7 @@ export class WorldScene extends Phaser.Scene {
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
-    if (Math.random() >= MIGRATE_CHANCE) return;
+    if (rand() >= MIGRATE_CHANCE) return;
     const d = this.pickMigrant();
     if (!d) return;
     // BACKLOG-340: homesickness overrules scenery — a dino aching for a friend a zone away crosses toward it,
@@ -5465,7 +5472,7 @@ export class WorldScene extends Phaser.Scene {
       this.isZoneDeclining(home) ? DECLINING_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP,
       this.isZoneCrowded(home) ? CROWDED_MIGRATE_DAMP : SETTLED_MIGRATE_DAMP,
     );
-    if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true, Math.random, damp)) return;
+    if (isSettled(tenureOf(this.tenure, d.name)) && resistsMigration(true, rand, damp)) return;
     // BACKLOG-450: mouths move toward plenty — head for the richest neighbour, not a coin flip.
     this.scarcityMigrate(d);
     this.lastMigrationMs = Date.now();
@@ -5662,7 +5669,7 @@ export class WorldScene extends Phaser.Scene {
     const candidates = this.dinos.filter((d) => !this.migrating.has(d.name));
     // BACKLOG-340: a dino homesick for a friend a zone away is the first the wander picks up (company > scenery).
     const homesick = candidates.filter((d) => this.homesickOf(d));
-    // BACKLOG-456: positional, not random. This was the last `Math.random()` left in a pickable set, and
+    // BACKLOG-456: positional, not random. This was the last `rand()` left in a pickable set, and
     // it is the mechanism behind cycle-076-news-pull's identity flake: an ambient meeting mid-drive turns a
     // dino homesick and the pick lands on someone else. First-in-list-order-wins is the same rule
     // richestNeighbor (450), unsettledNeighbor (474), hopToward (475) and pondCompanion (360) all use.
@@ -5670,23 +5677,23 @@ export class WorldScene extends Phaser.Scene {
     const pull = (d: Dino) =>
       grovePull(recall(this.memory, d.name), this.groveVisited, d.name, zoneOf(this.dinoZones, d.name, BOWL_ID));
     const told = candidates.filter((d) => pull(d) === 2);
-    if (told.length) return told[Math.floor(Math.random() * told.length)];
+    if (told.length) return told[Math.floor(rand() * told.length)];
     const curious = candidates.filter((d) => pull(d) >= 1);
-    if (curious.length) return curious[Math.floor(Math.random() * curious.length)];
+    if (curious.length) return curious[Math.floor(rand() * curious.length)];
     // BACKLOG-458: a dino primed by word of plenty (heard a thriving neighbour) is pulled next — ahead of the
     // scarcity/random fallback, below the grove tiers so the 076/078 grove-pull picks stay byte-identical.
     const primed = candidates.filter((d) => this.plentyDestOf(d));
-    if (primed.length) return primed[Math.floor(Math.random() * primed.length)];
+    if (primed.length) return primed[Math.floor(rand() * primed.length)];
     // BACKLOG-362: a dino that misses a ground goes next — strictly below the plenty tier and strictly
     // above the scarcity fallback, so every pinned pick above stays byte-identical.
     const yearning = candidates.filter((d) => this.yearnDestOf(d));
-    if (yearning.length) return yearning[Math.floor(Math.random() * yearning.length)];
+    if (yearning.length) return yearning[Math.floor(rand() * yearning.length)];
     // BACKLOG-450: no news or homesickness pulling anyone — scarcity decides. A resident of the poorest,
     // emptiest-pantry zone is likeliest to walk out (want empties out); random among the equally-poor keeps
     // *which* of them leaves varied. Touches only this fallback tier, so the grove-pull picks above (pinned by
     // cycle-076/078) and the homesick pick are byte-identical.
     const poor = poorestResidents(candidates, (d) => zoneOf(this.dinoZones, d.name, BOWL_ID), (z) => this.zoneAppeal(z));
-    return poor[Math.floor(Math.random() * poor.length)] ?? null;
+    return poor[Math.floor(rand() * poor.length)] ?? null;
   }
 
   /**

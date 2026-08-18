@@ -14,6 +14,7 @@
 
 import type { Tile } from './movement';
 import { BOWL_ID, GROVE_ID, FERNREACH_ID } from './zones';
+import { rand as worldRand } from './rng';
 
 export type ResourceKind = 'branch' | 'stone' | 'frond';
 
@@ -44,13 +45,13 @@ export function noticeResource(curiosity: number, distTiles: number): GatherReac
 }
 
 /** Where a resource appears: a random in-bounds tile, kept off the very rim so it lands among the cast. */
-export function resourceLanding(cols: number, rows: number, rand: () => number = Math.random): Tile {
+export function resourceLanding(cols: number, rows: number, rand: () => number = worldRand): Tile {
   const span = (n: number) => 1 + Math.floor(rand() * Math.max(1, n - 2)); // [1, n-2]
   return { tileX: span(cols), tileY: span(rows) };
 }
 
 /** Whether a resource spawns this roll (only call when none is present). */
-export function rollResource(rand: () => number = Math.random): boolean {
+export function rollResource(rand: () => number = worldRand): boolean {
   return rand() < RESOURCE_SPAWN_CHANCE;
 }
 
@@ -72,7 +73,7 @@ export const ZONE_BIAS: Record<string, ResourceKind> = {
 export const BIAS_WEIGHT = 0.75; // chance the favored kind rolls in its biased zone (vs 0.5 uniform)
 
 /** Pick which kind appears — uniform 50/50 with no zone, or leaning to the zone's bias (348/400). */
-export function pickKind(rand: () => number = Math.random, zone?: string): ResourceKind {
+export function pickKind(rand: () => number = worldRand, zone?: string): ResourceKind {
   const favored = zone ? ZONE_BIAS[zone] : undefined;
   if (!favored) return rand() < 0.5 ? 'branch' : 'stone';
   // The off-kind is intentionally a primary (branch↔stone), never the favored's "opposite" among all

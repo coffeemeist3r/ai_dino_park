@@ -5,7 +5,9 @@
   "structureItem": "BACKLOG-486: The run, not the spec",
   "lastVerdict": null,
   "structureVerdict": null,
-  "reworkCount": {},
+  "reworkCount": {
+    "BACKLOG-486": 1
+  },
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {

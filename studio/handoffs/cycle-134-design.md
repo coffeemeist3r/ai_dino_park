@@ -105,3 +105,50 @@ every run, always green in isolation, always "not near the diff". That is the sh
 - [ ] No spec file's assertions are weakened, skipped, or `test.slow()`-ed to achieve the above — the fix is
       in the run's configuration, not in what the suite checks.
 - [ ] Unit suite and `npm run build` unaffected.
+
+
+---
+
+## Structure track — BACKLOG-486, REWORK loop 1 (2026-08-18)
+
+**Why the first attempt failed, in its own evidence.**
+
+| run | config | result | wall |
+|---|---|---|---|
+| baseline | `--workers=6 --timeout=30000` (the old behaviour) | **1 failed** — `cycle-129-berth` | 9.4m |
+| 1 | shipped (`workers=4`, `timeout=60000`) | **2 failed** — `cycle-077-carry`, `cycle-129-berth` | 8.8m |
+| 2 | shipped | 527/527 | 8.7m |
+| 3 | shipped | **1 failed** — `cycle-110-plenty` | 8.6m |
+
+Bounding the load did not stop the pattern, and the first design's named mechanism — a boot that ate the
+per-test budget — is **not what these failures are**. `cycle-129-berth` failed its distance assertion by
+`127.999 → 96`: exactly **one tile**. That is a wander step, not a clock. The spec asserts that a wary dino
+"does not get closer to the food" while the world takes a step in which that dino wanders in a *randomly
+chosen direction*; one direction in several closes the distance, and the assertion loses. No worker cap, no
+timeout, and no number of re-runs can make an assertion over a live coin flip informative.
+
+**So the item's own premise needs correcting, and this is the finding of the cycle.** "The failure is a
+property of the run, not of the spec's assertions" was half right. The failure is not a property of any
+*particular* spec — four different victims in four cycles proves that — but it is not contention either. It
+is a property of the **suite's footing**: 35 randomness call sites under `game/src`, and 527 specs asserting
+over them with the dice live.
+
+**What ships in the loop:** the world's dice get a seam. `game/src/world/rng.ts` exposes `rand()`, which is
+`Math.random()` verbatim when unseeded — production and every unit test that stubs `Math.random` are
+untouched — and a plain LCG when seeded. Every real randomness site under `game/src` routes through it,
+including the four modules that already took an injectable `rand` parameter (their *default* now comes from
+the same seam, which is where the injection was leaking). `boot()` seeds every spec with one fixed value.
+
+The config changes from the first attempt **stay**: the timeout inversion was real (a 30s boot ceiling under
+a 30s per-test budget leaves a slow boot no room), and an explicit worker cap is right regardless. They were
+just not sufficient, and were never the whole story.
+
+**Amended acceptance criteria**
+
+- [ ] `rand()` is `Math.random()` when unseeded, including for a caller that stubs `Math.random`.
+- [ ] The same seed replays the same sequence; different seeds diverge; every draw is in [0, 1).
+- [ ] No `Math.random` remains in a decision path under `game/src` (comments and the rng module aside).
+- [ ] `boot()` seeds the world, and the four historical victims (`berth`, `carry`, `plenty`, `wandering`)
+      pass repeated runs.
+- [ ] **Three consecutive** full runs green, wall times recorded.
+- [ ] Build clean, unit suite green, no spec's assertions weakened.

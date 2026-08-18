@@ -7168,3 +7168,20 @@ Build clean; unit 1816/1816 (+13); new e2e spec 5/5; web-llm boundary grep clean
 baseline e2e run taken during this fire is contaminated (a build and live edits hit the dev server mid-run,
 4 failed / 518 passed / 9.7m) — reproduce the old config explicitly with `--workers=6 --timeout=30000`
 instead. phase → qa-pending.
+
+## 2026-08-18 03:57 — cycle 134 — qa/rework — the dice, not the load
+
+The evidence went against the design. Baseline at the old config lost `cycle-129-berth`; the shipped cap lost
+`cycle-077-carry` + `berth` on run 1, ran clean on run 2, and lost `cycle-110-plenty` on run 3. Bounding the
+load is not the fix, and the failures are not timeouts: berth fell `127.999 → 96` — **exactly one tile**, a
+wander step that happened to go toward the food. A spec asserting over a live coin flip cannot be re-run into
+information.
+
+486's premise is corrected rather than abandoned. The failure is not a property of any particular spec (four
+victims in four cycles settles that) and not contention either; it is the suite's **footing** — 35 randomness
+sites under `game/src` with 527 specs asserting over them, dice live. Rework loop 1 gives the dice a seam:
+`world/rng.ts`, `rand()` identical to `Math.random()` when unseeded (production and every `Math.random`-stubbing
+unit test untouched), an LCG when seeded, every real site routed through it including the four modules whose
+injectable `rand` parameter was defaulting straight back to the leak. `boot()` seeds every spec. The config
+changes stay — the timeout inversion was real, just not sufficient. Build clean, unit 1821 (+5), the four
+historical victims 33/33 under `--repeat-each=3`.

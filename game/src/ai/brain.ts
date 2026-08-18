@@ -14,6 +14,7 @@ import type { Season } from '../world/seasons';
 import type { SpendPriority } from '../world/governance';
 import type { HatchOutcome } from '../world/manner';
 import { WebLLMBrain } from './webllmBrain';
+import { rand } from '../world/rng';
 
 export interface NPCContext {
   name: string;
@@ -312,7 +313,7 @@ export function cannedReply(ctx: NPCContext): Reply {
   else if (ctx.affection !== undefined && ctx.affection >= FOND_MIN) {
     reply = { text: fondGreeting(ctx.name, ctx.keeperName), mood: moodFromTraits(ctx.traits), source: 'canned' };
   } else {
-    const idx = Math.floor(Math.random() * cannedGreetings.length);
+    const idx = Math.floor(rand() * cannedGreetings.length);
     const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
     reply = { text, mood: moodFromTraits(ctx.traits), source: 'canned' };
   }

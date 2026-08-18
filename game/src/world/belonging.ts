@@ -9,6 +9,8 @@
  * `settledLine` into the book. The first lore arc of Milestone 2 ("Places to belong").
  */
 
+import { rand as worldRand } from './rng';
+
 export type Tenure = Record<string, number>;
 
 /** Migration rolls a dino must reside continuously in one zone before it counts as *settled* (~4×90 s ≈ 6 min). */
@@ -42,7 +44,7 @@ export function isSettled(rolls: number, threshold: number = SETTLE_ROLLS): bool
  *  a lower one so its residents lean harder to leave. */
 export function resistsMigration(
   settled: boolean,
-  rand: () => number = Math.random,
+  rand: () => number = worldRand,
   damp: number = SETTLED_MIGRATE_DAMP,
 ): boolean {
   return settled && rand() < damp;
