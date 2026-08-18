@@ -21,7 +21,7 @@ a way to hear its own unpaid bills.
 **Lore arcs:**
 - [x] A ritual you fall into after a sting — a dino that came away empty from a contested drop takes up its signature tic sooner than a contented one, so the hatch's aftermath is something you can watch (BACKLOG-412 — cycle 132)
 - [x] A ritual that spreads — a dino that watches a close friend at its tic often enough picks up a faint echo of it, so a private ritual becomes the first thing in this park to travel by imitation (BACKLOG-407 — cycle 133)
-- [ ] A ritual with a name — the collection book names each dino's signature tic, the distinctness the player collects at a glance (BACKLOG-409)
+- [x] A ritual with a name — the collection book names each dino's signature tic, the distinctness the player collects at a glance (BACKLOG-409 — cycle 134)
 
 **Structure arcs:**
 - [x] The seat has a term — the council is re-derived on the in-game day boundary and held between, with a beat when the membership actually turns over, so a ground's electorate changes on a date instead of flickering (BACKLOG-484 — cycle 132)

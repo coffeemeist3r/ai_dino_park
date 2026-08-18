@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-488 [core] Hands on the derelict — the patch-up (480) is pile arithmetic nobody performs; make repair a *job* a resident does (full text in the cycle-133 block below).
-- [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
 - [ ] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
 - [ ] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
 
@@ -661,7 +660,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
 > it (409), a stranger-zone deepens it (410), and being found lifts it (411).
 
-- [ ] BACKLOG-409 [pokemon] Tics in the book — the collection book names each dino's signature tic ("paces a fixed little path"), a distinctness read the player collects at a glance. Builds on 405 / 021.
 - [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
 
 ## Cycle 88 — the ritual, seen
@@ -685,7 +683,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > item somebody should seed, not a note somebody should read"); the other is the half of governance the vote
 > (481) did not reach.
 
-- [ ] BACKLOG-486 [infra] The run, not the spec — for twenty cycles the e2e suite's occasional single-spec failure was catalogued per spec, and cycle 125 (456) put the four known victims on a dev hold. Cycle 130 ended that reading: two consecutive full runs, 498/499 each, with a **different** victim each time (`cycle-110-plenty`, then `cycle-123-wandering`), neither near that cycle's diff, both green in isolation. At 499 specs the failure is a property of the **run** — contention between parallel workers over the shared dev server, the WebGPU-less browser, and boot — not of any spec's assertions, and the next two-track cycle rolls the same die. Bound the load instead of chasing victims: set an explicit worker cap / shard in `playwright.config.ts` calibrated against a measured run, give the boot path the same settle discipline 456 built for the crossing race, and land the evidence (three consecutive clean full runs) in the QA handoff. Success is a suite whose green is information again. Builds on 456 / 430 / 431. **(2026-08-17, cycle 133: a third distinct victim — `mobile-minds` fell in a full run at 522 specs and passed 5/5 isolated in five seconds. Cycle 132's two consecutive clean runs did not extend to three, and the suite has grown ten specs since. The cycle-133 validator recommends picking this next even though it is off-milestone.)**
 - [ ] BACKLOG-487 [core] The other call goes to the council — 481 handed a ground's **work** priority (473) to its council by majority off the members' temperaments, the provider breaking ties. The ground's **spend** priority (463) — feed-the-hungry-first vs. bank-toward-a-granary, the older and more player-visible of the two calls, on the lens since 468 and in the cast's mouths since 469/470/471 — is still set unilaterally by whoever out-banks everyone else, and re-set silently on every handover (467). Run it through the same decision the work call now uses, so a ground's two calls are made the same way by the same seats, the handover beat (467) fires on a *vote* rather than one dino's temperament, and the discontent ticker (471) is finally answering a decision the ground actually made together. Reuses 481's tally wholesale; additive save. Builds on 481 / 473 / 463 / 467.
 
 ## Cycle 133 structure additions — after the bill (2026-08-17)

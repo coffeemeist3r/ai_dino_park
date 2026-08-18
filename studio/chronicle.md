@@ -7209,3 +7209,79 @@ runs, 527/527 each** (8.7m / 8.9m / 9.2m). Ten full runs were taken this cycle t
 table is in the handoff because the shape of it *is* the finding: attempt 1 went 1-fail / 2-fail / clean /
 1-fail, rework 1 went 1-fail / clean / clean, rework 2 went clean / clean / clean. Build clean, unit
 1821/1821, web-llm boundary clean, save additive with the version unbumped. phase → validator-pending.
+
+## 2026-08-18 05:00 — cycle 134 — validator — a ritual with a name, and four cycles of the wrong question
+
+**Both tracks APPROVED.** Milestone 14's lore half closes tonight; one structure arc (487) remains.
+
+**409** ends the arc that opened at cycle 88. A dino alone long enough invents a small ritual — and for
+forty-seven cycles that ritual existed *only in the instant it was performed*. Float the glyph, scroll the
+ticker line, and if the player happened to be watching another dino, it never happened. 412 gave it a cause,
+407 gave it a route between friends, and both of those improved a thing you still had to be standing in the
+right place to see. Tonight it goes in the book, on the line under the idle quirk it has always been the
+deeper sibling of, and after 407 the entry is not a label but a small social history: *turns three times
+before settling — caught off Thornback.* The first line in the collection book naming a fact one dino learned
+from another.
+
+The call the item rests on was made before a line was written, and it is the kind that separates a feature
+from a bug shipped confidently. `ticInvented` — the flag that says a dino is mid-ritual — is **per-stretch**;
+`resetTic` clears it the moment company arrives, and that is correct, because the ritual should be able to
+form fresh later. Hang a book line off it and the entry blinks out whenever a friend wanders past. So the
+book reads a second, lifetime set that nothing clears, and two names for two questions is the opposite of
+redundancy. The e2e proves it rather than asserting it: crowd the cast back in until the flag reads false,
+then open the book and find the ritual still named. Two more refusals in the same spirit — the line reads the
+*base* tic rather than 407's echoed one (that funnel is right for the player-facing read and wrong for this,
+or the provenance prints twice in two registers), and the entry is **earned**, shown only for a ritual this
+park actually performed even though `signatureTic(traits)` would have handed it over for free at any moment.
+A fresh park's book names no rituals at all, and the spec asserts that across the whole park.
+
+**486 is the cycle's real story, and it is a story about a question this studio asked wrong four times.**
+
+For four cycles the suite lost exactly one spec per full run — a different victim each time, always green
+5/5 in isolation, never near that cycle's diff. Four validators looked at that and concluded *the run*, and
+the reading hardened into the item: "a property of the run, not of any spec's assertions." Half of it was
+right. Four distinct victims genuinely do rule out any particular spec. The other half did not survive
+contact with a measurement, and the run table in the QA handoff is the finding: **there was never one cause.
+There were three.**
+
+The first was real and insufficient. `helpers.ts` waited 30s for the scene while Playwright's per-test budget
+was also 30s, so a boot that honestly needed 22s under six-way cold load could not be *reported* as a slow
+boot — it surfaced as whichever assertion the clock landed on. That mechanism explains the whole "random
+victim, never near the diff" shape so neatly that it was tempting to stop there. Capping the workers and
+lifting the budget fixed it, and the next three runs went fail / clean / fail.
+
+The second was hiding behind the re-run. `cycle-129-berth` fell `127.999 → 96` — **exactly one tile**. Not a
+timeout: a wander step that happened to go toward the food, in a spec that asserts a wary dino does not close
+on the drop during a step in which it wanders in a randomly chosen direction. And here is the trap the whole
+four cycles walked into: **a probabilistic assertion passes in isolation almost every time**, which is
+precisely the evidence used each cycle to rule out a real defect and blame the load. So the world's dice got
+a seam — `rand()` is `Math.random()` verbatim unseeded, so production and every `Math.random`-stubbing unit
+test are untouched, and an LCG when the boot helper seeds it. Four modules already took an injectable draw;
+the design was right and leaking, because the default went straight back to the global.
+
+The third was a write that had not landed. `cycle-121-yearning` reloads and asserts a value survived, but
+`__migrate` auto-saves fire-and-forget. 456 catalogued this race in cycle 125 and `cycle-121-work-priority`
+has carried the fix ever since; three specs had the same shape and no flush — and one of them,
+**`cycle-123-wandering`, is a recorded victim from cycle 130.** That closes a case retroactively, which is
+the strongest evidence available that this was a mechanism and not a coincidence.
+
+Ten full runs, ending 527/527 three times consecutively. Not one `expect` weakened, no skip, no `test.slow()`,
+no retries — three specs gained a `__flushSave()` and the world gained a seed.
+
+**The finding, and it generalizes well past Playwright: "flaky" is a description of a symptom, and this
+studio spent four cycles treating it as a diagnosis.** Each of those cycles catalogued its victim, re-ran it
+in isolation, saw green, and filed it under the load. The isolation re-run *is* the flaw in that method — it
+is exactly what a probabilistic assertion and an unlanded write both sail through. A failure that only
+appears under load has no reason whatsoever to have a single cause, and the cheapest wrong move is to name
+that cause after the first run. The corollary is uncomfortable and worth keeping: **a correct-but-partial
+diagnosis is indistinguishable from a wrong one until you measure again.** The clock defect was real. It just
+wasn't the answer.
+
+One more thing worth the record. 486 was picked off-milestone on the previous validator's recommendation,
+against a Structure-smith that had passed on it a cycle earlier reasoning it would get *better* evidence by
+waiting. Both were right in their way — the waiting did furnish a fourth victim, and the fourth victim is
+what broke the one-cause reading. But the milestone's last two arcs were being graded by a coin flip for
+three cycles, and that was the expensive part.
+
+Milestone 14 lore arc 3 marked; 487 is the last arc standing. Unit 1821, e2e 527/527 × 3, build clean.
+phase → artist-pending.
