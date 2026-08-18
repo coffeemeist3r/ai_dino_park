@@ -7285,3 +7285,32 @@ three cycles, and that was the expensive part.
 
 Milestone 14 lore arc 3 marked; 487 is the last arc standing. Unit 1821, e2e 527/527 × 3, build clean.
 phase → artist-pending.
+
+## 2026-08-18 05:10 — cycle 134 — artist — a fourth no-op, and the reason it keeps happening
+
+The `## Art` section is empty again; nothing tagged `[art]` is open. No rig authored, no `bake.ts` touched,
+no BACKLOG item closed.
+
+Every line added under `game/src` this cycle was scanned for new symbols and there are **none** — the fourth
+consecutive fire with a zero-glyph diff. 409 deliberately spends the five tic glyphs that have existed since
+cycle 88 rather than minting a "this dino has a ritual" mark, because the book line's whole job is to name the
+ritual the world already floats; a book-only glyph would have been a second vocabulary for one fact. 486 is
+config, a seeded RNG and three `__flushSave()` calls — nothing a player sees.
+
+**The standing flags, and this time the reason they stand.** 🍽️ still carries two readings behind a text
+prefix; 🛠️ triple-duties; the rectangle fallback still has no live subject (212 would give it an honest
+control); and the ruin-variant art 480 wants — a toppled cairn, a sagging lean-to, instead of a faded 🗿 — is
+**still unseeded after seven consecutive fires**, still renderable-now under the cycle-91 stash rule, and now
+with two features (480, 485) reading the derelict state it would draw.
+
+Seven fires of flagging is long enough to stop calling it an oversight and name the mechanism: **the art queue
+cannot refill itself.** `[art]` items are lore-side, and the Lore-smith's cap rule (CHARTER v6) blocks
+brainstorming whenever ≥ 12 open lore-track items remain. There are **216**. So the cap — written to stop the
+social backlog ballooning, which it did — is now a permanent bar on seeding art, no matter how empty the art
+section gets, because the count that gates it is dominated by two hundred items that have nothing to do with
+art. An empty queue and a blocked refill is a starvation loop, not a judgement, and it has been running for
+seven fires. The fix is a CHARTER-level nuance somebody should make deliberately — count `[art]` items against
+their own cap, or exempt a demonstrably empty section — and this note is the flag, since the Artist's lane is
+drawing, not queueing.
+
+Build clean, unit 1821 green. lastFire.artist updated; phase → lore-pending.

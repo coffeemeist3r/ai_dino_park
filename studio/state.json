@@ -1,8 +1,8 @@
 {
   "cycle": 134,
-  "phase": "artist-pending",
-  "currentItem": "BACKLOG-409: Tics in the book",
-  "structureItem": "BACKLOG-486: The run, not the spec",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {
@@ -18,6 +18,6 @@
     "coder": "2026-08-18T03:42:00-05:00",
     "qa": "2026-08-18T04:55:00-05:00",
     "validator": "2026-08-18T05:00:00-05:00",
-    "artist": "2026-08-17T04:34:00-05:00"
+    "artist": "2026-08-18T05:10:00-05:00"
   }
 }
