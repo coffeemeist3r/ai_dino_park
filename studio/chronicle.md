@@ -7130,3 +7130,14 @@ and `playwright.config.ts` still runs `fullyParallel` with no worker cap over 21
 remaining arcs would otherwise be judged by a coin flip. Chosen: BACKLOG-486. Seeded BACKLOG-489 (the queue
 sat at 3, below cap X=4) — the cycle-133 freshness-gate finding filed as work instead of prose. 487 waits one
 cycle; 488 wants 486 to land first.
+
+## 2026-08-18 03:04 — cycle 134 — designer — a ritual with a name, and a gate that stops guessing
+
+Lore: 409 puts the signature tic in the collection book, on the line under the 303 quirk, and makes it
+*earned* — the line shows only for a dino whose ritual actually formed in this park, never derived from
+`signatureTic(traits)`. After 407 the entry carries who it was caught off, so the book's newest line is the
+first fact in it one dino learned from another. Structure: 486's mechanism is named at last — `workers` is
+unset (six browsers on one dev server) and the 30s boot ceiling in `helpers.ts` equals Playwright's 30s
+per-test default, so a slow-but-correct boot is always reported as whatever assertion the clock landed on. A
+different spec every run, always green in isolation. Cap the workers, lift the test timeout above the boot
+ceiling, and land three consecutive green runs as evidence. phase → codeplan-pending.
