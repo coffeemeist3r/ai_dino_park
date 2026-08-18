@@ -7113,3 +7113,11 @@ fires**, still renderable-now under the cycle-91 stash rule, and now with a seco
 derelict state it would draw. Six fires of flagging without a seed is no longer a judgement anybody made.
 
 Build clean, unit 1803 green. lastFire.artist updated; phase → lore-pending.
+
+## 2026-08-18 02:30 — cycle 134 — lore-smith — the tic gets a name
+
+Milestone 14's last lore arc. 405 invented the ritual, 412 gave it a cause, 407 gave it legs — and none of
+the three left a trace a player who was looking elsewhere could ever find. BACKLOG-409 puts the signature tic
+in the collection book, where after 407 it is not a label but a small social history: a dino's tic may be its
+own or borrowed from a friend. Queue at 216 open lore items, far past the cap of 12 — nothing brainstormed;
+the cycle is themed instead. Idea Box empty. phase → designer-pending; suggested next-up BACKLOG-409.
