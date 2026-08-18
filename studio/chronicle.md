@@ -7141,3 +7141,14 @@ unset (six browsers on one dev server) and the 30s boot ceiling in `helpers.ts` 
 per-test default, so a slow-but-correct boot is always reported as whatever assertion the clock landed on. A
 different spec every run, always green in isolation. Cap the workers, lift the test timeout above the boot
 ceiling, and land three consecutive green runs as evidence. phase → codeplan-pending.
+
+## 2026-08-18 03:18 — cycle 134 — codeplan — two lifetime facts and two numbers
+
+409: ~8 files. The whole design rests on one distinction the plan makes explicit — `ticInvented` is a
+per-stretch flag that `resetTic` clears, and the book's fact is lifetime, so a second piece of state
+(`ticsFormed`) is correct rather than redundant. `ticBookLine` takes the *base* tic, never `echoedTic`'s
+reworded label, so a borrowed ritual reads its provenance once. Two additive save fields, with a load-time
+union that back-fills any dino already carrying an echo. 486: two numbers — an explicit `workers` cap
+(env-overridable) and a per-test `timeout` lifted strictly above the boot ceiling, plus a rAF settle in
+`boot()`. No retries, no skips, no `test.slow()` — a retry would hide the signal the item exists to restore.
+phase → coder-pending.
