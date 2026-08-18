@@ -2,7 +2,7 @@
   "cycle": 134,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-409: Tics in the book",
-  "structureItem": null,
+  "structureItem": "BACKLOG-486: The run, not the spec",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-18T02:30:00-05:00",
-    "structure-smith": "2026-08-17T02:44:00-05:00",
+    "structure-smith": "2026-08-18T02:44:00-05:00",
     "designer": "2026-08-17T03:04:00-05:00",
     "code-planner": "2026-08-17T03:18:00-05:00",
     "coder": "2026-08-17T03:42:00-05:00",

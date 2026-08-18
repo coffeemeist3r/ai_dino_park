@@ -7121,3 +7121,12 @@ the three left a trace a player who was looking elsewhere could ever find. BACKL
 in the collection book, where after 407 it is not a label but a small social history: a dino's tic may be its
 own or borrowed from a friend. Queue at 216 open lore items, far past the cap of 12 — nothing brainstormed;
 the cycle is themed instead. Idea Box empty. phase → designer-pending; suggested next-up BACKLOG-409.
+
+## 2026-08-18 02:44 — cycle 134 — structure-smith — the run, not the spec
+
+Off-milestone on purpose, and on the last validator's explicit recommendation. Three cycles, three distinct
+e2e victims, each green 5/5 in isolation: the failure is a property of the run, not of any spec's assertions,
+and `playwright.config.ts` still runs `fullyParallel` with no worker cap over 213 files. Milestone 14's two
+remaining arcs would otherwise be judged by a coin flip. Chosen: BACKLOG-486. Seeded BACKLOG-489 (the queue
+sat at 3, below cap X=4) — the cycle-133 freshness-gate finding filed as work instead of prose. 487 waits one
+cycle; 488 wants 486 to land first.

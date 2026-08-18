@@ -23,6 +23,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-488 [core] Hands on the derelict — the patch-up (480) is pile arithmetic nobody performs; make repair a *job* a resident does (full text in the cycle-133 block below).
 - [ ] BACKLOG-486 [infra] The run, not the spec — the e2e suite's parallel-load failure is now a property of the run rather than of particular specs; bound the load instead of chasing victims (full text in the cycle-131 block below).
 - [ ] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
+- [ ] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
 
 ---
 
@@ -704,3 +705,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
+
+## Cycle 134 structure additions — the gate that was written for one door (2026-08-18)
+
+> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
+> cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
+
+- [ ] BACKLOG-489 [core] The gate that was written for one door — cycle 133's finding, generalized. 485's first draft was correct in every hook and posted nothing, because 481's `checkCouncilCall` seeds silently on a ground's *first* recorded call — sound for a vote (an opening seating is not a turnover), fatal for a second source of the same event, and fatal **most reliably for the population that second source exists to cover**. Four freshness gates in this park now carry an implicit "…as decided by whatever was here first": the rumor freshness (222/233), the gratitude fade (251), one-visit-per-sorrow (226), the once-a-day discontent (471). Each will silence a later cause the day one is added. Give the pattern one shared seam — a gate that distinguishes *seeding* from *suppressing*, so a first record from a new source fires rather than seeds — port the four existing gates onto it, and leave a test per gate that adds a second cause and asserts it is heard. Nothing player-visible changes today; the point is that the next feature built on any of the four is not silently half-shipped. Builds on 485 / 481 / 471 / 251.
