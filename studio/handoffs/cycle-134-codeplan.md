@@ -78,3 +78,26 @@ suite green by hiding exactly the signal this item exists to restore.
 
 **Evidence to collect (QA):** baseline run (unset workers) wall time + victim, then three consecutive full
 runs at the capped setting with wall times.
+
+
+---
+
+## Shipped (coder, 2026-08-18)
+
+**409** — `world/tic.ts` (+`ticBookLine`, `ECHO_FROM_UNKNOWN`), `ui/lenses.ts` (`BookRow.tic`, rendered under
+the 303 quirk line), `world/saveGame.ts` (`ticsFormed` + `ticEchoFrom`, validated, additive, version
+unbumped), `scenes/WorldScene.ts` (`ticsFormed` set + `ticEchoFrom`, written in `performTic`'s invention
+branch and `watchTic`'s echo branch and `__inventTic`, read by the new `ticBookEntry`, saved and restored with
+the pre-409 echo back-fill). Tests: `tests/unit/cycle-134-tic-book.test.ts` (13), `tests/e2e/cycle-134-tic-book.spec.ts` (5).
+
+**486** — `playwright.config.ts` (`workers: Number(process.env.E2E_WORKERS) || 4`, `timeout: 60_000`),
+`tests/e2e/helpers.ts` (the invariant documented on `BOOT_TIMEOUT`, plus a one-frame settle after `__ready`).
+
+`npm run build` clean. `npx vitest run` 1816/1816 (was 1803; +13). Boundary grep clean —
+`@mlc-ai/web-llm` appears nowhere outside `game/src/ai/`. New e2e spec 5/5.
+
+**Blocker:** none. **Note for QA:** the pre-change baseline e2e run collected during this fire is
+*contaminated* — a `npm run build` and live source edits landed on the dev server mid-run, and it finished 4
+failed / 518 passed in 9.7m. Do not report it as the honest baseline. Reproduce the old configuration
+explicitly instead: `npx playwright test --workers=6 --timeout=30000` (the unset-`workers` default on this
+12-core box, and the old per-test budget), then take the three evidence runs at the shipped defaults.

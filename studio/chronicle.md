@@ -7152,3 +7152,19 @@ union that back-fills any dino already carrying an echo. 486: two numbers — an
 (env-overridable) and a per-test `timeout` lifted strictly above the boot ceiling, plus a rAF settle in
 `boot()`. No retries, no skips, no `test.slow()` — a retry would hide the signal the item exists to restore.
 phase → coder-pending.
+
+## 2026-08-18 03:42 — cycle 134 — coder — the ritual is written down, and the run gets a ceiling
+
+409 ships in ~7 files. The load-bearing line is one the design insisted on: `ticInvented` is per-stretch and
+`resetTic` clears it, so the book reads a second, lifetime set (`ticsFormed`) that nothing clears — and the
+e2e proves the distinction by crowding the cast back in until the flag drops and finding the book line still
+there. `ticBookEntry` reads the *base* tic rather than `ticFor`'s echoed one, so a borrowed ritual states its
+provenance once, with a name. Two additive save fields, version unbumped, with a load-time union that
+back-fills any dino already carrying an echo. 486 ships two numbers and a frame: `workers` capped at 4
+(`E2E_WORKERS` overrides), the per-test `timeout` lifted to 60s so it is strictly above the 30s boot ceiling
+it used to equal, and one `requestAnimationFrame` after `__ready` so a spec reads a scene that has drawn.
+
+Build clean; unit 1816/1816 (+13); new e2e spec 5/5; web-llm boundary grep clean. Flagged for QA: the
+baseline e2e run taken during this fire is contaminated (a build and live edits hit the dev server mid-run,
+4 failed / 518 passed / 9.7m) — reproduce the old config explicitly with `--workers=6 --timeout=30000`
+instead. phase → qa-pending.

@@ -147,7 +147,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -356,6 +356,15 @@ export class WorldScene extends Phaser.Scene {
    */
   private ticEchoes: Record<string, keyof Personality> = {};
   private ticWatches: Record<string, number> = {};
+  /**
+   * The ritual in the book (BACKLOG-409). `ticInvented` above is a *per-stretch* flag — `resetTic` clears it
+   * the moment company returns, so the ritual can form fresh later. This is the **lifetime** fact the book
+   * asks about: has this dino's ritual ever actually happened in this park? Nothing clears it, and the book
+   * shows no line for a dino that is not in here — the entry is earned by the sim, never derived from
+   * `signatureTic(traits)`. `ticEchoFrom` remembers who a borrowed ritual was caught off; both persist.
+   */
+  private ticsFormed = new Set<string>();
+  private ticEchoFrom: Record<string, string> = {};
   /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
    *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
   private ticGrief: Record<string, string | null> = {};
@@ -1222,6 +1231,7 @@ export class WorldScene extends Phaser.Scene {
       if (!d) return false;
       this.soloSteps[name] = TIC_AFTER_STEPS;
       this.ticInvented.add(name);
+      this.ticsFormed.add(name); // BACKLOG-409: the hook produces the same state performTic does
       this.ticAnchor[name] ??= this.tileOf(d);
       return true;
     };
@@ -3049,6 +3059,7 @@ export class WorldScene extends Phaser.Scene {
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
+      tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
       home: isSettled(tenureOf(this.tenure, d.name)) // BACKLOG-341: where it's settled, once it belongs
@@ -3663,6 +3674,21 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
+   * The book's ritual line (BACKLOG-409), or `undefined` for a dino whose ritual has never formed here.
+   *
+   * Reads the *base* tic rather than `ticFor`'s echoed one: `echoedTic` rewords the label to say the ritual
+   * is second-hand, and the book says that itself — with the friend's name — so going through `ticFor` would
+   * print the provenance twice.
+   */
+  private ticBookEntry(d: Dino): string | undefined {
+    if (!this.ticsFormed.has(d.name)) return undefined;
+    const axis = this.ticEchoes[d.name];
+    const base = axis ? TIC_BY_AXIS[axis] : signatureTic(d.traits);
+    const from = axis ? (this.ticEchoFrom[d.name] ?? ECHO_FROM_UNKNOWN) : null;
+    return ticBookLine(base, from);
+  }
+
+  /**
    * Watching a friend at its ritual (BACKLOG-407). Called once per *solitary stretch* from `performTic`'s
    * invention branch — never from the every-six-steps re-float, which would turn three watches into three
    * steps and have the whole park echoing inside a minute.
@@ -3693,6 +3719,10 @@ export class WorldScene extends Phaser.Scene {
       const echoed = picksUpTic(watches, bond);
       if (echoed) {
         this.ticEchoes[o.name] = this.ticEchoes[performer.name] ?? signatureAxis(performer.traits);
+        // BACKLOG-409: an adopted ritual is one the park announced on the ticker, so it counts as witnessed —
+        // and the book names who it came off rather than the vaguer "from a friend".
+        this.ticEchoFrom[o.name] = performer.name;
+        this.ticsFormed.add(o.name);
         const tic = this.ticFor(o);
         this.memory = remember(this.memory, o.name, echoTicMemory(tic.label, performer.name));
         this.flashFeed(o, tic.glyph);
@@ -3706,6 +3736,7 @@ export class WorldScene extends Phaser.Scene {
   private performTic(d: Dino, tic: Tic): void {
     if (!this.ticInvented.has(d.name)) {
       this.ticInvented.add(d.name);
+      this.ticsFormed.add(d.name); // BACKLOG-409: the lifetime fact the book reads — never cleared by resetTic
       // BACKLOG-414: a dino grieving a departed friend files the directional ache; else the plain 405 ritual.
       // BACKLOG-412: a dino still smarting from a contested drop files the self-soothing note instead —
       // the same ritual, started for a reason. Grief outranks it: a departed friend is the larger ache, and
@@ -6666,6 +6697,9 @@ export class WorldScene extends Phaser.Scene {
       // echo is stored as an axis key so a reworded glyph or label can never invalidate an old save.
       ticEchoes: this.ticEchoes,
       ticWatches: this.ticWatches,
+      // BACKLOG-409: the lifetime "this ritual happened" set + who each echo was caught off (additive).
+      ticsFormed: [...this.ticsFormed],
+      ticEchoFrom: this.ticEchoFrom,
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -6763,6 +6797,11 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-407 (absent → {}): a pre-407 save restores with every dino on the ritual it was born with.
       this.ticEchoes = (save.ticEchoes as Record<string, keyof Personality>) ?? {};
       this.ticWatches = (save.ticWatches as Record<string, number>) ?? {};
+      // BACKLOG-409 (absent → the echo back-fill): a pre-409 save recorded no formed-set, but a dino carrying
+      // an echo demonstrably has a ritual — the park announced it when it took — so the union is the honest
+      // restore rather than a blank line under a dino that plainly paces.
+      this.ticsFormed = new Set([...(save.ticsFormed ?? []), ...Object.keys(this.ticEchoes)]);
+      this.ticEchoFrom = save.ticEchoFrom ?? {};
       // BACKLOG-484: absent seats mean *no term yet*, so `null` (read live) — never `{}`, which would say
       // "held, and every ground seats nobody" and take the 481 vote inert for a day.
       this.councilSeats = save.councilSeats ?? null;

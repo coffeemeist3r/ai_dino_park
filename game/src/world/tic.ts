@@ -290,3 +290,29 @@ export function echoTicMemory(label: string, friend: string): string {
 export function echoedLine(watcher: string, friend: string, glyph: string): string {
   return `${glyph} ${watcher} has picked up ${friend}'s little ritual`;
 }
+
+/* ---------------------------------------------------------------------------------------------------
+ * The ritual in the book (BACKLOG-409).
+ *
+ * Forty-seven cycles of the most per-dino behaviour in the park, and it has only ever existed in the
+ * instant it was performed: a glyph floats, a ticker line scrolls, and a player looking at another dino
+ * never learns it happened. The collection book (021) already keeps the shallower sibling of this fact —
+ * the idle quirk (303) — and this is the line under it.
+ *
+ * Takes the **base** tic, never `echoedTic`'s reworded label: a borrowed ritual says so once, here, with
+ * the friend it was caught off named. Passing the echoed label would print the provenance twice.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** The stand-in when the park knows a ritual is borrowed but not from whom — a pre-409 save carries the
+ *  echo without its source. One code path, not a second branch. */
+export const ECHO_FROM_UNKNOWN = 'a friend';
+
+/**
+ * The book's line for a dino's ritual. `from` names who it was caught off (407); omit it (or pass null)
+ * for a dino performing its own. `ECHO_FROM_UNKNOWN` renders the honest vaguer form.
+ */
+export function ticBookLine(t: Tic, from?: string | null): string {
+  const own = `${t.glyph} ritual: ${t.label}`;
+  if (!from) return own;
+  return from === ECHO_FROM_UNKNOWN ? `${own} — picked up from a friend` : `${own} — caught off ${from}`;
+}

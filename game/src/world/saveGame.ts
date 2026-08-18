@@ -109,6 +109,13 @@ export interface SaveData {
   ticEchoes?: Record<string, string>;
   /** BACKLOG-407: `watcher>performer` → how many of that friend's solitary rituals this dino has watched. */
   ticWatches?: Record<string, number>;
+  /** BACKLOG-409: the dinos whose ritual has ever *formed* in this park — the book's line is earned, not
+   *  derived from personality. Lifetime, unlike the per-stretch `ticInvented` flag. Additive; absent → none
+   *  recorded (an old save back-fills every dino already carrying an echo, which was announced when it took). */
+  ticsFormed?: string[];
+  /** BACKLOG-409: dino → the friend it caught its ritual off (407). Additive; absent → {} (an echo without a
+   *  recorded source reads as "picked up from a friend"). */
+  ticEchoFrom?: Record<string, string>;
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
    *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
   leftDays?: Record<string, Record<string, number>>;
@@ -484,6 +491,25 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // ticsFormed / ticEchoFrom (BACKLOG-409) — the lifetime "this ritual happened" set and who each echo was
+  // caught off. Additive; absent → undefined.
+  let ticsFormed: string[] | undefined;
+  if (o.ticsFormed !== undefined) {
+    if (!Array.isArray(o.ticsFormed)) return null;
+    for (const n of o.ticsFormed) if (typeof n !== 'string') return null;
+    ticsFormed = [...(o.ticsFormed as string[])];
+  }
+  let ticEchoFrom: Record<string, string> | undefined;
+  if (o.ticEchoFrom !== undefined) {
+    if (typeof o.ticEchoFrom !== 'object' || o.ticEchoFrom === null || Array.isArray(o.ticEchoFrom)) return null;
+    const byDino = o.ticEchoFrom as Record<string, unknown>;
+    ticEchoFrom = {};
+    for (const n of Object.keys(byDino)) {
+      if (typeof byDino[n] !== 'string') return null;
+      ticEchoFrom[n] = byDino[n] as string;
+    }
+  }
+
   // leftDays (BACKLOG-362) — dino→zone→the day it last left. Object of objects of finite numbers: the
   // seenZones nesting with harvestedByZone's numeric leaf.
   let leftDays: Record<string, Record<string, number>> | undefined;
@@ -784,6 +810,8 @@ export function deserialize(json: string): SaveData | null {
     workPriorityByZone,
     ticEchoes,
     ticWatches,
+    ticsFormed,
+    ticEchoFrom,
     leftDays,
     cameFrom,
     cairns,

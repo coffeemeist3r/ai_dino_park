@@ -1,6 +1,6 @@
 {
   "cycle": 134,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-409: Tics in the book",
   "structureItem": "BACKLOG-486: The run, not the spec",
   "lastVerdict": null,
@@ -13,7 +13,7 @@
     "structure-smith": "2026-08-18T02:44:00-05:00",
     "designer": "2026-08-18T03:04:00-05:00",
     "code-planner": "2026-08-18T03:18:00-05:00",
-    "coder": "2026-08-17T03:42:00-05:00",
+    "coder": "2026-08-18T03:42:00-05:00",
     "qa": "2026-08-17T04:06:00-05:00",
     "validator": "2026-08-17T04:22:00-05:00",
     "artist": "2026-08-17T04:34:00-05:00"

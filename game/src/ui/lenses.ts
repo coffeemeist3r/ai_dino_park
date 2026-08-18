@@ -183,6 +183,10 @@ export interface BookRow {
   /** Signature idle quirk label (BACKLOG-303) — the `fidget()` label, set by the live bookRows().
    *  Optional so older BookRow literals (tests) stay valid; the dossier always shows it in-game. */
   quirk?: string;
+  /** The signature ritual, once it has actually formed in this park (BACKLOG-409) — the 405 tic named,
+   *  with the friend it was caught off (407) when it is borrowed. Undefined for a dino that has never been
+   *  alone long enough (then no line shows); built by `ticBookLine`. */
+  tic?: string;
   /** Today's intent note (BACKLOG-393) — what the dino feels like doing with its day. */
   intent?: string;
   /** The day's shape (BACKLOG-012) — the lean per day-phase, dawn→night (e.g. `forage → social → solitary → rest`). */
@@ -230,6 +234,7 @@ export function bookLines(rows: BookRow[]): string[] {
     out.push(`${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
+    if (r.tic) out.push(`  ${r.tic}`); // BACKLOG-409: the ritual it has actually fallen into, under the quirk
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone

@@ -13,6 +13,12 @@ import type { Page } from '@playwright/test';
  * transforms genuinely take longer than 10s. The server-side fix (vite
  * optimizeDeps + warmup) shrinks that cost; this headroom absorbs the rest so
  * a slow-but-correct cold boot isn't reported as a failure.
+ *
+ * BACKLOG-486: this number must stay **strictly below** the per-test `timeout` in
+ * `playwright.config.ts` (60s). While the two were equal, a boot that genuinely
+ * needed 22s left the spec no budget at all, and the failure surfaced as whatever
+ * assertion the clock landed on — a different victim every run, always green in
+ * isolation. If you raise this ceiling, raise that timeout first.
  */
 const BOOT_TIMEOUT = 30_000;
 
@@ -22,6 +28,9 @@ export async function boot(page: Page): Promise<void> {
   await page.waitForFunction(() => (window as Record<string, unknown>).__ready === true, undefined, {
     timeout: BOOT_TIMEOUT,
   });
+  // BACKLOG-486: `__ready` is a flag create() sets on its last line — it says the hooks are attached, not
+  // that the scene has drawn. Give it one frame, so a spec reads a world that has actually stepped once.
+  await page.evaluate(() => new Promise<void>((r) => requestAnimationFrame(() => r())));
   // BACKLOG-431: freeze the wall-clock ambient timers (wander/sky/migration rolls) for every spec, so the
   // background world tick can't mutate pinned state mid-assert. Specs drive beats via explicit hooks
   // (__stepWorld, __triggerSky, __migrate, __maybeBarter, __advanceWall), which bypass the pause. A spec
