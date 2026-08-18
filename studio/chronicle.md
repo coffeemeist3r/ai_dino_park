@@ -7185,3 +7185,19 @@ unit test untouched), an LCG when seeded, every real site routed through it incl
 injectable `rand` parameter was defaulting straight back to the leak. `boot()` seeds every spec. The config
 changes stay — the timeout inversion was real, just not sufficient. Build clean, unit 1821 (+5), the four
 historical victims 33/33 under `--repeat-each=3`.
+
+## 2026-08-18 04:26 — cycle 134 — qa/rework 2 — the second mechanism: a write that had not landed
+
+Seeded dice took the suite from 1 failure in 3 runs to 1 in 3 — and the new victim named the *second*
+mechanism. `cycle-121-yearning` reloads the page and asserts the departure clock survived, but `__migrate`
+auto-saves fire-and-forget (`void this.saveGame()`), so under parallel load the reload beats the IndexedDB
+write and the spec reads a save that was never written. Not a coin flip, not a clock — an unsettled write.
+
+456 already documented this and `cycle-121-work-priority` already carries the fix (`__flushSave()` before the
+reload). Three specs had the same shape and no flush: 121-yearning, 122-struck, 123-wandering — and
+`cycle-123-wandering` is one of the recorded victims from cycle 130, which closes that case retroactively.
+All three patched to the existing precedent; 63/63 under `--repeat-each=3`.
+
+The tally so far: four "flaky" specs, **three** distinct causes (a probabilistic assertion over live dice, a
+race against a fire-and-forget write, and a boot ceiling equal to the per-test budget). Every cycle that
+catalogued a victim was looking for one cause and there was never one.

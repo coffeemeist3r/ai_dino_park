@@ -77,6 +77,10 @@ test('the standing only ever grows, and survives a reload', async ({ page }) => 
   const before = await wanderOf(page, 'Mossback');
   expect(before).toContain('2 crossings');
 
+  // BACKLOG-486 (rework 2): `__migrate` auto-saves fire-and-forget (`void this.saveGame()`), so under
+  // parallel load the reload can beat the IndexedDB write and the spec reads a save that was never written.
+  // The 456 precedent: settle it first. This is the race, not the persistence.
+  await page.evaluate(() => (window as W).__flushSave());
   await page.reload();
   await page.waitForFunction(() => (window as W).__ready === true);
   expect((await crossings(page)).Mossback).toBe(2);
