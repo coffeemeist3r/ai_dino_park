@@ -7201,3 +7201,11 @@ All three patched to the existing precedent; 63/63 under `--repeat-each=3`.
 The tally so far: four "flaky" specs, **three** distinct causes (a probabilistic assertion over live dice, a
 race against a fire-and-forget write, and a boot ceiling equal to the per-test budget). Every cycle that
 catalogued a victim was looking for one cause and there was never one.
+
+## 2026-08-18 04:55 — cycle 134 — qa — 23/23 criteria, and three green runs at last
+
+409: 13/13. 486: 9/9, with the evidence its own acceptance criterion demanded — **three consecutive full
+runs, 527/527 each** (8.7m / 8.9m / 9.2m). Ten full runs were taken this cycle to get there, and the run
+table is in the handoff because the shape of it *is* the finding: attempt 1 went 1-fail / 2-fail / clean /
+1-fail, rework 1 went 1-fail / clean / clean, rework 2 went clean / clean / clean. Build clean, unit
+1821/1821, web-llm boundary clean, save additive with the version unbumped. phase → validator-pending.
