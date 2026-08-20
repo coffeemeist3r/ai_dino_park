@@ -7323,3 +7323,11 @@ art starvation loop is closed:** the Lore-smith's cap rule is now per-queue, the
 section-scoped cap that CHARTER v6 says it mirrors always was — a shared count had made two hundred
 social items a permanent bar on seeding art, and seven consecutive Artist fires no-op'd on an empty
 queue while flagging it. Art queue: 0 → 2 (490 the dropped food, 491 the egg by the den). Idea Box empty.
+
+## Cycle 135 — structure-smith
+
+BACKLOG-487 picked: Milestone 14's last open arc. The spend call (463) has been the provider's alone
+since cycle 118 and the deliberate live control against 481's voted work call; four cycles of evidence
+later the control is retired and both of a ground's calls become the council's. Queue was 3 (< X=4), so
+one seeded — BACKLOG-492, the question 487 forces: every seat votes a hard threshold on one name-seeded
+axis, so a council is unanimous by construction and nothing that happens in the park can turn one.
