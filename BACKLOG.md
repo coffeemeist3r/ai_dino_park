@@ -58,6 +58,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > system that displays it, but only when the rig renders standalone (a prop/sprite
 > `bakePropArt` can resolve in a test); true terrain that needs a host stays deferred.
 
+- [ ] BACKLOG-490 [art] The food the hatch drops — every piece of food that falls through the hatch is still a text emoji (`🍖 🌿 🐟 🍓 🥕 🍄 🌰`, `WorldScene.dropFood`), which leaves the single most-looked-at object in the park — the thing five dinos sprint at, fight over, cede, gobble and remember for the rest of the save — the only prop still rendering as a font glyph while the cairn, granary, thatch, shelter and all three ripe crops bake real pixel rigs. Author pixel prop rigs for the seven `FOODS` ids (fish and berries first, the two the cast reacts to most), wire them into `PROP_RIGS` keyed `food_<id>`, and have `dropFood` bake the rig where one exists and keep the emoji where it doesn't — the same graceful per-item fallback `drawPlotSprite` already uses for a rig-less crop, so the rectangle-fallback control is untouched and a partial roster ships fine. Builds on 296 / 317 / 419.
+- [ ] BACKLOG-491 [art] The egg by the den — a bonded pair nests and lays (`🥚`, `layEgg`), the one hopeful object in the park and the lineage/plaque arc's first frame, and it is a font glyph. Author a pixel egg rig (speckled shell, a warm ground-shadow so it reads as *set down* rather than floating) and bake it wherever the egg sprite is drawn, emoji fallback kept. Small subject, high meaning — the park's only prop that turns into a character. Builds on 296 / 490.
+
 
 ## Infra
 

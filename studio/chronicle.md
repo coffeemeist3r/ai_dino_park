@@ -7314,3 +7314,12 @@ their own cap, or exempt a demonstrably empty section — and this note is the f
 drawing, not queueing.
 
 Build clean, unit 1821 green. lastFire.artist updated; phase → lore-pending.
+
+## Cycle 135 — lore-smith
+
+Two loners in sight of each other, neither crossing (416) — the last unbuilt beat of the ritual thread
+Milestone 14's three lore arcs built. Social queue capped (216 ≥ 12), so nothing social seeded. **The
+art starvation loop is closed:** the Lore-smith's cap rule is now per-queue, the way the Structure-smith's
+section-scoped cap that CHARTER v6 says it mirrors always was — a shared count had made two hundred
+social items a permanent bar on seeding art, and seven consecutive Artist fires no-op'd on an empty
+queue while flagging it. Art queue: 0 → 2 (490 the dropped food, 491 the egg by the den). Idea Box empty.

@@ -35,11 +35,24 @@ suggestion needs a one-line justification in your handoff.
 
 ## The cap rule (drain before you invent — mirrors the Structure-smith)
 
-Count open, unstarted lore-track items in BACKLOG.md (open `[ ]` items not in
-`## Structure Track`). **If ≥ 12:** do NOT brainstorm new items — theme the cycle
-and suggest a next-up from what's queued. **If < 12:** brainstorm 1–4 new items
-(arc-sized per CHARTER v6, milestone-advancing first). The backlog is a queue,
-not a landfill.
+The cap is **per queue**, exactly as the Structure-smith's is (it counts only its own
+`## Structure Track` section). Two queues live on the lore side, and each is counted
+and capped on its own:
+
+- **Social/emergent queue** (open `[ ]` lore items that are *not* `[art]` and not in
+  `## Structure Track`), cap **12**. **If ≥ 12:** do NOT brainstorm new social items
+  — theme the cycle and suggest a next-up from what's queued. **If < 12:** brainstorm
+  1–4 new items (arc-sized per CHARTER v6, milestone-advancing first).
+- **Art queue** (open `[ ]` `[art]` items, the `## Art` section), cap **3**. **If ≥ 3:**
+  do NOT seed art. **If < 3:** seed 1–2 `[art]` items so the Artist (routine 7) has
+  something to draw.
+
+The backlog is a queue, not a landfill — but a shared count is a *starvation loop*, not
+a cap. Amended cycle 135: the two queues had been counted together, so ~216 open social
+items permanently barred art seeding and the Artist no-op'd on an empty queue for seven
+consecutive fires while flagging it each time. CHARTER v6 grants the Lore-smith "a
+drain-before-invent cap like the Structure-smith's", and the Structure-smith's is
+section-scoped; this restores that reading. Routine-level fix, no CHARTER amendment.
 
 ## Do
 
