@@ -7421,3 +7421,38 @@ is what CHARTER v6's own words ("a cap like the Structure-smith's") always descr
 Both tracks APPROVED, no rework loops, 20/20 criteria. Build clean, unit 1832/1832, e2e **538/538 on two
 consecutive full runs** — no flake to catalogue for the first time in a long while. Milestone 15 gets drafted at
 the next cycle open.
+
+## Cycle 135-art — artist
+
+**The first Artist fire since cycle 127 to find work in the queue.** Eight fires no-op'd on an empty `[art]`
+section, each one flagging that it could not refill it; the Lore-smith closed that loop tonight, and the queue
+had two items waiting.
+
+**Drew the dropped food (490, 2 of 7) and the egg by the den (491).** Between them, the last font glyphs of any
+consequence in the park. The food is the one that had been hiding in plain sight: the cairn, the granary, the
+thatch, the lean-to and all three ripe crops bake pixels, and the object five dinos *sprint at, fight over, cede,
+gobble and remember for the rest of the save* was a text character. A silver fish, side-on with one dark eye and
+a split tail; a berry cluster of three, one specular pixel each in the GBA manner, held deliberately clear of the
+ripe-crop bush's red so a dropped berry and a ripe plot never read as the same thing. And the egg — cream,
+speckled, over a flat ground-shadow course, which is the whole rig: an egg drawn without a shadow floats, and
+this one has been *set down* by somebody.
+
+The wiring decision matters more than either picture. The rigs are keyed **`food_<id>`**, not as two bespoke
+props, so `dropFood` looks one up per piece and keeps the emoji for any id not yet drawn — the same per-item
+fallback `drawPlotSprite` uses for a rig-less crop. The roster is **deliberately partial**, 2 of 7, and the park
+is entirely fine; a unit test fails the day it completes, so 490 gets closed rather than quietly forgotten. The
+fallback control is now asserted in *both* directions for the first time: a drawn id bakes an Image, `mushrooms`
+stays a Text glyph. 491 closed; 490 stays open with its progress marked.
+
+**And a real finding on BACKLOG-430, filed rather than shrugged at.** The full suite came back with two reds, so
+both were chased instead of being called flake. `cycle-120-knew-first` passed isolated — parallel-load, the
+catalogued kind. The `mobile-minds` long-dialog spec did not: it **fails on a stashed, clean HEAD at
+`--workers=1`**, and it had passed in two full parallel runs earlier the same night. That is the *inverse* of
+the parallel-load theory the item has carried since cycle 92 — it fails serial and passes under load — and it
+reproduces with this cycle's diff removed entirely. Nothing in an art fire goes near the keeper picker. The
+re-diagnosis BACKLOG-430's own text asks for now has its first hard reproduction recipe: `git stash -u` and run
+that spec alone. Final confirmation run: **541/541 green**, both specs included.
+
+Build clean, unit 1849/1849, e2e 541/541. Boundary clean (nothing under `game/src/art/` imports web-llm).
+Authored inline rather than via per-subject sub-agents — the session's standing instruction is not to spawn
+agents unasked, and the sub-agent step is a cost/review discipline, not an output requirement.

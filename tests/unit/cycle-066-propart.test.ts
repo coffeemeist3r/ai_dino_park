@@ -11,6 +11,9 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'crop_ripe_roots', // BACKLOG-432: the Fernreach's roots crop
       'crop_seed',
       'crop_sprout',
+      'egg', // BACKLOG-491: the egg by the den
+      'food_berries', // BACKLOG-490
+      'food_fish', // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'shelter',

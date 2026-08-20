@@ -391,6 +391,114 @@ const GRANARY_RIG: PropRig = {
  * Props the pixel pipeline can render; keys match ResourceKind ('branch'|'stone'|'frond') + 'cairn', plus the
  * plot's crop stages keyed `crop_<CropStage>` (BACKLOG-317) so `bakePropArt('crop_ripe')` resolves.
  */
+/* ---------------------------------------------------------------------------------------------------
+ * The food the hatch drops (BACKLOG-490) and the egg by the den (BACKLOG-491).
+ *
+ * Two rigs of the same kind and, between them, the last font glyphs of any consequence in this park. The
+ * cairn, the granary, the thatch, the shelter and all three ripe crops have baked pixels; the object five
+ * dinos sprint at, fight over, cede, gobble and remember for the rest of the save did not — and neither did
+ * the one object in the bowl that turns into a character.
+ *
+ * `food_<id>` is keyed off the `FOODS` id so `dropFood` can look a rig up per piece and keep the emoji for
+ * any id not yet drawn — the same graceful per-item fallback `drawPlotSprite` uses for a rig-less crop.
+ * Fish and berries first, per the item's own text: the two the cast reacts to most.
+ * ------------------------------------------------------------------------------------------------- */
+
+// ── Silver fish 🐟 — side-on, nose left, one dark eye and a split tail; the curiosity favourite ────────
+const FISH_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '..........oo....',
+  '....ooooooshso..',
+  '..oobbbbbossho..',
+  '.obhhhhbbbossoo.',
+  'oebhhhhhhbbsso..',
+  '.obbhhhhbbbso...',
+  '..oobbbbboso....',
+  '....oooooooo....',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const FISH_RIG: PropRig = {
+  size: 16,
+  grid: FISH_GRID,
+  palette: {
+    o: 0x1c2f45, // dark outline (never pure black)
+    b: 0x4a6f96, // flank shadow
+    h: 0x9fc4e0, // silver highlight
+    s: 0x35547a, // fin + tail
+    e: 0x14202e, // eye
+  },
+};
+
+// ── Sweet berries 🍓 — a cluster of three, two low and one perched, with a small green sprig ──────────
+const BERRIES_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.......gg.......',
+  '....oogggoo.....',
+  '...orrrgrrro....',
+  '...orRrrrrro....',
+  '..oorrrrrroo....',
+  '.orrrooorrrro...',
+  'orRrrorrorrrro..',
+  'orrrrorrrorrro..',
+  '.orrroorroorro..',
+  '..ooo..oo..oo...',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const BERRIES_RIG: PropRig = {
+  size: 16,
+  grid: BERRIES_GRID,
+  palette: {
+    o: 0x4a1220, // dark outline
+    r: 0xc22f43, // berry body
+    R: 0xf07a86, // specular highlight (one pixel per berry, GBA-style)
+    g: 0x3f7a35, // sprig
+  },
+};
+
+// ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
+const EGG_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '......oooo......',
+  '.....oLLwwoo....',
+  '....oLLwwwppo...',
+  '...oLwwwppwwo...',
+  '...oLwwwwwwpo...',
+  '...owwppwwwwo...',
+  '...owwwwwwppo...',
+  '...oppwwwwwwo...',
+  '...owwwwppwwo...',
+  '....owwwwwwo....',
+  '.....oooooo.....',
+  '.....ssssss.....',
+  '................',
+  '................',
+];
+
+const EGG_RIG: PropRig = {
+  size: 16,
+  grid: EGG_GRID,
+  palette: {
+    o: 0x6b5334, // dark shell outline
+    w: 0xf2e4c6, // shell
+    L: 0xfff8ea, // top-left highlight
+    p: 0xcbb188, // speckles
+    s: 0x8a7a5c, // the ground-shadow it is set down on
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -404,6 +512,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
   thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
   granary: GRANARY_RIG, // BACKLOG-454: the food-cap-lifting granary — a domed plaster storehouse
+  food_fish: FISH_RIG, // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
+  food_berries: BERRIES_RIG, // BACKLOG-490
+  egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

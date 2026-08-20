@@ -498,7 +498,7 @@ export class WorldScene extends Phaser.Scene {
   private lastChorus: ChorusEntry[] | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
-  private eggSprites = new Map<string, Phaser.GameObjects.Text>();
+  private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
   private sleepMarks: Phaser.GameObjects.Text[] = [];
   /** Per-dino current-activity glyph (BACKLOG-295), index-aligned with `dinos`; live-derived, not saved. */
   private activityMarks: Phaser.GameObjects.Text[] = [];
@@ -556,7 +556,7 @@ export class WorldScene extends Phaser.Scene {
   private food: { tileX: number; tileY: number } | null = null;
   private foodKind: Food | null = null;
   private foodLanded = false;
-  private foodSprite: Phaser.GameObjects.Text | null = null;
+  private foodSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null; // BACKLOG-490: baked rig or emoji fallback
   /** One raw resource per zone (BACKLOG-314, was a single global slot 146/308). Each inhabited zone
    *  grows + holds its own; keyed by zone id. `zone` on the value mirrors the key for the 308 checks. */
   private resourceByZone: Record<string, { kind: ResourceKind; tileX: number; tileY: number; zone: string }> = {};
@@ -1491,6 +1491,13 @@ export class WorldScene extends Phaser.Scene {
       this.resourceSpriteByZone[this.zoneId] instanceof Phaser.GameObjects.Image;
     (window as any).__cairnIsArt = () =>
       this.cairnSprites.length > 0 && this.cairnSprites[0] instanceof Phaser.GameObjects.Image;
+    // BACKLOG-490/491: is the live sprite the baked rig rather than the emoji fallback? Same read as the
+    // two above, so the spec proves the swap without comparing pixels.
+    (window as any).__foodIsArt = () => this.foodSprite instanceof Phaser.GameObjects.Image;
+    (window as any).__eggIsArt = () => {
+      const first = this.eggSprites.values().next();
+      return !first.done && first.value instanceof Phaser.GameObjects.Image;
+    };
   }
 
   /**
@@ -1703,7 +1710,13 @@ export class WorldScene extends Phaser.Scene {
     this.lastBerth = null;
     const px = landing.tileX * TILE + TILE / 2;
     const landY = landing.tileY * TILE + TILE / 2;
-    this.foodSprite = this.add.text(px, TILE * 0.4, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
+    // BACKLOG-490: a baked pixel rig per food id where one is drawn, the emoji glyph where one is not —
+    // the same graceful per-item fallback `drawPlotSprite` uses for a rig-less crop, so a partial roster ships.
+    const foodKey = `food_${kind.id}`;
+    const foodTex = hasPropArt(foodKey) ? bakePropArt(this, foodKey) : null;
+    this.foodSprite = foodTex
+      ? this.add.image(px, TILE * 0.4, foodTex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, TILE * 0.4, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
     this.tweens.add({
       targets: this.foodSprite,
       y: landY,
@@ -2655,10 +2668,13 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private drawEgg(egg: Egg): void {
-    const sprite = this.add
-      .text(egg.tileX * TILE + TILE / 2, egg.tileY * TILE + TILE / 2, '🥚', { fontSize: '18px' })
-      .setOrigin(0.5)
-      .setDepth(2);
+    // BACKLOG-491: the baked egg rig where one exists, the emoji otherwise (the 490 fallback, same shape).
+    const px = egg.tileX * TILE + TILE / 2;
+    const py = egg.tileY * TILE + TILE / 2;
+    const tex = hasPropArt('egg') ? bakePropArt(this, 'egg') : null;
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, '🥚', { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
     this.eggSprites.set(egg.id, sprite);
   }
 
