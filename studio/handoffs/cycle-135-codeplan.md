@@ -177,3 +177,39 @@ No shared line. **Order: structure, commit-ready, then lore.** Both tracks add a
 class but in different blocks (~275 lines apart), which is the only place a careless patch could collide.
 
 **Total estimated touch count: ~9 files.** Well inside CHARTER v6's ~15.
+
+---
+
+# Shipped
+
+## Files actually touched
+
+**Structure track — BACKLOG-487**
+- `game/src/world/governance.ts` — `councilMajority<T extends string>` (481's body, generic, generalized to a plurality rather than two options); `councilWorkPriority` now a one-line delegation; `councilSpendPriority` its twin; `spendCallMeaning` beside `workCallMeaning`.
+- `game/src/world/governance.test.ts` — 8 new cases. The pre-487 `councilWorkPriority` cases are byte-identical and pass untouched.
+- `game/src/scenes/WorldScene.ts` — `spendPriorityFor` grew the council-then-provider-then-lingering ladder; `lastSpendCallByZone` (not persisted); `checkCouncilCall` announces both calls; `__councilVotes` gained `spendVotes`/`spendTieBreak`/`spendCall`.
+- `tests/e2e/cycle-135-spend-vote.spec.ts` — new, 5 tests.
+
+**Lore track — BACKLOG-416**
+- `game/src/world/tic.ts` — `kinshipMemory`, `kinshipLine`, in a block stating the asymmetry with 407.
+- `game/src/scenes/WorldScene.ts` — `kinFiled` set, `kinTic(performer)`, the `performTic` call site, the `resetTic` clear, the `__kinTic` dev hook.
+- `tests/unit/cycle-135-not-the-only-one.test.ts` — new, 4 tests.
+- `tests/e2e/cycle-135-not-the-only-one.spec.ts` — new, 6 tests.
+
+## Deviations from the plan
+
+1. **`checkCouncilCall`'s helper was not extracted.** The plan asked for the announce-on-change body pulled into one helper called twice. The two halves turned out not to be the same shape — the work half has 485's lean threaded through both its entry guard *and* its seeding rule and *its choice of line*, and the spend half has none of that. A helper covering both would have taken a `lean` parameter that is meaningless for one caller. Written as two explicit blocks in one loop instead, with the lean asymmetry commented. This is the shape BACKLOG-489 exists to fix properly; faking it here would have made 489 harder.
+2. **The plan's trap was real and is handled.** `checkCouncilCall`'s entry guard now computes `seated` once; the work half fires on `seated || lean`, the spend half on `seated` alone. A derelict landmark cannot announce a pantry call.
+3. **E2E test 3 in the structure spec was re-aimed.** The plan asked for a spend-hook assertion via `__discontent`; staging a *starving* mouth in a *banking* zone with six residents is several beats of setup for a fact `__spendPriority` already proves through the identical read path. Replaced with "a council of one is still that one dino", which pins the compatibility claim the plan itself calls the riskiest part of this change. Net: the same number of tests, aimed at the load-bearing assertion.
+4. **The bond read in the lore spec** goes through `__bondPair(a, b, 0)` — the repo has no read-only pairwise-bond hook, and adding one was outside the plan. Adding zero is a read.
+5. **No new save field, no `saveGame.ts` change**, exactly as planned. `spendPriorityByZone`'s stored values are the same two strings; only who decided them widened.
+
+## Build + test status
+
+- `npm run build` — clean.
+- `npx vitest run` — **1832 passed / 1832** (189 files). Was 1821 before this fire; +11 from the two new unit files.
+- `npx playwright test tests/e2e/cycle-135-spend-vote.spec.ts` — 5 passed.
+- `npx playwright test tests/e2e/cycle-135-not-the-only-one.spec.ts` — 6 passed.
+- Dev server smoke: `http://localhost:5173/` → 200, port freed after.
+- Boundary check: `grep -rn "@mlc-ai/web-llm" game/src --include=*.ts | grep -v "^game/src/ai/"` → empty.
+- Full e2e suite is QA's gate, not run here.

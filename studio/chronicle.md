@@ -7349,3 +7349,16 @@ ladder `decideWork` has. One trap written down — `checkCouncilCall`'s continue
 open the door, and the bill leans labour, not the pantry, so the spend half must gate on the council alone or
 485 starts announcing a call it does not touch. Lore: `kinTic` is `watchTic`'s shape with the bond floor
 removed and `ticInvented` required on **both** ends; the band is `watchingTic`, reused, no second number.
+
+## Cycle 135 — coder
+
+Both tracks shipped. Structure: `councilWorkPriority`'s counting loop is now `councilMajority`, generic and
+stated for a plurality rather than for two options, and the pantry call runs through it at the same seats —
+`spendPriorityFor` grew the exact ladder `decideWork` has. The codeplan's trap held: `checkCouncilCall`'s
+entry guard lets a derelict landmark open the *labour* door and must not open the pantry one, so the two
+halves gate differently and say so in a comment. The plan's "extract one helper" step was **not** taken and
+the reason is recorded — the two halves are not the same shape once 485's lean is threaded through one of
+them, and faking a shared seam here would make BACKLOG-489 harder, not easier. Lore: `kinTic` is `watchTic`
+with the bond floor removed and `ticInvented` required at both ends; the band is `watchingTic`, reused, and
+no second distance exists in the codebase. Build clean, unit 1832/1832 (+11), both new e2e specs green
+(5 + 6), dev server 200, webllm boundary clean.

@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import {
+  councilMajority,
+  councilSpendPriority,
+  spendCallMeaning,
+  SPEND_CALL,
+  type SpendPriority,
   providerPriority,
   feedReserve,
   granaryDeferredForFeeding,
@@ -186,6 +191,54 @@ describe('councilWorkPriority (BACKLOG-481 / 031)', () => {
   it('the ticker reads the same table the lens glyph and the legend read', () => {
     for (const o of WORK_CALL.options) {
       expect(workCallMeaning(o.value as WorkPriority)).toBe(o.meaning);
+    }
+  });
+});
+
+/**
+ * The other call goes to the council (BACKLOG-487) — Milestone 14's last arc.
+ *
+ * `councilWorkPriority`'s own cases above are left byte-identical on purpose: they are the proof that
+ * turning its body into a generic changed no answer.
+ */
+describe('BACKLOG-487 — the pantry call at the same seats', () => {
+  it('councilMajority takes the plurality', () => {
+    expect(councilMajority(['a', 'a', 'b'], null)).toBe('a');
+    expect(councilMajority(['a', 'a', 'a'], 'b')).toBe('a'); // unanimity never reaches the tie-break
+    expect(councilMajority(['a', 'b', 'b'], 'a')).toBe('b');
+  });
+
+  it('councilMajority falls to the say on an even split, then to the top banker', () => {
+    expect(councilMajority(['a', 'b'], 'b')).toBe('b');
+    expect(councilMajority(['a', 'b'], null)).toBe('a'); // votes[0] — seats are most-banked first
+    expect(councilMajority(['b', 'a'], null)).toBe('b');
+  });
+
+  it('councilMajority answers null for a ground that seats nobody — the compatibility seam', () => {
+    expect(councilMajority([], 'a')).toBeNull();
+    expect(councilMajority<string>([], null)).toBeNull();
+  });
+
+  it('councilMajority is stated for a plurality, not just two options', () => {
+    expect(councilMajority(['a', 'b', 'b', 'c'], null)).toBe('b');
+    expect(councilMajority(['a', 'b', 'c'], 'c')).toBe('c'); // three-way tie falls to the say
+  });
+
+  it('the pantry vote is the work vote’s twin, over its own enum', () => {
+    expect(councilSpendPriority(['feed', 'feed', 'bank'], null)).toBe('feed');
+    expect(councilSpendPriority(['feed', 'bank'], 'bank')).toBe('bank'); // the provider breaks it
+    expect(councilSpendPriority(['feed', 'bank'], null)).toBe('feed'); // ...else the biggest contributor
+    expect(councilSpendPriority([], 'feed')).toBeNull();
+  });
+
+  it('a council of one behaves exactly as that one dino did alone — why a shipping park is bit-identical', () => {
+    expect(councilSpendPriority(['feed'], null)).toBe('feed');
+    expect(councilSpendPriority(['bank'], null)).toBe('bank');
+  });
+
+  it('the pantry beat reads the same table the lens glyph and the legend read', () => {
+    for (const o of SPEND_CALL.options) {
+      expect(spendCallMeaning(o.value as SpendPriority)).toBe(o.meaning);
     }
   });
 });

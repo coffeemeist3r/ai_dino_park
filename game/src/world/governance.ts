@@ -135,12 +135,66 @@ export function councilWorkPriority(
   votes: readonly WorkPriority[],
   tieBreak: WorkPriority | null,
 ): WorkPriority | null {
+  return councilMajority(votes, tieBreak);
+}
+
+/**
+ * The majority arithmetic itself (BACKLOG-487), lifted out of `councilWorkPriority` unchanged and made
+ * generic over the enum being voted on.
+ *
+ * 481 wrote this counting loop for `WorkPriority` because at the time exactly one of a ground's calls was a
+ * vote. 487 makes the second one a vote too, and the arithmetic turns out to have had nothing to do with
+ * labour: it is "count the options, take the plurality, fall to the say and then to the top banker." Writing
+ * it a second time for `SpendPriority` would have been the `standings.ts` (482) failure one layer down — two
+ * comparators that must agree forever and no test that they do.
+ *
+ * Generalized from two options to N deliberately. Both of today's calls are binary, but the tie-break law
+ * ("the say breaks it, else the ground's biggest contributor") is stated for a plurality, and a third option
+ * on either call must not be the moment somebody re-derives what a tie means under pressure.
+ *
+ * `[]` → `null` is the compatibility seam every governance function here honours: a ground that seats nobody
+ * has decided nothing *by council*, and the caller falls through to the pre-vote provider rule.
+ */
+export function councilMajority<T extends string>(votes: readonly T[], tieBreak: T | null): T | null {
   if (votes.length === 0) return null;
-  const build = votes.filter((v) => v === 'build').length;
-  const gather = votes.length - build;
-  if (build > gather) return 'build';
-  if (gather > build) return 'gather';
-  return tieBreak ?? votes[0];
+  const counts = new Map<T, number>();
+  for (const v of votes) counts.set(v, (counts.get(v) ?? 0) + 1);
+  let best = votes[0];
+  let bestCount = 0;
+  let tied = false;
+  // Iterate `votes`, not the map, so the winner among equals is the earliest-voting seat — and `zoneCouncil`
+  // orders most-banked first, which is exactly what `votes[0]` is documented to mean.
+  for (const v of votes) {
+    const n = counts.get(v)!;
+    if (n > bestCount) {
+      best = v;
+      bestCount = n;
+      tied = false;
+    } else if (n === bestCount && v !== best) {
+      tied = true;
+    }
+  }
+  return tied ? (tieBreak ?? votes[0]) : best;
+}
+
+/**
+ * The ground's *other* call, at the same council (BACKLOG-487) — Milestone 14's last arc.
+ *
+ * 481 handed the work priority to the seats and left this one with the provider on purpose, as a live
+ * control: "the unchanged call sits beside the changed one." Four cycles later the voted call has a term
+ * (484), a turnover beat (484) and a feedback loop from the ground's own skyline (485), and the unvoted one
+ * is still re-set silently by whoever out-banks everyone else on every handover (467). The control has
+ * reported. This retires it.
+ *
+ * Each seat votes `providerPriority(traits)` — the **same** agreeableness read the provider always used, so a
+ * council of one behaves exactly as that one dino did alone and a shipping five-dino park is bit-identical.
+ * Tie-break law identical to 481's, for the reason recorded there: the say breaks it, else `votes[0]`.
+ */
+export function councilSpendPriority(
+  votes: readonly SpendPriority[],
+  tieBreak: SpendPriority | null,
+): SpendPriority | null {
+  return councilMajority(votes, tieBreak);
 }
 
 /** The ground's call in the player's words, read off the same table the lens glyph and the `[?]` legend
@@ -148,6 +202,13 @@ export function councilWorkPriority(
  *  with — one table, three readers. */
 export function workCallMeaning(p: WorkPriority): string {
   return WORK_CALL.options.find((o) => o.value === p)!.meaning;
+}
+
+/** The pantry call in the player's words — `workCallMeaning`'s twin over `SPEND_CALL` (BACKLOG-487). Same
+ *  one-table-three-readers rule: the vote's ticker beat cannot announce a call in words the `[?]` legend
+ *  disagrees with, because it is reading the legend's own table. */
+export function spendCallMeaning(p: SpendPriority): string {
+  return SPEND_CALL.options.find((o) => o.value === p)!.meaning;
 }
 
 /**

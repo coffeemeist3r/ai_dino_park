@@ -132,6 +132,8 @@ import {
   governanceLine,
   providerWorkPriority,
   councilWorkPriority, // BACKLOG-481: the seats vote; the provider only breaks a tie
+  councilSpendPriority, // BACKLOG-487: ...and the pantry call goes to the same seats
+  spendCallMeaning, // BACKLOG-487: the pantry beat speaks the `[?]` legend's own words
   billLean, // BACKLOG-485: what a ground's own disrepair asks of it
   calledWork,
   billCallLine,
@@ -147,7 +149,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -397,6 +399,9 @@ export class WorldScene extends Phaser.Scene {
    *  memory guard. Both transient — cleared by resetTic (company/need ends the stretch) and on greet cancel. */
   private caughtTic: string | null = null;
   private ticCaughtFiled = new Set<string>();
+  /** BACKLOG-416: who has already filed its "not the only one" note this solitary stretch. `ticCaughtFiled`'s
+   *  twin in every respect — per-stretch, not persisted, cleared by `resetTic`. */
+  private kinFiled = new Set<string>();
   /**
    * BACKLOG-370: leaning loners that have already filed their "waited by the glass" memory. Transient,
    * and deliberately NOT cleared by resetTic: that guard tracks the *tic* stretch, which company breaks
@@ -637,7 +642,22 @@ export class WorldScene extends Phaser.Scene {
    * policy, or null if the zone has never had a provider — null → today's behaviour (both hooks inert).
    */
   private spendPriorityFor(zone: string): SpendPriority | null {
+    // BACKLOG-487: the ground's *older* call is the council's now too. Deliberately no `calledWork`-style
+    // lean above it — the bill (485) leans a ground's labour, never its pantry, so there is nothing here to
+    // override the decision with. This is the whole ladder.
     const provider = this.providerFor(zone);
+    // Each seat votes the same agreeableness read the provider always used, so a council of one behaves
+    // exactly as that one dino did alone and a shipping park is bit-identical. The provider only breaks a tie.
+    const council = this.councilFor(zone);
+    if (council.length) {
+      const votes = council.map((n) => providerPriority(this.dinoByName(n)?.traits));
+      const tieBreak = provider ? providerPriority(this.dinoByName(provider)?.traits) : null;
+      const decided = councilSpendPriority(votes, tieBreak);
+      if (decided) {
+        this.spendPriorityByZone[zone] = decided;
+        return decided;
+      }
+    }
     if (provider) {
       const p = providerPriority(this.dinoByName(provider)?.traits);
       this.spendPriorityByZone[zone] = p;
@@ -684,6 +704,9 @@ export class WorldScene extends Phaser.Scene {
    * reload therefore *seeds* rather than announces (see `checkCouncilCall`'s first-seating guard).
    */
   private lastWorkCallByZone: Record<string, WorkPriority> = {};
+  /** The pantry twin (BACKLOG-487), and not persisted for the same reason: a live read of a live situation,
+   *  so a reload seeds rather than announces. */
+  private lastSpendCallByZone: Record<string, SpendPriority> = {};
   /** BACKLOG-484: the held council seating and the in-game day its term began. `null` seats means no term
    *  has been held yet — every ground reads live, exactly the pre-484 park. Persisted additively. */
   private councilSeats: Record<string, string[]> | null = null;
@@ -703,22 +726,38 @@ export class WorldScene extends Phaser.Scene {
    */
   private checkCouncilCall(): void {
     for (const z of ZONES) {
+      const seated = this.councilFor(z.id).length > 0;
       // BACKLOG-485: a ground with nothing derelict and nobody seated still announces nothing. A ground
       // whose walls are coming down has something to say whether or not it has seats to say it with.
       const lean = billLean(this.derelictIn(z.id));
-      if (!this.councilFor(z.id).length && !lean) continue;
-      const call = this.workPriorityFor(z.id);
-      if (!call || this.lastWorkCallByZone[z.id] === call) continue;
-      const seeding = this.lastWorkCallByZone[z.id] === undefined;
-      this.lastWorkCallByZone[z.id] = call;
-      // The first *vote* a ground records is not a turnover, so it seeds silently (481). A ground turning to
-      // gathering because its own walls are down is news the first time regardless — most such grounds have
-      // never announced a call at all, having never seated a council, and swallowing it would mean the beat
-      // only ever fires for grounds that happen to have had a vote first. The cost is one line after a reload
-      // of a park left in disrepair, which is a true statement about that park.
-      if (seeding && lean !== call) continue;
-      // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
-      this.logEvent(lean === call ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`);
+      if (seated || lean) {
+        const call = this.workPriorityFor(z.id);
+        const seeding = this.lastWorkCallByZone[z.id] === undefined;
+        // The first *vote* a ground records is not a turnover, so it seeds silently (481). A ground turning to
+        // gathering because its own walls are down is news the first time regardless — most such grounds have
+        // never announced a call at all, having never seated a council, and swallowing it would mean the beat
+        // only ever fires for grounds that happen to have had a vote first. The cost is one line after a reload
+        // of a park left in disrepair, which is a true statement about that park.
+        if (call && this.lastWorkCallByZone[z.id] !== call) {
+          this.lastWorkCallByZone[z.id] = call;
+          // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
+          if (!seeding || lean === call) {
+            this.logEvent(
+              lean === call ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`,
+            );
+          }
+        }
+      }
+      // BACKLOG-487: the pantry call, announced the same way — but gated on the **council alone**. The lean
+      // above is a labour concept (`calledWork` overrides the work call and nothing else), so letting a
+      // derelict landmark open this door would have 485's bill announcing a decision it does not touch.
+      if (!seated) continue;
+      const spend = this.spendPriorityFor(z.id);
+      if (!spend || this.lastSpendCallByZone[z.id] === spend) continue;
+      const seedingSpend = this.lastSpendCallByZone[z.id] === undefined;
+      this.lastSpendCallByZone[z.id] = spend;
+      if (seedingSpend) continue; // the first call a ground records is not a turnover — the 481 precedent
+      this.logEvent(`🗳️ the ${z.name}'s council calls it: ${spendCallMeaning(spend)}`);
     }
   }
   /**
@@ -1249,6 +1288,12 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__watchTic = (name: string) => {
       const d = this.dinos.find((x) => x.name === name);
       return d ? this.watchTic(d) : [];
+    };
+    // BACKLOG-416: one deterministic pass of the kinship scan — the `__watchTic` precedent, so the spec
+    // drives the very method `performTic` calls rather than a second path of its own.
+    (window as any).__kinTic = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.kinTic(d) : [];
     };
     // any: dev-only Playwright hooks — the resource in play / per-dino gather tally / deterministic spawn (BACKLOG-146)
     // BACKLOG-314: the active zone's resource, else any present one (so cross-zone queries still read).
@@ -3230,6 +3275,10 @@ export class WorldScene extends Phaser.Scene {
         votes: seats.map((n) => providerWorkPriority(this.dinoByName(n)?.traits)),
         tieBreak: provider ? providerWorkPriority(this.dinoByName(provider)?.traits) : null,
         call: this.workPriorityFor(z),
+        // BACKLOG-487: the pantry call at the same seats, read through the same production path.
+        spendVotes: seats.map((n) => providerPriority(this.dinoByName(n)?.traits)),
+        spendTieBreak: provider ? providerPriority(this.dinoByName(provider)?.traits) : null,
+        spendCall: this.spendPriorityFor(z),
       };
     };
     // dev-only: credit banked food to a dino without staging a whole harvest haul, so a spec can seat a council.
@@ -3638,6 +3687,7 @@ export class WorldScene extends Phaser.Scene {
     delete this.ticGrief[name]; // BACKLOG-414: the grief re-derives fresh next stretch
 
     this.ticCaughtFiled.delete(name); // BACKLOG-408: the stretch ended — a later one can be caught (+ remembered) afresh
+    this.kinFiled.delete(name); // BACKLOG-416: ...and a later stretch can find company across the way afresh
     if (this.caughtTic === name) this.caughtTic = null;
   }
 
@@ -3740,6 +3790,43 @@ export class WorldScene extends Phaser.Scene {
     return out;
   }
 
+  /**
+   * Not the only one (BACKLOG-416). `watchTic`'s shape with the two things that make 407 what it is removed:
+   * the bond floor, and the requirement that only one of the pair be ticcing. Here **both** must be mid-ritual
+   * (`ticInvented`), and no bond of any size is required or moved — you cannot learn a stranger's ritual from
+   * across a field, but you can be glad they are out there.
+   *
+   * Called from `performTic`'s invention branch, after `watchTic`, so it fires once per solitary stretch and
+   * touches none of 407's tallies. That means the pairing lands when the **second** of the two falls into its
+   * ritual, which is the honest moment: until then there was only one loner out here.
+   *
+   * Reads `watchingTic` for the band rather than naming a distance of its own — the only window in which this
+   * can happen is the one 407 already had to name for the opposite reason.
+   */
+  private kinTic(performer: Dino): string[] {
+    const out: string[] = [];
+    if (this.ambientHeld) return out;
+    const zone = zoneOf(this.dinoZones, performer.name, BOWL_ID);
+    const at = this.tileOf(performer);
+    for (const o of this.dinos) {
+      if (o.name === performer.name) continue;
+      if (zoneOf(this.dinoZones, o.name, BOWL_ID) !== zone) continue;
+      if (!this.ticInvented.has(o.name)) continue; // the other must be at its own ritual — the whole item
+      if (!watchingTic(this.chebyTiles(this.tileOf(o), at))) continue;
+      for (const [self, other] of [
+        [performer, o],
+        [o, performer],
+      ] as const) {
+        if (this.kinFiled.has(self.name)) continue; // once per solitary stretch, per dino
+        this.kinFiled.add(self.name);
+        this.memory = remember(this.memory, self.name, kinshipMemory(other.name));
+      }
+      this.logEvent(kinshipLine(performer.name, o.name));
+      out.push(o.name);
+    }
+    return out;
+  }
+
   private performTic(d: Dino, tic: Tic): void {
     if (!this.ticInvented.has(d.name)) {
       this.ticInvented.add(d.name);
@@ -3760,6 +3847,7 @@ export class WorldScene extends Phaser.Scene {
       this.logEvent(`${tic.glyph} ${d.name} ${grieved ? `${tic.label} at the edge ${grieved} left by` : tic.label}`);
       this.leaveTrace(d); // BACKLOG-424: the ritual scuffs the ground it happens on
       this.watchTic(d); // BACKLOG-407: whoever is watching from the band gets one watch of this stretch
+      this.kinTic(d); // BACKLOG-416: ...and another loner ticcing in that same band is company of a kind
     } else if ((this.soloSteps[d.name] ?? 0) % 6 === 0) {
       this.flashFeed(d, tic.glyph);
     }

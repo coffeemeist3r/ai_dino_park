@@ -316,3 +316,32 @@ export function ticBookLine(t: Tic, from?: string | null): string {
   if (!from) return own;
   return from === ECHO_FROM_UNKNOWN ? `${own} — picked up from a friend` : `${own} — caught off ${from}`;
 }
+
+/* ---------------------------------------------------------------------------------------------------
+ * Not the only one (BACKLOG-416).
+ *
+ * Every beat this thread has added needed a **channel**. A sting starts a ritual (412). A friend near enough
+ * to watch picks one up (407). The keeper walks over and catches one (408/413). The book names one (409).
+ * This is the beat with no channel at all: two dinos, each far enough into its own solitude to have invented
+ * a ritual, each near enough to see the other at it, and neither one crosses.
+ *
+ * The band is `watchingTic` — 407's, reused, not a second number. That is not thrift, it is the point: the
+ * only distance at which this can happen is the distance at which a ritual can form *and* another dino is
+ * visible, and 407 already had to name exactly that window for the opposite reason.
+ *
+ * **No bond floor, and no bond change.** 407 requires a real friend because you cannot learn a stranger's
+ * ritual from across a field; you can absolutely feel less alone next to one. That asymmetry is the design.
+ * This is the first thing in this park that two dinos share without knowing each other — no contact, no
+ * bond moved, no word spoken, and nothing in the world to show for it but what each of them remembers.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** The faint note each of two in-sight loners files. Names the other without calling them a friend — the
+ *  whole beat is that they need not be one. */
+export function kinshipMemory(other: string): string {
+  return `you were not the only one out here — ${other} kept to its own ritual across the way`;
+}
+
+/** The ticker beat for the pairing. The new moon, because nothing happened — which is the beat. */
+export function kinshipLine(a: string, b: string): string {
+  return `\u{1F311} ${a} and ${b} keep to their own rituals, in sight of each other`;
+}
