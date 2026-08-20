@@ -8,25 +8,7 @@
 
 ## Current milestone
 
-**Milestone 14: A ritual that spreads, and a government with a term**
-**Status:** ACTIVE (opened cycle 132)
-
-The tic (405) has been pure idleness for forty-five cycles: a dino alone long enough invents a little
-ritual and nothing in the park ever *causes* one or ever *notices* one. The council (479/481) has the
-opposite problem — it decides real things now, and it is re-derived from live banked tallies on every
-read, so a ground's electorate flickers rather than changing on a date. This milestone gives the
-ritual a cause, a witness and a name, and gives the ground's government a term, a second call, and
-a way to hear its own unpaid bills.
-
-**Lore arcs:**
-- [x] A ritual you fall into after a sting — a dino that came away empty from a contested drop takes up its signature tic sooner than a contented one, so the hatch's aftermath is something you can watch (BACKLOG-412 — cycle 132)
-- [x] A ritual that spreads — a dino that watches a close friend at its tic often enough picks up a faint echo of it, so a private ritual becomes the first thing in this park to travel by imitation (BACKLOG-407 — cycle 133)
-- [x] A ritual with a name — the collection book names each dino's signature tic, the distinctness the player collects at a glance (BACKLOG-409 — cycle 134)
-
-**Structure arcs:**
-- [x] The seat has a term — the council is re-derived on the in-game day boundary and held between, with a beat when the membership actually turns over, so a ground's electorate changes on a date instead of flickering (BACKLOG-484 — cycle 132)
-- [ ] The other call goes to the council — the spend priority (463), still the provider's alone, runs through the same vote the work call now uses (BACKLOG-487)
-- [x] The bill reaches the call — a ground carrying a derelict landmark (480) leans its own call toward gathering, the first feedback loop from a building back into a decision (BACKLOG-485 — cycle 133)
+_No milestone is ACTIVE. The smiths draft Milestone 15 at the next cycle open._
 
 ---
 
@@ -46,6 +28,51 @@ a way to hear its own unpaid bills.
 ```
 
 ## Shipped milestones
+
+### Milestone 14: A ritual that spreads, and a government with a term — SHIPPED cycle 135 (opened cycle 132)
+
+Milestone 14 was proposed as two repairs that had nothing to do with each other, and closed having said the same
+thing twice.
+
+The **tic** (405) had been pure idleness for forty-five cycles: a dino alone long enough invented a little ritual,
+and nothing in the park ever *caused* one or ever *noticed* one. Four cycles gave it a cause, a way to travel, a
+name, and — last — a witness who does nothing about it. 412 made the aftermath of a contested drop something you
+can watch: a dino that came away empty takes up its ritual far sooner than a contented one, and the threshold
+composes by `Math.min` with the two shorteners already there, so no branch outranks another. 407 was the larger
+event and the milestone's real headline: **the first behaviour in this park's life to travel sideways between two
+living dinos.** Traits are name-seeded at birth, blended at a hatch, or nudged inward by a dino's own experience —
+vertical or inward, never across. Now a close friend who watches your ritual three times takes it up. And the band
+that makes it possible is a *consequence* rather than a knob: a watcher must be outside company range, because a
+dino any nearer would have broken the solitude the ritual needs, so **the friend who can learn your ritual is
+definitionally the friend who left you to have it.** 409 put the ritual in the book, on the line under the idle
+quirk, reading a second *lifetime* set rather than the per-stretch flag `resetTic` clears — a split nobody would
+have made by accident. And 416, tonight, read that same band for the case nobody had: **both** ends ticcing. Two
+loners in sight of each other, neither crossing, each filing that it was not the only one out here. No contact,
+no bond, no word. It introduces no new number, because the window it needs is the window 407 already named.
+
+The **council** had the opposite problem — it decided real things, and it was re-derived from live banked tallies
+on every read, so a ground's electorate flickered rather than changing on a date. 484 gave the seating a term:
+re-derived on the in-game day boundary, held between, with one beat when the membership actually turns over. Its
+own header carries the sharper half — `null` is not `[]`, because collapsing "no term yet, read live" into "held
+and seats nobody" would have taken 481's vote inert for a day on every fresh save with no existing spec
+noticing. 485 built the first loop in this park that runs from a *building* back into a *decision*: a ground
+carrying a derelict landmark leans to gathering, which fills the pile, which pays the upkeep, which patches the
+landmark, which releases the lean. And 487 closed it by retiring the control 481 had deliberately left standing —
+the pantry call now goes to the same seats, through arithmetic that turned out never to have been about labour at
+all.
+
+The milestone's finding is the one both halves arrived at independently: **the second source of an event is where
+you learn what your first one assumed.** 485's first draft was correct in every hook and posted nothing, because
+481's freshness gate seeds silently on a ground's *first* recorded call — sound for a vote, fatal for a second
+cause, and fatal most reliably for the young poor grounds the feature existed to cover. 487 hit the same wall
+from the other side: its plan asked for one shared announce-helper, and the honest answer was that the two halves
+stop being the same shape once 485's lean threads through one of them. Four freshness gates in this park now
+carry an implicit *"...as decided by whatever was here first"*, and each will silence the next cause added to it.
+That is filed as BACKLOG-489, and it is the clearest-motivated item on the Structure Track precisely because two
+separate cycles hit it and neither was in a position to fix it properly.
+
+**Lore arcs:** 412 (cycle 132) · 407 (cycle 133) · 409 (cycle 134) · [416 shipped alongside, cycle 135]
+**Structure arcs:** 484 (cycle 132) · 485 (cycle 133) · 487 (cycle 135)
 
 ### Milestone 13: The hatch is a society, and the ground votes — SHIPPED cycle 131 (opened cycle 129)
 

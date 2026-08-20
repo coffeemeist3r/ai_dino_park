@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-488 [core] Hands on the derelict — the patch-up (480) is pile arithmetic nobody performs; make repair a *job* a resident does (full text in the cycle-133 block below).
-- [~] BACKLOG-487 [core] The other call goes to the council — the spend priority (463) is still the provider's alone while the work priority (473) is voted; hand the second call to the same deciders (full text in the cycle-131 block below).
 - [ ] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
 - [ ] BACKLOG-492 [core] A vote nothing can change — every seat votes a hard threshold on one birth trait, so a council is unanimous by construction and no event in the park can ever turn one; give a seat something it has *lived* to vote on (full text in the cycle-135 block below).
 
@@ -674,7 +673,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
 
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
-- [~] BACKLOG-416 [emergent] Not the only one — when two solitary dinos happen to tic within sight of each other (just past company range, so neither breaks), each files a faint "not the only one out here" — a wordless kinship between loners without contact or a bond change. Builds on 405 / 135.
 - [ ] BACKLOG-420 [social] Caught again — greet a fond dino mid-tic (413) a second time in the same solitary stretch and its pleasure turns to playful teasing ("you again? spying on me?"), so a repeat catch reads different from the first warm one. Builds on 413 / 408.
 - [ ] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
@@ -687,7 +685,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > item somebody should seed, not a note somebody should read"); the other is the half of governance the vote
 > (481) did not reach.
 
-- [~] BACKLOG-487 [core] The other call goes to the council — 481 handed a ground's **work** priority (473) to its council by majority off the members' temperaments, the provider breaking ties. The ground's **spend** priority (463) — feed-the-hungry-first vs. bank-toward-a-granary, the older and more player-visible of the two calls, on the lens since 468 and in the cast's mouths since 469/470/471 — is still set unilaterally by whoever out-banks everyone else, and re-set silently on every handover (467). Run it through the same decision the work call now uses, so a ground's two calls are made the same way by the same seats, the handover beat (467) fires on a *vote* rather than one dino's temperament, and the discontent ticker (471) is finally answering a decision the ground actually made together. Reuses 481's tally wholesale; additive save. Builds on 481 / 473 / 463 / 467.
 
 ## Cycle 133 structure additions — after the bill (2026-08-17)
 

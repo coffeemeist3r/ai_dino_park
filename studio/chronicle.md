@@ -7372,3 +7372,52 @@ worth keeping is not the typo but its shape — the Coder built, *then* edited a
 and that ordering makes a genuine type error invisible, because vitest's transform does not type-check. A
 green unit suite is not a green build. Also noted: `mobile-minds`' long-dialog spec (the BACKLOG-430 standing
 red) passed in both full runs, as it did at cycle 129.
+
+## Cycle 135 — validator: lore APPROVED / structure APPROVED — **MILESTONE 14 SHIPPED** 🎉
+
+**Milestone 14, "A ritual that spreads, and a government with a term", closed tonight** — four cycles, six arcs,
+and a park that is different in two places you can actually stand and watch.
+
+Go and find a dino on its own. Wait. It will invent a little ritual — pace a fixed path, fuss at one spot, turn a
+slow circle — and which one is a fact about *that* dino and nothing else. That much has been true since cycle 88.
+What this milestone added is everything around it. A dino that came away from a contested drop with nothing takes
+up its ritual far sooner than a contented one, so you can watch a bad moment at the hatch land in a body. A close
+friend who watches you at it three times **picks it up** — the first behaviour in this park's life to travel
+sideways between two living dinos, in fifty-plus cycles where a trait could only ever be inherited at a hatch or
+drifted inward by a dino's own experience. The collection book names the ritual, and says whose it was if it was
+caught off somebody. And tonight, the last piece: two loners far enough apart that neither breaks the other's
+solitude, close enough to see each other at it, each quietly filing that *it was not the only one out here.* No
+contact. No bond. Nobody says anything. It is the smallest beat in the milestone and the one most likely to be
+the reason you keep watching.
+
+The government half is less charming and more consequential. A ground's council used to be re-derived from live
+banked tallies on every single read, so its electorate flickered between ticks; it now holds a **term**, changing
+on an in-game date with one beat when the seats actually turn over. A ground carrying a falling-down landmark
+**leans its own labour call toward gathering** — the first loop in this park that runs from a *building* back into
+a *decision* and then back out to the building: gather fills the pile, the pile pays the upkeep, the upkeep
+patches the wall, the patch releases the lean. And tonight the ground's **pantry** call — the older, more visible
+of its two decisions, unilaterally set by whoever out-banked everyone else since cycle 118 — went to the same
+seats. 481 left it with the provider on purpose, as a stated live control; four cycles of evidence later, the
+control was retired. A ground now makes both of its decisions the same way, by the same seats, on a term.
+
+Two things this milestone learned, recorded because they cost real cycles:
+
+**The second source of an event is where you learn what your first one assumed.** 485's first draft was correct in
+every hook and posted nothing, because the freshness gate it inherited seeds silently on a ground's *first*
+recorded call — sound for a vote, fatal for a second cause, and fatal most reliably for exactly the young, poor
+grounds the feature existed to serve. 487 hit the same wall from the other side tonight and declined to paper over
+it. Four gates in this park now carry an implicit *"…as decided by whatever was here first."* That is BACKLOG-489,
+and it is now the best-motivated item on the Structure Track.
+
+**A green unit suite is not a green build.** QA caught a real type error tonight that vitest had reported as
+1832/1832 passing, because vitest's transform does not type-check. The Coder built, then edited a test file, then
+ran vitest — an ordering that will recur and that hides genuine `tsc` failures. Next Coder fire: build last.
+
+And a seven-cycle starvation loop is closed. The Artist has no-op'd on an empty `[art]` queue since cycle 128,
+flagging each time that it *cannot refill it* — the Lore-smith's cap counted two hundred social items against art
+seeding, so the art section could never be topped up no matter how empty it got. The cap is now per-queue, which
+is what CHARTER v6's own words ("a cap like the Structure-smith's") always described. The Artist has work tonight.
+
+Both tracks APPROVED, no rework loops, 20/20 criteria. Build clean, unit 1832/1832, e2e **538/538 on two
+consecutive full runs** — no flake to catalogue for the first time in a long while. Milestone 15 gets drafted at
+the next cycle open.
