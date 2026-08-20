@@ -1,6 +1,6 @@
 {
   "cycle": 135,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-416: Not the only one \u2014 two solitary dinos ticcing in sight of each other file a wordless kinship",
   "structureItem": "BACKLOG-487: The other call goes to the council \u2014 the spend priority (463) runs through the same vote the work call uses",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "lore-smith": "2026-08-20T02:30:00-05:00",
     "structure-smith": "2026-08-20T02:44:00-05:00",
     "designer": "2026-08-20T03:04:00-05:00",
-    "code-planner": "2026-08-18T03:18:00-05:00",
+    "code-planner": "2026-08-20T03:18:00-05:00",
     "coder": "2026-08-18T03:42:00-05:00",
     "qa": "2026-08-18T04:55:00-05:00",
     "validator": "2026-08-18T05:00:00-05:00",

@@ -7340,3 +7340,12 @@ spoken. Reads 407's band for the case where *both* ends are ticcing, which nobod
 Milestone 14's last arc — 481's live control has reported, so the spend call joins the work call at the
 council. 481's majority arithmetic goes generic; the rest is a mirror of `decideWork`. Structure first (wider
 blast radius); the two tracks share only `WorldScene.ts`, ~500 lines apart.
+
+## Cycle 135 — code-planner
+
+~9 files, both tracks inside CHARTER v6's 15. Structure first: `councilWorkPriority`'s body becomes a generic
+`councilMajority`, `councilSpendPriority` is its twin, and `spendPriorityFor` grows the same council-then-provider
+ladder `decideWork` has. One trap written down — `checkCouncilCall`'s continue-guard lets a *derelict landmark*
+open the door, and the bill leans labour, not the pantry, so the spend half must gate on the council alone or
+485 starts announcing a call it does not touch. Lore: `kinTic` is `watchTic`'s shape with the bond floor
+removed and `ticInvented` required on **both** ends; the band is `watchingTic`, reused, no second number.
