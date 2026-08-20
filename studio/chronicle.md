@@ -7331,3 +7331,12 @@ since cycle 118 and the deliberate live control against 481's voted work call; f
 later the control is retired and both of a ground's calls become the council's. Queue was 3 (< X=4), so
 one seeded — BACKLOG-492, the question 487 forces: every seat votes a hard threshold on one name-seeded
 axis, so a council is unanimous by construction and nothing that happens in the park can turn one.
+
+## Cycle 135 — designer
+
+Lore: BACKLOG-416, the one beat in the ritual thread that needs no channel — two loners ticcing in sight of
+each other, each filing that it was not the only one out here, with no contact, no bond change and no word
+spoken. Reads 407's band for the case where *both* ends are ticcing, which nobody had. Structure: BACKLOG-487,
+Milestone 14's last arc — 481's live control has reported, so the spend call joins the work call at the
+council. 481's majority arithmetic goes generic; the rest is a mirror of `decideWork`. Structure first (wider
+blast radius); the two tracks share only `WorldScene.ts`, ~500 lines apart.
