@@ -3,8 +3,6 @@ import {
   councilMajority,
   councilSpendPriority,
   spendCallMeaning,
-  SPEND_CALL,
-  type SpendPriority,
   providerPriority,
   feedReserve,
   granaryDeferredForFeeding,

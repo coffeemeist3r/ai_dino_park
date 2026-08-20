@@ -7362,3 +7362,13 @@ them, and faking a shared seam here would make BACKLOG-489 harder, not easier. L
 with the bond floor removed and `ticInvented` required at both ends; the band is `watchingTic`, reused, and
 no second distance exists in the codebase. Build clean, unit 1832/1832 (+11), both new e2e specs green
 (5 + 6), dev server 200, webllm boundary clean.
+
+## Cycle 135 — qa
+
+20/20 criteria pass across both tracks. Build clean, unit 1832/1832, e2e **538/538 twice consecutively** —
+no failures, no isolated re-runs, no flake to catalogue. One real defect found and fixed: `governance.test.ts`
+carried duplicate `SPEND_CALL` / `SpendPriority` imports that vitest tolerated and `tsc` did not. The finding
+worth keeping is not the typo but its shape — the Coder built, *then* edited a test file, *then* ran vitest,
+and that ordering makes a genuine type error invisible, because vitest's transform does not type-check. A
+green unit suite is not a green build. Also noted: `mobile-minds`' long-dialog spec (the BACKLOG-430 standing
+red) passed in both full runs, as it did at cycle 129.
