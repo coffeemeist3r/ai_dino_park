@@ -7577,3 +7577,13 @@ being spied on eight ways.
 and the stone to raise it; a resident walks over and the patch resolves on arrival. The live day tick
 stops patching by hand (it asks `runUpkeep` for the bill only); the away catch-up keeps 480's arithmetic
 unchanged, because nobody is watching an unattended park. `upkeep.ts` is not edited — only its caller.
+
+## Cycle 136 — code-planner
+
+Both tracks planned, ~12 files, no new dependencies. The reuse audit turned up the cycle's one non-obvious
+seam: the mend must spend `REPAIR_COST` off a ground's pile by the same largest-kind rule upkeep has always
+used, but `spendOne` is module-private and the design forbids editing `upkeep.ts` — so the scene calls
+`runUpkeep(pile, 0, 1)`, where zero standing means zero bill and the only thing the call does is the repair
+spend, through the exact function that has always done it. On the lore side the compatibility seam is
+"the old path *is* the old function": `caughtOpener('pleased')` returns `fondOpener()` by calling it, so
+the two existing catch specs stay green by construction rather than by matching text twice.
