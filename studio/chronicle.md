@@ -7564,3 +7564,16 @@ with nobody near it. This makes it a job — a resident walks to the fallen land
 on arrival. The 24-minute day is what makes it watchable, and the CHARTER v7 corollary is what makes it
 honest: `upkeep.ts` currently documents its own dormancy on a fresh save as a virtue, so the founding park
 ships a **fallen cairn in the Grove** and the stone to raise it, in this cycle rather than behind it.
+
+## Cycle 136 — designer
+
+**Lore: BACKLOG-420, caught again.** The catch has had two constant strings since cycle 89 and gives the
+same one on the first interruption and the fifth. It gets a register that climbs inside one stretch —
+pleased, then teasing, then fondly resigned — and only for a dino that is fond, so the escalation *is*
+the tell that it likes you. The tease is worded off the dino's signature axis, so eight dinos object to
+being spied on eight ways.
+
+**Structure: BACKLOG-488, hands on the derelict.** The founding park ships a fallen cairn in the Grove
+and the stone to raise it; a resident walks over and the patch resolves on arrival. The live day tick
+stops patching by hand (it asks `runUpkeep` for the bill only); the away catch-up keeps 480's arithmetic
+unchanged, because nobody is watching an unattended park. `upkeep.ts` is not edited — only its caller.
