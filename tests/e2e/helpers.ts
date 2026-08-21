@@ -42,3 +42,24 @@ export async function boot(page: Page): Promise<void> {
   // that genuinely needs the live timers calls __resumeAmbient() after boot.
   await page.evaluate(() => (window as Record<string, () => void>).__pauseAmbient?.());
 }
+
+/**
+ * Gather the whole cast into the bowl (CHARTER v7).
+ *
+ * Before v7 the roster spawned entirely into the bowl, so "everyone is co-located and every other ground is
+ * empty" was the free founding fixture, and a good many specs were written against it without ever saying
+ * so. v7 ships residents on the grove and the Fernreach, which is the point — but a spec whose *subject* is
+ * something else (a comfort visit, an inspection, a shared stargaze) still needs the cast in one place.
+ *
+ * This restores that fixture **explicitly**, so the assumption is visible in the spec that depends on it
+ * rather than smuggled in from the roster. Specs whose subject genuinely *is* the founding state assert the
+ * new distribution instead and must not call this.
+ */
+export async function gatherToBowl(page: Page): Promise<void> {
+  await page.evaluate(() => {
+    const w = window as Record<string, any>;
+    for (const d of w.__dinoPositions() as Array<{ name: string }>) {
+      if (w.__homeZone(d.name) !== 'bowl') w.__migrate(d.name, 'bowl');
+    }
+  });
+}

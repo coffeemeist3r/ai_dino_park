@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 /**
  * Zone prosperity index (BACKLOG-428) — each zone's live stockpile + built structures + resident heads +
@@ -17,7 +17,9 @@ test('a zone reads a prosperity tier that climbs as its stockpile grows, and the
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // The grove starts empty of dinos, piles, and structures → nothing to read → 'quiet'.
+  // CHARTER v7 seats residents on the grove, and heads are one of prosperity's own signals — so this case
+  // clears them rather than reading a different ground, keeping every tier threshold below exactly as tuned.
+  await gatherToBowl(page);
   const start = await prosperity(page, 'grove');
   expect(start.score).toBe(0);
   expect(start.tier).toBe('quiet');

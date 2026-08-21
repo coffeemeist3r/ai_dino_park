@@ -20,9 +20,12 @@ const unsettled = (p: Page) => p.evaluate(() => (window as W).__unsettled() as s
 const zoneMap = (p: Page) =>
   p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean }>);
 
-test('a fresh park is one inhabited ground and four nobody has ever lived on', async ({ page }) => {
+test('a fresh park is three inhabited grounds and two nobody has ever lived on', async ({ page }) => {
   await boot(page);
-  expect(await unsettled(page)).toEqual(['grove', 'fernreach', 'hollow', 'ridge']); // BACKLOG-478
+  // CHARTER v7: the cast ships across the map, so the grove and the Fernreach are settled from boot. The
+  // Hollow and the Ridge are the frontier now — which is what keeps this feature meaningful rather than
+  // making it a label on four-fifths of the park.
+  expect(await unsettled(page)).toEqual(['hollow', 'ridge']);
 
   const model = await zoneMap(page);
   expect(model.find((e) => e.id === 'hollow')!.unsettled).toBe(true);

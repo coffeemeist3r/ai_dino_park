@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 type W = Record<string, unknown>;
 type Jealousy = { name: string; line: string; memory: string } | null;
@@ -16,6 +16,7 @@ const bondKey = (a: string, b: string) => [a, b].sort().join('|');
 
 test('a sulking runner-up is consoled by its closest friend with a 🫂 and a bond bump (BACKLOG-130)', async ({ page }) => {
   await boot(page);
+  await gatherToBowl(page); // CHARTER v7: this case needs the cast co-located in the bowl
 
   // Near-tie between Sunny and Glade (one greet each), and make Twitch the strong
   // friend of *both* so it's the comforter whichever of them ends up sulking.

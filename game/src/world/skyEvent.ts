@@ -123,13 +123,25 @@ export interface Gazer {
   name: string;
   tileX: number;
   tileY: number;
+  /**
+   * The ground this gazer is standing on. Optional so a caller that has only ever had one zone stays
+   * source-compatible; absent is treated as "the same unnamed ground", which is the pre-v7 behaviour.
+   */
+  zone?: string;
 }
 
 /**
  * Stargazing companions (BACKLOG-288): which gazers ended up watching the sky side by side. Two dinos
- * that settled within one tile (Chebyshev ≤ 1) of each other are companions — the bold who pressed in
- * together under the spectacle, the timid who happened to halt beside one another. Returns each unordered
- * pair once. Pure; takes plain positions so this module stays free of an ai/ import.
+ * that settled within one tile (Chebyshev ≤ 1) of each other **on the same ground** are companions — the
+ * bold who pressed in together under the spectacle, the timid who happened to halt beside one another.
+ * Returns each unordered pair once. Pure; takes plain positions so this module stays free of an ai/ import.
+ *
+ * **The zone check is a bug fix (CHARTER v7).** This compared tile coordinates across the entire cast and
+ * nothing else, which was correct for four hundred cycles only because every dino was in the bowl: each
+ * ground is its own 20×15 grid, so a bowl dino at (5,6) and a grove dino at (5,7) are one tile apart by
+ * this arithmetic and a whole zone apart in the world. The moment the roster spread across the map, the
+ * park started knitting bonds between dinos who could not see each other. Nothing was wrong with the
+ * single-zone park; the assumption was simply never written down, and never had to be true until now.
  */
 export function stargazingPairs(gazers: Gazer[]): [string, string][] {
   const pairs: [string, string][] = [];
@@ -138,6 +150,7 @@ export function stargazingPairs(gazers: Gazer[]): [string, string][] {
       const a = gazers[i];
       const b = gazers[j];
       if (a.name === b.name) continue;
+      if (a.zone !== b.zone) continue; // side by side means on the same ground
       if (Math.abs(a.tileX - b.tileX) <= 1 && Math.abs(a.tileY - b.tileY) <= 1) pairs.push([a.name, b.name]);
     }
   }

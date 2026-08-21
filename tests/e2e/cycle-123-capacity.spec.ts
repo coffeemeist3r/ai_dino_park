@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 /**
  * What a ground can hold (BACKLOG-476) — Milestone 11's second structure arc, and the first ceiling in a
@@ -38,6 +38,7 @@ test('piling the cast onto one ground crowds it', async ({ page }) => {
 
 test('a crowded ground is worth less than the same ground uncrowded', async ({ page }) => {
   await boot(page);
+  await gatherToBowl(page); // CHARTER v7 seats a resident in the Fernreach; this case counts heads exactly
   // four into the Fernreach: exactly at capacity, and the baseline for the comparison
   for (const name of ['Rex', 'Mossback', 'Sunny', 'Twitch']) {
     await page.evaluate((n) => (window as W).__migrate(n, 'fernreach'), name);

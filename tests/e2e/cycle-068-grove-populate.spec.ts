@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 /**
  * Populate the grove (BACKLOG-274). A dino can migrate between the bowl and the grove; the keeper can
@@ -15,6 +15,7 @@ const nearest = (p: import('@playwright/test').Page) =>
 
 test('a migrated dino leaves the bowl and is only interactable in its own zone', async ({ page }) => {
   await boot(page);
+  await gatherToBowl(page); // CHARTER v7: this case needs the cast co-located in the bowl
 
   // The whole roster starts in the bowl (spawn byte-identical).
   expect(await visible(page)).toContain('Mossback');

@@ -75,7 +75,20 @@ export class WorldClock {
   private _tickListeners: TimeListener[] = [];
   private _hourListeners: TimeListener[] = [];
 
-  private _scale = 1; // realtime multiplier; 1× = 24 real hours per in-game day
+  /**
+   * Realtime multiplier. **1× is still the default; raising it is BACKLOG-493** (CHARTER v7's reachability
+   * bar names it the largest unreachable surface left in the park).
+   *
+   * At 1× an in-game day is 24 real hours, and that single number is what puts most of this park out of
+   * reach: the council's term (484), upkeep and disrepair (480), spoilage (455), crop growth, the dawn beat
+   * and the once-a-day discontent gate all fire on the day boundary, so a normal session never crosses one.
+   * `T` toggles to 60× (a 24-minute day) and the save carries the choice.
+   *
+   * Measured 2026-08-20: flipping this default to 60 turns ~10 day-boundary specs red and changes what the
+   * offline catch-up (`away.ts`) and multi-day spoilage math mean. That is real work, not a constant edit,
+   * which is why it is BACKLOG-493 and not this line.
+   */
+  private _scale = 1;
   private _nowSource: () => number = () => Date.now();
   private _anchorEpochMs = 0;
   private _anchorAbsMin = 0;

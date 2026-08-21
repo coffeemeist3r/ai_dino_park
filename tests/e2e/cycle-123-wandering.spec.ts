@@ -16,12 +16,17 @@ const bookRows = (p: Page) =>
   p.evaluate(() => (window as W).__bookRows() as Array<{ name: string; wander?: string }>);
 const wanderOf = async (p: Page, name: string) => (await bookRows(p)).find((r) => r.name === name)!.wander;
 
-test('a fresh park is all homebodies, named for the ground they have never left', async ({ page }) => {
+test('a fresh park is all homebodies, each named for its own ground', async ({ page }) => {
   await boot(page);
   expect(await crossings(page)).toEqual({});
+  // CHARTER v7: still all homebodies — nobody has crossed anything yet — but they are homebodies of three
+  // different grounds, so the line names each dino's own home rather than the one zone everybody shared.
+  const homes = new Set<string>();
   for (const row of await bookRows(page)) {
-    expect(row.wander).toBe('a homebody — never left Pocket Cretaceous');
+    expect(row.wander).toMatch(/^a homebody — never left .+/);
+    homes.add(row.wander!);
   }
+  expect(homes.size).toBeGreaterThan(1);
   expect(await page.evaluate(() => (window as W).__bookText() as string)).toContain('a homebody');
 });
 

@@ -51,6 +51,30 @@ The `NPCBrain` interface (in `game/src/ai/brain.ts`) is a hard boundary. WebLLM-
 - No silent failures — errors must reach `chronicle.md`
 - File comments are rare. Code should explain itself.
 
+### The reachability bar (v7) — the one that outranks the others
+
+**A cycle has not shipped until a player can reach it.** Before the Validator may write APPROVED,
+each track must answer, in the verdict, one question:
+
+> *In a fresh save, watched for ten minutes, what does the player see that they could not see before?*
+
+An answer of "nothing — it is bit-identical / it needs six residents / it fires on the day boundary /
+it is groundwork for a later item" is a **REWORK**, not a compatibility win. Ship the feature *and*
+whatever founding-state change makes it reachable, in the same cycle.
+
+**Corollary — constants are not tuned to be dormant.** It is a defect, not a virtue, to calibrate a
+threshold so that the founding park sits exactly below it. The founding state must *exercise* the
+systems the park has built, not sit inert beneath all of them. Where a system has a floor, the shipping
+park starts above it.
+
+*Why this rule exists (2026-08-20): seven consecutive cycles of governance shipped into a park where
+`councilSeats(5) = 2`, seat 1 is always the provider, and a 2-seat tie falls to the provider — so the
+vote could never, in any reachable state, differ from the one dino already deciding. Half of the rest
+hung off an in-game day boundary that costs 24 real hours at the default clock. `TILES_PER_HEAD` was
+tuned, and documented in its own source comment as a virtue, so that "this whole system is dormant on a
+fresh save." Every cycle passed its criteria. Every suite was green. The operator opened the game and
+correctly reported that nothing had changed in months.*
+
 ## Milestones (v6)
 
 The studio works toward a **milestone**: one player-visible headline goal spanning
@@ -129,5 +153,6 @@ The human will NOT:
 - 2026-06-03: v2 — **Art pipeline = procedural code, not an image API.** The Artist now authors flat-vector dinos/props as pure shape rigs (`game/src/art/`) baked to animated Canvas textures, via a dedicated sub-agent per character — no API keys, no asset downloads, no copyright risk (the key-gated raster pipeline had stalled for 29 cycles). Gen3-pixel mandate retired in favour of clean flat vector at the same footprint; STYLE-GUIDE rewritten to match. Human-approved. Seeds BACKLOG-117/118; reframes BACKLOG-033–036 as vector.
 - 2026-06-07: v3 — **Idea Box** added as a low-influence human override channel (`studio/IDEABOX.md`). Operator drops raw nudges; the Lore-smith considers them each cycle as seeds it may reshape, defer, or decline, then logs the call in the lore handoff. Never skips the chain. Wired into routine 1. Human-approved.
 - 2026-06-19: v5 — **Structure track added (operator ruling).** A new routine **1.5 Structure-smith** fires right after the Lore-smith every cycle and picks one *structural* item (world systems, the bigger map, persistent jobs/roles, the resources→crafting→building→governance arc, save/versioning, load-bearing infra) from a new `## Structure Track` queue in BACKLOG.md. Routines 2–6 now build **both** tracks in parallel (two sections per handoff), and the Validator issues an independent verdict per track. This is the operator's counterweight to the Lore-smith's emergence-over-foundation bias, which had starved the structural backlog (zones/jobs/build arc seeded but never chosen). Cap rule: the Structure-smith only invents new structural items when fewer than X=4 remain queued (drain before invent). `state.json` gains `structureItem` + `structureVerdict`. Human-approved. Reframes BACKLOG-143/032/146/145/040 as the seed Structure Track.
+- 2026-08-20: v7 — **The reachability bar + a founding state that exercises the park (operator grant).** The operator granted scoped amendment authority after reporting that the park felt identical month over month — and the report was correct and measurable. Four changes. (1) **Reachability bar** (see Quality bar): a track cannot be APPROVED without naming what a player sees in a fresh ten-minute save; "bit-identical" is a REWORK, not a compatibility win. (2) **Founding constants must exercise the systems** — calibrating a threshold so the fresh park sits inert below it is a defect. (3) **The cast ships across the map**, not stacked in one zone: the roster carries a spawn zone, and every ground the player can walk to has life on it at boot. (4) Migration cadence retuned from ~25 real minutes-to-first-crossing to ~2 (90s/15%/60s → 20s/35%/20s against the settle-resist). **Deliberately NOT shipped in the same pass: the default clock.** It is 1x — a 24-real-hour in-game day — which is why the council's term, upkeep, disrepair, spoilage, crop growth and the once-a-day gates are all unreachable in a normal session. Measured at 60x it turns roughly ten day-boundary specs red and changes what the offline catch-up and spoilage math *mean*, so it is queued as **BACKLOG-493** with that evidence attached rather than rushed in behind this amendment. The reachability bar above applies to it: it is the largest single unreachable surface left in the park. Scope of the grant, recorded: routine rules and founding constants are the studio's to amend; the North Star, the GBA-pixel mandate (v4), deathlessness, and the mobile deferral remain operator-only. Operator-granted.
 - 2026-07-03: v6 — **Arc-sized cycles + milestones (operator ruling).** Three changes to escape micro-beat stagnation: (1) **Items are arc-sized** — ~half-day dev scope, up to ~15 files, playable end-to-end (replaces the ~1-hour / 6-file caps). (2) **Milestone layer** — `studio/MILESTONE.md` holds one player-visible headline goal per ~5 cycles; smiths draft it autonomously, cycles serve its checklist, Validator declares it shipped. (3) **Backlog hygiene** — closed items + the closed log live in `BACKLOG-archive.md`; the Lore-smith gets a drain-before-invent cap like the Structure-smith's. Consolidated daily runs read the canon once per session instead of per stage. Human-approved.
 - 2026-06-09: v4 — **GBA-era pixel style reinstated (operator ruling).** The visual mandate returns to Pokemon Gen3 (Ruby/Sapphire/Emerald) pixel art: limited palettes, dark outlines, chunky readable overworld sprites. The **medium stays code** — pixels are authored as procedural pixel-grid rigs in `game/src/art/` baked to crisp nearest-neighbour textures; still no image APIs, no asset downloads, no keys, and **no sprite rips** (original pixels in the Gen3 *style*, never copied Nintendo assets). The cycle-37 decline of the GBA nudge was correct procedure (it needed this amendment); the operator has now made the call. STYLE-GUIDE rewritten to match; the flat-vector cast restyles one character per Artist fire (vector rigs keep rendering until each pixel rig replaces them — the build never breaks). Seeds BACKLOG-168/169; reframes 033/036/158 as pixel. Human-approved.

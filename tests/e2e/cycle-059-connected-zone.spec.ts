@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 /**
  * Connected zone (BACKLOG-143). Walking the keeper off the bowl's east edge crosses into the grove
@@ -47,8 +47,9 @@ test('the crossing is a no-op off an unlinked edge — the keeper stays put', as
   expect(await zone(page)).toBe('bowl');
 });
 
-test('dinos draw only in their own zone — the grove is empty (BACKLOG-143)', async ({ page }) => {
+test('dinos draw only in their own zone — an emptied grove draws nobody (BACKLOG-143)', async ({ page }) => {
   await boot(page);
+  await gatherToBowl(page); // CHARTER v7 ships grove residents; this case needs the grove genuinely empty
   const visible = (p: import('@playwright/test').Page) =>
     p.evaluate(() => (window as W).__visibleDinos() as string[]);
 

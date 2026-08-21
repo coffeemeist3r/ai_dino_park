@@ -23,6 +23,9 @@ test('two dinos that watched side by side come away closer', async ({ page }) =>
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  // Deliberately NOT gathered into one zone: the sky event is park-wide, and crowding all eight dinos into
+  // the bowl generates enough extra social traffic to push the sky note off the 6-slot memory ring before
+  // the assertion reads it. The natural v7 spread is both more realistic and less ring pressure.
   await advance(page, 14 * 60); // 08:00 → 22:00, a clear night
   await page.evaluate(() => (window as W).__triggerSky('meteors'));
 

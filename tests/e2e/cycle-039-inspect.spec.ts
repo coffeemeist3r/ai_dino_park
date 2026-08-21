@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, gatherToBowl } from './helpers';
 
 // BACKLOG-161 — first-contact inspection. Arming, the walk, the beat, and the memory are all
 // deterministic (pure keeperFit argmax + stepToward), so the whole flow runs headless.
@@ -60,6 +60,7 @@ test('switching observers draws the best-fit dino across the bowl for a look', a
 
 test('arrival lands the 👀 beat and files the inspect memory', async ({ page }) => {
   await boot(page);
+  await gatherToBowl(page); // CHARTER v7: this case needs the cast co-located in the bowl
 
   await pickKeeper(page, 'lumen');
   const expected = await expectedInspector(page);

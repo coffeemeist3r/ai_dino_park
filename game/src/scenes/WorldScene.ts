@@ -282,9 +282,18 @@ function emptyPlotStages(): Record<string, CropStage | 'empty'> {
  * test never waits this long. Paced by a real-time cooldown (BACKLOG-333) — the old ≤1/in-game-day cap was
  * ≤1/24 real hr at the 1× default, so the grove never filled; tests drive migration via `__migrate`.
  */
-const MIGRATE_ROLL_INTERVAL_MS = 90_000;
-const MIGRATE_CHANCE = 0.15;
-const MIGRATE_COOLDOWN_MS = 60_000; // BACKLOG-333: real-time floor between ambient migrations
+/**
+ * How often the ambient migration is rolled, how likely it is, and the floor between crossings.
+ *
+ * **Retuned by CHARTER v7.** The old triple was 90s / 15% / 60s, and against `SETTLED_MIGRATE_DAMP` (a
+ * settled dino resists 60% of the time) that is ~6% per 90 seconds — about **25 real minutes of unbroken
+ * watching for one body to cross one edge**, in a park with five grounds and every dino spawned into one of
+ * them. The operator reported at cycle 106 that migration "reads as dead weight, not a system", and was
+ * right; it was still true at cycle 135. These are the calibration knobs — tune here, never at a call site.
+ */
+const MIGRATE_ROLL_INTERVAL_MS = 20_000;
+const MIGRATE_CHANCE = 0.35;
+const MIGRATE_COOLDOWN_MS = 20_000; // BACKLOG-333: real-time floor between ambient migrations
 const HUNT_COOLDOWN_MS = 30_000; // BACKLOG-367: after an empty hunt a carnivore rests before stalking again
 const BARTER_COOLDOWN_MS = 45_000; // BACKLOG-358: real-time floor between edge-meet barters (paces the beat)
 const EDGE_DWELL = 2; // BACKLOG-358: force-steps a dino must linger at the edge column to count as *meeting* (not transiting)
@@ -2312,7 +2321,7 @@ export class WorldScene extends Phaser.Scene {
       this.dinos.map((d) => ({ name: d.name, ring: gazeRing(d.traits), ...this.tileOf(d) }));
     // BACKLOG-288: which gazers settled side by side (read before the event ends, when tiles are still held).
     (window as any).__skyCompanions = () =>
-      stargazingPairs([...this.skyGazerTiles].map(([name, t]) => ({ name, ...t })));
+      stargazingPairs([...this.skyGazerTiles].map(([name, t]) => ({ name, ...t, zone: zoneOf(this.dinoZones, name, BOWL_ID) })));
     // Force-start an event (default first, or by id), bypassing the roll — drives the e2e flow.
     (window as any).__triggerSky = (id?: SkyEventId) => {
       const ev = SKY_EVENTS.find((e) => e.id === id) ?? SKY_EVENTS[0];
@@ -2370,7 +2379,7 @@ export class WorldScene extends Phaser.Scene {
    * (idempotent guard) knits nothing.
    */
   private knitStargazers(): void {
-    const gazers = [...this.skyGazerTiles].map(([name, t]) => ({ name, ...t }));
+    const gazers = [...this.skyGazerTiles].map(([name, t]) => ({ name, ...t, zone: zoneOf(this.dinoZones, name, BOWL_ID) }));
     for (const [a, b] of stargazingPairs(gazers)) {
       this.bonds = strengthen(this.bonds, a, b, SHARED_WONDER_BOND);
       this.memory = remember(this.memory, a, `watched the sky together with ${b}`);
@@ -2450,6 +2459,7 @@ export class WorldScene extends Phaser.Scene {
     tileX: number;
     tileY: number;
     traits?: BornDino['traits'];
+    zone?: string; // CHARTER v7: the ground this dino wakes up on; absent → the bowl
   }): Dino {
     const dino = new Dino(this, cfg.tileX * TILE + TILE / 2, cfg.tileY * TILE + TILE / 2, {
       name: cfg.name,
@@ -2460,7 +2470,8 @@ export class WorldScene extends Phaser.Scene {
       brain: this.npcBrain,
     });
     this.dinos.push(dino);
-    this.dinoZones[cfg.name] ??= BOWL_ID;
+    // CHARTER v7: a roster entry may name the ground it wakes up on; absent → the bowl (every pre-v7 entry).
+    this.dinoZones[cfg.name] ??= cfg.zone ?? BOWL_ID;
     // BACKLOG-364: a dino has plainly seen the ground it lives on. Seeded here so a fresh save starts every
     // dino knowing the bowl; the load path re-seeds from restored home zones for a save written before this.
     markSeen(this.seenZones, cfg.name, this.dinoZones[cfg.name]);

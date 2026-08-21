@@ -152,8 +152,13 @@ describe('the Hollow farms its own crop (BACKLOG-472)', () => {
 });
 
 describe('adding a food disturbs nothing (BACKLOG-472)', () => {
-  it('flips no roster dino’s favorite food, in any season', () => {
-    for (const r of ROSTER) {
+  it('flips no founding dino’s favorite food, in any season', () => {
+    // 472's invariant is that *adding* mushrooms disturbed nobody who was already here — a regression guard
+    // on the founding five, not a rule that no dino may ever favour a food the park contains. CHARTER v7's
+    // new residents are name-seeded like everyone else and one of them does like mushrooms, which is the
+    // system working: a food nobody wanted was a food that existed for no one.
+    const FOUNDING = ['Rex', 'Mossback', 'Sunny', 'Twitch', 'Glade'];
+    for (const r of ROSTER.filter((d) => FOUNDING.includes(d.name))) {
       const p = seededPersonality(r.name);
       for (const s of SEASONS) {
         expect(favoriteFood(p, s).id, `${r.name} in ${s}`).not.toBe('mushrooms');

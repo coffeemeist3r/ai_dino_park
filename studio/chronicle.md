@@ -7456,3 +7456,61 @@ that spec alone. Final confirmation run: **541/541 green**, both specs included.
 Build clean, unit 1849/1849, e2e 541/541. Boundary clean (nothing under `game/src/art/` imports web-llm).
 Authored inline rather than via per-subject sub-agents — the session's standing instruction is not to spawn
 agents unasked, and the sub-agent step is a cost/review discipline, not an output requirement.
+
+## Cycle 135 — operator pass: CHARTER v7, the reachability bar
+
+The operator opened the project and said it felt the same as it always does, and that they had **never once
+seen a dino leave the first zone.** Both were correct, and both were measurable rather than a mood.
+
+**The numbers.** The park ships 5 dinos into 1 of its 5 grounds, at exactly that ground's capacity — because
+`TILES_PER_HEAD` was tuned so `ceil(294/60) = 5`, and its own source comment calls that a virtue: "this whole
+system is dormant on a fresh save." The ambient migration that was meant to populate the other four rolls
+every 90s at 15%, and a settled dino resists 60% of the time — **~6% per 90 seconds, about 25 real minutes of
+unbroken watching to move one body one edge.** Four grounds with plots, landmarks, providers and councils
+built for them sat empty from boot to save-death. And the governance work of the last seven cycles is worse
+than slow, it is *arithmetically unreachable*: `councilSeats(5) = 2`, `zoneCouncil`'s comparator is identical
+to `zoneProvider`'s so seat 1 is always the provider, and a 2-seat tie falls to the provider — **there is no
+reachable state in a shipping park where the council differs from the one dino already deciding.**
+
+The operator had filed this once already. The cycle-106 Idea Box entry says ambient migration "reads as dead
+weight, not a system." It was routed to BACKLOG-450 and was still true 29 cycles later.
+
+**CHARTER v7 (operator-granted amendment authority, scoped).** The reachability bar now outranks the rest of
+the quality bar: before APPROVED, each track must answer *"in a fresh save, watched for ten minutes, what does
+the player see that they could not see before?"* — and "nothing, it is bit-identical" is a REWORK, not a
+compatibility win. Corollary: a constant tuned so the founding park sits inert below it is a defect. The
+grant's boundary is recorded in the amendment log — routine rules and founding constants are the studio's;
+the North Star, GBA pixel, deathlessness and the mobile deferral stay the operator's.
+
+**Shipped.** The roster carries a spawn zone; the cast is 8 across three grounds (grove and Fernreach get
+residents). Species are reused deliberately — the pixel rigs are colour-keyed, so a second stegosaurus in a
+different ramp bakes its own texture while traits stay name-seeded, which means new minds and no new art.
+Migration retuned to ~2 minutes to a first crossing.
+
+**A real bug fell out of it immediately, which is the bar working.** `stargazingPairs` compared tile
+coordinates across the whole cast with no zone check. Correct for four hundred cycles *only* because everyone
+was in the bowl: each ground is its own 20x15 grid, so a bowl dino at (5,6) and a grove dino at (5,7) read as
+one tile apart. The moment the roster spread, the park began knitting shared-wonder bonds between dinos who
+could not see each other. Fixed in `skyEvent.ts` with an optional `zone` on `Gazer` (absent = one shared
+ground, so every pre-v7 caller is unchanged) and three unit tests.
+
+**Fifteen e2e specs had to be updated, and their titles are the story**: "five dinos spawn", "the grove is
+empty", "a fresh park is one inhabited ground and four nobody has ever lived on", "a fresh park is all
+homebodies, named for the ground they have never left." The old contract, written down fifteen times. Specs
+whose *subject* is the founding state now assert the new distribution; specs that merely needed a co-located
+cast call an explicit `gatherToBowl()` helper, so the assumption is visible in the spec that depends on it
+instead of being smuggled in from the roster.
+
+**Held back deliberately: the clock.** The default is still 1x — a 24-real-hour in-game day — which is the
+largest unreachable surface left. Filed as **BACKLOG-493** with the measurement already done: flipping it
+reddens ~10 specs, and the `away.ts` catch-up, the spoilage bleed and the homecoming digest all need their
+semantics decided first, because "a multi-day absence" means something different when a day costs 24 minutes.
+That is design work, not a constant edit, and it was not going to get done well at the end of this session.
+
+**Also:** Playwright's default workers dropped 4 → 2. Four Chromium process trees pegged the operator's CPU at
+96% and made the machine unpleasant to use while a suite ran — a cost the suite was charging its operator
+silently. `E2E_WORKERS=4` for CI or an unattended box.
+
+Build clean, unit 190 files / all green, e2e 539/541 — the two reds are `cycle-047-warmth` (passes isolated,
+catalogued parallel-load flake) and `mobile-minds` long-dialog (BACKLOG-430, reproduced on a stashed clean
+HEAD earlier tonight, not from this diff).

@@ -16,7 +16,14 @@ test('every dino starts knowing exactly the ground it lives on', async ({ page }
   await boot(page);
   const map = await seen(page);
   expect(Object.keys(map).length).toBeGreaterThan(1);
-  for (const zones of Object.values(map)) expect(zones).toEqual(['bowl']);
+  // CHARTER v7: "the ground it lives on" is no longer the bowl for everybody — a grove resident has plainly
+  // seen the grove and nothing else. Asserted per dino against its own home, which is what the title always
+  // claimed and what a single-zone park made impossible to actually test.
+  for (const [name, zones] of Object.entries(map)) {
+    const home = await page.evaluate((n) => (window as W).__homeZone(n) as string, name);
+    expect(zones, name).toEqual([home]);
+  }
+  expect(new Set(Object.values(map).flat()).size).toBeGreaterThan(1); // ...and they don't all know the same one
 });
 
 test('crossing a ground adds it to what a dino has seen, and coming home keeps it', async ({ page }) => {

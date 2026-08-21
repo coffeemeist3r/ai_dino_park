@@ -2,19 +2,19 @@ import { test, expect } from '@playwright/test';
 
 import { boot } from './helpers';
 
-test('five dinos spawn', async ({ page }) => {
+test('eight dinos spawn, across three grounds (CHARTER v7)', async ({ page }) => {
   await boot(page);
   const count = await page.evaluate(() => ((window as Record<string, unknown>).__dinoCount as () => number)());
-  expect(count).toBe(5);
+  expect(count).toBe(8);
 });
 
-test('all five dinos have unique names', async ({ page }) => {
+test('all eight dinos have unique names', async ({ page }) => {
   await boot(page);
   const names = await page.evaluate(() =>
     ((window as Record<string, unknown>).__dinoNames as () => string[])(),
   );
-  expect(names).toHaveLength(5);
-  expect(new Set(names).size).toBe(5);
+  expect(names).toHaveLength(8);
+  expect(new Set(names).size).toBe(8);
 });
 
 test('Rex is still the anchor dino[0] with seeded traits', async ({ page }) => {

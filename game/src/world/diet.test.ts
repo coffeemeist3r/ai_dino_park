@@ -4,16 +4,23 @@ import { FOODS } from './foods';
 import { ROSTER } from '../entities/roster';
 
 describe('diet split (BACKLOG-435)', () => {
-  it('is species-correct for the roster: only the compsognathus hunts', () => {
+  it('is species-correct for the roster: the compsognathus hunts, nothing else does', () => {
     const diets = Object.fromEntries(ROSTER.map((d) => [d.name, dietOf(d.species, d.name)]));
     expect(diets).toEqual({
       Rex: 'herbivore', // triceratops
       Mossback: 'herbivore', // stegosaurus
       Sunny: 'herbivore', // brontosaurus
-      Twitch: 'carnivore', // compsognathus — the roster's sole predator
+      Twitch: 'carnivore', // compsognathus
       Glade: 'herbivore', // parasaurolophus (the backlog's "Glade" guess was wrong)
+      Bramble: 'herbivore', // stegosaurus — CHARTER v7, the grove
+      Pip: 'carnivore', // compsognathus — CHARTER v7, the grove's own small predator
+      Thornback: 'herbivore', // triceratops — CHARTER v7, the Fernreach
     });
-    expect(ROSTER.filter((d) => isCarnivore(d.species, d.name))).toHaveLength(1);
+    // The rule is the species, not the headcount: every compsognathus hunts and only a compsognathus does.
+    // (Was `toHaveLength(1)` when the park had one ground and one comp; v7 gave the grove a second.)
+    const hunters = ROSTER.filter((d) => isCarnivore(d.species, d.name)).map((d) => d.name);
+    expect(hunters).toEqual(ROSTER.filter((d) => d.species === 'compsognathus').map((d) => d.name));
+    expect(hunters.length).toBeGreaterThan(0);
   });
 
   it('is case-insensitive on species', () => {

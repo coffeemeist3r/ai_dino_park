@@ -17,7 +17,11 @@ import { defineConfig, devices } from '@playwright/test';
  *
  * No retries, no `test.slow()`, no skips: those make the suite green by hiding the signal it exists to give.
  */
-const WORKERS = Number(process.env.E2E_WORKERS) || 4;
+// Default 2, not 4. Four workers is four Chromium process *trees* — on this box that pegged the CPU at 96%
+// and made the machine unpleasant to use while a suite ran, which is a real cost the suite was quietly
+// charging its operator. Two is slower in wall-clock and leaves the box usable. Raise it in CI, or locally
+// with `E2E_WORKERS=4`, when nobody is sitting in front of the machine.
+const WORKERS = Number(process.env.E2E_WORKERS) || 2;
 
 export default defineConfig({
   testDir: './tests/e2e',

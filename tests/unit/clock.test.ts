@@ -68,9 +68,17 @@ describe('WorldClock — wall-clock anchored', () => {
     return { clock, ref };
   }
 
-  it('defaults to 1× and advances 1 in-game minute per 60s of real time', () => {
-    const { clock, ref } = fakeClock();
+  it('still defaults to 1× — a 24-real-hour in-game day (see BACKLOG-493)', () => {
+    const { clock } = fakeClock();
+    // This number is why most day-boundary behaviour in the park is unreachable in a normal session, and
+    // changing it is queued as BACKLOG-493 rather than done here: at 60× roughly ten specs that encode
+    // day-boundary timing go red, and the offline catch-up and spoilage math genuinely change meaning.
     expect(clock.getScale()).toBe(1);
+  });
+
+  it('at 1× advances 1 in-game minute per 60s of real time', () => {
+    const { clock, ref } = fakeClock();
+    clock.setScale(1);
     ref.ms = 60_000;
     clock.update();
     expect(clock.now()).toEqual({ day: 1, hour: 8, minute: 1 });
@@ -97,9 +105,10 @@ describe('WorldClock — wall-clock anchored', () => {
 
   it('a gap larger than the catch-up cap jumps without flooding onTick', () => {
     const { clock, ref } = fakeClock();
+    clock.setScale(1); // explicit: this case is about the catch-up cap, not about the default rate
     let ticks = 0;
     clock.onTick(() => ticks++);
-    // 60× × 2 real days of ms = 2880 in-game minutes, well over the 1440 cap.
+    // 2 real days of ms at 1× = 2880 in-game minutes, well over the 1440 cap.
     ref.ms = 60_000 * 60 * 24 * 2;
     clock.update();
     // Lands on the correct wall-clock time...
@@ -110,6 +119,7 @@ describe('WorldClock — wall-clock anchored', () => {
 
   it('setScale does not jump the displayed time', () => {
     const { clock, ref } = fakeClock();
+    clock.setScale(1);
     ref.ms = 30 * 60_000; // 08:30 at 1×
     clock.update();
     const before = clock.now();

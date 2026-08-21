@@ -54,3 +54,34 @@ describe('stargazing companions (BACKLOG-288)', () => {
     expect(bondPoints(bonds, 'Rex', 'Sunny')).toBe(SHARED_WONDER_BOND);
   });
 });
+
+describe('side by side means the same ground (CHARTER v7 bug fix)', () => {
+  it('does not pair two dinos who share tile coordinates on different grounds', () => {
+    // Each ground is its own 20×15 grid, so identical coordinates in two zones are a whole zone apart.
+    // Before the roster spread across the map this could not happen, and the assumption went unwritten.
+    expect(
+      stargazingPairs([
+        { name: 'Rex', tileX: 5, tileY: 6, zone: 'bowl' },
+        { name: 'Bramble', tileX: 5, tileY: 7, zone: 'grove' },
+      ]),
+    ).toEqual([]);
+  });
+
+  it('still pairs neighbours on the same ground', () => {
+    expect(
+      stargazingPairs([
+        { name: 'Rex', tileX: 5, tileY: 6, zone: 'bowl' },
+        { name: 'Sunny', tileX: 5, tileY: 7, zone: 'bowl' },
+      ]),
+    ).toEqual([['Rex', 'Sunny']]);
+  });
+
+  it('treats an absent zone as one shared ground — every pre-v7 caller is unchanged', () => {
+    expect(
+      stargazingPairs([
+        { name: 'Rex', tileX: 5, tileY: 6 },
+        { name: 'Sunny', tileX: 5, tileY: 7 },
+      ]),
+    ).toEqual([['Rex', 'Sunny']]);
+  });
+});

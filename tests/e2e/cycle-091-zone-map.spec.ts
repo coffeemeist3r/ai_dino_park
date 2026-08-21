@@ -44,10 +44,13 @@ test('the map shows the whole chain with the roster counted at home', async ({ p
     'The Hollow',
     'The Sunward Ridge',
   ]);
-  // every dino is counted somewhere, and the fresh-boot cast starts in the bowl
+  // Every dino is counted somewhere — the invariant that actually matters, and the one a single-zone park
+  // could never distinguish from "they are all in box one". CHARTER v7 spreads the cast, so the total still
+  // reconciles but the bowl no longer holds all of it.
   const roster = await page.evaluate(() => ((window as W).__bookRows as () => unknown[])().length);
   expect(model.reduce((s, e) => s + e.count, 0)).toBe(roster);
-  expect(model[0].count).toBe(roster);
+  expect(model[0].count).toBeLessThan(roster); // the bowl is a ground, not the park
+  expect(model.filter((e) => e.count > 0).length).toBeGreaterThan(1);
   // the keeper starts in the bowl
   expect(model.map((e) => e.keeper)).toEqual([true, false, false, false, false]); // BACKLOG-478
 });
