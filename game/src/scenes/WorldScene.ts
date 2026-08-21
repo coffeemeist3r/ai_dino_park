@@ -122,8 +122,22 @@ import {
   lapsedLine,
   patchedLine,
   DERELICT_ALPHA,
+  REPAIR_COST,
   type Landmark,
 } from '../world/upkeep';
+// BACKLOG-488: the patch-up stops being arithmetic and becomes a job a resident walks to.
+import {
+  canMend,
+  mendLine,
+  mendMemory,
+  mendEventLine,
+  MEND_GLYPH,
+  MEND_STEPS,
+  MEND_COOLDOWN_MS,
+  type Mend,
+} from '../world/mending';
+// CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
+import { FOUNDING_RUIN, FOUNDING_PILES } from '../world/founding';
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
   providerPriority,
@@ -149,7 +163,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, undisturbed, inventsTic, ticStep, ticMemory, bashfulOpener, caughtMemory, fondOfBeingCaught, fondOpener, fondCaughtMemory, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -407,7 +421,10 @@ export class WorldScene extends Phaser.Scene {
   /** Caught mid-tic (BACKLOG-408): the dino this greet caught mid-ritual (bashful reply), + a once-per-stretch
    *  memory guard. Both transient — cleared by resetTic (company/need ends the stretch) and on greet cancel. */
   private caughtTic: string | null = null;
+  /** BACKLOG-420: `name` → catches so far *this* stretch, and the filed guard keyed `name:register` so each
+   *  register leaves at most one memory. Both transient, cleared by `resetTic` with the rest of the stretch. */
   private ticCaughtFiled = new Set<string>();
+  private ticCatches: Record<string, number> = {};
   /** BACKLOG-416: who has already filed its "not the only one" note this solitary stretch. `ticCaughtFiled`'s
    *  twin in every respect — per-stretch, not persisted, cleared by `resetTic`. */
   private kinFiled = new Set<string>();
@@ -546,6 +563,14 @@ export class WorldScene extends Phaser.Scene {
   /** Brought to the hatch (BACKLOG-381): the live escort — a friend walking out to a withdrawn loner and
    *  then walking it back to the food. One at a time, transient, never persisted (the `pendingRespond` shape). */
   private escort: Escort | null = null;
+  /** Hands on the derelict (BACKLOG-488): the live mend errand — a resident walking to its ground's ruin.
+   *  One at a time, transient, never persisted (the `escort` shape). `lastMendMs` paces dispatch off the
+   *  wall clock (the 333 gate), so the cadence holds at either clock rate. */
+  private mend: Mend | null = null;
+  private lastMendMs = 0;
+  /** Set by the `__clearFounding` spec hook. `loadFromDb()` resolves a beat *after* `__ready`, so a spec can
+   *  clear the founding ruin before it has been seeded; this makes the clear win either way. */
+  private foundingCleared = false;
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
@@ -1287,6 +1312,13 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-407: the ritual a dino has picked up off a friend (null when it still performs its own), the
     // per-pair watch tally, and one deterministic pass of the watch scan — the `__noticeTraces` precedent, so
     // the spec and the game drive the same path rather than the spec driving a second one.
+    (window as any).__ticCatches = (name: string) => this.ticCatches[name] ?? 0; // BACKLOG-420
+    // BACKLOG-420: end a solitary stretch the way company or a need does, so a spec can prove the register
+    // starts warm again rather than inferring it. Drives production's own `resetTic`, not a second path.
+    (window as any).__resetTic = (name: string) => {
+      this.resetTic(name);
+      return this.ticCatches[name] ?? 0;
+    };
     (window as any).__ticEcho = (name: string) => {
       const axis = this.ticEchoes[name];
       const d = this.dinos.find((x) => x.name === name);
@@ -1384,6 +1416,31 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-480: run the production upkeep pass (a live day, or `days` of away catch-up) and read the
     // per-zone standing/derelict counts. Mirrors __spoilFood — one path for the game and the spec.
     (window as any).__runUpkeep = (days = 1) => this.runUpkeepPass(days);
+    // CHARTER v7 / BACKLOG-488: drop the founding ruin and its pile, restoring the pre-v7 empty-grounds
+    // fixture. The `gatherToBowl` precedent (cycle 135): a spec whose subject is *not* the founding state
+    // still needs the old fixture, and it should say so out loud rather than inherit it by accident.
+    (window as any).__clearFounding = () => {
+      this.foundingCleared = true;
+      const i = this.cairns.findIndex(
+        (c) => c.zone === FOUNDING_RUIN.zone && c.tileX === FOUNDING_RUIN.tileX && c.tileY === FOUNDING_RUIN.tileY,
+      );
+      if (i >= 0) {
+        this.cairns.splice(i, 1);
+        this.cairnSprites.splice(i, 1).forEach((sp) => sp.destroy());
+      }
+      for (const zone of Object.keys(FOUNDING_PILES)) this.stockpileByZone[zone] = {};
+      this.mend = null;
+      this.applyObjectVisibility();
+      return this.cairns.length;
+    };
+    // BACKLOG-488: the live mend errand, and one deterministic resolve step, so a spec drives the
+    // production path rather than waiting on frame timing (the `__noticeTraces` precedent).
+    (window as any).__mend = () => (this.mend ? { ...this.mend } : null);
+    (window as any).__stepMend = () => {
+      this.checkMend();
+      this.stepMend();
+      return this.mend ? { ...this.mend } : null;
+    };
     (window as any).__landmarks = (z?: string) =>
       this.landmarksIn(z ?? this.zoneId).map((l) => ({ ...l, derelict: !!l.derelict }));
     (window as any).__standing = (z?: string) => this.standingIn(z ?? this.zoneId);
@@ -1644,6 +1701,102 @@ export class WorldScene extends Phaser.Scene {
     this.memory = remember(this.memory, name, haulMemory(zoneName));
     this.flashFeed(hauler, '🧺');
     this.logEvent(haulLine(name, zoneName));
+  }
+
+  /**
+   * The founding ruin (CHARTER v7). A brand-new save — and only a brand-new save — starts with one fallen
+   * cairn in the Grove and enough stone in the Grove's pile to raise it. `upkeep.ts` calibrated the founding
+   * park to sit inert beneath its own system and said so in its header as a virtue; v7's corollary makes that
+   * the defect. A derelict landmark owes no upkeep, so the ruin costs the ground nothing — it is purely the
+   * invitation that makes 480/485/488 things a new player can watch rather than facts about a save file.
+   *
+   * Writes ordinary `cairns` / `stockpileByZone` entries, so it round-trips through the existing save fields
+   * with no version bump. Called from the `!save` branch of `setupSave`, after the sprite arrays exist.
+   */
+  private seedFounding(): void {
+    if (this.foundingCleared) return; // a spec restored the pre-v7 empty grounds before the DB read resolved
+    if (this.cairns.length) return; // one-shot: never seed a second founding ruin over an existing skyline
+    const ruin: Landmark = { ...FOUNDING_RUIN, derelict: true };
+    this.cairns.push(ruin);
+    this.drawCairn(ruin);
+    for (const [zone, pile] of Object.entries(FOUNDING_PILES)) {
+      this.stockpileByZone[zone] = { ...pile, ...(this.stockpileByZone[zone] ?? {}) };
+    }
+    this.applyObjectVisibility(); // the 480 alpha pass — the ruin reads as disrepair from the first frame
+  }
+
+  /**
+   * Dispatch a mend (BACKLOG-488). Once per world step, for the ground the player is **looking at**: if it
+   * carries a ruin, its pile can pay, and the wall-clock gate has elapsed, its nearest resident is sent to the
+   * oldest derelict landmark (`pickNearest` — the 448 tie-break, so the pick is deterministic).
+   *
+   * In-view only, and deliberately: this is a beat, and a beat nobody is present for is the thing CHARTER v7
+   * was written about. A ground the player has left keeps its ruin until somebody comes to watch it mended —
+   * or, if the park is closed entirely, until the away catch-up settles it arithmetically (`runUpkeepPass(days)`).
+   */
+  private checkMend(): void {
+    if (this.mend) return; // one errand at a time
+    if (!cooldownReady(Date.now(), this.lastMendMs, MEND_COOLDOWN_MS)) return;
+    const zone = this.zoneId;
+    const ruin = this.landmarkRecords(zone).find((r) => r.rec.derelict);
+    if (!ruin) return;
+    if (!canMend(pileTotal(this.pileFor(zone)), REPAIR_COST)) return;
+    const residents = this.dinos
+      .filter((d) => zoneOf(this.dinoZones, d.name, BOWL_ID) === zone)
+      .map((d) => ({ name: d.name, dist: this.chebyTiles(this.tileOf(d), ruin.rec) }));
+    const fixer = pickNearest(residents);
+    if (!fixer) return; // a ground with nobody home keeps its ruin — it does not patch itself
+    this.lastMendMs = Date.now();
+    this.mend = { fixer, zone, tileX: ruin.rec.tileX, tileY: ruin.rec.tileY, steps: MEND_STEPS };
+  }
+
+  /**
+   * Resolve the mend once per world step (BACKLOG-488), built like `stepEscort` (381): adjacency ends it,
+   * the step budget is the safety valve. The pile is spent **on arrival, never on dispatch** — an errand that
+   * runs out of steps, or whose fixer leaves the ground, costs its ground nothing and the next pass retries.
+   *
+   * The spend goes through `runUpkeep(pile, 0, 1)`: zero standing landmarks means zero bill, so the only thing
+   * that call does is the repair spend — by the same largest-kind rule upkeep has always used, through the
+   * exact function that has always done it. (`spendOne` is module-private and `upkeep.ts` is not ours to edit.)
+   */
+  private stepMend(): void {
+    if (!this.mend) return;
+    const fixer = this.dinoByName(this.mend.fixer);
+    if (!fixer || zoneOf(this.dinoZones, fixer.name, BOWL_ID) !== this.mend.zone) {
+      this.mend = null; // it left the ground — nobody is walking to this ruin any more
+      return;
+    }
+    // The walk lives here rather than in the movement branch so that one call — production's world step or
+    // the `__stepMend` hook — advances and resolves the errand identically.
+    const at = this.tileOf(fixer);
+    if (this.chebyTiles(at, this.mend) > 1) {
+      const step = stepToward(at, this.mend, COLS, ROWS);
+      fixer.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+    }
+    if (this.chebyTiles(this.tileOf(fixer), this.mend) <= 1) {
+      const zone = this.mend.zone;
+      const hit = this.landmarkRecords(zone).find(
+        (r) => r.rec.derelict && r.rec.tileX === this.mend!.tileX && r.rec.tileY === this.mend!.tileY,
+      );
+      this.mend = null;
+      if (!hit) return; // the ruin resolved some other way while it walked — spend nothing
+      const pile = this.pileFor(zone);
+      const plan = runUpkeep(pile, 0, 1);
+      if (plan.repaired === 0) return; // the pile emptied during the walk — nothing spent, try again later
+      this.stockpileByZone[zone] = plan.pile;
+      hit.rec.derelict = false;
+      const zoneName = zoneById(zone).name;
+      this.applyObjectVisibility(); // it stands back up where it fell
+      this.showBubble(fixer, mendLine(fixer.name, hit.glyph));
+      this.flashFeed(fixer, MEND_GLYPH);
+      this.memory = remember(this.memory, fixer.name, mendMemory(zoneName, hit.glyph));
+      this.logEvent(patchedLine(zoneName, hit.glyph)); // 480's line: the ground patched something up
+      this.logEvent(mendEventLine(fixer.name, zoneName, hit.glyph)); // ...and this is who did it
+      void this.saveGame();
+      return;
+    }
+    this.mend = { ...this.mend, steps: this.mend.steps - 1 };
+    if (this.mend.steps <= 0) this.mend = null;
   }
 
   /** Redraw each zone's plot marker for its current stage; log the ripen note once, on the edge into ripe.
@@ -3713,7 +3866,10 @@ export class WorldScene extends Phaser.Scene {
     delete this.ticPhase[name];
     delete this.ticGrief[name]; // BACKLOG-414: the grief re-derives fresh next stretch
 
-    this.ticCaughtFiled.delete(name); // BACKLOG-408: the stretch ended — a later one can be caught (+ remembered) afresh
+    // BACKLOG-408/420: the stretch ended — a later one can be caught (+ remembered) afresh, and its
+    // register starts back at pleased rather than leaving the dino permanently sardonic.
+    delete this.ticCatches[name];
+    for (const key of [...this.ticCaughtFiled]) if (key.startsWith(`${name}:`)) this.ticCaughtFiled.delete(key);
     this.kinFiled.delete(name); // BACKLOG-416: ...and a later stretch can find company across the way afresh
     if (this.caughtTic === name) this.caughtTic = null;
   }
@@ -3755,6 +3911,12 @@ export class WorldScene extends Phaser.Scene {
   private ticFor(d: Dino): Tic {
     const axis = this.ticEchoes[d.name];
     return axis ? echoedTic(TIC_BY_AXIS[axis]) : signatureTic(d.traits);
+  }
+
+  /** The axis of the ritual this dino actually performs (BACKLOG-420) — a picked-up one (407) if it has it,
+   *  else its own. `ticFor`'s twin: the tease is worded off the ritual you interrupted, not the one it was born with. */
+  private ticAxisFor(d: Dino): keyof Personality {
+    return this.ticEchoes[d.name] ?? signatureAxis(d.traits);
   }
 
   /**
@@ -4033,6 +4195,16 @@ export class WorldScene extends Phaser.Scene {
         continue;
       }
 
+      // Hands on the derelict (BACKLOG-488): the fixer is on a committed errand — it walks to its ground's
+      // ruin instead of wandering, the same way the escort walks away from a meal. Below the crossing/hunt
+      // branches above (a migration still beats a day's work) and above the escort, because a mend is the
+      // shorter errand and the two never contend for the same dino anyway (the escort's pair is picked
+      // from dinos missing a meal, and `checkMend` skips nobody).
+      if (this.mend && d.name === this.mend.fixer) {
+        this.activityById[d.name] = 'gathering'; // it is working with materials — the nearest true activity
+        continue; // `stepMend` owns the walk, so exactly one place moves the fixer
+      }
+
       // Brought to the hatch (BACKLOG-381): the escort outranks the food rush — that's the whole visible
       // oddity, one dino walking *away* from the meal while everyone else converges on it — and it outranks
       // the moping branch below, so the fetched loner follows instead of withdrawing. It sits under the
@@ -4272,6 +4444,8 @@ export class WorldScene extends Phaser.Scene {
     this.stepInspection();
     this.stepResponder();
     this.stepEscort(); // BACKLOG-381: the fetch's two legs resolve beside the distress walk
+    this.checkMend(); // BACKLOG-488: a ground the player is watching sends somebody to its ruin...
+    this.stepMend(); // ...and the patch-up resolves where that somebody is standing
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
@@ -6093,11 +6267,18 @@ export class WorldScene extends Phaser.Scene {
     const caught = this.caughtTic === target.name;
     // BACKLOG-413: a fond caught dino leads with a warm opener + files a glad memory; a non-fond one stays bashful (408).
     const fond = caught && fondOfBeingCaught(heartsFromPoints(this.friendship[target.name] ?? 0));
-    const text = caught ? `${fond ? fondOpener() : bashfulOpener()} ${reply.text}` : reply.text;
-    if (caught && !this.ticCaughtFiled.has(target.name)) {
+    // BACKLOG-420: the catch climbs across one stretch — pleased, teasing, then fondly resigned — but only
+    // for a dino that is fond. A dino that barely knows you stays bashful however often you find it, and
+    // that flatness is the read: the escalation is the tell. The count advances here and nowhere else, so a
+    // cancelled greet (which nulls `caughtTic` above) can never burn a register.
+    const catches = caught ? (this.ticCatches[target.name] = (this.ticCatches[target.name] ?? 0) + 1) : 0;
+    const register = caughtRegister(catches, fond);
+    const text = caught ? `${caughtOpener(register, this.ticAxisFor(target))} ${reply.text}` : reply.text;
+    const filedKey = `${target.name}:${register}`;
+    if (caught && !this.ticCaughtFiled.has(filedKey)) {
       const label = this.ticFor(target).label; // BACKLOG-407: it names the ritual it actually performs
-      this.memory = remember(this.memory, target.name, fond ? fondCaughtMemory(label) : caughtMemory(label));
-      this.ticCaughtFiled.add(target.name);
+      this.memory = remember(this.memory, target.name, caughtRegisterMemory(register, label));
+      this.ticCaughtFiled.add(filedKey);
     }
     this.caughtTic = null;
     const line = `${replyPrefix(reply.source)}${target.name}: ${text}`;
@@ -6554,7 +6735,10 @@ export class WorldScene extends Phaser.Scene {
       const plan =
         days > 1
           ? runUpkeepOverDays(pile, days, this.standingIn(zone), this.derelictIn(zone))
-          : runUpkeep(pile, this.standingIn(zone), this.derelictIn(zone));
+          // BACKLOG-488: the *live* pass asks for the bill only (`derelict = 0`). Lapsing is unchanged;
+          // repairing is the mend errand's job now, and it happens where a dino is standing. The away form
+          // above keeps 480's full arithmetic — nobody is watching an unattended park, so nobody can walk.
+          : runUpkeep(pile, this.standingIn(zone), 0);
       if (plan.pile === pile && plan.lapsed === 0 && plan.repaired === 0) continue;
       changed = true;
       this.stockpileByZone[zone] = plan.pile;
@@ -6868,6 +7052,7 @@ export class WorldScene extends Phaser.Scene {
     void loadFromDb().then((save) => {
       if (!save) {
         // Brand-new game: keep the default observer, but invite a choice (non-blocking).
+        this.seedFounding(); // CHARTER v7: the founding park ships a ruin, so its systems are reachable
         this.showKeeperInvite();
         return;
       }

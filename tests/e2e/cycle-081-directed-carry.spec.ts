@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Directed carry (BACKLOG-356). A crossing dino ferries the kind the destination zone is short of for its
@@ -37,6 +37,7 @@ test('a crosser ferries the kind the destination is short of, not the most-stock
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // Bowl pile: stone:2, branch:1 (stone is most-stocked — what the old carry would have moved).
   await bankOn(page, 'Rex', 'stone');

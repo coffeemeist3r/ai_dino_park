@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Word of plenty (BACKLOG-458) — plenty travels by talk before a body follows. A resident of a thriving zone
@@ -35,6 +35,7 @@ async function crossUntilArrived(page: import('@playwright/test').Page, name: st
 
 test('a thriving zone seeds its residents with plenty word, which spreads and primes a target', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   // Sunny alone in the Fernreach, which we make thriving (a fat resource pile). Rex stays in the bowl.
   await migrate(page, 'Sunny', 'fernreach');
   await setPile(page, 'fernreach', { stone: 12 });
@@ -52,6 +53,7 @@ test('a thriving zone seeds its residents with plenty word, which spreads and pr
 
 test('hearsay of plenty chooses the migration destination over the richer neighbour', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   // Rex in the grove; its two neighbours are the bowl (west) and the Fernreach (east). Make the BOWL the
   // richest neighbour, but prime Rex toward the Fernreach by word of plenty — hearsay must win the destination.
   await migrate(page, 'Rex', 'grove');

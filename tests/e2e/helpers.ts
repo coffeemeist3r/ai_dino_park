@@ -63,3 +63,18 @@ export async function gatherToBowl(page: Page): Promise<void> {
     }
   });
 }
+
+/**
+ * Restore the pre-v7 empty grounds (CHARTER v7 / BACKLOG-488).
+ *
+ * The founding park now ships a ruin in the Grove and the stone to raise it, so that the disrepair, upkeep
+ * and mend systems are things a new player can watch rather than facts about a save file. That is the point
+ * — but a good many specs used "every ground but the bowl is empty, and no pile has anything in it" as a
+ * free fixture without ever saying so: a carry spec, a craft spec, a prosperity tier.
+ *
+ * This restores that fixture **explicitly**, the way `gatherToBowl` restores the co-located cast. A spec
+ * whose subject genuinely *is* the founding state asserts the new one instead and must not call this.
+ */
+export async function emptyGrounds(page: Page): Promise<void> {
+  await page.evaluate(() => (window as Record<string, () => number>).__clearFounding?.());
+}

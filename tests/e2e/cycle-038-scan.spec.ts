@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 // BACKLOG-157 — Field Scan, LUMEN-3's distinct ability. The dossier is pure (keeper/scan.ts), so
 // the whole flow is observable headless: pick an observer, stand by a dino, press B.
@@ -19,6 +19,7 @@ test('as LUMEN-3, B beside a dino opens the dossier (boot is clean)', async ({ p
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
@@ -40,6 +41,7 @@ test('as LUMEN-3, B beside a dino opens the dossier (boot is clean)', async ({ p
 
 test('the dossier reports the resting quirk, matching the live fidget (BACKLOG-312)', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
@@ -56,6 +58,7 @@ test('the dossier reports the resting quirk, matching the live fidget (BACKLOG-3
 
 test('B again closes the dossier', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
@@ -70,6 +73,7 @@ test('B again closes the dossier', async ({ page }) => {
 
 test('other observers cannot scan — B yields an in-character refusal, no panel', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await page.locator('canvas').focus();
 
   // Default observer is AETHER-1 — no Scholar Lens sensors.
@@ -85,6 +89,7 @@ test('other observers cannot scan — B yields an in-character refusal, no panel
 
 test('the scan never blocks the talk path — E still opens the tone menu with the dossier up', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');

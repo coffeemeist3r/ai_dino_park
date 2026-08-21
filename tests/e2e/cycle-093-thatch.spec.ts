@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The Fernreach's frond thatch (BACKLOG-417) — the third distinct built landmark. The frond-rich
@@ -28,6 +28,7 @@ async function bankOn(p: Page, name: string, kind: string) {
 
 test('the chain raises three distinct landmarks: cairn / lean-to / thatch', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   expect(await page.evaluate(() => (window as W).__zoneStructure('bowl'))).toBe('cairn');
   expect(await page.evaluate(() => (window as W).__zoneStructure('grove'))).toBe('shelter');
   expect(await page.evaluate(() => (window as W).__zoneStructure('fernreach'))).toBe('thatch');
@@ -37,6 +38,7 @@ test('the Fernreach weaves a frond thatch and never a cairn (its bias is frond)'
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // Put a dino in the Fernreach and make it the active zone, then gather fronds there.
   await page.evaluate(() => (window as W).__migrate('Rex', 'fernreach'));

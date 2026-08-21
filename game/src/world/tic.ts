@@ -196,6 +196,110 @@ export function fondCaughtMemory(label: string): string {
 }
 
 /**
+ * Caught again (BACKLOG-420) — the catch stops being a lookup.
+ *
+ * 408 and 413 gave the interruption two readings, bashful and pleased, and both are constant strings: a
+ * player who walks up to the same ticcing dino five times inside one unbroken stretch of solitude gets the
+ * identical opener five times, and the memory is filed once and then never again. A reaction that never
+ * changes is not a mind.
+ *
+ * So the *fond* reading climbs across one stretch — pleased, then playful teasing, then fond resignation —
+ * and floors there; a ninth catch is a third catch. The unfond reading does not climb at all, and that
+ * flatness is the point rather than an omission: **the escalation is the tell that this dino likes you.**
+ *
+ * The stretch is the one `resetTic` clears (company or a pressing need), and the keeper walking up is not
+ * company — `companyNear` counts only dinos — which is exactly why a repeat catch is reachable.
+ */
+export type CaughtRegister = 'bashful' | 'pleased' | 'teasing' | 'resigned';
+
+/** The second catch in a stretch turns pleasure to teasing... */
+export const CAUGHT_TEASE_AT = 2;
+/** ...and the third settles into fond resignation, where it stays. */
+export const CAUGHT_RESIGNED_AT = 3;
+
+/** How this catch reads: the count within the stretch, forked on the 413 fondness gate. Floors at resigned. */
+export function caughtRegister(catches: number, fond: boolean): CaughtRegister {
+  if (!fond) return 'bashful';
+  if (catches >= CAUGHT_RESIGNED_AT) return 'resigned';
+  if (catches >= CAUGHT_TEASE_AT) return 'teasing';
+  return 'pleased';
+}
+
+/**
+ * One tease per axis, in the voice `TIC_BY_AXIS` established. A single "you again?" would have made all
+ * eight dinos object identically, which is the sameness the CHARTER calls a defect — so a curious dino
+ * accuses you of taking notes, a jittery one of sneaking, an aloof one is pointedly unbothered.
+ */
+const TEASE_BY_AXIS: Record<keyof Personality, string> = {
+  curiosity: '*narrows its eyes* You again? Are you writing this down somewhere?',
+  sociability: '*grins* Twice now! Admit it — you came back for the show.',
+  energy: '*still pacing, faster* You— again? Some of us are busy, you know.',
+  agreeableness: '*sets the leaf down, patiently* You do keep turning up while I am tidying.',
+  bravery: '*does not stop turning* Spying on me, then. Bold of you.',
+};
+
+/** ...and one resignation per axis: caught three times in a row, a dino stops pretending to mind. */
+const RESIGNED_BY_AXIS: Record<keyof Personality, string> = {
+  curiosity: '*does not even look up* Fine. Pull up a patch of ground and observe properly.',
+  sociability: '*laughing* All right, all right — you live here now. Come on then.',
+  energy: '*puffing* You are just going to stand there, are you. Suit yourself.',
+  agreeableness: '*shifts over to make room* Well. You may as well help.',
+  bravery: '*sighs, unbothered* Watch away. I have given up minding.',
+};
+
+/** The teasing opener for a dino performing the ritual of `axis` (its own, or one it picked up — 407). */
+export function teaseOpener(axis: keyof Personality): string {
+  return TEASE_BY_AXIS[axis];
+}
+
+/** The fondly-resigned opener, the third catch and every one after it. */
+export function resignedOpener(axis: keyof Personality): string {
+  return RESIGNED_BY_AXIS[axis];
+}
+
+/** What a teased dino files — the ritual named, the way 408/413's memories name it. */
+export function teaseMemory(label: string): string {
+  return `the keeper caught you mid-ritual twice over — you ${label}, and gave them a hard time for it`;
+}
+
+/** What a thrice-caught dino files: it has stopped guarding the ritual from this one. */
+export function resignedMemory(label: string): string {
+  return `the keeper kept catching you at it — you ${label}, and let them stay and watch`;
+}
+
+/**
+ * The one entry point the scene calls, so no register `switch` leaks into `WorldScene`. The two existing
+ * registers **call** `bashfulOpener`/`fondOpener` rather than restating their text — the compatibility seam
+ * is "the old path *is* the old function", which is what keeps the 408 and 413 specs green by construction.
+ */
+export function caughtOpener(register: CaughtRegister, axis: keyof Personality): string {
+  switch (register) {
+    case 'bashful':
+      return bashfulOpener();
+    case 'pleased':
+      return fondOpener();
+    case 'teasing':
+      return teaseOpener(axis);
+    case 'resigned':
+      return resignedOpener(axis);
+  }
+}
+
+/** The memory for a register — the same shape as `caughtOpener`, delegating to the 408/413 builders. */
+export function caughtRegisterMemory(register: CaughtRegister, label: string): string {
+  switch (register) {
+    case 'bashful':
+      return caughtMemory(label);
+    case 'pleased':
+      return fondCaughtMemory(label);
+    case 'teasing':
+      return teaseMemory(label);
+    case 'resigned':
+      return resignedMemory(label);
+  }
+}
+
+/**
  * A ritual for the missing friend (BACKLOG-414) — a real friend (pairwise bond ≥ this) whose departure
  * to another zone turns the tic into an ache. Below it, a crossing isn't a loss worth grieving. One
  * huddle's worth, matching `comfort.ts`'s COMFORT_BOND_FLOOR (013).

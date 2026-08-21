@@ -33,14 +33,19 @@ async function buildUp(page: Page): Promise<string> {
   return zone;
 }
 
-test('a fresh park owes nothing — a day of upkeep costs it no landmark', async ({ page }) => {
+test('a fresh park owes nothing — but it is no longer inert beneath the system', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // The inertness bar: a new save has at most one landmark per ground and must not notice this feature.
+  // The *bill* is still nothing: no ground has two standing landmarks, and 480s rule that a derelict
+  // landmark owes no upkeep is unchanged.
   expect(await runUpkeep(page)).toEqual([]);
-  expect(await runUpkeep(page, 7)).toEqual([]);
+
+  // What changed is the founding state, not the arithmetic (CHARTER v7 / BACKLOG-488): the park now ships
+  // a ruin in the Grove, so a week away has something to settle rather than nothing to notice. The old
+  // assertion here was `[]`, and it was the clearest statement in the suite of the dormancy v7 forbids.
+  expect((await runUpkeep(page, 7)).join(' ')).toContain('patched up');
 
   expect(errors).toEqual([]);
 });
@@ -72,11 +77,15 @@ test('a ground that cannot pay lets its skyline lapse — and patches it back up
   await runUpkeep(page);
   expect(await standing(page, zone)).toBe(1); // one landmark is free — the floor
 
-  // Restock and it comes back, one landmark a day, without anyone raising anything new.
+  // Restock and it comes back — but a *live* day no longer patches by hand (BACKLOG-488): the cure is an
+  // errand a resident walks, and `cycle-136-mending.spec.ts` is where a body does it. What is asserted here
+  // is that the away form still converges, through the same pure function it always did.
   await setPile(page, zone, { stone: 8 });
-  const patched = await runUpkeep(page);
+  expect(await runUpkeep(page)).toEqual([]); // the live pass bills only
+  expect(await standing(page, zone)).toBe(1);
+  const patched = await runUpkeep(page, 2);
   expect(patched.join(' ')).toContain('patched up');
-  expect(await standing(page, zone)).toBe(2);
+  expect(await standing(page, zone)).toBe(3); // two days away, one ruin raised each
 });
 
 test('an absence is charged the days it owed, through the same pass', async ({ page }) => {
@@ -85,7 +94,9 @@ test('an absence is charged the days it owed, through the same pass', async ({ p
   await setPile(page, zone, {});
 
   // Seven days away with an empty pile bleeds to the same affordable skyline a week of live days would.
-  const lines = await runUpkeep(page, 7);
+  // The pass sweeps every ground, and the founding Grove ruin (CHARTER v7) settles in the same sweep, so
+  // this filters to the ground under test rather than counting the whole park's lines.
+  const lines = (await runUpkeep(page, 7)).filter((l) => l.includes('disrepair'));
   expect(lines.length).toBe(3);
   expect(await standing(page, zone)).toBe(1);
 });

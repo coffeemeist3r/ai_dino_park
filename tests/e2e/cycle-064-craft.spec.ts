@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * First craft (BACKLOG-286). Once the shared park stockpile (285) covers the recipe (3 branch + 2 stone),
@@ -32,6 +32,7 @@ test('a stockpile that clears the recipe becomes a cairn', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   expect(await cairns(page)).toEqual([]);
 
@@ -59,6 +60,7 @@ test('a stockpile that clears the recipe becomes a cairn', async ({ page }) => {
 
 test('no second cairn without rebuilding the stockpile', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   for (const k of ['branch', 'branch', 'branch', 'stone', 'stone']) await bankOne(page, k);
   expect((await cairns(page)).length).toBe(1);
 

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Carry between zones (BACKLOG-329). A dino completing a visible crossing ferries one banked resource
@@ -45,6 +45,7 @@ test('a crossing dino ferries one banked resource to the zone it enters; an empt
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // Pin every dino's day-intent to 'social' (BACKLOG-393): a seeded 'forage' day widens resource
   // notice enough that an organic grove spawn (which leans branch, 348) gets gathered and banked

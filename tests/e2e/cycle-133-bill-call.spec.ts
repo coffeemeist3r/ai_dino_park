@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The bill reaches the call (BACKLOG-485) — a ground carrying a derelict landmark leans its own work call
@@ -39,6 +39,7 @@ test('a park with nothing derelict is untouched — the ground still makes its o
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   const zone = await buildUp(page);
   await setPile(page, zone, { branch: 9, stone: 9 }); // it can pay; nothing lapses
@@ -58,6 +59,7 @@ test('a ground whose walls come down turns to gathering — and says so as upkee
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   const zone = await buildUp(page);
   await step(page); // seed the ground's own call before anything lapses
@@ -80,6 +82,7 @@ test('the lean is not a decision — a ground that patches its skyline up goes b
   page,
 }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   const zone = await buildUp(page);
   await step(page);
@@ -90,8 +93,11 @@ test('the lean is not a decision — a ground that patches its skyline up goes b
   expect(await workPriority(page, zone)).toBe('gather');
 
   // Stock it back up and let the upkeep pass patch the derelicts back in (480's reversible cure).
+  // BACKLOG-488: a *live* day no longer patches by hand — the cure is an errand a resident walks. The lean
+  // this test is about is released by the skyline coming back up, whichever path raised it, so drive the
+  // away form (which keeps 480s full arithmetic) rather than six live days that now only bill.
   await setPile(page, zone, { branch: 20, stone: 20 });
-  for (let i = 0; i < 6; i++) await runUpkeep(page);
+  await runUpkeep(page, 6);
   expect(await standing(page, zone)).toBe(4);
 
   expect(await workPriority(page, zone)).toBe(own);

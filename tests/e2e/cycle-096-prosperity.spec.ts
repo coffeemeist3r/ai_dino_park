@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot, gatherToBowl } from './helpers';
+import { boot, gatherToBowl, emptyGrounds } from './helpers';
 
 /**
  * Zone prosperity index (BACKLOG-428) — each zone's live stockpile + built structures + resident heads +
@@ -16,6 +16,7 @@ test('a zone reads a prosperity tier that climbs as its stockpile grows, and the
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // CHARTER v7 seats residents on the grove, and heads are one of prosperity's own signals — so this case
   // clears them rather than reading a different ground, keeping every tier threshold below exactly as tuned.
@@ -50,6 +51,7 @@ test('harvesting a zone plot feeds its farming term into the prosperity read', a
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   expect((await prosperity(page, 'grove')).signals.harvested).toBe(0);
 

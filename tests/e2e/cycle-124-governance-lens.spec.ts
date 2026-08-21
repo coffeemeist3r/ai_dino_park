@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Both of the ground's calls, on the lens (BACKLOG-477) — the two governance glyphs come off the end of
@@ -39,6 +39,7 @@ async function onlyResident(page: Page, keep: string) {
 
 test('the [?] panel explains every glyph the governance row can draw', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   const text = await helpText(page);
   // still the controls reference it has always been
   expect(text).toContain('— Controls —');
@@ -52,6 +53,7 @@ test("a ground's calls fold into one row on the zone map, and nothing before one
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // A young park has decided nothing anywhere — no box carries a governance glyph at all.
   const before = (await mapText(page)).join('\n');

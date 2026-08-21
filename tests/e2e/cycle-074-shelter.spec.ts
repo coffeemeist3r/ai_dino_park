@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Dino-built shelter (BACKLOG-315), as reshaped by zone-distinct craft (BACKLOG-377). The lean-to is no
@@ -31,6 +31,7 @@ test('the bowl stacks cairns and never a lean-to (its bias is stone)', async ({ 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // The bowl builds cairns (BACKLOG-377: zoneStructure('bowl') === 'cairn').
   expect(await page.evaluate(() => (window as W).__zoneStructure('bowl'))).toBe('cairn');
@@ -58,6 +59,7 @@ test('the grove raises a lean-to and never a cairn (its bias is branch)', async 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // The grove builds lean-tos (BACKLOG-377: zoneStructure('grove') === 'shelter').
   expect(await page.evaluate(() => (window as W).__zoneStructure('grove'))).toBe('shelter');

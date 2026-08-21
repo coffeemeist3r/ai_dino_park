@@ -273,3 +273,54 @@ never asked to be teasing, so the `NPCBrain` boundary is unchanged.
 
 **Save check:** the structure track writes only existing fields (`cairns`, `stockpileByZone`); the lore
 track persists nothing. No version bump, no migration, old saves load unchanged.
+
+---
+
+## Shipped
+
+**Build:** `npm --prefix game run build` ✅ clean.
+**Unit:** `npx vitest run` ✅ **193 files / 1888 tests**, all green (+30 this cycle).
+**E2E:** `npx playwright test` — **548 passed / 4 failed**, and all four are known:
+- `cycle-038-scan`, `cycle-047-warmth`, `cycle-110-plenty` — pass isolated on a re-run (verified this fire);
+  the catalogued parallel-load flake.
+- `mobile-minds` long-dialog — BACKLOG-430, reproduced on clean HEAD in cycle 135, not from this diff.
+
+**Boundary:** `grep -rn "@mlc-ai/web-llm" game/src | grep -v "^game/src/ai/"` → empty. ✅
+
+### Files touched (24)
+
+*New source (2):* `game/src/world/mending.ts`, `game/src/world/founding.ts`
+*Modified source (2):* `game/src/scenes/WorldScene.ts`, `game/src/world/tic.ts`
+*New unit (3):* `cycle-136-mending.test.ts`, `cycle-136-founding.test.ts`, `cycle-136-caught-again.test.ts`
+*New e2e (2):* `cycle-136-mending.spec.ts`, `cycle-136-caught-again.spec.ts`
+*Modified e2e (15):* `helpers.ts`, `cycle-128-upkeep`, `cycle-133-bill-call`, `cycle-038-scan`,
+`cycle-063-stockpile`, `cycle-064-craft`, `cycle-074-shelter`, `cycle-076-zone-stockpile`, `cycle-077-carry`,
+`cycle-081-directed-carry`, `cycle-093-thatch`, `cycle-096-prosperity`, `cycle-110-plenty`,
+`cycle-121-work-priority`, `cycle-124-governance-lens`
+
+### Deviations from the plan
+
+1. **The founding-state ripple was bigger than the plan predicted, and it was measured rather than argued.**
+   The plan named exactly one spec (`cycle-128-upkeep`) as needing a deliberate edit. The first full e2e run
+   returned **16 reds**, and they split cleanly into two groups. Group one is `cycle-128` and `cycle-133`,
+   whose subject genuinely *is* the founding state or the live upkeep pass — those assertions were rewritten
+   to the new contract. Group two is thirteen specs about carrying, crafting, prosperity, plenty-word and
+   the governance lens, which had been using "every ground but the bowl is empty and no pile has anything in
+   it" as a **free fixture without ever saying so** — precisely the pattern cycle 135 found with the
+   co-located cast. So they got cycle 135's own answer: a new **`emptyGrounds(page)`** helper (the
+   `gatherToBowl` precedent) backed by a `__clearFounding` dev hook, called explicitly at the top of each,
+   so the assumption is visible in the spec that depends on it. No assertion was weakened; thirteen specs
+   gained one line each that says what they were quietly relying on.
+2. **`__resetTic` dev hook added** (not in the plan). The lore e2e needed to prove that a *new* stretch
+   starts warm again, and inferring that from text would have been guesswork. The hook drives production's
+   own `resetTic`, not a second path.
+3. **The walk moved into `stepMend()`.** The plan put the fixer's step in the world-step movement branch.
+   That would have meant the `__stepMend` hook advanced nothing, so a spec would have had to wait on frame
+   timing. `stepMend` now owns the walk and the movement branch only holds the fixer out of the ordinary
+   wander — one place moves the fixer, and production's world step and the spec hook drive it identically.
+4. **`foundingCleared` flag.** `loadFromDb()` resolves a beat *after* `__ready`, so `__clearFounding` could
+   run before the seed had happened and the ruin would reappear behind it — which showed up as exactly one
+   flaky spec, not thirteen. The flag makes the clear win regardless of ordering. This is the same class of
+   bug as cycle 133's freshness gate: an ordering assumption that was true by accident.
+5. **`activityById` reuses `'gathering'`** for the fixer rather than widening the `Activity` union, per the
+   plan's own risk note — a new activity id would ripple into the book and the lens for no gain.

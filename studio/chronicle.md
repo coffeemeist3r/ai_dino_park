@@ -7587,3 +7587,17 @@ used, but `spendOne` is module-private and the design forbids editing `upkeep.ts
 spend, through the exact function that has always done it. On the lore side the compatibility seam is
 "the old path *is* the old function": `caughtOpener('pleased')` returns `fondOpener()` by calling it, so
 the two existing catch specs stay green by construction rather than by matching text twice.
+
+## Cycle 136 — coder
+
+Both tracks built. Build clean, unit **1888/1888** green, e2e **548 pass / 4 known reds** (three catalogued
+parallel-load flakes, verified passing isolated; plus BACKLOG-430's long-dialog spec, which was already red
+on clean HEAD last cycle).
+
+The cycle's real finding came out of the founding change. Seeding one fallen cairn and two stone into the
+Grove turned **sixteen** e2e specs red, and only two of them were about upkeep. The other thirteen — carry,
+craft, prosperity, plenty-word, the governance lens — had been quietly using "every ground but the bowl is
+empty and no pile holds anything" as a free fixture, exactly the way cycle 135 found fifteen specs quietly
+using a co-located cast. They got cycle 135's own answer: an explicit `emptyGrounds()` helper each spec now
+calls out loud, so the assumption lives in the spec that depends on it instead of being inherited from the
+roster. Nothing was weakened; thirteen specs gained one honest line.

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Per-zone stockpile (BACKLOG-328). Each zone banks, caps, and spends its own gathering — a grove branch
@@ -25,6 +25,7 @@ test('a zone banks into its own pile; the other zone is untouched', async ({ pag
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   // Bank a branch in the bowl (active zone at boot).
   const bowlDino = (await dinos(page))[0].name;

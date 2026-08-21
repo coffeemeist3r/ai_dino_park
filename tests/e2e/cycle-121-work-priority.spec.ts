@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The ground's second decision (BACKLOG-473). 463 gave a provider one call — how the pantry spends. These
@@ -40,12 +40,14 @@ async function soleProvider(page: Page, keep: string): Promise<void> {
 
 test('a ground with no provider has no work policy — today’s behaviour, untouched', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   expect(await workPriority(page)).toBeNull();
   for (const e of await zoneMap(page)) expect(e.work).toBeNull();
 });
 
 test('a calm provider gathers first, and the lens carries both calls', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await soleProvider(page, 'Twitch');
   expect(await page.evaluate(() => (window as W).__zoneProvider('bowl') as string | null)).toBe('Twitch');
   expect(await workPriority(page)).toBe('gather');
@@ -60,6 +62,7 @@ test('a gather-first ground holds off the landmark while its pile is thin, and r
   page,
 }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await soleProvider(page, 'Mossback');
   expect(await workPriority(page)).toBe('gather');
 
@@ -76,6 +79,7 @@ test('a gather-first ground holds off the landmark while its pile is thin, and r
 
 test('a build-first ground never defers the same pile', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await soleProvider(page, 'Rex');
   expect(await workPriority(page)).toBe('build');
 
@@ -87,6 +91,7 @@ test('a build-first ground never defers the same pile', async ({ page }) => {
 
 test('the work policy persists across a reload', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
   await soleProvider(page, 'Mossback');
   expect(await workPriority(page)).toBe('gather');
 

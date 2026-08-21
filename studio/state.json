@@ -1,6 +1,6 @@
 {
   "cycle": 136,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-420: Caught again \u2014 a repeat catch mid-tic escalates",
   "structureItem": "BACKLOG-488: Hands on the derelict \u2014 repair becomes a job a resident walks to",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-08-21T02:44:00-05:00",
     "designer": "2026-08-21T03:05:00-05:00",
     "code-planner": "2026-08-21T03:20:00-05:00",
-    "coder": "2026-08-20T03:42:00-05:00",
+    "coder": "2026-08-21T03:55:00-05:00",
     "qa": "2026-08-20T04:55:00-05:00",
     "validator": "2026-08-20T05:00:00-05:00",
     "artist": "2026-08-20T05:10:00-05:00"

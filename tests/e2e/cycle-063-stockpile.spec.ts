@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * Resource stockpile (BACKLOG-285). Each 146 pickup banks into a shared per-kind park stockpile,
@@ -30,6 +30,7 @@ test('a pickup banks into the shared park stockpile and shows on the plaque', as
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
 
   expect(await stockpile(page)).toEqual({});
   expect((await plaque(page)).stockpile).toBe(''); // no stores line while empty
