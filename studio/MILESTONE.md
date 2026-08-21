@@ -8,7 +8,26 @@
 
 ## Current milestone
 
-_No milestone is ACTIVE. The smiths draft Milestone 15 at the next cycle open._
+**Milestone 15: Somebody does it — the park's work grows hands, and its private moments stop repeating themselves**
+**Status:** ACTIVE (opened cycle 136)
+
+The park spent cycle 135 discovering that a great deal of what it had built was true but unwatchable. The
+clock now runs at two rates and the cast is spread across five grounds, so the day boundary is twenty-four
+real *minutes* and every ground has somebody standing on it. This milestone spends that: work that used to
+happen *to* a ground is performed *in* it by a body you can follow, and a decision that used to be arithmetic
+over five birth-numbers starts answering to what those five dinos have actually lived. On the feel side, the
+park's most private behaviour — a dino alone with its ritual — stops giving the same answer every time it is
+found.
+
+**Lore arcs:**
+- [ ] Being found is a conversation, not a lookup — a dino caught mid-ritual twice in one stretch of solitude escalates from pleased to teasing to fondly resigned, in words drawn from its own signature trait (BACKLOG-420, -422)
+- [ ] The ritual is a living habit — its little path drifts across the ground over many stretches, and being found leaves a warm trace it can lead with later (BACKLOG-421, -411)
+- [ ] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423)
+
+**Structure arcs:**
+- [ ] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)
+- [ ] A vote that answers to a history — a seat's ballot is shaded by the hunger, the short share and the fallen landmark that seat has lived through (BACKLOG-492)
+- [ ] A gate that does not silence its next cause — the four freshness gates get one shared seam that tells seeding apart from suppressing (BACKLOG-489)
 
 ---
 

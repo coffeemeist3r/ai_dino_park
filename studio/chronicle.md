@@ -7545,3 +7545,13 @@ nowhere, and load-bearing the moment a founding constant moves.**
 
 Full suite green: build clean, unit 190/190 files, e2e **541/541** — `mobile-minds`' long-dialog spec
 (BACKLOG-430) included, at 2 workers.
+
+## Cycle 136 — lore-smith
+
+Milestone 14 is shipped and the operator pass has left the park with a 24-minute day and a cast on
+every ground, so **Milestone 15 — "Somebody does it"** opens on the thing that unlocks: work performed
+by a body in a place, and private moments that stop repeating themselves. Social queue is ~215 open, so
+nothing new was seeded there; the art queue was down to one, so **BACKLOG-494 (ruin rigs)** was drawn up
+— a derelict grid per landmark, because a fallen cairn currently reads as fog at 45% alpha. Suggested
+next-up: **BACKLOG-420, caught again** — the keeper has been getting the same two reactions to catching
+a dino mid-ritual since cycle 89, on the first catch and the fifth. Idea Box: empty.
