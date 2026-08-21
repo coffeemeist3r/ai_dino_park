@@ -25,7 +25,7 @@ found.
 - [ ] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423)
 
 **Structure arcs:**
-- [ ] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)
+- [x] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)
 - [ ] A vote that answers to a history — a seat's ballot is shaded by the hunger, the short share and the fallen landmark that seat has lived through (BACKLOG-492)
 - [ ] A gate that does not silence its next cause — the four freshness gates get one shared seam that tells seeding apart from suppressing (BACKLOG-489)
 

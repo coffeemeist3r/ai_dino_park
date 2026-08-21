@@ -7609,3 +7609,59 @@ three catalogued parallel-load flakes (all green on an isolated re-run this fire
 long-dialog spec, already red on clean HEAD. Both tracks answer the CHARTER v7 reachability question with
 something a player sees in the first minute: a second greeting that differs from the first, and a fallen
 cairn in the Grove that somebody walks over and puts back up. Recommendation: APPROVE / APPROVE.
+
+## Cycle 136 — APPROVED / APPROVED — *somebody does it*
+
+Milestone 14 shipped last cycle and the operator pass that followed it left the park with two things it had
+never had: a day that costs twenty-four real **minutes**, and residents standing on grounds other than the
+bowl. **Milestone 15 opens on what those two facts unlock** — work performed by a body in a place, and
+private moments that stop repeating themselves.
+
+**The ruin in the Grove.** For eight cycles a landmark could fall down and come back up, and the coming-back-up
+was a line of arithmetic executed on a ground with nobody near it, on a day boundary that used to cost
+twenty-four real hours. Now a resident walks over. Boot a new game, step one edge west, and there is a fallen
+cairn on the Grove's west side, drawn faded — and within about twenty seconds Bramble stops what it was
+doing, crosses the Grove, and **puts it back up**. The sprite returns to full, a 🛠️ floats, and the ticker
+says two things, because a ground patching its skyline and a dino doing it with its hands are two different
+sentences. The Grove's pile goes from two stone to one. Bramble keeps the memory.
+
+That founding cairn is the whole reason this counts as shipped. `upkeep.ts` had written into its own header
+that a fresh park is inert beneath the upkeep system, and had written it as a *virtue* — which is exactly the
+sentence CHARTER v7 was amended to forbid. So the ruin ships with the feature, in the same cycle, and two
+unit tests exist for no purpose other than to keep it reachable: one asserts the founding pile can afford the
+founding repair, the other that the ruin's ground has somebody living on it. Either could break and take the
+entire 480 → 485 → 488 arc dormant again **without another test in the suite going red.** That is not a
+hypothetical; it is a description of the seven cycles the operator opened the game and correctly reported
+that nothing had changed.
+
+**Caught again.** The other half is the smallest change in the park and possibly the most-felt. Since cycle 89
+walking up to a dino mid-ritual has produced one of two constant strings — sheepish if it barely knows you,
+pleased if it loves you — on the first interruption and on the fifth, in the same unbroken stretch of
+solitude. Now the fond reading climbs: pleased, then playful teasing, then a fond sort of resignation, and
+there it stops. What makes it characterisation rather than a third string is what *doesn't* happen: a dino
+you have not befriended stays sheepish however often you find it. **The escalation is the tell.** And the
+tease comes out of the dino's own signature axis — the read that already decides which ritual it invented —
+so Twitch accuses you of sneaking and Glade is pointedly unbothered, and where a dino picked its ritual up
+off a friend (407) it objects in the voice of *that* ritual, not the one it was born with.
+
+**The finding, and it is the second cycle running to arrive at it.** Seeding one cairn and two stone into the
+Grove turned **sixteen** e2e specs red — and only two of them were about upkeep. The other thirteen were
+about carrying, crafting, prosperity, hearsay, the governance lens, and every one of them had been quietly
+using "every ground but the bowl is empty and no pile holds anything" as a free fixture. Not one said so.
+That is precisely last cycle's discovery, where fifteen specs turned out to be leaning on a co-located cast,
+and it got the same answer — an explicit `emptyGrounds()` helper each spec now calls out loud, the twin of
+`gatherToBowl`. Nothing was weakened; thirteen specs gained one honest line. Twenty-eight specs across two
+cycles, depending on a founding state without saying so.
+
+The lesson is not that the founding state is fragile. It is that **a fixture nobody names becomes an
+assertion nobody knows they are making**, and the only thing that ever surfaces it is moving the constant —
+which is an argument for moving founding constants *more* often, not less. Filed as **BACKLOG-495**. And the
+sharpest evidence of it is a test title: `cycle-128-upkeep`'s first case was called *"a fresh park owes
+nothing — a day of upkeep costs it no landmark"*, and it asserted emptiness twice. Half of that was a real
+invariant. Half was the dormancy the charter now forbids. From inside the suite, the two looked identical.
+
+Build clean, unit **1888/1888**, e2e **548 pass** — the four reds are three catalogued parallel-load flakes
+(all green on an isolated re-run this fire) and BACKLOG-430's long-dialog spec, already red on clean HEAD.
+The dev server could not be started in this unattended run, so both reachability claims rest on Playwright
+driving the production paths rather than on a hand-played session — noted rather than glossed.
+

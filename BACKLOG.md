@@ -20,9 +20,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-488 [core] Hands on the derelict — the patch-up (480) is pile arithmetic nobody performs; make repair a *job* a resident does (full text in the cycle-133 block below).
 - [ ] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
 - [ ] BACKLOG-492 [core] A vote nothing can change — every seat votes a hard threshold on one birth trait, so a council is unanimous by construction and no event in the park can ever turn one; give a seat something it has *lived* to vote on (full text in the cycle-135 block below).
+- [ ] BACKLOG-495 [infra] The fixture nobody names — two consecutive founding-constant moves turned 28 e2e specs red that were not about the founding state; give the suite a declared founding fixture (full text in the cycle-136 block below).
 
 ---
 
@@ -672,7 +672,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
 
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
-- [~] BACKLOG-420 [social] Caught again — greet a fond dino mid-tic (413) a second time in the same solitary stretch and its pleasure turns to playful teasing ("you again? spying on me?"), so a repeat catch reads different from the first warm one. Builds on 413 / 408.
 - [ ] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
 - [ ] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
@@ -691,7 +690,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > half of the upkeep economy 485 makes conspicuous: once a ground's *decision* answers its falling-down
 > skyline, the fact that nobody in the park ever lifts a finger to patch it starts to read as a hole.
 
-- [~] BACKLOG-488 [core] Hands on the derelict — 480 made a landmark cost something to keep and gave disrepair a reversible cure, but the cure is arithmetic: `runUpkeep` patches the oldest derelict the instant the pile can spare `REPAIR_COST`, with no dino anywhere near it. Every other economy in this park is *performed* — a harvest is hauled (446), a unit is ferried across an edge by a body that remembers carrying it (447/451), a landmark is raised where a dino stood. Repair alone happens to a ground rather than in it. Make it a job: a resident of a ground carrying a derelict landmark (and, once 485 lands, a ground whose call has turned to gathering because of it) walks to that landmark, and the patch-up resolves *on arrival* rather than on the day tick — the fixer keeping a small "put the Grove's cairn back up" memory the way the courier keeps its pride. The pure arithmetic in `upkeep.ts` is unchanged; what moves is *who* triggers `repaired` and *where* they are standing when it happens. The first time in the park's life that a building is mended by somebody. Builds on 480 / 485 / 447 / 451.
 
 ## Mobile (deferred, do not pick until charter clears)
 
@@ -732,3 +730,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > track makes the first thing a player walks up to on a fresh save.
 
 - [ ] BACKLOG-494 [art] Ruin rigs — 480 draws a derelict landmark by turning its own sprite down to `DERELICT_ALPHA` (0.45), which was the honest placeholder when nothing was drawn and reads as *fog* rather than *ruin*. Author a **derelict grid per landmark rig** — a toppled cairn with its top stones on the ground, a caved lean-to, an unravelled thatch, a cracked granary with its dome open — and let `bake.ts` resolve the ruin variant when `derelict` is set, with the alpha fade retired for the four rigs that have one and kept as the fallback for any that don't. Each renders standalone (a prop rig, no host terrain), so it clears the cycle-91 stash-ahead rule. With 488 shipping a founding ruin in the Grove, this is the first structure a new player ever inspects. Builds on 480 / 488 / 344 / 427 / 454.
+
+## Cycle 136 structure additions — the fixture nobody names (2026-08-21)
+
+> Filed by the cycle-136 validator. Two cycles running, a founding-constant move has been the only thing to
+> reveal what the suite was actually asserting — and both times the answer was "a fixture nobody wrote down".
+
+- [ ] BACKLOG-495 [infra] The fixture nobody names — cycle 135 spread the cast across five grounds and turned ~15 e2e specs red that had been quietly relying on a co-located cast; cycle 136 seeded one fallen cairn and two stone into the Grove and turned **16** red, of which only two were about upkeep. Both times the repair was the same: a helper (`gatherToBowl`, then `emptyGrounds`) that each spec calls out loud so the assumption lives in the spec that depends on it. That is the right fix twice and the wrong shape three times — the next founding constant to move will find a third population, and there is now no single place that says *what founding state a spec wants*. Give the suite a **declared founding fixture**: one `foundingState({ cast, grounds, piles })`-style seam a spec opts into by name (`'v7-spread'`, `'all-bowl'`, `'empty-grounds'`), defaulting to whatever production actually ships, so moving a founding constant costs a fixture edit rather than an archaeology pass over 550 specs. The point is not tidiness — it is that a fixture nobody names becomes an assertion nobody knows they are making, and the only thing that surfaces it is moving the constant, which is exactly the thing CHARTER v7 wants the studio doing *more* often. Builds on 488 / 486 / 431.
