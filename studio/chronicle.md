@@ -7601,3 +7601,11 @@ empty and no pile holds anything" as a free fixture, exactly the way cycle 135 f
 using a co-located cast. They got cycle 135's own answer: an explicit `emptyGrounds()` helper each spec now
 calls out loud, so the assumption lives in the spec that depends on it instead of being inherited from the
 roster. Nothing was weakened; thirteen specs gained one honest line.
+
+## Cycle 136 — qa
+
+**22/22 criteria PASS** (10 lore, 12 structure). Build clean, unit 1888/1888, e2e 548 pass with four reds —
+three catalogued parallel-load flakes (all green on an isolated re-run this fire) and BACKLOG-430's
+long-dialog spec, already red on clean HEAD. Both tracks answer the CHARTER v7 reachability question with
+something a player sees in the first minute: a second greeting that differs from the first, and a fallen
+cairn in the Grove that somebody walks over and puts back up. Recommendation: APPROVE / APPROVE.
