@@ -1,5 +1,27 @@
 # Backlog Archive — closed items
 
+## Closed cycle 136 housekeeping — the operator block drains (2026-08-21)
+
+> BACKLOG-493 shipped in cycle 135's operator pass and its section had no open items left, so the whole
+> block moves here. The working backlog stays lean; every stage reads it.
+
+- [x] BACKLOG-493 [core] The day nobody can reach — the default clock is 1x, so **an in-game day costs 24 real hours**, and every system in this park that fires on the day boundary is therefore unreachable in a normal session: the council's term (484), upkeep and disrepair (480), spoilage (455), crop growth, the dawn beat, the once-a-day discontent gate (471). Two full milestones of structure work sit behind this one number. `T` already toggles 60x (a 24-minute day) and the save carries the choice, so the *mechanism* is built and tested — what is missing is the default. **Measured 2026-08-20, so the next fire does not have to re-derive it:** flipping `WorldClock._scale` to 60 turns roughly ten specs red, and they split cleanly — `cycle-028-realtime` (x2), `smoke` (clock ticks), `cycle-002-daynight` (tint), `cycle-045-chorus` and `cycle-104-wake-hungry` (both "once per in-game day, and a fresh day re-arms it" — at 60x a fresh day arrives mid-test), `cycle-114-away-spoilage` (x2) and `cycle-029-away` (offline catch-up over a multi-day absence), plus a `controls-help` toggle race. The last group is the actual design work rather than spec bookkeeping: **what a "multi-day absence" means changes** when a day costs 24 minutes, and `away.ts`'s catch-up, the spoilage bleed and the homecoming digest all read that. Decide the semantics first, then move the constant. Builds on 105 / 455 / 480 / 484 / 471.
+  *(shipped: cycle 135 operator pass. The world runs at two rates — `ACTIVE_SCALE` (60x, a 24-minute in-game
+  day) while somebody is watching, `AWAY_SCALE` (1x, real time) the moment the tab is hidden, with the
+  offline catch-up reading `AWAY_SCALE` rather than whatever rate the save was being watched at. Keeping the
+  away rate at 1 is the load-bearing decision: `MAX_AWAY_DAYS = 7` still means seven **real** days, so
+  nothing about being away changed meaning at all — only watching got faster, and two of the specs the
+  cycle-135 measurement had listed as blockers passed unchanged as a result. The spec fallout was the
+  interesting part: `cycle-045-chorus` and `cycle-104-wake-hungry` hardcoded wall milliseconds computed
+  against 1x, with a comment saying "at 1x", and now say what they mean via `wallMsFor`.)*
+
+## Cycle 135 operator block — the reachability pass (2026-08-20)
+
+> CHARTER v7. The operator reported the park felt identical month over month; it was measurable, not a mood.
+> The cast now ships across the map and migration is ~2 minutes to a first crossing instead of ~25. The one
+> lever deliberately left for its own cycle is the clock.
+
+
 ## Closed items (cycle 136, 2026-08-21 — Milestone 15 "Somebody does it" opens: a catch that escalates + a ruin somebody mends)
 
 - [x] BACKLOG-488 [core] Hands on the derelict — 480 made a landmark cost something to keep and gave disrepair a reversible cure, but the cure is arithmetic: `runUpkeep` patches the oldest derelict the instant the pile can spare `REPAIR_COST`, with no dino anywhere near it. Every other economy in this park is *performed* — a harvest is hauled (446), a unit is ferried across an edge by a body that remembers carrying it (447/451), a landmark is raised where a dino stood. Repair alone happens to a ground rather than in it. Make it a job: a resident of a ground carrying a derelict landmark (and, once 485 lands, a ground whose call has turned to gathering because of it) walks to that landmark, and the patch-up resolves *on arrival* rather than on the day tick — the fixer keeping a small "put the Grove's cairn back up" memory the way the courier keeps its pride. The pure arithmetic in `upkeep.ts` is unchanged; what moves is *who* triggers `repaired` and *where* they are standing when it happens. The first time in the park's life that a building is mended by somebody. Builds on 480 / 485 / 447 / 451.

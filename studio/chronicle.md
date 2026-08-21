@@ -7693,3 +7693,10 @@ Build clean, unit **194 files / 1910 tests** green (the prop-registry test at `c
 two new keys — that test exists precisely to make a silent registry addition impossible), e2e green for the
 new spec and its neighbours.
 
+
+## Cycle 136 — housekeeping
+
+BACKLOG-493 shipped in cycle 135's operator pass and its section had nothing open left, so the whole
+"cycle 135 operator block" moved to the archive. The working backlog carries **0 closed bullets** and 218
+open items, of which 4 are on the Structure Track (488 closed, 495 filed) — at cap X=4 for the first time
+in several cycles, so the next Structure-smith drains rather than invents.
