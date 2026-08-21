@@ -2,7 +2,7 @@
   "cycle": 136,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-488: Hands on the derelict \u2014 repair becomes a job a resident walks to",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-21T02:30:00-05:00",
-    "structure-smith": "2026-08-20T02:44:00-05:00",
+    "structure-smith": "2026-08-21T02:44:00-05:00",
     "designer": "2026-08-20T03:04:00-05:00",
     "code-planner": "2026-08-20T03:18:00-05:00",
     "coder": "2026-08-20T03:42:00-05:00",

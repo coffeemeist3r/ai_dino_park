@@ -7555,3 +7555,12 @@ nothing new was seeded there; the art queue was down to one, so **BACKLOG-494 (r
 — a derelict grid per landmark, because a fallen cairn currently reads as fog at 45% alpha. Suggested
 next-up: **BACKLOG-420, caught again** — the keeper has been getting the same two reactions to catching
 a dino mid-ritual since cycle 89, on the first catch and the fifth. Idea Box: empty.
+
+## Cycle 136 — structure-smith
+
+**BACKLOG-488, hands on the derelict.** Queue drained (3 open, top unblocked, dependencies all shipped).
+Every economy in this park is performed by a body except one: `runUpkeep` patches a ruin on the day tick
+with nobody near it. This makes it a job — a resident walks to the fallen landmark and the patch resolves
+on arrival. The 24-minute day is what makes it watchable, and the CHARTER v7 corollary is what makes it
+honest: `upkeep.ts` currently documents its own dormancy on a fresh save as a virtue, so the founding park
+ships a **fallen cairn in the Grove** and the stone to raise it, in this cycle rather than behind it.
