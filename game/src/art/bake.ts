@@ -292,6 +292,17 @@ export function hasPropArt(name: string): boolean {
  * cells skipped), then `generateTexture` once. Idempotent; returns the texture key, or null if the
  * prop has no rig (WorldScene then keeps the emoji text fallback). Mirrors bakeDialogFrame.
  */
+/**
+ * The baked ruin variant of a prop, or null where none is drawn (BACKLOG-494).
+ *
+ * Keyed by convention (`<name>_derelict`) rather than by a second registry, so drawing the remaining ruins
+ * is a rig plus a `PROP_RIGS` line and nothing else. A landmark whose ruin is undrawn returns null and the
+ * caller keeps 480's alpha fade — the graceful fallback, exactly as an undrawn species keeps its rectangle.
+ */
+export function bakeRuinArt(scene: Phaser.Scene, name: string): string | null {
+  return bakePropArt(scene, `${name}_derelict`);
+}
+
 export function bakePropArt(scene: Phaser.Scene, name: string): string | null {
   const rig = PROP_RIGS[name];
   if (!rig) return null;

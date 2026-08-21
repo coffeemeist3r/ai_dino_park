@@ -7665,3 +7665,31 @@ Build clean, unit **1888/1888**, e2e **548 pass** — the four reds are three ca
 The dev server could not be started in this unattended run, so both reachability claims rest on Playwright
 driving the production paths rather than on a hand-played session — noted rather than glossed.
 
+## Cycle 136-art — the ruin gets a silhouette
+
+Drew the **toppled cairn** and the **caved lean-to** — the first two of BACKLOG-494's four ruin rigs, seeded
+by the Lore-smith this same cycle and worth drawing immediately, because the structure track made a fallen
+cairn in the Grove the first structure any new player ever walks up to.
+
+Disrepair has been drawn since cycle 128 by turning a landmark's own sprite down to 45% opacity. That was
+honest while nothing was drawn, and it reads as *a cairn in fog*. The first draft of the ruin made the
+opposite mistake and had to be thrown out: a cairn with its top course removed is not a ruin, it is **a
+smaller cairn**. What actually says *this came down* is loose material lying on the ground **beside** the
+thing, out at the ground line where nobody stacked it — so the shipped rig is a squat surviving stub with
+two stones fallen off, one to each side, lying flat. The unit test pins that reading rather than trusting
+it: the ruin must occupy columns the standing rig never uses, and it must start lower down. The lean-to is
+the same sentence in wood — the back post snapped short, the roof slumped nearly flat, a dark gap punched
+through the middle where it caved.
+
+Both keep their intact twin's exact palette, asserted per-character. A ruin is the same stone and the same
+wood as the thing that fell; making it greyer would have been drawing *sad* instead of drawing *broken*.
+
+Keyed by convention (`<name>_derelict`), so `bakeRuinArt` finds one without a second registry and the
+remaining two are a rig plus a line. **Deliberately 2 of 4** — the thatch and the granary keep the alpha
+fade, and the e2e asserts that fallback in both directions, so the graceful-degradation control stays live
+rather than becoming a thing the code claims about itself. 494 stays open, annotated, the 490 precedent.
+
+Build clean, unit **194 files / 1910 tests** green (the prop-registry test at `cycle-066-propart` gained the
+two new keys — that test exists precisely to make a silent registry addition impossible), e2e green for the
+new spec and its neighbours.
+

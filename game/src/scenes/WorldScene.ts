@@ -17,7 +17,7 @@ import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
-import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt, hasTileArt } from '../art/bake';
+import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
 import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, type GameTime } from '../world/clock';
@@ -1563,6 +1563,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__eggIsArt = () => {
       const first = this.eggSprites.values().next();
       return !first.done && first.value instanceof Phaser.GameObjects.Image;
+    };
+    // BACKLOG-494: which texture the first cairn is actually wearing, and at what opacity — so a spec can
+    // prove disrepair swaps to the *ruin* rig at full alpha rather than fading the standing one.
+    (window as any).__cairnArt = () => {
+      const sp = this.cairnSprites[0] as Phaser.GameObjects.Image | undefined;
+      if (!sp || !(sp instanceof Phaser.GameObjects.Image)) return null;
+      return { texture: sp.texture.key, alpha: sp.alpha };
     };
   }
 
@@ -5542,17 +5549,26 @@ export class WorldScene extends Phaser.Scene {
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
-    const showLandmarks = (sprites: Phaser.GameObjects.GameObject[], recs: Landmark[]) =>
+    // BACKLOG-494: a landmark whose ruin has been drawn swaps to it and keeps full opacity — disrepair
+    // reads as a *fallen thing* rather than the same thing in fog. One whose ruin is undrawn keeps 480's
+    // alpha fade, the graceful fallback, exactly as an undrawn species keeps its rectangle.
+    const showLandmarks = (sprites: Phaser.GameObjects.GameObject[], recs: Landmark[], prop: string) =>
       sprites.forEach((sp, i) => {
         const rec = recs[i];
         const s = sp as Phaser.GameObjects.Text;
         s.setVisible(rec?.zone === this.zoneId);
-        s.setAlpha(rec?.derelict ? DERELICT_ALPHA : 1);
+        const drawnRuin = !!rec?.derelict && hasPropArt(`${prop}_derelict`);
+        const img = sp as Phaser.GameObjects.Image;
+        if (typeof img.setTexture === 'function' && hasPropArt(prop)) {
+          const key = drawnRuin ? bakeRuinArt(this, prop) : bakePropArt(this, prop);
+          if (key) img.setTexture(key);
+        }
+        s.setAlpha(rec?.derelict && !drawnRuin ? DERELICT_ALPHA : 1);
       });
-    showLandmarks(this.cairnSprites, this.cairns);
-    showLandmarks(this.shelterSprites, this.shelters); // BACKLOG-315
-    showLandmarks(this.thatchSprites, this.thatches); // BACKLOG-417
-    showLandmarks(this.granarySprites, this.granaries); // BACKLOG-454
+    showLandmarks(this.cairnSprites, this.cairns, 'cairn');
+    showLandmarks(this.shelterSprites, this.shelters, 'shelter'); // BACKLOG-315
+    showLandmarks(this.thatchSprites, this.thatches, 'thatch'); // BACKLOG-417
+    showLandmarks(this.granarySprites, this.granaries, 'granary'); // BACKLOG-454
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
   }

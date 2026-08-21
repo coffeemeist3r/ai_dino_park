@@ -499,6 +499,81 @@ const EGG_RIG: PropRig = {
   },
 };
 
+// ── Ruins (BACKLOG-494) — the derelict twin of a landmark rig ─────────────────────────────────
+// 480 drew disrepair by turning a landmark's own sprite down to DERELICT_ALPHA, which was the honest
+// placeholder while nothing was drawn and reads as *fog* rather than *ruin* — a cairn at 45% looks like a
+// cairn in mist, not a cairn that fell over. With 488 shipping a founding ruin in the Grove, this is the
+// first structure a new player ever walks up to, so it gets a silhouette of its own.
+//
+// The rule both rigs follow: **a ruin is not the same shape, shorter.** A cairn missing its top course
+// just reads as a smaller cairn. What says "this fell" is the loose material lying on the ground *beside*
+// the thing, at the ground line, where nobody stacked it. Palettes are the intact rigs' own — a ruin is
+// the same stone and the same wood, not a greyer version of them.
+
+// Toppled cairn 🗿 — a squat surviving stub with two stones fallen off, one to each side, lying flat.
+const CAIRN_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '....oooooooo....',
+  '....ohhssddo....',
+  'ooo.ohsssddo.ooo',
+  'oso.oooooooo.oso',
+  '................',
+];
+
+const CAIRN_RUIN_RIG: PropRig = {
+  size: 16,
+  grid: CAIRN_RUIN_GRID,
+  palette: {
+    o: 0x2e2e33, // the cairn's own outline
+    s: 0x7d7d86, // stone body
+    h: 0xa9a9b2, // lit face
+    d: 0x55555c, // shadowed face
+  },
+};
+
+// Caved lean-to 🛖 — the back post snapped off short, the roof slumped to the ground, and a dark gap
+// through the middle where it came in. Built of the same branches, so it keeps the branch tones.
+const SHELTER_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '..p.............',
+  '..p.............',
+  '..p......ooo....',
+  '..po....oLLwo...',
+  '..po...owwwwwo..',
+  '.oooo.owwwwwwwo.',
+  'owwwwoowwkkwwwwo',
+  'owwwwwwwkkwwwwwo',
+  'oooooooooooooooo',
+];
+
+const SHELTER_RUIN_RIG: PropRig = {
+  size: 16,
+  grid: SHELTER_RUIN_GRID,
+  palette: {
+    o: 0x3a2410, // the branch/lean-to outline
+    w: 0x8a5a2b, // wood body
+    L: 0xb98a4e, // what is left of the lit upper slope
+    p: 0x5e3a18, // the snapped back post
+    k: 0x2c1d0e, // the gap it caved through
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -515,6 +590,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   food_fish: FISH_RIG, // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
   food_berries: BERRIES_RIG, // BACKLOG-490
   egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
+  // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
+  cairn_derelict: CAIRN_RUIN_RIG,
+  shelter_derelict: SHELTER_RUIN_RIG,
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

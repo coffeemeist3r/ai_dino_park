@@ -6,6 +6,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
     expect(Object.keys(PROP_RIGS).sort()).toEqual([
       'branch',
       'cairn',
+      'cairn_derelict', // BACKLOG-494
       'crop_ripe',
       'crop_ripe_greens', // BACKLOG-418: the grove's greens crop, stashed ahead of the drawPlotSprite wiring
       'crop_ripe_roots', // BACKLOG-432: the Fernreach's roots crop
@@ -17,6 +18,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'shelter',
+      'shelter_derelict', // BACKLOG-494
       'stone',
       'thatch',
     ]);
