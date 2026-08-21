@@ -26,8 +26,18 @@ const setClock = (p: Page, d: number, h: number, m: number) =>
   p.evaluate(({ d, h, m }) => (window as W).__setClock(d, h, m), { d, h, m });
 const advanceWall = (p: Page, ms: number) => p.evaluate((x) => (window as W).__advanceWall(x), ms);
 
-const HALF_DAY_MS = 720 * 60_000; // 12 in-game hours at 1× — under the clock's catch-up cap, so roll a
-                                  // day in two steps (a full day at once jumps via set() and fires no onHour)
+/**
+ * Wall ms that advances the in-game clock by `mins` in-game minutes, **at whatever rate the clock is
+ * actually running**. BACKLOG-493 made the default 60×, and every constant below used to be raw wall ms
+ * computed against 1× — at 60× the same numbers advance sixty times as far, sail past the clock's
+ * per-update catch-up cap, and jump via `set()` without firing a single `onHour`. Expressing the intent
+ * ("twelve in-game hours") instead of the wall time is what makes these cases rate-proof.
+ */
+const wallMsFor = async (p: Page, mins: number) =>
+  (mins * 60_000) / (await p.evaluate(() => (window as W).__clockScale() as number));
+
+/** 12 in-game hours — under the clock's catch-up cap, so a day rolls in two steps. */
+const HALF_DAY_MINUTES = 720;
 const hungryLines = (log: string[]) => log.filter((e) => e.includes('woke hungry'));
 
 test('the dino that went to bed hungry wakes differently — and the sated one does not (BACKLOG-376)', async ({ page }) => {
@@ -76,13 +86,13 @@ test('the beat fires at most once per in-game day, and a fresh day re-arms it (B
   await setNeed(page, 'Rex', 0.7);
 
   await setClock(page, 5, 6, 59);
-  await advanceWall(page, 120_000); // day 5 dawn
+  await advanceWall(page, await wallMsFor(page, 2)); // day 5 dawn
   expect(hungryLines(await events(page))).toHaveLength(1);
 
-  await advanceWall(page, HALF_DAY_MS); // → 19:01 same day: no dawn, no re-fire
+  await advanceWall(page, await wallMsFor(page, HALF_DAY_MINUTES)); // → 19:01 same day: no re-fire
   expect(hungryLines(await events(page))).toHaveLength(1);
 
-  await advanceWall(page, HALF_DAY_MS); // → 07:01 next day: day 6's dawn
+  await advanceWall(page, await wallMsFor(page, HALF_DAY_MINUTES)); // → 07:01 next day: day 6's dawn
   expect(hungryLines(await events(page))).toHaveLength(2);
 });
 

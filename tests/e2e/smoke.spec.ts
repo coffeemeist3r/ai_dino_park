@@ -22,12 +22,9 @@ test('canvas responds to arrow key press', async ({ page }) => {
 
 test('world clock ticks in real time', async ({ page }) => {
   await boot(page);
-  // Default is 1× realtime (a full day = 24 real hours), too slow to observe in a
-  // test, so switch to the 60× watching rate (T) where ~1 in-game minute passes
-  // per real second. Time is wall-clock-derived, so a throttled game loop still
-  // catches up whenever the pump fires — poll rather than bet on a fixed window.
-  await page.locator('canvas').focus();
-  await page.keyboard.press('KeyT');
+  // BACKLOG-493: 60× is now the default watching rate (~1 in-game minute per real second), so no key press
+  // is needed to observe the clock move. Time is wall-clock-derived, so a throttled game loop still catches
+  // up whenever the pump fires — poll rather than bet on a fixed window.
   await page.waitForFunction(
     () => {
       const w = window as Record<string, unknown>;

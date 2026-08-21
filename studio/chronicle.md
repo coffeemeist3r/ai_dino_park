@@ -7514,3 +7514,34 @@ silently. `E2E_WORKERS=4` for CI or an unattended box.
 Build clean, unit 190 files / all green, e2e 539/541 — the two reds are `cycle-047-warmth` (passes isolated,
 catalogued parallel-load flake) and `mobile-minds` long-dialog (BACKLOG-430, reproduced on a stashed clean
 HEAD earlier tonight, not from this diff).
+
+## Operator pass — the clock runs at two rates
+
+The operator's ruling closed the question the last pass could not: *"for clock if that's the case clock needs
+to run slower when game not active."* That is the whole design, and it turns a blocked item into a shipped one.
+
+The problem with simply making the day 24 minutes was never the foreground — it was the background. At 60x a
+week away is **420 in-game days**, which empties every store to its spoilage floor, runs every landmark to
+derelict, and makes the homecoming digest meaningless. So the world now runs at `ACTIVE_SCALE` (60x) while
+somebody is watching and drops to `AWAY_SCALE` the moment the tab is hidden, and the offline catch-up reads
+`AWAY_SCALE` rather than whatever rate the save was being watched at.
+
+**`AWAY_SCALE` is 1, and that is the load-bearing decision.** It is the rate the entire away path was written
+and tuned against — `MAX_AWAY_DAYS = 7` means seven *real* days — so nothing about being away changes meaning
+at all. Only watching got faster. The proof came for free: `cycle-114-away-spoilage` and `cycle-029-away`, two
+of the specs the previous measurement listed as blockers, **passed unchanged.**
+
+The `T` toggle now keeps the player's chosen watching rate in `activeScale` instead of reading the live clock,
+because a hidden tab would otherwise silently reset someone who had picked the slow fishbowl; the save carries
+that choice, and returning to the foreground restores it.
+
+The spec fallout was the interesting part. `cycle-045-chorus` and `cycle-104-wake-hungry` both hardcoded wall
+milliseconds computed against 1x — `HALF_DAY_MS = 720 * 60_000`, with a comment saying "at 1x" — so at the new
+default they advanced *thirty in-game days*, blew past the clock's per-update catch-up cap, and fired no
+`onHour` at all, which is why they read as "the once-a-day gate broke". They now say what they mean
+(`wallMsFor(page, mins)`) and are proof against any future rate change. That is the same lesson as the
+stargazing zone bug one pass earlier: **an assumption that was only ever true by accident, written down
+nowhere, and load-bearing the moment a founding constant moves.**
+
+Full suite green: build clean, unit 190/190 files, e2e **541/541** — `mobile-minds`' long-dialog spec
+(BACKLOG-430) included, at 2 workers.

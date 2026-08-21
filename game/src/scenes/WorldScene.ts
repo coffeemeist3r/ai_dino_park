@@ -20,7 +20,7 @@ import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
-import { getWorldClock, cooldownReady, type GameTime } from '../world/clock';
+import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
@@ -4846,6 +4846,7 @@ export class WorldScene extends Phaser.Scene {
   private setupGovernor(): void {
     document.addEventListener('visibilitychange', () => {
       this.tabHidden = document.hidden;
+      this.applyClockRate(); // BACKLOG-493: a hidden tab's world runs at real time, not at watching speed
     });
     const nav = navigator as unknown as {
       getBattery?: () => Promise<{ level: number; addEventListener(ev: string, fn: () => void): void }>;
@@ -6693,10 +6694,28 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Cycle the realtime multiplier: 1× (24 real-hour day) ⇄ 60× (active watching). */
+  /**
+   * The rate the player has chosen for *watching* (BACKLOG-493). Distinct from the clock's live scale,
+   * which drops to `AWAY_SCALE` whenever the tab is hidden: without somewhere to keep the choice, coming
+   * back to the tab would silently reset a player who had picked the slow fishbowl. This is what the save
+   * carries, and what a return to the foreground restores.
+   */
+  private activeScale = ACTIVE_SCALE;
+
   private toggleScale(): void {
     const clock = getWorldClock();
-    clock.setScale(clock.getScale() === 1 ? 60 : 1);
+    this.activeScale = this.activeScale === AWAY_SCALE ? ACTIVE_SCALE : AWAY_SCALE;
+    if (!this.tabHidden) clock.setScale(this.activeScale);
     this.clockHud.setText(this.fmtClock(clock.now()));
+  }
+
+  /**
+   * The world runs fast while somebody is watching and at real time when nobody is (BACKLOG-493, operator
+   * ruling). `setScale` re-anchors without jumping the displayed time, so crossing this boundary is
+   * seamless in both directions — the clock simply starts accruing at the other rate.
+   */
+  private applyClockRate(): void {
+    getWorldClock().setScale(this.tabHidden ? AWAY_SCALE : this.activeScale);
   }
 
   private setupClock(): void {
@@ -6828,7 +6847,7 @@ export class WorldScene extends Phaser.Scene {
       eggs: this.eggs,
       born: this.born,
       savedAt: Date.now(),
-      scale: getWorldClock().getScale(),
+      scale: this.activeScale, // BACKLOG-493: the chosen watching rate, not a hidden tab's AWAY_SCALE
     };
   }
 
@@ -6855,9 +6874,16 @@ export class WorldScene extends Phaser.Scene {
       // Resume at the saved rate, then fast-forward the world over the real gap
       // since the save (BACKLOG-106). clock.set re-anchors at now, so the live
       // pump counts forward from the post-catch-up moment — no double-advance.
-      if (save.scale) clock.setScale(save.scale);
+      // BACKLOG-493: a save carries the player's chosen *watching* rate. Restore it as the active choice
+      // and then let `applyClockRate` decide what the clock actually runs at right now — a save loaded into
+      // a backgrounded tab must not start ticking at watching speed.
+      if (save.scale) this.activeScale = save.scale;
+      this.applyClockRate();
       const away = fastForward(
-        { time: save.time, savedAt: save.savedAt, scale: save.scale, bonds: save.bonds, memory: save.memory },
+        // BACKLOG-493: `AWAY_SCALE`, not `save.scale`. The saved scale is the rate the player was *watching*
+        // at; an unattended world runs at real time. Passing 60 here would turn a week away into 420 in-game
+        // days — every store at its spoilage floor, every landmark derelict, the digest meaningless.
+        { time: save.time, savedAt: save.savedAt, scale: AWAY_SCALE, bonds: save.bonds, memory: save.memory },
         Date.now(),
       );
       clock.set(away.time);
@@ -6990,7 +7016,7 @@ export class WorldScene extends Phaser.Scene {
     // current scale (savedAt 0 so elapsed === realMs, deterministic), apply + return the result.
     (window as any).__catchUp = (realMs: number) => {
       const away = fastForward(
-        { time: clock.now(), savedAt: 0, scale: clock.getScale(), bonds: this.bonds, memory: this.memory },
+        { time: clock.now(), savedAt: 0, scale: AWAY_SCALE, bonds: this.bonds, memory: this.memory },
         realMs,
       );
       clock.set(away.time);

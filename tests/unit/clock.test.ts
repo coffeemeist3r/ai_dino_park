@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { WorldClock, resetClockForTest, type GameTime } from '../../game/src/world/clock';
+import { ACTIVE_SCALE, AWAY_SCALE, WorldClock, resetClockForTest, type GameTime } from '../../game/src/world/clock';
+import { awayMinutes } from '../../game/src/world/away';
 
 beforeEach(() => {
   resetClockForTest();
@@ -68,12 +69,10 @@ describe('WorldClock — wall-clock anchored', () => {
     return { clock, ref };
   }
 
-  it('still defaults to 1× — a 24-real-hour in-game day (see BACKLOG-493)', () => {
+  it('defaults to ACTIVE_SCALE — a 24-minute in-game day while somebody is watching (BACKLOG-493)', () => {
     const { clock } = fakeClock();
-    // This number is why most day-boundary behaviour in the park is unreachable in a normal session, and
-    // changing it is queued as BACKLOG-493 rather than done here: at 60× roughly ten specs that encode
-    // day-boundary timing go red, and the offline catch-up and spoilage math genuinely change meaning.
-    expect(clock.getScale()).toBe(1);
+    expect(clock.getScale()).toBe(ACTIVE_SCALE);
+    expect(ACTIVE_SCALE).toBe(60);
   });
 
   it('at 1× advances 1 in-game minute per 60s of real time', () => {
@@ -144,5 +143,28 @@ describe('WorldClock — wall-clock anchored', () => {
     clock.setScale(60);
     clock.tick();
     expect(clock.now()).toEqual({ day: 1, hour: 8, minute: 1 });
+  });
+});
+
+describe('the world runs at two rates (BACKLOG-493 — operator ruling)', () => {
+  it('is fast in the foreground and real-time when nobody is watching', () => {
+    expect(ACTIVE_SCALE).toBe(60); // a 24-minute in-game day: day-boundary beats are watchable
+    expect(AWAY_SCALE).toBe(1); //  ...and an unattended world ages one in-game day per real day
+    expect(ACTIVE_SCALE).toBeGreaterThan(AWAY_SCALE);
+  });
+
+  it('keeps AWAY_SCALE at exactly 1, which is what stops "a while away" changing meaning', () => {
+    // The whole away path — the 7-day cap, the spoilage bleed, the drift-per-day, the digest's wording —
+    // was written and tuned against real time. This assertion exists so that stays deliberate: raising
+    // AWAY_SCALE silently redefines every one of them at once.
+    expect(AWAY_SCALE).toBe(1);
+  });
+
+  it('a week away is seven in-game days, not four hundred and twenty', () => {
+    const WEEK_MS = 7 * 24 * 60 * 60_000;
+    const minutesAtAway = awayMinutes(0, AWAY_SCALE, WEEK_MS);
+    expect(minutesAtAway / (24 * 60)).toBe(7);
+    // The bug this design avoids: catching up at the *watching* rate.
+    expect(awayMinutes(0, ACTIVE_SCALE, WEEK_MS) / (24 * 60)).toBe(420);
   });
 });

@@ -36,6 +36,19 @@ interface SceneTimer {
 
 const MINUTES_PER_DAY = 24 * 60;
 const MS_PER_REAL_MINUTE = 60_000;
+
+/**
+ * The two rates the world runs at (BACKLOG-493).
+ *
+ * `ACTIVE_SCALE` — somebody is watching: a 24-minute in-game day, so day-boundary beats are things a player
+ * can actually sit and see rather than facts about a save file.
+ *
+ * `AWAY_SCALE` — nobody is: real time, one in-game day per real day. Everything the park does to an
+ * unattended world (spoilage 455, upkeep 480, the away digest 106) was written and tuned against this rate,
+ * and keeping it at 1 is what lets the foreground speed up without redefining what "a while away" means.
+ */
+export const ACTIVE_SCALE = 60;
+export const AWAY_SCALE = 1;
 /**
  * Cap on per-`update()` catch-up. A gap larger than this (a long-backgrounded
  * tab) jumps the clock to the target instead of firing thousands of per-minute
@@ -76,19 +89,24 @@ export class WorldClock {
   private _hourListeners: TimeListener[] = [];
 
   /**
-   * Realtime multiplier. **1× is still the default; raising it is BACKLOG-493** (CHARTER v7's reachability
-   * bar names it the largest unreachable surface left in the park).
+   * Realtime multiplier. **`ACTIVE_SCALE` (60×) is the default as of BACKLOG-493** — a 24-minute in-game
+   * day while somebody is actually watching.
    *
-   * At 1× an in-game day is 24 real hours, and that single number is what puts most of this park out of
+   * At 1× an in-game day cost 24 real hours, and that single number is what put most of this park out of
    * reach: the council's term (484), upkeep and disrepair (480), spoilage (455), crop growth, the dawn beat
-   * and the once-a-day discontent gate all fire on the day boundary, so a normal session never crosses one.
-   * `T` toggles to 60× (a 24-minute day) and the save carries the choice.
+   * and the once-a-day discontent gate all fire on the day boundary, so a normal session never crossed one.
    *
-   * Measured 2026-08-20: flipping this default to 60 turns ~10 day-boundary specs red and changes what the
-   * offline catch-up (`away.ts`) and multi-day spoilage math mean. That is real work, not a constant edit,
-   * which is why it is BACKLOG-493 and not this line.
+   * **The rate is not one number, it is two** (operator ruling, 2026-08-20). A fast clock is only wanted
+   * while somebody is watching: at 60× a week away would be 420 in-game days, which empties every store to
+   * its spoilage floor, runs every landmark to derelict and reduces the homecoming digest to noise. So the
+   * world runs at `ACTIVE_SCALE` in the foreground and drops to `AWAY_SCALE` the moment the tab is hidden,
+   * and the offline catch-up reads `AWAY_SCALE` rather than whatever the save was watching at.
+   *
+   * `AWAY_SCALE` is deliberately **1** — the rate the whole away path was built and tuned against
+   * (`MAX_AWAY_DAYS = 7` is seven *real* days), so nothing about being away changes meaning. Only watching
+   * got faster.
    */
-  private _scale = 1;
+  private _scale = ACTIVE_SCALE;
   private _nowSource: () => number = () => Date.now();
   private _anchorEpochMs = 0;
   private _anchorAbsMin = 0;
