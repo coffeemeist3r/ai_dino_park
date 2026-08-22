@@ -7732,3 +7732,12 @@ header: 485's bill already overrides the labour call wherever a landmark is down
 could only fire where its result is discarded. Scoping found the larger hole — a fresh save seats
 **no council on any ground** — so 492 ships with founding banked tallies giving the Grove a one-seat
 council whose holder sits 0.022 above the pantry threshold.
+
+## Cycle 137 — code-planner
+
+Two files of new pure logic (`world/ballot.ts`, four exports on `world/tic.ts`), one founding
+constant, and the `WorldScene` wiring for both. Flagged the likely cost up front: seeding founding
+banked tallies gives the Grove a council at boot, and every spec that has been quietly relying on
+"nobody has banked" — an empty council, an unset lens glyph, a null Grove policy — will go red. That
+is BACKLOG-495's population number three, and the repair is `__clearFounding()` called out loud, not
+a weakened assert.
