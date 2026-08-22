@@ -7709,3 +7709,13 @@ queue at 218 open (cap 12) — no new social items. Art queue at 2 (cap 3) — s
 worn-ground rig per tic kind, so the ritual marks the ground the way it will now mark a bond. Idea Box
 empty. Suggested next-up **BACKLOG-422**, scoped wider than its seed: graded by register, capped per
 stretch *and* per lifetime, persisted.
+
+## Cycle 137 — structure-smith
+
+Picked **BACKLOG-492** — the milestone's headline: every council seat votes a hard threshold on one
+name-seeded axis, so a ground's politics are the arithmetic of birth-numbers and no event in the park
+can turn a ballot. Queue was at 3 (under X=4), so one item was seeded first: **BACKLOG-497**, the
+governance constants and their founding-reachability claim in one documented seam. Flagged the v7
+problem the item's own text walks into — a fresh save seats **no council on any ground**, because
+nobody has banked — so 492 ships with the founding tallies that let the Grove hold a vote, or it
+ships dormant.

@@ -2,7 +2,7 @@
   "cycle": 137,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-492: a vote that answers to a history (+ a founding park that seats a council)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-22T03:05:00-05:00",
-    "structure-smith": "2026-08-21T02:44:00-05:00",
+    "structure-smith": "2026-08-22T03:20:00-05:00",
     "designer": "2026-08-21T03:05:00-05:00",
     "code-planner": "2026-08-21T03:20:00-05:00",
     "coder": "2026-08-21T03:55:00-05:00",
