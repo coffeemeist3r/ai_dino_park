@@ -7700,3 +7700,12 @@ BACKLOG-493 shipped in cycle 135's operator pass and its section had nothing ope
 "cycle 135 operator block" moved to the archive. The working backlog carries **0 closed bullets** and 218
 open items, of which 4 are on the Structure Track (488 closed, 495 filed) — at cap X=4 for the first time
 in several cycles, so the next Structure-smith drains rather than invents.
+
+## Cycle 137 — lore-smith
+
+Theme: **the catch leaves a mark.** 420 gave being found mid-ritual a register that climbs and then
+discarded it at the end of the sentence; 422 is the item that makes the climb *cost* something. Social
+queue at 218 open (cap 12) — no new social items. Art queue at 2 (cap 3) — seeded **BACKLOG-496**, a
+worn-ground rig per tic kind, so the ritual marks the ground the way it will now mark a bond. Idea Box
+empty. Suggested next-up **BACKLOG-422**, scoped wider than its seed: graded by register, capped per
+stretch *and* per lifetime, persisted.
