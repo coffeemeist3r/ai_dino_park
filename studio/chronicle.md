@@ -7719,3 +7719,16 @@ governance constants and their founding-reachability claim in one documented sea
 problem the item's own text walks into — a fresh save seats **no council on any ground**, because
 nobody has banked — so 492 ships with the founding tallies that let the Grove hold a vote, or it
 ships dormant.
+
+## Cycle 137 — designer
+
+Two specs. **422** prices 420's climb: being found warms a bond by the register the catch reached
+(0/2/3/4), capped at exactly one full climb per solitary stretch and four climbs per lifetime, the
+lifetime half persisted so a reload cannot re-buy the affection. **492** shades each council seat's
+ballot by what that seat has lived — its hunger, its banked share, whether its ground has held mouths
+short — as a bounded nudge across the threshold, never a replacement for the temperament. The
+derelict term the item asked for is deliberately dropped and the reason written into the module
+header: 485's bill already overrides the labour call wherever a landmark is down, so that weight
+could only fire where its result is discarded. Scoping found the larger hole — a fresh save seats
+**no council on any ground** — so 492 ships with founding banked tallies giving the Grove a one-seat
+council whose holder sits 0.022 above the pantry threshold.
