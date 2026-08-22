@@ -467,6 +467,79 @@ const BERRIES_RIG: PropRig = {
   },
 };
 
+// ── Hunk of meat 🍖 — a joint with the bone knuckle out one end; the bold dino's favourite ────────────
+//
+// The first draft was a red oval with a pale stripe laid across it, and at sixteen pixels that is a chilli.
+// What says *meat* is the **knuckle**: a bone with two lobes at its head, sticking out of the mass at an
+// angle nothing grows at. The marbling does the rest of the work — a solid red field reads as fruit, and
+// this park already has a red fruit sixty pixels away in the same hatch.
+const MEAT_GRID: ReadonlyArray<string> = [
+  '................',
+  '...bb...........',
+  '..bBBb..........',
+  '..bBBb..........',
+  '...bBb..........',
+  '...oBbo.........',
+  '..orrmrro.......',
+  '.orrrrrmrro.....',
+  '.orrmrrrrrro....',
+  '.ormrrrrrrrro...',
+  '.orrrrrmrrrro...',
+  '..orrrrrrrrro...',
+  '...orrrrrrro....',
+  '....ooooooo.....',
+  '................',
+  '................',
+];
+
+const MEAT_RIG: PropRig = {
+  size: 16,
+  grid: MEAT_GRID,
+  palette: {
+    o: 0x4a1a14, // dark outline (never pure black)
+    r: 0xa8342c, // muscle
+    m: 0xd9756a, // fat marbling — the thing that stops it reading as a berry
+    b: 0x6b5a3a, // bone outline
+    B: 0xe8dfc0, // bone
+  },
+};
+
+// ── Leafy greens 🌿 — three broad leaves, tied. The warm dino's favourite ─────────────────────────────
+//
+// A bundle rather than a plant, and the **twine** is the whole distinction: this park already draws a
+// fern (419) and a ripe greens crop (418), both of them things growing out of the ground. What the hatch
+// drops is cut and bound, and one band of cord at the stem says so at any size.
+const GREENS_GRID: ReadonlyArray<string> = [
+  '................',
+  '.....oo.oo......',
+  '....oGGoGGo.....',
+  '...oGGGoGGGo....',
+  '..oGgGGoGGgGo...',
+  '..oGgGGoGGgGo...',
+  '.oGGgGGoGGgGGo..',
+  '.oGGgGGoGGgGGo..',
+  '..oGGgGoGgGGo...',
+  '...oGGGoGGGo....',
+  '....oGGGGGo.....',
+  '....otttto......',
+  '.....osso.......',
+  '.....osso.......',
+  '......oo........',
+  '................',
+];
+
+const GREENS_RIG: PropRig = {
+  size: 16,
+  grid: GREENS_GRID,
+  palette: {
+    o: 0x1e3a1c, // dark outline
+    G: 0x4f8c3a, // leaf body
+    g: 0x84c05a, // lit vein
+    t: 0xb08a4a, // the twine tie — cut and bound, not growing
+    s: 0x3d6b2c, // cut stem
+  },
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -589,6 +662,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   granary: GRANARY_RIG, // BACKLOG-454: the food-cap-lifting granary — a domed plaster storehouse
   food_fish: FISH_RIG, // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
   food_berries: BERRIES_RIG, // BACKLOG-490
+  food_meat: MEAT_RIG, // BACKLOG-490 (cycle 137) — the two the hatch drops most
+  food_greens: GREENS_RIG, // BACKLOG-490 (cycle 137)
   egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,

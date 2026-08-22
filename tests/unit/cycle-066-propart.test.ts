@@ -15,6 +15,8 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'egg', // BACKLOG-491: the egg by the den
       'food_berries', // BACKLOG-490
       'food_fish', // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
+      'food_greens', // BACKLOG-490 (cycle 137)
+      'food_meat', // BACKLOG-490 (cycle 137)
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'shelter',

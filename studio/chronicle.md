@@ -7853,3 +7853,35 @@ assumption, and the strongest argument yet for **BACKLOG-495**.
 Build clean, unit **1924/1924**, e2e **561 pass / 1 fail** — the long-dialog spec, which is BACKLOG-430
 and red on a clean HEAD. QA's own gap is filed rather than buried: the new save field has no
 round-trip spec, which is **BACKLOG-498**. Both tracks APPROVED. Milestone 15 is at four of six arcs.
+
+## Cycle 137-art — the hatch stops typing
+
+Drew the **hunk of meat** and the **leafy greens** — 3 and 4 of BACKLOG-490's seven, and the two ids at
+the top of the `FOODS` table. Fish and berries got pixels in cycle 135; meat and greens are the two the
+founding cast's favourites actually resolve to most often, and they were still font glyphs falling
+through the same hatch.
+
+Both first drafts were plausible pictures of the wrong thing, and in both cases the fix was one
+distinguishing feature rather than more detail.
+
+**The meat.** A red oval with a pale stripe laid across it is, at sixteen pixels, a chilli. What says
+*meat* is the **knuckle** — a bone with two lobes at its head, sticking out of the mass at an angle
+nothing grows at — and the **marbling** through the muscle, because a solid red field reads as fruit
+and this park drops a red fruit through the very same hatch. The unit test pins both readings rather
+than trusting them: the bone must begin above the first muscle row (a bone through the middle is a
+stripe), and the fat must span more than one row (one streak is a highlight).
+
+**The greens.** This park already draws a fern and a ripe greens crop, and both of them are things
+growing out of the ground. What the keeper drops is *cut and bound* — so the **twine** at the stem is
+the whole distinction, and the test asserts the order a bundle has: cord below every leaf, above a cut
+stem.
+
+Both keyed `food_<id>` on cycle 135's convention, so **no wiring changed at all** — two registry lines,
+and `dropFood` finds them. Still deliberately 3 short: roots, mushrooms and seeds keep their emoji, and
+the e2e exercises that fallback in both directions on every run, so the graceful-degradation control
+stays live rather than becoming a claim the code makes about itself. The unit test fails the day the
+roster completes, so 490 gets closed rather than quietly forgotten.
+
+Build clean, unit **1937 tests** green (the prop-registry test at `cycle-066-propart` gained the two
+new keys — that test exists to make a silent registry addition impossible), e2e green for the new spec
+and its cycle-135 neighbour.
