@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The seat has a term (BACKLOG-484) — the council (479) stops being re-derived on every read. It is held
@@ -45,6 +45,7 @@ test('a park that has held no term reads live — boot is exactly the pre-484 pa
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   expect((await seating(page)).seats).toBeNull(); // no term held yet
   expect(Object.values(await councils(page)).every((s) => s.length === 0)).toBe(true);
@@ -61,6 +62,7 @@ test('the seats hold through the term — a mid-term banker does not take a seat
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, here } = await seatThree(page);
   const seated = here.slice(0, 3);
@@ -83,6 +85,7 @@ test('the term moves them, once, and names the ground', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, here } = await seatThree(page);
   await term(page);
@@ -106,6 +109,7 @@ test('the term moves them, once, and names the ground', async ({ page }) => {
 
 test('the held seating survives a reload, and the seats do not silently re-derive', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, here } = await seatThree(page);
   await term(page);
@@ -113,6 +117,7 @@ test('the held seating survives a reload, and the seats do not silently re-deriv
   await page.evaluate(() => (window as W).__saveNow());
 
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
   const after = await seating(page);
   expect(after.seats![zone]).toEqual(seated);
   expect((await councils(page))[zone]).toEqual(seated);

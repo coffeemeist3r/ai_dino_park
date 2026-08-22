@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * More than one voice on the call (BACKLOG-479). A ground's council is derived from the same banked-food
@@ -18,6 +18,7 @@ test('a fresh park seats nobody anywhere; banking food seats a voice', async ({ 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   // The inertness criterion: nothing about this feature is live on a new save.
   const fresh = await councils(page);
@@ -43,6 +44,7 @@ test('a fresh park seats nobody anywhere; banking food seats a voice', async ({ 
 
 test('the provider is always the first voice seated', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const roster = await page.evaluate(() =>
     ((window as W).__dinoPositions() as { name: string }[]).map((d) => d.name),

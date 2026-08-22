@@ -137,7 +137,8 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_PILES } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_PILES, FOUNDING_BANKED } from '../world/founding';
+import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
   providerPriority,
@@ -163,7 +164,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -425,6 +426,12 @@ export class WorldScene extends Phaser.Scene {
    *  register leaves at most one memory. Both transient, cleared by `resetTic` with the rest of the stretch. */
   private ticCaughtFiled = new Set<string>();
   private ticCatches: Record<string, number> = {};
+  /** BACKLOG-422: affinity earned from being found — `stretch` is per solitary stretch (transient, cleared
+   *  by `resetTic` with the rest of the stretch state) and `total` is the **lifetime** ceiling, persisted so a
+   *  reload cannot re-buy the same affection. The 409 `ticsFormed` shape: a per-stretch flag beside a
+   *  lifetime fact, and the difference between them is the whole point of there being two. */
+  private ticWarmthStretch: Record<string, number> = {};
+  private catchWarmthTotal: Record<string, number> = {};
   /** BACKLOG-416: who has already filed its "not the only one" note this solitary stretch. `ticCaughtFiled`'s
    *  twin in every respect — per-stretch, not persisted, cleared by `resetTic`. */
   private kinFiled = new Set<string>();
@@ -671,6 +678,22 @@ export class WorldScene extends Phaser.Scene {
    *  lingering exactly like `spendPriorityByZone`. Absent → no policy → today's behaviour at both hooks. */
   private workPriorityByZone: Record<string, WorkPriority> = {};
   /**
+   * What a seat has lived on the ground it sits for (BACKLOG-492). All three reads already existed — this
+   * only gathers them, so no new state and no new save field. `stake` is against the ground's *residents'*
+   * banked total rather than the pile, because a ballot is about what this dino put in relative to its
+   * neighbours and not about how full the pantry happens to be — and it is measured against an even split,
+   * so the ordinary sole-banker ground reads 0 rather than handing that dino a free maximum nudge.
+   */
+  private seatExperience(name: string, zone: string): SeatExperience {
+    const here = this.dinos.filter((d) => zoneOf(this.dinoZones, d.name, BOWL_ID) === zone);
+    const bankedHere = here.reduce((n, d) => n + (this.foodBanked[d.name] ?? 0), 0);
+    return {
+      hunger: this.needs[name]?.hunger ?? 0,
+      heldShort: (this.shortsByZone[zone] ?? 0) > 0,
+      stake: bankedHere > 0 && here.length > 0 ? (this.foodBanked[name] ?? 0) / bankedHere - 1 / here.length : 0,
+    };
+  }
+  /**
    * A zone's spend priority (BACKLOG-463): if it has a standing provider, the priority that provider
    * sets from its temperament (stored so it persists + reads legibly); else the last provider's lingering
    * policy, or null if the zone has never had a provider — null → today's behaviour (both hooks inert).
@@ -684,8 +707,14 @@ export class WorldScene extends Phaser.Scene {
     // exactly as that one dino did alone and a shipping park is bit-identical. The provider only breaks a tie.
     const council = this.councilFor(zone);
     if (council.length) {
-      const votes = council.map((n) => providerPriority(this.dinoByName(n)?.traits));
-      const tieBreak = provider ? providerPriority(this.dinoByName(provider)?.traits) : null;
+      // BACKLOG-492: each seat votes its temperament *shaded by what it has lived on this ground* — a bounded
+      // nudge across the threshold, never a replacement for the trait. The tie-break is read lived too: the
+      // provider is a seat, and a tie-break that ignored its history would be the one ballot in the room that
+      // answers to nothing.
+      const votes = council.map((n) => votedSpend(this.dinoByName(n)?.traits, this.seatExperience(n, zone)));
+      const tieBreak = provider
+        ? votedSpend(this.dinoByName(provider)?.traits, this.seatExperience(provider, zone))
+        : null;
       const decided = councilSpendPriority(votes, tieBreak);
       if (decided) {
         this.spendPriorityByZone[zone] = decided;
@@ -693,6 +722,9 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     if (provider) {
+      // BACKLOG-492 leaves this branch **unlived**, on purpose: a ground with no seats falls through to 463's
+      // monarchy, the same dino reading the same trait the same way it always did. It is the live control
+      // sitting beside the branch that changed — the 481 precedent, one layer along.
       const p = providerPriority(this.dinoByName(provider)?.traits);
       this.spendPriorityByZone[zone] = p;
       return p;
@@ -717,8 +749,12 @@ export class WorldScene extends Phaser.Scene {
     // below untouched, which is what keeps a young park bit-identical to its pre-481 self.
     const council = this.councilFor(zone);
     if (council.length) {
-      const votes = council.map((n) => providerWorkPriority(this.dinoByName(n)?.traits));
-      const tieBreak = provider ? providerWorkPriority(this.dinoByName(provider)?.traits) : null;
+      // BACKLOG-492: the labour ballot, shaded the same way — a hungry seat wants backs on the gathering, the
+      // seat that filled the pile wants the pile to become something.
+      const votes = council.map((n) => votedWork(this.dinoByName(n)?.traits, this.seatExperience(n, zone)));
+      const tieBreak = provider
+        ? votedWork(this.dinoByName(provider)?.traits, this.seatExperience(provider, zone))
+        : null;
       const decided = councilWorkPriority(votes, tieBreak);
       if (decided) {
         this.workPriorityByZone[zone] = decided;
@@ -726,6 +762,7 @@ export class WorldScene extends Phaser.Scene {
       }
     }
     if (provider) {
+      // Unlived, for the reason recorded on `spendPriorityFor`'s twin branch: this is the control.
       const p = providerWorkPriority(this.dinoByName(provider)?.traits);
       this.workPriorityByZone[zone] = p;
       return p;
@@ -1313,6 +1350,11 @@ export class WorldScene extends Phaser.Scene {
     // per-pair watch tally, and one deterministic pass of the watch scan — the `__noticeTraces` precedent, so
     // the spec and the game drive the same path rather than the spec driving a second one.
     (window as any).__ticCatches = (name: string) => this.ticCatches[name] ?? 0; // BACKLOG-420
+    // BACKLOG-422: the warmth ledgers — the per-stretch budget and the persisted lifetime ceiling.
+    (window as any).__catchWarmth = (name: string) => ({
+      stretch: this.ticWarmthStretch[name] ?? 0,
+      life: this.catchWarmthTotal[name] ?? 0,
+    });
     // BACKLOG-420: end a solitary stretch the way company or a need does, so a spec can prove the register
     // starts warm again rather than inferring it. Drives production's own `resetTic`, not a second path.
     (window as any).__resetTic = (name: string) => {
@@ -1429,6 +1471,19 @@ export class WorldScene extends Phaser.Scene {
         this.cairnSprites.splice(i, 1).forEach((sp) => sp.destroy());
       }
       for (const zone of Object.keys(FOUNDING_PILES)) this.stockpileByZone[zone] = {};
+      // BACKLOG-492/495: the founding council goes with the founding ruin. A spec that asks for the pre-v7
+      // fixture means *all* of it — an empty council, an unset lens glyph, a null Grove policy — and letting
+      // the bank ledger survive here would leave the same unnamed assumption this hook exists to name.
+      for (const name of Object.keys(FOUNDING_BANKED)) delete this.foodBanked[name];
+      // ...and the calls those tallies produced. `spendPriorityFor`/`decideWork` **store** every answer they
+      // derive and fall back to the stored one when a ground seats nobody (the 463 lingering-policy rule), so
+      // dropping the ledger alone would leave the Grove reading a policy it can no longer have voted for —
+      // a ground that "has never decided anything" with a decision in it. Clearing the memo is what makes
+      // this hook actually restore the pre-v7 park rather than approximately restore it.
+      this.spendPriorityByZone = {};
+      this.workPriorityByZone = {};
+      this.lastSpendCallByZone = {};
+      this.lastWorkCallByZone = {};
       this.mend = null;
       this.applyObjectVisibility();
       return this.cairns.length;
@@ -1729,6 +1784,10 @@ export class WorldScene extends Phaser.Scene {
     for (const [zone, pile] of Object.entries(FOUNDING_PILES)) {
       this.stockpileByZone[zone] = { ...pile, ...(this.stockpileByZone[zone] ?? {}) };
     }
+    // BACKLOG-492: and a bank ledger, so the Grove seats a council from the first frame. Without this the
+    // whole of governance — two votes, a term, a turnover beat, two lens glyphs — is unreachable on a fresh
+    // save, because `zoneCouncil` seats bankers and nobody has banked. `??=` so a restored tally always wins.
+    for (const [name, units] of Object.entries(FOUNDING_BANKED)) this.foodBanked[name] ??= units;
     this.applyObjectVisibility(); // the 480 alpha pass — the ruin reads as disrepair from the first frame
   }
 
@@ -3459,12 +3518,15 @@ export class WorldScene extends Phaser.Scene {
       const provider = this.providerFor(z);
       return {
         seats,
-        votes: seats.map((n) => providerWorkPriority(this.dinoByName(n)?.traits)),
-        tieBreak: provider ? providerWorkPriority(this.dinoByName(provider)?.traits) : null,
+        // BACKLOG-492: the *lived* ballots, because this hook's whole promise is the production path.
+        votes: seats.map((n) => votedWork(this.dinoByName(n)?.traits, this.seatExperience(n, z))),
+        tieBreak: provider ? votedWork(this.dinoByName(provider)?.traits, this.seatExperience(provider, z)) : null,
         call: this.workPriorityFor(z),
         // BACKLOG-487: the pantry call at the same seats, read through the same production path.
-        spendVotes: seats.map((n) => providerPriority(this.dinoByName(n)?.traits)),
-        spendTieBreak: provider ? providerPriority(this.dinoByName(provider)?.traits) : null,
+        spendVotes: seats.map((n) => votedSpend(this.dinoByName(n)?.traits, this.seatExperience(n, z))),
+        spendTieBreak: provider
+          ? votedSpend(this.dinoByName(provider)?.traits, this.seatExperience(provider, z))
+          : null,
         spendCall: this.spendPriorityFor(z),
       };
     };
@@ -3876,6 +3938,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-408/420: the stretch ended — a later one can be caught (+ remembered) afresh, and its
     // register starts back at pleased rather than leaving the dino permanently sardonic.
     delete this.ticCatches[name];
+    delete this.ticWarmthStretch[name]; // BACKLOG-422: ...and the stretch's warmth budget refills. The lifetime tally is deliberately untouched.
     for (const key of [...this.ticCaughtFiled]) if (key.startsWith(`${name}:`)) this.ticCaughtFiled.delete(key);
     this.kinFiled.delete(name); // BACKLOG-416: ...and a later stretch can find company across the way afresh
     if (this.caughtTic === name) this.caughtTic = null;
@@ -6296,6 +6359,29 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, target.name, caughtRegisterMemory(register, label));
       this.ticCaughtFiled.add(filedKey);
     }
+    // BACKLOG-422: the register is the price. Granted after the memory filing so both read the same register,
+    // and inside the `caught` guard so an ordinary greet is untouched. Note the ordering above: `fond` was
+    // read from `this.friendship` *before* this — a grant can never retroactively change the register of the
+    // catch that earned it. The register is decided by the bond you walked up with.
+    if (caught) {
+      const gain = catchWarmth(
+        register,
+        this.ticWarmthStretch[target.name] ?? 0,
+        this.catchWarmthTotal[target.name] ?? 0,
+      );
+      if (gain > 0) {
+        const firstPaid = (this.ticWarmthStretch[target.name] ?? 0) === 0;
+        this.ticWarmthStretch[target.name] = (this.ticWarmthStretch[target.name] ?? 0) + gain;
+        this.catchWarmthTotal[target.name] = (this.catchWarmthTotal[target.name] ?? 0) + gain;
+        this.friendship = bumpPoints(this.friendship, target.name, gain);
+        // One beat per stretch, on the first catch that actually pays. The first draft gated this on a
+        // whole-heart crossing, which was wrong for a reason worth recording: the greet path applies its own
+        // tone gain (142) in the same call, so whether the *warmth* crossed a heart depends on a number this
+        // beat has nothing to do with — the line would fire or not fire for reasons the player cannot see.
+        // A stretch is the unit the whole feature is denominated in; it is the unit the beat reports in too.
+        if (firstPaid) this.logEvent(catchWarmedLine(target.name));
+      }
+    }
     this.caughtTic = null;
     const line = `${replyPrefix(reply.source)}${target.name}: ${text}`;
     this.dialog.show(line);
@@ -7006,6 +7092,7 @@ export class WorldScene extends Phaser.Scene {
       tenure: this.tenure, // BACKLOG-341: per-dino home-zone tenure (settling persists across a reload)
       gathered: this.gathered,
       foodBanked: this.foodBanked, // BACKLOG-448: who's been filling the pantries (additive)
+      catchWarmth: this.catchWarmthTotal, // BACKLOG-422: the lifetime being-found ceiling (additive)
       roots: this.roots, // BACKLOG-452: where each dino belongs (additive)
       needs: this.needs, // BACKLOG-371: hunger/thirst per dino
 
@@ -7102,6 +7189,7 @@ export class WorldScene extends Phaser.Scene {
       this.tenure = save.tenure ?? {}; // BACKLOG-341: home-zone tenure restore (absent → settle from scratch)
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.foodBanked = save.foodBanked ?? {}; // BACKLOG-448: banked-food tally restore (absent → {})
+      this.catchWarmthTotal = save.catchWarmth ?? {}; // BACKLOG-422: lifetime warmth restore (absent → {})
       this.roots = save.roots ?? {}; // BACKLOG-452: roots restore (absent → nobody can come home yet)
       // BACKLOG-371: needs restore (absent → {}); any spawned dino missing an entry backfills to sated.
       this.needs = save.needs ?? {};

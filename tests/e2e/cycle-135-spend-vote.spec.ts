@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The other call goes to the council (BACKLOG-487) — Milestone 14's last arc.
@@ -44,6 +44,7 @@ test('a fresh park has decided nothing — the whole feature is inert until some
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const seats = await councils(page);
   expect(Object.values(seats).every((s) => s.length === 0)).toBe(true);
@@ -77,6 +78,7 @@ test('the majority carries the pantry, over its own top banker', async ({ page }
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, seats } = await seatThree(page);
   await warmth(page, seats[0], 0.9); // the top banker — and the provider — would feed its own first
@@ -97,6 +99,7 @@ test('a council of one is still that one dino — the compatibility control', as
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   // One banker only: `zoneCouncil` seats it alone, and its comparator is byte-identical to `zoneProvider`'s,
   // so the seat and the say are the same dino and the answer must be exactly the pre-487 provider rule.
@@ -118,6 +121,7 @@ test('a flipped pantry call is announced once, in the legend’s own words', asy
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, seats } = await seatThree(page);
   for (const n of seats) await warmth(page, n, 0.9); // a unanimously feed-minded council
@@ -147,6 +151,7 @@ test('the labour call is untouched — 481 still decides its own half', async ({
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, seats } = await seatThree(page);
   // Warmth decides the pantry; energy decides the labour. Set them in opposition to prove the generic

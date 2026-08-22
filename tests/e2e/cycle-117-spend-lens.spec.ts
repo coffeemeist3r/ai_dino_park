@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The provider's read on the lens (BACKLOG-468) — each zone's spend policy (463) becomes a column on the
@@ -35,6 +35,7 @@ test('the zone map reads each ground\'s spend policy, and nothing before one is 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   // A young park has decided nothing anywhere — every box reads no policy.
   const before = await zoneMap(page);

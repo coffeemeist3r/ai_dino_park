@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The council actually decides (BACKLOG-481 / BACKLOG-031). 479 seated the deciders; this is the first
@@ -26,6 +26,7 @@ test('a fresh park holds no vote — the whole feature is inert until somebody b
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const seats = await councils(page);
   expect(Object.values(seats).every((s) => s.length === 0)).toBe(true);
@@ -64,6 +65,7 @@ test('the majority carries the ground, over its own top banker', async ({ page }
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, seats } = await seatThree(page);
   await energy(page, seats[0], 0.9); // the top banker — and the provider — wants the walls up
@@ -84,6 +86,7 @@ test('a flipped vote is announced once, in the legend’s own words', async ({ p
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const { zone, seats } = await seatThree(page);
   for (const n of seats) await energy(page, n, 0.1); // a unanimously gather-minded council

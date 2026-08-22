@@ -183,3 +183,37 @@ than to invented numbers.
 ## Blockers
 
 _(none — filled by the Coder if the build or a suite cannot be made green.)_
+
+---
+
+## Shipped (Coder, cycle 137)
+
+Both tracks landed. Two deviations from the plan, both found by the suite and both worth recording.
+
+**1. The warmth beat is once per stretch, not on a heart crossing.** The plan gated `catchWarmedLine` on
+the grant pushing the bond over a whole heart. In the running game that is not a fact about the warmth:
+the greet path applies its own tone gain (142) inside the same call, so whether *this* grant crossed a
+heart depends on a number the beat has nothing to do with — the line would fire or not fire for reasons
+invisible to the player. The gate is now "the first catch this stretch that actually pays". A stretch is
+the unit the whole feature is denominated in, so it is the unit the ticker reports in.
+
+**2. `SeatExperience.share` became `SeatExperience.stake`, measured against an even split.** The plan's
+absolute share (`own / ground total`) turned `cycle-121-work-priority` red, and the spec was right. The
+ordinary ground in this park has exactly **one** dino that has banked anything, whose absolute share is
+therefore `1.0` — the maximum possible nudge, for free, on every such ground forever. That is a constant
+wearing a history's clothes, which is the failure this item exists to fix. `stake` is now
+`own/total − 1/residents`: a dino pulling its weight shades nothing, and only carrying more (or less)
+than your share of the ground is news. It also tightens the founding beat from a −0.133 shift to −0.033,
+which is a better story — Pip's ballot turns on a sixth of a pile rather than on a landslide.
+
+**Founding-fixture fallout, as predicted.** Nine specs went red on "a fresh park seats nobody" — 107,
+117, 127, 129, 131, 132, 135 (seven specs newly calling `emptyGrounds()` out loud) plus 121, which
+already called it and still failed, because `__clearFounding` dropped the bank ledger but left the
+*stored* policies those tallies had already produced (`spendPriorityByZone`'s lingering-policy rule, 463).
+The hook now clears the memo too — which is what makes it actually restore the pre-v7 park rather than
+approximately restore it. BACKLOG-495's third population, and the third time the repair has been "name
+the fixture in the spec that depends on it."
+
+**Gates:** `npm run build` clean · `npx vitest run` **1924/1924** · `npx playwright test`
+**561 passed, 1 failed** — `mobile-minds.spec.ts` "long dialogs page GBA-style", which is BACKLOG-430
+and fails on a clean HEAD. No new red.

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * The provider role (BACKLOG-448) — the first emergent role read off the economy instead of the social
@@ -35,6 +35,7 @@ test('the resident that hauls the harvest away is credited, and becomes the prov
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   await onlyResident(page, 'Rex');
   expect(await foodBanked(page)).toEqual({});
@@ -56,6 +57,7 @@ test('the resident that hauls the harvest away is credited, and becomes the prov
 
 test('a full pantry banks nothing, so nobody is credited for hauling nothing', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
   await onlyResident(page, 'Rex');
 
   // FOOD_STOCKPILE_CAP = 6 berries: the bowl's store cannot take another.
@@ -68,6 +70,7 @@ test('a full pantry banks nothing, so nobody is credited for hauling nothing', a
 
 test('a courier that actually ferries a unit is credited too (447 → 448)', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   await page.evaluate(() => (window as W).__setZoneFoodPile('bowl', { berries: 3 }));
   await page.evaluate(() => (window as W).__setZoneFoodPile('grove', {}));

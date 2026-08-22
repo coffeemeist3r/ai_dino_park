@@ -299,6 +299,57 @@ export function caughtRegisterMemory(register: CaughtRegister, label: string): s
   }
 }
 
+/* ---------------------------------------------------------------------------------------------------
+ * Warmed by the catch (BACKLOG-422).
+ *
+ * 420 gave the interruption three readings that climb across one unbroken stretch of solitude — pleased,
+ * teasing, fondly resigned — and the climb changed exactly one thing: which string got printed. Close the
+ * dialog box and the park was bit-identical to a park where the keeper never walked over. The milestone's
+ * arc says being found is a conversation rather than a lookup, and a conversation that moves nothing is a
+ * lookup with better prose.
+ *
+ * So the **register is the price**. Being found warms the bond by however far the catch climbed, which makes
+ * 420's escalation the mechanism instead of the decoration.
+ *
+ * `bashful` is worth **zero**, and that is load-bearing rather than an oversight. 420's own rule: the unfond
+ * reading does not climb, *and that flatness is the tell that this dino likes you*. A dino that barely knows
+ * you gains nothing from being found however often you find it. This is the same sentence in a second
+ * register — do not "fix" it into a small positive number.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** What each reading of a catch is worth in affinity points. The 420 climb, priced. */
+export const CATCH_WARMTH: Record<CaughtRegister, number> = {
+  bashful: 0,
+  pleased: 2,
+  teasing: 3,
+  resigned: 4,
+};
+
+/** Exactly `2 + 3 + 4` — **one solitary stretch is worth exactly one full climb**. The fourth catch in a
+ *  stretch is also `resigned` and also nominally worth 4, and pays nothing: a player standing on a ticcing
+ *  dino mashing the greet key gets one climb's worth and then a great many nice sentences. */
+export const CATCH_WARMTH_PER_STRETCH = 9;
+
+/** Four full climbs, and **persisted**. The cycle-133 freshness-gate lesson applied to a bond: a warmth with
+ *  no lifetime ceiling is a farm, and a ceiling that lives only in memory is a farm with a reload button. */
+export const CATCH_WARMTH_LIFETIME = 36;
+
+/**
+ * What this catch actually grants, after both ceilings. One expression rather than two guards at the call
+ * site, so neither cap can be applied in one place and forgotten in another.
+ */
+export function catchWarmth(register: CaughtRegister, earnedThisStretch: number, earnedLifetime: number): number {
+  const stretchRoom = Math.max(0, CATCH_WARMTH_PER_STRETCH - earnedThisStretch);
+  const lifeRoom = Math.max(0, CATCH_WARMTH_LIFETIME - earnedLifetime);
+  return Math.max(0, Math.min(CATCH_WARMTH[register], stretchRoom, lifeRoom));
+}
+
+/** The beat, and only on a whole-heart crossing — the ticker reports what the player can see, and a heart is
+ *  what the player can see. The yellow heart is disjoint from the pink one the friendship bar draws. */
+export function catchWarmedLine(name: string): string {
+  return `\u{1F49B} ${name} warms to you a little, for being found`;
+}
+
 /**
  * A ritual for the missing friend (BACKLOG-414) — a real friend (pairwise bond ≥ this) whose departure
  * to another zone turns the tic into an ache. Below it, a crossing isn't a loss worth grieving. One

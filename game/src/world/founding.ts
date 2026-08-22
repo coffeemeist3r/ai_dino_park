@@ -36,3 +36,26 @@ export const FOUNDING_RUIN = { zone: GROVE_ID, tileX: 4, tileY: 10 } as const;
 export const FOUNDING_PILES: Record<string, Stockpile> = {
   [GROVE_ID]: { stone: 2 },
 };
+
+/**
+ * The founding council (CHARTER v7 / BACKLOG-492).
+ *
+ * Seven cycles of governance — two votes (481/487), a term (484), a turnover beat, a bill lean (485) and two
+ * lens glyphs (477) — and **not one of them was reachable on a fresh save**, for a reason nobody had written
+ * down: `zoneCouncil` seats a ground's food-bankers, the founding cast has banked nothing, so every ground
+ * reads "seats nobody" from boot until the ambient sim gets around to a harvest haul. That is `TILES_PER_HEAD`
+ * with a ballot box, and v7's corollary makes it a defect rather than a compatibility win.
+ *
+ * So the Grove starts with a bank ledger. Two residents means `councilSeats(2, 2) = 1` — **one seat and no
+ * tie to break**, the simplest live council the park can hold. Both sit under `PROVIDER_BANKS = 3`, so no
+ * provider exists to shadow the seat and the tie-break is `null`: the founding call is a genuine single
+ * ballot rather than a monarchy wearing a council's badge.
+ *
+ * And the seat is Pip, deliberately. Pip's name-seeded agreeableness is **0.522** — twenty-two thousandths
+ * over the pantry call's threshold — so its ballot is one a life can actually turn, in both directions,
+ * inside a session. A founding state that seats an unturnable council would have satisfied the letter of the
+ * reachability bar and none of it.
+ *
+ * Ordinary `foodBanked` entries, so this round-trips the existing additive save field with no version bump.
+ */
+export const FOUNDING_BANKED: Record<string, number> = { Pip: 2, Bramble: 1 };

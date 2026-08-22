@@ -116,6 +116,9 @@ export interface SaveData {
   /** BACKLOG-409: dino → the friend it caught its ritual off (407). Additive; absent → {} (an echo without a
    *  recorded source reads as "picked up from a friend"). */
   ticEchoFrom?: Record<string, string>;
+  /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
+   *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
+  catchWarmth?: Record<string, number>;
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
    *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
   leftDays?: Record<string, Record<string, number>>;

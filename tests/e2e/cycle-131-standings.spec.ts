@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
 
 /**
  * One place the standings are derived (BACKLOG-482). A behaviour-preserving fold: the same dinos hold the
@@ -26,6 +26,7 @@ test('a fresh park seats nobody and prints no standing line', async ({ page }) =
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   // Nothing has been banked and nothing has been crossed into, so the whole read is inert.
   expect(await standings(page)).toEqual([]);
@@ -40,6 +41,7 @@ test('banking seats a council, and every consumer reads the same seat', async ({
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
   const [first] = await roster(page);
   // Past PROVIDER_BANKS (3) so this exercises the provider standing as well as the council seat.

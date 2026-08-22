@@ -7741,3 +7741,20 @@ banked tallies gives the Grove a council at boot, and every spec that has been q
 "nobody has banked" — an empty council, an unset lens glyph, a null Grove policy — will go red. That
 is BACKLOG-495's population number three, and the repair is `__clearFounding()` called out loud, not
 a weakened assert.
+
+## Cycle 137 — coder
+
+Both tracks built. **422**: `CATCH_WARMTH` + two caps + `catchWarmth()` in `tic.ts`, the grant at the
+existing catch site, a transient per-stretch tally beside a persisted lifetime one, one additive save
+field. **492**: `world/ballot.ts`, `FOUNDING_BANKED`, and both vote sites shaded.
+
+Two deviations, both found by the suite. The warmth beat fires once per stretch rather than on a heart
+crossing — the greet path's own tone gain lands in the same call, so a heart-crossing gate would fire or
+stay silent for reasons the player cannot see. And the ballot's stake term is measured **against an even
+split**: the absolute read gave every sole banker — the ordinary ground in this park — the maximum nudge
+for free, which is a constant wearing a history's clothes. `cycle-121` caught it.
+
+Nine specs went red on "a fresh park seats nobody", exactly as flagged. Seven now call `emptyGrounds()`
+out loud; the eighth was already calling it and still failed, because `__clearFounding` dropped the bank
+ledger but left the stored policies those tallies had produced. Build clean, unit 1924/1924, e2e 561
+pass / 1 fail (BACKLOG-430, red on clean HEAD).
