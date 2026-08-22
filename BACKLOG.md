@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
-- [x] BACKLOG-492 [core] A vote nothing can change — every seat votes a hard threshold on one birth trait, so a council is unanimous by construction and no event in the park can ever turn one; give a seat something it has *lived* to vote on (full text in the cycle-135 block below).
 - [ ] BACKLOG-495 [infra] The fixture nobody names — two consecutive founding-constant moves turned 28 e2e specs red that were not about the founding state; give the suite a declared founding fixture (full text in the cycle-136 block below).
 - [ ] BACKLOG-497 [infra] The council nobody can convene — the three constants that decide whether a ground can hold a vote at all were calibrated against a five-dino bowl and no test says what population governance is meant to be observable at (full text in the cycle-137 block below).
 - [ ] BACKLOG-498 [infra] The save field nobody reloads — `catchWarmth` (422) ships with no round-trip spec, and it is the third additive field in a row to do so (full text in the cycle-137 block below).
@@ -677,7 +676,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
 - [ ] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
-- [x] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 
 ## Cycle 131 structure additions — after the fold (2026-08-15)
@@ -711,14 +709,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
 
 - [ ] BACKLOG-489 [core] The gate that was written for one door — cycle 133's finding, generalized. 485's first draft was correct in every hook and posted nothing, because 481's `checkCouncilCall` seeds silently on a ground's *first* recorded call — sound for a vote (an opening seating is not a turnover), fatal for a second source of the same event, and fatal **most reliably for the population that second source exists to cover**. Four freshness gates in this park now carry an implicit "…as decided by whatever was here first": the rumor freshness (222/233), the gratitude fade (251), one-visit-per-sorrow (226), the once-a-day discontent (471). Each will silence a later cause the day one is added. Give the pattern one shared seam — a gate that distinguishes *seeding* from *suppressing*, so a first record from a new source fires rather than seeds — port the four existing gates onto it, and leave a test per gate that adds a second cause and asserts it is heard. Nothing player-visible changes today; the point is that the next feature built on any of the four is not silently half-shipped. Builds on 485 / 481 / 471 / 251.
-
-## Cycle 135 structure additions — a vote nothing can change (2026-08-20)
-
-> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 487. It is the
-> fact 487 makes unavoidable: once *both* of a ground's calls are votes, the thing worth asking is what a
-> vote can possibly be about.
-
-- [x] BACKLOG-492 [core] A vote nothing can change — with 487 landed, a ground's two calls are both decided by its council, and **neither can ever turn over on anything that happens in the park**. Every seat votes `providerWorkPriority(traits)` (energy ≥ 0.5) or `providerPriority(traits)` (agreeableness ≥ 0.5): a hard threshold on a single **name-seeded** axis (010), fixed at the moment the dino was named and untouched by every ledger this park keeps. A ground can starve for a season, watch its granary go derelict, lose its provider and seat three new dinos, and its politics are exactly the arithmetic of five birth-numbers — 484's term is a calendar over a constant, and 485's bill has to *override* the vote precisely because it cannot *persuade* it. Give a seat something it has lived to vote on: shade each vote by that dino's own experience of the ground it sits for — its hunger (371), its banked share (448), whether it was one of the mouths the reserve held short (471), whether it stood in a zone whose landmark came down (480) — as a bounded nudge across the 0.5 line rather than a replacement for the trait, so a warm dino that has gone hungry under a banking council can vote to feed and a ground's election can finally be *about* something. The seat's temperament stays the floor, exactly the way 043/187's capped drift shades a trait without erasing it, and an unlived (fresh-save) council is bit-identical to today's. The first time in this park's life that a decision answers to a history. Builds on 487 / 481 / 471 / 448 / 043.
 
 ## Cycle 136 lore additions — the ruin gets a face (2026-08-21)
 

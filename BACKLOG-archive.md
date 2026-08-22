@@ -1,5 +1,49 @@
 # Backlog Archive — closed items
 
+## Closed cycle 137 — the ground changes its mind, and being found starts to count (2026-08-22)
+
+> Both tracks APPROVED. 492 closed Milestone 15's headline structure arc and, in the process, found that a
+> fresh save seated **no council on any ground** — seven cycles of governance unreachable from boot — so it
+> shipped the founding bank ledger that fixes it. 422 closed Milestone 15's first lore arc by giving 420's
+> three registers a price. The Structure Track's 492 pointer goes with the body text.
+
+> The **cycle-135 structure additions** section had no open items left once 492 closed, so the whole
+> section moves here with it:
+>
+> ## Cycle 135 structure additions — a vote nothing can change (2026-08-20)
+> 
+> > The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 487. It is the
+> > fact 487 makes unavoidable: once *both* of a ground's calls are votes, the thing worth asking is what a
+> > vote can possibly be about.
+
+- [x] BACKLOG-492 [core] A vote nothing can change — with 487 landed, a ground's two calls are both decided by its council, and **neither can ever turn over on anything that happens in the park**. Every seat votes `providerWorkPriority(traits)` (energy ≥ 0.5) or `providerPriority(traits)` (agreeableness ≥ 0.5): a hard threshold on a single **name-seeded** axis (010), fixed at the moment the dino was named and untouched by every ledger this park keeps. A ground can starve for a season, watch its granary go derelict, lose its provider and seat three new dinos, and its politics are exactly the arithmetic of five birth-numbers — 484's term is a calendar over a constant, and 485's bill has to *override* the vote precisely because it cannot *persuade* it. Give a seat something it has lived to vote on: shade each vote by that dino's own experience of the ground it sits for — its hunger (371), its banked share (448), whether it was one of the mouths the reserve held short (471), whether it stood in a zone whose landmark came down (480) — as a bounded nudge across the 0.5 line rather than a replacement for the trait, so a warm dino that has gone hungry under a banking council can vote to feed and a ground's election can finally be *about* something. The seat's temperament stays the floor, exactly the way 043/187's capped drift shades a trait without erasing it, and an unlived (fresh-save) council is bit-identical to today's. The first time in this park's life that a decision answers to a history. Builds on 487 / 481 / 471 / 448 / 043.
+  *(shipped: cycle 137. `world/ballot.ts` shades each seat's threshold read by what that seat has lived on
+  the ground it sits for — own hunger (371), stake in the pile (448), whether the reserve refused one of the
+  ground's mouths (471) — as a bounded ±`LIVED_NUDGE_CAP` nudge across the line. `votedSpend`/`votedWork`
+  **call** the existing threshold functions on shaded traits rather than restating `>= 0.5`, so every
+  463/473/481/487 spec stays green by construction, and an unlived seat is the pre-492 answer to the bit.
+  **Two departures from the text above, both recorded as findings.** The **derelict term was dropped**:
+  485's `calledWork` already overrides the labour call wherever a landmark is down, so that weight could
+  only ever fire where its result is guaranteed to be discarded. And the **banked-share term became a
+  `stake` measured against an even split** (`own/total − 1/residents`), because read absolutely the ordinary
+  ground here has one banker whose share is 1.0 — the maximum nudge, free, forever, which is a constant
+  wearing a history's clothes. And the promise of a bit-identical fresh save was **retired rather than
+  kept**: CHARTER v7 forbids it, and the reason it looked safe was that no ground seated a council at boot
+  at all. `FOUNDING_BANKED` gives the Grove a ledger — one seat, no tie, no provider to shadow it, and the
+  seat is Pip at agreeableness 0.522, chosen because a founding council that could not be turned would meet
+  the letter of the reachability bar and none of its point.)*
+
+- [x] BACKLOG-422 [social] Warmed by the catch — a dino caught *fond* (413) gains a small lasting affinity for having been seen and glad of it (a one-time bond nudge, first catch per stretch), so the moment leaves a trace beyond the line. Builds on 413 / 016.
+  *(shipped: cycle 137, scoped wider than this line. Not "a one-time nudge" but the **register as the
+  price** — pleased 2, teasing 3, resigned 4, `bashful` deliberately 0 because 420's flatness is the tell.
+  Two ceilings carry it: `CATCH_WARMTH_PER_STRETCH = 9` is exactly 2+3+4, so one stretch of solitude is
+  worth exactly one full climb and a fourth catch pays nothing; `CATCH_WARMTH_LIFETIME = 36` is four climbs
+  and lives in the save, because a warmth with no lifetime ceiling is a farm and a ceiling that lives only
+  in memory is a farm with a reload button. The ticker beat fires once per stretch rather than on a
+  whole-heart crossing — the greet path applies its own tone gain in the same call, so a heart-crossing
+  gate would fire for a quantity the beat has nothing to do with.)*
+
+
 ## Closed cycle 136 housekeeping — the operator block drains (2026-08-21)
 
 > BACKLOG-493 shipped in cycle 135's operator pass and its section had no open items left, so the whole

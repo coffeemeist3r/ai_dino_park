@@ -7885,3 +7885,16 @@ roster completes, so 490 gets closed rather than quietly forgotten.
 Build clean, unit **1937 tests** green (the prop-registry test at `cycle-066-propart` gained the two
 new keys — that test exists to make a silent registry addition impossible), e2e green for the new spec
 and its cycle-135 neighbour.
+
+## Cycle 137 — housekeeping
+
+422 and 492 moved to the archive with their shipped notes, and the **cycle-135 structure additions**
+section went with 492 — it had nothing open left. The working backlog carries **0 closed bullets** and
+**221 open** items, of which **4** are on the Structure Track (492 closed, 497 and 498 filed) — at cap
+X=4 again, so the next Structure-smith drains rather than invents. The art queue holds 3 (490 at 4 of
+7, 494 at 2 of 4, 496 fresh), which is its cap, so the next Lore-smith seeds no art.
+
+Final gates after housekeeping: build clean, unit **1937/1937**, e2e **563 pass / 2 fail** — the
+long-dialog spec (BACKLOG-430, red on clean HEAD) and `cycle-110-plenty`, which passed on an isolated
+re-run this fire and is one of the specs BACKLOG-430's notes already name as a parallel-load victim.
+Noted as flake, not regression.
