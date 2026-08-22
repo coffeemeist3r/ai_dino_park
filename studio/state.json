@@ -1,6 +1,6 @@
 {
   "cycle": 137,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-422: warmed by the catch",
   "structureItem": "BACKLOG-492: a vote that answers to a history (+ a founding park that seats a council)",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-08-22T03:35:00-05:00",
     "code-planner": "2026-08-22T03:50:00-05:00",
     "coder": "2026-08-22T04:35:00-05:00",
-    "qa": "2026-08-21T04:20:00-05:00",
+    "qa": "2026-08-22T04:50:00-05:00",
     "validator": "2026-08-21T04:35:00-05:00",
     "artist": "2026-08-21T04:55:00-05:00"
   }

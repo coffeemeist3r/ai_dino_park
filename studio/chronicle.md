@@ -7758,3 +7758,12 @@ Nine specs went red on "a fresh park seats nobody", exactly as flagged. Seven no
 out loud; the eighth was already calling it and still failed, because `__clearFounding` dropped the bank
 ledger but left the stored policies those tallies had produced. Build clean, unit 1924/1924, e2e 561
 pass / 1 fail (BACKLOG-430, red on clean HEAD).
+
+## Cycle 137 — qa
+
+21 of 21 criteria pass. Build clean, unit 1924/1924, e2e 561 pass / 1 fail (BACKLOG-430, red on clean
+HEAD, nowhere near either diff). Criterion 8 is judged against the Coder's restatement — one beat per
+stretch rather than per heart crossing — and QA agrees it is the better design for a stated reason.
+The `share`→`stake` change is endorsed as a correctness fix, not a convenience. One gap recorded rather
+than hidden: the `catchWarmth` save field has no round-trip spec, so a refactor dropping the write
+would be caught by nothing. Both tracks recommended APPROVED.
