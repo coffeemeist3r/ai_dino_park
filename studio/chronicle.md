@@ -7906,3 +7906,7 @@ Seeded nothing (social queue 214 ≥ 12, art queue 3 ≥ 3) and suggested **BACK
 ## Cycle 138 — structure-smith
 
 Drained (4 open ≥ X=4) and chose **BACKLOG-489** — the freshness gate learns the difference between seeding and suppressing. Read all four gates the item names and found only two of them exist in the shape it claims; scoped to those two, with the reachable half being 485's bill line, which today cannot fire on the one park that ships a founding ruin.
+
+## Cycle 138 — designer
+
+Specced **BACKLOG-421** (the ritual gets a *haunt* — a remembered tile per dino per ground that the ritual returns to and that drifts one tile a stretch; the filed premise that the anchor pins one tile is wrong, it is re-chosen arbitrarily every stretch, which is the same missing habit seen from the other side) and **BACKLOG-489** (a cause-keyed announce gate, scoped to the two sites that actually carry the defect). Found while reading the save: `catchWarmth` is written and never parsed, so 422's lifetime ceiling dies on reload — repaired in-cycle with the whole-shape round-trip spec 498 asked for.
