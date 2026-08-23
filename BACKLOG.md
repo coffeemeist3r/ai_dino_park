@@ -675,21 +675,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 
-## Cycle 131 structure additions — after the fold (2026-08-15)
-
-> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 482. One is the
-> item the cycle-130 validator explicitly declined to file under BACKLOG-430 ("a general fix is a Structure-Track
-> item somebody should seed, not a note somebody should read"); the other is the half of governance the vote
-> (481) did not reach.
-
-
-## Cycle 133 structure additions — after the bill (2026-08-17)
-
-> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 485. It is the
-> half of the upkeep economy 485 makes conspicuous: once a ground's *decision* answers its falling-down
-> skyline, the fact that nobody in the park ever lifts a finger to patch it starts to read as a hole.
-
-
 ## Mobile (deferred, do not pick until charter clears)
 
 - [ ] BACKLOG-100 [infra] Capacitor wrap — only after game is fun on desktop. Charter must clear.
@@ -699,12 +684,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
-
-## Cycle 134 structure additions — the gate that was written for one door (2026-08-18)
-
-> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
-> cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
-
 
 ## Cycle 136 lore additions — the ruin gets a face (2026-08-21)
 

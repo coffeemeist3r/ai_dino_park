@@ -8022,3 +8022,20 @@ is laid under a tic anchor in `WorldScene` yet. Stash-ahead under the cycle-91 r
 Build clean, unit **1978 passed / 2 skipped** (the two skips are the outline assertion, skipped by name with
 its reason recorded), e2e green for the new spec and both of its neighbours — the cycle-91 thatch stash and
 the cycle-137 food rigs, run together on purpose so the fallback controls are exercised beside the new one.
+
+## Cycle 138 — housekeeping
+
+421, 489 and 498 went to the archive with their shipped notes, and **three whole sections went with them** —
+the cycle-131, -133 and -134 structure-additions blocks, each of which held only items the Structure-smith
+had seeded when its queue dipped below cap, and every one of those has now shipped. Their blockquotes moved
+across rather than being deleted: the item text says what was built, and only the blockquote says why the
+queue was refilled that cycle.
+
+The working backlog carries **0 closed bullets** and **217 open** items, of which **2** are on the Structure
+Track (495 and 497) — **below the cap of X=4**, so the next Structure-smith brainstorms rather than drains.
+The art queue holds 3 (490 at 4 of 7, 494 at 2 of 4, 496 now at 2 of 3), which is its cap, so the next
+Lore-smith seeds no art.
+
+Final gates after housekeeping: build clean, unit **1978 passed / 2 skipped**, e2e **571 pass / 1 fail** —
+the long-dialog spec, BACKLOG-430, red on a clean HEAD. Every parallel-load victim from the earlier runs
+came back green.

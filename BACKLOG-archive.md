@@ -1,5 +1,29 @@
 # Backlog Archive — closed items
 
+## Closed cycle 138 housekeeping — three emptied seeding blocks (2026-08-23)
+
+> Each of these held exactly one or two items the Structure-smith brainstormed when its queue dipped below
+> cap; every one of them has now shipped. The blockquote is kept because it records *why* the queue was
+> refilled that cycle, which is the part the item text does not carry.
+
+## Cycle 131 structure additions — after the fold (2026-08-15)
+
+> The Structure Track sat at 3 open (below cap X=4), so two were brainstormed while picking 482. One is the
+> item the cycle-130 validator explicitly declined to file under BACKLOG-430 ("a general fix is a Structure-Track
+> item somebody should seed, not a note somebody should read"); the other is the half of governance the vote
+> (481) did not reach.
+
+## Cycle 133 structure additions — after the bill (2026-08-17)
+
+> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 485. It is the
+> half of the upkeep economy 485 makes conspicuous: once a ground's *decision* answers its falling-down
+> skyline, the fact that nobody in the park ever lifts a finger to patch it starts to read as a hole.
+
+## Cycle 134 structure additions — the gate that was written for one door (2026-08-18)
+
+> The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
+> cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
+
 ## Closed cycle 138 — the little path learns to wander, and the gate learns who is speaking (2026-08-23)
 
 - [x] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405. **SHIPPED cycle 138** — as a *haunt*, not as a slower pin. The filed premise was wrong: the anchor never pinned a tile, it was re-chosen from wherever the wander dropped the dino and thrown away by `resetTic`, so six stretches on one ground happened in six unrelated places. New `Haunt`/`Haunts` in `world/tic.ts` with `ticAnchorFor` / `driftHaunt` / `hauntSeed`: one worn tile per (dino, ground), returned to and nudged one tile per stretch, name-seeded so it never touches `world/rng.ts` and survives a reload. Beyond `HAUNT_RETURN_RANGE` (6) the old haunt is abandoned and a new one is laid underfoot — a habit you have wandered away from is a habit you have lost. Grief (414) still outranks it and deliberately leaves the haunt alone. `ticHaunts` additive save field; one-time memory + ticker beat at `HAUNT_DRIFT_NOTED` (4) drifts. +11 unit, +4 e2e.
