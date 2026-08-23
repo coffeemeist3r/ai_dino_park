@@ -2,7 +2,7 @@
   "cycle": 138,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-421: The ritual drifts \u2014 the tic anchor wanders across solitary stretches",
-  "structureItem": null,
+  "structureItem": "BACKLOG-489: The gate that was written for one door \u2014 one seam that tells seeding from suppressing",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-23T03:05:00-05:00",
-    "structure-smith": "2026-08-22T03:20:00-05:00",
+    "structure-smith": "2026-08-23T03:20:00-05:00",
     "designer": "2026-08-22T03:35:00-05:00",
     "code-planner": "2026-08-22T03:50:00-05:00",
     "coder": "2026-08-22T04:35:00-05:00",

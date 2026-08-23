@@ -7902,3 +7902,7 @@ Noted as flake, not regression.
 ## Cycle 138 — lore-smith
 
 Seeded nothing (social queue 214 ≥ 12, art queue 3 ≥ 3) and suggested **BACKLOG-421** — the tic anchor learns to wander, so the ritual reads as a habit rather than a loop, and 496's worn-ground art gets a path to mark instead of a smudge.
+
+## Cycle 138 — structure-smith
+
+Drained (4 open ≥ X=4) and chose **BACKLOG-489** — the freshness gate learns the difference between seeding and suppressing. Read all four gates the item names and found only two of them exist in the shape it claims; scoped to those two, with the reachable half being 485's bill line, which today cannot fire on the one park that ships a founding ruin.
