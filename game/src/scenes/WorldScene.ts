@@ -87,7 +87,7 @@ import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip,
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
-import { wanderStep, stepToward, pickNearest } from '../world/movement';
+import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
@@ -99,6 +99,7 @@ import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
+import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
@@ -164,7 +165,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, ticAnchorFor, hauntSeed, hauntWorthNoting, hauntDriftMemory, hauntDriftedLine, type Haunts, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -395,6 +396,15 @@ export class WorldScene extends Phaser.Scene {
   /** BACKLOG-414: the departed friend a dino is grieving this stretch (its tic aims at the edge they left by),
    *  or absent when the tic is a plain 405 in-place ritual. Transient, cleared by resetTic. */
   private ticGrief: Record<string, string | null> = {};
+  /**
+   * The ritual's haunt (BACKLOG-421) — dino → ground → the worn tile its tic returns to, and how far that
+   * tile has walked since it was first laid. **Not** cleared by `resetTic`, unlike `ticAnchor` beside it:
+   * the anchor is this stretch, the haunt is what the dino knows about the ground. Persisted, so a reloaded
+   * park keeps the path it wore. `hauntNoted` is the once-per-(dino, ground) guard on the drift beat — the
+   * lifetime shape `ticsFormed` uses, not the per-stretch shape `ticCaughtFiled` uses.
+   */
+  private ticHaunts: Haunts = {};
+  private hauntNoted = new Set<string>();
   /**
    * Traces of your pacing (BACKLOG-424). `worldSteps` is the monotonic ambient-step counter a trace is
    * stamped with (the same units 405's solitude threshold counts in). `paceTraces` holds one live mark per
@@ -770,14 +780,15 @@ export class WorldScene extends Phaser.Scene {
     return this.workPriorityByZone[zone] ?? null;
   }
   /**
-   * The ground's last announced call (BACKLOG-481). Deliberately **not persisted** — a live read of a live
-   * situation, the `shortsByZone` precedent. A reload starts it empty, and the first council step after a
-   * reload therefore *seeds* rather than announces (see `checkCouncilCall`'s first-seating guard).
+   * What each ground has last been heard to decide, and by whom (BACKLOG-481 / 487, re-seated on 489's gate).
+   * Keyed `<zone>:work` / `<zone>:spend` so the two votes cannot collide on one ground, then by cause — which
+   * is the whole of 489: a gate keyed by *place* alone cannot tell a ground that has never spoken from an
+   * authority that has never spoken, and silences the second one.
+   *
+   * Deliberately **not persisted** — a live read of a live situation, the `shortsByZone` precedent. A reload
+   * starts it empty, and the first council step after a reload therefore seeds rather than announces.
    */
-  private lastWorkCallByZone: Record<string, WorkPriority> = {};
-  /** The pantry twin (BACKLOG-487), and not persisted for the same reason: a live read of a live situation,
-   *  so a reload seeds rather than announces. */
-  private lastSpendCallByZone: Record<string, SpendPriority> = {};
+  private callLog: CauseLog<string> = {};
   /** BACKLOG-484: the held council seating and the in-game day its term began. `null` seats means no term
    *  has been held yet — every ground reads live, exactly the pre-484 park. Persisted additively. */
   private councilSeats: Record<string, string[]> | null = null;
@@ -803,18 +814,18 @@ export class WorldScene extends Phaser.Scene {
       const lean = billLean(this.derelictIn(z.id));
       if (seated || lean) {
         const call = this.workPriorityFor(z.id);
-        const seeding = this.lastWorkCallByZone[z.id] === undefined;
-        // The first *vote* a ground records is not a turnover, so it seeds silently (481). A ground turning to
-        // gathering because its own walls are down is news the first time regardless — most such grounds have
-        // never announced a call at all, having never seated a council, and swallowing it would mean the beat
-        // only ever fires for grounds that happen to have had a vote first. The cost is one line after a reload
-        // of a park left in disrepair, which is a true statement about that park.
-        if (call && this.lastWorkCallByZone[z.id] !== call) {
-          this.lastWorkCallByZone[z.id] = call;
-          // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
-          if (!seeding || lean === call) {
+        if (call) {
+          // Who decided it. The bill is a distinct authority from the council, and 489 exists because that
+          // distinction used to be invisible to the gate: a ground whose council had already called `gather`
+          // and *then* lost a landmark said nothing at all, because the value had not changed — even though
+          // the reason it now holds is that the walls are coming down, which is the part worth hearing.
+          const cause = lean === call ? BILL_CAUSE : COUNCIL_CAUSE;
+          const gate = recordCall(this.callLog, `${z.id}:work`, cause, call);
+          this.callLog = gate.log;
+          if (gate.announce) {
+            // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
             this.logEvent(
-              lean === call ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`,
+              cause === BILL_CAUSE ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`,
             );
           }
         }
@@ -824,10 +835,12 @@ export class WorldScene extends Phaser.Scene {
       // derelict landmark open this door would have 485's bill announcing a decision it does not touch.
       if (!seated) continue;
       const spend = this.spendPriorityFor(z.id);
-      if (!spend || this.lastSpendCallByZone[z.id] === spend) continue;
-      const seedingSpend = this.lastSpendCallByZone[z.id] === undefined;
-      this.lastSpendCallByZone[z.id] = spend;
-      if (seedingSpend) continue; // the first call a ground records is not a turnover — the 481 precedent
+      if (!spend) continue;
+      // The pantry has one authority today. It goes through the same gate anyway — that is the point of 489:
+      // the day a second cause is added here, it will be heard rather than swallowed as a first record.
+      const spendGate = recordCall(this.callLog, `${z.id}:spend`, COUNCIL_CAUSE, spend);
+      this.callLog = spendGate.log;
+      if (!spendGate.announce) continue;
       this.logEvent(`🗳️ the ${z.name}'s council calls it: ${spendCallMeaning(spend)}`);
     }
   }
@@ -1343,13 +1356,20 @@ export class WorldScene extends Phaser.Scene {
       this.soloSteps[name] = TIC_AFTER_STEPS;
       this.ticInvented.add(name);
       this.ticsFormed.add(name); // BACKLOG-409: the hook produces the same state performTic does
-      this.ticAnchor[name] ??= this.tileOf(d);
+      this.ticAnchor[name] ??= this.anchorForTic(d); // BACKLOG-421: the hook lays a haunt exactly as production does
       return true;
     };
     // BACKLOG-407: the ritual a dino has picked up off a friend (null when it still performs its own), the
     // per-pair watch tally, and one deterministic pass of the watch scan — the `__noticeTraces` precedent, so
     // the spec and the game drive the same path rather than the spec driving a second one.
     (window as any).__ticCatches = (name: string) => this.ticCatches[name] ?? 0; // BACKLOG-420
+    // BACKLOG-421: the haunt this dino keeps on the ground it is standing on, plus this stretch's anchor.
+    (window as any).__ticHaunt = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return null;
+      const zone = zoneOf(this.dinoZones, name, BOWL_ID);
+      return { zone, haunt: this.ticHaunts[name]?.[zone] ?? null, anchor: this.ticAnchor[name] ?? null };
+    };
     // BACKLOG-422: the warmth ledgers — the per-stretch budget and the persisted lifetime ceiling.
     (window as any).__catchWarmth = (name: string) => ({
       stretch: this.ticWarmthStretch[name] ?? 0,
@@ -1482,8 +1502,7 @@ export class WorldScene extends Phaser.Scene {
       // this hook actually restore the pre-v7 park rather than approximately restore it.
       this.spendPriorityByZone = {};
       this.workPriorityByZone = {};
-      this.lastSpendCallByZone = {};
-      this.lastWorkCallByZone = {};
+      this.callLog = {};
       this.mend = null;
       this.applyObjectVisibility();
       return this.cairns.length;
@@ -3968,6 +3987,39 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
+   * Where this stretch's ritual is performed (BACKLOG-421). One decision, one caller-visible effect.
+   *
+   * Grief (414) still outranks the habit and deliberately leaves `ticHaunts` alone: a dino pacing the edge
+   * its friend left by is not keeping a habit, and the habit has to still be there to come back to. Every
+   * other ritual goes through `ticAnchorFor`, which lays a haunt where the dino stands the first time and
+   * nudges it one tile every stretch after — so the little path migrates instead of being re-rolled.
+   */
+  private anchorForTic(d: Dino): Tile {
+    const cur = this.tileOf(d);
+    const grief = this.griefFor(d);
+    this.ticGrief[d.name] = grief?.friend ?? null;
+    if (grief) return griefAnchor(grief.edge, cur, COLS, ROWS);
+    const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const byZone = (this.ticHaunts[d.name] ??= {});
+    const { anchor, haunt } = ticAnchorFor({
+      haunt: byZone[zone],
+      at: cur,
+      seed: hauntSeed(d.name),
+      cols: COLS,
+      rows: ROWS,
+    });
+    byZone[zone] = haunt;
+    const key = `${d.name}:${zone}`;
+    if (hauntWorthNoting(haunt) && !this.hauntNoted.has(key)) {
+      this.hauntNoted.add(key);
+      const tic = this.ticFor(d);
+      this.memory = remember(this.memory, d.name, hauntDriftMemory(tic.label));
+      this.logEvent(hauntDriftedLine(d.name, tic.glyph));
+    }
+    return anchor;
+  }
+
+  /**
    * Perform the tic (BACKLOG-405): the first time a dino falls into its ritual this solitary stretch, float
    * the glyph, log it, and file the one-time memory (which the greeting/reflection path can later surface).
    * Afterward it re-floats the glyph every few steps so an ongoing ritual stays visible without spamming.
@@ -4452,11 +4504,7 @@ export class WorldScene extends Phaser.Scene {
       } else if (ticcing) {
         // BACKLOG-414: on the first ticcing step, if this dino's closest friend has crossed to another zone,
         // aim the ritual at the edge they left by (walked toward, below); else settle where the ritual began (405).
-        if (this.ticAnchor[d.name] === undefined) {
-          const grief = this.griefFor(d);
-          this.ticGrief[d.name] = grief?.friend ?? null;
-          this.ticAnchor[d.name] = grief ? griefAnchor(grief.edge, cur, COLS, ROWS) : cur;
-        }
+        if (this.ticAnchor[d.name] === undefined) this.ticAnchor[d.name] = this.anchorForTic(d);
         const anchor = this.ticAnchor[d.name];
         const tic = this.ticFor(d); // BACKLOG-407: a picked-up ritual if it has one, else its own
         this.ticPhase[d.name] = (this.ticPhase[d.name] ?? 0) + 1;
@@ -7093,6 +7141,7 @@ export class WorldScene extends Phaser.Scene {
       gathered: this.gathered,
       foodBanked: this.foodBanked, // BACKLOG-448: who's been filling the pantries (additive)
       catchWarmth: this.catchWarmthTotal, // BACKLOG-422: the lifetime being-found ceiling (additive)
+      ticHaunts: this.ticHaunts, // BACKLOG-421: the worn places each ritual returns to (additive)
       roots: this.roots, // BACKLOG-452: where each dino belongs (additive)
       needs: this.needs, // BACKLOG-371: hunger/thirst per dino
 
@@ -7190,6 +7239,7 @@ export class WorldScene extends Phaser.Scene {
       this.gathered = save.gathered ?? {}; // BACKLOG-146: gathered tally restore
       this.foodBanked = save.foodBanked ?? {}; // BACKLOG-448: banked-food tally restore (absent → {})
       this.catchWarmthTotal = save.catchWarmth ?? {}; // BACKLOG-422: lifetime warmth restore (absent → {})
+      this.ticHaunts = save.ticHaunts ?? {}; // BACKLOG-421: the haunts restore (absent → {}; every ritual a first)
       this.roots = save.roots ?? {}; // BACKLOG-452: roots restore (absent → nobody can come home yet)
       // BACKLOG-371: needs restore (absent → {}); any spawned dino missing an entry backfills to sated.
       this.needs = save.needs ?? {};

@@ -119,6 +119,9 @@ export interface SaveData {
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
+  /** BACKLOG-421: dino → zone → the worn tile that dino's ritual returns to on that ground, and how far the
+   *  path has drifted since it was laid. Additive; absent → {} (every ritual on that save is a first one). */
+  ticHaunts?: Record<string, Record<string, { tileX: number; tileY: number; drifts: number }>>;
   /** dino → zone → the in-game day it last crossed *out* of that ground (BACKLOG-362). Additive; absent →
    *  {} (no back-fill: a ground you have never been recorded leaving cannot yet be missed). */
   leftDays?: Record<string, Record<string, number>>;
@@ -533,6 +536,43 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // catchWarmth (BACKLOG-422) — the lifetime being-found ceiling. Additive, the foodBanked idiom.
+  //
+  // **This block is the repair, not the original.** 422 declared the field, wrote it, and never parsed it,
+  // so the ceiling that exists to stop being-found becoming farmable was reset by every reload — the exact
+  // failure BACKLOG-498 filed by name the same night. The whole-shape round-trip spec beside this file is
+  // the part that stops the next one.
+  let catchWarmth: Record<string, number> | undefined;
+  if (o.catchWarmth !== undefined) {
+    if (typeof o.catchWarmth !== 'object' || o.catchWarmth === null || Array.isArray(o.catchWarmth)) return null;
+    const entries = o.catchWarmth as Record<string, unknown>;
+    catchWarmth = {};
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      catchWarmth[k] = entries[k] as number;
+    }
+  }
+
+  // ticHaunts (BACKLOG-421) — dino→zone→{tileX,tileY,drifts}. The leftDays nesting with a tile leaf.
+  let ticHaunts: Record<string, Record<string, { tileX: number; tileY: number; drifts: number }>> | undefined;
+  if (o.ticHaunts !== undefined) {
+    if (typeof o.ticHaunts !== 'object' || o.ticHaunts === null || Array.isArray(o.ticHaunts)) return null;
+    const dinos = o.ticHaunts as Record<string, unknown>;
+    ticHaunts = {};
+    for (const n of Object.keys(dinos)) {
+      const zones = dinos[n];
+      if (typeof zones !== 'object' || zones === null || Array.isArray(zones)) return null;
+      const byZone: Record<string, { tileX: number; tileY: number; drifts: number }> = {};
+      for (const z of Object.keys(zones as Record<string, unknown>)) {
+        const h = (zones as Record<string, unknown>)[z] as Record<string, unknown> | null;
+        if (typeof h !== 'object' || h === null || Array.isArray(h)) return null;
+        if (!isNum(h.tileX) || !isNum(h.tileY) || !isNum(h.drifts)) return null;
+        byZone[z] = { tileX: h.tileX as number, tileY: h.tileY as number, drifts: h.drifts as number };
+      }
+      ticHaunts[n] = byZone;
+    }
+  }
+
   // cameFrom (BACKLOG-347) — dino→the ground it last crossed out of. String-valued object, the `pioneers`
   // guard below with dinos for keys; additive, absent → undefined, caller defaults to {}.
   let cameFrom: Record<string, string> | undefined;
@@ -816,6 +856,8 @@ export function deserialize(json: string): SaveData | null {
     ticsFormed,
     ticEchoFrom,
     leftDays,
+    catchWarmth,
+    ticHaunts,
     cameFrom,
     cairns,
     shelters,

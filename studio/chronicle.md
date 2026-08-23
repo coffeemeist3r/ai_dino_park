@@ -7914,3 +7914,7 @@ Specced **BACKLOG-421** (the ritual gets a *haunt* — a remembered tile per din
 ## Cycle 138 — codeplan
 
 Twelve files across the two tracks. The lore track lands first because both tracks touch `WorldScene` and `saveGame`. Two rules written down before a line of code: the haunt survives `resetTic` (or every stretch is a first stretch and the feature is inert), and the drift never draws from `world/rng.ts` (a habit that reshuffles on reload is not a habit).
+
+## Cycle 138 — coder
+
+Both tracks landed. The tic gained a haunt (`ticHaunts`, persisted, deliberately not cleared by `resetTic`) and the drift is drawn from the dino's own name rather than the world's shared dice. The two seed-silently call sites moved onto `world/gates.ts`, and 485's hand-rolled `!seeding || lean === call` is gone — its behaviour now falls out of the rules. The `catchWarmth` parse gap 498 predicted was real and is repaired, with a coverage spec that reads the interface itself and was checked by breaking it on purpose.

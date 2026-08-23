@@ -13,7 +13,7 @@
  * memory. Sibling in spirit to world/fidget.ts (the idle *glyph*); this is the idle *behavior*.
  */
 
-import { AXES, type Personality } from '../ai/personality';
+import { AXES, hashSeed, mulberry32, type Personality } from '../ai/personality';
 import { FOND_MIN } from '../ai/brain';
 import type { Tile } from './movement';
 import { ZONE_LINKS, type Edge } from './zones';
@@ -499,4 +499,118 @@ export function kinshipMemory(other: string): string {
 /** The ticker beat for the pairing. The new moon, because nothing happened — which is the beat. */
 export function kinshipLine(a: string, b: string): string {
   return `\u{1F311} ${a} and ${b} keep to their own rituals, in sight of each other`;
+}
+
+/* ---------------------------------------------------------------------------------------------------
+ * The ritual drifts (BACKLOG-421) — the tic gets a haunt.
+ *
+ * The item says the anchor "pins one tile". It does not, and the truth is the same failure seen from the
+ * other side: `WorldScene` sets the anchor to wherever the wander happened to drop the dino, and `resetTic`
+ * throws it away, so a dino that has taken up its ritual six times on one ground has performed it in six
+ * unrelated places. Neither a pin nor a wander is a *habit*. A habit is a place you keep coming back to,
+ * which moves a little each time you do.
+ *
+ * So the ritual gets a **haunt**: one remembered tile per (dino, ground), returned to and nudged one tile
+ * every stretch performed there. Two rules carry the whole design:
+ *
+ * - The haunt **survives `resetTic`**. `ticAnchor` is per-stretch state; the haunt is what the dino knows
+ *   about the ground. Clear it with the stretch and every stretch is a first stretch.
+ * - The drift **never draws from `world/rng.ts`**. That stream is global and the e2e seeds it; a habit that
+ *   reshuffles because some other dino rolled a wander step is not a habit. The direction comes from the
+ *   dino's own name and its own drift count, so a reloaded park keeps the path it wore.
+ *
+ * Grief (414) still outranks all of this and deliberately does **not** touch the haunt: a dino pacing the
+ * edge its friend left by is not keeping a habit, and the habit must be there to return to afterward.
+ * ------------------------------------------------------------------------------------------------- */
+
+/** A worn place: where a dino keeps its ritual on one ground, and how far the path has walked since it was laid. */
+export interface Haunt {
+  tileX: number;
+  tileY: number;
+  drifts: number;
+}
+
+/** dino → zone id → its haunt on that ground. Persisted (additive); absent → no haunts, every ritual a first. */
+export type Haunts = Record<string, Record<string, Haunt>>;
+
+/** How far a dino will walk back to its habit. Beyond this the old haunt is abandoned and the ground it is
+ *  standing on becomes the new one — a habit you have wandered away from is a habit you have lost.
+ *
+ *  ponytail: raising this makes the walk-back long enough that a dino can spend a whole stretch travelling
+ *  and never perform. If it ever needs to grow, give the walk-back its own step budget first. */
+export const HAUNT_RETURN_RANGE = 6;
+
+/** Drifts before the path has moved far enough to be worth remarking on — the beat that makes the drift
+ *  legible instead of merely true. */
+export const HAUNT_DRIFT_NOTED = 4;
+
+/** Tile distance in the units a grid walk actually costs (Chebyshev — a diagonal is one step). */
+export function hauntDistance(a: { tileX: number; tileY: number }, b: { tileX: number; tileY: number }): number {
+  return Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY));
+}
+
+/** The eight neighbours a haunt can drift into — `ticStep`'s `circle` ring, with the diagonals. */
+const DRIFT_RING: ReadonlyArray<readonly [number, number]> = [
+  [0, -1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+];
+
+/** The dino's own die for its own path — name-seeded (010's `hashSeed`), never the world's shared stream. */
+export function hauntSeed(name: string): number {
+  return hashSeed(name);
+}
+
+/**
+ * One tile of drift. Direction is drawn from the dino's seed mixed with the drift count, so the path
+ * meanders rather than running in a straight line, and re-deriving it after a reload gives the same walk.
+ * Clamped to the grid the same way `ticStep` clamps.
+ */
+export function driftHaunt(h: Haunt, seed: number, cols: number, rows: number): Haunt {
+  const [dx, dy] = DRIFT_RING[Math.floor(mulberry32((seed + h.drifts * 0x9e3779b9) >>> 0)() * DRIFT_RING.length) % DRIFT_RING.length];
+  const clamp = (v: number, hi: number) => Math.max(0, Math.min(hi - 1, v));
+  return { tileX: clamp(h.tileX + dx, cols), tileY: clamp(h.tileY + dy, rows), drifts: h.drifts + 1 };
+}
+
+/**
+ * The one anchor decision the scene calls for a plain (non-grief) ritual: where this stretch is performed,
+ * and what the dino's haunt on this ground becomes. Pure — the caller stores the haunt and fires the beat.
+ *
+ * No haunt, or a haunt further than `HAUNT_RETURN_RANGE` away, lays a fresh one where the dino stands —
+ * which is byte-for-byte the pre-421 behaviour, so a dino's *first* stretch on a ground is unchanged.
+ */
+export function ticAnchorFor(args: {
+  haunt: Haunt | undefined;
+  at: Tile;
+  seed: number;
+  cols: number;
+  rows: number;
+}): { anchor: Tile; haunt: Haunt } {
+  const { haunt, at, seed, cols, rows } = args;
+  if (!haunt || hauntDistance(haunt, at) > HAUNT_RETURN_RANGE) {
+    const fresh: Haunt = { tileX: at.tileX, tileY: at.tileY, drifts: 0 };
+    return { anchor: { tileX: fresh.tileX, tileY: fresh.tileY }, haunt: fresh };
+  }
+  const next = driftHaunt(haunt, seed, cols, rows);
+  return { anchor: { tileX: next.tileX, tileY: next.tileY }, haunt: next };
+}
+
+/** Has the path moved far enough to be worth noticing? */
+export function hauntWorthNoting(h: Haunt): boolean {
+  return h.drifts >= HAUNT_DRIFT_NOTED;
+}
+
+/** The one-time memory a dino files when its little path has visibly moved (the `ticMemory` register). */
+export function hauntDriftMemory(label: string): string {
+  return `your little path has wandered — you ${label} on ground you did not used to`;
+}
+
+/** The ticker beat for the same moment. The footprints, because the ground is what changed. */
+export function hauntDriftedLine(name: string, glyph: string): string {
+  return `${glyph} ${name}'s little path has worn its way across the ground`;
 }
