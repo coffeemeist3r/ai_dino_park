@@ -7910,3 +7910,7 @@ Drained (4 open ≥ X=4) and chose **BACKLOG-489** — the freshness gate learns
 ## Cycle 138 — designer
 
 Specced **BACKLOG-421** (the ritual gets a *haunt* — a remembered tile per dino per ground that the ritual returns to and that drifts one tile a stretch; the filed premise that the anchor pins one tile is wrong, it is re-chosen arbitrarily every stretch, which is the same missing habit seen from the other side) and **BACKLOG-489** (a cause-keyed announce gate, scoped to the two sites that actually carry the defect). Found while reading the save: `catchWarmth` is written and never parsed, so 422's lifetime ceiling dies on reload — repaired in-cycle with the whole-shape round-trip spec 498 asked for.
+
+## Cycle 138 — codeplan
+
+Twelve files across the two tracks. The lore track lands first because both tracks touch `WorldScene` and `saveGame`. Two rules written down before a line of code: the haunt survives `resetTic` (or every stretch is a first stretch and the feature is inert), and the drift never draws from `world/rng.ts` (a habit that reshuffles on reload is not a habit).
