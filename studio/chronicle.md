@@ -7898,3 +7898,7 @@ Final gates after housekeeping: build clean, unit **1937/1937**, e2e **563 pass 
 long-dialog spec (BACKLOG-430, red on clean HEAD) and `cycle-110-plenty`, which passed on an isolated
 re-run this fire and is one of the specs BACKLOG-430's notes already name as a parallel-load victim.
 Noted as flake, not regression.
+
+## Cycle 138 — lore-smith
+
+Seeded nothing (social queue 214 ≥ 12, art queue 3 ≥ 3) and suggested **BACKLOG-421** — the tic anchor learns to wander, so the ritual reads as a habit rather than a loop, and 496's worn-ground art gets a path to mark instead of a smudge.
