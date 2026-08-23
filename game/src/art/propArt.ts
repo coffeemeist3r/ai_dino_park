@@ -647,6 +647,89 @@ const SHELTER_RUIN_RIG: PropRig = {
   },
 };
 
+/* ---------------------------------------------------------------------------------------------------
+ * The ritual's little path (BACKLOG-496).
+ *
+ * The tic (405) is the most per-dino behaviour in this park and for fifty cycles it left the ground exactly
+ * as it found it: a dino paces the same two tiles a hundred times, turns the same slow circle, and the grass
+ * is untouched. Cycle 138 gave the ritual a **haunt** that drifts a tile per stretch (421), which is what
+ * turns a mark on the ground from a smudge into a path — so the mark is worth drawing now and was not before.
+ *
+ * Keyed `tic_<TicKind>` so a caller can look one up per kind and draw nothing for a kind with no rig, the
+ * per-item fallback 490 and 494 both ship. Stashed ahead of the `WorldScene` wiring under the cycle-91 rule:
+ * both render standalone against a grass swatch, no host terrain.
+ *
+ * **These are ground marks, so they carry no near-black outline.** Every other prop here stands *on* the
+ * grass and needs one to cut its silhouette out; these are worn *into* it, and a hard dark edge reads as a
+ * hole in the world rather than a bald patch. The edge is `s` — trodden grass a shade darker and browner
+ * than `GRASS_RIG`'s field green — which is what a real worn patch fades through.
+ * ------------------------------------------------------------------------------------------------- */
+
+// ── pace 🐾 — the two-tile scuff. First draft was one long oval, which at 16px is a shadow; what says
+// *pacing* is that the ground is worn bare at the two **ends** and only trodden thin between them, because
+// that is where the animal turns around. Wider than it is tall, and the two bare patches are disjoint.
+const TIC_PACE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '..ssss....ssss..',
+  '.seeees..seeees.',
+  '.sedeetttteedes.',
+  '.seeees..seeees.',
+  '..ssss....ssss..',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const TIC_PACE_RIG: PropRig = {
+  size: 16,
+  grid: TIC_PACE_GRID,
+  palette: {
+    s: 0x3d6631, // trodden grass — the soft edge a worn patch fades through (darker than GRASS_RIG's g)
+    e: 0x6b5738, // bare earth, where the turning happens
+    d: 0x4e3f28, // a divot scuffed deeper
+    t: 0x5d6c33, // the thin track between the two ends — trodden, never quite bare
+  },
+};
+
+// ── circle 🔁 — the trodden ring. First draft was a worn disc, which is just a bigger scuff; the whole
+// distinction is the **hole**: an animal turning on the spot wears the circumference and leaves the middle
+// standing. Roughly as wide as it is tall, and the centre is untouched grass.
+const TIC_CIRCLE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....ssssss.....',
+  '....seeeeees....',
+  '...seeeeeeees...',
+  '..sedesssseees..',
+  '..sees....sees..',
+  '..sees....sees..',
+  '..sees....sees..',
+  '..sees....sees..',
+  '..seeessssedes..',
+  '...seeeeeeees...',
+  '....seeeeees....',
+  '.....ssssss.....',
+  '................',
+  '................',
+];
+
+const TIC_CIRCLE_RIG: PropRig = {
+  size: 16,
+  grid: TIC_CIRCLE_GRID,
+  palette: {
+    s: 0x3d6631, // the same trodden edge the scuff uses — one worn-ground language, not two
+    e: 0x6b5738,
+    d: 0x4e3f28,
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -668,6 +751,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,
   shelter_derelict: SHELTER_RUIN_RIG,
+  // BACKLOG-496: the ritual's worn ground, keyed `tic_<TicKind>`. `fuss` is deliberately still undrawn —
+  // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
+  tic_pace: TIC_PACE_RIG,
+  tic_circle: TIC_CIRCLE_RIG,
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

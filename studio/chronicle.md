@@ -7991,3 +7991,34 @@ the exact string a spec asserts.
 
 **Milestone 15: all three structure arcs are closed.** The lore side carries two of three, with 411 — the
 warm trace a catch leaves — the open half of the arc 421 just did the larger part of.
+
+## Cycle 138-art — the ground remembers
+
+Drew the **two-tile scuff** and the **trodden ring** — 2 of BACKLOG-496's three, and the two `TicKind`s that
+actually move a dino across tiles. The item has been queued since yesterday and was worth drawing *today*
+specifically: 421 shipped this cycle, so a mark left by a ritual now sits under an anchor that comes back and
+drifts, which is the difference between a smudge and a path.
+
+One decision shaped both, and it broke a rule this file has kept since cycle 66. Every prop in `propArt.ts`
+stands **on** the ground and carries a near-black outline to cut its silhouette out of the grass. These are
+worn **into** it, and a hard dark edge on a bald patch does not read as a bald patch — it reads as a hole in
+the world. So the edge is trodden grass, a shade darker and browner than the field green, which is what a
+worn patch actually fades through. The generic outline assertion is skipped for `tic_*` with the reason
+written into the test rather than quietly deleted, and the new spec asserts the *opposite* property — no
+colour in either palette is anywhere near black — so the discipline was replaced, not dropped.
+
+Both first drafts were plausible pictures of the wrong thing, which is becoming the reliable failure mode.
+**The scuff** was one long oval, and at sixteen pixels a long oval is a shadow. What says *pacing* is that
+the ground is bare at the two **ends** and only trodden thin between them, because the ends are where the
+animal turns around; the test pins the mark wider than tall and pins one row carrying two disjoint bare runs
+with nothing but track between them. **The ring** was a worn disc, which is just a bigger scuff. The whole
+distinction is the **hole**: something turning on the spot wears the circumference and leaves the middle
+standing, so the four centre cells must be untouched and the mark must be as wide as it is tall.
+
+Keyed `tic_<TicKind>` on the convention 490 and 494 both use, so nothing wired at all — two registry lines.
+Still deliberately short of the wiring: `fuss` has no rig and the e2e asserts it reports false, and no mark
+is laid under a tic anchor in `WorldScene` yet. Stash-ahead under the cycle-91 rule; both render standalone.
+
+Build clean, unit **1978 passed / 2 skipped** (the two skips are the outline assertion, skipped by name with
+its reason recorded), e2e green for the new spec and both of its neighbours — the cycle-91 thatch stash and
+the cycle-137 food rigs, run together on purpose so the fallback controls are exercised beside the new one.

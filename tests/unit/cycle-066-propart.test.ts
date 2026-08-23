@@ -23,6 +23,8 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'shelter_derelict', // BACKLOG-494
       'stone',
       'thatch',
+      'tic_circle', // BACKLOG-496: the ritual's trodden ring
+      'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss stays undrawn — the per-kind fallback control)
     ]);
   });
 
@@ -43,7 +45,13 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
         expect(propCharsUsed(rig.grid).size).toBeGreaterThan(0);
       });
 
-      it('has a dark outline char `o`', () => {
+      // BACKLOG-496 amends this, narrowly. Every prop in this file until now stands *on* the ground and
+      // needs a dark outline to cut its silhouette out of the grass. The `tic_*` marks are worn *into* the
+      // ground, and a near-black edge on one reads as a hole in the world rather than a bald patch. The
+      // discipline is replaced rather than dropped: `cycle-138-ticground-art` asserts the opposite property
+      // (no colour in either palette is anywhere near black) so neither rig can quietly grow one.
+      const isGroundMark = name.startsWith('tic_');
+      it.skipIf(isGroundMark)('has a dark outline char `o`', () => {
         expect(rig.palette.o).toBeTypeOf('number');
         expect(propCharsUsed(rig.grid).has('o')).toBe(true);
       });
