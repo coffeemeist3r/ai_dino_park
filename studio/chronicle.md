@@ -7918,3 +7918,7 @@ Twelve files across the two tracks. The lore track lands first because both trac
 ## Cycle 138 — coder
 
 Both tracks landed. The tic gained a haunt (`ticHaunts`, persisted, deliberately not cleared by `resetTic`) and the drift is drawn from the dino's own name rather than the world's shared dice. The two seed-silently call sites moved onto `world/gates.ts`, and 485's hand-rolled `!seeding || lean === call` is gone — its behaviour now falls out of the rules. The `catchWarmth` parse gap 498 predicted was real and is repaired, with a coverage spec that reads the interface itself and was checked by breaking it on purpose.
+
+## Cycle 138 — qa
+
+18/18 criteria pass, both tracks APPROVE. Two e2e failures, both accounted for: BACKLOG-430's long-dialog spec (red on clean HEAD) and one rotating parallel-load victim, a different spec on each of the two full runs and green on both isolated re-runs. Added the grief-versus-haunt spec the Coder shipped without, verified the new save-coverage guard by breaking the parser on purpose, and filed **BACKLOG-499** — every governance beat has been printing "the The Grove" since 481, and 488/492 made it reachable in the first step of a fresh save.

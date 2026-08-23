@@ -111,3 +111,34 @@ test('the path wears its way across the ground, and says so once', async ({ page
 
   expect(errors).toEqual([]);
 });
+
+test('grief is not a habit — an aimed ritual leaves the haunt alone', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await boot(page);
+
+  const roster = await names(page);
+  const [alone, friend] = roster;
+  // 414's own setup: the dino's only real friend crosses east, so its ritual aims at the edge they left by.
+  await page.evaluate(
+    ({ alone, friend, rest }) => {
+      const w = window as W;
+      w.__bondPair(alone, friend, 50);
+      w.__migrate(friend, 'grove');
+      for (const n of rest) w.__migrate(n, 'grove');
+    },
+    { alone, friend, rest: roster.slice(2) },
+  );
+
+  await place(page, alone, 9, 6);
+  await inventTic(page, alone);
+
+  const g = await page.evaluate((nn) => (window as W).__griefTic(nn), alone);
+  expect(g.grieved).toBe(friend);
+  expect(g.anchor.tileX).toBeGreaterThan(9); // the east edge, not underfoot
+
+  // ...and the ground learned nothing. The habit must survive the grief so the ritual can come back to it.
+  expect((await haunt(page, alone)).haunt).toBeNull();
+
+  expect(errors).toEqual([]);
+});
