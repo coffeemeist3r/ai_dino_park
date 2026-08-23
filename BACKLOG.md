@@ -20,10 +20,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-489 [core] The gate that was written for one door — four freshness gates seed silently on their first record and will each silence the next cause added to them; give the pattern one shared seam (full text in the cycle-134 block below).
 - [ ] BACKLOG-495 [infra] The fixture nobody names — two consecutive founding-constant moves turned 28 e2e specs red that were not about the founding state; give the suite a declared founding fixture (full text in the cycle-136 block below).
 - [ ] BACKLOG-497 [infra] The council nobody can convene — the three constants that decide whether a ground can hold a vote at all were calibrated against a five-dino bowl and no test says what population governance is meant to be observable at (full text in the cycle-137 block below).
-- [ ] BACKLOG-498 [infra] The save field nobody reloads — `catchWarmth` (422) ships with no round-trip spec, and it is the third additive field in a row to do so (full text in the cycle-137 block below).
 
 ---
 
@@ -675,7 +673,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
 
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
-- [~] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405.
 - [ ] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
 
 ## Cycle 131 structure additions — after the fold (2026-08-15)
@@ -708,7 +705,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
 > cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
 
-- [~] BACKLOG-489 [core] The gate that was written for one door — cycle 133's finding, generalized. 485's first draft was correct in every hook and posted nothing, because 481's `checkCouncilCall` seeds silently on a ground's *first* recorded call — sound for a vote (an opening seating is not a turnover), fatal for a second source of the same event, and fatal **most reliably for the population that second source exists to cover**. Four freshness gates in this park now carry an implicit "…as decided by whatever was here first": the rumor freshness (222/233), the gratitude fade (251), one-visit-per-sorrow (226), the once-a-day discontent (471). Each will silence a later cause the day one is added. Give the pattern one shared seam — a gate that distinguishes *seeding* from *suppressing*, so a first record from a new source fires rather than seeds — port the four existing gates onto it, and leave a test per gate that adds a second cause and asserts it is heard. Nothing player-visible changes today; the point is that the next feature built on any of the four is not silently half-shipped. Builds on 485 / 481 / 471 / 251.
 
 ## Cycle 136 lore additions — the ruin gets a face (2026-08-21)
 
@@ -732,7 +728,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-497 [infra] The council nobody can convene — `zoneCouncil` (479) seats a ground's top food-bankers, gated by `COUNCIL_MIN_BANKS = 1` and sized by `councilSeats`' `COUNCIL_PER_HEADS = 2` cap `COUNCIL_SEATS_MAX = 3`. All three were picked against a five-dino bowl in cycle 119's world, and they are now read by **two** votes (481/487), a term (484), a turnover beat (484), a bill lean (485) and two lens glyphs (477) — with nothing anywhere stating what population the governance system is designed to be *observable* at, and nothing asserting the shipping park clears it. 492 had to seed founding banked tallies precisely because the answer turned out to be "not the founding park", and it discovered that by hand. Fold the three constants, the founding tallies and the reachability claim into one documented seam beside `founding.ts`, with a test that boots the shipping roster and asserts at least one ground seats a council — so the next tuning pass to the cast size or the banking rate cannot silently take the whole of governance dormant again. The `cycle-136-founding.test.ts` precedent (a test that pins a founding constant against the cost it must cover), applied to politics. Builds on 492 / 488 / 479 / 484.
 
-- [ ] BACKLOG-498 [infra] The save field nobody reloads — 422 added `catchWarmth` (the lifetime ceiling that stops being-found becoming farmable) beside `foodBanked`, restored it with the same `?? {}` idiom, and **nothing asserts it survives a reload**. QA found the gap and recorded it rather than counting the criterion covered, which is the right call — but it is a gap with a pattern behind it: the save's shape spec covers the *envelope*, and the per-field round-trip is left to whichever cycle happens to write an e2e that reloads. A field whose entire purpose is to survive a reload, and which is unobservable until somebody reloads, is exactly the one that will be dropped by a refactor and caught by nothing. Give `saveGame` a **field-coverage spec**: enumerate the interface's optional keys, assert each one that the scene writes is written and restored, and fail on a key the scene knows about that the round-trip does not. Then `catchWarmth` is covered, and so is the next one. Builds on 422 / 426 / 431.
 
 ## Cycle 138 lore additions — none (both queues at cap)
 

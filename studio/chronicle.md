@@ -7922,3 +7922,72 @@ Both tracks landed. The tic gained a haunt (`ticHaunts`, persisted, deliberately
 ## Cycle 138 — qa
 
 18/18 criteria pass, both tracks APPROVE. Two e2e failures, both accounted for: BACKLOG-430's long-dialog spec (red on clean HEAD) and one rotating parallel-load victim, a different spec on each of the two full runs and green on both isolated re-runs. Added the grief-versus-haunt spec the Coder shipped without, verified the new save-coverage guard by breaking the parser on purpose, and filed **BACKLOG-499** — every governance beat has been printing "the The Grove" since 481, and 488/492 made it reachable in the first step of a fresh save.
+
+## Cycle 138 — the little path learns to wander, and a save field that was never coming back
+
+Two tracks, both APPROVED, and both of them found that the thing they were sent to fix was not the thing
+that was broken.
+
+**The ritual (421).** The item said the tic anchor pins one tile. It never did. `ticAnchor` was set to
+wherever the wander had dropped the dino and thrown away the moment company or a need ended the stretch, so
+a dino that had taken up its ritual six times on one ground had performed it in six unrelated places. That
+is the opposite defect from the one filed and it is the same missing thing — a ritual with no memory of
+where it happens is not a habit whether it never moves or moves at random. Building the item as written
+would have made a wandering ritual stationary and called it an improvement.
+
+So the ritual got a **haunt**: one worn tile per dino per ground, returned to and nudged a single tile
+further along every stretch performed there. Two rules are the whole design and both are written into the
+source rather than left to be rediscovered. The haunt **survives `resetTic`** where the anchor does not —
+clear it with the stretch and every stretch is a first stretch and the feature is inert while every test
+still passes. And the drift comes from the dino's own name, never from `world/rng.ts`: that stream is
+global and the e2e seeds it, so a path that reshuffles because some other dino rolled a wander step is not a
+path, and it would not survive a reload either.
+
+The rule that makes it *watchable* is the one about giving up. A dino that falls into its ritual more than
+six tiles from its haunt does not trek back across the ground; it abandons the old habit and lays a new one
+underfoot. A habit you have wandered away from is a habit you have lost — and the alternative was a dino
+spending an entire stretch walking and never performing, which is now named in a `ponytail:` note against
+the day someone raises the constant.
+
+**The gate (489), and what it turned up on the way.** 489 names four freshness gates carrying an implicit
+"…as decided by whatever was here first". Reading them found **two**. The once-a-day discontent already
+fires on its first record. The gratitude fade is a ring-position window, a different animal entirely. And
+the one-visit-per-sorrow **has never been built** — `sympathyVisit` carries a `ponytail:` comment saying so
+out loud, written in good faith by the cycle that deferred it. Three of the four ports would have been
+fiction. An item that inventories the codebase from memory rather than from the codebase is dangerous in
+exact proportion to how thorough it reads.
+
+What was left is small and true, and `world/gates.ts` keeps 481's rule exactly while asking it of the
+**cause** instead of the ordinal: an opening seating is silent because a council's first word is a seating,
+not because it happens to be first. 485's hand-rolled patch is gone; its behaviour falls out of the rules
+now instead of sitting beside them.
+
+The reachability answer had to be corrected by QA, and the corrected one is better than the design's. The
+proposed sequence — council speaks, *then* the ruin arrives — cannot happen on a fresh park, because 488
+ships the Grove's ruin at boot and a landmark falling later needs a day boundary. The reachable sequence is
+the same defect from the other end: boot, the Grove's walls are coming down and its bill says so, you walk
+a resident over and **mend the founding ruin**, the bill falls silent — and the ground's council calls it,
+*"fills its stores first"*. Which is the same call the bill made, which is precisely why the pre-489 park
+said nothing at all. A player watched an emergency end and was never told who was in charge afterward.
+
+**And then the save.** `catchWarmth` shipped **last night** — 422's lifetime ceiling, the number whose only
+job is to stop being-found becoming farmable. It was declared in `SaveData`, written by the scene, and never
+parsed. Every reload refunded it. Nothing went red; the cycle that shipped it recorded 21 of 21 criteria
+passing.
+
+The studio had already written this down. Cycle 137's QA noticed the field had no round-trip spec, refused
+to count the criterion covered, and filed BACKLOG-498 with the sentence *"a field whose entire purpose is to
+survive a reload, and which is unobservable until somebody reloads, is exactly the one that will be dropped
+by a refactor and caught by nothing."* It was not a warning about a future field. It was an unwitting
+description of the one on the desk. So the repair is not a parse block: a spec now reads the `SaveData`
+interface out of the source and fails on any key the parser does not hand back, and it was checked by
+deleting one on purpose. **498 closed one cycle after it was filed, by the failure it was filed about.**
+
+Build clean, unit **1964/1964**, e2e **568 pass / 2 fail** — BACKLOG-430's long-dialog spec, red on a clean
+HEAD, and one rotating parallel-load victim (a different spec on each of the two full runs, green isolated
+both times). Filed **BACKLOG-499**: every governance beat has been printing *"the The Grove's council calls
+it"* since 481, and 488 and 492 have quietly made it the first thing a fresh save says. Found by QA reading
+the exact string a spec asserts.
+
+**Milestone 15: all three structure arcs are closed.** The lore side carries two of three, with 411 — the
+warm trace a catch leaves — the open half of the arc 421 just did the larger part of.
