@@ -8051,3 +8051,7 @@ Brainstormed (2 open < X=4) — seeded **BACKLOG-500** (two of five grounds stil
 ## Cycle 139 — designer
 
 Specced **BACKLOG-411** (the *end* of a solitary stretch becomes a moment — a dino found mid-ritual by another dino floats, remembers, reaches the ticker, and leads its next greeting with it; a stretch ended by hunger files nothing, and the keeper catch still outranks) and **BACKLOG-497** (the governance claim gets a home beside the ruin and the pile — plus the reachable half the reading turned up: the founding park seats one council of one seat, so the bowl gets a bank ledger and the park gets its first vote that can actually split).
+
+## Cycle 139 — codeplan
+
+Five files across the two tracks, lore first. Two rules written down before any code: the 411 beat fires *before* the teardown and the teardown stays unconditional (a stretch that files nothing must still end), and the 497 seam must be picked up by the two `FOUNDING_BANKED` loops that already exist — if the Coder has to add a call site in `WorldScene`, the seam is wrong. The plan also asks for `companyNear` to be refactored into `nearestCompany`, so the beat can never name a dino the solitude rule did not agree was there.
