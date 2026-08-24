@@ -658,13 +658,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
 - [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
 
-## Cycle 87 — the tic spreads
-
-> The solitary tic (405) turns a lone dino's idleness into a signature ritual. These shade it outward:
-> a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
-> it (409), a stranger-zone deepens it (410), and being found lifts it (411).
-
-
 ## Cycle 88 — the ritual, seen
 
 > With the keeper about to catch a dino mid-tic (408), the private ritual meets the social world. These
@@ -685,12 +678,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
 
-## Cycle 136 lore additions — the ruin gets a face (2026-08-21)
-
-> The art queue sat at 1 open (below cap 3), so one `[art]` item was seeded. It is the prop the structure
-> track makes the first thing a player walks up to on a fresh save.
-
-
 ## Cycle 136 structure additions — the fixture nobody names (2026-08-21)
 
 > Filed by the cycle-136 validator. Two cycles running, a founding-constant move has been the only thing to
@@ -701,10 +688,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 137 lore additions — the catch leaves a mark (2026-08-22)
 
 - [ ] BACKLOG-496 [art] **(2 of 3 drawn — the two-tile scuff and the trodden ring shipped cycle 138-art; `fuss` stays undrawn as the per-kind fallback control, and the world wiring that lays one under a tic anchor is still to come)** The ritual's little path — the tic (405) is the most per-dino behaviour in the park and it leaves the ground exactly as it found it: a dino paces the same two tiles for a hundred steps, turns the same slow circle, fusses the same patch, and the grass is untouched. Author a **worn-ground prop rig per `TicKind`** — a two-tile scuff for `pace`, a trodden ring for `circle`, a disturbed patch of loose earth for `fuss` — baked through `bakePropArt` and keyed `tic_<kind>`, so `WorldScene` can lay one under a dino's tic anchor and lift it when the stretch ends. Each renders standalone against a grass swatch (no host terrain), so it clears the cycle-91 stash-ahead rule, and a kind with no rig simply draws nothing — the same per-item fallback 490 and 494 both ship. With 421 queued to make the anchor *drift*, the mark is what turns a drifting anchor into a visible little path. Builds on 405 / 407 / 421 / 296.
-
-## Cycle 137 structure additions — the vote gets a history (2026-08-22)
-
-
 
 ## Cycle 138 lore additions — none (both queues at cap)
 

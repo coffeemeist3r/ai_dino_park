@@ -8188,3 +8188,22 @@ frame (BACKLOG-036).
 *Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used this fire — this session runs
 under an operator instruction not to spawn sub-agents. Both rigs were authored inline against the same
 brief, with the same reject-your-first-draft discipline, and the same unit + e2e gates.
+
+## Cycle 139 — housekeeping
+
+411, 494 and 497 went to the archive with their shipped notes, and **three whole sections went with them** —
+the cycle-87 tic-spreads block, the cycle-136 lore-additions block and the cycle-137 structure-additions
+block, each of which had exactly one open item left and lost it this cycle. Their blockquotes moved across
+rather than being deleted, on the cycle-138 precedent: the item text says what was built, and only the
+blockquote says why the queue was seeded that cycle.
+
+The working backlog carries **0 closed bullets** and **217 open** items, of which **3** are on the Structure
+Track (495, 500, 501) — still **below the cap of X=4**, so the next Structure-smith brainstorms rather than
+drains, exactly as this one did. The art queue has dropped to **2** (490 at 4 of 7, 496 at 2 of 3, with 494
+closed at 4 of 4), which is **under** its cap of 3 — so the next Lore-smith seeds art, for the first time in
+four cycles.
+
+Final gates after housekeeping: build clean, unit **2034 passed / 2 skipped** across 204 files, e2e **581
+passed / 0 failed** — a fully green run with no parallel-load victims and BACKLOG-430's long-dialog spec
+green too, which is worth noting rather than celebrating: that spec's whole character is that it is
+intermittent, and cycle 135's `--workers=1` reproduction is still the only reliable handle anyone has on it.

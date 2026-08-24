@@ -24,6 +24,26 @@
 > The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
 > cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
 
+## Closed cycle 139 housekeeping — three emptied seeding blocks (2026-08-24)
+
+> Their last open items shipped this cycle (411 out of the cycle-87 block, 494 out of the cycle-136 lore
+> block, 497 out of the cycle-137 structure block), so the whole sections move across rather than being
+> deleted: the item text says what was built, and only the blockquote says why the queue was seeded that
+> cycle.
+
+## Cycle 87 — the tic spreads
+
+> The solitary tic (405) turns a lone dino's idleness into a signature ritual. These shade it outward:
+> a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
+> it (409), a stranger-zone deepens it (410), and being found lifts it (411).
+
+## Cycle 136 lore additions — the ruin gets a face (2026-08-21)
+
+> The art queue sat at 1 open (below cap 3), so one `[art]` item was seeded. It is the prop the structure
+> track makes the first thing a player walks up to on a fresh save.
+
+## Cycle 137 structure additions — the vote gets a history (2026-08-22)
+
 ## Closed cycle 139-art — the set of ruins closes (2026-08-24)
 
 > With the thatch and the granary drawn, all four landmarks have a fallen twin and 480's alpha fade stops
