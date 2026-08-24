@@ -665,7 +665,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
 > it (409), a stranger-zone deepens it (410), and being found lifts it (411).
 
-- [ ] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
+- [~] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
 
 ## Cycle 88 — the ritual, seen
 
