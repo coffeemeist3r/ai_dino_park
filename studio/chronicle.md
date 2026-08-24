@@ -8063,3 +8063,83 @@ Both tracks landed. The end of a solitary stretch is a beat now — a float, a m
 ## Cycle 139 — qa
 
 24/24 criteria pass, both tracks APPROVE. Build clean, unit 1997 passed / 2 skipped, e2e 579 passed / 1 failed — BACKLOG-430s long-dialog spec, red on a clean HEAD, with no parallel-load victims this run. Added the two specs the Coder shipped without: the ambient hold on the 411 beat (which also pins the harder half — the stretch still ends while held) and a running-game assertion that the park boots into the founding seating rather than only agreeing with it on paper. Recorded the 497 fallout in full: seven specs across five files, one root cause, every one of them asserting the defect.
+
+## Cycle 139 — the end of a solitary stretch, and a vote with something to count
+
+Two tracks, both APPROVED. They have nothing to do with each other and they closed on the same sentence:
+*the thing you never made a moment of is the thing nobody can see.*
+
+**Being left alone, and then not (411).** The tic has been this park's most private behaviour for fifty
+cycles, and in all that time the studio has built five ways for it to *start* — plain idleness, a solitary
+day, a friendless new ground, a fresh sting at the hatch, a friend who crossed away — and exactly one
+ending anybody ever noticed: the keeper walking up, which by now escalates across a stretch, names the
+ritual it interrupted, and costs the dino a little warmth. The *other* ending, the one that actually
+happens most, was a function call. Another dino wanders inside three tiles, the solitude breaks,
+`resetTic` tears down nine fields, and nothing is left: no mark, no memory, no line, no word. A dino that
+had spent the last minute turning a slow circle by itself would greet you as though the last minute had
+not happened.
+
+It happens now. `🤗` over its head, a note in its book — *you turned a slow circle until Pip came over —
+glad of the company* — a line on the ticker, and a **warm trace** it leads its next greeting with:
+*Glad you came by — Pip found me at it just now.* Deliberately free. 422 priced the keeper's catch,
+because the keeper's attention is a thing a player can farm; this one is between two dinos and costs
+nothing, gains nothing, and escalates into nothing. It is just noticed.
+
+Two rules did most of the work. The first is that the beat fires **before** the teardown and the teardown
+stays unconditional — the specs pin that a stretch which earns no beat still ends, held or not, which is
+the failure mode every "file something, then clean up" feature in this codebase has eventually hit. The
+second is smaller and better: `companyNear`, the boolean that decides whether a dino is alone, was
+**refactored** into `nearestCompany` rather than a second scan being written next to it. So the beat and
+the solitude rule are the same read, and the park is physically incapable of naming a dino that the rule
+did not agree was standing there. This codebase has caught that exact bug four separate times. This is the
+first cycle it was pre-empted instead.
+
+**A vote with something to count (497).** The structure item was filed as a documentation-and-test job:
+three council constants picked in cycle 119 against a five-dino bowl, now load-bearing under two votes, a
+term, a turnover beat, a bill lean, two lens glyphs and a book standing, with nothing anywhere saying what
+population governance was designed to be *watchable* at. Write it down, pin it, done. Under CHARTER v7 that
+is a track that ships nothing, and the reading is what saved it.
+
+Writing the claim down forced the question the claim is *about*: how many seats does a council need before
+it is a council? `councilSeats` hands one seat to any ground with a single banker — and a one-seat council
+is `zoneProvider` wearing a different glyph. Every beat 487 built on top of the seating, the majority
+arithmetic and the tie-break and any call that can split, needs **two**. And the founding park seated
+exactly one, on one ground, in the Grove. The bowl — where the player spawns, where five of the eight dinos
+live — had banked nothing and therefore had no politics at all. Which is 492's discovery repeating itself
+one layer up: 492 found that a fresh save seated *no* council anywhere and fixed it by hand, for one
+ground, and the fix was exactly one seat short of making anything built on it observable.
+
+So the bowl gets a ledger. Sunny two, Glade one. Five residents, two eligible, two seats — both under the
+provider bar, so no provider shadows them and the tie-break stays `null`, and the two of them fall on
+**opposite sides** of the pantry threshold: Sunny at 0.622 wants the ground fed, Glade at 0.085 wants it
+banked. Open a new game, press to the zone lens before walking anywhere, and the ground under your feet
+seats two voices who want different things. That is the first vote in this park's life that has anything
+to count.
+
+The evidence that the seam is a seam and not a patch is what `WorldScene` did about it: **nothing.** No
+new call site. The two loops that already walk the founding ledger picked the second ground up for free,
+which is precisely the test the code plan set for whether the claim had been put in the right file.
+
+**And the fallout, which is the finding.** Seven e2e specs across five files went red, all on one cause,
+and every single one of them was asserting the defect — *"a young park has no policy"*, *"the bowl raises
+a granary the instant the pile allows"*. Neither was ever a rule; both were descriptions of a park where
+governance could not happen, written down by specs whose subject was something else entirely. That is the
+**third consecutive cycle** in which moving a founding constant was the only thing that revealed what the
+suite was actually claiming — cycle 135 spread the cast, cycle 136 seeded a ruin, cycle 139 seated a
+council, and all three times the assumption surfaced only under the change. BACKLOG-495 has been arguing
+exactly this since cycle 136 and now has its third data point; the repair here used the fixture 495's
+groundwork had already put in place, with each spec saying in its own header why it wants it.
+
+One by-product, filed rather than fixed: `foundingCouncils()` now states plainly that the Hollow and the
+Sunward Ridge seat nobody, because nobody lives on them. Two of five grounds, empty at boot, against
+CHARTER v7's own text saying the cast ships across the map. That is **BACKLOG-500**, seeded by the
+Structure-smith at the top of this cycle and handed its evidence by the bottom of it.
+
+**Milestone 15** takes its second lore arc tonight — *the ritual is a living habit* is closed, the drift
+last cycle and the warm trace this one — and the arc turned out to be about a **friend** walking up rather
+than the keeper, which is the half it had been missing. All three structure arcs closed in cycle 138. One
+arc remains in the whole milestone: **BACKLOG-423**, the ritual colouring the voice. Ship that and
+Milestone 15 ships with it.
+
+Gates: build clean, unit **1997 passed / 2 skipped**, e2e **579 passed / 1 failed** — BACKLOG-430's
+long-dialog spec, red on a clean HEAD, off both diffs, and no parallel-load victims in the final run.

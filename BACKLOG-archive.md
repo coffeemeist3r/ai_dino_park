@@ -24,6 +24,18 @@
 > The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
 > cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
 
+## Closed cycle 139 — the end of a solitary stretch, and a vote with something to count (2026-08-24)
+
+> Both tracks APPROVED. 411 closed Milestone 15's lore arc 2 (421 shipped the drift; this was the warm
+> trace), leaving arc 3 — BACKLOG-423 — as the only thing between the park and Milestone 15 shipping.
+> 497 was filed as documentation and a test; reading the three council constants against the shipping
+> roster turned it into a cycle, because the founding park seated exactly one council of exactly one seat
+> and every beat 487 built needs two. The Structure Track's 497 pointer goes with the body text.
+
+- [x] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
+
+- [x] BACKLOG-497 [infra] The council nobody can convene — `zoneCouncil` (479) seats a ground's top food-bankers, gated by `COUNCIL_MIN_BANKS = 1` and sized by `councilSeats`' `COUNCIL_PER_HEADS = 2` cap `COUNCIL_SEATS_MAX = 3`. All three were picked against a five-dino bowl in cycle 119's world, and they are now read by **two** votes (481/487), a term (484), a turnover beat (484), a bill lean (485) and two lens glyphs (477) — with nothing anywhere stating what population the governance system is designed to be *observable* at, and nothing asserting the shipping park clears it. 492 had to seed founding banked tallies precisely because the answer turned out to be "not the founding park", and it discovered that by hand. Fold the three constants, the founding tallies and the reachability claim into one documented seam beside `founding.ts`, with a test that boots the shipping roster and asserts at least one ground seats a council — so the next tuning pass to the cast size or the banking rate cannot silently take the whole of governance dormant again. The `cycle-136-founding.test.ts` precedent (a test that pins a founding constant against the cost it must cover), applied to politics. Builds on 492 / 488 / 479 / 484.
+
 ## Closed cycle 138 — the little path learns to wander, and the gate learns who is speaking (2026-08-23)
 
 - [x] BACKLOG-421 [emergent] The ritual drifts — over many solitary stretches a dino's tic anchor slowly wanders its zone instead of pinning one tile, so its "little path" migrates and the ritual reads as a living habit, not a fixed loop. Builds on 405 / 421-none; 405. **SHIPPED cycle 138** — as a *haunt*, not as a slower pin. The filed premise was wrong: the anchor never pinned a tile, it was re-chosen from wherever the wander dropped the dino and thrown away by `resetTic`, so six stretches on one ground happened in six unrelated places. New `Haunt`/`Haunts` in `world/tic.ts` with `ticAnchorFor` / `driftHaunt` / `hauntSeed`: one worn tile per (dino, ground), returned to and nudged one tile per stretch, name-seeded so it never touches `world/rng.ts` and survives a reload. Beyond `HAUNT_RETURN_RANGE` (6) the old haunt is abandoned and a new one is laid underfoot — a habit you have wandered away from is a habit you have lost. Grief (414) still outranks it and deliberately leaves the haunt alone. `ticHaunts` additive save field; one-time memory + ticker beat at `HAUNT_DRIFT_NOTED` (4) drifts. +11 unit, +4 e2e.

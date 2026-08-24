@@ -21,8 +21,8 @@ found.
 
 **Lore arcs:**
 - [x] Being found is a conversation, not a lookup — a dino caught mid-ritual twice in one stretch of solitude escalates from pleased to teasing to fondly resigned, in words drawn from its own signature trait (BACKLOG-420, -422)
-- [ ] The ritual is a living habit — its little path drifts across the ground over many stretches, and being found leaves a warm trace it can lead with later (BACKLOG-421, -411) — *421 shipped cycle 138 (the drift); 411 (the warm trace) is the open half*
-- [ ] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423)
+- [x] The ritual is a living habit — its little path drifts across the ground over many stretches, and being found leaves a warm trace it can lead with later (BACKLOG-421, -411) — *421 shipped cycle 138 (the drift); 411 shipped cycle 139 (the warm trace — and the trace turned out to be left by a **friend** walking up, not by the keeper, which is the half the arc was missing)*
+- [ ] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423) — **the last open arc in Milestone 15; all three structure arcs and both other lore arcs are closed**
 
 **Structure arcs:**
 - [x] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)

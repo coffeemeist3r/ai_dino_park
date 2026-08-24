@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-495 [infra] The fixture nobody names — two consecutive founding-constant moves turned 28 e2e specs red that were not about the founding state; give the suite a declared founding fixture (full text in the cycle-136 block below).
-- [~] BACKLOG-497 [infra] The council nobody can convene — the three constants that decide whether a ground can hold a vote at all were calibrated against a five-dino bowl and no test says what population governance is meant to be observable at (full text in the cycle-137 block below).
 - [ ] BACKLOG-500 [infra] The grounds nobody lives on — CHARTER v7 said every ground the player can walk to has life on it at boot, and two of the five still have none (full text in the cycle-139 block below).
 - [ ] BACKLOG-501 [infra] The reachability register — v7's bar is a paragraph each verdict re-argues by hand, with no machine-checked list of what the founding park actually exercises (full text in the cycle-139 block below).
 
@@ -665,7 +664,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a friend can catch it and echo it (407), the keeper can catch a dino mid-ritual (408), the book names
 > it (409), a stranger-zone deepens it (410), and being found lifts it (411).
 
-- [~] BACKLOG-411 [emergent] Glad of the company — a dino pulled out of its tic by a friend wandering into range files a small "glad of the company" note, so being found mid-solitude leaves a warm trace it can lead its next greeting with. Builds on 405 / 011.
 
 ## Cycle 88 — the ritual, seen
 
@@ -707,7 +705,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 137 structure additions — the vote gets a history (2026-08-22)
 
-- [~] BACKLOG-497 [infra] The council nobody can convene — `zoneCouncil` (479) seats a ground's top food-bankers, gated by `COUNCIL_MIN_BANKS = 1` and sized by `councilSeats`' `COUNCIL_PER_HEADS = 2` cap `COUNCIL_SEATS_MAX = 3`. All three were picked against a five-dino bowl in cycle 119's world, and they are now read by **two** votes (481/487), a term (484), a turnover beat (484), a bill lean (485) and two lens glyphs (477) — with nothing anywhere stating what population the governance system is designed to be *observable* at, and nothing asserting the shipping park clears it. 492 had to seed founding banked tallies precisely because the answer turned out to be "not the founding park", and it discovered that by hand. Fold the three constants, the founding tallies and the reachability claim into one documented seam beside `founding.ts`, with a test that boots the shipping roster and asserts at least one ground seats a council — so the next tuning pass to the cast size or the banking rate cannot silently take the whole of governance dormant again. The `cycle-136-founding.test.ts` precedent (a test that pins a founding constant against the cost it must cover), applied to politics. Builds on 492 / 488 / 479 / 484.
 
 
 ## Cycle 138 lore additions — none (both queues at cap)
