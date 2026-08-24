@@ -8039,3 +8039,7 @@ Lore-smith seeds no art.
 Final gates after housekeeping: build clean, unit **1978 passed / 2 skipped**, e2e **571 pass / 1 fail** —
 the long-dialog spec, BACKLOG-430, red on a clean HEAD. Every parallel-load victim from the earlier runs
 came back green.
+
+## Cycle 139 — lore-smith
+
+Seeded nothing (social queue 214 ≥ 12, art queue 3 ≥ 3) and suggested **BACKLOG-411** — a solitary stretch ended by a friend walking up has been the most common event in the tic system and the only one that leaves no trace at all; it becomes a warm note the dino leads its next greeting with.
