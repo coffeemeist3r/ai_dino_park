@@ -24,6 +24,15 @@
 > The Structure Track sat at 3 open (below cap X=4), so one was brainstormed while picking 486. It is the
 > cycle-133 validator's finding filed as work rather than left as a paragraph somebody might reread.
 
+## Closed cycle 139-art — the set of ruins closes (2026-08-24)
+
+> With the thatch and the granary drawn, all four landmarks have a fallen twin and 480's alpha fade stops
+> being a *rendering* — it survives only as the per-landmark fallback for a landmark nobody has drawn yet,
+> which is where the e2e's control now rides. `WorldScene` needed no wiring: the swap has been one generic
+> line since the `<name>_derelict` convention was chosen.
+
+- [x] BACKLOG-494 [art] **(4 of 4 drawn — the toppled cairn + the caved lean-to cycle 136, the unravelled thatch + the cracked granary cycle 139-art; the alpha fade is retired as a rendering and survives only as the per-landmark fallback for a landmark nobody has drawn yet)** Ruin rigs — 480 draws a derelict landmark by turning its own sprite down to `DERELICT_ALPHA` (0.45), which was the honest placeholder when nothing was drawn and reads as *fog* rather than *ruin*. Author a **derelict grid per landmark rig** — a toppled cairn with its top stones on the ground, a caved lean-to, an unravelled thatch, a cracked granary with its dome open — and let `bake.ts` resolve the ruin variant when `derelict` is set, with the alpha fade retired for the four rigs that have one and kept as the fallback for any that don't. Each renders standalone (a prop rig, no host terrain), so it clears the cycle-91 stash-ahead rule. With 488 shipping a founding ruin in the Grove, this is the first structure a new player ever inspects. Builds on 480 / 488 / 344 / 427 / 454.
+
 ## Closed cycle 139 — the end of a solitary stretch, and a vote with something to count (2026-08-24)
 
 > Both tracks APPROVED. 411 closed Milestone 15's lore arc 2 (421 shipped the drift; this was the warm

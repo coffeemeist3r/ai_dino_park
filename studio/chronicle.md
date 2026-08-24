@@ -8143,3 +8143,48 @@ Milestone 15 ships with it.
 
 Gates: build clean, unit **1997 passed / 2 skipped**, e2e **579 passed / 1 failed** — BACKLOG-430's
 long-dialog spec, red on a clean HEAD, off both diffs, and no parallel-load victims in the final run.
+
+## Cycle 139-art — the set of ruins closes
+
+Two subjects: the **unravelled thatch** and the **cracked granary** — the last two landmarks still wearing
+480's alpha fade, which reads as a building in fog rather than a building that came down. BACKLOG-494 is
+now 4 of 4, and the fade stops being a *rendering* at all; it survives as the per-landmark fallback for a
+landmark nobody has drawn yet, which is exactly where the e2e's control now rides.
+
+Both first drafts made the same mistake, and it is the mistake cycle 136 already wrote a rule against: *a
+ruin is not the same shape, shorter.* A smaller thatch is a thatch. A squatter granary is a granary.
+
+**The thatch.** A reed stack is held up by the cord cinched round its waist, so what happens when that cord
+goes is not that the stack shrinks — it **bursts**. A short stub still stands where the binding was tied
+lowest, still wearing its scrap of cord; the rest of the bundle has slumped sideways; and loose reeds lie
+flat on the ground out past *both* edges of the tile, in columns nothing woven ever occupied. That last
+part is the whole read: material out where nobody put it.
+
+**The granary.** A dome does not lean, it caves. So the ruin is a dark seam torn straight down the middle
+of the body with two stubs of roof timber left standing either side of it, and plaster chunks fallen out to
+both edges. The seam deliberately runs the *whole* body rather than stopping at the door — what makes a
+granary a ruin is that the thing it existed to keep dry is not dry any more — and it is drawn in the
+doorway's own shadow colour, so the building reads as **opened** rather than repainted.
+
+The most satisfying part was what the fire did *not* have to do. `WorldScene` gained nothing: the derelict
+swap has been one generic line — `hasPropArt(`${prop}_derelict`)` — since cycle 136 chose the naming
+convention, so drawing a ruin has been a rig plus one registry entry ever since. Two rigs, two lines, no
+wiring. And `cycle-139-ruin-art.test.ts` generalises cycle 136's cairn-only silhouette assertions to
+**every** registered ruin — spills into columns the standing rig never used, starts lower than the standing
+crown, keeps its intact twin's palette — so the fifth landmark this park ever builds cannot skip them.
+
+Two roster assertions moved with the work rather than being deleted: the `PROP_RIGS` inventory in
+`cycle-066-propart`, and the cycle-136 e2e that used to assert the thatch and granary reported **false**.
+Both now say the set is complete, and the fallback control moved onto a name nobody has drawn a fallen twin
+for at all.
+
+Gates: build clean, unit **2034 passed / 2 skipped**, e2e **581 passed / 0 failed** — a fully green run,
+BACKLOG-430's long-dialog spec included.
+
+Still on flat-shape or glyph fallback: three of seven dropped foods (roots, mushrooms, seeds, BACKLOG-490),
+the `fuss` worn-ground mark (BACKLOG-496, held back deliberately as that item's control), and the dialog
+frame (BACKLOG-036).
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used this fire — this session runs
+under an operator instruction not to spawn sub-agents. Both rigs were authored inline against the same
+brief, with the same reject-your-first-draft discipline, and the same unit + e2e gates.

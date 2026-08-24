@@ -647,6 +647,78 @@ const SHELTER_RUIN_RIG: PropRig = {
   },
 };
 
+// Unravelled thatch 🥻 — the binding cord snapped, and a reed stack with nothing holding its waist does
+// not shrink, it *bursts*. A short stub still stands where the cord was tied lowest; the rest of the bundle
+// has slumped sideways and loose reeds lie flat on the ground out past both edges, where nobody wove them.
+// Same fronds, same gold — the ruin rule: a ruin is the same material, not a greyer version of it.
+const THATCH_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '....tt..........',
+  '...offo.........',
+  '...offo...ttt...',
+  '...offo..offfo..',
+  '...obbo.offsffo.',
+  '...offo.offffffo',
+  '..offfo.offsfffo',
+  '.odffdo.oodfffdo',
+  'ffo..oddddo..off',
+  'oo...oooooo...oo',
+];
+
+const THATCH_RUIN_RIG: PropRig = {
+  size: 16,
+  grid: THATCH_RUIN_GRID,
+  palette: {
+    o: 0x4a3a12, // the frond family's warm brown-olive outline
+    f: 0xc2a94e, // woven reed body (frond gold)
+    s: 0x9a7d2e, // stalk-dark weave flecks
+    t: 0xe0cf72, // pale seed-tips, now fraying off the broken crown
+    b: 0x6e5420, // what is left of the binding cord, still cinched round the stub
+    d: 0x86702a, // shadowed course where the slumped bundle meets the ground
+  },
+};
+
+// Cracked granary 🏛️ — the dome caved, so the storehouse is open to the sky down a dark seam through the
+// middle, with two stubs of roof timber left standing either side of the gap and plaster chunks fallen out
+// to both edges. The seam runs the whole body rather than stopping at the door: what makes a granary a ruin
+// is that the thing it existed to keep dry is not dry any more.
+const GRANARY_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '...oo......oo...',
+  '..orro....orro..',
+  '..orrro..orrrro.',
+  '..ohhbbssbbhho..',
+  '..obbbbssbbbbo..',
+  '..obbbbssbbbbo..',
+  '..obbbdssdbbbo..',
+  '..obbbdssdbbbo..',
+  '.oobbbdssdbbboo.',
+  '.obbbbdssdbbbbo.',
+  '.obbbdssdbbbbbo.',
+  'oboobbbbbbbbboob',
+  'oo..oooooooo..oo',
+];
+
+const GRANARY_RUIN_RIG: PropRig = {
+  size: 16,
+  grid: GRANARY_RUIN_GRID,
+  palette: {
+    o: 0x3a2e20, // the granary's own warm outline
+    r: 0xb06a3a, // the two roof-timber stubs left either side of the gap
+    h: 0xe8dcc0, // lit plaster, now only along the broken eave
+    b: 0xcdb890, // plaster-stone body
+    d: 0x6e4a28, // door timber, and the frame the seam tore through
+    s: 0x2c2018, // the seam itself — the same shadow the doorway always was
+  },
+};
+
 /* ---------------------------------------------------------------------------------------------------
  * The ritual's little path (BACKLOG-496).
  *
@@ -751,6 +823,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,
   shelter_derelict: SHELTER_RUIN_RIG,
+  thatch_derelict: THATCH_RUIN_RIG,
+  granary_derelict: GRANARY_RUIN_RIG,
   // BACKLOG-496: the ritual's worn ground, keyed `tic_<TicKind>`. `fuss` is deliberately still undrawn —
   // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
   tic_pace: TIC_PACE_RIG,

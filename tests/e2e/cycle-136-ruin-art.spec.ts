@@ -46,10 +46,12 @@ test('the founding ruin wears the ruin rig at full opacity, and the mend swaps i
 
 test('a landmark whose ruin is undrawn keeps the alpha fade', async ({ page }) => {
   await boot(page);
-  // The thatch and the granary have no ruin rig yet (2 of 4 drawn) — the fallback must still be there.
+  // Cycle 139 drew the remaining two, so all four landmarks now resolve — the roster assertion moved to
+  // `cycle-139-ruin-art.spec.ts`, and with it the fallback control, which now rides on a name nobody has
+  // drawn a fallen twin for at all rather than on a landmark that was merely waiting its turn.
   const has = await page.evaluate(
     () => ['cairn_derelict', 'shelter_derelict', 'thatch_derelict', 'granary_derelict']
       .map((n) => (window as W).__hasPropArt(n) as boolean),
   );
-  expect(has).toEqual([true, true, false, false]);
+  expect(has).toEqual([true, true, true, true]);
 });

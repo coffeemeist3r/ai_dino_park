@@ -690,7 +690,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > The art queue sat at 1 open (below cap 3), so one `[art]` item was seeded. It is the prop the structure
 > track makes the first thing a player walks up to on a fresh save.
 
-- [ ] BACKLOG-494 [art] **(2 of 4 drawn — the toppled cairn + the caved lean-to shipped cycle 136; the thatch and the granary keep the alpha fade via the per-landmark fallback)** Ruin rigs — 480 draws a derelict landmark by turning its own sprite down to `DERELICT_ALPHA` (0.45), which was the honest placeholder when nothing was drawn and reads as *fog* rather than *ruin*. Author a **derelict grid per landmark rig** — a toppled cairn with its top stones on the ground, a caved lean-to, an unravelled thatch, a cracked granary with its dome open — and let `bake.ts` resolve the ruin variant when `derelict` is set, with the alpha fade retired for the four rigs that have one and kept as the fallback for any that don't. Each renders standalone (a prop rig, no host terrain), so it clears the cycle-91 stash-ahead rule. With 488 shipping a founding ruin in the Grove, this is the first structure a new player ever inspects. Builds on 480 / 488 / 344 / 427 / 454.
 
 ## Cycle 136 structure additions — the fixture nobody names (2026-08-21)
 

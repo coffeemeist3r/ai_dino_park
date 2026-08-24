@@ -19,10 +19,12 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'food_meat', // BACKLOG-490 (cycle 137)
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
+      'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'stone',
       'thatch',
+      'thatch_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the unravelled stack)
       'tic_circle', // BACKLOG-496: the ritual's trodden ring
       'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss stays undrawn — the per-kind fallback control)
     ]);
