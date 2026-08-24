@@ -1,5 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
+
+/**
+ * BACKLOG-497 fixture note: the founding park now seats a two-voice council in the bowl, so the ground the
+ * player spawns on carries a spend policy from the first frame. Nothing in this file is *about* the founding
+ * state, so each spec asks for the pre-governance fixture by name — `emptyGrounds`, the `gatherToBowl`
+ * precedent — rather than asserting the absence of a system that now ships.
+ */
 
 /**
  * The grumble reaches the keeper (BACKLOG-471) — Milestone 9's last arc. The pure detection + gate are
@@ -56,6 +63,7 @@ test('a bank-first ground that leaves its own short grumbles to the keeper', asy
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   await bankFirstBowl(page);
 
   // Drain the pantry down to the reserve, then keep asking: the reserve starts refusing, and the refusals
@@ -70,6 +78,7 @@ test('a bank-first ground that leaves its own short grumbles to the keeper', asy
 
 test('the grumble is a standing, not a tic: once a day, however many mouths go short', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   await bankFirstBowl(page);
 
   for (let i = 0; i < 12 && (await shorts(page)) < 2; i++) await starveAndStep(page, 'Rex');
@@ -91,6 +100,7 @@ test('the grumble is a standing, not a tic: once a day, however many mouths go s
 
 test('feeding one of its own clears the grievance', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   await bankFirstBowl(page);
 
   for (let i = 0; i < 12 && (await shorts(page)) < 2; i++) await starveAndStep(page, 'Rex');
@@ -109,6 +119,7 @@ test('a park with no provider never grumbles — the default ticker is untouched
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
 
   expect(await page.evaluate(() => (window as W).__spendPriority('bowl'))).toBeNull();
   for (let i = 0; i < 6; i++) await starveAndStep(page, 'Rex');

@@ -165,7 +165,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, ticAnchorFor, hauntSeed, hauntWorthNoting, hauntDriftMemory, hauntDriftedLine, type Haunts, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, ticAnchorFor, hauntSeed, hauntWorthNoting, hauntDriftMemory, hauntDriftedLine, COMPANY_GLYPH, companyTraceIsFresh, foundByCompany, gladOfCompanyMemory, gladOfCompanyLine, gladOpener, type Haunts, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -405,6 +405,14 @@ export class WorldScene extends Phaser.Scene {
    */
   private ticHaunts: Haunts = {};
   private hauntNoted = new Set<string>();
+
+  /**
+   * The warm trace a found dino carries (BACKLOG-411) — who walked up on its ritual, and the world step it
+   * happened on. Transient like the rest of the 405 stretch state, but deliberately **not** cleared by
+   * `resetTic`: this is what the *ended* stretch left behind, so tearing it down with the stretch would
+   * delete it the instant it is written. It expires by `companyTraceIsFresh` and is consumed by one greet.
+   */
+  private companyTrace: Record<string, { friend: string; at: number }> = {};
   /**
    * Traces of your pacing (BACKLOG-424). `worldSteps` is the monotonic ambient-step counter a trace is
    * stamped with (the same units 405's solitude threshold counts in). `paceTraces` holds one live mark per
@@ -1380,6 +1388,18 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__resetTic = (name: string) => {
       this.resetTic(name);
       return this.ticCatches[name] ?? 0;
+    };
+    // BACKLOG-411: the warm trace a found dino carries, and one deterministic run of the stretch-ending
+    // beat. `__breakTic` drives production's own `breakTic` (the `__resetTic` precedent, not a second
+    // path); the optional `agedBy` backdates the trace so the fade can be tested without a clock hook.
+    (window as any).__companyTrace = (name: string) => this.companyTrace[name] ?? null;
+    (window as any).__breakTic = (name: string, agedBy = 0) => {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) return null;
+      this.breakTic(d);
+      const t = this.companyTrace[name];
+      if (t && agedBy) t.at -= agedBy;
+      return t ?? null;
     };
     (window as any).__ticEcho = (name: string) => {
       const axis = this.ticEchoes[name];
@@ -3922,16 +3942,55 @@ export class WorldScene extends Phaser.Scene {
     return best;
   }
 
-  /** Is another dino in `d`'s own zone within tic-company range (BACKLOG-405)? Company breaks the solitude. */
-  private companyNear(d: Dino): boolean {
+  /**
+   * The nearest dino in `d`'s own zone within tic-company range (BACKLOG-405), or null when `d` is alone.
+   * Nearest first, ties by name so the pick is deterministic.
+   *
+   * Split out of `companyNear` for BACKLOG-411, which needs the *name* of whoever ended the stretch. One
+   * function answers both questions on purpose: a beat that named a dino the solitude rule did not agree
+   * was there would be a lie the player could catch.
+   */
+  private nearestCompany(d: Dino): string | null {
     const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
     const cur = this.tileOf(d);
-    return this.dinos.some(
-      (o) =>
-        o !== d &&
-        zoneOf(this.dinoZones, o.name, BOWL_ID) === zone &&
-        this.chebyTiles(this.tileOf(o), cur) <= TIC_COMPANY_RANGE,
-    );
+    let best: { name: string; dist: number } | null = null;
+    for (const o of this.dinos) {
+      if (o === d) continue;
+      if (zoneOf(this.dinoZones, o.name, BOWL_ID) !== zone) continue;
+      const dist = this.chebyTiles(this.tileOf(o), cur);
+      if (dist > TIC_COMPANY_RANGE) continue;
+      if (!best || dist < best.dist || (dist === best.dist && o.name.localeCompare(best.name) < 0)) {
+        best = { name: o.name, dist };
+      }
+    }
+    return best?.name ?? null;
+  }
+
+  /** Is another dino in `d`'s own zone within tic-company range (BACKLOG-405)? Company breaks the solitude. */
+  private companyNear(d: Dino): boolean {
+    return this.nearestCompany(d) !== null;
+  }
+
+  /**
+   * Glad of the company (BACKLOG-411) — the solitude ended, and for once the park says so.
+   *
+   * The one caller is the wander loop's not-alone branch, which until now went straight to `resetTic`. The
+   * beat fires *before* the teardown and the teardown is unconditional: a stretch that earns no beat must
+   * still end. `foundByCompany` holds the whole ordering rule (mid-ritual, and not a need that pulled the
+   * dino away), and the ambient pause holds the beat exactly like every other ambient beat.
+   */
+  private breakTic(d: Dino): void {
+    const friend = foundByCompany(this.ticInvented.has(d.name), !!pressingNeed(this.needs[d.name]))
+      ? this.nearestCompany(d)
+      : null;
+    if (friend && !this.ambientHeld) {
+      const tic = this.ticFor(d); // BACKLOG-407: the ritual it actually performs, not the one it was born with
+      this.memory = remember(this.memory, d.name, gladOfCompanyMemory(tic.label, friend));
+      this.flashFeed(d, COMPANY_GLYPH);
+      this.logEvent(gladOfCompanyLine(d.name, friend, COMPANY_GLYPH));
+      this.companyTrace[d.name] = { friend, at: this.worldSteps };
+    }
+    this.resetTic(d.name);
   }
 
   /**
@@ -4472,7 +4531,7 @@ export class WorldScene extends Phaser.Scene {
       const aloneNow =
         !huddling && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
       if (aloneNow) this.soloSteps[d.name] = (this.soloSteps[d.name] ?? 0) + 1;
-      else this.resetTic(d.name);
+      else this.breakTic(d); // BACKLOG-411: ...and if a body ended the stretch, the park says so before it ends
       // BACKLOG-410: a dino freshly moved *alone* into a friendless zone (not settled + no in-zone bonded
       // friend) falls into its tic sooner — take the min with the 393 solitary-day threshold so the two
       // shorteners compose. The onset only shortens; the ritual + its memory (plain 405 / grief 414) are unchanged.
@@ -6400,7 +6459,19 @@ export class WorldScene extends Phaser.Scene {
     // cancelled greet (which nulls `caughtTic` above) can never burn a register.
     const catches = caught ? (this.ticCatches[target.name] = (this.ticCatches[target.name] ?? 0) + 1) : 0;
     const register = caughtRegister(catches, fond);
-    const text = caught ? `${caughtOpener(register, this.ticAxisFor(target))} ${reply.text}` : reply.text;
+    // BACKLOG-411: a dino found mid-ritual by *another dino* leads its next line with it. One prefix or the
+    // other or neither — never both. The `caught` branch wins because it is about the stretch happening
+    // right now, where the trace is what an already-ended stretch left behind (and a caught dino is by
+    // definition mid-stretch, so any trace it holds is older than the ritual it is standing in).
+    const trace = caught ? undefined : this.companyTrace[target.name];
+    const glad = trace && companyTraceIsFresh(this.worldSteps - trace.at) ? trace : undefined;
+    if (glad) delete this.companyTrace[target.name]; // consumed by this one line
+    const opener = caught
+      ? caughtOpener(register, this.ticAxisFor(target))
+      : glad
+        ? gladOpener(glad.friend)
+        : null;
+    const text = opener ? `${opener} ${reply.text}` : reply.text;
     const filedKey = `${target.name}:${register}`;
     if (caught && !this.ticCaughtFiled.has(filedKey)) {
       const label = this.ticFor(target).label; // BACKLOG-407: it names the ritual it actually performs

@@ -8055,3 +8055,7 @@ Specced **BACKLOG-411** (the *end* of a solitary stretch becomes a moment — a 
 ## Cycle 139 — codeplan
 
 Five files across the two tracks, lore first. Two rules written down before any code: the 411 beat fires *before* the teardown and the teardown stays unconditional (a stretch that files nothing must still end), and the 497 seam must be picked up by the two `FOUNDING_BANKED` loops that already exist — if the Coder has to add a call site in `WorldScene`, the seam is wrong. The plan also asks for `companyNear` to be refactored into `nearestCompany`, so the beat can never name a dino the solitude rule did not agree was there.
+
+## Cycle 139 — coder
+
+Both tracks landed. The end of a solitary stretch is a beat now — a float, a memory, a ticker line and a short-lived warm trace the dino leads its next greeting with — and `companyNear` was refactored into `nearestCompany` so the beat can never name a dino the solitude rule did not agree was there. On the structure side the founding governance claim got a home in `founding.ts`, the bowl got a bank ledger, and `WorldScene` gained **no new call site**: the two loops that already iterate `FOUNDING_BANKED` picked it up for free, which is the evidence the seam sits in the right place. Seven e2e specs broke and every one of them was asserting the defect — a young park with no policy on the ground the player spawns on — so each now asks for the pre-governance fixture by name.

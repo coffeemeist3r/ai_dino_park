@@ -172,6 +172,29 @@ weaken the new pins to keep an old assertion green.
 
 ---
 
+## Shipped
+
+Both tracks landed as planned, with three notes.
+
+- **The glyph.** `🙂` was taken (`world/foods.ts`, the non-favourite eat mark), so the float is **`🤗`**,
+  which the unit suite now pins as disjoint from every `TIC_BY_AXIS` glyph.
+- **`companyNear` was refactored, not duplicated.** `nearestCompany` is the real predicate and
+  `companyNear` is now `nearestCompany(d) !== null`, so the beat and the solitude rule cannot disagree
+  about who was standing there.
+- **The 497 fallout was bigger than the plan guessed, and every bit of it was the defect being asserted.**
+  Seven e2e specs across five files broke, all on one root cause: the bowl now carries a spend policy from
+  the first frame, so `granaryDeferredForFeeding` defers a feed-first ground's granary and
+  `__spendPriority('bowl')` is no longer `null` on a young park. None of those specs is *about* the founding
+  state, so each now asks for the pre-governance fixture by name — `emptyGrounds`, the helper 495's
+  precedent already put there — with a header saying why. The one spec in that set whose subject genuinely
+  **is** the founding state (`cycle-128-upkeep` "a fresh park owes nothing") deliberately does not call it,
+  and carries a comment saying so. No new pin was weakened.
+
+Also of note: `WorldScene` gained **no new call site** for 497. The two existing `FOUNDING_BANKED` loops
+(the seed and the `__clearFounding` hook) picked the bowl tallies up for free, exactly as the plan required
+— which is the evidence that the seam is in the right place.
+
 ## Blockers
 
-_(none — filled by the Coder if the gates fail.)_
+_(none — build clean, unit 1997 passed / 2 skipped, e2e 576 passed / 1 failed, the failure being
+BACKLOG-430's long-dialog spec which is red on a clean HEAD.)_

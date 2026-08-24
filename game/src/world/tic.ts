@@ -614,3 +614,66 @@ export function hauntDriftMemory(label: string): string {
 export function hauntDriftedLine(name: string, glyph: string): string {
   return `${glyph} ${name}'s little path has worn its way across the ground`;
 }
+
+/* ── Glad of the company (BACKLOG-411) ────────────────────────────────────────────────────────────── */
+
+/**
+ * The other way a solitary stretch ends.
+ *
+ * Since 405 the tic has had five ways to *start* — plain idleness, a solitary day (393), a friendless new
+ * ground (410), a fresh sting (412), a departed friend (414) — and exactly one ending anybody notices: the
+ * keeper walking up (408/413/420/422). The far commoner ending is another dino wandering inside
+ * `TIC_COMPANY_RANGE`, at which point `resetTic` tears the whole stretch down without a memory, a float, a
+ * ticker line or a word. A dino that spent the last minute turning a slow circle by itself greeted you as
+ * though it had not.
+ *
+ * So the ending gets a beat of its own: a mark, a memory naming who found it, one line on the ticker, and a
+ * short-lived **warm trace** the dino leads its next greeting with. Free — no bond, no affinity, no
+ * register that climbs. 422 priced the *keeper's* catch; this one is between two dinos.
+ */
+
+/** The float over a dino whose ritual was ended by company. Disjoint from the tic glyphs, the 408/413
+ *  catch marks (😳/😊) and the feeding marks — a warmth of its own register. */
+export const COMPANY_GLYPH = '🤗';
+
+/**
+ * How many world steps the warm trace stays worth leading with. Deliberately the same span
+ * `STING_FADES_AFTER_STEPS` uses and deliberately *not* imported from it: a note that outlives the walk
+ * back across the ground is a note the player cannot connect to anything they watched. Two separate claims
+ * that happen to agree today.
+ */
+export const COMPANY_TRACE_FADES_AFTER_STEPS = 24;
+
+/** Is the warm trace still worth leading with, given how many world steps have passed since it? */
+export function companyTraceIsFresh(stepsSince: number): boolean {
+  return stepsSince >= 0 && stepsSince < COMPANY_TRACE_FADES_AFTER_STEPS;
+}
+
+/**
+ * Did a body end this stretch, or did a need? The whole ordering rule, in one place so the unit suite can
+ * state it: a dino that walked off to the hatch was not *found* by anybody, and a stretch that never
+ * reached the ritual was never a ritual to be pulled out of.
+ */
+export function foundByCompany(wasTiccing: boolean, hasPressingNeed: boolean): boolean {
+  return wasTiccing && !hasPressingNeed;
+}
+
+/** The memory the found dino files — the ritual it was at, and who walked up. `ticMemory`'s register. */
+export function gladOfCompanyMemory(label: string, friend: string): string {
+  return `you ${label} until ${friend} came over — glad of the company`;
+}
+
+/** The ticker beat for the same moment (both names + the glyph), in `kinshipLine`'s shape. */
+export function gladOfCompanyLine(name: string, friend: string, glyph: string): string {
+  return `${glyph} ${friend} came over while ${name} was at its ritual`;
+}
+
+/**
+ * The deterministic frame a freshly-found dino leads its next greeting with — `bashfulOpener`'s sibling,
+ * prefixed to whatever the brain or the stub returned so it reads identically on a device with no model.
+ * One constant line: there is no register here, on purpose (420's escalation is the keeper's, not a
+ * friend's).
+ */
+export function gladOpener(friend: string): string {
+  return `Glad you came by — ${friend} found me at it just now.`;
+}

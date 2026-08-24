@@ -17,8 +17,10 @@
  * a restored save seeds nothing.
  */
 
-import { GROVE_ID } from './zones';
+import { BOWL_ID, GROVE_ID, zoneChain } from './zones';
 import type { Stockpile } from './resource';
+import { ROSTER } from '../entities/roster';
+import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type ProviderCandidate } from '../ai/roles';
 
 /**
  * The founding ruin: a toppled cairn on the Grove's west side. Grass by `groveTileAt` (the pond is the NE
@@ -57,5 +59,64 @@ export const FOUNDING_PILES: Record<string, Stockpile> = {
  * reachability bar and none of it.
  *
  * Ordinary `foodBanked` entries, so this round-trips the existing additive save field with no version bump.
+ * **And a second ground, from BACKLOG-497.** The Grove's ledger was the reachable half of 492 and the
+ * *unreachable* half of everything built on top of it: two residents gives `councilSeats(2, 2) = 1`, and a
+ * one-seat council is `zoneProvider` wearing a different glyph. Every beat that needs more than one ballot
+ * — the majority arithmetic (487), the tie-break, a call that can actually split — was as far out of reach
+ * on a fresh save as the whole system had been before 492. So the bowl gets a ledger too. Five residents and
+ * two eligible gives `councilSeats(5, 2) = 2`; both tallies sit under `PROVIDER_BANKS = 3`, so no provider
+ * shadows the seats and the tie-break stays `null`; and the two seats fall on **opposite sides of the pantry
+ * threshold** (Sunny's name-seeded agreeableness is 0.622, Glade's 0.085), so the ground the player spawns on
+ * holds the first vote in this park's life that has something to count.
  */
-export const FOUNDING_BANKED: Record<string, number> = { Pip: 2, Bramble: 1 };
+export const FOUNDING_BANKED: Record<string, number> = { Pip: 2, Bramble: 1, Sunny: 2, Glade: 1 };
+
+/**
+ * What population governance is *observable* at (BACKLOG-497).
+ *
+ * `zoneCouncil` and its three constants (`COUNCIL_MIN_BANKS`, `COUNCIL_PER_HEADS`, `COUNCIL_SEATS_MAX`) were
+ * picked in cycle 119 against a single five-dino bowl, and are now read by two votes (481/487), a term and a
+ * turnover beat (484), a bill lean (485), two lens glyphs (477) and a book standing (482) — with nothing
+ * anywhere stating what population that stack is designed to be watchable at, and nothing asserting the
+ * shipping park clears it. 492 found out by hand that it did not, and fixed it by hand, for one ground.
+ *
+ * This is the claim written down. **Derived from the constants, never restating their values**, so the
+ * statement and the arithmetic cannot drift apart: `councilSeats` hands one seat to any ground with a single
+ * banker, so the number that matters is the one that seats *two* — the point at which a ground's decision
+ * stops being one dino's temperament and starts being a count.
+ */
+export const GOVERNANCE_OBSERVABLE_AT = {
+  /** Residents one ground needs before it seats a council that can disagree. */
+  residents: COUNCIL_PER_HEADS * 2,
+  /** What each of those seats must have banked to be eligible for one. */
+  banked: COUNCIL_MIN_BANKS,
+} as const;
+
+/**
+ * The shipping roster and the founding ledger as the role layer sees them (BACKLOG-497) — so a test can ask
+ * what the park *actually boots into* rather than re-deriving it from two files and hoping.
+ */
+export function foundingCandidates(): ProviderCandidate[] {
+  return ROSTER.map((r) => {
+    const foodBanked = FOUNDING_BANKED[r.name] ?? 0;
+    return {
+      name: r.name,
+      zoneId: r.zone ?? BOWL_ID,
+      role: deriveRole({ meetings: 0, rumorsHeard: 0, topBond: 0, foodBanked }),
+      foodBanked,
+    };
+  });
+}
+
+/**
+ * Who each ground seats at boot (BACKLOG-497). Every ground in the chain appears, including the ones that
+ * seat nobody — an absent entry and an empty one are different claims, and the empty ones are the evidence
+ * BACKLOG-500 was filed on. Goes through `zoneCouncil` itself: the seat arithmetic lives in `ai/roles.ts`
+ * and there is exactly one copy of it.
+ */
+export function foundingCouncils(): Record<string, string[]> {
+  const candidates = foundingCandidates();
+  const out: Record<string, string[]> = {};
+  for (const id of zoneChain()) out[id] = zoneCouncil(candidates, id);
+  return out;
+}

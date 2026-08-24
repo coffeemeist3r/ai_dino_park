@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, emptyGrounds } from './helpers';
+
+/**
+ * BACKLOG-497 fixture note: the founding park now seats a two-voice council in the bowl, so the ground the
+ * player spawns on carries a spend policy from the first frame. Nothing in this file is *about* the founding
+ * state, so each spec asks for the pre-governance fixture by name — `emptyGrounds`, the `gatherToBowl`
+ * precedent — rather than asserting the absence of a system that now ships.
+ */
 
 /**
  * The granary (BACKLOG-454) — building finally feeds the food economy. A zone that has raised enough base
@@ -20,6 +27,7 @@ const bankFood = (p: import('@playwright/test').Page, z: string, food: string) =
 
 test('a zone with enough landmarks and the recipe raises a granary; the cap lifts 6 → 9', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   expect(await hasGranary(page, 'bowl')).toBe(false);
   expect(await foodCap(page, 'bowl')).toBe(6);
 
@@ -39,6 +47,7 @@ test('a zone with enough landmarks and the recipe raises a granary; the cap lift
 
 test('below the landmark bar the same pile builds a bias landmark, not a granary', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   // Only 2 landmarks — under GRANARY_AFTER_STRUCTURES(3) — so the zone still auto-builds its bias cairn.
   await seedReady(page, 'bowl', 2);
   await runBuild(page, 'Rex');
@@ -48,6 +57,7 @@ test('below the landmark bar the same pile builds a bias landmark, not a granary
 
 test('a granary lets the pantry bank past the flat cap of 6', async ({ page }) => {
   await boot(page);
+  await emptyGrounds(page); // BACKLOG-497: this spec's subject is not the founding council (see header)
   await seedReady(page, 'bowl');
   await runBuild(page, 'Rex');
   expect(await hasGranary(page, 'bowl')).toBe(true);
