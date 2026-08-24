@@ -8043,3 +8043,7 @@ came back green.
 ## Cycle 139 — lore-smith
 
 Seeded nothing (social queue 214 ≥ 12, art queue 3 ≥ 3) and suggested **BACKLOG-411** — a solitary stretch ended by a friend walking up has been the most common event in the tic system and the only one that leaves no trace at all; it becomes a warm note the dino leads its next greeting with.
+
+## Cycle 139 — structure-smith
+
+Brainstormed (2 open < X=4) — seeded **BACKLOG-500** (two of five grounds still ship with no residents, against CHARTER v7's own text) and **BACKLOG-501** (a reachability register, so v7's bar becomes a thing that breaks rather than a thing that is remembered) — then chose **BACKLOG-497**. Skipped the top pointer 495 on purpose: it is bit-identical by construction, and it wants to name what founding state a spec asks for while the founding state's own governance claim is still undeclared. Reading the three council constants against the shipping roster found the reachable half — the founding park seats exactly one council of exactly one seat, so every beat that needs two ballots is as unreachable today as the whole system was before 492.
