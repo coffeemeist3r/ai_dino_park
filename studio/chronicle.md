@@ -8059,3 +8059,7 @@ Five files across the two tracks, lore first. Two rules written down before any 
 ## Cycle 139 — coder
 
 Both tracks landed. The end of a solitary stretch is a beat now — a float, a memory, a ticker line and a short-lived warm trace the dino leads its next greeting with — and `companyNear` was refactored into `nearestCompany` so the beat can never name a dino the solitude rule did not agree was there. On the structure side the founding governance claim got a home in `founding.ts`, the bowl got a bank ledger, and `WorldScene` gained **no new call site**: the two loops that already iterate `FOUNDING_BANKED` picked it up for free, which is the evidence the seam sits in the right place. Seven e2e specs broke and every one of them was asserting the defect — a young park with no policy on the ground the player spawns on — so each now asks for the pre-governance fixture by name.
+
+## Cycle 139 — qa
+
+24/24 criteria pass, both tracks APPROVE. Build clean, unit 1997 passed / 2 skipped, e2e 579 passed / 1 failed — BACKLOG-430s long-dialog spec, red on a clean HEAD, with no parallel-load victims this run. Added the two specs the Coder shipped without: the ambient hold on the 411 beat (which also pins the harder half — the stretch still ends while held) and a running-game assertion that the park boots into the founding seating rather than only agreeing with it on paper. Recorded the 497 fallout in full: seven specs across five files, one root cause, every one of them asserting the defect.

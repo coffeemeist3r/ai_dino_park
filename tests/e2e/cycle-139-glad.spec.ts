@@ -137,3 +137,29 @@ test("the keeper's catch outranks the trace — a dino mid-ritual is bashful, no
 
   expect(errors).toEqual([]);
 });
+
+/**
+ * QA addition (cycle 139): the design asks for the beat to be held by the ambient pause like every other
+ * ambient beat, and the Coder shipped it without a spec. Without this, a future refactor could quietly make
+ * the beat the one ambient thing 300+ parallel specs can race.
+ */
+test('the ambient hold stops the beat, and releasing it lets the beat through', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await boot(page);
+
+  const [lone] = await loneAndFinder(page);
+  await page.evaluate(() => (window as W).__holdAmbient());
+  expect(await breakTic(page, lone)).toBeNull();
+  expect((await ticker(page)).filter((l) => l.includes('came over while'))).toEqual([]);
+
+  // ...and the stretch still ended, held or not — the teardown is unconditional.
+  expect(await inventTic(page, lone)).toBe(true);
+
+  await page.evaluate(() => (window as W).__releaseAmbient());
+  await place(page, lone, 9, 6);
+  await inventTic(page, lone);
+  expect(await breakTic(page, lone)).not.toBeNull();
+
+  expect(errors).toEqual([]);
+});
