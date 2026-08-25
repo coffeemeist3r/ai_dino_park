@@ -13,6 +13,7 @@ import type { Personality } from './personality';
 import type { Season } from '../world/seasons';
 import type { SpendPriority } from '../world/governance';
 import type { HatchOutcome } from '../world/manner';
+import type { TicKind } from '../world/tic';
 import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
 
@@ -51,6 +52,12 @@ export interface NPCContext {
    * career read lives in the collection book (402), and this is the one the player hears.
    */
   mealtime?: { outcome: HatchOutcome; other: string };
+  /**
+   * The ritual this dino was interrupted at (BACKLOG-423), set only on a catch. The model is told what
+   * happened and answers in the colour of it — it is never asked to author the bashful/fond frame itself,
+   * which stays the deterministic layer (`ticAside`, `caughtOpener`). Absent → today's prompt exactly.
+   */
+  interrupted?: { kind: TicKind; label: string };
 }
 
 export interface Observation {

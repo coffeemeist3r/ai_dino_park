@@ -114,6 +114,37 @@ export function foundingCandidates(): ProviderCandidate[] {
  * BACKLOG-500 was filed on. Goes through `zoneCouncil` itself: the seat arithmetic lives in `ai/roles.ts`
  * and there is exactly one copy of it.
  */
+/**
+ * Who wakes up on each ground in a brand-new park (BACKLOG-500). Every ground in `zoneChain()` is a key,
+ * including any that seat nobody — present-and-empty and absent are different claims, and the empty ones
+ * were the evidence this item was filed on. `foundingCouncils`'s sibling: same discipline, one layer down.
+ */
+export function foundingResidents(): Record<string, string[]> {
+  const out: Record<string, string[]> = {};
+  for (const id of zoneChain()) out[id] = [];
+  for (const r of ROSTER) (out[r.zone ?? BOWL_ID] ??= []).push(r.name);
+  return out;
+}
+
+/**
+ * The residency invariant (BACKLOG-500) — the grounds a fresh park boots with nobody on.
+ *
+ * CHARTER v7 says "every ground the player can walk to has life on it at boot." The roster that shipped
+ * alongside that sentence spread eight dinos as 5 bowl / 2 grove / 1 fernreach / **0 hollow / 0 ridge**, so
+ * two of five grounds were exactly as dead as all four had been before the amendment, and everything a
+ * ground can hold — a plot, a landmark, a pile, an upkeep bill, a mend errand, a council seat — was inert on
+ * them from boot to save-death. The Ridge was the sharper half: the park's only *branch*, the one ground
+ * reached by a decision rather than by continuing east, with nobody on either arm of it.
+ *
+ * This is the claim as something that breaks. It walks `zoneChain()` rather than a list of five ids, so the
+ * sixth ground inherits the invariant on the day it is added rather than the cycle somebody notices.
+ */
+export function groundsWithoutResidents(): string[] {
+  return Object.entries(foundingResidents())
+    .filter(([, names]) => names.length === 0)
+    .map(([id]) => id);
+}
+
 export function foundingCouncils(): Record<string, string[]> {
   const candidates = foundingCandidates();
   const out: Record<string, string[]> = {};

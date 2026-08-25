@@ -15,7 +15,7 @@ const dinos = (page: import('@playwright/test').Page) =>
 const gathered = (page: import('@playwright/test').Page) =>
   page.evaluate(() => (window as W).__gathered() as Record<string, number>);
 const resource = (page: import('@playwright/test').Page) =>
-  page.evaluate(() => (window as W).__resource() as { kind: string } | null);
+  page.evaluate(() => (window as W).__resource() as { kind: string; tileX: number; tileY: number } | null);
 
 test('a dino picks up a resource, raising its tally and clearing the resource', async ({ page }) => {
   const errors: string[] = [];
@@ -35,7 +35,11 @@ test('a dino picks up a resource, raising its tally and clearing the resource', 
   // One world step: the dino on (or beside) it picks it up.
   await page.evaluate(() => (window as W).__stepWorld());
 
-  expect(await resource(page)).toBeNull();
+  // BACKLOG-500: the branch is gone and the tally rose. What this no longer asserts is that *nothing* is
+  // lying around afterwards — with a resident on all five grounds the ambient roll can drop a fresh resource
+  // in the same step, which is the system working, not the pickup failing.
+  const after = await resource(page);
+  expect(after && { tileX: after.tileX, tileY: after.tileY }).not.toEqual({ tileX: tx, tileY: ty });
   expect(Object.values(await gathered(page)).reduce((a, b) => a + b, 0)).toBe(1);
   expect(errors).toEqual([]);
 });

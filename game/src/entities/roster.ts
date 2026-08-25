@@ -43,4 +43,17 @@ export const ROSTER: ReadonlyArray<DinoSpawn> = [
   { name: 'Bramble', species: 'stegosaurus', personality: 'territorial, tends the grove like a garden', color: 0x6f9a3c, tileX: 6, tileY: 8, zone: 'grove' },
   { name: 'Pip', species: 'compsognathus', personality: 'small, loud, certain it is in charge', color: 0xe0a23a, tileX: 13, tileY: 5, zone: 'grove' },
   { name: 'Thornback', species: 'triceratops', personality: 'old, slow, remembers the fern flats before the rest', color: 0x9a5f7a, tileX: 9, tileY: 9, zone: 'fernreach' },
+  // BACKLOG-500 — the last two empty grounds get residents. v7's spread cast left the Hollow and the Ridge
+  // on zero, which made the amendment's own sentence false; the invariant that now holds it true lives in
+  // world/founding.ts (`groundsWithoutResidents`), not in this comment.
+  //
+  // The roster GREW rather than rebalanced, on purpose: the bowl at five is the cast `TILES_PER_HEAD`
+  // (ceil(294/60) = 5, booting *at* capacity), the 460 last-one floor, the huddle and the food scramble were
+  // all tuned against, and moving a body off it to fill the Hollow would have re-tuned four systems to pay
+  // for a spawn-table edit. Two more minds per tick is the cheaper bill.
+  //
+  // Neither is a compsognathus: `diet.test.ts` pins the carnivore set to exactly those rows, and a residency
+  // fix has no business changing the hunting balance on the way past.
+  { name: 'Murk', species: 'parasaurolophus', personality: 'quiet, damp-loving, speaks in short sentences', color: 0x4c6b78, tileX: 5, tileY: 8, zone: 'hollow' },
+  { name: 'Ember', species: 'brontosaurus', personality: 'sun-drunk, slow-talking, climbs for the view', color: 0xc4713f, tileX: 14, tileY: 6, zone: 'ridge' },
 ];

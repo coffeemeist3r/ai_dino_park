@@ -8235,3 +8235,12 @@ buildMessages, and two lines in the greet block (with a hoist of `const caught` 
 flagged as the one real risk, since the ordering comments there were written after a bug). Structure: two
 roster rows on verified grass tiles ((5,8) Hollow, (14,6) Ridge), two derived exports in founding.ts, and a
 fallout sweep for cast-counting specs to run BEFORE the suite rather than after.
+
+## Cycle 140 - coder
+
+Both tracks shipped. 423: the aside between the frozen opener and the reply, plus the prompt field on top.
+500: Murk on the Hollow, Ember on the Ridge, and the residency invariant in founding.ts.
+
+The cycle turned up a real conflict on the way past: 474's unsettled-ground read is about grounds nobody
+lives on, and CHARTER v7 says there must be none - so satisfying v7 made 474's frontier tier dormant on a
+fresh save. The spec now says so out loud rather than being quietly reworded.

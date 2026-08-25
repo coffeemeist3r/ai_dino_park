@@ -15,6 +15,8 @@ describe('diet split (BACKLOG-435)', () => {
       Bramble: 'herbivore', // stegosaurus — CHARTER v7, the grove
       Pip: 'carnivore', // compsognathus — CHARTER v7, the grove's own small predator
       Thornback: 'herbivore', // triceratops — CHARTER v7, the Fernreach
+      Murk: 'herbivore', // parasaurolophus — BACKLOG-500, the Hollow
+      Ember: 'herbivore', // brontosaurus — BACKLOG-500, the Ridge
     });
     // The rule is the species, not the headcount: every compsognathus hunts and only a compsognathus does.
     // (Was `toHaveLength(1)` when the park had one ground and one comp; v7 gave the grove a second.)

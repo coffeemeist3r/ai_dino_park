@@ -180,3 +180,54 @@ structure track second (it moves the founding state and will have spec fallout).
 3. `npx --yes kill-port 5173` then the full e2e.
 
 No file is touched by both tracks.
+
+---
+
+## Shipped
+
+Both tracks landed as planned. 15 files: 7 source, 8 spec.
+
+**Lore track (BACKLOG-423)** — `world/tic.ts` (`TIC_ASIDE` + `ticAside`), `ai/brain.ts`
+(`NPCContext.interrupted`, type-only `TicKind` import), `ai/webllmBrain.ts` (one clause in
+`buildMessages`, spliced after `${mealtime}`), `scenes/WorldScene.ts` (the `const caught` hoist, the
+`interrupted` context field, and the three-part `[opener, aside, reply].filter(Boolean).join(' ')`).
+The hoist was the one flagged risk and it was clean: nothing between the old and new site touches
+`this.caughtTic` or `target.name`, and the ordering that *is* load-bearing below (the 420 count, `fond`
+read before the 422 grant) was not moved.
+
+**Structure track (BACKLOG-500)** — `entities/roster.ts` (Murk on the Hollow at (5,8), Ember on the Ridge
+at (14,6), both verified grass by `zoneTileAt` before being written, both herbivores), `world/founding.ts`
+(`foundingResidents` + `groundsWithoutResidents`).
+
+### Fallout, and what it turned out to mean
+
+Four existing spec files moved. None was deleted.
+
+- `roster.test.ts` / `cycle-005-roster.spec.ts` — 8 → 10, and "at least three grounds" became "all five".
+- `world/diet.test.ts` — the two new herbivores added to the roster diet map. The carnivore rule
+  (`hunters === the compsognathus rows`) was already written as a rule rather than a count, so it needed
+  nothing.
+- `cycle-062-resource.spec.ts` — **a real consequence, not a rename.** The spec asserted that after the
+  pickup step *no* resource exists anywhere. With a resident on all five grounds the ambient roll can drop
+  a fresh one in the same step (it dropped a stone on the Ridge). The assertion now says the *branch at
+  that tile* is gone and the tally rose, which is what the spec was ever about.
+- `cycle-120-unsettled.spec.ts` — **the finding of this cycle, and it is worth the Validator's attention.**
+  474's frontier read is *about* grounds nobody lives on, and CHARTER v7 says there must be none. Putting
+  a resident on the Hollow and the Ridge therefore makes the unsettled read, its lens glyph, and the
+  frontier migration tier **dormant on a fresh save** — the exact shape of defect v7's corollary was
+  written against, arrived at by obeying v7's own third change. The spec now asserts the new truth out
+  loud (`unsettled()` is `[]` at boot) and proves the read still works the instant a ground empties, and
+  the two tests that needed a frontier now *make* one by walking the residents out. This wants a backlog
+  item, not a comment.
+
+### Gates
+
+- `npm run build` clean.
+- `npx vitest run` — **2053 passed / 2 skipped**, 206 files.
+- `npx playwright test` — **582 passed / 2 failed**. Both pass isolated on a re-run:
+  `mobile-minds.spec.ts` (BACKLOG-430, the standing red that fails on a clean HEAD) and
+  `cycle-110-plenty.spec.ts` (the catalogued parallel-load victim, named in the cycle-130 chronicle).
+  Neither is near either diff.
+- Brain boundary: `@mlc-ai/web-llm` appears nowhere outside `game/src/ai/` (grep, no hits).
+- Save format: unchanged. Nothing new is persisted by either track; the two new dinos spawn from `ROSTER`
+  on the `!save` branch exactly as the other eight do.

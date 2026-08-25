@@ -156,13 +156,18 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     slunk: `NAME wouldn't budge off the last food drop and you gave up and slunk away — it still stings. `,
   };
   const mealtime = ctx.mealtime ? MEALTIME[ctx.mealtime.outcome].replaceAll('NAME', ctx.mealtime.other) : '';
+  // The ritual colours the voice (BACKLOG-423): the enrichment half. The deterministic aside (`ticAside`)
+  // already ships without a model; this only tells the model what it walked in on. Absent → today's prompt.
+  const interrupted = ctx.interrupted
+    ? `You were alone doing your own private thing — you ${ctx.interrupted.label} — and got walked in on; you still sound like it. `
+    : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

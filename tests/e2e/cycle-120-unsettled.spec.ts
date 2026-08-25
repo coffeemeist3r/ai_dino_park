@@ -20,16 +20,22 @@ const unsettled = (p: Page) => p.evaluate(() => (window as W).__unsettled() as s
 const zoneMap = (p: Page) =>
   p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean }>);
 
-test('a fresh park is three inhabited grounds and two nobody has ever lived on', async ({ page }) => {
+test('a fresh park has no unsettled ground left — and reads unsettled again the moment one empties', async ({ page }) => {
   await boot(page);
-  // CHARTER v7: the cast ships across the map, so the grove and the Fernreach are settled from boot. The
-  // Hollow and the Ridge are the frontier now — which is what keeps this feature meaningful rather than
-  // making it a label on four-fifths of the park.
-  expect(await unsettled(page)).toEqual(['hollow', 'ridge']);
+  // BACKLOG-500 flips this assertion, and the flip is the finding. CHARTER v7 says every ground the player
+  // can walk to has life on it at boot; 474's frontier read is *about* grounds nobody lives on. Satisfying
+  // the constitution makes the frontier tier dormant on a fresh save — a real cost, recorded here rather
+  // than papered over. The read itself still works the instant a ground actually empties.
+  expect(await unsettled(page)).toEqual([]);
 
-  const model = await zoneMap(page);
-  expect(model.find((e) => e.id === 'hollow')!.unsettled).toBe(true);
-  expect(model.find((e) => e.id === 'bowl')!.unsettled).toBe(false);
+  const booted = await zoneMap(page);
+  expect(booted.find((e) => e.id === 'hollow')!.unsettled).toBe(false);
+  expect(booted.find((e) => e.id === 'bowl')!.unsettled).toBe(false);
+
+  // Empty the Hollow and it reads unsettled again — the read is heads, not history.
+  await page.evaluate(() => (window as W).__migrate('Murk', 'fernreach'));
+  expect(await unsettled(page)).toEqual(['hollow']);
+  expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.unsettled).toBe(true);
 });
 
 test('a migrant aims at the unsettled ground over an inhabited neighbour', async ({ page }) => {
@@ -38,14 +44,20 @@ test('a migrant aims at the unsettled ground over an inhabited neighbour', async
   // richer by every read) and the Hollow (still nobody). The frontier tier must take the Hollow.
   await page.evaluate(() => (window as W).__migrate('Sunny', 'grove'));
   await page.evaluate(() => (window as W).__migrate('Twitch', 'fernreach'));
-  // BACKLOG-478: the Ridge is unsettled too, and two hops off — so this is now a real test of the frontier
-  // tier's *nearest*-qualifying read rather than a one-candidate walkover.
+  // BACKLOG-500: the frontier has to be *made* now — both far grounds ship with a resident, so their
+  // residents walk out first. The Ridge stays two hops off, so this is still a test of the frontier tier's
+  // nearest-qualifying read rather than a one-candidate walkover.
+  await page.evaluate(() => (window as W).__migrate('Murk', 'grove'));
+  await page.evaluate(() => (window as W).__migrate('Ember', 'grove'));
   expect(await unsettled(page)).toEqual(['hollow', 'ridge']);
   expect(await page.evaluate(() => (window as W).__scarcityDest('Twitch') as string)).toBe('hollow');
 });
 
 test('the first dino in settles it, once, and the ground stops reading unsettled', async ({ page }) => {
   await boot(page);
+  // BACKLOG-500: the Hollow ships with Murk on it, so empty it before founding it — this test is about the
+  // pioneer record (343), and a spawned resident records none.
+  await page.evaluate(() => (window as W).__migrate('Murk', 'fernreach'));
   await page.evaluate(() => (window as W).__migrate('Twitch', 'hollow'));
 
   const log = (await events(page)).join('\n');

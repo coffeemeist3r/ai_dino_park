@@ -196,6 +196,36 @@ export function fondCaughtMemory(label: string): string {
 }
 
 /**
+ * The ritual colours the voice (BACKLOG-423) — the aside between the opener and the reply.
+ *
+ * Fifty cycles of the tic went into the ritual's *body*: what starts it, where its little path drifts, who
+ * catches it, what the catch costs, who learns it off whom. Four registers of being caught (420), a warmth
+ * price (422), a memory per register, a friend-left trace (411) — and not one of them ever looked at **what
+ * the dino was actually doing**. Catch a pacer and catch a fusser and the words were byte-identical.
+ *
+ * This is the half that ships to every device. The item was filed as a prompt nudge, which would have been
+ * bit-identical on a machine with no model — and the model is optional by charter, so that is the CHARTER v7
+ * reachability bar failing, not a compatibility win. So the ritual colours the voice twice: here, in the
+ * physical business of stopping what you were doing (deterministic, model-free), and again in the prompt
+ * (`NPCContext.interrupted`) where a model happens to be loaded.
+ *
+ * The 408/413/420 opener strings are frozen. This sits *between* the opener and the reply and adds to them.
+ */
+export const TIC_ASIDE: Record<TicKind, string> = {
+  pace: '*feet still going a moment after the rest of it stops*',
+  circle: '*finishes the turn it was in the middle of before it looks up*',
+  fuss: '*sets the thing down, then picks at it once more anyway*',
+};
+
+/**
+ * The aside for a ritual kind. A function rather than raw table access at the call site, so the table can
+ * grow a shape later (per register, per dino) without `WorldScene` learning about it.
+ */
+export function ticAside(kind: TicKind): string {
+  return TIC_ASIDE[kind];
+}
+
+/**
  * Caught again (BACKLOG-420) — the catch stops being a lookup.
  *
  * 408 and 413 gave the interruption two readings, bashful and pleased, and both are constant strings: a

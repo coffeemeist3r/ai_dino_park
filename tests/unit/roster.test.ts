@@ -6,9 +6,9 @@ const COLS = 20;
 const ROWS = 15;
 
 describe('ROSTER', () => {
-  it('has 8 entries with distinct names (CHARTER v7 — the cast ships across the map)', () => {
-    expect(ROSTER).toHaveLength(8);
-    expect(new Set(ROSTER.map((d) => d.name)).size).toBe(8);
+  it('has 10 entries with distinct names (BACKLOG-500 — every ground has a resident)', () => {
+    expect(ROSTER).toHaveLength(10);
+    expect(new Set(ROSTER.map((d) => d.name)).size).toBe(10);
   });
 
   it('reuses species deliberately, but never a species+colour pair', () => {
@@ -21,7 +21,7 @@ describe('ROSTER', () => {
 
   it('puts a resident on every ground the player can walk to', () => {
     const zones = new Set(ROSTER.map((d) => d.zone ?? 'bowl'));
-    expect(zones.size).toBeGreaterThanOrEqual(3); // the bowl is no longer the whole park
+    expect(zones.size).toBe(5); // BACKLOG-500: all five, not "at least three" — the invariant itself lives in founding.ts
     expect(zones.has('bowl')).toBe(true);
   });
 

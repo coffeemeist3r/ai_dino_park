@@ -165,7 +165,7 @@ import { cropYield, harvestYieldLine, seasonCropLine } from '../world/cropseason
 import { handoverBeat } from '../world/handover';
 import { spreadPlentyWord, plentyMemory, plentyTarget, PLENTY_TOKEN } from '../world/plentyword';
 import { recordTrace, traceNear, traceMemory, traceKey, TRACE_GLYPH, type PaceTrace } from '../world/traces';
-import { signatureTic, signatureAxis, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, ticAnchorFor, hauntSeed, hauntWorthNoting, hauntDriftMemory, hauntDriftedLine, COMPANY_GLYPH, companyTraceIsFresh, foundByCompany, gladOfCompanyMemory, gladOfCompanyLine, gladOpener, type Haunts, type Tic } from '../world/tic';
+import { signatureTic, signatureAxis, ticAside, caughtRegister, caughtOpener, caughtRegisterMemory, undisturbed, inventsTic, ticStep, ticMemory, fondOfBeingCaught, griefEdge, griefAnchor, griefTicMemory, GRIEF_BOND_FLOOR, TIC_AFTER_STEPS, TIC_AFTER_STEPS_HOMESICK, TIC_AFTER_STEPS_STUNG, stingIsFresh, soothingTicMemory, TIC_COMPANY_RANGE, aloneInStrangeZone, TIC_BY_AXIS, ECHO_BOND_FLOOR, watchingTic, picksUpTic, echoedTic, echoTicMemory, echoedLine, ticBookLine, ECHO_FROM_UNKNOWN, kinshipMemory, kinshipLine, catchWarmth, catchWarmedLine, ticAnchorFor, hauntSeed, hauntWorthNoting, hauntDriftMemory, hauntDriftedLine, COMPANY_GLYPH, companyTraceIsFresh, foundByCompany, gladOfCompanyMemory, gladOfCompanyLine, gladOpener, type Haunts, type Tic } from '../world/tic';
 import { zoneProsperity, prosperityTier, prosperityBadge, type ZoneSignals, type ProsperityTier } from '../world/prosperity';
 import {
   noticeResource,
@@ -6418,6 +6418,11 @@ export class WorldScene extends Phaser.Scene {
 
     // Reply path is unchanged from the old greet flow (tone-coloured reply is BACKLOG-148).
     this.dialog.show(`${target.name}: ...`);
+    // BACKLOG-423: hoisted above the context literal so the prompt can carry the interrupted ritual. Reads
+    // only `this.caughtTic` and `target.name`, and nothing between here and its old site touches either —
+    // the ordering that *is* load-bearing (the 420 count, and `fond` being read before the 422 grant) is
+    // untouched below.
+    const caught = this.caughtTic === target.name;
     const now = getWorldClock().now();
     const reply = await target.greet({
       personality: this.ensurePersona(target).text, // BACKLOG-103: the stored self feeds the prompt
@@ -6445,12 +6450,16 @@ export class WorldScene extends Phaser.Scene {
       // Mealtime mood in the voice (BACKLOG-404): how its last contested drop went, while that beat is still
       // on the ring. The ring is the freshness gate — when the memory rolls off, the dino stops mentioning it.
       mealtime: lastHatchOutcome(recall(this.memory, target.name)) ?? undefined,
+      // The ritual colours the voice (BACKLOG-423): the enrichment half. Goes through the same `ticFor` the
+      // aside and the memory filing use, so the three can never name different rituals.
+      interrupted: caught
+        ? { kind: this.ticFor(target).kind, label: this.ticFor(target).label }
+        : undefined,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
     // to whatever the brain/stub returned (never asks the model to be bashful; the NPCBrain boundary is intact).
     // It files the caught memory once per solitary stretch (cleared by resetTic when the stretch ends).
-    const caught = this.caughtTic === target.name;
     // BACKLOG-413: a fond caught dino leads with a warm opener + files a glad memory; a non-fond one stays bashful (408).
     const fond = caught && fondOfBeingCaught(heartsFromPoints(this.friendship[target.name] ?? 0));
     // BACKLOG-420: the catch climbs across one stretch — pleased, teasing, then fondly resigned — but only
@@ -6471,7 +6480,10 @@ export class WorldScene extends Phaser.Scene {
       : glad
         ? gladOpener(glad.friend)
         : null;
-    const text = opener ? `${opener} ${reply.text}` : reply.text;
+    // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
+    // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
+    const aside = caught ? ticAside(this.ticFor(target).kind) : null;
+    const text = [opener, aside, reply.text].filter(Boolean).join(' ');
     const filedKey = `${target.name}:${register}`;
     if (caught && !this.ticCaughtFiled.has(filedKey)) {
       const label = this.ticFor(target).label; // BACKLOG-407: it names the ritual it actually performs
