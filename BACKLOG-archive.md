@@ -13,6 +13,15 @@
 
 - [x] BACKLOG-500 [infra] The grounds nobody lives on — CHARTER v7's third change reads "**the cast ships across the map**, not stacked in one zone: the roster carries a spawn zone, and every ground the player can walk to has life on it at boot." The roster it shipped spreads eight dinos as **5 bowl / 2 grove / 1 fernreach / 0 hollow / 0 ridge** — so two of the five grounds are exactly as empty at boot as all four were before the amendment, and the sentence that says otherwise is in the constitution. Everything a ground can hold (a plot, a landmark, a pile, a provider, a council, an upkeep bill, a mend errand) is inert on the Hollow and the Ridge from boot to save-death, and the Ridge is the *branch* — the one ground reached by a choice rather than by walking the line. Give the roster a residency invariant with a test that reads `zoneChain()` and asserts every ground has at least one resident, and seed whatever residents that costs. Note the tension to resolve rather than paper over: the bowl at five is the cast the 460 last-one floor, the huddle and the food scramble were all tuned against, so this is a *rebalance* of eight bodies (or a slightly larger roster), not a redistribution done blind. Builds on 486 / 474 / 460.
 
+## Closed cycle 140-art — the food roster closes (2026-08-25)
+
+> Three fires and every piece of food the hatch drops bakes a real prop. The item shipped against a
+> `drawn < FOODS.length` guard that said "when this fails, 490 is complete: close it" — it failed in three
+> places (two unit specs and an e2e) and all three were inverted rather than deleted, so the 2 → 4 → 7
+> progression stays readable. The graceful-fallback control moved onto an id the park has never dropped.
+
+- [x] BACKLOG-490 [art] **(7 of 7 — fish + berries cycle 135-art, meat + greens cycle 137-art, roots + mushrooms + seeds cycle 140-art; the roster closes and the per-item fallback control moves onto an id the park has never dropped)** The food the hatch drops — every piece of food that falls through the hatch is still a text emoji (`🍖 🌿 🐟 🍓 🥕 🍄 🌰`, `WorldScene.dropFood`), which leaves the single most-looked-at object in the park — the thing five dinos sprint at, fight over, cede, gobble and remember for the rest of the save — the only prop still rendering as a font glyph while the cairn, granary, thatch, shelter and all three ripe crops bake real pixel rigs. Author pixel prop rigs for the seven `FOODS` ids (fish and berries first, the two the cast reacts to most), wire them into `PROP_RIGS` keyed `food_<id>`, and have `dropFood` bake the rig where one exists and keep the emoji where it doesn't — the same graceful per-item fallback `drawPlotSprite` already uses for a rig-less crop, so the rectangle-fallback control is untouched and a partial roster ships fine. Builds on 296 / 317 / 419.
+
 ## Closed cycle 138 housekeeping — three emptied seeding blocks (2026-08-23)
 
 > Each of these held exactly one or two items the Structure-smith brainstormed when its queue dipped below

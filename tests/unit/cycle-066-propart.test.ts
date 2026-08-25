@@ -17,6 +17,9 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'food_fish', // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
       'food_greens', // BACKLOG-490 (cycle 137)
       'food_meat', // BACKLOG-490 (cycle 137)
+      'food_mushrooms', // BACKLOG-490 (cycle 140-art — 7 of 7, the food roster closes)
+      'food_roots', // BACKLOG-490 (cycle 140-art)
+      'food_seeds', // BACKLOG-490 (cycle 140-art)
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)

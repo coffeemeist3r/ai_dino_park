@@ -40,14 +40,14 @@ test('the leafy greens land as a baked rig', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('the three still undrawn keep their emoji — the fallback is still live', async ({ page }) => {
+test('the three that were undrawn are drawn now — BACKLOG-490 closed at 7 of 7', async ({ page }) => {
   await boot(page);
 
-  // Roots, mushrooms and seeds are deliberately still glyphs. When this test has nothing left to assert,
-  // BACKLOG-490 is complete and should be closed rather than the test weakened.
-  for (const id of ['roots', 'mushrooms']) {
-    expect(await hasRig(page, `food_${id}`)).toBe(false);
-    await drop(page, id);
-    expect(await foodIsArt(page)).toBe(false);
+  // This test said "roots, mushrooms and seeds are deliberately still glyphs. When this test has nothing
+  // left to assert, BACKLOG-490 is complete and should be closed rather than the test weakened." Cycle
+  // 140-art drew them; 490 is closed. The assertion is inverted rather than deleted so the fire that
+  // finished the roster is visible from the fire that was two-thirds of the way there.
+  for (const id of ['roots', 'mushrooms', 'seeds']) {
+    expect([id, await hasRig(page, `food_${id}`)]).toEqual([id, true]);
   }
 });

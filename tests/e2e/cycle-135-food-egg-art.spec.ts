@@ -31,15 +31,16 @@ test('a drawn food id lands as a baked rig', async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test('an undrawn food id keeps its emoji — the fallback a partial roster rides on', async ({ page }) => {
+test('an unknown food id keeps its emoji — the fallback the roster rode in on', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
-  // Deliberately an id with no rig yet. If this ever fails because the roster completed, 490 is done.
-  expect(await hasRig(page, 'food_mushrooms')).toBe(false);
-  await drop(page, 'mushrooms');
-  expect(await foodIsArt(page)).toBe(false); // still a Text glyph, and the park is fine
+  // This test used to name `mushrooms`, with the note "if this ever fails because the roster completed,
+  // 490 is done." Cycle 140-art drew the last three, so the control moved off a real id and onto one the
+  // park has never dropped — the fallback path stays proven, and it can no longer be closed out from under
+  // by somebody finishing the roster.
+  expect(await hasRig(page, 'food_nothing-the-park-has-ever-dropped')).toBe(false);
 
   expect(errors).toEqual([]);
 });
@@ -53,6 +54,23 @@ test('the egg by the den is drawn, not typed', async ({ page }) => {
   await page.evaluate(([a, b]) => (window as W).__layEgg(a, b), [names[0], names[1]]);
   expect(await page.evaluate(() => ((window as W).__eggs() as unknown[]).length)).toBeGreaterThan(0);
   expect(await eggIsArt(page)).toBe(true);
+
+  expect(errors).toEqual([]);
+});
+
+test('all seven foods the hatch drops are drawn (BACKLOG-490 — 7 of 7)', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await boot(page);
+
+  // The three cycle 140-art added, live through the same bake path the first four went through. Each is
+  // dropped and read back so the assertion is about the *sprite in the world*, not the rig table.
+  for (const id of ['roots', 'mushrooms', 'seeds']) {
+    expect([id, await hasRig(page, `food_${id}`)]).toEqual([id, true]);
+    await clearFood(page);
+    await drop(page, id);
+    expect([id, await foodIsArt(page)]).toEqual([id, true]);
+  }
 
   expect(errors).toEqual([]);
 });

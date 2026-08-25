@@ -540,6 +540,120 @@ const GREENS_RIG: PropRig = {
   },
 };
 
+// ── Starchy roots 🥕 — two scrubbed tubers, cut and bound for the hatch ───────────────────────────────
+//
+// The trap here was that this park already draws a root: `crop_ripe_roots` (432), a tuber shouldering out
+// of a soil mound under a leaf sprig. The first draft of this was that picture again, smaller, which is the
+// same mistake the ruins fire made in cycle 139 and the same correction: **what the hatch drops is cut.**
+// So there is no soil and no sprig — two tubers, each with the pale scar of a **cropped crown** where the
+// leaves were taken off, and a whisker of taproot trailing from each tail. Two of them, not one, so the
+// silhouette is a pair of tapers crossing rather than a single lump that could be anything.
+const FOOD_ROOTS_GRID: ReadonlyArray<string> = [
+  '................',
+  '....oo....oo....',
+  '...occo..occo...',
+  '...oTto..oTto...',
+  '..otTtto.otto...',
+  '..ottTto.oTtto..',
+  '..otttto.ottto..',
+  '..otttto.ottto..',
+  '..ottto..ottto..',
+  '...ootto..otto..',
+  '....otto..otto..',
+  '....otto..oto...',
+  '.....oto..ow....',
+  '.....ow....w....',
+  '......w.........',
+  '................',
+];
+
+const FOOD_ROOTS_RIG: PropRig = {
+  size: 16,
+  grid: FOOD_ROOTS_GRID,
+  palette: {
+    o: 0x4a2c14, // dark outline (never pure black)
+    t: 0xc9762b, // scrubbed root body
+    T: 0xe8a552, // sun-caught face
+    c: 0xe3d6a8, // the cropped crown — the pale scar that says this was cut, not pulled up whole
+    w: 0xa8895a, // trailing taproot whisker
+  },
+};
+
+// ── Pale mushrooms 🍄 — a cluster of three, gills out ─────────────────────────────────────────────────
+//
+// The first draft was one big spotted toadstool, and it was wrong twice: a single cap at sixteen pixels is
+// a lollipop, and a *red* one is a berry with a stick in it — this hatch already drops berries. The read
+// is the **cluster** and the **gills**. Three caps at different heights give a lumpy, organic outline that
+// nothing else in `PROP_RIGS` has, and a dark band under each cap says the underside is open, which is the
+// one thing a mushroom has that no fruit does. Cool and pale on purpose: everything else the hatch drops is
+// warm, so this is the odd one in the pile at a glance.
+const FOOD_MUSHROOMS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....oooo.......',
+  '....oCCCCo......',
+  '...oCDCCDCo.....',
+  '...oCCCCCCo.....',
+  '...ogggggo......',
+  '....osso........',
+  '..oooosso.oooo..',
+  '.oCDCCoss.oCCDo.',
+  '.oCCCCoss.oCDCo.',
+  '.ogggo.ss.ogggo.',
+  '..oss......oss..',
+  '..oss......oss..',
+  '...o........o...',
+  '................',
+];
+
+const FOOD_MUSHROOMS_RIG: PropRig = {
+  size: 16,
+  grid: FOOD_MUSHROOMS_GRID,
+  palette: {
+    o: 0x2e2438, // dark outline (never pure black)
+    C: 0xd8cfc0, // pale cap
+    D: 0xa89a8c, // cap freckle
+    g: 0x6b5f70, // the gills — the underside nothing else in the hatch has
+    s: 0xe6e0d4, // stalk
+  },
+};
+
+// ── Hard pine seeds 🌰 — a heap of six ────────────────────────────────────────────────────────────────
+//
+// A heap, not an object. Every other food the hatch drops is one thing with one silhouette; this is the
+// only one that is *many*, and leaning into that is what stops it reading as a small brown berry. Six
+// facetted nuts stacked three-two-one wide, each with a single lit facet — and two of them **cracked**,
+// because the label is "hard pine seeds" and a crack is the cheapest way to say a thing has a shell.
+const FOOD_SEEDS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '....oo....oo....',
+  '...oNno..onNo...',
+  '...onno..onno...',
+  '....oo....oo....',
+  '.......oo.......',
+  '......oNno......',
+  '......onno......',
+  '.oo....oo....oo.',
+  'oNno..onko..oNno',
+  'onno..okno..onno',
+  '.oo....oo....oo.',
+  '................',
+  '................',
+];
+
+const FOOD_SEEDS_RIG: PropRig = {
+  size: 16,
+  grid: FOOD_SEEDS_GRID,
+  palette: {
+    o: 0x3a2a18, // dark outline (never pure black)
+    n: 0x8a6236, // shell
+    N: 0xc49456, // lit facet
+    k: 0x5d4223, // the split in a cracked shell
+  },
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -819,6 +933,11 @@ export const PROP_RIGS: Record<string, PropRig> = {
   food_berries: BERRIES_RIG, // BACKLOG-490
   food_meat: MEAT_RIG, // BACKLOG-490 (cycle 137) — the two the hatch drops most
   food_greens: GREENS_RIG, // BACKLOG-490 (cycle 137)
+  // BACKLOG-490 (cycle 140-art) — 7 of 7. The food roster closes; the per-item fallback in `dropFood`
+  // is untouched and still the shipping path for any food id a later cycle adds without a rig.
+  food_roots: FOOD_ROOTS_RIG,
+  food_mushrooms: FOOD_MUSHROOMS_RIG,
+  food_seeds: FOOD_SEEDS_RIG,
   egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,

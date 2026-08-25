@@ -8312,3 +8312,56 @@ turned out to be the title read twice: a ruin gets mended by *somebody* who walk
 what *somebody* has lived; a ritual is found, escalated, learned, and now voiced by *somebody* specific. The
 smiths draft Milestone 16 at the next cycle open.
 
+
+## Cycle 140-art — artist: the last three foods (BACKLOG-490, 7 of 7)
+
+The food roster closes. Three fires — fish and berries at 135, meat and greens at 137, and tonight the
+starchy roots, the pale mushrooms and the hard pine seeds — and every piece of food the hatch drops now
+bakes a real prop. That matters more than the subject size suggests: this is the object the whole social
+engine runs on. Five dinos sprint at it, one cedes, one gobbles, somebody remembers it for the rest of the
+save, and until cycle 135 it was a font glyph.
+
+All three first drafts were plausible pictures of something this park already draws, and all three fixes
+were one feature rather than more detail.
+
+**The roots** came out as `crop_ripe_roots` again, smaller — a tuber shouldering out of a soil mound under
+a leaf sprig. That is the crop, and this is not the crop: *what the hatch drops is cut.* So the soil and the
+sprig went, and what replaced them is a pale scar where the leaves came off — a **cropped crown** — on each
+of **two** tubers, with a taproot whisker trailing from each tail. Two, so the silhouette is a pair of
+tapers rather than one lump that could be a potato, a stone, or a cocoon.
+
+**The mushrooms** started as a single spotted toadstool, which is wrong twice over: one cap at sixteen
+pixels is a lollipop, and a red one is a berry with a stick in it — and this hatch already drops berries.
+The read is the **cluster** and the **gills**. Three caps at different heights make a lumpy outline nothing
+else in the prop table has, and the dark band under each cap says the underside is open, which is the one
+thing a mushroom has that no fruit does. Cool and pale on purpose: everything else in the hatch is warm, so
+this is the odd one in the pile at a glance.
+
+**The seeds** are the only food in this park that is *many*. Every other one is a single object with a
+single silhouette, and leaning into the plurality is exactly what stops a brown seed reading as a small
+brown berry — six facetted nuts stacked three-two-one, one lit facet each, and two of them **cracked**,
+because the label says "hard pine seeds" and a crack is the cheapest way to say a thing has a shell.
+
+`WorldScene` gained nothing. The `food_<id>` convention cycle 135 chose means a food is a rig plus a
+registry line, and it has been that way for three fires.
+
+**The part worth recording is what happened to the control.** 490 shipped for three cycles against a guard
+written in three places — two unit specs and an e2e — each saying some version of *when this fails, 490 is
+complete: close it*. Tonight it failed in all three. Every one was **inverted rather than deleted**, so the
+2 → 4 → 7 progression is still readable from the specs that lived through it, and the graceful-fallback
+path moved onto `food_nothing-the-park-has-ever-dropped` — an id nobody will ever draw. That is the same
+move cycle 139 made when the ruin set closed, and it is becoming this studio's habit: when a roster
+completes, the control does not retire, it relocates somewhere it cannot be closed out from under.
+
+Gates: build clean, unit **2066 passed / 2 skipped**, e2e **584 passed / 1 failed** — `cycle-075-zone-indicator`
+timed out at boot under parallel load and passed isolated in 839ms; BACKLOG-430's long-dialog spec was green
+in the full run this time, which is worth noting rather than celebrating.
+
+Still on flat-shape or glyph fallback: the `fuss` worn-ground mark (BACKLOG-496, held back deliberately as
+that item's per-kind control) and the feeding hatch itself (BACKLOG-502, seeded this cycle) — the one thing
+in this park the player presses a key to use and still cannot see.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used this fire — this session runs
+under an instruction not to spawn sub-agents. All three rigs were authored inline against the same brief,
+with the same reject-your-first-draft discipline, and the same unit + e2e gates.
+

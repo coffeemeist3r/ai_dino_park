@@ -56,9 +56,12 @@ describe('BACKLOG-490 — meat and greens', () => {
     }
   });
 
-  it('the roster is still deliberately partial — the emoji fallback stays a live control', () => {
+  it('the roster closed at seven — cycle 140-art drew the last three (BACKLOG-490)', () => {
+    // This assertion said `drawn === 4` and "when this fails, 490 is complete: close it". It failed, and
+    // 490 was closed. Kept as a count rather than deleted so the two fires that got here stay legible: 4 at
+    // cycle 137, 7 at cycle 140. The live fallback control moved to `cycle-135-food-egg-rigs`, which asserts
+    // an unknown `food_<id>` still resolves nothing.
     const drawn = Object.keys(PROP_RIGS).filter((k) => k.startsWith('food_')).length;
-    expect(drawn).toBe(4);
-    expect(drawn).toBeLessThan(FOODS.length); // when this fails, 490 is complete: close it
+    expect(drawn).toBe(FOODS.length);
   });
 });
