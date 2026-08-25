@@ -8244,3 +8244,10 @@ Both tracks shipped. 423: the aside between the frozen opener and the reply, plu
 The cycle turned up a real conflict on the way past: 474's unsettled-ground read is about grounds nobody
 lives on, and CHARTER v7 says there must be none - so satisfying v7 made 474's frontier tier dormant on a
 fresh save. The spec now says so out loud rather than being quietly reworded.
+
+## Cycle 140 - qa
+
+24/24 criteria pass. Build clean, unit 2053/2 skipped, e2e 582 passed / 2 failed - BACKLOG-430's standing
+red and the catalogued cycle-110-plenty parallel-load victim, both green on an isolated re-run. Raised one
+finding for the Validator rather than waving it through: 500 makes 474's unsettled-ground read dormant on a
+fresh save, which wants a backlog item.

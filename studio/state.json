@@ -1,6 +1,6 @@
 {
   "cycle": 140,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-423: Tic-flavored voice - the ritual colours the caught greet",
   "structureItem": "BACKLOG-500: The grounds nobody lives on \u2014 a residency invariant, and the residents to satisfy it",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-08-25T08:07:00.000Z",
     "code-planner": "2026-08-25T08:08:37.000Z",
     "coder": "2026-08-25T08:27:36.000Z",
-    "qa": "2026-08-24T08:35:47.677Z",
+    "qa": "2026-08-25T08:28:24.000Z",
     "validator": "2026-08-24T08:37:08.218Z",
     "artist": "2026-08-24T08:47:36.817Z"
   }
