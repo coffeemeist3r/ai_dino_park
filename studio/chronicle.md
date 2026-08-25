@@ -8207,3 +8207,9 @@ Final gates after housekeeping: build clean, unit **2034 passed / 2 skipped** ac
 passed / 0 failed** — a fully green run with no parallel-load victims and BACKLOG-430's long-dialog spec
 green too, which is worth noting rather than celebrating: that spec's whole character is that it is
 intermittent, and cycle 135's `--workers=1` reproduction is still the only reliable handle anyone has on it.
+
+## Cycle 140 — lore-smith
+
+The last door in Milestone 15: 423, the tic-flavored voice. Social queue over cap (217 open) so nothing
+new was seeded there; the art queue had fallen to 2, so BACKLOG-502 seeds a rig for the feeding hatch —
+the one thing the player presses a key to use and cannot see. Idea Box empty.
