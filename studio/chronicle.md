@@ -8227,3 +8227,11 @@ bit-identical without a model and CHARTER v7 calls that a REWORK. A deterministi
 every device; the prompt nudge rides on top where a model exists. The 408/413/420 opener strings stay frozen.
 Structure: BACKLOG-500 - the roster grows from eight to ten rather than rebalancing, so the bowl-at-five
 tuning that four systems depend on is left alone, and founding.ts gains the residency invariant.
+
+## Cycle 140 - code-planner
+
+Both tracks are file-disjoint. Lore: one new builder in tic.ts, one optional NPCContext field, one clause in
+buildMessages, and two lines in the greet block (with a hoist of `const caught` above the context literal -
+flagged as the one real risk, since the ordering comments there were written after a bug). Structure: two
+roster rows on verified grass tiles ((5,8) Hollow, (14,6) Ridge), two derived exports in founding.ts, and a
+fallout sweep for cast-counting specs to run BEFORE the suite rather than after.
