@@ -8213,3 +8213,9 @@ intermittent, and cycle 135's `--workers=1` reproduction is still the only relia
 The last door in Milestone 15: 423, the tic-flavored voice. Social queue over cap (217 open) so nothing
 new was seeded there; the art queue had fallen to 2, so BACKLOG-502 seeds a rig for the feeding hatch —
 the one thing the player presses a key to use and cannot see. Idea Box empty.
+
+## Cycle 140 — structure-smith
+
+BACKLOG-500: two of the five grounds are empty at boot, and CHARTER v7 says in as many words that none of
+them are. Queue was at 3 (under X=4), so 503 (the Ridge branch has no stake — the operator's routed Idea Box
+nudge) and 504 (the pile is a number in a menu) were seeded first.

@@ -2,7 +2,7 @@
   "cycle": 140,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-500: The grounds nobody lives on \u2014 a residency invariant, and the residents to satisfy it",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-25T08:02:20.000Z",
-    "structure-smith": "2026-08-24T08:06:02.245Z",
+    "structure-smith": "2026-08-25T08:03:34.000Z",
     "designer": "2026-08-24T08:08:59.130Z",
     "code-planner": "2026-08-24T08:10:28.561Z",
     "coder": "2026-08-24T08:28:59.261Z",
