@@ -1,5 +1,18 @@
 # Backlog Archive — closed items
 
+## Closed cycle 140 — the ritual finds its voice, and the last two grounds find residents (2026-08-25)
+
+> Both tracks APPROVED, and **Milestone 15 SHIPPED** — 423 was the last unchecked arc in it. 423 was filed
+> as a prompt nudge and would have been bit-identical without a model, so the Designer split it in two and
+> shipped the deterministic half to every device; the frozen 408/413/420 opener strings are now pinned
+> byte-for-byte in a unit test. 500 cashed a comment `founding.ts` had been carrying for a cycle, and its
+> own fallout is filed as BACKLOG-505 rather than left in a spec comment. The Structure Track's 500 pointer
+> goes with the body text.
+
+- [x] BACKLOG-423 [ai] Tic-flavored voice — a caught dino's reply is prompt-nudged by which ritual it was at (a pacer sounds restless, a fusser distracted), enrichment-on-top with the deterministic bashful/fond frame (408/413) unchanged under stub/fallback. Builds on 408 / 413 / 393.
+
+- [x] BACKLOG-500 [infra] The grounds nobody lives on — CHARTER v7's third change reads "**the cast ships across the map**, not stacked in one zone: the roster carries a spawn zone, and every ground the player can walk to has life on it at boot." The roster it shipped spreads eight dinos as **5 bowl / 2 grove / 1 fernreach / 0 hollow / 0 ridge** — so two of the five grounds are exactly as empty at boot as all four were before the amendment, and the sentence that says otherwise is in the constitution. Everything a ground can hold (a plot, a landmark, a pile, a provider, a council, an upkeep bill, a mend errand) is inert on the Hollow and the Ridge from boot to save-death, and the Ridge is the *branch* — the one ground reached by a choice rather than by walking the line. Give the roster a residency invariant with a test that reads `zoneChain()` and asserts every ground has at least one resident, and seed whatever residents that costs. Note the tension to resolve rather than paper over: the bowl at five is the cast the 460 last-one floor, the huddle and the food scramble were all tuned against, so this is a *rebalance* of eight bodies (or a slightly larger roster), not a redistribution done blind. Builds on 486 / 474 / 460.
+
 ## Closed cycle 138 housekeeping — three emptied seeding blocks (2026-08-23)
 
 > Each of these held exactly one or two items the Structure-smith brainstormed when its queue dipped below

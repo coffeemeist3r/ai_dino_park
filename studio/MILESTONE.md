@@ -8,26 +8,7 @@
 
 ## Current milestone
 
-**Milestone 15: Somebody does it — the park's work grows hands, and its private moments stop repeating themselves**
-**Status:** ACTIVE (opened cycle 136)
-
-The park spent cycle 135 discovering that a great deal of what it had built was true but unwatchable. The
-clock now runs at two rates and the cast is spread across five grounds, so the day boundary is twenty-four
-real *minutes* and every ground has somebody standing on it. This milestone spends that: work that used to
-happen *to* a ground is performed *in* it by a body you can follow, and a decision that used to be arithmetic
-over five birth-numbers starts answering to what those five dinos have actually lived. On the feel side, the
-park's most private behaviour — a dino alone with its ritual — stops giving the same answer every time it is
-found.
-
-**Lore arcs:**
-- [x] Being found is a conversation, not a lookup — a dino caught mid-ritual twice in one stretch of solitude escalates from pleased to teasing to fondly resigned, in words drawn from its own signature trait (BACKLOG-420, -422)
-- [x] The ritual is a living habit — its little path drifts across the ground over many stretches, and being found leaves a warm trace it can lead with later (BACKLOG-421, -411) — *421 shipped cycle 138 (the drift); 411 shipped cycle 139 (the warm trace — and the trace turned out to be left by a **friend** walking up, not by the keeper, which is the half the arc was missing)*
-- [ ] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423) — **the last open arc in Milestone 15; all three structure arcs and both other lore arcs are closed**
-
-**Structure arcs:**
-- [x] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)
-- [x] A vote that answers to a history — a seat's ballot is shaded by the hunger, the short share and the fallen landmark that seat has lived through (BACKLOG-492)
-- [x] A gate that does not silence its next cause — the four freshness gates get one shared seam that tells seeding apart from suppressing (BACKLOG-489) — *shipped cycle 138; two of the four turned out not to be gates of that shape, and one had never been built*
+_(none — the smiths draft Milestone 16 at the next cycle open.)_
 
 ---
 
@@ -47,6 +28,63 @@ found.
 ```
 
 ## Shipped milestones
+
+### Milestone 15: Somebody does it — the park's work grows hands, and its private moments stop repeating themselves — SHIPPED cycle 140 (opened cycle 136)
+
+Milestone 15 was opened on a diagnosis rather than an idea. Cycle 135 had just finished proving that a great
+deal of what this park had built was *true and unwatchable* — a day boundary that cost twenty-four real
+hours, a cast stacked in one bowl, a council that could not disagree with itself. The clock now runs at two
+rates and the cast is spread across the map, and this milestone was about spending that: work that used to
+happen *to* a ground gets performed *in* it by a body you can follow, and the park's most private behaviour
+stops giving the same answer every time it is found.
+
+Six arcs, five cycles, and the through-line turned out to be the same sentence in two registers: **somebody
+does it.**
+
+On the structure side, **488** made a ruin something a resident walks to and mends on arrival, and — the
+half that mattered — made the founding park ship a ruin to walk to, so the first structure a new player
+meets is a broken one and somebody fixes it within the minute. **492** gave a ballot a history: a seat's
+vote shaded by the hunger, the short share and the fallen landmark that seat has lived through, and it
+uncovered on the way that no ground seated a council at all on a fresh save — seven cycles of governance,
+every one of them green, none of them reachable. **489** gave the four freshness gates one seam that tells
+seeding apart from suppressing, and found that two of the four were not gates of that shape and one had
+never been built.
+
+On the feel side, **420** and **422** turned being caught mid-ritual from a lookup into a conversation that
+escalates and then *costs* something. **421** and **411** made the ritual a living habit — its little path
+drifting across the ground, and being found leaving a warm trace the dino leads with later; the trace turned
+out to be left by a *friend* walking up rather than by the keeper, which was the half the arc was missing.
+And **423**, tonight, closed it: a caught dino now sounds like the thing it was interrupted doing.
+
+The last arc is also the milestone's sharpest procedural moment. 423 was filed as a prompt nudge with the
+deterministic frame explicitly unchanged — which would have been a cycle that is bit-identical on a machine
+with no model, on a platform where the model is optional by charter. CHARTER v7 exists because seven
+consecutive cycles shipped exactly that. The Designer caught it at spec time rather than the Validator
+catching it at judgement time, and split the item so the ritual colours the voice on every device. That is
+the bar working the way it was meant to: not a veto at the end, but a shape the work takes on the way in.
+
+The arc checklist as shipped.
+
+**Milestone 15: Somebody does it — the park's work grows hands, and its private moments stop repeating themselves**
+**Status:** SHIPPED cycle 140 (opened cycle 136)
+
+The park spent cycle 135 discovering that a great deal of what it had built was true but unwatchable. The
+clock now runs at two rates and the cast is spread across five grounds, so the day boundary is twenty-four
+real *minutes* and every ground has somebody standing on it. This milestone spends that: work that used to
+happen *to* a ground is performed *in* it by a body you can follow, and a decision that used to be arithmetic
+over five birth-numbers starts answering to what those five dinos have actually lived. On the feel side, the
+park's most private behaviour — a dino alone with its ritual — stops giving the same answer every time it is
+found.
+
+**Lore arcs:**
+- [x] Being found is a conversation, not a lookup — a dino caught mid-ritual twice in one stretch of solitude escalates from pleased to teasing to fondly resigned, in words drawn from its own signature trait (BACKLOG-420, -422)
+- [x] The ritual is a living habit — its little path drifts across the ground over many stretches, and being found leaves a warm trace it can lead with later (BACKLOG-421, -411) — *421 shipped cycle 138 (the drift); 411 shipped cycle 139 (the warm trace — and the trace turned out to be left by a **friend** walking up, not by the keeper, which is the half the arc was missing)*
+- [x] The ritual colours the voice — a caught dino sounds like the thing it was interrupted doing (BACKLOG-423) — *shipped cycle 140, and it shipped **twice**: the item as filed was a prompt nudge, which would have been bit-identical on a machine with no model, so the deterministic aside ships to every device and the prompt rides on top*
+
+**Structure arcs:**
+- [x] A ruin is mended by somebody — a resident walks to a derelict landmark and the patch-up resolves on arrival, and the founding park ships a ruin to walk to (BACKLOG-488)
+- [x] A vote that answers to a history — a seat's ballot is shaded by the hunger, the short share and the fallen landmark that seat has lived through (BACKLOG-492)
+- [x] A gate that does not silence its next cause — the four freshness gates get one shared seam that tells seeding apart from suppressing (BACKLOG-489) — *shipped cycle 138; two of the four turned out not to be gates of that shape, and one had never been built*
 
 ### Milestone 14: A ritual that spreads, and a government with a term — SHIPPED cycle 135 (opened cycle 132)
 

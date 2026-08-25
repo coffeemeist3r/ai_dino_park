@@ -8251,3 +8251,64 @@ fresh save. The spec now says so out loud rather than being quietly reworded.
 red and the catalogued cycle-110-plenty parallel-load victim, both green on an isolated re-run. Raised one
 finding for the Validator rather than waving it through: 500 makes 474's unsettled-ground read dormant on a
 fresh save, which wants a backlog item.
+
+## Cycle 140 — validator: lore APPROVED / structure APPROVED — **Milestone 15 SHIPPED** 🎉
+
+Two things happened tonight and they are the same thing, which is what a milestone closing is supposed to
+feel like.
+
+**The ritual found its voice (423).** Fifty-odd cycles have gone into the tic and every one of them was
+about its *body*: what starts it, where its little path drifts, who catches it, what the catch costs, who
+learns it off whom, who wanders in and ends it. Four registers of being caught, a warmth price, a memory
+apiece, a friend-left trace — and the words were byte-identical whether you walked in on a dino pacing,
+turning, or fussing over one spot. Now a caught dino says the physical business of stopping. Feet still
+going a moment after the rest of it stops. The turn finished before it looks up. The thing set down, and
+then picked at once more anyway.
+
+The item as filed would not have shipped, and that is worth recording. It specified a *prompt nudge*, with
+the deterministic frame explicitly unchanged under stub and fallback — which is a cycle that is
+bit-identical on a machine with no model, on a platform where the model is optional by charter. CHARTER v7
+exists because seven consecutive cycles shipped exactly that shape. The Designer caught it at spec time
+rather than the Validator catching it at judgement, and split the item: the aside ships to every device,
+the prompt rides on top where a model happens to be loaded, and the frozen 408/413/420 openers are now
+pinned byte-for-byte in a unit test — so "unchanged under fallback" is a guarantee instead of a
+description. The bar working as a shape the work takes on the way in, not as a veto at the end.
+
+**And the last two grounds got residents (500).** The constitution has said since August that every ground
+the player can walk to has life on it at boot. The roster that shipped alongside that sentence read five
+bowl, two grove, one fernreach, and **zero** on the Hollow and zero on the Sunward Ridge —
+`founding.ts` has been carrying the evidence in a comment for a cycle. Murk wakes up on the Hollow now, and
+Ember on the Ridge, which is the park's only *branch*: the one ground you reach by deciding to rather than
+by continuing east. The sentence is a test now — it walks `zoneChain()`, so the sixth ground inherits the
+invariant on the day it is added rather than the cycle somebody notices.
+
+The roster **grew to ten rather than rebalancing eight**, and the reason is in the source rather than in a
+handoff nobody reads twice: the bowl at five is the cast `TILES_PER_HEAD`, the last-one floor, the huddle
+and the food scramble were all tuned against, and moving a body off it would have silently re-tuned four
+systems to pay for a spawn-table edit. A test pins the bowl at five so the next pass that wants to move
+somebody has to come here and say so.
+
+**And it cost something, which is the night's real finding.** 474's *unsettled ground* — the lens glyph,
+and the frontier tier that sends a wanderer at virgin ground over a richer neighbour — is **defined** as a
+ground nobody lives on. So obeying the charter's third change took a reachable system dormant: `__unsettled()`
+returns `[]` at boot where it returned `['hollow', 'ridge']`. That is v7's own corollary violated by obeying
+v7's own sentence, and nobody hid it: the spec asserts the empty result out loud with the reason, proves the
+read still fires the instant a ground actually empties, and two of its three tests now *make* a frontier by
+walking the residents out first. Filed as **BACKLOG-505**, with the note that this is precisely what
+BACKLOG-501 (the reachability register) exists to catch — a standing claim going dark as a side effect of
+somebody else's founding-state move, found by a spec rather than by anything that lists the claims together.
+501 rose in priority tonight.
+
+Three other specs moved, none deleted. `cycle-062-resource` turned out to have been asserting something it
+never meant since 2026-06: with five inhabited grounds the ambient roll can drop a fresh resource in the
+same step as a pickup, so "nothing is lying around afterwards" was never the claim.
+
+Gates: build clean, unit **2053 passed / 2 skipped** across 206 files, e2e **582 passed / 2 failed** — both
+catalogued standing reds (BACKLOG-430's long-dialog spec and the cycle-110-plenty parallel-load victim),
+both green on an isolated re-run, neither near either diff.
+
+**Milestone 15 — "Somebody does it" — SHIPPED**, five cycles after it opened. Six arcs, and the through-line
+turned out to be the title read twice: a ruin gets mended by *somebody* who walks there; a ballot answers to
+what *somebody* has lived; a ritual is found, escalated, learned, and now voiced by *somebody* specific. The
+smiths draft Milestone 16 at the next cycle open.
+
