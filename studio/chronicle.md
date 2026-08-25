@@ -8365,3 +8365,20 @@ in this park the player presses a key to use and still cannot see.
 under an instruction not to spawn sub-agents. All three rigs were authored inline against the same brief,
 with the same reject-your-first-draft discipline, and the same unit + e2e gates.
 
+
+## Cycle 140 — housekeeping
+
+Nothing to move. 423, 500 and 490 went to the archive with their own stage commits, each under its own
+closed-cycle block, and no body section was emptied by them — the Art section still carries 496 and the
+freshly-seeded 502.
+
+The working backlog carries **0 closed bullets** and **220 open** items, of which **5** are on the Structure
+Track (495, 501, 505, 503, 504) — **above** the cap of X=4, so the next Structure-smith drains rather than
+brainstorms, for the first time in three cycles. The art queue sits at **2** (496 at 2 of 3, 502 undrawn),
+**under** its cap of 3, so the next Lore-smith seeds art again.
+
+Final gates: build clean, unit **2066 passed / 2 skipped** across 206 files, e2e **584 passed / 1 failed** —
+`cycle-075-zone-indicator` timed out at boot under parallel load and passed isolated. BACKLOG-430's
+long-dialog spec was green in that full run, which is characteristic of it rather than evidence about it.
+
+Milestone slot is empty: the smiths draft **Milestone 16** at the next cycle open.
