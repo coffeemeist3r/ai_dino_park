@@ -1,7 +1,7 @@
 {
   "cycle": 140,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-423: Tic-flavored voice - the ritual colours the caught greet",
   "structureItem": "BACKLOG-500: The grounds nobody lives on \u2014 a residency invariant, and the residents to satisfy it",
   "lastVerdict": null,
   "structureVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-08-25T08:02:20.000Z",
     "structure-smith": "2026-08-25T08:03:34.000Z",
-    "designer": "2026-08-24T08:08:59.130Z",
+    "designer": "2026-08-25T08:07:00.000Z",
     "code-planner": "2026-08-24T08:10:28.561Z",
     "coder": "2026-08-24T08:28:59.261Z",
     "qa": "2026-08-24T08:35:47.677Z",

@@ -8219,3 +8219,11 @@ the one thing the player presses a key to use and cannot see. Idea Box empty.
 BACKLOG-500: two of the five grounds are empty at boot, and CHARTER v7 says in as many words that none of
 them are. Queue was at 3 (under X=4), so 503 (the Ridge branch has no stake — the operator's routed Idea Box
 nudge) and 504 (the pile is a number in a menu) were seeded first.
+
+## Cycle 140 - designer
+
+Lore: BACKLOG-423, the tic-flavored voice - shipped in two layers, because the item as written was
+bit-identical without a model and CHARTER v7 calls that a REWORK. A deterministic per-kind aside ships to
+every device; the prompt nudge rides on top where a model exists. The 408/413/420 opener strings stay frozen.
+Structure: BACKLOG-500 - the roster grows from eight to ten rather than rebalancing, so the bowl-at-five
+tuning that four systems depend on is left alone, and founding.ts gains the residency invariant.
