@@ -8389,3 +8389,10 @@ Milestone 16 drafted: **"Somewhere to stand"** — the park's stock, its scarcit
 being numbers in a menu. Social queue capped (~207 ≥ 12), so nothing new seeded there; art queue at 2 < 3,
 so **BACKLOG-506** (the pile's three-step heap rig) was seeded to stand on the bank tile 504 wants to place.
 Suggested next-up **BACKLOG-300** — press E on a dino and the hello names what you pulled it off.
+
+## Cycle 141 — structure-smith
+
+Drained rather than invented (5 open ≥ X=4). Chose **BACKLOG-504** — the per-ground stockpile has driven
+upkeep, mends, ballots, the granary and the courier since cycle 285 and has never once been a thing on the
+ground. Milestone 16's spine arcs recorded (504, 503, 505, 501). Reachability stated in the handoff up
+front: the founding park must ship a *visible* heap and it must be watchable dropping a step.
