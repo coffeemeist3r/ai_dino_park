@@ -19,12 +19,12 @@ closed itself the day every ground got a resident. Each of those is true, tested
 invisible from inside the game. This milestone spends the cycle on the standing-in-it half.
 
 **Lore arcs:**
-- [ ] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300)
+- [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
 - [ ] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496)
 - [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
 
 **Structure arcs:**
-- [ ] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506)
+- [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *504 shipped cycle 141 on the glyph fallback; 506 draws the heap*
 - [ ] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503)
 - [ ] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505)
 - [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)

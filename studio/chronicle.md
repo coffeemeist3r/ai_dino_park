@@ -8418,3 +8418,45 @@ sync with the number that drives it. The lore half is four lines in the greet pa
 neither near either diff. BACKLOG-430's long-dialog spec was green in the full run, on a cycle that touches
 its greet path. Verified by grep that the `setPile` seam is total: fifteen assignment sites, fifteen
 rewrites, zero survivors.
+
+## Cycle 141 - validator: both tracks APPROVED
+
+Milestone 16 opened tonight and took a bite out of both ends of it, which is not how these usually start.
+
+The lore half is a small edit with a long overdue feeling. BACKLOG-295 shipped a per-dino activity read
+forty-odd cycles ago and exactly one thing has consumed it since: a glyph over a head. Meanwhile everything
+else the park knows about a dino - its ritual, its palate, its grudges, what it heard about whom - has been
+routed into the greeting, one cycle at a time, until the greeting became the park's richest surface. The one
+fact that differs per dino AND per minute was the one fact it did not carry. So now a dino that was eating
+swallows first. One that was in the huddle either peels itself out of the warm pile or answers from where it
+is curled, depending on which dino it is. One that was hauling something sets it down, carefully. Two
+phrasings apiece, chosen by a hash of the name, so it is the same words from the same dino every time - a
+thing you can learn about somebody - and not the same words from all of them.
+
+The interesting decision is the one that produces nothing. A wandering dino gets no clause at all, and that
+is what makes the rest of it mean something: the beat fires when there is something to name and stays quiet
+when there is not, so the ordinary greeting is untouched. It is tested as a negative, twice, because "we
+changed nothing on the common path" is a claim, and claims in this codebase are supposed to be executable.
+
+The structure half went after the oldest unwatchable thing here. A ground's pile has been load-bearing since
+cycle 285 - the upkeep bill, a mend, a seat's stake in a ballot, the granary filling, the courier's cargo -
+and you could only ever see it by opening a lens and reading a line of text. A dino carries a stone across a
+ground, which is the entire point of 328, and the stone becomes an integer in a menu one screen away.
+
+There is a heap on the ground now, and it steps. Same tile on every ground, deliberately, so the bank is a
+place you learn once. The thresholds are the part worth recording: rather than raising the founding pile to
+clear a bar, the bar was set where the founding pile already stands. The Grove ships two stone, which is a
+visible heap one edge east of where a new player wakes up; a mend costs one, so watching Bramble put the
+founding cairn back up - the beat 488 built to happen in the first minute - knocks the heap down a step while
+you are standing there. That is CHARTER v7 read forwards instead of as a veto, and both halves are pinned by
+tests that say aloud what breaks if someone retunes them later.
+
+And the thing that makes the heap worth trusting: the pile was written in fifteen scattered places, and all
+fifteen now go through one seam. Not because tidiness is a virtue but because a heap that agrees with the
+number most of the time is worse than no heap at all. There is nowhere left to write a pile without the
+ground agreeing.
+
+Gates: build clean, unit 2081 passed / 2 skipped across 208 files, e2e 590 passed / 2 failed - two boot
+timeouts under parallel load, both green isolated, neither near either diff. 24/24 criteria. Milestone 16
+has four arcs left: the ritual's mark, the hatch's mouth, the branch's stake, the frontier's form, and the
+register that would have caught last cycle's regression before a spec did.
