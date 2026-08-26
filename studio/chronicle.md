@@ -8404,3 +8404,9 @@ plain greet stays byte-identical, and the deterministic clause ships to every de
 enrichment on top. Structure: one bank tile on every ground (same coordinates, learned once), a three-step
 heap keyed off `pileTotal`, thresholds [1,2,4] chosen so the founding Grove ships at step 2 and the founding
 mend is watched knocking it to step 1 - reachability without widening a founding constant.
+
+## Cycle 141 - code-planner
+
+Nine files, two new pure modules. The structure half is mostly one mechanical move: fifteen scattered
+`stockpileByZone[z] = ...` assignments collapse onto a single `setPile` seam, so the heap cannot fall out of
+sync with the number that drives it. The lore half is four lines in the greet path plus a table.
