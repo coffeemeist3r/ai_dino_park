@@ -14,6 +14,7 @@ import type { Season } from '../world/seasons';
 import type { SpendPriority } from '../world/governance';
 import type { HatchOutcome } from '../world/manner';
 import type { TicKind } from '../world/tic';
+import type { Activity } from '../world/activity';
 import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
 
@@ -58,6 +59,13 @@ export interface NPCContext {
    * which stays the deterministic layer (`ticAside`, `caughtOpener`). Absent → today's prompt exactly.
    */
   interrupted?: { kind: TicKind; label: string };
+  /**
+   * What this dino was doing when the keeper walked up (BACKLOG-300), from the 295 activity read. Set only
+   * when it was doing something nameable — a plain wanderer carries nothing, so an ordinary greet's prompt
+   * is byte-identical to before. Never set on a catch: the ritual (`interrupted`) is the more specific
+   * truth about a dino found alone with its own habit, and the two never both fire.
+   */
+  doing?: Activity;
 }
 
 export interface Observation {

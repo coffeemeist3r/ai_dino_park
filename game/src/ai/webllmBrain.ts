@@ -15,6 +15,7 @@ import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
 import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
 import { PARK_LORE } from './persona';
+import type { Activity } from '../world/activity';
 
 /**
  * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
@@ -155,11 +156,30 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     stood: `You held your ground at the last food drop when NAME tried to take your food, and kept it — you're proud. `,
     slunk: `NAME wouldn't budge off the last food drop and you gave up and slunk away — it still stings. `,
   };
+  // BACKLOG-300: the 295 activity read, said the way a dino would say it. `wandering` has no phrase —
+  // a dino that was doing nothing in particular carries nothing into the prompt.
+  const DOING_PHRASE: Record<Activity, string> = {
+    gazing: 'staring up at something in the sky',
+    inspecting: 'nosing at something that caught your eye',
+    responding: 'hurrying toward somebody who needed you',
+    stalking: 'creeping up on prey',
+    fleeing: 'running from something that wanted to eat you',
+    feeding: 'eating',
+    huddling: 'curled up warm in a pile with the others',
+    gathering: 'carrying something you picked up off the ground',
+    socializing: 'in the middle of talking with another dino',
+    wandering: '',
+  };
   const mealtime = ctx.mealtime ? MEALTIME[ctx.mealtime.outcome].replaceAll('NAME', ctx.mealtime.other) : '';
   // The ritual colours the voice (BACKLOG-423): the enrichment half. The deterministic aside (`ticAside`)
   // already ships without a model; this only tells the model what it walked in on. Absent → today's prompt.
   const interrupted = ctx.interrupted
     ? `You were alone doing your own private thing — you ${ctx.interrupted.label} — and got walked in on; you still sound like it. `
+    : '';
+  // Caught in the act (BACKLOG-300): the model is told what it was pulled off, and answers in the colour of
+  // it. The deterministic clause (`activityAside`) ships without this — the prompt is the enrichment half.
+  const doing = ctx.doing && ctx.doing !== 'wandering'
+    ? `The keeper just walked up while you were ${DOING_PHRASE[ctx.doing]}; you still sound like it. `
     : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
@@ -167,7 +187,7 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

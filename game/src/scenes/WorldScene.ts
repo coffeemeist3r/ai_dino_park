@@ -194,7 +194,8 @@ import {
   type Stockpile,
 } from '../world/resource';
 import { rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
-import { dinoActivity, ACTIVITY_GLYPH, type Activity } from '../world/activity';
+import { dinoActivity, activityAside, ACTIVITY_GLYPH, type Activity } from '../world/activity';
+import { BANK_TILE, bankStep, pileArtKey } from '../world/bank';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
@@ -633,6 +634,20 @@ export class WorldScene extends Phaser.Scene {
   private pileFor(zone: string): Stockpile {
     return (this.stockpileByZone[zone] ??= {});
   }
+  /**
+   * The one seam every per-zone pile write goes through (BACKLOG-504).
+   *
+   * The pile was written in fifteen places — banking, crafting, building, the granary, a mend, the upkeep
+   * bill, a carry, a pressured carry, both halves of a barter, and the dev hooks — and the heap standing on
+   * the ground has to agree with all of them. Rather than fifteen chances to forget, there is nowhere else
+   * to write a pile: assign, then sync that ground's bank.
+   */
+  private setPile(zone: string, pile: Stockpile): void {
+    this.stockpileByZone[zone] = pile;
+    this.syncBank(zone);
+  }
+  /** The heap standing on each ground's bank tile (BACKLOG-504), lazily created per zone. */
+  private bankSprites: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
   private cairns: Landmark[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
@@ -1429,6 +1444,16 @@ export class WorldScene extends Phaser.Scene {
 
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
+    // BACKLOG-504: the heap on a ground's bank tile — what the player can see, not what the lens reports.
+    (window as any).__bank = (z?: string) => {
+      const zone = z ?? this.zoneId;
+      return {
+        tile: { ...BANK_TILE },
+        step: bankStep(this.pileFor(zone)),
+        total: pileTotal(this.pileFor(zone)),
+        visible: !!this.bankSprites[zone]?.visible,
+      };
+    };
     (window as any).__zoneFoodPile = (z: string) => ({ ...this.foodStoreFor(z) }); // BACKLOG-446: a named zone's banked food
     // BACKLOG-444: seed a zone's banked food so the e2e can watch the stores feed a starving resident.
     (window as any).__setZoneFoodPile = (zone: string, pile: Record<string, number>) => {
@@ -1456,7 +1481,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__cropYield = (food: string, season?: Season) => cropYield(food, season ?? this.currentSeason());
     // BACKLOG-358: seed a zone's pile + run a barter between two named dinos deterministically (edge-meet trade).
     (window as any).__setZonePile = (zone: string, pile: Record<string, number>) => {
-      this.stockpileByZone[zone] = { ...pile };
+      this.setPile(zone, { ...pile });
       return { ...this.pileFor(zone) };
     };
     // BACKLOG-358: run the ambient edge-meet scan deterministically (like __maybeMigrate) — dwell accumulates
@@ -1510,7 +1535,7 @@ export class WorldScene extends Phaser.Scene {
         this.cairns.splice(i, 1);
         this.cairnSprites.splice(i, 1).forEach((sp) => sp.destroy());
       }
-      for (const zone of Object.keys(FOUNDING_PILES)) this.stockpileByZone[zone] = {};
+      for (const zone of Object.keys(FOUNDING_PILES)) this.setPile(zone, {});
       // BACKLOG-492/495: the founding council goes with the founding ruin. A spec that asks for the pre-v7
       // fixture means *all* of it — an empty council, an unset lens glyph, a null Grove policy — and letting
       // the bank ledger survive here would leave the same unnamed assumption this hook exists to name.
@@ -1543,7 +1568,7 @@ export class WorldScene extends Phaser.Scene {
     // gathering it out. Adds `n` cairns tagged to the zone and stocks the pile to the granary recipe.
     (window as any).__seedGranaryReady = (zone: string, landmarks = GRANARY_AFTER_STRUCTURES) => {
       for (let i = 0; i < landmarks; i++) this.cairns.push({ tileX: 1 + i, tileY: 1, zone });
-      this.stockpileByZone[zone] = { ...(this.pileFor(zone)), branch: 3, stone: 3 };
+      this.setPile(zone, { ...(this.pileFor(zone)), branch: 3, stone: 3 });
     };
     // dev-only: run the exact on-gather build decision for a named dino's zone (granary gate vs bias landmark).
     (window as any).__runBuild = (name: string) => {
@@ -1821,12 +1846,13 @@ export class WorldScene extends Phaser.Scene {
     this.cairns.push(ruin);
     this.drawCairn(ruin);
     for (const [zone, pile] of Object.entries(FOUNDING_PILES)) {
-      this.stockpileByZone[zone] = { ...pile, ...(this.stockpileByZone[zone] ?? {}) };
+      this.setPile(zone, { ...pile, ...(this.stockpileByZone[zone] ?? {}) });
     }
     // BACKLOG-492: and a bank ledger, so the Grove seats a council from the first frame. Without this the
     // whole of governance — two votes, a term, a turnover beat, two lens glyphs — is unreachable on a fresh
     // save, because `zoneCouncil` seats bankers and nobody has banked. `??=` so a restored tally always wins.
     for (const [name, units] of Object.entries(FOUNDING_BANKED)) this.foodBanked[name] ??= units;
+    this.syncBanks(); // BACKLOG-504: the founding Grove's heap stands on the ground from the first frame
     this.applyObjectVisibility(); // the 480 alpha pass — the ruin reads as disrepair from the first frame
   }
 
@@ -1888,7 +1914,7 @@ export class WorldScene extends Phaser.Scene {
       const pile = this.pileFor(zone);
       const plan = runUpkeep(pile, 0, 1);
       if (plan.repaired === 0) return; // the pile emptied during the walk — nothing spent, try again later
-      this.stockpileByZone[zone] = plan.pile;
+      this.setPile(zone, plan.pile);
       hit.rec.derelict = false;
       const zoneName = zoneById(zone).name;
       this.applyObjectVisibility(); // it stands back up where it fell
@@ -2349,7 +2375,7 @@ export class WorldScene extends Phaser.Scene {
     if (atCap(this.pileFor(zone), kind)) {
       this.logEvent(`${RESOURCE_GLYPH[kind]} stores full — ${taker.name} drops the ${kind}`);
     } else {
-      this.stockpileByZone[zone] = bankResource(this.pileFor(zone), kind); // BACKLOG-328: into this zone's pile
+      this.setPile(zone, bankResource(this.pileFor(zone), kind)); // BACKLOG-328: into this zone's pile
     }
     this.refreshPlaque();
     this.flashFeed(taker, RESOURCE_GLYPH[kind]);
@@ -2361,6 +2387,46 @@ export class WorldScene extends Phaser.Scene {
     // costs (cairn/shelter math byte-identical), then place by kind — else the pile is still climbing.
     this.buildOnGather(taker);
     void this.saveGame();
+  }
+
+  /**
+   * The ground's bank (BACKLOG-504) — the heap on `BANK_TILE` stepped to match this zone's banked total.
+   *
+   * Same sprite-or-glyph shape the cairn, lean-to, thatch and granary all use: the baked pixel rig where
+   * one exists (BACKLOG-506 draws `pile_1`/`pile_2`/`pile_3`), else the graceful fallback — the stone glyph
+   * once per step, which reads as a heap that grows and borrows the park's own resource vocabulary. Step 0
+   * banks nothing and shows nothing.
+   */
+  private syncBank(zone: string): void {
+    const step = bankStep(this.pileFor(zone));
+    const key = pileArtKey(step);
+    const tex = key && hasPropArt(key) ? bakePropArt(this, key) : null;
+    const px = BANK_TILE.tileX * TILE + TILE / 2;
+    const py = BANK_TILE.tileY * TILE + TILE / 2;
+    let sprite = this.bankSprites[zone];
+    // A rig that appears (or vanishes) between steps changes which kind of object this is, so drop the old
+    // one rather than trying to retexture a Text — the same care `showLandmarks` takes over its arrays.
+    const wantsImage = !!tex;
+    const isImage = sprite instanceof Phaser.GameObjects.Image;
+    if (sprite && wantsImage !== isImage) {
+      sprite.destroy();
+      sprite = undefined as unknown as Phaser.GameObjects.Text;
+      delete this.bankSprites[zone];
+    }
+    if (!sprite) {
+      sprite = tex
+        ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+        : this.add.text(px, py, '', { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+      this.bankSprites[zone] = sprite;
+    }
+    if (tex && sprite instanceof Phaser.GameObjects.Image) sprite.setTexture(tex);
+    else if (sprite instanceof Phaser.GameObjects.Text) sprite.setText(RESOURCE_GLYPH.stone.repeat(step));
+    sprite.setVisible(step > 0 && zone === this.zoneId); // BACKLOG-308: a heap shows only on its own ground
+  }
+
+  /** Sync every ground's bank — after setup, and after a save restore replaces the whole pile map. */
+  private syncBanks(): void {
+    for (const z of zoneChain()) this.syncBank(z);
   }
 
   /** Draw a cairn glyph at a tile (BACKLOG-286). Same depth/shape as a resource glyph. */
@@ -2458,7 +2524,7 @@ export class WorldScene extends Phaser.Scene {
       if (!deferred && canBuildGranary(this.pileFor(zone), this.baseLandmarks(zone), this.granaryRaised(zone), gate)) {
         const spent = buildGranary(this.pileFor(zone));
         if (spent) {
-          this.stockpileByZone[zone] = spent;
+          this.setPile(zone, spent);
           this.placeGranary(this.tileOf(taker), taker);
           this.refreshPlaque();
         }
@@ -2470,7 +2536,7 @@ export class WorldScene extends Phaser.Scene {
     if (landmarkDeferredForGathering(work, pileTotal(this.pileFor(zone)))) return;
     const built = buildStructureFor(this.pileFor(zone), zone);
     if (built) {
-      this.stockpileByZone[zone] = built;
+      this.setPile(zone, built);
       const kind = zoneStructure(zone);
       if (kind === 'thatch') this.placeThatch(this.tileOf(taker), taker);
       else if (kind === 'shelter') this.placeShelter(this.tileOf(taker), taker);
@@ -4701,12 +4767,12 @@ export class WorldScene extends Phaser.Scene {
     const swap = barterSwap(this.pileFor(zoneA), this.pileFor(zoneB), structureRecipe(zoneA), structureRecipe(zoneB));
     if (!swap.aGives && !swap.bGives) return false; // nothing tradeable — no phantom beat
     if (swap.aGives) {
-      this.stockpileByZone[zoneA] = takeResource(this.pileFor(zoneA), swap.aGives);
-      this.stockpileByZone[zoneB] = bankResource(this.pileFor(zoneB), swap.aGives);
+      this.setPile(zoneA, takeResource(this.pileFor(zoneA), swap.aGives));
+      this.setPile(zoneB, bankResource(this.pileFor(zoneB), swap.aGives));
     }
     if (swap.bGives) {
-      this.stockpileByZone[zoneB] = takeResource(this.pileFor(zoneB), swap.bGives);
-      this.stockpileByZone[zoneA] = bankResource(this.pileFor(zoneA), swap.bGives);
+      this.setPile(zoneB, takeResource(this.pileFor(zoneB), swap.bGives));
+      this.setPile(zoneA, bankResource(this.pileFor(zoneA), swap.bGives));
     }
     for (const d of [a, b]) if (this.inView(d)) this.flashFeed(d, '🔄');
     this.memory = remember(this.memory, a.name, `bartered with ${b.name} at the ${zoneById(zoneB).name} edge`);
@@ -5741,6 +5807,8 @@ export class WorldScene extends Phaser.Scene {
     showLandmarks(this.granarySprites, this.granaries, 'granary'); // BACKLOG-454
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
+    // BACKLOG-504: and each ground's banked heap, on the same rule.
+    for (const z of Object.keys(this.bankSprites)) this.syncBank(z);
   }
 
   /**
@@ -6232,8 +6300,8 @@ export class WorldScene extends Phaser.Scene {
     // resources flow toward need. Not over cap / heavier dest → one kind, byte-identical to 356/377.
     const carried = pressuredCarry(this.pileFor(home), this.pileFor(dest), structureRecipe(dest));
     for (const carry of carried) {
-      this.stockpileByZone[home] = takeResource(this.pileFor(home), carry);
-      this.stockpileByZone[dest] = bankResource(this.pileFor(dest), carry);
+      this.setPile(home, takeResource(this.pileFor(home), carry));
+      this.setPile(dest, bankResource(this.pileFor(dest), carry));
     }
     if (carried.length) {
       const glyphs = carried.map((k) => RESOURCE_GLYPH[k]).join('');
@@ -6423,6 +6491,10 @@ export class WorldScene extends Phaser.Scene {
     // the ordering that *is* load-bearing (the 420 count, and `fond` being read before the 422 grant) is
     // untouched below.
     const caught = this.caughtTic === target.name;
+    // BACKLOG-300: what the keeper walked up on, read once and used by both the aside and the prompt — the
+    // same discipline 423 used for `ticFor`, so the two can never name different things. Never set on a
+    // catch: the ritual is the more specific truth about a dino found alone with its own habit.
+    const doingNow = caught ? undefined : this.activityById[target.name];
     const now = getWorldClock().now();
     const reply = await target.greet({
       personality: this.ensurePersona(target).text, // BACKLOG-103: the stored self feeds the prompt
@@ -6455,6 +6527,9 @@ export class WorldScene extends Phaser.Scene {
       interrupted: caught
         ? { kind: this.ticFor(target).kind, label: this.ticFor(target).label }
         : undefined,
+      // Caught in the act (BACKLOG-300): the enrichment half, beside 423's. The deterministic clause below
+      // ships to every device whether or not a model ever loads.
+      doing: doingNow,
     });
     this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
@@ -6482,7 +6557,13 @@ export class WorldScene extends Phaser.Scene {
         : null;
     // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
     // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
-    const aside = caught ? ticAside(this.ticFor(target).kind) : null;
+    // BACKLOG-300: and a dino that was *not* mid-ritual names what it was doing instead. One aside or the
+    // other or neither — never both; a plain wanderer still gets none, so an ordinary greet is unchanged.
+    const aside = caught
+      ? ticAside(this.ticFor(target).kind)
+      : doingNow
+        ? activityAside(doingNow, target.name)
+        : null;
     const text = [opener, aside, reply.text].filter(Boolean).join(' ');
     const filedKey = `${target.name}:${register}`;
     if (caught && !this.ticCaughtFiled.has(filedKey)) {
@@ -6974,7 +7055,7 @@ export class WorldScene extends Phaser.Scene {
           : runUpkeep(pile, this.standingIn(zone), 0);
       if (plan.pile === pile && plan.lapsed === 0 && plan.repaired === 0) continue;
       changed = true;
-      this.stockpileByZone[zone] = plan.pile;
+      this.setPile(zone, plan.pile);
       const zoneName = zoneById(zone).name;
       for (let i = 0; i < plan.lapsed; i++) {
         const hit = this.landmarkRecords(zone).filter((r) => !r.rec.derelict).pop();
@@ -7381,6 +7462,7 @@ export class WorldScene extends Phaser.Scene {
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
       this.plotStageShownByZone = emptyPlotStages();
       this.refreshPlot();
+      this.syncBanks(); // BACKLOG-504: the restore replaces the whole pile map, so resync every ground's heap
       this.applyObjectVisibility(); // BACKLOG-308: hide off-zone props if we restored into the grove
       this.renderKeeperAvatar(); // restore re-renders the saved observer at the restored position
       this.lastAwayDigest = away.digest;

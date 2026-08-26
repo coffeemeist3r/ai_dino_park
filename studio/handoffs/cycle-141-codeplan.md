@@ -118,3 +118,27 @@ export function pileArtKey(step: PileStep): string | null   // `pile_${step}`, n
 
 ## Blockers
 _(none — filled by the Coder if a gate fails.)_
+
+---
+
+## Shipped
+
+Both tracks built as planned, no deviations worth a rework note. Nine files: `world/bank.ts` (new),
+`world/activity.ts`, `ai/brain.ts`, `ai/webllmBrain.ts`, `scenes/WorldScene.ts`, two unit specs, two e2e
+specs.
+
+Two notes for QA and the Validator:
+
+- **The `setPile` rewrite was mechanical and total.** All fifteen per-zone assignments now route through the
+  seam; the only two remaining mentions of `stockpileByZone` outside the accessor are the save
+  serialization (a read) and the save restore (a whole-map replace), and the restore is followed by a
+  `syncBanks()`. There is no way left to write a pile without the heap agreeing.
+- **`syncBank` destroys and re-creates the sprite when it crosses between glyph and rig.** Today every step
+  is on the glyph fallback because BACKLOG-506 is undrawn, so that branch is dormant — but it is what stops
+  a half-drawn rig set (say `pile_2` only) from trying to `setTexture` a `Text`, which is exactly the shape
+  of bug the park has hit before with partially-drawn prop sets.
+
+Gates: build clean; unit **2081 passed / 2 skipped** across 208 files; e2e **590 passed / 2 failed** —
+`cycle-110-plenty` and `cycle-123-capacity`, both boot timeouts under parallel load, both green isolated
+(8/8 in 5.6s), neither anywhere near either diff. `@mlc-ai/web-llm` still imported only by
+`ai/webllm.worker.ts` and `ai/webllmBrain.ts`. No save field added or changed.
