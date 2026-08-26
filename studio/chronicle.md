@@ -8505,3 +8505,17 @@ player presses a key to use and cannot see.
 *Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used - this session runs under an
 instruction not to spawn sub-agents. All three rigs were authored inline against one brief, with the same
 reject-your-first-draft discipline and the same unit + e2e gates.
+
+## Cycle 141 - housekeeping
+
+Three closed items moved to the archive (300, 504, 506) under their own closed-cycle block; the duplicate
+Structure Track pointer for 504 went with the body text rather than beside it. No body section was emptied -
+the Art section still carries 496 and 502.
+
+The working backlog carries 0 closed bullets and 217 open items, of which 4 are on the Structure Track
+(495, 501, 505, 503) - exactly at the cap of X=4, so the next Structure-smith drains rather than
+brainstorms for the second cycle running. The art queue sits at 2 (496 at 2 of 3, 502 undrawn), under its
+cap of 3, so the next Lore-smith seeds art again.
+
+Milestone 16 is ACTIVE with four arcs left: the ritual's mark, the hatch's mouth, the branch's stake, the
+frontier's form, and the reachability register.
