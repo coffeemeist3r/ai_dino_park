@@ -1,6 +1,6 @@
 {
   "cycle": 141,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-300: Caught in the act \u2014 the greeting names what you interrupted",
   "structureItem": "BACKLOG-504: The pile is a number in a menu \u2014 give a ground its bank tile",
   "lastVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-08-26T04:10:00.000Z",
     "structure-smith": "2026-08-26T04:14:00.000Z",
-    "designer": "2026-08-25T08:07:00.000Z",
+    "designer": "2026-08-26T04:25:00.000Z",
     "code-planner": "2026-08-25T08:08:37.000Z",
     "coder": "2026-08-25T08:27:36.000Z",
     "qa": "2026-08-25T08:28:24.000Z",

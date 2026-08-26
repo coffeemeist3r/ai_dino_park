@@ -8396,3 +8396,11 @@ Drained rather than invented (5 open ≥ X=4). Chose **BACKLOG-504** — the per
 upkeep, mends, ballots, the granary and the courier since cycle 285 and has never once been a thing on the
 ground. Milestone 16's spine arcs recorded (504, 503, 505, 501). Reachability stated in the handoff up
 front: the founding park must ship a *visible* heap and it must be watchable dropping a step.
+
+## Cycle 141 - designer
+
+Both tracks specced. Lore: `activityAside` rides the aside seam 423 built, `wandering` returns null so the
+plain greet stays byte-identical, and the deterministic clause ships to every device with the prompt
+enrichment on top. Structure: one bank tile on every ground (same coordinates, learned once), a three-step
+heap keyed off `pileTotal`, thresholds [1,2,4] chosen so the founding Grove ships at step 2 and the founding
+mend is watched knocking it to step 1 - reachability without widening a founding constant.
