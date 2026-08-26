@@ -8382,3 +8382,10 @@ Final gates: build clean, unit **2066 passed / 2 skipped** across 206 files, e2e
 long-dialog spec was green in that full run, which is characteristic of it rather than evidence about it.
 
 Milestone slot is empty: the smiths draft **Milestone 16** at the next cycle open.
+
+## Cycle 141 — lore-smith
+
+Milestone 16 drafted: **"Somewhere to stand"** — the park's stock, its scarcity and its private marks stop
+being numbers in a menu. Social queue capped (~207 ≥ 12), so nothing new seeded there; art queue at 2 < 3,
+so **BACKLOG-506** (the pile's three-step heap rig) was seeded to stand on the bank tile 504 wants to place.
+Suggested next-up **BACKLOG-300** — press E on a dino and the hello names what you pulled it off.

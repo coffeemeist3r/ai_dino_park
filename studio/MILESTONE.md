@@ -8,7 +8,26 @@
 
 ## Current milestone
 
-_(none — the smiths draft Milestone 16 at the next cycle open.)_
+**Milestone 16: Somewhere to stand — the park's stock, its scarcity and its private marks stop being numbers in a menu and become things on the ground you can walk to.**
+**Status:** ACTIVE (opened cycle 141)
+
+Milestone 15 gave the park's work a body: somebody walks to the ruin and mends it, somebody carries the
+stone. Milestone 16 asks the next question, and it is the CHARTER v7 question — *where does any of it
+happen?* Five systems run off a ground's banked gathering and the only way to see the bank is to open a
+lens. The one branch in the map leads somewhere that grows nothing the line doesn't. The frontier read
+closed itself the day every ground got a resident. Each of those is true, tested, load-bearing, and
+invisible from inside the game. This milestone spends the cycle on the standing-in-it half.
+
+**Lore arcs:**
+- [ ] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300)
+- [ ] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496)
+- [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
+
+**Structure arcs:**
+- [ ] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506)
+- [ ] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503)
+- [ ] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505)
+- [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)
 
 ---
 
