@@ -8410,3 +8410,11 @@ mend is watched knocking it to step 1 - reachability without widening a founding
 Nine files, two new pure modules. The structure half is mostly one mechanical move: fifteen scattered
 `stockpileByZone[z] = ...` assignments collapse onto a single `setPile` seam, so the heap cannot fall out of
 sync with the number that drives it. The lore half is four lines in the greet path plus a table.
+
+## Cycle 141 - qa
+
+24/24 criteria pass. Build clean, unit 2081 passed / 2 skipped across 208 files, e2e 590 passed / 2 failed -
+`cycle-110-plenty` and `cycle-123-capacity`, both boot timeouts under parallel load, both green isolated,
+neither near either diff. BACKLOG-430's long-dialog spec was green in the full run, on a cycle that touches
+its greet path. Verified by grep that the `setPile` seam is total: fifteen assignment sites, fifteen
+rewrites, zero survivors.
