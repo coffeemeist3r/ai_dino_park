@@ -24,7 +24,7 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 - [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
 
 **Structure arcs:**
-- [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *504 shipped cycle 141 on the glyph fallback; 506 draws the heap*
+- [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*
 - [ ] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503)
 - [ ] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505)
 - [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)

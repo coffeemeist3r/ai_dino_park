@@ -916,6 +916,95 @@ const TIC_CIRCLE_RIG: PropRig = {
   },
 };
 
+/**
+ * The ground's bank, at three fullness steps (BACKLOG-506, for BACKLOG-504).
+ *
+ * A dino-made heap of what dinos carried, so it must read as **piled** rather than **built** — which is the
+ * whole job here, because this park already has a stacked-stone prop and it is sixteen pixels away. The
+ * cairn (296) is tidy: level courses, a clean taper, every stone squared to the one under it. So the bank
+ * gets the opposite of all three — lumps at staggered heights whose outlines deliberately never line up
+ * into a course, a crown perched off-centre, and at the full step a stone that has plainly rolled off the
+ * side and a branch end shouldering out of the mass. Nobody stacked this carefully; somebody dropped it.
+ *
+ * The read the item asks for is **silhouette at a glance from across a ground**: a keeper standing on the
+ * Grove should be able to tell a full bank from a spent one without opening the lens. So the three steps are
+ * separated by outline, not by detail — a low scatter barely off the grass, a shouldered heap, and a high
+ * irregular mass that breaks the sixteen-pixel box at the top. Park earth tones, not the keeper palette.
+ */
+const PILE_1_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '....ooo.........',
+  '...ohsso.oo.....',
+  '...osddoohso....',
+  '....ooo..oo.....',
+  '................',
+  '................',
+];
+
+const PILE_2_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......oo.......',
+  '......ohso......',
+  '.......oo.ooo...',
+  '....oooo.ohsso..',
+  '...ohhssoosddo..',
+  '...osssdo.ooo...',
+  '....oooo........',
+  '................',
+  '................',
+];
+
+const PILE_3_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '.........ooooo..',
+  '........okwwwo..',
+  '.........ooooo..',
+  '........oooo....',
+  '.....ooohhsso...',
+  '....ohsosssdo...',
+  '....osddooooooo.',
+  '..oooooooooohsso',
+  '.ohhssoohhsosddo',
+  '.oossdoosssdooo.',
+  'ohsooo..oooo....',
+  '.oo.............',
+];
+
+const PILE_STONE_PALETTE = {
+  o: 0x2e2e33, // dark stone outline — the same one the loose stone and the cairn use
+  s: 0x7d7d86, // stone body
+  h: 0xa9a9b2, // lit face
+  d: 0x55555c, // shadowed face
+};
+
+const PILE_1_RIG: PropRig = { size: 16, grid: PILE_1_GRID, palette: PILE_STONE_PALETTE };
+const PILE_2_RIG: PropRig = { size: 16, grid: PILE_2_GRID, palette: PILE_STONE_PALETTE };
+const PILE_3_RIG: PropRig = {
+  size: 16,
+  grid: PILE_3_GRID,
+  // Only the full heap carries wood: a branch end shouldering out is the cheapest way to say this pile is
+  // *gathering* and not masonry, and it is the one step with the room to say it.
+  palette: { ...PILE_STONE_PALETTE, w: 0x8a6a3f, k: 0x5c4426 },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -948,6 +1037,11 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
   tic_pace: TIC_PACE_RIG,
   tic_circle: TIC_CIRCLE_RIG,
+  // BACKLOG-506: the ground's bank at its three fullness steps (504), keyed `pile_<step>`. Step 0 banks
+  // nothing and draws nothing, so there is no `pile_0` — the null key is the empty ground.
+  pile_1: PILE_1_RIG,
+  pile_2: PILE_2_RIG,
+  pile_3: PILE_3_RIG,
 };
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */

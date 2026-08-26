@@ -23,6 +23,9 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)
+      'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
+      'pile_2',
+      'pile_3',
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'stone',

@@ -8460,3 +8460,48 @@ Gates: build clean, unit 2081 passed / 2 skipped across 208 files, e2e 590 passe
 timeouts under parallel load, both green isolated, neither near either diff. 24/24 criteria. Milestone 16
 has four arcs left: the ritual's mark, the hatch's mouth, the branch's stake, the frontier's form, and the
 register that would have caught last cycle's regression before a spec did.
+
+## Cycle 141-art - the ground's bank, at three fullness steps
+
+Unusual fire: the art queue's newest item was the one worth drawing, because the structure track had placed
+its subject the same morning. 504 put a bank tile on every ground and stepped a heap on it against the
+banked total, shipping on the stone-glyph fallback. So tonight's rigs land on wiring that already exists,
+and the graceful path is what shipped first rather than what was promised for later - the inverse of the
+usual stash-ahead arrangement, and a better one.
+
+The problem was not drawing rocks. It was that this park already draws stacked stone and it is sixteen
+pixels away. The cairn is *built*: level courses, a clean taper, every stone squared to the one under it.
+A bank is *piled*. So the heaps got the inverse of all three - lumps at staggered heights whose outlines
+deliberately never line up into a course, a crown perched off-centre, and at the full step a stone that has
+plainly rolled clear of the mass. That is pinned as an invariant rather than left to taste: no step may
+contain a full-width run of pure outline, which is exactly the cairn's tell.
+
+The first draft failed the requirement the item actually stated. 506 asks for legibility in *silhouette*
+from across a ground, and step 1's two pebbles had been flung so far apart that their bounding box was as
+wide as step 2's shouldered heap - three states that a player would have had to squint at to tell apart.
+Detail cannot separate three states at sixteen pixels; outline can. The scatter was pulled tight, and the
+test now asserts each step is strictly taller AND wider AND denser than the one below it, which is the
+property that lets a keeper standing on the Grove read a full bank from a spent one without the lens.
+
+One detail carries the meaning past "these are rocks": only the full step wears wood, a branch end
+shouldering out of the heap, because a bank holds whatever the ground gathered and step 3 is the one with
+room to say so.
+
+There is deliberately no `pile_0` - step 0 is bare ground, not a picture of bare ground - and that absence
+is what keeps the interesting path live. `syncBank` drops and re-creates its sprite when a step crosses
+between the glyph fallback and a baked rig, which is the guard against a half-drawn rig set calling
+`setTexture` on a Text. This morning that branch was dormant. With steps 1-3 drawn and step 0 not, every
+save now crosses it the first time a ground banks anything.
+
+Gates: build clean, unit 2098 passed / 2 skipped across 209 files, e2e 592 passed / 2 failed - the
+catalogued mobile-minds long-dialog red (BACKLOG-430) and `cycle-110-plenty`, both green isolated in a
+17/17 re-run. `cycle-066-propart`'s registry roster grew by three, which is the one place a new prop is
+supposed to be noticed.
+
+Still on flat-shape or glyph fallback: the `fuss` worn-ground mark (BACKLOG-496, held back on purpose as
+that item's per-kind control) and the feeding hatch (BACKLOG-502) - still the one thing in this park the
+player presses a key to use and cannot see.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used - this session runs under an
+instruction not to spawn sub-agents. All three rigs were authored inline against one brief, with the same
+reject-your-first-draft discipline and the same unit + e2e gates.
