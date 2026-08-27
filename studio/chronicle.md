@@ -8548,3 +8548,12 @@ obsidian: an exclusivity rather than 348 lean, a beacon built from it, one unit 
 recipe so the climb is load-bearing, and a quarry migration tier that sends a body up the mountain. The
 obsidian tithe on *every* structure recipe was specced out of scope on purpose — it reaches into the
 constant three carry systems read as their deficit driver.
+
+## Cycle 142 — code-planner
+
+Both tracks planned against prior art rather than new machinery: the beacon is the thatch mirrored at
+fifteen sites, the quarry tier slots into the same `primed ?? missed ?? ...` chain hearsay and yearning
+already use, and the shard rides home on the existing `pickCarry` fallback with no carry code touched.
+One finding worth recording before a line was written: exclusivity without the matching `STRUCTURE_BY_BIAS`
+row would silently kill Ridge building, because `zoneStructure` reads the bias and a Ridge that only ever
+gathers obsidian can never afford `CRAFT_RECIPE`. The beacon is a correctness requirement, not parity.
