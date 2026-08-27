@@ -8672,3 +8672,19 @@ the only place the draw-a-rig-or-draw-nothing branch has a natural control.
 instruction not to spawn sub-agents. All three rigs were authored inline against one brief, with the same
 reject-your-first-draft discipline and the same unit + e2e gates. Three subjects is over the routine's
 "1–2 per fire", matching cycle 141-art's precedent; noted rather than glossed.
+
+## Cycle 142 — housekeeping
+
+Four closed items archived (503, 507, 496, 508) under their own closed-cycle block, and **three whole
+sections went with them** — the cycle-137 lore block, the first cycle-140 structure block, and the
+cycle-142 lore block, each of which had held exactly one item and now held none. Duplicate pointers were
+collapsed into their bodies rather than archived twice.
+
+The working backlog carries 0 closed bullets and **215 open items**, of which 4 sit on the Structure Track
+(495, 501, 505, 509) — exactly at the cap of X=4, so the next Structure-smith drains rather than
+brainstorms for the third cycle running. The art queue is down to **1** (502, the feeding hatch), well
+under its cap of 3, so the next Lore-smith seeds art — and 502 is now the last undrawn prop key in the
+park, which makes it the only natural home left for the draw-a-rig-or-draw-nothing control.
+
+Milestone 16 is ACTIVE with three arcs left: the hatch's mouth, the frontier's form, and the reachability
+register.
