@@ -13,12 +13,17 @@
  */
 
 import type { Tile } from './movement';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, RIDGE_ID } from './zones';
 import { rand as worldRand } from './rng';
 
-export type ResourceKind = 'branch' | 'stone' | 'frond';
+export type ResourceKind = 'branch' | 'stone' | 'frond' | 'obsidian';
 
-export const RESOURCE_GLYPH: Record<ResourceKind, string> = { branch: '🪵', stone: '🪨', frond: '🌾' };
+/**
+ * BACKLOG-503: `obsidian` is appended **last** on purpose. This map's key order is `KINDS` in `upkeep.ts`
+ * and the iteration order of `pickCarry` / `directedCarry` / `pressuredCarry` / `stockpileLine`, all of
+ * which break ties by it. A fourth kind at the end leaves every tie among the first three untouched.
+ */
+export const RESOURCE_GLYPH: Record<ResourceKind, string> = { branch: '🪵', stone: '🪨', frond: '🌾', obsidian: '🌑' };
 
 export const RESOURCE_RANGE = 6; // tiles — beyond this a resource goes unnoticed
 const CURIOUS = 0.35; // curiosity at/above which a dino bothers to fetch
@@ -69,11 +74,39 @@ export const ZONE_BIAS: Record<string, ResourceKind> = {
   [BOWL_ID]: 'stone',
   [GROVE_ID]: 'branch',
   [FERNREACH_ID]: 'frond',
+  // BACKLOG-503: the Ridge's entry is a bias *and* an exclusivity (below). It has to be here as well as in
+  // ZONE_EXCLUSIVE because `zoneStructure` reads the bias to decide what a ground builds — a Ridge that
+  // gathers nothing but obsidian and still carried CRAFT_RECIPE would be a ground that can never build.
+  [RIDGE_ID]: 'obsidian',
+};
+
+/**
+ * Zone-exclusive resource (BACKLOG-503) — the difference between a *lean* and a *lock*.
+ *
+ * `ZONE_BIAS` above weights a roll; the off-kind still turns up past `BIAS_WEIGHT`, which is why the three
+ * biased grounds have always been three flavours of the same economy. The Ridge is the one ground in this
+ * park a player reaches by deciding to rather than by continuing to walk east, and until now it grew what
+ * the line grew and banked what the line banked — so every migration heuristic that weighed it was choosing
+ * between two identical arguments.
+ *
+ * A ground listed here rolls its exclusive kind and **nothing else**, and that kind rolls **nowhere else**:
+ * `pickKind`'s off-kind is always a primary (branch/stone), so an exclusive kind can never leak into another
+ * ground's roll the way 400 was careful the frond never could. That is what makes obsidian a thing a dino
+ * has to *go* for — the first resource in this park with a place.
+ */
+export const ZONE_EXCLUSIVE: Record<string, ResourceKind> = {
+  [RIDGE_ID]: 'obsidian',
 };
 export const BIAS_WEIGHT = 0.75; // chance the favored kind rolls in its biased zone (vs 0.5 uniform)
 
-/** Pick which kind appears — uniform 50/50 with no zone, or leaning to the zone's bias (348/400). */
+/**
+ * Pick which kind appears — uniform 50/50 with no zone, leaning to the zone's bias (348/400), or *locked*
+ * to the zone's exclusive kind (503). The exclusivity is checked first and consumes no randomness, so the
+ * Ridge's roll is the same shard whatever the stream says and every other ground is byte-identical.
+ */
 export function pickKind(rand: () => number = worldRand, zone?: string): ResourceKind {
+  const only = zone ? ZONE_EXCLUSIVE[zone] : undefined;
+  if (only) return only;
   const favored = zone ? ZONE_BIAS[zone] : undefined;
   if (!favored) return rand() < 0.5 ? 'branch' : 'stone';
   // The off-kind is intentionally a primary (branch↔stone), never the favored's "opposite" among all
@@ -267,7 +300,7 @@ export function pressuredCarry(
  * escalation (286/315 `SHELTER_AFTER_CAIRNS`) with a one-structure-per-zone choice keyed off ZONE_BIAS.
  * The pile-math (`craft`/`buildShelter`) and recipes are unchanged — only the *selection* moves here.
  */
-export type Structure = 'cairn' | 'shelter' | 'thatch';
+export type Structure = 'cairn' | 'shelter' | 'thatch' | 'beacon';
 
 /**
  * Woven frond thatch (BACKLOG-417) — the Fernreach's own built landmark, the third structure beyond the
@@ -280,11 +313,21 @@ export const THATCH_RECIPE: Partial<Record<ResourceKind, number>> = { frond: 4 }
 export const THATCH_GLYPH = '🥻';
 
 /**
+ * The Ridge's beacon (BACKLOG-503) — the fourth structure, and the only one made of something you cannot
+ * gather anywhere else. Shards of black glass set upright in a stack, on the one ground in the park that
+ * hangs off a branch rather than sitting on the line. Twin recipe of the cairn / lean-to / thatch: the
+ * `structureRecipe` table below routes it and `buildStructureFor` spends it, so no fourth bespoke
+ * afford/spend pair was needed. The glyph is the graceful fallback until BACKLOG-508 draws the rig.
+ */
+export const BEACON_RECIPE: Partial<Record<ResourceKind, number>> = { obsidian: 3 };
+export const BEACON_GLYPH = '🗼';
+
+/**
  * A zone's bias kind → the landmark it raises: stone stacks cairns, branch raises lean-tos, frond weaves
  * a thatch (BACKLOG-417). Total over the ResourceKind union so a new kind can never silently fall through
  * to a default.
  */
-export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter', frond: 'thatch' };
+export const STRUCTURE_BY_BIAS: Record<ResourceKind, Structure> = { stone: 'cairn', branch: 'shelter', frond: 'thatch', obsidian: 'beacon' };
 
 /** Which structure a zone builds, by its bias. An unbiased/unknown zone → 'cairn' (286 default, back-compat). */
 export function zoneStructure(zone?: string): Structure {
@@ -295,7 +338,10 @@ export function zoneStructure(zone?: string): Structure {
 /** The recipe a zone's structure costs — the cairn (286), the lean-to (315), or the frond thatch (417). */
 export function structureRecipe(zone?: string): Partial<Record<ResourceKind, number>> {
   const kind = zoneStructure(zone);
-  return kind === 'shelter' ? SHELTER_RECIPE : kind === 'thatch' ? THATCH_RECIPE : CRAFT_RECIPE;
+  if (kind === 'shelter') return SHELTER_RECIPE;
+  if (kind === 'thatch') return THATCH_RECIPE;
+  if (kind === 'beacon') return BEACON_RECIPE; // BACKLOG-503
+  return CRAFT_RECIPE;
 }
 
 /**

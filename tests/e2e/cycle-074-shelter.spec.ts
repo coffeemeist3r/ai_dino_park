@@ -46,8 +46,11 @@ test('the bowl stacks cairns and never a lean-to (its bias is stone)', async ({ 
   expect((await cairns(page)).every((c) => c.zone === 'bowl')).toBe(true);
 
   // BACKLOG-454: with three landmarks up, the bowl now saves toward a granary — banking the granary recipe
-  // ({branch:3, stone:3}) puts one up, still never a lean-to. Building finally feeds the food economy.
-  for (const k of ['branch', 'branch', 'branch', 'stone', 'stone', 'stone']) await bankOn(page, bowlDino, k);
+  // puts one up, still never a lean-to. Building finally feeds the food economy.
+  // BACKLOG-503: and one obsidian, which the bowl cannot roll — it comes home in somebody's arms off the
+  // Ridge. Spawning it here is that carry, stood in for: the granary is the one structure in the park that
+  // no ground can raise on its own gather.
+  for (const k of ['branch', 'branch', 'branch', 'stone', 'stone', 'stone', 'obsidian']) await bankOn(page, bowlDino, k);
   expect((await granaries(page)).length).toBe(1);
   expect((await granaries(page)).every((g) => g.zone === 'bowl')).toBe(true);
   expect((await cairns(page)).length).toBe(3); // no fourth cairn — the gather went to the granary

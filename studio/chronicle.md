@@ -8557,3 +8557,13 @@ already use, and the shard rides home on the existing `pickCarry` fallback with 
 One finding worth recording before a line was written: exclusivity without the matching `STRUCTURE_BY_BIAS`
 row would silently kill Ridge building, because `zoneStructure` reads the bias and a Ridge that only ever
 gathers obsidian can never afford `CRAFT_RECIPE`. The beacon is a correctness requirement, not parity.
+
+## Cycle 142 — coder
+
+Both tracks shipped in 14 files. The structure track uncovered its own defect on the way: the quarry
+errand as specced sat above the appeal read, and since no ground holds obsidian on a fresh save, every
+migrant ran an errand and 450 scarcity migration went dormant — thirteen specs said so. The errand moved
+inside `scarcityDestOf`, below a genuinely richer neighbour: it is what a dino does when nothing else is
+pulling it. Five of those thirteen were a different finding entirely — `__seedGranaryReady` held a copy of
+`GRANARY_RECIPE` instead of the recipe, so a one-unit recipe change took three upkeep specs and two
+bill-call specs red about a granary none of them tested.

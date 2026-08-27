@@ -121,3 +121,38 @@ player can be shown one ritual and the book another — the exact hazard `ticFor
 - `npx vitest run` — full unit suite from the **repo root** (the root config covers `tests/unit` + `game/src`).
 - `npx --yes kill-port 5173 && npx playwright test` — full e2e.
 - Boundary grep: `@mlc-ai/web-llm` imported only under `game/src/ai/`.
+
+---
+
+## Shipped
+
+Both tracks built, in the planned order. `npm run build` clean, `npx vitest run` 2125 passed / 2 skipped
+across 211 files, `npx playwright test` 602 passed / 1 failed (`cycle-139-glad`, a cold-boot
+canvas-visible timeout, green in an isolated 6/6 re-run — the catalogued flake, not a regression). The
+`@mlc-ai/web-llm` import stays confined to `game/src/ai/`.
+
+**14 files.** New: `world/quarry.ts`, `world/wear.ts`, and two unit + two e2e specs. Edited:
+`world/resource.ts`, `world/granary.ts`, `world/saveGame.ts`, `scenes/WorldScene.ts`, and four existing
+test files whose fixtures moved with the schema.
+
+### One finding, and one design change made mid-build
+
+**The quarry tier as specced took the scarcity system dormant.** The design put the errand above the
+appeal read, on the reasoning that "a thing that exists in exactly one place is a harder fact than a
+comparison of two prosperity scores". That reasoning is sound and the placement was wrong, because on a
+fresh save *no ground holds any obsidian* — so every ground has an errand, every migrant runs it, and the
+whole of 450's scarcity migration, 458's hearsay-into-appeal fallback and 111's wry welcome stop
+happening. Thirteen e2e specs said so.
+
+That is CHARTER v7's corollary arrived at from the other side: a new system made reachable by taking an
+old one dormant is not a win. The fix moves the errand *inside* `scarcityDestOf`, below the frontier tier
+and below a genuinely richer neighbour: **the errand is what a dino does when nothing else is pulling it.**
+The appeal read keeps its claim (mouths move toward plenty), and a walk with no better argument fetches the
+one thing the ground cannot grow. `cycle-142-obsidian.spec.ts` pins the ordering in both directions — the
+errand live and losing to plenty, then winning when the plenty is taken away.
+
+**And one hook that was a copy of a constant.** Five of the thirteen failures were not about migration at
+all: `__seedGranaryReady` hardcoded `{branch: 3, stone: 3}` beside `GRANARY_RECIPE` rather than reading it,
+so the day the recipe grew an obsidian, three upkeep specs and two bill-call specs went red about a granary
+none of them was testing. The hook now spreads the recipe. Same class of finding as BACKLOG-483 and
+BACKLOG-495: a claim written down twice is a claim that goes stale in one of the two places.

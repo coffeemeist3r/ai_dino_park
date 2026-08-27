@@ -114,7 +114,7 @@ import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
-import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES } from '../world/granary';
+import { canBuildGranary, buildGranary, granaryFoodCap, GRANARY_GLYPH, GRANARY_AFTER_STRUCTURES, GRANARY_RECIPE } from '../world/granary';
 // BACKLOG-480: a standing landmark costs its ground something, and one it can't pay for falls into
 // reversible disrepair.
 import {
@@ -179,6 +179,7 @@ import {
   CAIRN_GLYPH,
   SHELTER_GLYPH,
   THATCH_GLYPH,
+  BEACON_GLYPH, // BACKLOG-503
   canBuildShelter,
   buildStructureFor,
   zoneStructure,
@@ -196,6 +197,10 @@ import {
 import { rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, activityAside, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { BANK_TILE, bankStep, pileArtKey } from '../world/bank';
+// BACKLOG-503: the quarry errand - the hard scarcity pull toward the one ground the black glass falls on.
+import { quarryDest, quarryGround, quarryEvent, quarryMemory } from '../world/quarry';
+// BACKLOG-507: the ritual's worn ground, laid on the haunt 421 persists.
+import { marksOn, type WornMark } from '../world/wear';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
 import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
@@ -648,6 +653,9 @@ export class WorldScene extends Phaser.Scene {
   }
   /** The heap standing on each ground's bank tile (BACKLOG-504), lazily created per zone. */
   private bankSprites: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
+  /** The worn ground under each haunt (BACKLOG-507), keyed `<dino>:<ground>`. Transient — never saved:
+   *  the haunts are what persist (421), and these are one render of them. */
+  private wearSprites: Record<string, Phaser.GameObjects.Image> = {};
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
   private cairns: Landmark[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
@@ -657,6 +665,10 @@ export class WorldScene extends Phaser.Scene {
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's own landmark. Persisted; absent → []. Zone-scoped (308). */
   private thatches: Landmark[] = [];
   private thatchSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+  /** Obsidian beacons (BACKLOG-503) - the Ridge's own landmark, and the only structure in the park made of
+   *  something that can only be gathered on one ground. Persisted; absent -> []. Zone-scoped (308). */
+  private beacons: Landmark[] = [];
+  private beaconSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
   /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Persisted; absent → []. Zone-scoped (308). */
   private granaries: Landmark[] = [];
   private granarySprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
@@ -1386,6 +1398,15 @@ export class WorldScene extends Phaser.Scene {
     // per-pair watch tally, and one deterministic pass of the watch scan — the `__noticeTraces` precedent, so
     // the spec and the game drive the same path rather than the spec driving a second one.
     (window as any).__ticCatches = (name: string) => this.ticCatches[name] ?? 0; // BACKLOG-420
+    // BACKLOG-507: the worn marks actually drawn on the active ground (the sprites, not the pure read),
+    // so a spec asserts what the player sees rather than what the model thinks.
+    (window as any).__wornMarks = () =>
+      Object.entries(this.wearSprites).map(([id, sprite]) => ({
+        name: id.split(':')[0],
+        tileX: Math.floor(sprite.x / TILE),
+        tileY: Math.floor(sprite.y / TILE),
+        visible: sprite.visible,
+      }));
     // BACKLOG-421: the haunt this dino keeps on the ground it is standing on, plus this stretch's anchor.
     (window as any).__ticHaunt = (name: string) => {
       const d = this.dinos.find((x) => x.name === name);
@@ -1508,6 +1529,12 @@ export class WorldScene extends Phaser.Scene {
       this.shelterSprites[0] instanceof Phaser.GameObjects.Image ? this.shelterSprites[0].texture.key : null;
     (window as any).__canBuildShelter = () => canBuildShelter(this.pileFor(this.zoneId)); // BACKLOG-315
     (window as any).__thatches = () => this.thatches.map((t) => ({ ...t })); // BACKLOG-417: woven frond thatches
+    (window as any).__beacons = () => this.beacons.map((b) => ({ ...b })); // BACKLOG-503: the Ridge's obsidian beacons
+    // BACKLOG-503: the next hop a named dino would take on a quarry errand, or null when it has no errand.
+    (window as any).__quarryDest = (name: string) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.quarryDestOf(zoneOf(this.dinoZones, d.name, BOWL_ID)) : null;
+    };
     // BACKLOG-417: is the first thatch drawn from the stashed pixel rig (BACKLOG-427) rather than the 🥻 glyph?
     (window as any).__thatchIsArt = () =>
       this.thatchSprites.length > 0 && this.thatchSprites[0] instanceof Phaser.GameObjects.Image;
@@ -1568,7 +1595,10 @@ export class WorldScene extends Phaser.Scene {
     // gathering it out. Adds `n` cairns tagged to the zone and stocks the pile to the granary recipe.
     (window as any).__seedGranaryReady = (zone: string, landmarks = GRANARY_AFTER_STRUCTURES) => {
       for (let i = 0; i < landmarks; i++) this.cairns.push({ tileX: 1 + i, tileY: 1, zone });
-      this.setPile(zone, { ...(this.pileFor(zone)), branch: 3, stone: 3 });
+      // BACKLOG-503: seed from the recipe rather than a copy of it. The hook's name is a promise that the
+      // ground is *ready*, and the day the recipe grew an obsidian this hardcoded {branch:3, stone:3} took
+      // five specs red at once — every one of them about upkeep or the bill call, not about the granary.
+      this.setPile(zone, { ...this.pileFor(zone), ...GRANARY_RECIPE });
     };
     // dev-only: run the exact on-gather build decision for a named dino's zone (granary gate vs bias landmark).
     (window as any).__runBuild = (name: string) => {
@@ -2429,6 +2459,58 @@ export class WorldScene extends Phaser.Scene {
     for (const z of zoneChain()) this.syncBank(z);
   }
 
+  /**
+   * The ritual's worn ground (BACKLOG-507) — a patch under every haunt on the ground the keeper is
+   * standing on.
+   *
+   * The mark belongs to the *haunt*, not to the stretch: worn grass does not un-wear when a dino walks
+   * off, and 421's haunt is precisely the place it keeps coming back to. When the haunt drifts the mark
+   * moves with it — one sprite per dino per ground, moved, never accumulating — which is what turns four
+   * drifts into a visible little path.
+   *
+   * Only the active ground draws, the same `zone === this.zoneId` rule the heap, the resource glyph and
+   * every landmark use; the off-ground sprites are torn down rather than hidden, because a haunt that
+   * drifted while you were elsewhere would otherwise come back at its old tile.
+   *
+   * A kind with no rig draws nothing. `fuss` is undrawn on purpose (496's per-kind fallback control) and
+   * two of the five personality axes map to it, so this branch is live on essentially every save.
+   */
+  private syncWear(): void {
+    const marks = this.wornMarks();
+    const wanted = new Set<string>();
+    for (const m of marks) {
+      const tex = hasPropArt(m.key) ? bakePropArt(this, m.key) : null;
+      if (!tex) continue; // no rig for this ritual — the ground stays as it was
+      const id = `${m.name}:${this.zoneId}`;
+      wanted.add(id);
+      const px = m.tileX * TILE + TILE / 2;
+      const py = m.tileY * TILE + TILE / 2;
+      let sprite = this.wearSprites[id];
+      if (!sprite) {
+        // Depth 1: it is ground. Resources, landmarks and the heap all stand on it at depth 2.
+        sprite = this.add.image(px, py, tex).setOrigin(0.5).setDepth(1);
+        this.wearSprites[id] = sprite;
+      }
+      sprite.setTexture(tex);
+      sprite.setPosition(px, py);
+      sprite.setVisible(true);
+    }
+    for (const id of Object.keys(this.wearSprites)) {
+      if (wanted.has(id)) continue;
+      this.wearSprites[id].destroy();
+      delete this.wearSprites[id];
+    }
+  }
+
+  /** The marks this ground should be showing (BACKLOG-507) — the pure read, over the live cast. A haunt
+   *  whose dino is no longer in the park resolves to no kind and leaves no ghost. */
+  private wornMarks(): WornMark[] {
+    return marksOn(this.ticHaunts, this.zoneId, (name) => {
+      const d = this.dinos.find((x) => x.name === name);
+      return d ? this.ticFor(d).kind : null;
+    });
+  }
+
   /** Draw a cairn glyph at a tile (BACKLOG-286). Same depth/shape as a resource glyph. */
   private drawCairn(c: { tileX: number; tileY: number; zone: string }): void {
     const px = c.tileX * TILE + TILE / 2;
@@ -2540,9 +2622,33 @@ export class WorldScene extends Phaser.Scene {
       const kind = zoneStructure(zone);
       if (kind === 'thatch') this.placeThatch(this.tileOf(taker), taker);
       else if (kind === 'shelter') this.placeShelter(this.tileOf(taker), taker);
+      else if (kind === 'beacon') this.placeBeacon(this.tileOf(taker), taker); // BACKLOG-503
       else this.placeCairn(this.tileOf(taker), taker);
       this.refreshPlaque();
     }
+  }
+
+  /** Draw a beacon at a tile (BACKLOG-503). Mirror of drawThatch - the baked obsidian-beacon rig once
+   *  BACKLOG-508 draws it, with the glyph as the graceful fallback until then. Shows only in its own zone (308). */
+  private drawBeacon(b: { tileX: number; tileY: number; zone: string }): void {
+    const px = b.tileX * TILE + TILE / 2;
+    const py = b.tileY * TILE + TILE / 2;
+    const tex = bakePropArt(this, 'beacon');
+    const sprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+      : this.add.text(px, py, BEACON_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    sprite.setVisible(b.zone === this.zoneId);
+    this.beaconSprites.push(sprite);
+  }
+
+  /** Record + render a freshly raised beacon and mark the moment on the builder (BACKLOG-503). */
+  private placeBeacon(tile: { tileX: number; tileY: number }, crafter: Dino): void {
+    const b = { ...tile, zone: zoneOf(this.dinoZones, crafter.name, BOWL_ID) };
+    this.beacons.push(b);
+    this.drawBeacon(b);
+    this.flashFeed(crafter, BEACON_GLYPH);
+    this.memory = remember(this.memory, crafter.name, 'set black glass upright on the ridge');
+    this.logEvent(`${BEACON_GLYPH} ${crafter.name} raised a beacon of black glass`);
   }
 
   /** Draw a granary at a tile (BACKLOG-454). Mirror of drawThatch — the baked pixel granary (GRANARY_RIG
@@ -2573,13 +2679,13 @@ export class WorldScene extends Phaser.Scene {
    *  not granaries themselves (BACKLOG-454). BACKLOG-480: derelict landmarks don't count, so a ground must
    *  hold three up to earn the fourth; a skyline it can't maintain doesn't buy it a granary. */
   private baseLandmarks(zone: string): number {
-    return [...this.cairns, ...this.shelters, ...this.thatches].filter((s) => s.zone === zone && !s.derelict)
+    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.beacons].filter((s) => s.zone === zone && !s.derelict)
       .length;
   }
 
   /** Every landmark in a zone, maintained or not (BACKLOG-480) — the four arrays as one list. */
   private landmarksIn(zone: string): Landmark[] {
-    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.granaries].filter((s) => s.zone === zone);
+    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.beacons, ...this.granaries].filter((s) => s.zone === zone);
   }
 
   /** How many of a zone's landmarks are standing (BACKLOG-480) — what upkeep is owed on. */
@@ -4141,6 +4247,9 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, d.name, hauntDriftMemory(tic.label));
       this.logEvent(hauntDriftedLine(d.name, tic.glyph));
     }
+    // BACKLOG-507: the haunt just moved (or was just laid), so the worn ground moves with it now rather
+    // than at the next zone event.
+    this.syncWear();
     return anchor;
   }
 
@@ -5804,11 +5913,15 @@ export class WorldScene extends Phaser.Scene {
     showLandmarks(this.cairnSprites, this.cairns, 'cairn');
     showLandmarks(this.shelterSprites, this.shelters, 'shelter'); // BACKLOG-315
     showLandmarks(this.thatchSprites, this.thatches, 'thatch'); // BACKLOG-417
+    showLandmarks(this.beaconSprites, this.beacons, 'beacon'); // BACKLOG-503
     showLandmarks(this.granarySprites, this.granaries, 'granary'); // BACKLOG-454
     // BACKLOG-308/349: each zone's plot draws only while the keeper stands in that zone.
     for (const z of Object.keys(this.plotSpriteByZone)) this.plotSpriteByZone[z]?.setVisible(z === this.zoneId);
     // BACKLOG-504: and each ground's banked heap, on the same rule.
     for (const z of Object.keys(this.bankSprites)) this.syncBank(z);
+    // BACKLOG-507: and the worn ground under this ground's haunts. One call site rather than four —
+    // a zone cross, the founding pass and the save restore all already come through here.
+    this.syncWear();
   }
 
   /**
@@ -6152,11 +6265,29 @@ export class WorldScene extends Phaser.Scene {
    */
   private scarcityDestOf(home: string): string {
     const neighbors = zoneNeighbors(home).map((l) => l.to);
-    return (
-      unsettledNeighbor(neighbors, (z) => this.isZoneUnsettled(z)) ??
-      richestNeighbor(neighbors, (z) => this.zoneAppeal(z)) ??
-      otherZone(home)
-    );
+    const frontier = unsettledNeighbor(neighbors, (z) => this.isZoneUnsettled(z));
+    if (frontier) return frontier;
+    const richest = richestNeighbor(neighbors, (z) => this.zoneAppeal(z));
+    // BACKLOG-503: a neighbour that is genuinely better off still wins — mouths move toward plenty, and
+    // that is 450's whole claim. The errand is what a dino does when *nothing else is pulling it*: the
+    // appeal read has found no neighbour worth the walk, so the walk may as well fetch the one thing the
+    // ground cannot grow. Putting it above this read instead made every migration an errand and took the
+    // scarcity system dormant — the exact defect CHARTER v7's corollary is about, arrived at from the
+    // other side.
+    if (richest && this.zoneAppeal(richest) > this.zoneAppeal(home)) return richest;
+    return this.quarryDestOf(home) ?? richest ?? otherZone(home);
+  }
+
+  /**
+   * The next hop a dino takes on a quarry errand (BACKLOG-503), or null when it has none.
+   *
+   * `scarcityDestOf`'s tiers all answer "which of my neighbours is better"; this one answers a question no
+   * comparison of two grounds can — the black glass falls on the Ridge and nowhere else, so a ground
+   * without any cannot gather, trade, or prosper its way into some. The routing is multi-hop
+   * (`hopToward`, 475), so a dino three grounds away gets the first step of the walk rather than a shrug.
+   */
+  private quarryDestOf(home: string): string | null {
+    return quarryDest(home, this.pileFor(home));
   }
 
   /** A zone's appeal to a mouth seeking plenty (BACKLOG-450) — its prosperity index (428) + banked food (446),
@@ -6189,6 +6320,9 @@ export class WorldScene extends Phaser.Scene {
     // thriving still beats one it merely misses, but a longing beats a spreadsheet.
     const missed = primed ? null : this.yearnDestOf(d);
     const dest = primed ?? missed ?? this.scarcityDestOf(home);
+    // BACKLOG-503: an errand is not a separate destination tier, it is a *reason* the destination read
+    // already reached. Asking `scarcityDestOf` what it decided keeps one ordering rather than two.
+    const errand = !primed && !missed && dest === this.quarryDestOf(home) ? dest : null;
     // BACKLOG-475: the ticker names the ground it is *heading for* — which is no longer always the ground it
     // steps into this crossing. `primed`/`missed` are the next hop; the target is what it actually wants.
     if (primed) this.logEvent(`🌾 ${d.name} heard ${zoneById(this.plentyTargetOf(d) ?? primed).name} is thriving — heads that way`);
@@ -6196,9 +6330,17 @@ export class WorldScene extends Phaser.Scene {
       this.logEvent(yearnEvent(d.name, zoneById(this.yearnTargetOf(d) ?? missed).name));
       this.flashFeed(d, yearnLine());
     }
+    if (errand) {
+      const ground = quarryGround();
+      const groundName = zoneById(ground ?? dest).name;
+      this.logEvent(quarryEvent(d.name, groundName, RESOURCE_GLYPH.obsidian));
+      this.memory = remember(this.memory, d.name, quarryMemory(groundName));
+      this.flashFeed(d, RESOURCE_GLYPH.obsidian);
+    }
     // A yearning move is not a scarcity move: it must not fire 457's greener-ground beat, whatever the
-    // appeal maths happen to say about where it is going.
-    const reason = missed ? undefined : this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined;
+    // appeal maths happen to say about where it is going. BACKLOG-503: nor is an errand — a dino that
+    // went for the one thing its ground could not grow did not leave for greener ground.
+    const reason = missed || errand ? undefined : this.zoneAppeal(dest) > this.zoneAppeal(home) ? 'scarcity' : undefined;
     this.startMigration(d, dest, reason);
     this.tryTogether(d); // BACKLOG-360: shared travel, off the shared-place bond 346 has been filing since c76
   }
@@ -7085,6 +7227,7 @@ export class WorldScene extends Phaser.Scene {
       ...of(this.cairns, CAIRN_GLYPH),
       ...of(this.shelters, SHELTER_GLYPH),
       ...of(this.thatches, THATCH_GLYPH),
+      ...of(this.beacons, BEACON_GLYPH), // BACKLOG-503
       ...of(this.granaries, GRANARY_GLYPH),
     ];
   }
@@ -7314,6 +7457,7 @@ export class WorldScene extends Phaser.Scene {
       cairns: this.cairns,
       shelters: this.shelters,
       thatches: this.thatches, // BACKLOG-417: the Fernreach's frond-thatch landmarks
+      beacons: this.beacons, // BACKLOG-503: the Ridge's obsidian beacons
       granaries: this.granaries, // BACKLOG-454: food-cap-lifting granaries, one per zone
       groveVisited: this.groveVisited,
       pondSeen: this.pondSeen, // BACKLOG-359
@@ -7420,6 +7564,9 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-417: frond thatches restore (additive; new field, so old saves load none). Mirrors shelters.
       this.thatches = (save.thatches ?? []).map((t) => ({ ...t, zone: t.zone ?? BOWL_ID }));
       for (const t of this.thatches) this.drawThatch(t);
+      // BACKLOG-503: beacons restore (additive; new field, so old saves load none). Mirrors thatches.
+      this.beacons = (save.beacons ?? []).map((b) => ({ ...b, zone: b.zone ?? BOWL_ID }));
+      for (const b of this.beacons) this.drawBeacon(b);
       // BACKLOG-454: granaries restore (additive; new field, so old saves load none). Mirrors thatches.
       this.granaries = (save.granaries ?? []).map((g) => ({ ...g, zone: g.zone ?? BOWL_ID }));
       for (const g of this.granaries) this.drawGranary(g);

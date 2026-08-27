@@ -10,7 +10,9 @@ import {
 import { FOOD_STOCKPILE_CAP } from './foodstore';
 
 describe('granary gate (BACKLOG-454)', () => {
-  const rich = { branch: 3, stone: 3 };
+  // BACKLOG-503: and one obsidian — the granary is the structure that cannot be raised without
+  // somebody having climbed the Ridge for it.
+  const rich = { branch: 3, stone: 3, obsidian: 1 };
 
   it('needs enough landmarks, no existing granary, and an affordable pile', () => {
     expect(canBuildGranary(rich, GRANARY_AFTER_STRUCTURES, false)).toBe(true);
@@ -31,10 +33,15 @@ describe('granary gate (BACKLOG-454)', () => {
 
 describe('buildGranary spend', () => {
   it('spends exactly the recipe and never mutates the input', () => {
-    const pile = { branch: 4, stone: 3, frond: 1 };
+    const pile = { branch: 4, stone: 3, frond: 1, obsidian: 2 };
     const next = buildGranary(pile);
-    expect(next).toEqual({ branch: 4 - (GRANARY_RECIPE.branch ?? 0), stone: 3 - (GRANARY_RECIPE.stone ?? 0), frond: 1 });
-    expect(pile).toEqual({ branch: 4, stone: 3, frond: 1 }); // unmutated
+    expect(next).toEqual({
+      branch: 4 - (GRANARY_RECIPE.branch ?? 0),
+      stone: 3 - (GRANARY_RECIPE.stone ?? 0),
+      frond: 1,
+      obsidian: 2 - (GRANARY_RECIPE.obsidian ?? 0),
+    });
+    expect(pile).toEqual({ branch: 4, stone: 3, frond: 1, obsidian: 2 }); // unmutated
   });
 
   it('returns null when unaffordable', () => {

@@ -150,6 +150,8 @@ export interface SaveData {
   shelters?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Woven frond thatches (BACKLOG-417) — the Fernreach's landmark. Additive; absent → []. Mirrors `shelters`. */
   thatches?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
+  /** Beacons (BACKLOG-503) — the Ridge's obsidian landmark. Additive; absent → []. Mirrors `thatches`. */
+  beacons?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Granaries (BACKLOG-454) — the food-cap-lifting upgrade, one per zone. Additive; absent → []. Mirrors `thatches`. */
   granaries?: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   /** Dinos that have ever been to the grove (BACKLOG-339). Additive; absent → []. Gates the once-ever arrival beat. */
@@ -711,6 +713,20 @@ export function deserialize(json: string): SaveData | null {
     thatches = o.thatches as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
   }
 
+  // beacons is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors thatches. (BACKLOG-503)
+  let beacons: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
+  if (o.beacons !== undefined) {
+    if (!Array.isArray(o.beacons)) return null;
+    for (const b of o.beacons) {
+      if (typeof b !== 'object' || b === null) return null;
+      const r = b as Record<string, unknown>;
+      if (!isNum(r.tileX) || !isNum(r.tileY)) return null;
+      if (r.zone !== undefined && typeof r.zone !== 'string') return null;
+      if (r.derelict !== undefined && typeof r.derelict !== 'boolean') return null;
+    }
+    beacons = o.beacons as { tileX: number; tileY: number; zone?: string; derelict?: boolean }[];
+  }
+
   // granaries is additive — absent in older saves (default []); array of {tileX,tileY,zone?}, mirrors thatches. (BACKLOG-454)
   let granaries: { tileX: number; tileY: number; zone?: string; derelict?: boolean }[] = [];
   if (o.granaries !== undefined) {
@@ -862,6 +878,7 @@ export function deserialize(json: string): SaveData | null {
     cairns,
     shelters,
     thatches,
+    beacons,
     granaries,
     groveVisited,
     pondSeen,

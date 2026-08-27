@@ -22,6 +22,7 @@ const sample: SaveData = {
   cairns: [],
   shelters: [],
   thatches: [],
+  beacons: [], // BACKLOG-503
   granaries: [],
   groveVisited: [],
   pondSeen: [],

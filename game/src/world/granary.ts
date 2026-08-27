@@ -21,7 +21,13 @@ export const GRANARY_GLYPH = '🏛️';
 
 /** One fixed recipe for every zone (unlike the bias landmarks): a real mixed investment, earnable by any
  *  zone via its own gather plus inter-zone carry (329) / barter (358). */
-export const GRANARY_RECIPE: Partial<Record<ResourceKind, number>> = { branch: 3, stone: 3 };
+/**
+ * BACKLOG-503: and one obsidian. The granary is the ground's own decision to hold more than it needs today,
+ * and it is now the one structure in the park nobody can raise without having sent somebody up the Ridge —
+ * the black glass falls on exactly one ground and cannot be gathered, traded or waited into existence
+ * anywhere else. One unit: the smallest honest requirement that cannot be met without the climb.
+ */
+export const GRANARY_RECIPE: Partial<Record<ResourceKind, number>> = { branch: 3, stone: 3, obsidian: 1 };
 
 /** Base landmarks (cairns + lean-tos + thatches) a zone must have raised before it can put up a granary —
  *  the "has built enough" gate. Granaries themselves don't count toward it (see WorldScene `baseLandmarks`). */
