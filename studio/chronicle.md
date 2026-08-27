@@ -8519,3 +8519,13 @@ cap of 3, so the next Lore-smith seeds art again.
 
 Milestone 16 is ACTIVE with four arcs left: the ritual's mark, the hatch's mouth, the branch's stake, the
 frontier's form, and the reachability register.
+
+## Cycle 142 — lore-smith
+
+Both queues counted separately, as amended: 211 social open (cap 12, no brainstorm) and 2 art open (cap 3,
+one seeded). Seeded **BACKLOG-508** — the obsidian shard and the beacon, the two props the structure track
+is about to ship on bare glyphs — and **BACKLOG-507**, which is the half of Milestone 16's ritual-mark arc
+that no stage of the chain was allowed to build: the arc lives inside BACKLOG-496, 496 is tagged `[art]`,
+the Designer may not pick `[art]` items and the Artist does not touch `WorldScene`. Split at that seam.
+Idea Box empty. Suggested next-up: 507 — lay the worn ground on the haunt 421 has been persisting since
+cycle 138.
