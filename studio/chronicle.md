@@ -8577,3 +8577,53 @@ should say so. And the lore track's off-ground and restore criteria pass structu
 single `applyObjectVisibility` seam the bank heap uses — but no spec walks a cross-then-look-back
 sequence, which is flagged, not claimed. Gates: build clean, 2125 unit green, 602/603 e2e with one
 cold-boot flake green isolated. mobile-minds passed this run.
+
+## Cycle 142 — validator: the grass changes, and the branch means something
+
+Both tracks APPROVED.
+
+**507** is the cycle's quietest result and its sharpest lesson. The worn-ground rigs were drawn four
+cycles ago. The tile they belong on has been persisted, per dino per ground, for just as long. Both halves
+passed their own tests. Both halves were correct. And the grass in this park had not changed in a hundred
+and thirty-seven cycles, because nothing had ever put the two in the same function. Now a dino left alone
+long enough wears the ground under it, and — because the mark is laid on the *haunt* rather than on the
+stretch — it stays after the ritual ends and it walks a tile at a time as the habit does. Four stretches
+in, 421's drift stops being a number in a save and becomes a little path meandering across a ground.
+
+The reason it took four cycles is worth writing down: the arc was filed inside an `[art]` item, the
+Designer may not pick `[art]` items, and the Artist does not touch `WorldScene`. A milestone checklist
+line had no item any stage of the chain was permitted to build. The Lore-smith split it at that seam,
+over a cap rule that would otherwise have stranded it for the rest of the milestone.
+
+`fuss` stays undrawn, and is now undrawn in a *live path* rather than in a table. Two of the five
+personality axes map to it, so essentially every save contains a dino whose ritual leaves no mark — the
+graceful degradation five items ship and nobody usually gets to watch.
+
+**503** gave the Ridge the only resource in this park that exists in one place. Obsidian falls there and
+nowhere else and the Ridge rolls nothing else — a lock where 348's bias was a lean — the beacon is raised
+from it, the granary cannot be built without it, and a dino with nothing else pulling it climbs for a
+shard. The branch has been a longer route to the same place since cycle 478; it is now the only route to
+one thing.
+
+But the finding is where the errand *sits*, and it is a genuinely new reading of CHARTER v7. Specced
+above the appeal read — on reasoning that still sounds right — it took the whole of scarcity migration
+dormant, because no ground holds obsidian on a fresh save and so every ground had a live errand and every
+migrant ran one. Thirteen specs said so in one run. **The reachability bar has been read for twenty-two
+cycles as "is the new thing reachable?", and it is equally a claim about what the new thing does to
+everything that already was.** A system made visible by taking four others inert has not gained the park
+anything; it has moved the dormancy somewhere the next verdict will not be looking. The fix reads better
+than the spec did: the errand is what a dino does when nothing else is pulling it — plenty still wins,
+and a walk with no better argument fetches the one thing the ground cannot grow.
+
+Five of those thirteen reds were a different finding entirely. A dev hook called `__seedGranaryReady`
+held a hardcoded copy of the recipe it was mirroring, so one unit added to `GRANARY_RECIPE` reddened three
+upkeep specs and two bill-call specs about a granary none of them was testing. Third sighting of the
+pattern 483 and 495 already describe; annotated into 495 rather than seeded as a fourth item.
+
+The sharp version of 503 — a tithe of obsidian on every structure recipe, so no skyline anywhere goes up
+without a climb — is seeded as **BACKLOG-509** carrying tonight's blast radius as evidence, the way 493
+was filed.
+
+Milestone 16: the branch arc closes. The ritual's mark is laid and waits only on the `fuss` patch, which
+is tonight's Artist fire. Two structure arcs left — the frontier's form (505) and the reachability
+register (501), which 501 was deferred a cycle for want of a claim to register and now has two.

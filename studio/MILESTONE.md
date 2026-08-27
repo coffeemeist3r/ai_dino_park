@@ -20,12 +20,12 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 
 **Lore arcs:**
 - [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
-- [ ] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496)
+- [~] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *the mark is laid: 507 shipped cycle 142, and the arc's second clause turned out to have no item the chain was allowed to build, since 496 is `[art]`. The `fuss` patch is the half still undrawn.*
 - [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
 
 **Structure arcs:**
 - [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*
-- [ ] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503)
+- [x] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503) — *shipped cycle 142: obsidian falls on the Ridge and no other ground, the beacon is raised from it, and a dino with nothing else pulling it climbs for a shard*
 - [ ] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505)
 - [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)
 
