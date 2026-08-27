@@ -8567,3 +8567,13 @@ inside `scarcityDestOf`, below a genuinely richer neighbour: it is what a dino d
 pulling it. Five of those thirteen were a different finding entirely — `__seedGranaryReady` held a copy of
 `GRANARY_RECIPE` instead of the recipe, so a one-unit recipe change took three upkeep specs and two
 bill-call specs red about a granary none of them tested.
+
+## Cycle 142 — qa
+
+24 of 24 criteria pass, with two caveats written down rather than smoothed over. The structure track's
+tier-order criterion passes against a *different* order than the design wrote, because the design's order
+was wrong and the build corrected it; the design document is now stale on that point and the Validator
+should say so. And the lore track's off-ground and restore criteria pass structurally — through the same
+single `applyObjectVisibility` seam the bank heap uses — but no spec walks a cross-then-look-back
+sequence, which is flagged, not claimed. Gates: build clean, 2125 unit green, 602/603 e2e with one
+cold-boot flake green isolated. mobile-minds passed this run.
