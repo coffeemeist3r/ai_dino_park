@@ -20,7 +20,7 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 
 **Lore arcs:**
 - [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
-- [~] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *the mark is laid: 507 shipped cycle 142, and the arc's second clause turned out to have no item the chain was allowed to build, since 496 is `[art]`. The `fuss` patch is the half still undrawn.*
+- [x] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *closed cycle 142, in one night and by both halves of the studio: the chain shipped 507 (the wiring, which had no item any stage was allowed to build until the Lore-smith split it out of the `[art]` item it was buried in), and the Artist fire closed 496 by drawing the `fuss` patch hours later*
 - [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
 
 **Structure arcs:**

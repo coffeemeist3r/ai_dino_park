@@ -653,6 +653,9 @@ export class WorldScene extends Phaser.Scene {
   }
   /** The heap standing on each ground's bank tile (BACKLOG-504), lazily created per zone. */
   private bankSprites: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
+  /** Grounds that have already announced an errand (BACKLOG-503). Transient — the ticker is a beat, not a
+   *  ledger, and a ground trying again is a habit rather than news. */
+  private quarryTold = new Set<string>();
   /** The worn ground under each haunt (BACKLOG-507), keyed `<dino>:<ground>`. Transient — never saved:
    *  the haunts are what persist (421), and these are one render of them. */
   private wearSprites: Record<string, Phaser.GameObjects.Image> = {};
@@ -6333,8 +6336,25 @@ export class WorldScene extends Phaser.Scene {
     if (errand) {
       const ground = quarryGround();
       const groundName = zoneById(ground ?? dest).name;
-      this.logEvent(quarryEvent(d.name, groundName, RESOURCE_GLYPH.obsidian));
-      this.memory = remember(this.memory, d.name, quarryMemory(groundName));
+      // The ticker is a **12-line ring**, and an errand is the *commonest* crossing in a park where no
+      // ground has fetched a shard yet — every migration with no richer neighbour is one. Logging each of
+      // them evicted whatever the player was actually watching within a few steps, which `cycle-110-plenty`
+      // caught: hearsay chose its destination correctly and its own ticker line had been pushed off the end.
+      //
+      // So the beat is once per ground, not once per crossing. A ground deciding it needs black glass is
+      // an event; a ground trying again is a habit, and habits do not belong on a ticker. Announced only on
+      // the ground the player is standing on, `maybeSpawnResource`'s rule.
+      const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      // ponytail: never cleared, so a ground announces its first errand once a session. If a ground that
+      // has *had* a shard and run dry should announce again, clear this in `setPile` when obsidian hits 0.
+      if (home === this.zoneId && !this.quarryTold.has(home)) {
+        this.quarryTold.add(home);
+        this.logEvent(quarryEvent(d.name, groundName, RESOURCE_GLYPH.obsidian));
+      }
+      const trace = quarryMemory(groundName);
+      // Deduped against the ring the way `seedYearning` dedupes its own: a dino that climbs three times is
+      // a dino with a habit, not a dino with three memories.
+      if (!recall(this.memory, d.name).includes(trace)) this.memory = remember(this.memory, d.name, trace);
       this.flashFeed(d, RESOURCE_GLYPH.obsidian);
     }
     // A yearning move is not a scarcity move: it must not fire 457's greener-ground beat, whatever the

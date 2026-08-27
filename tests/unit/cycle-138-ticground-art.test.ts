@@ -32,14 +32,19 @@ const bbox = (grid: ReadonlyArray<string>) => {
 const earthRuns = (row: string) => [...row.matchAll(/[ed]+/g)].map((m) => [m.index!, m.index! + m[0].length - 1]);
 
 describe("the ritual's worn ground (BACKLOG-496)", () => {
-  it('draws pace and circle, and deliberately not fuss — the per-kind fallback stays exercised', () => {
+  it('draws all three ritual kinds — 496 closed cycle 142-art', () => {
+    // For four cycles the third line here read `toBeUndefined()`: `fuss` was held back on purpose as the
+    // per-kind fallback control, and cycle 138-art drew two of three so the control would stay *exercised*
+    // rather than merely asserted. Cycle 142 gave the marks a host in the world (507) and the Artist closed
+    // the item the same night. The control for the draw-a-rig-or-draw-nothing branch has moved to the one
+    // prop key still undrawn — the feeding hatch, BACKLOG-502.
     expect(PROP_RIGS.tic_pace).toBeDefined();
     expect(PROP_RIGS.tic_circle).toBeDefined();
-    expect(PROP_RIGS.tic_fuss).toBeUndefined();
+    expect(PROP_RIGS.tic_fuss).toBeDefined();
   });
 
   it('neither mark carries a near-black outline — a worn patch is not a hole in the world', () => {
-    for (const key of ['tic_pace', 'tic_circle']) {
+    for (const key of ['tic_pace', 'tic_circle', 'tic_fuss']) {
       for (const color of Object.values(PROP_RIGS[key].palette)) {
         const [r, g, b] = [(color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff];
         expect(r + g + b).toBeGreaterThan(120); // every prop outline in this file sits well below this
@@ -47,9 +52,38 @@ describe("the ritual's worn ground (BACKLOG-496)", () => {
     }
   });
 
-  it('the two rigs speak one worn-ground language — the same earth and the same trodden edge', () => {
-    expect(PROP_RIGS.tic_pace.palette.s).toBe(PROP_RIGS.tic_circle.palette.s);
-    expect(PROP_RIGS.tic_pace.palette.e).toBe(PROP_RIGS.tic_circle.palette.e);
+  it('the three rigs speak one worn-ground language — the same earth and the same trodden edge', () => {
+    for (const key of ['tic_circle', 'tic_fuss']) {
+      expect(PROP_RIGS[key].palette.s).toBe(PROP_RIGS.tic_pace.palette.s);
+      expect(PROP_RIGS[key].palette.e).toBe(PROP_RIGS.tic_pace.palette.e);
+    }
+  });
+
+  describe('fuss — the turned-over patch (cycle 142-art)', () => {
+    const rig = PROP_RIGS.tic_fuss;
+
+    it('is one clump, not two: no row carries two separate runs of earth', () => {
+      // That property is `pace`'s whole tell, and the first draft of this rig was a small scuff, which at
+      // sixteen pixels is the same picture. These two assertions are what separate them.
+      for (const row of rig.grid) expect(earthRuns(row).length).toBeLessThanOrEqual(1);
+    });
+
+    it('has no hole: the middle is turned over, which is what `circle` leaves standing', () => {
+      const b = bbox(rig.grid);
+      const mid = rig.grid[Math.floor((b.y0 + b.y1) / 2)];
+      expect(mid[Math.floor((b.x0 + b.x1) / 2)]).toMatch(/[ed]/);
+    });
+
+    it('is roughly square and smaller than either of the others — a spot, not a route', () => {
+      const b = bbox(rig.grid);
+      expect(Math.abs(b.w - b.h)).toBeLessThanOrEqual(3);
+      expect(b.w).toBeLessThan(bbox(PROP_RIGS.tic_pace.grid).w);
+    });
+
+    it('scatters its clods rather than outlining them — the churn is inside the shape', () => {
+      const deep = rig.grid.reduce((n, row) => n + [...row].filter((c) => c === 'd').length, 0);
+      expect(deep).toBeGreaterThan(2);
+    });
   });
 
   describe('pace — the two-tile scuff', () => {

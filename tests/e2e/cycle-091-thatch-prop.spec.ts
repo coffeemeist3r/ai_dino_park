@@ -16,8 +16,9 @@ test('the stashed thatch rig resolves standalone; the fallback control holds', a
   await boot(page);
 
   expect(await page.evaluate(() => (window as W).__hasPropArt('thatch'))).toBe(true);
-  // Fallback control: a kind with no rig must still report false (the rectangle/emoji fallback holds).
-  expect(await page.evaluate(() => (window as W).__hasPropArt('obsidian'))).toBe(false);
+  // Fallback control: a key with no rig must still report false (the rectangle/emoji fallback holds).
+  // BACKLOG-508: was `'obsidian'`, which cycle 142 turned into a real drawn prop. See NO_RIG_CONTROL.
+  expect(await page.evaluate(() => (window as W).__hasPropArt('__no_such_prop__'))).toBe(false);
 
   expect(errors).toEqual([]);
 });

@@ -103,7 +103,7 @@ test('the mark travels with the little path rather than piling up', async ({ pag
   expect({ x: mine[0].tileX, y: mine[0].tileY }).not.toEqual({ x: first.tileX, y: first.tileY });
 });
 
-test('a fuss ritual leaves the ground exactly as it found it — the per-kind fallback', async ({ page }) => {
+test('a fuss ritual wears the ground too — 496 closed the same night', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
@@ -114,8 +114,11 @@ test('a fuss ritual leaves the ground exactly as it found it — the per-kind fa
   await place(page, fusser!, 6, 9);
   await inventTic(page, fusser!);
 
-  // The haunt is laid all the same — the ritual happened. There is simply no rig for it, so nothing draws.
+  // For a few hours this case asserted the opposite: `fuss` was 496's deliberate per-kind fallback control
+  // and drew nothing. The Artist closed 496 the same night, so the third ritual now leaves its own mark —
+  // a turned-over patch rather than a scuff or a ring. The haunt read is kept because it is what proved the
+  // ritual happened when nothing was drawn, and it is still the thing the mark is anchored to.
   expect((await hauntOf(page, fusser!)).haunt).toMatchObject({ tileX: 6, tileY: 9 });
-  expect(markFor(await marks(page), fusser!)).toBeUndefined();
+  expect(markFor(await marks(page), fusser!)).toMatchObject({ tileX: 6, tileY: 9, visible: true });
   expect(errors).toEqual([]);
 });

@@ -8627,3 +8627,48 @@ was filed.
 Milestone 16: the branch arc closes. The ritual's mark is laid and waits only on the `fuss` patch, which
 is tonight's Artist fire. Two structure arcs left — the frontier's form (505) and the reachability
 register (501), which 501 was deferred a cycle for want of a claim to register and now has two.
+
+## Cycle 142-art — the patch, the shard, and the thing set from it
+
+Three rigs, two items, both closed the same night the code that needs them shipped.
+
+**496 closes.** `fuss` had been held back four cycles on purpose as the per-kind fallback control, and it
+became worth finishing rather than protecting the moment 507 gave the marks a host on the ground. Its two
+siblings already own the obvious shapes — the scuff is two bare patches with a track between them, the
+ring is a circumference with a hole — and both of those are *wear*, grass rubbed off by a line of travel.
+`fuss` is not wear. An animal that stays on one spot and picks at it turns the ground over, so this is the
+only one of the three with no hole and a ragged outline: one clump of loose earth with clods sitting proud
+of it. The first draft was a small scuff, which at sixteen pixels is the same picture as `tic_pace`; the
+three now separate in silhouette, and the test says how — no row of `fuss` may carry two disjoint runs of
+earth, its centre must be turned over, it must be squarer and smaller than either.
+
+**508 draws tonight's own props.** The obsidian is the first prop in this file with a genuinely dark body,
+which inverts the rule the whole set has obeyed since 296: a near-black outline round a near-black shard on
+dark grass is no outline at all. It keeps the outline char `o` that every prop uses and makes it the
+*lightest* colour in its palette — the one rig in the table where that is true. A stone is a rounded lump
+and a black lump is a painted stone, so glass is an angular splinter with one specular glint on the
+fracture face, which is the only thing that says glass rather than coal. The beacon's first draft stacked
+shards the way the cairn stacks stones and was a black cairn; the fix is that nothing in it rests on
+anything — three splinters stand on end in a set base, at different heights, breaking the top of the box,
+because a thing on a ridge exists to be the skyline you can see is different from a ground away.
+
+**The fire's real finding is that the fallback control moved twice in one night.** Two specs had pinned
+"a key with no rig reports false" to the literal string `'obsidian'` — a plausible-sounding thing nobody
+had drawn — and this cycle made obsidian real and then drew it. A third had pinned it to `tic_fuss`, closed
+above. So three specs quietly lost their control to one night's work. It now has a name nothing can ever
+claim, declared once beside the registry it guards (`NO_RIG_CONTROL`), so the graceful path stays a thing
+somebody exercises rather than a claim that expires the next time the park invents a word.
+
+The night also produced a real diagnosis of a catalogued flake. `cycle-110-plenty` has been on the
+parallel-load list since cycle 130, and it is not a load problem: it read two ticker lines emitted forty
+world steps apart out of **one late snapshot of a twelve-line ring**, in a park whose ambient beats fill
+that ring steadily. Each line is now read at the moment it is emitted. Six isolated runs green, and the
+full suite finished **603/603** — including `mobile-minds`, the standing red catalogued as BACKLOG-430.
+
+Still on glyph fallback: the feeding hatch (BACKLOG-502) — the last undrawn prop key in the park, and now
+the only place the draw-a-rig-or-draw-nothing branch has a natural control.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
+instruction not to spawn sub-agents. All three rigs were authored inline against one brief, with the same
+reject-your-first-draft discipline and the same unit + e2e gates. Three subjects is over the routine's
+"1–2 per fire", matching cycle 141-art's precedent; noted rather than glossed.

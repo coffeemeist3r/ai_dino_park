@@ -4,6 +4,7 @@ import { PROP_RIGS, propCharsUsed } from '../../game/src/art/propArt';
 describe('resource + cairn pixel props (BACKLOG-296)', () => {
   it('draws branch, stone, frond, and cairn (+ the crop stages, BACKLOG-317/419/418; + the stashed thatch, 427)', () => {
     expect(Object.keys(PROP_RIGS).sort()).toEqual([
+      'beacon', // BACKLOG-508: the Ridge's landmark, set from the black glass
       'branch',
       'cairn',
       'cairn_derelict', // BACKLOG-494
@@ -23,6 +24,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)
+      'obsidian', // BACKLOG-508: the Ridge's black glass (503) - the park's first zone-exclusive resource
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',
       'pile_3',
@@ -32,7 +34,8 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'thatch',
       'thatch_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the unravelled stack)
       'tic_circle', // BACKLOG-496: the ritual's trodden ring
-      'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss stays undrawn — the per-kind fallback control)
+      'tic_fuss', // BACKLOG-496 closes (cycle 142-art) - the turned-over patch, the third and last kind
+      'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss WAS undrawn — the per-kind fallback control)
     ]);
   });
 

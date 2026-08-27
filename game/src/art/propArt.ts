@@ -1005,6 +1005,135 @@ const PILE_3_RIG: PropRig = {
   palette: { ...PILE_STONE_PALETTE, w: 0x8a6a3f, k: 0x5c4426 },
 };
 
+// -- fuss (the third and last TicKind, BACKLOG-496 closed cycle 142-art) -----------------------
+// The scuff is two bare patches with a track between them; the ring is a circumference with the middle
+// left standing. Both are *wear* — grass rubbed away by a repeated line of travel. `fuss` is not wear at
+// all, and that is the whole rig: an animal that stays on one spot and picks at it **turns the ground
+// over**. So this is the only one of the three with no soft trodden rim on every side and no hole: a
+// single compact clump of loose earth with clods sitting proud of it, its outline deliberately ragged
+// where the other two are smooth.
+//
+// First draft was a small filled scuff — which is to say, `tic_pace` with one patch instead of two, and at
+// sixteen pixels those are the same picture. The three have to separate in *silhouette*, because a player
+// reads them from across a ground: two blobs, a ring, one ragged clump. The clods are what earn the third
+// shape, so they break the outline rather than sitting inside it.
+const TIC_FUSS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......ss.......',
+  '.....sseedss....',
+  '....sedeeeeds...',
+  '...seeedeeeees..',
+  '...seedeeedees..',
+  '....seeedeees...',
+  '.....sdeeeds....',
+  '......sseess....',
+  '.........ss.....',
+  '................',
+  '................',
+  '................',
+];
+
+const TIC_FUSS_RIG: PropRig = {
+  size: 16,
+  grid: TIC_FUSS_GRID,
+  palette: {
+    s: 0x3d6631, // the same trodden edge the scuff and the ring use - one worn-ground language, not three
+    e: 0x6b5738, // turned earth
+    d: 0x4e3f28, // a clod sitting proud of it, scattered rather than outlined
+  },
+};
+
+// -- Obsidian - the Ridge's black glass (BACKLOG-508, for BACKLOG-503) -------------------------
+// The first prop in this table whose body is genuinely dark, and that inverts one rule the whole set has
+// obeyed since 296: every other rig sits inside a *dark* outline, which is invisible around a near-black
+// shard on grass that is itself dark. So the obsidian carries a **light** rim instead - the one place in
+// `PROP_RIGS` where the outline is the brightest colour in the palette - and the shape is read off that rim
+// rather than off any interior detail.
+//
+// Silhouette is the other half. A stone (296) is a rounded lump; if this read as a lump it would be a
+// stone somebody painted black. Volcanic glass fractures conchoidally, so it is an **angular splinter** -
+// every edge straight, no two the same length, one long axis leaning off vertical, and a single specular
+// glint on the fracture face because that is the only thing that says *glass* rather than *coal*.
+const OBSIDIAN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.........o......',
+  '........obo.....',
+  '.......obbgo....',
+  '.......obbgo....',
+  '......obbbgo....',
+  '......obkbbo....',
+  '.....obkkbbo....',
+  '.....obkkbbo....',
+  '....obkkkbbo....',
+  '....obkkkbo.....',
+  '....obkkbo......',
+  '....obbbo.......',
+  '.....ooo........',
+  '................',
+];
+
+const OBSIDIAN_RIG: PropRig = {
+  size: 16,
+  grid: OBSIDIAN_GRID,
+  palette: {
+    // The outline char is `o`, as every prop in this file uses - but it is the LIGHTEST colour here, not
+    // the darkest. A dark outline round a near-black shard on dark grass is no outline at all, so the
+    // convention is kept and its *colour* inverted. The one rig in the table where that is true.
+    o: 0x6e6a7a,
+    b: 0x1b1a22, // the glass body
+    k: 0x0b0b10, // the deep fracture, darker still
+    g: 0xd8d4e6, // one specular glint on the fracture face - the only thing that says glass, not coal
+  },
+};
+
+// -- Beacon - the Ridge's landmark, raised from the black glass (BACKLOG-508, for BACKLOG-503) --
+// The park's fifth structure, and it has two things to distinguish itself from at sixteen pixels: the
+// cairn, which is stacked stone, and the bank heap (506), which is dropped stone. So the beacon is the one
+// landmark that goes **up** - shards set on end in a base rather than laid flat on each other, breaking the
+// top of the box the way the full bank heap does, because the whole point of a thing on a ridge is that it
+// is the skyline you can see is different from a ground away.
+//
+// First draft stacked the shards like the cairn stacks stones, which made it a black cairn. The fix is that
+// nothing here rests on anything: three splinters stand in a set base, at different heights and leaning
+// apart, and the base is ordinary park stone so the glass reads as the thing that was *brought*.
+const BEACON_GRID: ReadonlyArray<string> = [
+  '.......g........',
+  '......rbr.......',
+  '..g...rbr...g...',
+  '.rbr..rbr..rbr..',
+  '.rbr..rkr..rbr..',
+  '.rbr..rkr..rbr..',
+  '.rkr..rkr..rkr..',
+  '.rkr..rkr..rkr..',
+  '.rkr..rkr..rkr..',
+  '.rkr..rkr..rkr..',
+  '.rkroorkroorkr..',
+  '..oosssssssoo...',
+  '.ossshhhssssdo..',
+  '.osssssssssddo..',
+  '..oooooooooooo..',
+  '................',
+];
+
+const BEACON_RIG: PropRig = {
+  size: 16,
+  grid: BEACON_GRID,
+  palette: {
+    r: 0x6e6a7a, // the same light rim the loose shard uses - one black-glass language, two objects
+    b: 0x1b1a22,
+    k: 0x0b0b10,
+    g: 0xd8d4e6, // glints, on the two tallest - the reason you can see it from a ground away
+    o: 0x2e2e33, // ordinary park stone base: dark outline, as every other landmark has
+    s: 0x7d7d86,
+    h: 0xa9a9b2,
+    d: 0x55555c, // the base's shadowed face, the same read the stone and the cairn use
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1037,12 +1166,33 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
   tic_pace: TIC_PACE_RIG,
   tic_circle: TIC_CIRCLE_RIG,
+  // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
+  // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern
+  // moves to the one prop key still undrawn - the feeding hatch (BACKLOG-502).
+  tic_fuss: TIC_FUSS_RIG,
   // BACKLOG-506: the ground's bank at its three fullness steps (504), keyed `pile_<step>`. Step 0 banks
   // nothing and draws nothing, so there is no `pile_0` — the null key is the empty ground.
+  // BACKLOG-508: the Ridge's black glass (503) - the loose shard and the landmark set from it.
+  obsidian: OBSIDIAN_RIG,
+  beacon: BEACON_RIG,
   pile_1: PILE_1_RIG,
   pile_2: PILE_2_RIG,
   pile_3: PILE_3_RIG,
 };
+
+/**
+ * The no-rig control key (BACKLOG-508, cycle 142-art).
+ *
+ * Five specs assert that a prop key with no rig reports false, so that the draw-a-rig-or-draw-nothing
+ * fallback stays *exercised* rather than becoming a claim the code merely makes about itself. Two of them
+ * spelled that key `'obsidian'` — a plausible-sounding thing nobody had drawn — and cycle 142 made obsidian
+ * a real resource and then drew it, quietly taking the control with it. A third had pinned the control to
+ * `tic_fuss`, which the same night's Artist fire closed.
+ *
+ * So the control gets a name nothing can ever claim, in one place, next to the registry it is a control
+ * for. Never add a rig under this key.
+ */
+export const NO_RIG_CONTROL = '__no_such_prop__';
 
 /** Distinct non-transparent chars in a grid — test helper for palette discipline. */
 export function propCharsUsed(grid: ReadonlyArray<string>): Set<string> {

@@ -67,8 +67,16 @@ test('hearsay of plenty chooses the migration destination over the richer neighb
   // The ambient pick is Rex (the only plenty-primed dino), and it heads for the Fernreach it heard about —
   // not the richer bowl.
   expect(await maybeMigrate(page)).toBe('Rex');
+
+  // The two ticker lines this test cares about are emitted about forty world steps apart — the hearsay line
+  // at dispatch, the arrival line on the crossing — and `__events` is a **12-line ring** in a park whose
+  // ambient beats (rituals found, news told, barters at an edge) fill it steadily. Reading both from one
+  // snapshot taken after the walk was always a race, which is the honest diagnosis of why this spec has sat
+  // on the catalogued-flake list since cycle 130. Each line is now read at the moment it is emitted.
+  const atDispatch = await events(page);
+  expect(atDispatch.some((e) => e.includes('Rex') && e.includes('The Fernreach is thriving'))).toBe(true);
+
   expect(await crossUntilArrived(page, 'Rex')).toBe(true);
-  const log = await events(page);
-  expect(log.some((e) => e.includes('Rex') && e.includes('The Fernreach is thriving'))).toBe(true);
-  expect(log.some((e) => e.includes('Rex') && e.includes('crossed into The Fernreach'))).toBe(true);
+  const onArrival = await events(page);
+  expect(onArrival.some((e) => e.includes('Rex') && e.includes('crossed into The Fernreach'))).toBe(true);
 });

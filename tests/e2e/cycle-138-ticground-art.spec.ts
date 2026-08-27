@@ -12,14 +12,18 @@ import { boot } from './helpers';
 
 type W = Record<string, any>;
 
-test('the scuff and the ring resolve standalone; the undrawn kind still reports false', async ({ page }) => {
+test('all three worn-ground rigs resolve standalone; the fallback control still reports false', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
 
   expect(await page.evaluate(() => (window as W).__hasPropArt('tic_pace'))).toBe(true);
   expect(await page.evaluate(() => (window as W).__hasPropArt('tic_circle'))).toBe(true);
-  expect(await page.evaluate(() => (window as W).__hasPropArt('tic_fuss'))).toBe(false);
+  // BACKLOG-496 closed cycle 142-art: all three ritual kinds are drawn now, so `tic_fuss` is no longer
+  // the control. The branch it guarded is still live and still needs one, so it names the key nothing
+  // can claim (NO_RIG_CONTROL) rather than the next plausible-sounding undrawn thing.
+  expect(await page.evaluate(() => (window as W).__hasPropArt('tic_fuss'))).toBe(true);
+  expect(await page.evaluate(() => (window as W).__hasPropArt('__no_such_prop__'))).toBe(false);
 
   expect(errors).toEqual([]);
 });

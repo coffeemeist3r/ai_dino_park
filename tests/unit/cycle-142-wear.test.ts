@@ -23,12 +23,20 @@ describe('the key convention', () => {
     expect(wearKey('fuss')).toBe('tic_fuss');
   });
 
-  it('has a rig for pace and circle, and deliberately none for fuss', () => {
-    expect(wearKey('pace') in PROP_RIGS).toBe(true);
-    expect(wearKey('circle') in PROP_RIGS).toBe(true);
-    // 496's per-kind fallback control. Two of the five personality axes map to `fuss`, so this branch is
-    // walked on essentially every save rather than being a path nobody takes.
-    expect(wearKey('fuss') in PROP_RIGS).toBe(false);
+  it('every ritual kind has a rig — 496 closed cycle 142-art', () => {
+    // `fuss` was held back for four cycles as 496's per-kind fallback control, and this assertion read
+    // `toBe(false)` for the few hours between 507 shipping and the Artist fire that closed the item. It is
+    // flipped rather than deleted, because the *fact* it pins has moved rather than gone: the
+    // draw-a-rig-or-draw-nothing branch in `syncWear` is still live, and its remaining control is the one
+    // prop key in this park still undrawn — the feeding hatch (BACKLOG-502). When that is drawn, the
+    // control has to be manufactured rather than found, and this comment is where that gets noticed.
+    for (const kind of ['pace', 'circle', 'fuss'] as TicKind[]) {
+      expect(wearKey(kind) in PROP_RIGS).toBe(true);
+    }
+  });
+
+  it('a key nothing has drawn resolves to no rig — the branch itself, independent of any one kind', () => {
+    expect(wearKey('shuffle' as TicKind) in PROP_RIGS).toBe(false);
   });
 
   it('every axis a dino can be born with resolves to a key', () => {

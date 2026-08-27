@@ -14,8 +14,10 @@ test('a spawned frond renders as a baked pixel prop; an undrawn kind falls back'
   await boot(page);
 
   expect(await page.evaluate(() => (window as W).__hasPropArt('frond'))).toBe(true);
-  // Fallback control: a kind with no rig must still report false (the rectangle/emoji fallback holds).
-  expect(await page.evaluate(() => (window as W).__hasPropArt('obsidian'))).toBe(false);
+  // Fallback control: a key with no rig must still report false (the rectangle/emoji fallback holds).
+  // BACKLOG-508: this used to name `'obsidian'` — a plausible thing nobody had drawn — and cycle 142 made
+  // obsidian real and then drew it. The control now names something nothing can ever claim.
+  expect(await page.evaluate(() => (window as W).__hasPropArt('__no_such_prop__'))).toBe(false);
 
   await page.evaluate(() => (window as W).__spawnResource('frond', 9, 7));
   expect(await page.evaluate(() => (window as W).__resource())).not.toBeNull();
