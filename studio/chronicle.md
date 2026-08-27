@@ -8538,3 +8538,13 @@ one cycle on the bar it exists to enforce: a register of reachability claims ans
 question with "nothing", and wants a cycle whose claim it can register. This is that cycle. 505 was passed
 over for colliding with 503 in the migration-tier ordering. The stake is **obsidian** — Ridge-exclusive,
 not a 348-style lean — the **beacon** built from it, and a quarry errand that sends a body up the mountain.
+
+## Cycle 142 — designer
+
+Two specs. **507** lays 496's worn-ground rigs onto 421's persisted haunts — the mark and its place have
+both been in the repository for four cycles without meeting. `fuss` stays undrawn and is the fallback
+control, which two of five personality axes exercise on essentially every save. **503** gives the Ridge
+obsidian: an exclusivity rather than 348 lean, a beacon built from it, one unit of it in the granary
+recipe so the climb is load-bearing, and a quarry migration tier that sends a body up the mountain. The
+obsidian tithe on *every* structure recipe was specced out of scope on purpose — it reaches into the
+constant three carry systems read as their deficit driver.
