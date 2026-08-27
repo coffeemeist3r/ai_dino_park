@@ -2,7 +2,7 @@
   "cycle": 142,
   "phase": "designer-pending",
   "currentItem": "",
-  "structureItem": "BACKLOG-504: The pile is a number in a menu \u2014 give a ground its bank tile",
+  "structureItem": "BACKLOG-503: The branch with nothing to choose \u2014 give the Ridge a stake",
   "lastVerdict": "",
   "structureVerdict": "",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-27T08:06:57.000Z",
-    "structure-smith": "2026-08-26T04:14:00.000Z",
+    "structure-smith": "2026-08-27T08:07:36.000Z",
     "designer": "2026-08-26T04:25:00.000Z",
     "code-planner": "2026-08-26T04:33:00.000Z",
     "coder": "2026-08-26T05:05:00.000Z",

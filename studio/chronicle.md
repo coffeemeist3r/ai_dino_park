@@ -8529,3 +8529,12 @@ that no stage of the chain was allowed to build: the arc lives inside BACKLOG-49
 the Designer may not pick `[art]` items and the Artist does not touch `WorldScene`. Split at that seam.
 Idea Box empty. Suggested next-up: 507 — lay the worn ground on the haunt 421 has been persisting since
 cycle 138.
+
+## Cycle 142 — structure-smith
+
+Structure Track at 4 open, at the cap, so drained rather than brainstormed for the second cycle running.
+Chose **BACKLOG-503** — the branch with nothing to choose. 501 sits above it in the queue and was deferred
+one cycle on the bar it exists to enforce: a register of reachability claims answers v7's own ten-minute
+question with "nothing", and wants a cycle whose claim it can register. This is that cycle. 505 was passed
+over for colliding with 503 in the migration-tier ordering. The stake is **obsidian** — Ridge-exclusive,
+not a 348-style lean — the **beacon** built from it, and a quarry errand that sends a body up the mountain.
