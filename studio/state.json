@@ -1,6 +1,6 @@
 {
   "cycle": 142,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-507: The ritual mark, laid on the ground",
   "structureItem": "BACKLOG-503: The branch with nothing to choose \u2014 give the Ridge a stake",
   "lastVerdict": "",
@@ -14,7 +14,7 @@
     "designer": "2026-08-27T08:10:46.000Z",
     "code-planner": "2026-08-27T08:11:55.000Z",
     "coder": "2026-08-27T08:50:26.000Z",
-    "qa": "2026-08-26T05:12:00.000Z",
+    "qa": "2026-08-27T08:51:15.000Z",
     "validator": "2026-08-26T05:20:00.000Z",
     "artist": "2026-08-26T05:40:00.000Z"
   }
