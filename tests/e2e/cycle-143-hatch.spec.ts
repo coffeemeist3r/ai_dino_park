@@ -20,10 +20,10 @@ test('the hatch is standing on the ground before anybody presses anything', asyn
   await boot(page);
   const h = await hatch(page);
   expect(h.visible).toBe(true);
-  // Rig or glyph — the per-item fallback 490/494/496/504 all ship. BACKLOG-502 draws the rig; this spec
-  // passes either way on purpose, so the wiring never waits on the art and the art never waits on the
-  // wiring. (`art` is the one bit that flips when 502 lands.)
-  expect(typeof h.art).toBe('boolean');
+  // The wiring shipped on the glyph fallback in the morning (490/494/496/504's per-item seam) and
+  // BACKLOG-502 drew the rig the same night, which is the bit that flipped this assertion from
+  // `typeof h.art === 'boolean'` to the real one. A baked pixel rig is standing on the ground.
+  expect(h.art).toBe(true);
 });
 
 test('food comes out of the hatch instead of out of the sky', async ({ page }) => {

@@ -232,12 +232,72 @@ export const FERN_RIG: TileRig = {
   variants: [FERN_A, FERN_B],
 };
 
+// ── Salt crust (BACKLOG-511, for BACKLOG-505) — the Saltpan's floor, and the first tile in this file that
+// is the **anti-grass**. Every other ground kind is a field with something scattered on it: grass has
+// tufts, fern has fronds, and both are a base colour speckled with two-pixel marks. Drawn that way, salt is
+// grass in a paler palette — which is exactly what the first draft was, a scatter of specks that read as
+// dry lawn.
+//
+// A crust is not scattered, it is *broken*. So the marks are closed polygons — irregular plates whose
+// edges meet — and the eye reads shapes rather than noise. Each variant carries three plates and a
+// highlight or two where a plate has lifted and catches the light. The borders stay flat base, so the
+// SEAMLESS guarantee holds and the plates simply read as bigger than one tile.
+
+const SALT_A: ReadonlyArray<string> = [
+  'ssssssssssssssss',
+  'ssssssssssssssss',
+  'sssccccccsssssss',
+  'ssscsllsscssssss',
+  'sssclsssscssssss',
+  'ssscsssssscsssss',
+  'sssccsssscssssss',
+  'sssssccscsscssss',
+  'ssssssscsscsccss',
+  'ssccssssscssscss',
+  'sscsccssscllcsss',
+  'scssscsscssscsss',
+  'sccscssscccccsss',
+  'sssccsssssssssss',
+  'ssssssssssssssss',
+  'ssssssssssssssss',
+];
+
+const SALT_B: ReadonlyArray<string> = [
+  'ssssssssssssssss',
+  'ssssssssssssssss',
+  'sssscccssccsssss',
+  'ssccssscscscccss',
+  'sscsllscscsllcss',
+  'sscssssscscslscs',
+  'sscsssscsscssscs',
+  'ssccsscssscccccs',
+  'ssssccssssssssss',
+  'sssssscccsssssss',
+  'ssscccssscssssss',
+  'sssscsllsscsssss',
+  'sssscsssssccssss',
+  'ssssscssccssssss',
+  'ssssssccssssssss',
+  'ssssssssssssssss',
+];
+
+export const SALT_RIG: TileRig = {
+  size: 16,
+  palette: {
+    s: 0xd8d1bc, // bleached crust — the lightest ground value in the park, and the point of the Saltpan
+    c: 0x9c9077, // the hairline cracks between plates
+    l: 0xefe9d8, // a lifted plate catching the sun
+  },
+  variants: [SALT_A, SALT_B],
+};
+
 /** Ground tiles the pixel pipeline can render today; others fall back to the flat checker. */
 export const TILE_RIGS: Record<string, TileRig> = {
   grass: GRASS_RIG,
   path: PATH_RIG,
   water: WATER_RIG,
   fern: FERN_RIG,
+  salt: SALT_RIG, // BACKLOG-511: the Saltpan's crust (505)
 };
 
 /** The flat base char of a tile (its uniform border) — the seam colour. */

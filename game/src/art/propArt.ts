@@ -1134,6 +1134,49 @@ const BEACON_RIG: PropRig = {
   },
 };
 
+// ── Feeding hatch 🕳️ (BACKLOG-502, wired by BACKLOG-510) — the last undrawn prop key in the park, and the
+// one the player looks at most: `H` drops food through it and every social system downstream reads where
+// that food lands. It is the **odd artefact** among the reed, stone and plaster landmarks, because it is the
+// only object on the ground the keeper made rather than a dino. So it is drawn against every other prop's
+// grammar: rectilinear where they are organic, cool steel where they are earth, and **sunk rather than
+// raised** — every other rig lights its top-left and shadows its bottom, and a thing set flush *into* the
+// ground does the opposite. Shadow on the inner top wall, light on the inner bottom one; that inversion is
+// what says "hole" rather than "plate lying on the grass", and it is the whole drawing.
+// The first draft was a bevelled ellipse, which at sixteen pixels is a burrow with a metal rim — round is
+// what animals dig. The seam of the shutter is the two leaves parked at the opening's sides (`t`), the one
+// detail that says the hole opens and closes rather than simply being a hole.
+const HATCH_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '..oooooooooooo..',
+  '.ollllllllllllo.',
+  '.olddddddddddlo.',
+  '.oldkkkkkkkkdlo.',
+  '.oltkkkkkkkktlo.',
+  '.oltkkkkkkkktlo.',
+  '.oldkkkkkkkkdlo.',
+  '.olmmmmmmmmmmlo.',
+  '.ommmmmmmmmmmmo.',
+  '..oooooooooooo..',
+  '................',
+  '................',
+];
+
+const HATCH_RIG: PropRig = {
+  size: 16,
+  grid: HATCH_GRID,
+  palette: {
+    o: 0x232830, // dark cool outline — steel, never the warm brown-olive the dino-made props outline with
+    l: 0x8b95a3, // lit chamfer running the whole rim: sunlight caught on the plate flush with the grass
+    m: 0x5c6672, // mid steel, and the lit *lower* inner wall — the half of the inversion that says "sunk"
+    d: 0x39404b, // shadowed upper inner wall, the other half
+    k: 0x101318, // the opening: the darkest value in the park, because nothing in it is lit
+    t: 0xa9b3c0, // the shutter leaves, parked either side of the mouth
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1178,6 +1221,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   pile_1: PILE_1_RIG,
   pile_2: PILE_2_RIG,
   pile_3: PILE_3_RIG,
+  // BACKLOG-502: the feeding hatch — the last undrawn prop key in the park closes, and with it the
+  // draw-a-rig-or-draw-nothing control moves off the prop registry entirely and onto `NO_RIG_CONTROL`,
+  // the name nothing can ever claim (declared beside this table in cycle 142-art for exactly this night).
+  hatch: HATCH_RIG,
 };
 
 /**

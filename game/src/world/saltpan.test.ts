@@ -52,10 +52,13 @@ describe('the Saltpan (BACKLOG-505)', () => {
     expect(zoneTileAt(SALTPAN_ID, 5, 5, COLS, ROWS)).toBe('salt');
   });
 
-  it('ships a tile kind with no rig, so the floor bakes whole anyway', () => {
-    // The seam that has held through path/water (294), fern (399) and now salt: an undrawn kind falls back
-    // to the flat checker. BACKLOG-511 draws it; nothing breaks until it does, and nothing breaks after.
-    expect(TILE_RIGS.salt).toBeUndefined();
+  it('ships a tile kind the floor can render either way', () => {
+    // The seam that has held through path/water (294) and fern (399): a kind with no rig falls back to the
+    // flat checker, so adding one can never break the floor. `salt` shipped undrawn in the morning and
+    // BACKLOG-511 drew it the same night — both halves of that are the point, so this asserts the rig is
+    // there *and* that the fallback it shipped on is still a live path for whatever kind comes next.
+    expect(TILE_RIGS.salt).toBeDefined();
+    expect(TILE_RIGS.brimstone).toBeUndefined(); // the control: a ground kind nobody has invented
   });
 
   it('farms its fringe or not at all', () => {

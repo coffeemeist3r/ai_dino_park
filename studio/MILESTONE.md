@@ -21,7 +21,7 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 **Lore arcs:**
 - [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
 - [x] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *closed cycle 142, in one night and by both halves of the studio: the chain shipped 507 (the wiring, which had no item any stage was allowed to build until the Lore-smith split it out of the `[art]` item it was buried in), and the Artist fire closed 496 by drawing the `fuss` patch hours later*
-- [ ] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502)
+- [x] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502, BACKLOG-510) — *closed cycle 143, in one night and by both halves of the studio for the second cycle running: the chain shipped 510 (the wiring, split out of the `[art]` item that defers it in its own final sentence), and the Artist fire closed 502 hours later by drawing the hatch — the last undrawn prop key in the park*
 
 **Structure arcs:**
 - [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*

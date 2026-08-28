@@ -1,6 +1,6 @@
 {
   "cycle": 143,
-  "phase": "artist-pending",
+  "phase": "lore-pending",
   "currentItem": "BACKLOG-510: The hatch gets a mouth",
   "structureItem": "BACKLOG-505: The frontier 500 closed \u2014 a sixth ground, unsettled",
   "lastVerdict": "APPROVED",
@@ -16,6 +16,6 @@
     "coder": "2026-08-28T08:30:50.000Z",
     "qa": "2026-08-28T08:32:06.000Z",
     "validator": "2026-08-28T08:34:41.000Z",
-    "artist": "2026-08-27T09:22:36.000Z"
+    "artist": "2026-08-28T08:46:45.000Z"
   }
 }

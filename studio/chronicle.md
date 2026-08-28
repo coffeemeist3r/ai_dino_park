@@ -8807,3 +8807,56 @@ a clean HEAD and is nowhere near either diff.
 
 Milestone 16 has one lore arc and two structure arcs left. The hatch's mouth is wired; its face is the
 Artist's, tonight.
+
+## Cycle 143-art — the mouth, and the ground that isn't grass
+
+Two rigs, two items, both closed the same night the code that needs them shipped — the third fire running
+on that cadence, and it is no longer a coincidence: the smiths are now filing the wiring and the drawing as
+a pair, and the drawing lands on wiring that already runs rather than on a promise.
+
+**502 closes, and with it the last undrawn prop key in the park.** `H` is the most-pressed key in this game
+and until this morning the thing it opens did not exist on screen. The rig's whole problem is that it is the
+**odd artefact**: every other prop in this file was made by a dino or grown out of the ground, and they all
+share one grammar — organic outline, earth palette, lit at the top-left and shadowed at the bottom, the way
+a thing standing on grass is lit. The hatch is keeper-made and set *into* the ground, so it is drawn against
+all three. Rectilinear, because round is what animals dig — the first draft was a bevelled ellipse, which at
+sixteen pixels is a burrow with a metal rim. Cool steel, blue-shifted in every channel, against a house rule
+that has wanted warm brown-olive outlines since cycle 296.
+
+And the decision the whole picture rests on: **the lighting is inverted.** Shadow on the upper inner wall,
+light on the lower one — the opposite of every rig in this file, and the only thing that says *hole* rather
+than *plate lying on the grass*. That is exactly the sort of detail a later tidy-up pass would helpfully
+"correct", so it is a test rather than a comment. The shutter is two leaves parked either side of the mouth,
+which is the one detail that says the hole opens and closes instead of merely being one, and the mouth holds
+the darkest value in the park, because nothing in it is lit.
+
+**511 draws tonight's own ground.** The structure track laid a sixth ground this morning with a new `salt`
+tile kind on the flat-checker fallback, so this is the first terrain rig in the park's history whose host
+shipped in the *same cycle* as the request — the cycle-91 stash rule never came into play at all.
+
+Its first draft failed on the only thing that mattered. Every ground kind in `tileArt.ts` is a base colour
+with two-pixel marks scattered over it: grass has tufts, fern has fronds, and salt drawn that way is a paler
+lawn. **A crust is not scattered, it is broken.** So the marks became closed irregular polygons whose edges
+meet, and the eye reads plates instead of noise. The test measures the largest connected run of crack pixels
+and fails if the cracks fall back into speckle — which is the failure mode, stated as a number, so a future
+redraw cannot lose it quietly. Three plates a variant, a lifted edge or two catching the sun, the palest
+ground values in the park, and no green cast at all — asserted against `GRASS_RIG`'s own base colour rather
+than against a hex literal, so it stays the *anti*-grass whatever the grass later becomes.
+
+**Nothing was left on fallback that had a rig to lose.** With the hatch drawn, the prop registry has no
+undrawn key at all — and the control survives that, because cycle 142-art moved it off any real prop name
+and onto `NO_RIG_CONTROL`, a name nothing can ever claim, for precisely this night. On the terrain side the
+control moved the same way: it used to be `salt`, and it is now `salt`'s never-invented sibling.
+
+Full suite after the fire: build clean, **2178 unit green**, **609 e2e green** with the standing
+`mobile-minds` red (BACKLOG-430). `cycle-038-scan` fell once in the full run and passed isolated and in a
+second full run — the catalogued parallel-load flake, logged not chased.
+
+Art queue after this fire: **0 open** — the first empty art queue since cycle 90, and the reason the next
+Lore-smith seeds rather than themes. Every prop key in the park is drawn, all four terrain kinds are drawn,
+and the two things still on a flat fallback are the ones nobody has asked for yet.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
+instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with the same
+reject-your-first-draft discipline and the same unit + e2e gates. Two subjects, within the routine's
+"1–2 per fire", unlike the last two fires.

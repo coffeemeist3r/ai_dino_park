@@ -66,8 +66,9 @@ test('the first dino in settles it, once, and it never reads unsettled again', a
 test('the ground the player walks onto is crust, and the floor is whole without a salt rig', async ({ page }) => {
   await boot(page);
   await page.evaluate(() => (window as W).__setZone('saltpan'));
-  // BACKLOG-511 has not drawn the salt rig yet. The flat-checker fallback that has held through path/water
-  // (294) and fern (399) holds again: the scene renders, the hooks answer, nothing is blank.
+  // The ground shipped on the flat-checker fallback that has held through path/water (294) and fern (399),
+  // and BACKLOG-511 drew the crust the same night. Either way the floor is whole: the scene renders, the
+  // hooks answer, nothing is blank.
   expect(await page.evaluate(() => (window as W).__zone() as string)).toBe('saltpan');
   expect(await page.evaluate(() => (window as W).__hatch().visible as boolean)).toBe(true);
 });
