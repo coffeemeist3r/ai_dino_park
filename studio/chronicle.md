@@ -8860,3 +8860,27 @@ and the two things still on a flat fallback are the ones nobody has asked for ye
 instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with the same
 reject-your-first-draft discipline and the same unit + e2e gates. Two subjects, within the routine's
 "1–2 per fire", unlike the last two fires.
+
+## Cycle 143 — housekeeping
+
+Five closed bullets archived (505 twice — pointer and body — plus 510, 502 and 511) under their own
+closed-cycle block, and **two whole sections went with them**: the cycle-140 structure block, which had
+held only 505, and tonight's own cycle-143 lore block, which had held only 510 and 511 and emptied the same
+night it was written. Both are preserved in the archive with their blockquotes, because the reasoning in
+those quotes is the part worth keeping.
+
+**One section that emptied stayed put.** `## Art` now holds zero open items, and the housekeeping rule says
+an emptied section goes to the archive — but its body is not a queue. It carries the cycle-91 stash-ahead
+rule, which is standing policy routine 7 reads every fire, and archiving the section would have deleted a
+rule along with a spent list. Kept in the working backlog with an explicit "(empty)" note. Worth writing
+down as a distinction: a section header is a queue, a section blockquote can be law.
+
+The working backlog carries 0 closed bullets and **214 open items**, of which 4 sit on the Structure Track
+(495, 501, 509, 512) — back at the cap of X=4 the moment 505 closed, so the next Structure-smith drains
+rather than brainstorms for the fourth cycle running. The art queue is at **0** for the first time since
+cycle 90: every prop key in the park is drawn and all four terrain kinds are drawn, so the next Lore-smith
+seeds art rather than skipping it, and it does so with no obvious candidate — which is a nicer problem than
+the one this queue had at cycle 135.
+
+Milestone 16 is ACTIVE with two arcs left, both structural: the reachability register (501) and the
+frontier read that calls lived-in ground unlived-in (512), filed tonight.
