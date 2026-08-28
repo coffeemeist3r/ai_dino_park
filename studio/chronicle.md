@@ -8688,3 +8688,11 @@ park, which makes it the only natural home left for the draw-a-rig-or-draw-nothi
 
 Milestone 16 is ACTIVE with three arcs left: the hatch's mouth, the frontier's form, and the reachability
 register.
+
+## Cycle 143 — lore-smith
+
+The last lore arc of Milestone 16: the hatch. `H` is the most-pressed key in this park and the food it
+drops falls out of the sky onto bare grass — the whole social engine hangs off a place with nothing on it.
+Social queue at 208 (cap 12) so nothing was invented; BACKLOG-510 is the wiring half **split** out of the
+`[art]` item that defers it, the same move that unblocked 507 last cycle. Art queue at 1 (cap 3), so one
+seed: BACKLOG-511, the salt crust for the sixth ground the structure track is about to lay down.
