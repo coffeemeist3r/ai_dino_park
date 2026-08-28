@@ -17,6 +17,7 @@ import {
   FERNREACH_ID,
   HOLLOW_ID,
   RIDGE_ID,
+  SALTPAN_ID,
 } from '../../game/src/world/zones';
 
 /**
@@ -30,7 +31,7 @@ const ROWS = 15; // BACKLOG-478
 
 describe('The Fernreach is registered (BACKLOG-378)', () => {
   it('is the third ZONES entry, east of the grove', () => {
-    expect(ZONES.map((z) => z.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]); // BACKLOG-472/478
+    expect(ZONES.map((z) => z.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, SALTPAN_ID]); // BACKLOG-472/478/505
     expect(ZONES.find((z) => z.id === FERNREACH_ID)?.name).toBe('The Fernreach');
   });
 

@@ -5,6 +5,7 @@ import {
   FERNREACH_ID,
   HOLLOW_ID,
   RIDGE_ID,
+  SALTPAN_ID,
   HOLLOW_TINT,
   ZONES,
   ZONE_TERRAIN,
@@ -44,8 +45,9 @@ describe('the chain grows a fourth link (BACKLOG-472)', () => {
   it('runs bowl → grove → fernreach → hollow, west to east', () => {
     // BACKLOG-478: the trunk still runs west→east and ends at the Hollow; the Ridge is appended after it
     // because no east walk reaches a north branch. Chain order is iteration order, not geography.
-    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]);
-    expect(ZONES).toHaveLength(5);
+    // BACKLOG-505: the trunk runs one ground further east, to the frontier; the Ridge is still appended.
+    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, SALTPAN_ID, RIDGE_ID]);
+    expect(ZONES).toHaveLength(6);
     expect(zoneById(HOLLOW_ID).name).toBe('The Hollow');
   });
 
@@ -53,12 +55,13 @@ describe('the chain grows a fourth link (BACKLOG-472)', () => {
     expect(neighborThrough(FERNREACH_ID, 'east')).toBe(HOLLOW_ID);
     expect(neighborThrough(HOLLOW_ID, 'west')).toBe(FERNREACH_ID);
     expect(neighborThrough(FERNREACH_ID, 'west')).toBe(GROVE_ID); // unchanged
-    expect(neighborThrough(HOLLOW_ID, 'east')).toBeNull(); // the cold end of the chain
+    expect(neighborThrough(HOLLOW_ID, 'east')).toBe(SALTPAN_ID); // BACKLOG-505: the cold end got a drier one past it
   });
 
   it('labels its edges through the existing indicator code, with no UI change', () => {
     expect(edgeIndicators(FERNREACH_ID).map((e) => e.text)).toContain('The Hollow ▸');
-    expect(edgeIndicators(HOLLOW_ID)).toEqual([{ edge: 'west', text: '◂ The Fernreach' }]);
+    // BACKLOG-505: the Hollow labels both edges now; the one-edge end of the chain is the Saltpan.
+    expect(edgeIndicators(HOLLOW_ID).map((e) => e.text)).toEqual(['◂ The Fernreach', 'The Saltpan ▸']);
   });
 });
 
@@ -177,9 +180,9 @@ describe('the generalized systems meet it untouched (BACKLOG-472)', () => {
   it('renders four boxes on the zone-map lens straight off the chain', () => {
     const model = zoneMapModel(
       zoneChain(),
-      { [BOWL_ID]: 2, [GROVE_ID]: 1, [FERNREACH_ID]: 1, [HOLLOW_ID]: 0, [RIDGE_ID]: 0 },
+      { [BOWL_ID]: 2, [GROVE_ID]: 1, [FERNREACH_ID]: 1, [HOLLOW_ID]: 0, [SALTPAN_ID]: 0, [RIDGE_ID]: 0 },
       BOWL_ID,
     );
-    expect(model.map((e) => e.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]); // BACKLOG-478
+    expect(model.map((e) => e.id)).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, SALTPAN_ID, RIDGE_ID]); // BACKLOG-478/505
   });
 });

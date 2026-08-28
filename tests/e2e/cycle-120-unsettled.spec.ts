@@ -20,21 +20,24 @@ const unsettled = (p: Page) => p.evaluate(() => (window as W).__unsettled() as s
 const zoneMap = (p: Page) =>
   p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean }>);
 
-test('a fresh park has no unsettled ground left — and reads unsettled again the moment one empties', async ({ page }) => {
+test('a fresh park has exactly one unsettled ground — the frontier — and reads another the moment one empties', async ({ page }) => {
   await boot(page);
-  // BACKLOG-500 flips this assertion, and the flip is the finding. CHARTER v7 says every ground the player
-  // can walk to has life on it at boot; 474's frontier read is *about* grounds nobody lives on. Satisfying
-  // the constitution makes the frontier tier dormant on a fresh save — a real cost, recorded here rather
-  // than papered over. The read itself still works the instant a ground actually empties.
-  expect(await unsettled(page)).toEqual([]);
+  // The assertion has now flipped twice, and both flips are the finding. BACKLOG-500 obeyed CHARTER v7's
+  // "every ground the player can walk to has life on it at boot" and turned this from ['hollow', 'ridge']
+  // into [] — the frontier tier, the lens badge and the settling beat all went dormant on a fresh save,
+  // a real cost recorded here rather than papered over. BACKLOG-505 pays it: the Saltpan is a ground that
+  // is empty because nobody has settled it *yet*, which is what 474 meant by unsettled all along. This is
+  // the first shipping save in the park's history on which the frontier read returns anything.
+  expect(await unsettled(page)).toEqual(['saltpan']);
 
   const booted = await zoneMap(page);
   expect(booted.find((e) => e.id === 'hollow')!.unsettled).toBe(false);
   expect(booted.find((e) => e.id === 'bowl')!.unsettled).toBe(false);
+  expect(booted.find((e) => e.id === 'saltpan')!.unsettled).toBe(true); // BACKLOG-505: the badge lights
 
-  // Empty the Hollow and it reads unsettled again — the read is heads, not history.
+  // Empty the Hollow and it reads unsettled too — the read is heads, not history.
   await page.evaluate(() => (window as W).__migrate('Murk', 'fernreach'));
-  expect(await unsettled(page)).toEqual(['hollow']);
+  expect(await unsettled(page)).toEqual(['hollow', 'saltpan']);
   expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.unsettled).toBe(true);
 });
 
@@ -49,7 +52,7 @@ test('a migrant aims at the unsettled ground over an inhabited neighbour', async
   // nearest-qualifying read rather than a one-candidate walkover.
   await page.evaluate(() => (window as W).__migrate('Murk', 'grove'));
   await page.evaluate(() => (window as W).__migrate('Ember', 'grove'));
-  expect(await unsettled(page)).toEqual(['hollow', 'ridge']);
+  expect(await unsettled(page)).toEqual(['hollow', 'saltpan', 'ridge']); // chain order — BACKLOG-505
   expect(await page.evaluate(() => (window as W).__scarcityDest('Twitch') as string)).toBe('hollow');
 });
 

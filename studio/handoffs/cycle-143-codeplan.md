@@ -97,3 +97,47 @@ way. This is the third time and it costs the same.
 ## Blockers
 
 _(none at plan time)_
+
+---
+
+## Shipped
+
+Both tracks built as planned. Gates: `npm run build` clean, `npx vitest run` **2158 passed / 3 skipped
+(213 files)**, `npx playwright test` **610 passed, 1 failed** — the failure being `mobile-minds.spec.ts`
+"long dialogs page GBA-style", the standing red catalogued as BACKLOG-430, which fails on a clean HEAD and
+is nowhere near either track's diff. `@mlc-ai/web-llm` still imports only under `game/src/ai/` (grepped).
+No save-shape change on either track: the Saltpan writes ordinary per-zone entries into maps that are keyed
+off `zoneChain()`, and the hatch persists nothing at all.
+
+### Prediction vs outcome (the risk register, checked)
+
+| Predicted | Outcome |
+|---|---|
+| Founding-shaped specs go red on the sixth ground | 17 unit + 7 e2e, all enumerations. Every one *updated*, none weakened. |
+| `hopDistances` / `hopToward` meet the six-node graph untouched | Correct — no source edit, only the two distance assertions. |
+| Feeding specs pass unmodified through the scatter | **One did not**, and it should not have: `tests/unit/feeding.test.ts` pinned the landing to literal columns 10 and 0, which is the distribution itself. Rewritten against `HATCH_TILE`/`HATCH_SCATTER` rather than new literals. Reported, per the plan. |
+| One scene edit for the Saltpan | **Zero.** The import turned out to be unnecessary — every reader goes through `zoneChain()` or the tables. 449's promise held a third time. |
+
+### Three findings the build turned up, none of them planned for
+
+1. **`KEEPSAKE` had no fallback anybody wanted.** `keepsakeGlyph` falls back to the leaf for an unknown
+   ground, and `struck.test.ts` asserts every ground's glyph is *distinct* — so the sixth ground silently
+   became a second Grove rather than failing loudly. Given the crust its own glyph. The fallback is still
+   there; it is just no longer the thing a new ground lands on.
+2. **The bank tile asked for grass and only needed to ask for not-water.** `cycle-141-bank.test.ts` pinned
+   grass on every ground; the Saltpan is crust, and a heap of gathered stone on crust is fine. The
+   assertion was *written* to stop a later terrain edit drowning the heap, so it now says that, on every
+   ground — the same claim `hatch.test.ts` makes about its own tile, for the same reason.
+3. **The Saltpan holds exactly one mouth, and nothing was tuned to make it.** `zoneCapacity` derives from
+   grass tiles (476); the crust gives it 30 where the other grounds have 226–294, so `ceil(30/60) = 1`. The
+   first ground in the park with a capacity that means something on a fresh save, arrived at by the derived
+   system doing its job — a frontier that could absorb the whole cast would stop being one immediately.
+
+### One thing the specs learned that is nobody's item yet
+
+`cycle-143-saltpan.spec.ts` records it: when the Saltpan's founder walks back out, the **Hollow** starts
+reading unsettled. `isUnsettled` treats only the bowl as an origin, and 343 records a pioneer at *arrival*,
+so a ground whose residents were *spawned* has no pioneer and reads as a place nobody ever lived the moment
+it empties. That is BACKLOG-505's second candidate ("re-point the tier at a ground that has lost its last
+resident") already half-true by accident, and half-true in the wrong direction. Written into the spec rather
+than asserted around; a Structure-smith's item, not a rider on this one.

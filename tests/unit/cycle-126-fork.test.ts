@@ -10,6 +10,7 @@ import {
   FERNREACH_ID,
   HOLLOW_ID,
   RIDGE_ID,
+  SALTPAN_ID,
   ZONES,
   crossing,
   edgeIndicators,
@@ -57,6 +58,7 @@ describe('the fork exists in the graph', () => {
       [FERNREACH_ID]: 2,
       [RIDGE_ID]: 2,
       [HOLLOW_ID]: 3,
+      [SALTPAN_ID]: 4, // BACKLOG-505: the frontier, one past the Hollow
     });
   });
 

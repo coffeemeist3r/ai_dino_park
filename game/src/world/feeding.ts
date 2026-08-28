@@ -10,6 +10,7 @@
 import type { Tile } from './movement';
 import { stepToward } from './movement';
 import { rand as worldRand } from './rng';
+import { hatchLanding } from './hatch';
 
 export type FeedReaction = 'rush' | 'ignore';
 
@@ -169,12 +170,14 @@ export function sharedMeal(
 }
 
 /**
- * Where dropped food lands. `col` (the hatch column) is honored and clamped when
- * given; otherwise a column is picked from `rand`. It always settles in the
- * upper-middle feeding zone so it falls into the cast rather than onto the rim.
+ * Where dropped food lands. `col` is honored and clamped when given — that is the crop-harvest path, which
+ * drops a ripe crop at its own plot column and is untouched. Otherwise the column comes from `hatchLanding`
+ * (BACKLOG-510): still a roll, but a roll *around the hatch* rather than across the whole map, so the piece
+ * spills out of a thing standing on the ground instead of appearing anywhere at all. The row is unchanged —
+ * the upper-middle feeding row, which is the row the hatch itself sits on.
  */
 export function foodLanding(cols: number, rows: number, col?: number, rand: () => number = worldRand): Tile {
   const tileX =
-    col === undefined ? Math.floor(rand() * cols) : Math.max(0, Math.min(cols - 1, Math.round(col)));
+    col === undefined ? hatchLanding(cols, rand) : Math.max(0, Math.min(cols - 1, Math.round(col)));
   return { tileX, tileY: Math.floor(rows * 0.45) };
 }

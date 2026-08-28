@@ -29,6 +29,22 @@ export const HOLLOW_ID = 'hollow';
  */
 export const RIDGE_ID = 'ridge';
 
+/**
+ * BACKLOG-505: the sixth ground, and the only one in the park that ships with nobody on it.
+ *
+ * 474 built the *unsettled ground* — a read, a lens badge, a migration tier above the richest-neighbour
+ * pick, and a settling beat for whoever arrives first — and then 500 obeyed CHARTER v7's "every ground has
+ * life on it at boot" and put a resident on all five, which took the whole of it dormant on a fresh save.
+ * The frontier had no ground left to be. The Saltpan is that ground: east out of the Hollow, the far end of
+ * the line, empty because nobody has settled it *yet*, which is what 474 meant by the word all along.
+ *
+ * It is not an exception to v7's third change so much as its destination — the rule spread the cast across
+ * the grounds people live on, and this is the one they have not reached. It stops being unsettled the first
+ * time anybody walks in, and `isUnsettled`'s "stricter than empty" clause means it can never read that way
+ * again.
+ */
+export const SALTPAN_ID = 'saltpan';
+
 export interface Zone {
   id: string;
   name: string;
@@ -40,6 +56,7 @@ export const ZONES: Zone[] = [
   { id: FERNREACH_ID, name: 'The Fernreach' },
   { id: HOLLOW_ID, name: 'The Hollow' }, // BACKLOG-472
   { id: RIDGE_ID, name: 'The Sunward Ridge' }, // BACKLOG-478 — the branch, not the next link in the line
+  { id: SALTPAN_ID, name: 'The Saltpan' }, // BACKLOG-505 — the frontier, the one ground with nobody on it
 ];
 
 /** The zone for an id, falling back to the bowl for an unknown id. */
@@ -98,6 +115,11 @@ export const ZONE_LINKS: ZoneLink[] = [
   // reason every pre-478 single-neighbour default path is byte-identical on a branching map.
   { from: GROVE_ID, edge: 'north', to: RIDGE_ID },
   { from: RIDGE_ID, edge: 'south', to: GROVE_ID },
+  // BACKLOG-505: the line's far end. Appended *after* the hollow→fernreach row for the third time running,
+  // so `linkEdge`/`otherZone` (first-match) still answer 'west'/fernreach for the Hollow and every
+  // single-neighbour default path through it stays byte-identical.
+  { from: HOLLOW_ID, edge: 'east', to: SALTPAN_ID },
+  { from: SALTPAN_ID, edge: 'west', to: HOLLOW_ID },
 ];
 
 /** The zone reached by leaving `zoneId` through `edge`, or null when that edge has no link. */
@@ -218,10 +240,12 @@ export function linkedZone(
  * Artist's (BACKLOG-033); until they exist those tiles bake as grass under GROVE_TINT, so the floor is
  * always whole and the tint alone already makes the grove distinct.
  */
-export type TileKind = 'grass' | 'path' | 'water' | 'fern';
+export type TileKind = 'grass' | 'path' | 'water' | 'fern' | 'salt';
 // 'fern' (BACKLOG-399) is the Fernreach's scrub kind; like the grove's path/water once did (294), it
 // bakes as the grass fallback under the zone tint until the Artist draws its rig (FERN_RIG), so the floor
 // is always whole and adding the kind can never break the build.
+// 'salt' (BACKLOG-505) is the Saltpan's crust, added on exactly that seam: no TILE_RIGS entry, so it bakes
+// through the flat-checker fallback until BACKLOG-511 draws it. Fourth kind, fourth time the seam holds.
 
 /** A cool, shaded multiplicative tint applied to the whole grove floor so it reads as woodland. */
 export const GROVE_TINT = 0x9fc0b8;
@@ -348,6 +372,34 @@ export function ridgeTarnTile(rows: number): { tileX: number; tileY: number } {
  *  only tint in the park that reads as *above* the others. */
 export const RIDGE_TINT = 0xf0d2b4;
 
+/** A pale, bleached wash for the Saltpan (BACKLOG-505) — lighter than the Ridge's sunward warmth and the
+ *  only tint in the park that takes colour *out* of the floor rather than putting some in. */
+export const SALTPAN_TINT = 0xf2efe2;
+
+/**
+ * The Saltpan's ground (BACKLOG-505), laid out against the grain of all five others. Every ground so far is
+ * grass with a feature cut into it — the bowl's NW waterhole, the grove's NE pond and mid trail, the
+ * Fernreach's west creek, the Hollow's fen rim over a centre-south pool, the Ridge's vertical switchback.
+ * The Saltpan inverts that: **crust nearly everywhere**, one brine seep, and grass only as a fringe on the
+ * west edge where the Hollow's fen drains in — which is the edge the player crosses from, so the ground
+ * they step onto is green for two columns and then stops being green at all.
+ *
+ * Pure: (x,y) → tile kind over a cols×rows grid.
+ */
+export function saltpanTileAt(x: number, y: number, cols: number, _rows: number): TileKind {
+  // the brine seep: a 2x2 block in the north-east, the smallest water in the park.
+  if (x >= cols - 5 && x <= cols - 4 && y >= 3 && y <= 4) return 'water';
+  // the fringe: two columns of surviving grass on the west edge, against the Hollow.
+  if (x <= 1) return 'grass';
+  return 'salt';
+}
+
+/** The Saltpan's brine seep (BACKLOG-505) — pinned to the water block in `saltpanTileAt` by the cycle-108
+ *  landmark invariant, not by a comment. */
+export function saltpanSeepTile(cols: number): { tileX: number; tileY: number } {
+  return { tileX: cols - 5, tileY: 3 };
+}
+
 /**
  * A zone's ground, as data (BACKLOG-449). Terrain used to be three hand-written layout functions reached
  * through an `if` chain, with two more `if` chains beside it — one for the named water landmark, one for
@@ -387,6 +439,10 @@ export const ZONE_TERRAIN: Record<string, ZoneTerrain> = {
   // BACKLOG-478: the fifth ground, another row. Like the Hollow it takes no ZONE_BIAS entry (resource.ts)
   // and no structure kind — the same two documented back-compat seams, left alone deliberately.
   [RIDGE_ID]: { tileAt: ridgeTileAt, tint: RIDGE_TINT, water: (_cols, rows) => ridgeTarnTile(rows) },
+  // BACKLOG-505: the sixth ground, the third row added since 449 promised a zone would be one. Same two
+  // seams left alone on purpose - no ZONE_BIAS entry, no structure kind. A frontier that shipped its own
+  // resource would be a different item, and the point of this one is that it ships with nothing at all.
+  [SALTPAN_ID]: { tileAt: saltpanTileAt, tint: SALTPAN_TINT, water: (cols) => saltpanSeepTile(cols) },
 };
 
 /**

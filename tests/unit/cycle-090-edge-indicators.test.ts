@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { BOWL_ID, FERNREACH_ID,
-  HOLLOW_ID, GROVE_ID, edgeIndicators } from '../../game/src/world/zones';
+  HOLLOW_ID, GROVE_ID, SALTPAN_ID, edgeIndicators } from '../../game/src/world/zones';
 
 describe('edgeIndicators', () => {
   it('the bowl labels only its east edge, naming the grove', () => {
@@ -26,7 +26,12 @@ describe('edgeIndicators', () => {
       { edge: 'west', text: '◂ The Grove' },
       { edge: 'east', text: 'The Hollow ▸' },
     ]);
-    expect(edgeIndicators(HOLLOW_ID)).toEqual([{ edge: 'west', text: '◂ The Fernreach' }]);
+    // BACKLOG-505: the Hollow stopped being the end of the chain, so the one-edge end moved to the Saltpan.
+    expect(edgeIndicators(HOLLOW_ID)).toEqual([
+      { edge: 'west', text: '◂ The Fernreach' },
+      { edge: 'east', text: 'The Saltpan ▸' },
+    ]);
+    expect(edgeIndicators(SALTPAN_ID)).toEqual([{ edge: 'west', text: '◂ The Hollow' }]);
   });
 
   it('an unknown zone labels nothing', () => {

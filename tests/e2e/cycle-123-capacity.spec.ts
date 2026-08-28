@@ -18,12 +18,16 @@ const appeal = (p: Page, zone: string) => p.evaluate((z) => (window as W).__zone
 
 test('each ground has a capacity derived from its own terrain', async ({ page }) => {
   await boot(page);
-  expect(await caps(page)).toEqual({ bowl: 5, grove: 5, fernreach: 4, hollow: 5, ridge: 5 }); // BACKLOG-478: derived, no capacity.ts edit
+  // BACKLOG-478: derived, no capacity.ts edit — and BACKLOG-505 proves the claim a second time. The Saltpan
+  // is crust with a two-column grass fringe, so `livableTiles` finds 30 where every other ground finds
+  // 226–294, and it comes out holding **one mouth**. Nothing in capacity.ts was touched to get that, and it
+  // is the right answer: a frontier that could absorb the cast would not be a frontier for long.
+  expect(await caps(page)).toEqual({ bowl: 5, grove: 5, fernreach: 4, hollow: 5, saltpan: 1, ridge: 5 });
 });
 
 test('the founding park is at capacity, not over it', async ({ page }) => {
   await boot(page);
-  expect(await crowded(page)).toEqual({ bowl: false, grove: false, fernreach: false, hollow: false, ridge: false }); // BACKLOG-478
+  expect(await crowded(page)).toEqual({ bowl: false, grove: false, fernreach: false, hollow: false, saltpan: false, ridge: false }); // BACKLOG-478/505
 });
 
 test('piling the cast onto one ground crowds it', async ({ page }) => {

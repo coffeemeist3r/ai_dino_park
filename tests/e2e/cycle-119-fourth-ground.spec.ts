@@ -16,8 +16,9 @@ const zoneMap = (p: Page) => p.evaluate(() => (window as W).__zoneMap() as Array
 test('the chain runs four grounds deep, ending in The Hollow', async ({ page }) => {
   await boot(page);
   const model = await zoneMap(page);
-  // BACKLOG-478: the trunk still ends in the Hollow; the Ridge follows it as the appended branch.
-  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach', 'hollow', 'ridge']);
+  // BACKLOG-478: the Ridge follows the trunk as the appended branch.
+  // BACKLOG-505: the trunk no longer ends in the Hollow — the Saltpan is one further east.
+  expect(model.map((e) => e.id)).toEqual(['bowl', 'grove', 'fernreach', 'hollow', 'saltpan', 'ridge']);
   expect(model[3].name).toBe('The Hollow');
 });
 

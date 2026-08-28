@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ZONES, zoneChain, zonePopulations, BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID } from '../../game/src/world/zones';
+import { ZONES, zoneChain, zonePopulations, BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, SALTPAN_ID } from '../../game/src/world/zones';
 import { zoneMapModel, LENS_ORDER } from '../../game/src/ui/lenses';
 
 describe('zoneChain (BACKLOG-425)', () => {
@@ -8,7 +8,7 @@ describe('zoneChain (BACKLOG-425)', () => {
     // Ridge hangs north off the Grove, so no east walk can reach it and 425's append-the-unreached fallback
     // (written for a hypothetical orphan zone) is what puts the branch on the lens. The chain is an
     // iteration order, not a west→east geography, and this assertion is the place that says so.
-    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID]);
+    expect(zoneChain()).toEqual([BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, SALTPAN_ID, RIDGE_ID]);
   });
 
   it('includes every zone exactly once', () => {
@@ -25,13 +25,14 @@ describe('zoneMapModel (BACKLOG-425)', () => {
   it('mirrors zonePopulations and flags exactly the keeper zone', () => {
     const pops = zonePopulations(homes, names, BOWL_ID);
     const model = zoneMapModel(zoneChain(), pops, GROVE_ID);
-    expect(model.map((e) => e.count)).toEqual([4, 1, 0, 0, 0]);
-    expect(model.map((e) => e.keeper)).toEqual([false, true, false, false, false]);
+    expect(model.map((e) => e.count)).toEqual([4, 1, 0, 0, 0, 0]); // BACKLOG-505: six grounds
+    expect(model.map((e) => e.keeper)).toEqual([false, true, false, false, false, false]);
     expect(model.map((e) => e.name)).toEqual([
       'Pocket Cretaceous',
       'The Grove',
       'The Fernreach',
       'The Hollow',
+      'The Saltpan', // BACKLOG-505
       'The Sunward Ridge', // BACKLOG-478
     ]);
   });

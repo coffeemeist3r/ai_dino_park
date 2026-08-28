@@ -12,7 +12,7 @@
  */
 
 import type { Tile } from './movement';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID } from './zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, SALTPAN_ID } from './zones';
 
 export type CropStage = 'seed' | 'sprout' | 'ripe';
 
@@ -102,6 +102,14 @@ export const HOLLOW_PLOT_TILE: Tile = { tileX: 14, tileY: 7 };
  */
 export const RIDGE_PLOT_TILE: Tile = { tileX: 14, tileY: 3 };
 
+/**
+ * The Saltpan's plot tile (BACKLOG-505) — the one ground where the plot cannot sit in the middle. The
+ * Saltpan is crust from the third column east; the only soil on it is the two-column grass fringe on the
+ * west edge where the Hollow's fen drains in, so the plot sits *in* that fringe. Clear of the brine seep
+ * (x cols−5..cols−4 / y 3–4) by the whole width of the ground.
+ */
+export const SALTPAN_PLOT_TILE: Tile = { tileX: 1, tileY: 8 };
+
 /** Each zone's fixed plot tile (BACKLOG-308/349/432/472 — zone-scoped). A zone absent here has no plot. */
 export const PLOT_TILE_BY_ZONE: Record<string, Tile> = {
   [BOWL_ID]: PLOT_TILE,
@@ -109,6 +117,7 @@ export const PLOT_TILE_BY_ZONE: Record<string, Tile> = {
   [FERNREACH_ID]: FERNREACH_PLOT_TILE,
   [HOLLOW_ID]: HOLLOW_PLOT_TILE,
   [RIDGE_ID]: RIDGE_PLOT_TILE,
+  [SALTPAN_ID]: SALTPAN_PLOT_TILE, // BACKLOG-505
 };
 
 /** The crop's stage given whole in-game days since it was planted. Negative gaps clamp to seed. */

@@ -31,7 +31,8 @@ test('labels re-render on zone changes — grove and Fernreach show both neighbo
   expect((await labels(page)).sort()).toEqual(['The Hollow ▸', '◂ The Grove']);
 
   await page.evaluate(() => (window as W).__setZone('hollow'));
-  expect(await labels(page)).toEqual(['◂ The Fernreach']);
+  // BACKLOG-505: the Hollow labels both edges now — the one-edge end of the chain is the Saltpan.
+  expect(await labels(page)).toEqual(['◂ The Fernreach', 'The Saltpan ▸']);
 
   await page.evaluate(() => (window as W).__setZone('bowl'));
   expect(await labels(page)).toEqual(['The Grove ▸']);

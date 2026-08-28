@@ -6,17 +6,24 @@ import {
   groundsWithoutResidents,
   foundingCouncils,
 } from '../../game/src/world/founding';
-import { zoneChain, zoneTileAt, BOWL_ID } from '../../game/src/world/zones';
+import { zoneChain, zoneTileAt, BOWL_ID, SALTPAN_ID } from '../../game/src/world/zones';
 import { zoneCapacity } from '../../game/src/world/capacity';
 
 const COLS = 20;
 const ROWS = 15;
 
 describe('the residency invariant (BACKLOG-500)', () => {
-  it('leaves no ground without a resident', () => {
+  it('leaves no settled ground without a resident — and exactly one frontier without one', () => {
     // CHARTER v7: "every ground the player can walk to has life on it at boot." This is that sentence as a
-    // thing that breaks. Before this cycle it returned ['hollow', 'ridge'].
-    expect(groundsWithoutResidents()).toEqual([]);
+    // thing that breaks. When 500 shipped it returned ['hollow', 'ridge'] and this asserted [].
+    //
+    // BACKLOG-505 makes it name one ground instead of none, and the assertion gets *stronger*, not looser:
+    // the empty ground must be the frontier and there must be exactly one of it. The rule v7 wrote was
+    // about the cast being spread across the grounds people live on; the Saltpan is where nobody lives
+    // *yet*, which is the input 474's whole frontier system was built for and has never once had. A second
+    // empty ground, or an empty ground that is not the frontier, fails here — which is what this test is
+    // for.
+    expect(groundsWithoutResidents()).toEqual([SALTPAN_ID]);
   });
 
   it('reports every ground in the chain, including any that would be empty', () => {

@@ -106,6 +106,7 @@ import { spreadProviderWord } from '../world/providerword';
 import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
+import { HATCH_TILE, HATCH_ART_KEY, HATCH_GLYPH, HATCH_SCATTER } from '../world/hatch';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
@@ -651,6 +652,10 @@ export class WorldScene extends Phaser.Scene {
     this.stockpileByZone[zone] = pile;
     this.syncBank(zone);
   }
+  /** The feeding hatch (BACKLOG-510). **One** sprite, not one per zone: unlike the bank's heap, the hatch
+   *  is the same object in the same place on every ground, so there is nothing to key by zone and nothing
+   *  to show or hide on a crossing. */
+  private hatchSprite?: Phaser.GameObjects.Text | Phaser.GameObjects.Image;
   /** The heap standing on each ground's bank tile (BACKLOG-504), lazily created per zone. */
   private bankSprites: Record<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image> = {};
   /** Grounds that have already announced an errand (BACKLOG-503). Transient — the ticker is a beat, not a
@@ -1469,6 +1474,13 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
     // BACKLOG-504: the heap on a ground's bank tile — what the player can see, not what the lens reports.
+    // BACKLOG-510: the hatch itself — where the drop comes from, not just where the piece ended up.
+    (window as any).__hatch = () => ({
+      tile: { ...HATCH_TILE },
+      scatter: HATCH_SCATTER,
+      visible: !!this.hatchSprite?.visible,
+      art: !!(this.hatchSprite instanceof Phaser.GameObjects.Image),
+    });
     (window as any).__bank = (z?: string) => {
       const zone = z ?? this.zoneId;
       return {
@@ -1886,6 +1898,7 @@ export class WorldScene extends Phaser.Scene {
     // save, because `zoneCouncil` seats bankers and nobody has banked. `??=` so a restored tally always wins.
     for (const [name, units] of Object.entries(FOUNDING_BANKED)) this.foodBanked[name] ??= units;
     this.syncBanks(); // BACKLOG-504: the founding Grove's heap stands on the ground from the first frame
+    this.drawHatch(); // BACKLOG-510: and the hatch is on the ground before the player presses H
     this.applyObjectVisibility(); // the 480 alpha pass — the ruin reads as disrepair from the first frame
   }
 
@@ -2036,15 +2049,21 @@ export class WorldScene extends Phaser.Scene {
     this.lastBerth = null;
     const px = landing.tileX * TILE + TILE / 2;
     const landY = landing.tileY * TILE + TILE / 2;
+    // BACKLOG-510: the piece comes *out of the hatch*. It used to be spawned at y = TILE * 0.4 — above the
+    // top of the world — and dropped straight down onto whatever column the roll picked, which is why food
+    // has always looked like it materialised out of the sky onto bare grass.
+    const fromX = HATCH_TILE.tileX * TILE + TILE / 2;
+    const fromY = HATCH_TILE.tileY * TILE + TILE / 2;
     // BACKLOG-490: a baked pixel rig per food id where one is drawn, the emoji glyph where one is not —
     // the same graceful per-item fallback `drawPlotSprite` uses for a rig-less crop, so a partial roster ships.
     const foodKey = `food_${kind.id}`;
     const foodTex = hasPropArt(foodKey) ? bakePropArt(this, foodKey) : null;
     this.foodSprite = foodTex
-      ? this.add.image(px, TILE * 0.4, foodTex).setOrigin(0.5).setDepth(2)
-      : this.add.text(px, TILE * 0.4, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
+      ? this.add.image(fromX, fromY, foodTex).setOrigin(0.5).setDepth(2)
+      : this.add.text(fromX, fromY, kind.emoji, { fontSize: '18px' }).setOrigin(0.5).setDepth(2);
     this.tweens.add({
       targets: this.foodSprite,
+      x: px,
       y: landY,
       duration: 600,
       ease: 'Quad.easeIn',
@@ -2460,6 +2479,25 @@ export class WorldScene extends Phaser.Scene {
   /** Sync every ground's bank — after setup, and after a save restore replaces the whole pile map. */
   private syncBanks(): void {
     for (const z of zoneChain()) this.syncBank(z);
+  }
+
+  /**
+   * The feeding hatch on the ground (BACKLOG-510).
+   *
+   * Same rig-or-glyph fallback as every prop the park draws (490/494/496/504): the baked pixel rig once
+   * BACKLOG-502 has drawn one, the opening glyph until then — so the wiring never waits on the art and the
+   * art never waits on the wiring. Built once and left alone: `HATCH_TILE` is the same tile on every ground,
+   * so a crossing changes nothing about it. Depth 1 — under the food (2) that comes out of it, and under
+   * every dino that walks over it.
+   */
+  private drawHatch(): void {
+    if (this.hatchSprite) return;
+    const px = HATCH_TILE.tileX * TILE + TILE / 2;
+    const py = HATCH_TILE.tileY * TILE + TILE / 2;
+    const tex = hasPropArt(HATCH_ART_KEY) ? bakePropArt(this, HATCH_ART_KEY) : null;
+    this.hatchSprite = tex
+      ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(1)
+      : this.add.text(px, py, HATCH_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(1);
   }
 
   /**

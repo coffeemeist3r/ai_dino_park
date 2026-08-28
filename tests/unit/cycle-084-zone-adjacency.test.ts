@@ -12,6 +12,7 @@ import {
   GROVE_ID,
   FERNREACH_ID,
   HOLLOW_ID,
+  SALTPAN_ID,
   RIDGE_ID,
 } from '../../game/src/world/zones';
 
@@ -40,6 +41,9 @@ describe('ZONE_LINKS table (BACKLOG-383)', () => {
       // that is what keeps the grove's first-match primary neighbour (and every default path) unchanged.
       { from: GROVE_ID, edge: 'north', to: RIDGE_ID },
       { from: RIDGE_ID, edge: 'south', to: GROVE_ID },
+      // BACKLOG-505: the sixth ground, appended last for the same reason the fork was.
+      { from: HOLLOW_ID, edge: 'east', to: SALTPAN_ID },
+      { from: SALTPAN_ID, edge: 'west', to: HOLLOW_ID },
     ]);
   });
 
@@ -51,7 +55,8 @@ describe('ZONE_LINKS table (BACKLOG-383)', () => {
     expect(neighborThrough(BOWL_ID, 'west')).toBeNull();
     // BACKLOG-472: the Fernreach's east edge is linked now; the Hollow is the chain's unlinked cold end.
     expect(neighborThrough(FERNREACH_ID, 'east')).toBe(HOLLOW_ID);
-    expect(neighborThrough(HOLLOW_ID, 'east')).toBeNull();
+    expect(neighborThrough(HOLLOW_ID, 'east')).toBe(SALTPAN_ID); // BACKLOG-505: the line grew past the Hollow
+    expect(neighborThrough(SALTPAN_ID, 'east')).toBeNull(); // and stops there — the Saltpan is the far end
   });
 
   it('linkEdge gives each zone its outbound edge, null for unknown', () => {
@@ -74,7 +79,8 @@ describe('helpers stay byte-identical through the table (BACKLOG-383)', () => {
       zoneId: FERNREACH_ID,
       entry: { x: TILE * 1.5, y: 100 },
     });
-    expect(linkedZone(HOLLOW_ID, 'east', 100, 100, COLS, ROWS, TILE)).toBeNull(); // BACKLOG-472: the Hollow's far edge is unlinked
+    // BACKLOG-505: the Hollow's east edge is linked now; the *unlinked* far edge moved to the Saltpan's.
+    expect(linkedZone(SALTPAN_ID, 'east', 100, 100, COLS, ROWS, TILE)).toBeNull();
   });
 
   it('otherZone flips the pair and keeps the unknown→grove default', () => {

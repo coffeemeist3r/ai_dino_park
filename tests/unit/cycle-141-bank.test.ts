@@ -42,9 +42,14 @@ describe('the bank tile', () => {
    * place; if a later terrain pass grows a pond or a trail over it, this fails rather than the heap quietly
    * floating on water.
    */
-  it('is grass on every ground the player can walk to', () => {
+  it('is never underwater on any ground the player can walk to', () => {
+    // This asked for grass until BACKLOG-505, when the sixth ground turned out to be bare crust from its
+    // third column east — and a heap of gathered stone sitting on crust is fine. What was never fine, and
+    // what this test was actually written to catch, is a later terrain edit growing a pond over the tile
+    // and drowning the heap. That is the assertion now, on every ground, and it is the same one the hatch
+    // (BACKLOG-510) makes about its own tile for the same reason.
     for (const z of zoneChain()) {
-      expect(zoneTileAt(z, BANK_TILE.tileX, BANK_TILE.tileY, COLS, ROWS)).toBe('grass');
+      expect(zoneTileAt(z, BANK_TILE.tileX, BANK_TILE.tileY, COLS, ROWS), z).not.toBe('water');
     }
   });
 

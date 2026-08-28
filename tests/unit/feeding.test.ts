@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { HATCH_SCATTER, HATCH_TILE } from '../../game/src/world/hatch';
 import {
   reactionToFood,
   feedStep,
@@ -75,9 +76,13 @@ describe('foodLanding', () => {
     expect(foodLanding(20, 15, 999).tileX).toBe(19);
   });
 
-  it('picks a column from rand when none is given', () => {
-    expect(foodLanding(20, 15, undefined, () => 0.5).tileX).toBe(10);
-    expect(foodLanding(20, 15, undefined, () => 0).tileX).toBe(0);
+  it('picks a column from rand when none is given — around the hatch, not across the map', () => {
+    // BACKLOG-510: this used to roll the full twenty columns, which is why food appeared anywhere at all.
+    // It still rolls; the range is now the hatch's scatter band, so the piece spills out of a thing the
+    // player can see. Asserted against HATCH_TILE rather than against the literals it used to pin.
+    expect(foodLanding(20, 15, undefined, () => 0.5).tileX).toBe(HATCH_TILE.tileX);
+    expect(foodLanding(20, 15, undefined, () => 0).tileX).toBe(HATCH_TILE.tileX - HATCH_SCATTER);
+    expect(foodLanding(20, 15, undefined, () => 0.999).tileX).toBe(HATCH_TILE.tileX + HATCH_SCATTER);
   });
 
   it('always settles in the upper-middle feeding zone', () => {
