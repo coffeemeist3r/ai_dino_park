@@ -8711,3 +8711,10 @@ Two specs. The hatch becomes a fixed tile on every ground with the drop emerging
 keeps its scatter — a fixed landing would flatten five systems to make one visible). The frontier becomes
 **The Saltpan**, a sixth ground east of the Hollow: bare crust with a grass fringe and a brine seep, a new
 `salt` tile kind on the flat-checker fallback, and no residents, because being empty is the job.
+
+## Cycle 143 — code-planner
+
+One new pure module (`world/hatch.ts`, the `bank.ts` shape), one delegated branch in `foodLanding`, one
+sprite and one tween origin in the scene; and for the Saltpan, table rows in `zones.ts` and `plot.ts` plus
+one import. The plan predicts its own casualties in a risk register so QA can check the prediction rather
+than discover the damage.
