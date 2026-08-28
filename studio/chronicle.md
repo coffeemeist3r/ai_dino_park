@@ -8696,3 +8696,11 @@ drops falls out of the sky onto bare grass — the whole social engine hangs off
 Social queue at 208 (cap 12) so nothing was invented; BACKLOG-510 is the wiring half **split** out of the
 `[art]` item that defers it, the same move that unblocked 507 last cycle. Art queue at 1 (cap 3), so one
 seed: BACKLOG-511, the salt crust for the sixth ground the structure track is about to lay down.
+
+## Cycle 143 — structure-smith
+
+BACKLOG-505 drained from a queue at cap: the frontier that CHARTER v7 closed gets a sixth ground to be.
+**The Saltpan**, east out of the Hollow — bare crust where every other ground is grass, unsettled because
+nobody has settled it yet, which is what 474 always meant. The alternative candidate (re-point the tier at
+a ground that has *lost* its last resident) is declined in the handoff: on a fresh save nothing has lost
+anybody, so it would satisfy the item and fail the bar the item was filed under.
