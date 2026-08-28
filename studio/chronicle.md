@@ -8718,3 +8718,11 @@ One new pure module (`world/hatch.ts`, the `bank.ts` shape), one delegated branc
 sprite and one tween origin in the scene; and for the Saltpan, table rows in `zones.ts` and `plot.ts` plus
 one import. The plan predicts its own casualties in a risk register so QA can check the prediction rather
 than discover the damage.
+
+## Cycle 143 — qa
+
+17/17 criteria pass across both tracks. Build clean, 2158 unit green, 610/611 e2e — the one red is
+`mobile-minds`, the standing BACKLOG-430 that fails on a clean HEAD. Every one of the 24 changed assertions
+read against "updated, never weakened"; the residency invariant came out *stronger* (it now names the
+frontier rather than asserting an empty list). One finding escalated: a ground whose residents were spawned
+reads unsettled the moment it empties, because 343 records a pioneer only on arrival.
