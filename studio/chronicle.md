@@ -8704,3 +8704,10 @@ BACKLOG-505 drained from a queue at cap: the frontier that CHARTER v7 closed get
 nobody has settled it yet, which is what 474 always meant. The alternative candidate (re-point the tier at
 a ground that has *lost* its last resident) is declined in the handoff: on a fresh save nothing has lost
 anybody, so it would satisfy the item and fail the bar the item was filed under.
+
+## Cycle 143 — designer
+
+Two specs. The hatch becomes a fixed tile on every ground with the drop emerging *from* it (the landing
+keeps its scatter — a fixed landing would flatten five systems to make one visible). The frontier becomes
+**The Saltpan**, a sixth ground east of the Hollow: bare crust with a grass fringe and a brine seep, a new
+`salt` tile kind on the flat-checker fallback, and no residents, because being empty is the job.

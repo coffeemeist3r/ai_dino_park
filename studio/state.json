@@ -1,6 +1,6 @@
 {
   "cycle": 143,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-510: The hatch gets a mouth",
   "structureItem": "BACKLOG-505: The frontier 500 closed \u2014 a sixth ground, unsettled",
   "lastVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-08-28T08:04:16.000Z",
     "structure-smith": "2026-08-28T08:04:54.000Z",
-    "designer": "2026-08-27T08:10:46.000Z",
+    "designer": "2026-08-28T08:07:47.000Z",
     "code-planner": "2026-08-27T08:11:55.000Z",
     "coder": "2026-08-27T08:50:26.000Z",
     "qa": "2026-08-27T08:51:15.000Z",
