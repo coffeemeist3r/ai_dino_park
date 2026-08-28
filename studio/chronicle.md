@@ -8726,3 +8726,84 @@ than discover the damage.
 read against "updated, never weakened"; the residency invariant came out *stronger* (it now names the
 frontier rather than asserting an empty list). One finding escalated: a ground whose residents were spawned
 reads unsettled the moment it empties, because 343 records a pioneer only on arrival.
+
+## Cycle 143 — the mouth and the far end
+
+Two verdicts, both APPROVED, and they turn out to be the same sentence pointed in opposite directions:
+**a thing the park does every minute finally happens somewhere, and a place the park had no use for finally
+has one.**
+
+**The hatch (BACKLOG-510).** `H` is the first key anybody presses in this game. It has dropped food since
+cycle 59, and the entire social engine of the park reads where that food lands — the swarm, the cede, the
+gobble, the pecking order, the errand that walks a withdrawn loner over, four remembered beats and a Park
+News line. The landing itself was a uniform roll across twenty columns; the piece was spawned above the top
+of the world and dropped straight down; and the event line has said "food dropped from the hatch" for eighty
+cycles about an object that did not exist. Tonight the hatch is a tile — the bank's treatment (504) applied
+to the feeding hatch, the same place on every ground because `H` is the same key on every ground — and food
+comes **up out of it** and rolls a tile or two.
+
+The interesting decision was the one *not* taken. It would have been tidier to land the food on the hatch
+itself, and it would have been wrong: five systems read the distance to the landing, and pinning it would
+have made all five duller in order to make one visible. That is the reachability bar's own mistake run
+backwards, and the studio has now made it once (cycle 142's errand tier) and declined it once. The roll
+survives; only its range moved.
+
+The item is also the **second time in two cycles** that a milestone arc turned out to have no item any stage
+of the chain was permitted to build. 502 is `[art]`, the Designer may not pick `[art]` items, and 502 defers
+its own world wiring in its final sentence. Exactly what 496 did to 507 last night. The Lore-smith split it
+again — correctly, and under a social queue two hundred items over its cap, by calling it a split rather
+than an invention. Twice is a pattern, and it is written into the verdict as one.
+
+**The Saltpan (BACKLOG-505).** Cycle 140 shipped the residency invariant and discovered on the way past that
+obeying the constitution had switched off a system: put a resident on every ground and 474's *unsettled
+ground* — a read, a lens badge, a migration tier ranked above the richest neighbour, and a settling beat
+written for whoever gets there first — has nothing left to describe. `__unsettled()` returned `[]` on every
+save this park has shipped since. The Validator filed the item against its own cycle; three cycles later it
+is paid.
+
+The park has a **sixth ground**. East out of the Hollow, the far end of the line, and laid out against the
+grain of all five others: where every ground so far is grass with a feature cut into it, the Saltpan is
+crust with grass surviving only as a two-column fringe on the edge you walk in from, plus one brine seep.
+It is empty — not as an oversight, but because nobody has settled it *yet*, which is what 474 meant by the
+word all along. On a fresh save the lens shows six boxes, the unsettled badge is lit for the first time in
+this park's shipping history, the Hollow's resident is already aimed at it, and `settleLine` — written in
+cycle 474, never once fired outside a test — is one migration away from playing for real.
+
+The Structure-smith's better move was the **decline**. 505 offered a second candidate: re-point the tier at
+a ground that has *lost* its last resident. It would have satisfied the item. It would also have shipped a
+frontier that is unreachable at boot, because on a fresh save nothing has lost anybody — the exact defect
+the item was filed about, re-committed in the act of fixing it. That got written down before the build
+rather than discovered after it.
+
+**What the night cost the scene: nothing.** BACKLOG-449 promised in cycle 111 that "a fourth zone is a row".
+It has now been cashed three times, and this time the code plan's one predicted `WorldScene` edit turned out
+to be unnecessary — every reader goes through `zoneChain()` or a table. A promise that survives three
+growths is not a comment; it is infrastructure, and the verdict records it as such.
+
+**Four things nobody set out to find.** The Saltpan holds **exactly one mouth**, by derivation and not by
+tuning: `zoneCapacity` counts grass, the crust yields 30 tiles where every other ground yields 226–294, and
+`ceil(30/60) = 1`. That is the first capacity in this park that says anything at all on a fresh save, and it
+is the precise opposite of the founding sin CHARTER v7 was written against — a constant tuned so its system
+sits dormant. A frontier that could swallow the cast would stop being one by the afternoon. Second, the
+keepsake table silently handed a new ground the Grove's leaf glyph, and only the spec asserting per-ground
+distinctness noticed. Third, the bank tile had been asking for grass when its own comment said it meant
+*not water*; corrected, on all six grounds, to the same claim the hatch now makes about its own tile.
+
+And fourth, the one that became an item. Walk the Saltpan's founder back out and **the Hollow** starts
+reading unsettled — because `isUnsettled` treats only the bowl as an origin, and 343 records a pioneer at
+*arrival*, so every ground whose residents were *spawned* has no pioneer and reads as a place nobody has
+ever lived the moment it empties. The Grove, the Fernreach, the Hollow and the Ridge are all one departure
+away from being declared undiscovered country. QA escalated it instead of asserting around it; the spec
+pins the behaviour out loud; it is filed as **BACKLOG-512**. It is 505's second candidate, half-true by
+accident and pointing the wrong way — and it is exactly the class of thing BACKLOG-501's reachability
+register exists to catch before a spec stumbles into it.
+
+Twenty-four assertions changed across seventeen files, every one read against *updated, never weakened*.
+The one that mattered got **stronger**: `groundsWithoutResidents()` asserted an empty list and now names the
+frontier, so a second empty ground fails where before only a first one did.
+
+Build clean. 2158 unit green. 610 e2e green, one standing red — `mobile-minds`, BACKLOG-430, which fails on
+a clean HEAD and is nowhere near either diff.
+
+Milestone 16 has one lore arc and two structure arcs left. The hatch's mouth is wired; its face is the
+Artist's, tonight.

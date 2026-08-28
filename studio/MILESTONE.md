@@ -26,8 +26,9 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 **Structure arcs:**
 - [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*
 - [x] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503) — *shipped cycle 142: obsidian falls on the Ridge and no other ground, the beacon is raised from it, and a dino with nothing else pulling it climbs for a shard*
-- [ ] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505)
+- [x] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505) — *shipped cycle 143: the Saltpan, a sixth ground east of the Hollow, empty because nobody has settled it yet. The unsettled badge lights on a shipping save for the first time in the park's history, and 449's "a zone is a row" cost the scene zero edits*
 - [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)
+- [ ] The frontier read stops lying about lived-in ground — a ground whose residents were spawned reads unsettled the moment it empties (BACKLOG-512)
 
 ---
 
