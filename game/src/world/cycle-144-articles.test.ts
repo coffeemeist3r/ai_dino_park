@@ -12,13 +12,15 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { ZONES, bareZone, theZone } from './zones';
+import { BOWL_ID, GROVE_ID, ZONES, bareZone, theZone } from './zones';
 import { billCallLine } from './governance';
 import { turnoverLine } from './term';
 import { storesFedLine, storesFedMemory, courierMemory, haulLine, haulMemory } from './foodstore';
 import { discontentLine } from './discontent';
 import { settleMemory, settleEvent, hollowedLine } from './frontier';
 import { providerAside } from '../ai/brain';
+import { providerWordLine } from './providerword';
+import { pioneerLine, pioneerEvent } from './pioneer';
 
 const NAMES = ZONES.map((z) => z.name);
 const ARTICLED = NAMES.filter((n) => n.startsWith('The '));
@@ -77,6 +79,7 @@ describe('every line that names a ground, in both branches (BACKLOG-499)', () =>
     ['providerAside (prickly)', (z) => providerAside('Bramble', z, { agreeableness: 0.05, curiosity: 0.5, energy: 0.5, sociability: 0.5, bravery: 0.5 })],
     ['providerAside (effusive)', (z) => providerAside('Bramble', z, { agreeableness: 0.95, curiosity: 0.5, energy: 0.5, sociability: 0.5, bravery: 0.5 })],
     ['providerAside (even)', (z) => providerAside('Bramble', z)],
+    ['providerWordLine', (z) => providerWordLine('Rex', 'Bramble', z)],
   ];
 
   for (const [label, build] of lines) {
@@ -88,6 +91,19 @@ describe('every line that names a ground, in both branches (BACKLOG-499)', () =>
       expect(bare).toContain('the Pocket Cretaceous');
     });
   }
+});
+
+describe('the id-keyed builders (BACKLOG-499)', () => {
+  // `pioneerLine`/`pioneerEvent` take a zone *id*, so they cannot be driven by the table above — but they
+  // are two of the lines a fresh save shows first, since BACKLOG-512 puts a founding standing in the book
+  // on frame one. Both branches: an article-carrying ground and the one that owns none.
+  it('name the ground once, in lowercase, for both kinds of name', () => {
+    expect(pioneerLine(GROVE_ID)).toBe('first across into the Grove');
+    expect(pioneerLine(BOWL_ID)).toBe('first across into the Pocket Cretaceous');
+    expect(pioneerEvent(GROVE_ID, 'Bramble')).toContain('the Grove');
+    expect(pioneerEvent(GROVE_ID, 'Bramble')).not.toContain('The Grove');
+    expect(pioneerEvent(BOWL_ID, 'Sunny')).toContain('the Pocket Cretaceous');
+  });
 });
 
 /**

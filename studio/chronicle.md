@@ -8945,3 +8945,19 @@ Build clean, 2219 unit green, 618 e2e green. Two e2e reds, both proven pre-exist
 The cycle's sharpest artefact is a spec rather than a source file: `cycle-138-billcall.spec.ts`
 asserted `"🗳️ the The Grove's council calls it"` verbatim, inside a test about the upkeep gate. The
 doubled article had not merely shipped for seven cycles; it had been pinned.
+
+## Cycle 144 — qa
+
+21/21 criteria pass, both tracks APPROVE-recommended. Build clean, 2221 unit green, 619 e2e green
+with the standing `mobile-minds` red (430). QA extended the article coverage to the two id-keyed
+pioneer builders the design's table could not reach, and **narrowed** one e2e assertion that was
+broader than the item's own claim — it demanded a lowercase article on a line that legitimately
+*opens* with a ground ("🛠️ The Grove patched up its 🗿"), where the capital is correct English. The
+honest claim is the one now asserted: no capital article ever appears after a word.
+
+Two findings escalated rather than absorbed. First, `cycle-044-sound` failed serial and passed under
+load — and **fails on a stashed clean HEAD at `--workers=1`**, so it is a second spec wearing
+BACKLOG-430's inverted signature and belongs to the runner, not to either spec. Second, and this is
+the cycle's sharpest: `cycle-138-billcall.spec.ts` asserted `"🗳️ the The Grove's council calls it"`
+**verbatim** — the doubled article was not merely shipped for seven cycles, it was pinned by a green
+spec that was looking at something else entirely.
