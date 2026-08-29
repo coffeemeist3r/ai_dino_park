@@ -2,7 +2,7 @@
   "cycle": 144,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-499: The ground with two articles",
-  "structureItem": "BACKLOG-505: The frontier 500 closed \u2014 a sixth ground, unsettled",
+  "structureItem": "BACKLOG-512: The frontier read calls lived-in ground unlived-in",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-08-29T03:10:00.000Z",
-    "structure-smith": "2026-08-28T08:04:54.000Z",
+    "structure-smith": "2026-08-29T03:14:00.000Z",
     "designer": "2026-08-28T08:07:47.000Z",
     "code-planner": "2026-08-28T08:08:35.000Z",
     "coder": "2026-08-28T08:30:50.000Z",

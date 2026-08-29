@@ -8895,3 +8895,12 @@ Lore track picks **BACKLOG-499**, off-milestone with the justification that Mile
 arcs are all closed: the park has been printing *"the The Grove's council calls it"* on the first
 governance beat of every fresh save since 481, and two source files carry a comment warning about
 that exact hazard without either of them fixing it. Idea Box empty.
+
+## Cycle 144 — structure-smith
+
+Structure Track at 4 open (cap X=4), so drained rather than brainstormed. Picked **BACKLOG-512**:
+`isUnsettled` treats "has a pioneer" as the record of habitation, and nothing records a pioneer at
+*spawn* — so the four grounds the roster wakes on will each declare themselves virgin frontier the
+moment they empty. 501 (the reachability register) is the other open milestone arc and was
+deliberately deferred one cycle: its first entries are the standing founding claims, and one of
+those claims changes tonight. Build the truth, then the instrument that pins it.
