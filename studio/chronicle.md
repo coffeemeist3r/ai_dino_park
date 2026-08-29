@@ -8904,3 +8904,15 @@ Structure Track at 4 open (cap X=4), so drained rather than brainstormed. Picked
 moment they empty. 501 (the reachability register) is the other open milestone arc and was
 deliberately deferred one cycle: its first entries are the standing founding claims, and one of
 those claims changes tonight. Build the truth, then the instrument that pins it.
+
+## Cycle 144 — designer
+
+Both tracks specced. **499** gets one seam — `theZone()` in `zones.ts` — and one decision made once:
+the display names keep their articles, and every sentence that embeds a ground goes through the
+helper, which lowercases an owned article and supplies one where absent. Eight sites say it wrong
+today and ten more dodged it by dropping the article, which is why the spec covers both families and
+adds a grep test so a ninth site cannot be hand-rolled. **512** deletes a special case rather than
+adding one: `foundingPioneers()` records a founding as a founding, `isOrigin` goes away, and the
+visible half — an emptied founded ground reading hollowed and naming who founded it — ships in the
+same cycle rather than as a follow-up. The trap flagged for the Coder: seeding six pioneers must not
+post six arrival beats into the ticker.
