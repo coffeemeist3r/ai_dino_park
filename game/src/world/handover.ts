@@ -11,6 +11,7 @@
  */
 
 import type { SpendPriority, WorkPriority } from './governance';
+import { theZone } from './zones'; // BACKLOG-499
 
 /** The 🧺 mark the beat leads with — the same glyph the `provider` role wears (roles.ts ROLE_ICON). */
 export const HANDOVER_MARK = '🧺';
@@ -50,5 +51,5 @@ export function handoverBeat(
 ): string | null {
   if (!next || next === prev) return null;
   const tail = work ? `${priorityPhrase(priority)} · ${workPhrase(work)}` : priorityPhrase(priority);
-  return `${HANDOVER_MARK} ${next} sets ${zoneName}'s table now — ${tail}`;
+  return `${HANDOVER_MARK} ${next} sets ${theZone(zoneName)}'s table now — ${tail}`;
 }

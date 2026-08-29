@@ -68,8 +68,8 @@ describe('the Saltpan (BACKLOG-505)', () => {
   });
 
   it('reads unsettled while nobody lives there, and never again once somebody does', () => {
-    expect(isUnsettled(0, undefined, false)).toBe(true); // boot: no heads, no pioneer, not the origin
-    expect(isUnsettled(0, 'Bramble', false)).toBe(false); // emptied later — hollowed, not frontier
-    expect(isUnsettled(1, undefined, false)).toBe(false);
+    expect(isUnsettled(0, undefined)).toBe(true); // boot: no heads, no founder recorded
+    expect(isUnsettled(0, 'Bramble')).toBe(false); // emptied later — hollowed (512), not frontier
+    expect(isUnsettled(1, undefined)).toBe(false);
   });
 });

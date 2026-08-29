@@ -28,7 +28,7 @@ async function onlyResident(page: Page, keep: string) {
   }
 }
 
-const TABLE_RE = /sets Pocket Cretaceous's table now/;
+const TABLE_RE = /sets the Pocket Cretaceous's table now/; // BACKLOG-499: the ground goes through theZone
 
 test('the say changing hands lands one logged beat on the keeper ticker', async ({ page }) => {
   const errors: string[] = [];

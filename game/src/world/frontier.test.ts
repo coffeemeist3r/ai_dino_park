@@ -21,8 +21,10 @@ describe('isUnsettled (BACKLOG-474)', () => {
     expect(isUnsettled(0, 'Twitch')).toBe(false);
   });
 
-  it('is false for the emptied origin ground, which records no pioneer by construction (343)', () => {
-    expect(isUnsettled(0, undefined, true)).toBe(false);
+  // BACKLOG-512: the origin exemption is gone. The bowl reads settled because it now *records* a founder
+  // like every other ground the roster wakes on, not because its id is named in the rule.
+  it('is true for an emptied ground with no founder recorded — the rule is two clauses, not three', () => {
+    expect(isUnsettled(0, undefined)).toBe(true);
   });
 });
 
@@ -42,9 +44,9 @@ describe('unsettledNeighbor (BACKLOG-474)', () => {
 
 describe('the settling beat (BACKLOG-474)', () => {
   it('names the ground in the memory and the ground + dino in the ticker line', () => {
-    expect(settleMemory('The Hollow')).toContain('The Hollow');
+    expect(settleMemory('The Hollow')).toContain('the Hollow'); // BACKLOG-499: one article, lowercase
     expect(settleEvent('Twitch', 'The Hollow')).toContain('Twitch');
-    expect(settleEvent('Twitch', 'The Hollow')).toContain('The Hollow');
+    expect(settleEvent('Twitch', 'The Hollow')).toContain('the Hollow');
     expect(settleLine().length).toBeGreaterThan(0);
   });
 

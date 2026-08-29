@@ -18,9 +18,9 @@ type W = Record<string, any>;
 const events = (p: Page) => p.evaluate(() => (window as W).__events() as string[]);
 const unsettled = (p: Page) => p.evaluate(() => (window as W).__unsettled() as string[]);
 const zoneMap = (p: Page) =>
-  p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean }>);
+  p.evaluate(() => (window as W).__zoneMap() as Array<{ id: string; unsettled: boolean; hollowed: boolean }>);
 
-test('a fresh park has exactly one unsettled ground — the frontier — and reads another the moment one empties', async ({ page }) => {
+test('a fresh park has exactly one unsettled ground — the frontier — and an emptied ground does not join it', async ({ page }) => {
   await boot(page);
   // The assertion has now flipped twice, and both flips are the finding. BACKLOG-500 obeyed CHARTER v7's
   // "every ground the player can walk to has life on it at boot" and turned this from ['hollow', 'ridge']
@@ -35,45 +35,46 @@ test('a fresh park has exactly one unsettled ground — the frontier — and rea
   expect(booted.find((e) => e.id === 'bowl')!.unsettled).toBe(false);
   expect(booted.find((e) => e.id === 'saltpan')!.unsettled).toBe(true); // BACKLOG-505: the badge lights
 
-  // Empty the Hollow and it reads unsettled too — the read is heads, not history.
+  // And the assertion below has now flipped a third time, which is BACKLOG-512 and is the point of the
+  // read. It used to say "empty the Hollow and it reads unsettled too — the read is heads, not history",
+  // and that was the defect: `isUnsettled` asked for a pioneer, 343 recorded one only on *arrival*, and
+  // the five grounds the roster wakes on had none — so a ground the cast has lived on since the first
+  // frame declared itself virgin the moment its last resident stepped out. The read is history again.
   await page.evaluate(() => (window as W).__migrate('Murk', 'fernreach'));
-  expect(await unsettled(page)).toEqual(['hollow', 'saltpan']);
-  expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.unsettled).toBe(true);
+  expect(await unsettled(page)).toEqual(['saltpan']);
+  expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.unsettled).toBe(false);
+  expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.hollowed).toBe(true);
 });
 
 test('a migrant aims at the unsettled ground over an inhabited neighbour', async ({ page }) => {
   await boot(page);
-  // Settle the grove, then stand a dino in the Fernreach: its neighbours are now the grove (inhabited,
-  // richer by every read) and the Hollow (still nobody). The frontier tier must take the Hollow.
-  await page.evaluate(() => (window as W).__migrate('Sunny', 'grove'));
-  await page.evaluate(() => (window as W).__migrate('Twitch', 'fernreach'));
-  // BACKLOG-500: the frontier has to be *made* now — both far grounds ship with a resident, so their
-  // residents walk out first. The Ridge stays two hops off, so this is still a test of the frontier tier's
-  // nearest-qualifying read rather than a one-candidate walkover.
-  await page.evaluate(() => (window as W).__migrate('Murk', 'grove'));
-  await page.evaluate(() => (window as W).__migrate('Ember', 'grove'));
-  expect(await unsettled(page)).toEqual(['hollow', 'saltpan', 'ridge']); // chain order — BACKLOG-505
-  expect(await page.evaluate(() => (window as W).__scarcityDest('Twitch') as string)).toBe('hollow');
+  // BACKLOG-512: the frontier can no longer be *made* by emptying a ground — an emptied ground is hollowed,
+  // not virgin — so this test uses the park's one real frontier and a genuinely richer alternative. Stand
+  // Twitch in the Hollow: its neighbours are the Fernreach (inhabited, richer by every read) and the
+  // Saltpan (nobody, ever). The frontier tier must still take the Saltpan.
+  await page.evaluate(() => (window as W).__migrate('Twitch', 'hollow'));
+  expect(await unsettled(page)).toEqual(['saltpan']);
+  expect(await page.evaluate(() => (window as W).__scarcityDest('Twitch') as string)).toBe('saltpan');
 });
 
 test('the first dino in settles it, once, and the ground stops reading unsettled', async ({ page }) => {
   await boot(page);
-  // BACKLOG-500: the Hollow ships with Murk on it, so empty it before founding it — this test is about the
-  // pioneer record (343), and a spawned resident records none.
-  await page.evaluate(() => (window as W).__migrate('Murk', 'fernreach'));
-  await page.evaluate(() => (window as W).__migrate('Twitch', 'hollow'));
+  // BACKLOG-512: emptying a ground no longer un-founds it — a spawned resident now records a founding — so
+  // a *founding* needs a ground nobody has founded, which since BACKLOG-505 is the Saltpan, and which is
+  // what 474 meant by unsettled all along.
+  await page.evaluate(() => (window as W).__migrate('Twitch', 'saltpan'));
 
   const log = (await events(page)).join('\n');
-  expect(log).toMatch(/🚩 Twitch is the first ever to set foot in The Hollow/); // 343 founds
-  expect(log).toMatch(/🌱 Twitch settles The Hollow — nobody has ever lived here/); // 474 settles
+  expect(log).toMatch(/🚩 Twitch is the first ever to set foot in the Saltpan/); // 343 founds (499 wording)
+  expect(log).toMatch(/🌱 Twitch settles the Saltpan — nobody has ever lived here/); // 474 settles
   // Nobody tells the founder its brand-new home has gone quiet (464 must stay silent at peak 1 / heads 1).
   expect(log).not.toMatch(/gone quiet/);
 
-  expect(await unsettled(page)).not.toContain('hollow');
-  expect((await zoneMap(page)).find((e) => e.id === 'hollow')!.unsettled).toBe(false);
+  expect(await unsettled(page)).not.toContain('saltpan');
+  expect((await zoneMap(page)).find((e) => e.id === 'saltpan')!.unsettled).toBe(false);
 
   // A second arrival settles nothing — the founding happened once, forever.
-  await page.evaluate(() => (window as W).__migrate('Sunny', 'hollow'));
-  const settles = (await events(page)).filter((e) => e.includes('settles The Hollow'));
+  await page.evaluate(() => (window as W).__migrate('Sunny', 'saltpan'));
+  const settles = (await events(page)).filter((e) => e.includes('settles the Saltpan'));
   expect(settles).toHaveLength(1);
 });

@@ -92,7 +92,7 @@ describe('food flows between zones (BACKLOG-447)', () => {
 
 describe("the courier's pride (BACKLOG-451)", () => {
   it('names the food emoji and dest zone in the memory', () => {
-    expect(courierMemory('The Grove', '🍓')).toBe('you carried 🍓 to The Grove when its stores ran short');
+    expect(courierMemory('The Grove', '🍓')).toBe('you carried 🍓 to the Grove when its stores ran short'); // BACKLOG-499
   });
   it('shows the 📦 pride bubble', () => {
     expect(courierLine()).toBe('📦');

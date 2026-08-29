@@ -11,7 +11,7 @@ describe('handoverBeat (BACKLOG-467)', () => {
     const beat = handoverBeat(null, 'Sunny', 'The Grove', 'feed');
     expect(beat).not.toBeNull();
     expect(beat).toContain('Sunny');
-    expect(beat).toContain("The Grove's table");
+    expect(beat).toContain("the Grove's table"); // BACKLOG-499
     expect(beat!.startsWith(HANDOVER_MARK)).toBe(true);
   });
 

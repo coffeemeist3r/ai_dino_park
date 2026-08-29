@@ -13,6 +13,7 @@
 
 import { pickFoodToSpend, type FoodPile } from './foodstore';
 import { feedReserve, type SpendPriority } from './governance';
+import { theZone } from './zones'; // BACKLOG-499
 
 /** Mouths a ground must hold short before the word reaches the glass. Two, so one unlucky moment isn't a
  *  grievance — the ticker reads as a standing, not a tic (the 221/226 shape). */
@@ -46,8 +47,7 @@ export function soundsDiscontent(shorts: number, lastDay: number | null, day: nu
   return shorts >= SHORTS_BEFORE_WORD && lastDay !== day;
 }
 
-/** The ticker line. No leading article — two of the three zone names carry their own ("The Grove"), the
- *  same reason `storesFedLine` doesn't add one. */
+/** The ticker line, through `theZone` (BACKLOG-499) — the seam that replaced this line's article dodge. */
 export function discontentLine(zoneName: string): string {
-  return `😟 ${zoneName}'s going hungry while the granary fills`;
+  return `😟 ${theZone(zoneName)}'s going hungry while the granary fills`;
 }

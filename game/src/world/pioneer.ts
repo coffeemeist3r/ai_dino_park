@@ -13,7 +13,7 @@
  * (the visible crossing and the instant relocate) and renders `pioneerLine` into the collection book.
  */
 
-import { zoneById } from './zones';
+import { theZone, zoneById } from './zones';
 
 /** zoneId → the name of the first dino ever to arrive there. */
 export type Pioneers = Record<string, string>;
@@ -36,12 +36,12 @@ export function pioneerOf(map: Pioneers, zoneId: string): string | undefined {
 
 /** The founding standing as it reads in the collection book. */
 export function pioneerLine(zoneId: string): string {
-  return `first across into ${zoneById(zoneId).name}`;
+  return `first across into ${theZone(zoneById(zoneId).name)}`;
 }
 
 /** The one-off ticker line posted the moment a ground is founded. */
 export function pioneerEvent(zoneId: string, name: string): string {
-  return `🚩 ${name} is the first ever to set foot in ${zoneById(zoneId).name}`;
+  return `🚩 ${name} is the first ever to set foot in ${theZone(zoneById(zoneId).name)}`;
 }
 
 /** Which zone (if any) this dino founded — the book only shows the line on the pioneer's own block. */

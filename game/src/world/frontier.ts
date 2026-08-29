@@ -12,25 +12,43 @@
  * ground's (nonexistent) residents look rich. So the frontier lives in the destination pick alone.
  *
  * "Unsettled" is deliberately stricter than "empty": no residents **and** never founded. A ground that
- * hollows out later keeps its pioneer forever, so it reads as *declining* (460) — a place people left — and
+ * hollows out later keeps its pioneer forever, so it reads as *hollowed* — a place people left — and
  * never again as a frontier nobody has seen. Exactly one ground in the park can be unsettled at a time
  * today, and it can only stop being unsettled once.
  *
  * Pure TypeScript (no Phaser): Node-testable. WorldScene supplies the live head counts and the pioneer map.
  */
 
+import { theZone } from './zones'; // BACKLOG-499
+
 /**
  * Is this ground unsettled — nobody living there, and nobody has ever set foot on it? Every argument is
- * derivable at the call site (`zonePopulations`, `pioneerOf`, the origin id), so this module owns no state.
+ * derivable at the call site (`zonePopulations`, `pioneerOf`), so this module owns no state.
  *
- * `isOrigin` is the mirror of 343's construction: a pioneer is recorded at *arrival*, and nothing records
- * one at spawn, so the ground the cast began on has no pioneer and never will. Without this the bowl —
- * emptied by migration, as the cycle-109 specs deliberately arrange — would read as a place nobody has
- * ever lived, which is the one thing it certainly is not. An emptied origin is a *hollowed* ground (460),
- * exactly like an emptied grove.
+ * Two clauses, and it used to be three. The third was an `isOrigin` flag naming the bowl, because 343
+ * records a pioneer at *arrival* and nothing recorded one at spawn — so the ground the cast began on had
+ * no founder and, once emptied by migration, read as a place nobody had ever lived. BACKLOG-512 deleted
+ * that flag by making the record true instead: `foundingPioneers` (founding.ts) records a founding as a
+ * founding, for every ground the roster wakes on. The rule stopped being *which id the save calls home*
+ * and became *what the history says* — which matters because CHARTER v7's spread cast put residents on
+ * five grounds at boot and the flag only ever excused one of them.
  */
-export function isUnsettled(heads: number, pioneer: string | undefined, isOrigin = false): boolean {
-  return heads === 0 && !pioneer && !isOrigin;
+export function isUnsettled(heads: number, pioneer: string | undefined): boolean {
+  return heads === 0 && !pioneer;
+}
+
+/**
+ * The other empty ground (BACKLOG-512): nobody lives here **and** somebody once did. The exact complement
+ * of `isUnsettled` within "no heads", so the two can never both be true and an empty ground always reads
+ * as one of them.
+ *
+ * Distinct from `isDeclining` (460) on purpose: declining is a *live* hollowing, a ground below its peak
+ * but still holding the floor, and it is a modifier on a prosperity tier. This is a ground at zero, where
+ * the tier says nothing worth reading — so, like the unsettled badge, it replaces the line rather than
+ * decorating it.
+ */
+export function isHollowed(heads: number, pioneer: string | undefined): boolean {
+  return heads === 0 && !!pioneer;
 }
 
 /**
@@ -53,7 +71,7 @@ export function unsettledNeighbor(
  * plenty gets re-spread by the cascade rung that owns that token.
  */
 export function settleMemory(zoneName: string): string {
-  return `🌱 first to settle ${zoneName}`;
+  return `🌱 first to settle ${theZone(zoneName)}`;
 }
 
 /** The bubble the founder floats as it arrives on ground nobody has stood on. */
@@ -63,10 +81,20 @@ export function settleLine(): string {
 
 /** The ticker line, posted just after 343's founding line — the founding made a settlement. */
 export function settleEvent(name: string, zoneName: string): string {
-  return `🌱 ${name} settles ${zoneName} — nobody has ever lived here`;
+  return `🌱 ${name} settles ${theZone(zoneName)} — nobody has ever lived here`;
 }
 
 /** The zone-map lens read for an unsettled ground. Lives with its rule, the way `declineGlyph` lives in
  *  decline.ts: an empty ground has no prosperity worth reading, so this replaces the tier badge rather
  *  than sitting beside it. */
 export const UNSETTLED_BADGE = '· unsettled ·';
+
+/** The zone-map lens read for a ground everybody has left (BACKLOG-512). Sits beside its own rule, exactly
+ *  as `UNSETTLED_BADGE` does — the two are read by the same three-way branch and are wrong apart. */
+export const HOLLOWED_BADGE = '· hollowed ·';
+
+/** The one-off ticker line the first time a founded ground empties. It names the founder because that is
+ *  the fact the record now holds, and because it is what tells this beat from the frontier's. */
+export function hollowedLine(zoneName: string, founder: string): string {
+  return `🕸️ ${theZone(zoneName)} stands empty — ${founder} settled it, and nobody is left`;
+}

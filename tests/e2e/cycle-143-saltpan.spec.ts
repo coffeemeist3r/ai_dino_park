@@ -46,16 +46,16 @@ test('the first dino in settles it, once, and it never reads unsettled again', a
   await page.evaluate(() => (window as W).__migrate('Murk', 'saltpan'));
 
   const log = (await events(page)).join('\n');
-  expect(log).toMatch(/🚩 Murk is the first ever to set foot in The Saltpan/); // 343 founds
-  expect(log).toMatch(/🌱 Murk settles The Saltpan — nobody has ever lived here/); // 474 settles
+  expect(log).toMatch(/🚩 Murk is the first ever to set foot in the Saltpan/); // 343 founds (499 wording)
+  expect(log).toMatch(/🌱 Murk settles the Saltpan — nobody has ever lived here/); // 474 settles
 
-  // The Saltpan stops reading unsettled — and the Hollow starts, because Murk was its only resident and a
-  // *spawned* resident records no pioneer (343 records one at arrival). That is a pre-existing property of
-  // the frontier read, not something this item introduced: every ground except the bowl is `isOrigin: false`,
-  // so emptying one makes it read as a place nobody has ever lived. Worth writing down here rather than
-  // hiding behind a looser assertion; it is BACKLOG-505's second candidate ("re-point the tier at a ground
-  // that has lost its last resident") already half-true by accident, and it is not this item's to change.
-  expect(await unsettled(page)).toEqual(['hollow']);
+  // The Saltpan stops reading unsettled — and the Hollow, emptied by Murk's leaving, does **not** start.
+  // This assertion is the inverse of the one that shipped last night, and the flip is BACKLOG-512: 343
+  // recorded a pioneer only on *arrival*, so the five grounds the roster wakes on had no founder and every
+  // one of them read as virgin frontier the moment it emptied. `foundingPioneers` records a founding as a
+  // founding, so an emptied Hollow now reads as what it is — a ground everybody left.
+  expect(await unsettled(page)).toEqual([]);
+  expect(await page.evaluate(() => (window as W).__hollowed() as string[])).toEqual(['hollow']);
   expect((await zoneMap(page)).find((e) => e.id === 'saltpan')!.unsettled).toBe(false);
 
   // And the Saltpan stays settled even after its founder walks back out: unsettled is stricter than empty.

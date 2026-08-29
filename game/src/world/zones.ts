@@ -65,6 +65,33 @@ export function zoneById(id: string): Zone {
 }
 
 /**
+ * Naming a ground inside a sentence (BACKLOG-499) — the one answer, made once.
+ *
+ * Four of the six display names carry their own article (`The Grove`), and for seven cycles the park's
+ * templates prepended another, so every governance beat read *"the The Grove's council calls it"* — on the
+ * first step of a fresh save, since 488 and 492. Two source files went the other way and dropped the
+ * article entirely, each leaving a comment warning the next author off the hazard, so those lines read
+ * "**The** Grove's stores fed Sunny" with a capital article buried mid-sentence. Both families were the
+ * same missing thing: nowhere that says how a ground is *said*.
+ *
+ * The decision: **the names keep their articles.** `The Grove` is the ground's proper name and a heading
+ * or a bare label still renders it whole. Any sentence that embeds a ground goes through here.
+ *
+ * `bareZone` is the stripper and `theZone` is `'the ' + bareZone`, which is why the pair is idempotent and
+ * why the one line that names two grounds in a single phrase (`the Grove–Hollow edge`) has something
+ * honest to call rather than a `slice` of its own — a hand-rolled second copy of this rule is exactly how
+ * the second article arrived.
+ */
+export function bareZone(name: string): string {
+  return name.replace(/^[Tt]he /, '');
+}
+
+/** A ground as it reads inside a sentence: `The Grove` → `the Grove`, `Pocket Cretaceous` → `the Pocket Cretaceous`. */
+export function theZone(name: string): string {
+  return `the ${bareZone(name)}`;
+}
+
+/**
  * The edges that can link to another zone. East↔west was the whole of it for four grounds (BACKLOG-143);
  * BACKLOG-478 adds the vertical pair, because a fifth ground appended to the east end would have been a
  * longer line, not a fork — the Grove's east and west edges were already spoken for, and its north one

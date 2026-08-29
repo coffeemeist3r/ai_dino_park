@@ -47,8 +47,8 @@ describe('provider emerges from banked food (BACKLOG-448)', () => {
 describe('the hauler beat reads (BACKLOG-448)', () => {
   it('names the hauler and the zone whose stores it filled', () => {
     expect(haulLine('Sunny', 'The Fernreach')).toContain('Sunny');
-    expect(haulLine('Sunny', 'The Fernreach')).toContain('The Fernreach');
+    expect(haulLine('Sunny', 'The Fernreach')).toContain('the Fernreach'); // BACKLOG-499
     expect(haulLine('Sunny', 'The Fernreach').startsWith('🧺')).toBe(true);
-    expect(haulMemory('The Fernreach')).toContain('The Fernreach');
+    expect(haulMemory('The Fernreach')).toContain('the Fernreach');
   });
 });

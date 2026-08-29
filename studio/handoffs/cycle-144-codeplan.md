@@ -154,3 +154,66 @@ none.
 ### Estimated touch count
 
 ~12 source files + ~10 spec files, all one-line changes. Within the arc-sized bar; no split.
+
+---
+
+## Shipped
+
+Build order held: structure logic first, article wording second.
+
+**Structure track (BACKLOG-512) — shipped as planned, with one design call made at the keyboard.**
+`foundingPioneers()` walks `foundingResidents()` and takes the first roster name on each ground;
+`isUnsettled` lost its third clause; `isHollowed` is its exact complement within "no heads", so an
+empty ground always says *which kind* of empty it is rather than falling through to a prosperity
+tier it has no business rendering. `seedFoundingPioneers()` folds the map through `recordPioneer`
+and posts nothing — called from `seedFounding()` on a new game and from the load path right after
+`this.pioneers = save.pioneers ?? {}`, so an old save is repaired without a field, a version bump,
+or five founding announcements in its boot ticker. `unsettledNeighbor` was not touched and is
+covered by a test that proves the destination pick was fixed by fixing the predicate.
+
+**Lore track (BACKLOG-499) — shipped, one site wider than specced.** `bareZone` / `theZone` in
+`zones.ts`; every builder the plan named routes through it. **`providerWordLine`
+(`providerword.ts`) was added to the list** — the design enumerated the bare-name family from a
+grep of the two files carrying warning comments, and this third one was doing the same dodge with
+no comment to find it by. Routing it was one line, and leaving one member of the family
+hand-rolled would have been exactly the shape the item exists to end.
+
+The barter line took the `bareZone` half as planned: `the Grove–Hollow edge`, one article, two
+grounds. The grep guard is in `cycle-144-articles.test.ts` and matches the interpolation forms the
+tree actually uses rather than any `the ${`, with a test proving the guard would catch a
+re-introduction and would not fire on `the ${labelOf(food)}`.
+
+**Sentence-initial stayed out of scope, and the e2e proved it was the right call.** `patchedLine`
+opens with the ground — "🛠️ The Grove patched up its 🗿" — where the capital is simply correct. The
+spec was rewritten to assert the honest claim instead: no capital article ever appears *after a
+word*, which is the failure the dodging templates used to produce.
+
+### What the suite said
+
+- `npm run build`: clean.
+- `npx vitest run`: **2219 passed**, 3 skipped, 217 files.
+- `npx playwright test`: **618 passed, 2 failed** — both pre-existing, neither in this diff:
+  - `mobile-minds` long-dialog paging — the standing red (BACKLOG-430).
+  - `cycle-044-sound` "a greeted dino answers in its own voice" — **verified against a stashed,
+    clean HEAD at `--workers=1` and it fails there too**, with this cycle's diff removed entirely.
+    Same signature as 430's re-diagnosis (fails serial, green under load); logged for the Structure
+    Track rather than chased here.
+- `@mlc-ai/web-llm` grep: imported only under `game/src/ai/`.
+
+### Specs this cycle had to repair, and why each one is the item's evidence
+
+Seven e2e specs and six unit files asserted the pre-144 world. None was loosened; each was
+re-pointed at what is now true, with a comment naming the item.
+
+- `cycle-138-billcall.spec.ts` asserted the doubled article **verbatim** — `"🗳️ the The Grove's
+  council calls it"` — inside a spec about something else entirely. That line is 499's best
+  evidence: the bug was not merely shipped, it was pinned.
+- `cycle-119-fourth-ground` and `cycle-120-unsettled` both had to move their *founding* subject to
+  the Saltpan, because emptying a ground no longer un-founds it. `cycle-120`'s first assertion has
+  now flipped three times across three items and the comment records all three.
+- `cycle-131-standings` asked whether a fresh park prints *any* standing; it now asks about the
+  seat, which was always its subject — the pioneer rows are a real founding fact and deleting them
+  through a fixture would have been the dishonest repair.
+- `cycle-143-saltpan`'s Hollow case flipped from "starts reading unsettled" to "still reads
+  settled", exactly as the design required. The spec was written last night to pin the defect out
+  loud rather than assert around it, and it paid for itself in one cycle.

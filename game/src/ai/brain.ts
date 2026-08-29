@@ -17,6 +17,7 @@ import type { TicKind } from '../world/tic';
 import type { Activity } from '../world/activity';
 import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
+import { theZone } from '../world/zones'; // BACKLOG-499
 
 export interface NPCContext {
   name: string;
@@ -211,18 +212,18 @@ export function rattledAside(hunter: string, traits?: Personality): string {
  * a prickly dino concedes it, a warm one makes a whole thing of it, an even-tempered one states it — the
  * *fact* is identical in all three, only the voice moves.
  *
- * No article before `zoneName`: two of the three zone names carry their own ("The Grove"), and `the ${zoneName}`
- * reads as "the The Grove" — the same trap `storesFedLine` documents. Leads with a space so it appends onto
+ * The ground goes through `theZone` (BACKLOG-499) — this line used to drop the article entirely to dodge
+ * "the The Grove", which left a capitalised article mid-sentence. Leads with a space so it appends onto
  * whatever register produced the base line.
  */
 export function providerAside(providerName: string, zoneName: string, traits?: Personality): string {
   if (traits && traits.agreeableness < PRICKLY_MAX) {
-    return ` …and ${zoneName} eats because of ${providerName}. there. I said it.`;
+    return ` …and ${theZone(zoneName)} eats because of ${providerName}. there. I said it.`;
   }
   if (traits && traits.agreeableness > EFFUSIVE_MIN) {
-    return ` Oh — and you should know ${zoneName} eats because of ${providerName}! Nobody puts food away like they do.`;
+    return ` Oh — and you should know ${theZone(zoneName)} eats because of ${providerName}! Nobody puts food away like they do.`;
   }
-  return ` ${zoneName} eats because of ${providerName}, if you're keeping track.`;
+  return ` ${theZone(zoneName)} eats because of ${providerName}, if you're keeping track.`;
 }
 
 /**

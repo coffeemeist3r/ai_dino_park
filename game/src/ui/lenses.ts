@@ -61,6 +61,9 @@ export interface ZoneMapEntry {
   /** Has nobody ever lived here (BACKLOG-474)? An unsettled ground reads as unsettled rather than as a
    *  poor one — its prosperity is 0 by construction. False when unknown (older callers). */
   unsettled: boolean;
+  /** Has everybody left (BACKLOG-512)? A ground at zero heads whose founding *is* recorded — the honest
+   *  complement of `unsettled`, and the reason an emptied ground stopped reading as virgin frontier. */
+  hollowed: boolean;
   /** This ground's council (BACKLOG-479) — its top food-bankers, most-banked first. `[]` when the ground
    *  seats nobody, which is every ground on a fresh save (nobody has banked yet). Built by `zoneCouncil`. */
   council: string[];
@@ -131,6 +134,7 @@ export function zoneMapModel(
   unsettled: Record<string, boolean> = {},
   works: Record<string, WorkPriority | null> = {},
   councils: Record<string, string[]> = {},
+  hollowed: Record<string, boolean> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -145,6 +149,7 @@ export function zoneMapModel(
     declining: declining[id] ?? false, // BACKLOG-460: a zone hollowed below its peak shows a ⬇ marker
     spend: spends[id] ?? null, // BACKLOG-468: how this ground has chosen to spend (absent → no policy shown)
     unsettled: unsettled[id] ?? false, // BACKLOG-474: a ground nobody has ever lived on (absent → false)
+    hollowed: hollowed[id] ?? false, // BACKLOG-512: a ground everybody has left (absent → false)
     work: works[id] ?? null, // BACKLOG-473: what this ground puts its backs into (absent → no policy shown)
     council: councils[id] ?? [], // BACKLOG-479: the ground's seated voices (absent → seats nobody)
   }));

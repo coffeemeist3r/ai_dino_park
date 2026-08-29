@@ -59,7 +59,9 @@ test('THE ITEM — when the ruin is mended, the ground says who is deciding now'
   // `gather` — "fills its stores first" — which is the very value the bill had already recorded under the
   // ground's name, so the old gate's `last !== call` test was false and nothing was said. The council is a
   // different authority that had never been heard, and now it is.
-  expect(after).toEqual(["🗳️ the The Grove's council calls it: fills its stores first"]);
+  // BACKLOG-499: this line asserted "the **The** Grove's council" verbatim — the doubled article the park
+  // printed on every governance beat for seven cycles, pinned by a spec that was about something else.
+  expect(after).toEqual(["🗳️ the Grove's council calls it: fills its stores first"]);
 
   // ...and only once. A second step with nothing changed announces nothing.
   await step(page);

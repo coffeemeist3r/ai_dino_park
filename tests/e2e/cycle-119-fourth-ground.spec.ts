@@ -34,19 +34,23 @@ test('the Hollow farms its own crop through the existing plot path', async ({ pa
 
 test('the first dino into a ground is remembered as its pioneer, in the ticker and the book', async ({ page }) => {
   await boot(page);
-  // Nobody has founded anything on a fresh save — the cast began in the bowl, it did not arrive there.
-  expect(await pioneers(page)).toEqual({});
+  // BACKLOG-512: a fresh save is no longer founding-blank. Every ground the roster wakes on records who
+  // founded it, and the Hollow — where Murk lives from the first frame — is one of them. The subject of this
+  // spec (a *first arrival* takes a founding, once) needs a ground nobody has founded, which since
+  // BACKLOG-505 is the Saltpan.
+  expect((await pioneers(page)).hollow).toBe('Murk');
+  expect((await pioneers(page)).saltpan).toBeUndefined();
 
-  await page.evaluate(() => (window as W).__migrate('Twitch', 'hollow'));
-  expect((await pioneers(page)).hollow).toBe('Twitch');
-  expect((await events(page)).join('\n')).toMatch(/🚩 Twitch is the first ever to set foot in The Hollow/);
+  await page.evaluate(() => (window as W).__migrate('Twitch', 'saltpan'));
+  expect((await pioneers(page)).saltpan).toBe('Twitch');
+  expect((await events(page)).join('\n')).toMatch(/🚩 Twitch is the first ever to set foot in the Saltpan/);
 
   const book = await page.evaluate(() => (window as W).__bookText() as string);
-  expect(book).toContain('first across into The Hollow');
+  expect(book).toContain('first across into the Saltpan');
 
   // A second arrival never takes the founding, and posts no second beat.
-  await page.evaluate(() => (window as W).__migrate('Sunny', 'hollow'));
-  expect((await pioneers(page)).hollow).toBe('Twitch');
-  const beats = (await events(page)).filter((e) => e.includes('first ever to set foot in The Hollow'));
+  await page.evaluate(() => (window as W).__migrate('Sunny', 'saltpan'));
+  expect((await pioneers(page)).saltpan).toBe('Twitch');
+  const beats = (await events(page)).filter((e) => e.includes('first ever to set foot in the Saltpan'));
   expect(beats).toHaveLength(1);
 });

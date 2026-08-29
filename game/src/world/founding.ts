@@ -19,6 +19,7 @@
 
 import { BOWL_ID, GROVE_ID, zoneChain } from './zones';
 import type { Stockpile } from './resource';
+import type { Pioneers } from './pioneer';
 import { ROSTER } from '../entities/roster';
 import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type ProviderCandidate } from '../ai/roles';
 
@@ -123,6 +124,29 @@ export function foundingResidents(): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   for (const id of zoneChain()) out[id] = [];
   for (const r of ROSTER) (out[r.zone ?? BOWL_ID] ??= []).push(r.name);
+  return out;
+}
+
+/**
+ * Who founded each ground in a brand-new park (BACKLOG-512) — the first name the roster lists on it.
+ *
+ * 343 records a pioneer at *arrival*, which was the whole truth while the bowl was the only ground anybody
+ * woke on. CHARTER v7's spread cast ended that: five grounds hold residents from the first frame and none
+ * of them recorded a founder, so `isUnsettled` called every one of them virgin frontier the moment it
+ * emptied. This is the record the park was missing — a founding written down as a founding, so the frontier
+ * read is a claim about history rather than about which id the save calls home.
+ *
+ * Roster order decides: the first dino listed on a ground founded it. Grounds with nobody on them get no
+ * entry, which is what keeps the Saltpan the park's one frontier.
+ *
+ * Walks `foundingResidents()`, so a seventh ground inherits this the day it is added — the same discipline
+ * as `groundsWithoutResidents` below, for the same reason.
+ */
+export function foundingPioneers(): Pioneers {
+  const out: Pioneers = {};
+  for (const [id, names] of Object.entries(foundingResidents())) {
+    if (names.length) out[id] = names[0];
+  }
   return out;
 }
 

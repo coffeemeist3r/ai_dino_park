@@ -28,8 +28,11 @@ test('a fresh park seats nobody and prints no standing line', async ({ page }) =
   await boot(page);
   await emptyGrounds(page); // BACKLOG-492: the founding Grove now seats a council; this spec's subject is not the founding state
 
-  // Nothing has been banked and nothing has been crossed into, so the whole read is inert.
-  expect(await standings(page)).toEqual([]);
+  // Nothing has been banked, so no seat and no provider is derivable. BACKLOG-512: the *pioneer* rows are
+  // no longer inert on a fresh save and must not be — a founding is now recorded as a founding, so the five
+  // grounds the roster wakes on each name a founder. This spec's subject is the seat, so it asks about the
+  // seat rather than about every row on the read.
+  expect((await standings(page)).filter((s) => s.kind !== 'pioneer')).toEqual([]);
   expect(Object.values(await councils(page)).every((s) => s.length === 0)).toBe(true);
   expect(await mapText(page)).not.toContain('👥');
   expect(await bookText(page)).not.toContain('👥 one of');

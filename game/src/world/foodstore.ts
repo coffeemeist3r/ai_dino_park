@@ -11,6 +11,7 @@
  */
 
 import { FOODS } from './foods';
+import { theZone } from './zones'; // BACKLOG-499
 
 /** A zone's banked food: FOODS id → count. Partial like Stockpile — absent id reads 0. */
 export type FoodPile = Partial<Record<string, number>>;
@@ -87,15 +88,15 @@ export function pickFoodToSpend(pile: FoodPile, favoriteId?: string, reserve = 0
   return [...stocked].sort((a, b) => (pile[b] ?? 0) - (pile[a] ?? 0))[0] ?? null;
 }
 
-/** The ticker line when a zone's stores feed one of its own (BACKLOG-444). No leading article: two of the
- *  three zone names already carry their own ("The Grove"), so `the ${zoneName}` reads as "the The Grove". */
+/** The ticker line when a zone's stores feed one of its own (BACKLOG-444). Through `theZone` (499): this
+ *  line used to drop the article to dodge "the The Grove", which read as a capitalised article mid-sentence. */
 export function storesFedLine(zoneName: string, name: string, emoji: string): string {
-  return `${emoji} ${zoneName}'s stores fed ${name}`;
+  return `${emoji} ${theZone(zoneName)}'s stores fed ${name}`;
 }
 
 /** The memory the fed dino keeps; WorldScene folds this into the store. */
 export function storesFedMemory(zoneName: string): string {
-  return `you woke starving and ${zoneName}'s stores saw you through`;
+  return `you woke starving and ${theZone(zoneName)}'s stores saw you through`;
 }
 
 /**
@@ -129,7 +130,7 @@ export function pickFoodCarry(
  * neighbour keeps this, and greets a beat prouder for it (the trace rides the store into `recall` → the next
  * greeting). Twin of `storesFedMemory`. */
 export function courierMemory(zoneName: string, foodEmoji: string): string {
-  return `you carried ${foodEmoji} to ${zoneName} when its stores ran short`;
+  return `you carried ${foodEmoji} to ${theZone(zoneName)} when its stores ran short`;
 }
 
 /** The pride bubble shown over the courier at the crossing (BACKLOG-451). */
@@ -143,10 +144,10 @@ export function courierLine(): string {
  * fed" is a tally of real acts (this, plus the 447 courier carry) rather than an unattributed number.
  */
 export function haulLine(name: string, zoneName: string): string {
-  return `🧺 ${name} put the harvest away in ${zoneName}'s stores`;
+  return `🧺 ${name} put the harvest away in ${theZone(zoneName)}'s stores`;
 }
 
 /** The memory the hauler keeps; WorldScene folds this into the store (twin of `courierMemory`). */
 export function haulMemory(zoneName: string): string {
-  return `you put the harvest away in ${zoneName}'s stores`;
+  return `you put the harvest away in ${theZone(zoneName)}'s stores`;
 }

@@ -81,7 +81,7 @@ describe('soundsDiscontent (BACKLOG-471)', () => {
 describe('discontentLine (BACKLOG-471)', () => {
   it('names the ground, carries the worry glyph, and never doubles an article', () => {
     const line = discontentLine('The Grove');
-    expect(line).toContain('The Grove');
+    expect(line).toContain('the Grove'); // BACKLOG-499
     expect(line).toContain('😟');
     expect(line).toMatch(/going hungry while the granary fills/);
     expect(line).not.toMatch(/the The/i);

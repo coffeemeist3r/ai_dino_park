@@ -1,6 +1,6 @@
 {
   "cycle": 144,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-499: The ground with two articles",
   "structureItem": "BACKLOG-512: The frontier read calls lived-in ground unlived-in",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-08-29T03:14:00.000Z",
     "designer": "2026-08-29T03:22:00.000Z",
     "code-planner": "2026-08-29T03:30:00.000Z",
-    "coder": "2026-08-28T08:30:50.000Z",
+    "coder": "2026-08-29T03:35:00.000Z",
     "qa": "2026-08-28T08:32:06.000Z",
     "validator": "2026-08-28T08:34:41.000Z",
     "artist": "2026-08-28T08:46:45.000Z"

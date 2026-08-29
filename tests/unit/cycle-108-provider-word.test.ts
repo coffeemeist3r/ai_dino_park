@@ -71,7 +71,7 @@ describe('providerAside (BACKLOG-453) — same fact, three voices', () => {
   it('names the same provider and zone in every voice — temperament colours the words, never the fact', () => {
     for (const a of asides) {
       expect(a).toContain('Sunny');
-      expect(a).toContain('The Fernreach');
+      expect(a).toContain('the Fernreach'); // BACKLOG-499
     }
   });
 
@@ -102,7 +102,7 @@ describe('cannedReply composition (BACKLOG-453)', () => {
     const text = cannedReply({ ...base, provider: { name: 'Sunny', zoneName: 'The Grove' } }).text;
     expect(text).toContain('Twitch'); // the gratitude register survives
     expect(text).toContain('Sunny');
-    expect(text).toContain('The Grove');
+    expect(text).toContain('the Grove');
   });
 
   it('composes after hunger and the chase, in that order, without truncating', () => {
@@ -120,7 +120,7 @@ describe('cannedReply composition (BACKLOG-453)', () => {
     expect(hunger).toBeGreaterThan(-1);
     expect(chase).toBeGreaterThan(hunger);
     expect(provider).toBeGreaterThan(chase);
-    expect(text).toContain('The Grove eats because of Sunny');
+    expect(text).toContain('the Grove eats because of Sunny');
   });
 });
 

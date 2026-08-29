@@ -53,15 +53,15 @@ describe('recordPioneer (BACKLOG-343)', () => {
 
 describe('the lines it reads as (BACKLOG-343)', () => {
   it('names the zone in the book line and the ticker beat', () => {
-    expect(pioneerLine(GROVE_ID)).toBe('first across into The Grove');
+    expect(pioneerLine(GROVE_ID)).toBe('first across into the Grove'); // BACKLOG-499
     expect(pioneerEvent(GROVE_ID, 'Mossback')).toContain('🚩');
     expect(pioneerEvent(GROVE_ID, 'Mossback')).toContain('Mossback');
-    expect(pioneerEvent(GROVE_ID, 'Mossback')).toContain('The Grove');
+    expect(pioneerEvent(GROVE_ID, 'Mossback')).toContain('the Grove');
   });
 
   it('shows in the collection book on the pioneer’s block and on no other', () => {
     const lines = bookLines([row('Mossback', { standings: [pioneerLine(GROVE_ID)] }), row('Sunny')]).join('\n');
-    expect(lines).toContain('first across into The Grove');
+    expect(lines).toContain('first across into the Grove');
     expect(lines.match(/first across/g)).toHaveLength(1);
   });
 
@@ -74,9 +74,9 @@ describe('the fourth ground is founded with no code written for it (BACKLOG-343 
   it('records and renders the Hollow through exactly the same path as the grove', () => {
     const map = {};
     expect(recordPioneer(map, HOLLOW_ID, 'Twitch')).toBe(true);
-    expect(pioneerLine(HOLLOW_ID)).toBe('first across into The Hollow');
+    expect(pioneerLine(HOLLOW_ID)).toBe('first across into the Hollow');
     expect(bookLines([row('Twitch', { standings: [pioneerLine(HOLLOW_ID)] })]).join('\n')).toContain(
-      'first across into The Hollow',
+      'first across into the Hollow',
     );
   });
 });

@@ -16,6 +16,7 @@ import { currentModel } from './deviceProbe';
 import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
 import { PARK_LORE } from './persona';
 import type { Activity } from '../world/activity';
+import { theZone } from '../world/zones'; // BACKLOG-499
 
 /**
  * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
@@ -129,7 +130,7 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   // colour the line (the canned fallback carries the deterministic aside, so behavior never depends on the
   // model reaching this). Never the speaker itself: the caller only sets this for someone *else*.
   const provider = ctx.provider
-    ? `${ctx.provider.zoneName} eats because of ${ctx.provider.name}, who keeps its food stores full — you might mention it. `
+    ? `${theZone(ctx.provider.zoneName)} eats because of ${ctx.provider.name}, who keeps its food stores full — you might mention it. `
     : '';
   // BACKLOG-173: the season colours the line — a winter grumble or a spring savour (the canned fallback carries
   // the deterministic aside, so behaviour never depends on the model reaching this). Summer/fall stay quiet.

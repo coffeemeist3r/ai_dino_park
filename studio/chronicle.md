@@ -8927,3 +8927,21 @@ ticker beat, so seeding five founders the lazy way would post five founding anno
 boot log. The lore track picked up one wrinkle the design did not have: the barter line names two
 grounds in one sentence and wants the article once, so the seam splits into `bareZone` and
 `theZone = 'the ' + bareZone` — one rule, two exports, and the idempotence criterion falls out free.
+
+## Cycle 144 — coder
+
+Both tracks landed. **512** records a founding as a founding: `foundingPioneers()` gives every ground
+the roster wakes on a founder, `isUnsettled` loses the `isOrigin` clause that named one id, and
+`isHollowed` becomes its exact complement so an empty ground always says which kind of empty it is.
+The seed goes through `recordPioneer` and not `foundZone`, so a fresh save gains five founder
+standings in the book and gains no announcements in the ticker. **499** put one seam in `zones.ts`
+and routed nineteen line-builders through it — one more than specced, because a third file was doing
+the same article dodge with no warning comment to find it by.
+
+Build clean, 2219 unit green, 618 e2e green. Two e2e reds, both proven pre-existing: the standing
+`mobile-minds` (430), and `cycle-044-sound`, which **fails on a stashed clean HEAD at `--workers=1`**
+— the same fails-serial/passes-parallel signature 430 wears, and a second sighting of it.
+
+The cycle's sharpest artefact is a spec rather than a source file: `cycle-138-billcall.spec.ts`
+asserted `"🗳️ the The Grove's council calls it"` verbatim, inside a test about the upkeep gate. The
+doubled article had not merely shipped for seven cycles; it had been pinned.

@@ -13,6 +13,7 @@
 import type { Personality } from '../ai/personality';
 import { YIELD_MAX, YIELD_REGROW } from './regrowth';
 import { UPKEEP_GLYPH } from './upkeep';
+import { theZone } from './zones'; // BACKLOG-499
 
 /**
  * A zone's stance on its banked food, set by its provider:
@@ -282,7 +283,7 @@ export function calledWork(
 /** The ticker beat when disrepair — not a vote — is what turned a ground to gathering. Marked with the
  *  upkeep glyph rather than the ballot one, because no council decided this and the line shouldn't say it did. */
 export function billCallLine(zoneName: string): string {
-  return `${UPKEEP_GLYPH} the ${zoneName} turns to gathering — its own walls are coming down`;
+  return `${UPKEEP_GLYPH} ${theZone(zoneName)} turns to gathering — its own walls are coming down`;
 }
 
 /** The lens read (twin of `spendGlyph`): 🧺 fills its stores first, 🧱 raises its walls first. A ground with

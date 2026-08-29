@@ -85,7 +85,7 @@ describe('BACKLOG-473 — the ground’s second decision', () => {
 
   it('names both calls on a handover, and leaves the 4-arg beat untouched', () => {
     const four = handoverBeat(null, 'Sunny', 'The Grove', 'feed');
-    expect(four).toBe("🧺 Sunny sets The Grove's table now — mouths before walls");
+    expect(four).toBe("🧺 Sunny sets the Grove's table now — mouths before walls"); // BACKLOG-499
     const five = handoverBeat(null, 'Sunny', 'The Grove', 'feed', 'build');
     expect(five).toContain('mouths before walls');
     expect(five).toContain(workPhrase('build'));

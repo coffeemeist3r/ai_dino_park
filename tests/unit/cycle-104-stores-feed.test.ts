@@ -72,19 +72,19 @@ describe('pickFoodToSpend (BACKLOG-444)', () => {
 describe('the stores-fed wording (BACKLOG-444)', () => {
   it('names the zone and the dino it fed', () => {
     const line = storesFedLine('The Fernreach', 'Thornback', '🥕');
-    expect(line).toContain('The Fernreach');
+    expect(line).toContain('the Fernreach'); // BACKLOG-499
     expect(line).toContain('Thornback');
     expect(line).toContain('🥕');
   });
 
   it('reads clean for a zone name that carries its own article', () => {
-    // ZONES names are 'Pocket Cretaceous' / 'The Grove' / 'The Fernreach' — a leading "the" in the
-    // template would render "the The Grove's stores".
+    // ZONES names are 'Pocket Cretaceous' / 'The Grove' / 'The Fernreach'. BACKLOG-499 made this the
+    // seam's job (`theZone`) rather than each template's; the claim is unchanged and now holds everywhere.
     expect(storesFedLine('The Grove', 'Rex', '🍓')).not.toContain('the The');
     expect(storesFedMemory('The Grove')).not.toContain('the The');
   });
 
   it('leaves the fed dino a memory naming the zone that carried it', () => {
-    expect(storesFedMemory('The Grove')).toContain('The Grove');
+    expect(storesFedMemory('The Grove')).toContain('the Grove');
   });
 });

@@ -41,7 +41,7 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
-import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
+import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, bareZone, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, theZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import {
   bumpTenure,
   resetTenure,
@@ -139,7 +139,7 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_PILES, FOUNDING_BANKED } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers } from '../world/founding';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -207,7 +207,7 @@ import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
 import { zoneStandings, providerOf, councilOf, standingLines, type Standing } from '../world/standings';
 import { heldSeats, reseat, turnoverLine, type Seating } from '../world/term';
-import { isUnsettled, unsettledNeighbor, settleMemory, settleLine, settleEvent, UNSETTLED_BADGE } from '../world/frontier';
+import { isUnsettled, isHollowed, unsettledNeighbor, settleMemory, settleLine, settleEvent, hollowedLine, UNSETTLED_BADGE, HOLLOWED_BADGE } from '../world/frontier';
 import {
   markLeft,
   clearLeft,
@@ -688,6 +688,8 @@ export class WorldScene extends Phaser.Scene {
   private pondSeen: string[] = [];
   /** zone → the first dino ever to arrive there (BACKLOG-343). Persisted; absent → {}. First write wins. */
   private pioneers: Pioneers = {};
+  /** Grounds whose hollowed beat has already been posted (BACKLOG-512); cleared when one repopulates. */
+  private hollowedPosted = new Set<string>();
   /** Which grounds each dino has actually set foot on (BACKLOG-364) — the general form of `groveVisited`.
    *  Seeded with a dino's home zone at spawn; added to at both arrival seams. Persisted. */
   private seenZones: SeenZones = {};
@@ -868,7 +870,7 @@ export class WorldScene extends Phaser.Scene {
           if (gate.announce) {
             // The bill's line, not the ballot's, when the bill is what decided it — no council voted for this.
             this.logEvent(
-              cause === BILL_CAUSE ? billCallLine(z.name) : `🗳️ the ${z.name}'s council calls it: ${workCallMeaning(call)}`,
+              cause === BILL_CAUSE ? billCallLine(z.name) : `🗳️ ${theZone(z.name)}'s council calls it: ${workCallMeaning(call)}`,
             );
           }
         }
@@ -884,7 +886,7 @@ export class WorldScene extends Phaser.Scene {
       const spendGate = recordCall(this.callLog, `${z.id}:spend`, COUNCIL_CAUSE, spend);
       this.callLog = spendGate.log;
       if (!spendGate.announce) continue;
-      this.logEvent(`🗳️ the ${z.name}'s council calls it: ${spendCallMeaning(spend)}`);
+      this.logEvent(`🗳️ ${theZone(z.name)}'s council calls it: ${spendCallMeaning(spend)}`);
     }
   }
   /**
@@ -1687,6 +1689,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__teach = (a: string, b: string) => this.teachBeat(a, b);
     // BACKLOG-474: which grounds nobody has ever lived on, in chain order.
     (window as any).__unsettled = () => zoneChain().filter((z) => this.isZoneUnsettled(z));
+    (window as any).__hollowed = () => { this.checkHollowed(); return zoneChain().filter((z) => this.isZoneHollowed(z)); }; // BACKLOG-512
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
       if (d) {
@@ -1897,6 +1900,7 @@ export class WorldScene extends Phaser.Scene {
     // whole of governance — two votes, a term, a turnover beat, two lens glyphs — is unreachable on a fresh
     // save, because `zoneCouncil` seats bankers and nobody has banked. `??=` so a restored tally always wins.
     for (const [name, units] of Object.entries(FOUNDING_BANKED)) this.foodBanked[name] ??= units;
+    this.seedFoundingPioneers(); // BACKLOG-512: every ground the roster wakes on records who founded it
     this.syncBanks(); // BACKLOG-504: the founding Grove's heap stands on the ground from the first frame
     this.drawHatch(); // BACKLOG-510: and the hatch is on the ground before the player presses H
     this.applyObjectVisibility(); // the 480 alpha pass — the ruin reads as disrepair from the first frame
@@ -3579,9 +3583,50 @@ export class WorldScene extends Phaser.Scene {
 
   /** Is this ground unsettled (BACKLOG-474) — nobody living there and nobody has ever founded it? */
   private isZoneUnsettled(zoneId: string): boolean {
-    // BOWL_ID is the ground the cast spawns on — 343 records no pioneer there by construction, so the
-    // origin has to be named here or an emptied bowl would read as never-inhabited.
-    return isUnsettled(this.zoneHeads()[zoneId] ?? 0, pioneerOf(this.pioneers, zoneId), zoneId === BOWL_ID);
+    // BACKLOG-512: no origin exemption any more. Every ground the roster wakes on records a founder
+    // (`seedFoundingPioneers`), so "nobody has ever lived here" is a fact about the history rather than
+    // about which id the save calls home.
+    return isUnsettled(this.zoneHeads()[zoneId] ?? 0, pioneerOf(this.pioneers, zoneId));
+  }
+
+  /** Is this ground hollowed (BACKLOG-512) — emptied, but somebody founded it? The other half of empty. */
+  private isZoneHollowed(zoneId: string): boolean {
+    return isHollowed(this.zoneHeads()[zoneId] ?? 0, pioneerOf(this.pioneers, zoneId));
+  }
+
+  /** Which grounds currently read hollowed — the map lens's read, and the `__hollowed` hook. */
+  private hollowedZones(): Record<string, boolean> {
+    const out: Record<string, boolean> = {};
+    for (const z of zoneChain()) out[z] = this.isZoneHollowed(z);
+    return out;
+  }
+
+  /**
+   * Record a founding as a founding (BACKLOG-512). Seeds the pioneer map from the shipping roster, through
+   * `recordPioneer` so first-write-wins holds: a ground that already recorded an *arrival* keeps that name,
+   * and only the never-recorded founding grounds are filled.
+   *
+   * Deliberately **not** routed through `foundZone` — that posts 343's arrival beat, and five founding
+   * announcements in the boot ticker would be a worse lie than the one this fixes. The founders are a fact
+   * the park has always been true to; they were simply never written down.
+   */
+  private seedFoundingPioneers(): void {
+    for (const [zone, name] of Object.entries(foundingPioneers())) recordPioneer(this.pioneers, zone, name);
+  }
+
+  /**
+   * The ground everybody left (BACKLOG-512). Posts once the first time a founded ground reads empty, naming
+   * the dino who settled it. The posted set clears for a ground that regains a head, so a place that
+   * repopulates and empties again can sound afresh — the `checkLastOne` dedup discipline, one step further
+   * out: that beat fires at one resident, this one at none.
+   */
+  private checkHollowed(): void {
+    for (const z of zoneChain()) {
+      if (!this.isZoneHollowed(z)) { this.hollowedPosted.delete(z); continue; }
+      if (this.hollowedPosted.has(z)) continue;
+      this.hollowedPosted.add(z);
+      this.logEvent(hollowedLine(zoneById(z).name, pioneerOf(this.pioneers, z) ?? ''));
+    }
   }
 
   /** Which grounds currently read unsettled — the map lens's read, and the `__unsettled` hook. */
@@ -3872,6 +3917,7 @@ export class WorldScene extends Phaser.Scene {
       this.unsettledZones(), // BACKLOG-474: a ground nobody has ever lived on reads as unsettled, not poor
       this.zoneWorks(), // BACKLOG-473: what each ground puts its backs into (🧺/🧱 marker)
       this.zoneCouncils(), // BACKLOG-479: the ground's seated voices (👥N beside the head count)
+      this.hollowedZones(), // BACKLOG-512: a ground everybody has left reads hollowed, not unsettled and not poor
     );
   }
 
@@ -3935,12 +3981,14 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-477: the two governance glyphs (468's 🍽️/🏦, 473's 🧺/🧱) come *off* this line — they were
       // the fourth and fifth reads on it, and they are the same kind of fact — and land on their own row
       // below, in one table-driven order with a legend in the [?] panel.
-      let txt = e.unsettled
-        ? `${e.name}\n${e.count} 🦕\n${UNSETTLED_BADGE}`
+      // BACKLOG-512: and a ground everybody *left* gets the other empty read. The two are complements
+      // within "no heads", so an empty ground always says which kind of empty it is.
+      let txt = e.unsettled || e.hollowed
+        ? `${e.name}\n${e.count} 🦕\n${e.unsettled ? UNSETTLED_BADGE : HOLLOWED_BADGE}`
         : `${e.name}\n${e.count} 🦕${e.council.length ? `  👥${e.council.length}` : ''}\n${prosperityBadge(e.tier)}${e.declining ? ` ${declineGlyph()}` : ''}  🌾${e.harvested}`;
       // BACKLOG-479: the council rides the head-count line — it *is* a fact about who lives here, and it
       // costs no new row, so the box height (and the 477 governance row below it) is untouched.
-      const gov = e.unsettled ? '' : governanceLine([e.spend, e.work]); // BACKLOG-477
+      const gov = e.unsettled || e.hollowed ? '' : governanceLine([e.spend, e.work]); // BACKLOG-477 / 512
       if (gov) txt += `\n${gov}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
@@ -4925,9 +4973,13 @@ export class WorldScene extends Phaser.Scene {
       this.setPile(zoneA, bankResource(this.pileFor(zoneA), swap.bGives));
     }
     for (const d of [a, b]) if (this.inView(d)) this.flashFeed(d, '🔄');
-    this.memory = remember(this.memory, a.name, `bartered with ${b.name} at the ${zoneById(zoneB).name} edge`);
-    this.memory = remember(this.memory, b.name, `bartered with ${a.name} at the ${zoneById(zoneA).name} edge`);
-    this.logEvent(`🔄 ${a.name} and ${b.name} bartered at the ${zoneById(zoneA).name}–${zoneById(zoneB).name} edge`);
+    this.memory = remember(this.memory, a.name, `bartered with ${b.name} at ${theZone(zoneById(zoneB).name)} edge`);
+    this.memory = remember(this.memory, b.name, `bartered with ${a.name} at ${theZone(zoneById(zoneA).name)} edge`);
+    this.logEvent(
+      // BACKLOG-499: two grounds, one article — `bareZone` for the far side of the en-dash rather than a
+      // second `the`, which is the shape that put a doubled article in this line in the first place.
+      `🔄 ${a.name} and ${b.name} bartered at ${theZone(zoneById(zoneA).name)}–${bareZone(zoneById(zoneB).name)} edge`,
+    );
     this.refreshPlaque();
     void this.saveGame();
     return true;
@@ -6144,6 +6196,7 @@ export class WorldScene extends Phaser.Scene {
     this.seedPlentyWord(); // BACKLOG-458: a thriving zone's residents get first-hand word of plenty to spread
     this.seedYearning(); // BACKLOG-362: a dino long away from a ground it has stood on starts to miss it
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
+    this.checkHollowed(); // BACKLOG-512: ...and a zone that loses that last resident says whose ground it was
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (rand() >= MIGRATE_CHANCE) return;
@@ -7630,7 +7683,10 @@ export class WorldScene extends Phaser.Scene {
       for (const g of this.granaries) this.drawGranary(g);
       this.groveVisited = save.groveVisited ?? []; // BACKLOG-339: who's already been to the grove (absent → none)
       this.pondSeen = save.pondSeen ?? []; // BACKLOG-359: who's already seen the pond (absent → none)
-      this.pioneers = save.pioneers ?? {}; // BACKLOG-343 (absent → {}; no back-fill)
+      this.pioneers = save.pioneers ?? {}; // BACKLOG-343 (absent → {})
+      // BACKLOG-512: back-fill the foundings a pre-144 save never recorded. `recordPioneer`'s first-write-wins
+      // means a ground that recorded a real arrival keeps that name — this only fills the silence.
+      this.seedFoundingPioneers();
       // BACKLOG-364: seen-grounds restore, then re-seed from the restored home zones — a save written
       // before this item knows nothing, and the honest floor is "a dino has seen where it lives".
       this.seenZones = save.seenZones ?? {};

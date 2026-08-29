@@ -91,7 +91,9 @@ export function reseat(
  * that this park's features collide in the glyph space. A ground that seats nobody after a turnover says so
  * rather than trailing off into an empty list.
  */
+import { theZone } from './zones'; // BACKLOG-499
+
 export function turnoverLine(zoneName: string, seated: readonly string[]): string {
-  if (!seated.length) return `🗳️ the ${zoneName}'s council empties — nobody holds a seat now`;
-  return `🗳️ the ${zoneName}'s council turns over: ${seated.join(', ')}`;
+  if (!seated.length) return `🗳️ ${theZone(zoneName)}'s council empties — nobody holds a seat now`;
+  return `🗳️ ${theZone(zoneName)}'s council turns over: ${seated.join(', ')}`;
 }

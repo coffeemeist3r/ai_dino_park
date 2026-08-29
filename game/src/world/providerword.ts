@@ -11,6 +11,7 @@
 
 import { remember, type MemoryStore } from '../ai/memory';
 import { RUMOR_MARK } from '../social/gossip';
+import { theZone } from './zones'; // BACKLOG-499
 
 /**
  * The word a listener remembers. Carries `RUMOR_MARK` so it reads as heard-not-witnessed and can't
@@ -19,7 +20,7 @@ import { RUMOR_MARK } from '../social/gossip';
  * No article before `zoneName` — "The Grove" already carries its own (see `storesFedLine`).
  */
 export function providerWordLine(speaker: string, provider: string, zoneName: string): string {
-  return `${speaker} ${RUMOR_MARK} ${zoneName} eats because of ${provider}`;
+  return `${speaker} ${RUMOR_MARK} ${theZone(zoneName)} eats because of ${provider}`;
 }
 
 /**
