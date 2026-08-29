@@ -59,9 +59,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > system that displays it, but only when the rig renders standalone (a prop/sprite
 > `bakePropArt` can resolve in a test); true terrain that needs a host stays deferred.
 
-- [x] BACKLOG-513 [art] The founder's stake — a prop rig for the mark a ground's first-comer leaves: a driven stake with a bound cross-piece, weathered by the ground it stands on. BACKLOG-512 records a founding as a founding, so every ground gains a pioneer for the first time; a pioneer with no mark on the ground is another true, invisible fact. Standalone (`bakePropArt` resolves it in a test), so the cycle-91 stash-ahead rule permits drawing it ahead of the tile that plants it. Builds on 512 / 343.
-- [x] BACKLOG-514 [art] The stake that outlived its ground — the leaning variant of 513, for a ground that *was* settled and has emptied (the `hollowed` read, 460): same rig, canted, the binding gone slack, the ground's own colour crept up the shaft. The pair is the point — one glyph that reads *somebody got here first* and *and then they left* depending only on which variant is baked, so a hollowed ground is legible at a glance rather than through a lens. Builds on 513 / 460.
-
+_(empty — the two founder's-stake rigs seeded and drawn the same night, cycle 144. Every prop key and every terrain kind in the park is drawn. The next Lore-smith seeds here.)_
 
 ## Infra
 
@@ -683,13 +681,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-495 [infra] The fixture nobody names — cycle 135 spread the cast across five grounds and turned ~15 e2e specs red that had been quietly relying on a co-located cast; cycle 136 seeded one fallen cairn and two stone into the Grove and turned **16** red, of which only two were about upkeep. Both times the repair was the same: a helper (`gatherToBowl`, then `emptyGrounds`) that each spec calls out loud so the assumption lives in the spec that depends on it. That is the right fix twice and the wrong shape three times — the next founding constant to move will find a third population, and there is now no single place that says *what founding state a spec wants*. Give the suite a **declared founding fixture**: one `foundingState({ cast, grounds, piles })`-style seam a spec opts into by name (`'v7-spread'`, `'all-bowl'`, `'empty-grounds'`), defaulting to whatever production actually ships, so moving a founding constant costs a fixture edit rather than an archaeology pass over 550 specs. The point is not tidiness — it is that a fixture nobody names becomes an assertion nobody knows they are making, and the only thing that surfaces it is moving the constant, which is exactly the thing CHARTER v7 wants the studio doing *more* often. Builds on 488 / 486 / 431. **(2026-08-27, cycle 142: a third sighting, in a dev hook rather than a spec. `__seedGranaryReady` held a hardcoded `{branch: 3, stone: 3}` beside the `GRANARY_RECIPE` it was mirroring, so adding one unit to that recipe reddened three upkeep specs and two bill-call specs about a granary none of them was testing. Fixed at the hook, but the class is this item's: a founding-shaped claim written down twice goes stale in one of the two places, and moving the constant is the only thing that ever surfaces it — which is exactly what CHARTER v7 wants the studio doing more of.)**
 
-## Cycle 138 lore additions — none (both queues at cap)
-
-> The social queue stood at 214 open (cap 12) and the art queue at 3 (cap 3), so the Lore-smith seeded
-> nothing and themed the cycle instead. This block holds what QA found while verifying.
-
-
-
 ## Cycle 139 structure additions — the founding park, said out loud (2026-08-24)
 
 > The Structure Track stood at **2 open**, below the cap of X=4, so the Structure-smith brainstormed before
@@ -706,12 +697,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > measurement that says why the sharp version needs its own cycle rather than a rider on somebody else's.
 
 - [ ] BACKLOG-509 [core] The tithe — 503 gave the Ridge an exclusive resource and gave exactly two things a reason to want it: the Ridge's own beacon, and one unit in `GRANARY_RECIPE`. So a ground that has fetched one shard has no reason to fetch a second until it is granary-ready, and a park with a granary on every ground has no reason to climb again ever. The version of 503 with teeth is a **tithe**: one obsidian folded into `structureRecipe` for every ground but the Ridge, so **no skyline anywhere in this park goes up without somebody having made the climb** — the branch becomes load-bearing for the whole built landscape rather than for one storehouse. It was specced out of scope deliberately, and cycle 142 then supplied the evidence for why, in the shape BACKLOG-493 was filed: the *milder* change — one unit added to one recipe, plus a migration tier — turned thirteen e2e specs red in a single run, five of them about a granary none of them was testing. The tithe reaches further: `CRAFT_RECIPE` is what `directedCarry` (356), `pressuredCarry` (429) and `barterSwap` (358) all read as their **deficit driver**, so folding a kind into it changes what every carry in the park considers a shortfall, not just what a cairn costs. Two things to decide before building, both of which 142 leaves open: whether the founding grounds ship a shard each (so the fresh park still builds while the first errand walks) or start blocked (so the first landmark in a new park is *earned* by a climb the player watches) — and whether an unpaid tithe should defer a build or fail it. The reachability bar applies to the answer: a tithe that stalls every skyline in the park until an errand completes is a system made visible by making four others inert, which is the exact mistake 503 made once tonight and caught. Builds on 503 / 429 / 356 / 358 / 493.
-
-## Cycle 143 — structure (filed by the Validator)
-
-> Filed by the Validator rather than a smith: cycle 143's QA escalated it out of the Saltpan's own e2e
-> rather than asserting around it. The Structure Track stood at 4 open (at the cap) when 505 closed, so
-> this refills to 4 rather than adding a fifth.
 
 ## Cycle 144 — filed by the Validator (2026-08-29)
 

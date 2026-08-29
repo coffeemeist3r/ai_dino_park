@@ -9073,3 +9073,28 @@ Full suite after the fire: build clean, **2242 unit green**, art e2e green. Art 
 under an instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with
 the same reject-your-first-draft discipline and the same unit + e2e gates. Two subjects, within the
 routine's "1–2 per fire".
+
+## Cycle 144 — housekeeping
+
+Four closed bullets archived — 499 and 512 by the Validator, 513 and 514 by the Artist hours later —
+and **two whole sections went with them**: the cycle-138 lore block, which had held only 499, and the
+cycle-143 structure block, which had held only 512 and emptied the night after it was written. That
+is the second cycle running in which a Validator-filed block closed within one cycle of being filed.
+
+`## Art` emptied again and stayed put again, for the reason cycle 143 wrote down: its body is not a
+queue, it is the cycle-91 stash-ahead rule, which routine 7 reads every fire. A section header is a
+queue; a section blockquote can be law. Kept with an explicit "(empty)" note.
+
+The working backlog carries **0 closed bullets and 214 open items**, of which 4 sit on the Structure
+Track (495, 501, 509, **515**) — back at the cap of X=4 the moment 512 closed, so the next
+Structure-smith drains rather than brainstorms for the fifth cycle running. The art queue is at **0**
+for the second cycle running: seeded at 0 this morning, drawn to 0 tonight, which is a cadence rather
+than a stall.
+
+Final gates on the closing tree: build clean, **2242 unit green** across 218 files, **619 e2e green**.
+Two e2e reds, and tonight they have one name between them for the first time: `mobile-minds` and
+`cycle-044-sound`, both proven to fail at `--workers=1` on a stashed clean HEAD, both now filed as
+**BACKLOG-515** — the runner's serial/parallel split, which BACKLOG-430 has been half-describing since
+cycle 130 and which is a property of the run rather than of either spec.
+
+Milestone 16 has one arc left: the reachability register (501).
