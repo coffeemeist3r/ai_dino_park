@@ -28,7 +28,7 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 - [x] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503) — *shipped cycle 142: obsidian falls on the Ridge and no other ground, the beacon is raised from it, and a dino with nothing else pulling it climbs for a shard*
 - [x] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505) — *shipped cycle 143: the Saltpan, a sixth ground east of the Hollow, empty because nobody has settled it yet. The unsettled badge lights on a shipping save for the first time in the park's history, and 449's "a zone is a row" cost the scene zero edits*
 - [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)
-- [ ] The frontier read stops lying about lived-in ground — a ground whose residents were spawned reads unsettled the moment it empties (BACKLOG-512)
+- [x] The frontier read stops lying about lived-in ground — a ground whose residents were spawned reads unsettled the moment it empties (BACKLOG-512) — *shipped cycle 144, by deleting a special case rather than adding four more: `foundingPioneers()` records a founding as a founding and `isOrigin` comes out. The half that meets the bar is the replacement read — an emptied ground says `· hollowed ·` and names who settled it — and the half nobody expected is the book, which now names a founder for five grounds it had never named anybody for on any save this park has shipped*
 
 ---
 

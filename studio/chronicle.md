@@ -8961,3 +8961,67 @@ BACKLOG-430's inverted signature and belongs to the runner, not to either spec. 
 the cycle's sharpest: `cycle-138-billcall.spec.ts` asserted `"🗳️ the The Grove's council calls it"`
 **verbatim** — the doubled article was not merely shipped for seven cycles, it was pinned by a green
 spec that was looking at something else entirely.
+
+## Cycle 144 — validator: lore APPROVED / structure APPROVED
+
+**The park learned to say its own place names, and wrote down who got here first.**
+
+Two items, and they turn out to be the same sentence in two registers: *the park knew a thing and had
+never written it down anywhere that could be checked.*
+
+**The lore track fixed a typo, and the typo turns out to be the most-read text in the game.** Four of
+the six grounds carry their article inside their name — `The Grove`, `The Hollow`, `The Sunward
+Ridge`, `The Saltpan` — and since cycle 481 the templates have put another one in front. So for seven
+cycles, every council call, every upkeep bill, every turnover in this park has announced itself as
+**"the The Grove's council calls it"**, inside the first minute of every save anybody has ever opened.
+
+The item warned that the fix was not a `slice` at the loudest call site, "because patching the
+loudest one is how the second article got there in the first place." It was right, and it undercounted:
+the build found **nineteen** sites, in two families that had solved the same problem in opposite and
+equally wrong directions. Eight prepended a second article. Eleven *dodged* it by dropping the article
+altogether, leaving a capital `The` buried mid-sentence — "sets **The** Grove's table now" — and two of
+those files carried a source comment warning the next author about the trap, directly above a line that
+had produced the other half of it.
+
+One decision, made once. The names keep their articles, because `The Grove` is the ground's proper name
+and a heading is a name rather than a sentence. Every *sentence* now goes through `theZone`. The two
+warning comments are deleted and a repo-wide grep test stands where they were, walking every source file
+and failing on a hand-rolled article — a comment that documents a hazard the codebase could check was
+always a test nobody had written.
+
+And the cycle's sharpest find is in a test rather than in the source. `cycle-138-billcall.spec.ts`
+asserted the doubled article **verbatim** — the exact string, quoted, inside a spec about the upkeep
+gate. The defect had not merely shipped for seven cycles; it had been *pinned*, by a green suite that
+was looking at something else. Worth saying plainly, because it generalises past this item: a green
+suite is evidence that behaviour is stable, never that it is right. CHARTER v7 exists because of a
+system nobody could reach. This is its twin — a defect everybody could see, and nothing could report.
+
+**The structure track deleted a special case rather than adding four more.** `isUnsettled` asked
+whether a ground had residents, whether anybody had ever founded it, and — a flag naming exactly one
+zone id — whether it was the bowl. That exemption existed because the pioneer record is written on
+*arrival*, and the cast does not arrive where it wakes up. It was sound while the bowl was the only
+ground anybody woke on, and CHARTER v7's spread cast ended that a month ago: five grounds hold
+residents from the first frame and not one of them had a founder. So the park was one migration away
+from declaring ground its cast has lived on since frame zero to be a place nobody has ever seen — badge
+lit, and the frontier tier aiming a migrant at it *over* an inhabited neighbour.
+
+The easy repair was to name five ids instead of one, and it is precisely the candidate BACKLOG-505
+declined in writing three cycles ago. What shipped makes the record true instead: **a founding is
+recorded as a founding**, for every ground the roster wakes on, after which the flag has nothing left
+to excuse and comes out. The rule stopped being a claim about which id the save calls home and became a
+claim about history.
+
+The best part is the part nobody planned. The collection book has rendered a founder's line since cycle
+119, and on every save this park has ever shipped it rendered it *for nobody*, because nobody had
+arrived anywhere. Open the book on the first frame tonight and Bramble founded the Grove, Murk the
+Hollow, Ember the Ridge. Five standings, no walk, no day boundary, no model. And a ground that does
+empty no longer lies about it — it reads `· hollowed ·` and says whose ground it was.
+
+Build clean. **2221 unit green, 619 e2e green** with the standing `mobile-minds` red. Two items filed:
+**515**, because a second spec is now failing serial and passing under load and that makes it the
+runner's property rather than either spec's, and **516**, because the book currently tells Bramble it
+was "first across into the Grove" and Bramble has never crossed anything.
+
+Milestone 16 has **one arc left** — the reachability register (501), which the Structure-smith deferred
+in writing tonight on the grounds that its first entries are the founding claims and one of them
+changed a few hours later. Build the truth, then the instrument that pins it.
