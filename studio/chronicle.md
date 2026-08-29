@@ -8916,3 +8916,14 @@ adding one: `foundingPioneers()` records a founding as a founding, `isOrigin` go
 visible half — an emptied founded ground reading hollowed and naming who founded it — ships in the
 same cycle rather than as a follow-up. The trap flagged for the Coder: seeding six pioneers must not
 post six arrival beats into the ticker.
+
+## Cycle 144 — code-planner
+
+Build order set: structure first, lore second, because both tracks edit `pioneer.ts` and
+`frontier.ts` and the lore track only rewords what the structure track rewrites. The plan's two
+sharpest notes are both traps rather than designs — `isUnsettled`'s third parameter has a default,
+so dropping it compiles silently at every caller that omitted it, and `recordPioneer` is wired to a
+ticker beat, so seeding five founders the lazy way would post five founding announcements into the
+boot log. The lore track picked up one wrinkle the design did not have: the barter line names two
+grounds in one sentence and wants the article once, so the seam splits into `bareZone` and
+`theZone = 'the ' + bareZone` — one rule, two exports, and the idempotence criterion falls out free.
