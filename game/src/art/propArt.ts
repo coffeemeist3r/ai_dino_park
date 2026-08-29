@@ -1177,6 +1177,89 @@ const HATCH_RIG: PropRig = {
   },
 };
 
+// ── Founder's stake 🪧 (BACKLOG-513) — the mark a ground's first-comer leaves ──────────────────
+// The park had no object for a founding until BACKLOG-512 recorded one. Every other prop here is
+// either grown or piled; this is the first thing in the world that is purely a *claim* — a post
+// driven into the ground and a cross-piece lashed to it, which is what people have always made when
+// they wanted somewhere to say "this is ours" and had only wood.
+//
+// The first draft was a plain post. It read as a branch stuck upright — the park already has a branch
+// rig, and a stake that is only a stick is that rig rotated. The cross-piece is what makes it a
+// *sign*: two axes crossing is the oldest human mark there is, and it is the only detail that
+// survives 32px. The binding is the second: rope at the crossing says somebody tied it, which is the
+// difference between a marker and driftwood.
+const FOUNDER_STAKE_GRID: ReadonlyArray<string> = [
+  '................',
+  '......oooo......',
+  '......oLwo......',
+  '......oLwo......',
+  '...oooooooooo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oooooooooo...',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '......oooo......',
+];
+
+const FOUNDER_STAKE_RIG: PropRig = {
+  size: 16,
+  grid: FOUNDER_STAKE_GRID,
+  palette: {
+    o: 0x3a2410, // the branch rig's own bark outline — this is made of the wood the park gathers
+    w: 0x8a5a2b, // post body: fresh-cut, still warm
+    L: 0xb98a4e, // the lit edge down the post's left, so it reads round rather than flat
+    C: 0x74491f, // cross-piece, a shade under the post so the two axes separate at 32px
+    b: 0xd9c48a, // the binding — pale fibre, the only non-wood value, and the whole "somebody tied this"
+  },
+};
+
+// ── The stake that outlived its ground 🪧 (BACKLOG-514) — the same mark, on ground everybody left ──
+// Same rig, three things changed and nothing else: it **cants**, the binding has gone slack, and the
+// ground has crept up the shaft. The pair is the point — one glyph reads *somebody got here first*
+// and *and then they left* depending only on which variant is baked, so BACKLOG-512's hollowed read
+// (a founded ground at zero heads) is legible from the map without opening a lens.
+//
+// The cant is the load-bearing half and the first draft got it wrong: it leaned by drawing the post
+// crooked in place, which reads as a badly-drawn upright. A lean has to *travel* — the top of the
+// post sits four columns off the base — and the eye reads the diagonal before it reads anything else.
+const FOUNDER_STAKE_HOLLOWED_GRID: ReadonlyArray<string> = [
+  '................',
+  '..........oooo..',
+  '..........oLwo..',
+  '..........oLwo..',
+  '...ooooooooooo..',
+  '...oCCCCCCbbCo..',
+  '...oCCCCCCCCCo..',
+  '...ooooooooooo..',
+  '........oLwo....',
+  '........oLwo....',
+  '.......oLwo.....',
+  '.......oLwo.....',
+  '.......oLwo.....',
+  '......oLwo......',
+  '......oggo......',
+  '.....oggggo.....',
+];
+
+const FOUNDER_STAKE_HOLLOWED_RIG: PropRig = {
+  size: 16,
+  grid: FOUNDER_STAKE_HOLLOWED_GRID,
+  palette: {
+    o: 0x3a2410, // the same outline as its upright twin — one object, two states, not two objects
+    w: 0x8a7f6e, // the colour has gone out of the wood: same value, almost none of the saturation
+    L: 0xada08b,
+    C: 0x766b5c,
+    b: 0xbdb49c, // the cord, sun-bleached — and two pixels of it where the upright has six
+    g: 0x6f8a4a, // the ground climbing the shaft: the only green in either rig, and the only thing growing
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1225,6 +1308,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // draw-a-rig-or-draw-nothing control moves off the prop registry entirely and onto `NO_RIG_CONTROL`,
   // the name nothing can ever claim (declared beside this table in cycle 142-art for exactly this night).
   hatch: HATCH_RIG,
+  // BACKLOG-513 / 514 (cycle 144-art): the founder's mark and the same mark on ground everybody left.
+  // Stashed ahead of the tile that plants them, per the cycle-91 rule — both resolve standalone.
+  founder_stake: FOUNDER_STAKE_RIG,
+  founder_stake_hollowed: FOUNDER_STAKE_HOLLOWED_RIG,
 };
 
 /**

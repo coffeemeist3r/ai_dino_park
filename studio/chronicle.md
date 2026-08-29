@@ -9025,3 +9025,51 @@ was "first across into the Grove" and Bramble has never crossed anything.
 Milestone 16 has **one arc left** — the reachability register (501), which the Structure-smith deferred
 in writing tonight on the grounds that its first entries are the founding claims and one of them
 changed a few hours later. Build the truth, then the instrument that pins it.
+
+## Cycle 144-art — the founder's stake, and the same stake on ground everybody left
+
+The art queue was **empty** when this cycle opened — the first time since cycle 90 — so the two items
+drawn tonight were seeded this morning rather than drained, and they were seeded at the thing the
+structure track was about to make true. BACKLOG-512 gave every ground the roster wakes on a recorded
+founder. The park had no object for a founding.
+
+**513 is the first prop in this file that is purely a claim.** Everything else in `propArt.ts` is
+grown, gathered, or built to hold something. This holds nothing: a post driven into the ground with a
+cross-piece lashed to it, which is what people have always made when they wanted somewhere to say
+*this is ours* and had only wood.
+
+The first draft was a plain post, and the park already has a branch rig — a stake that is only a
+stick is that rig rotated. The **cross-piece** is what makes it a sign: two axes crossing is the
+oldest mark there is and the only detail that survives 32px. The **binding** at the crossing is the
+second, because rope says somebody tied it, which is the whole difference between a marker and
+driftwood.
+
+**514 is the same object, and the pair is the deliverable rather than either rig.** Three things
+change and nothing else: it **cants**, the binding goes **slack**, and the ground **creeps up the
+shaft**. One glyph therefore reads *somebody got here first* or *and then they left* depending only
+on which variant is baked — which is tonight's `· hollowed ·` read, legible from the map without
+opening a lens.
+
+Its first draft leaned by drawing the post crooked in place, which reads as a badly-drawn upright. A
+lean has to **travel**: the top of the post now sits four columns off its base, and the eye takes the
+diagonal before it takes anything else. The wood is **desaturated rather than darkened** — same
+brightness, almost none of the hue, because a ground everybody left is not a night scene — and the
+creep is the only green in either palette.
+
+Every one of those is a number in `cycle-144-founder-stake.test.ts` rather than a sentence in a
+comment, because every one of them is a thing a well-meaning tidy-up pass would plausibly undo: one
+column for every post row on the upright, a strictly monotone cant on the hollowed one (a post that
+wanders *back* is a wobble, not a lean), strictly less cord showing, saturation under half its twin's,
+creep only in the bottom third, and a shared outline colour — one object in two states, not two
+objects.
+
+**Stashed ahead of the tile that plants them**, per the cycle-91 rule and on its own condition: both
+resolve standalone through `bakePropArt`, and the e2e asserts that beside `NO_RIG_CONTROL` still
+reporting false, so the draw-a-rig-or-draw-nothing fallback stays a path somebody walks.
+
+Full suite after the fire: build clean, **2242 unit green**, art e2e green. Art queue back to **0**.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs
+under an instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with
+the same reject-your-first-draft discipline and the same unit + e2e gates. Two subjects, within the
+routine's "1–2 per fire".
