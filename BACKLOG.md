@@ -59,7 +59,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > system that displays it, but only when the rig renders standalone (a prop/sprite
 > `bakePropArt` can resolve in a test); true terrain that needs a host stays deferred.
 
-_(empty — every prop key and every terrain kind in the park is drawn as of cycle 143-art. The next Lore-smith seeds here.)_
+- [ ] BACKLOG-513 [art] The founder's stake — a prop rig for the mark a ground's first-comer leaves: a driven stake with a bound cross-piece, weathered by the ground it stands on. BACKLOG-512 records a founding as a founding, so every ground gains a pioneer for the first time; a pioneer with no mark on the ground is another true, invisible fact. Standalone (`bakePropArt` resolves it in a test), so the cycle-91 stash-ahead rule permits drawing it ahead of the tile that plants it. Builds on 512 / 343.
+- [ ] BACKLOG-514 [art] The stake that outlived its ground — the leaning variant of 513, for a ground that *was* settled and has emptied (the `hollowed` read, 460): same rig, canted, the binding gone slack, the ground's own colour crept up the shaft. The pair is the point — one glyph that reads *somebody got here first* and *and then they left* depending only on which variant is baked, so a hollowed ground is legible at a glance rather than through a lens. Builds on 513 / 460.
 
 
 ## Infra

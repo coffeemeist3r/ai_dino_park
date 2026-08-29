@@ -8884,3 +8884,14 @@ the one this queue had at cycle 135.
 
 Milestone 16 is ACTIVE with two arcs left, both structural: the reachability register (501) and the
 frontier read that calls lived-in ground unlived-in (512), filed tonight.
+
+## Cycle 144 — lore-smith
+
+Social queue at 214 (cap 12), so nothing social seeded; the art queue was at **0** for the first
+time in fifty cycles, so two `[art]` items were seeded into it — **513** the founder's stake and
+**514** the same stake leaning over a ground that emptied. Both are standalone prop rigs, drawn
+ahead of their host under the cycle-91 stash rule, and both hang off tonight's structure pick.
+Lore track picks **BACKLOG-499**, off-milestone with the justification that Milestone 16's lore
+arcs are all closed: the park has been printing *"the The Grove's council calls it"* on the first
+governance beat of every fresh save since 481, and two source files carry a comment warning about
+that exact hazard without either of them fixing it. Idea Box empty.
