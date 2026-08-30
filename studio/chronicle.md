@@ -9098,3 +9098,7 @@ Two e2e reds, and tonight they have one name between them for the first time: `m
 cycle 130 and which is a property of the run rather than of either spec.
 
 Milestone 16 has one arc left: the reachability register (501).
+
+## Cycle 145 — lore-smith
+
+A place you were born and a place you walked to are not the same standing. 512 gave five grounds a founder overnight and rendered every one of them with the sentence 343 wrote for an arrival; 516 teaches the book to tell the two apart. Social queue over cap (214 open) so nothing new seeded there; art queue at 0 and seeded with two — 517, the born-here stake, and 518, the stake somebody keeps up.
