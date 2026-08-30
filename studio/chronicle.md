@@ -9120,3 +9120,7 @@ Nine register entries, not the design's eight: the ninth asks whether every rig 
 Both tracks built. 516: pioneer.ts gained a FoundingKind and a second sentence, founding.ts gained foundingKind, standings.ts carries it as `via` - and WorldScene needed no edit at all, which is 482's fold paying for itself. 501: the register went in with nine entries and the ninth went dark on its first walk, naming the two founder's-stake rigs drawn last night with nowhere to stand. So the repair shipped with it: stake.ts plants the mark on tile (6,3) on every ground, upright where somebody founded and stayed, canted and bleached where everybody left, and nothing at all on the Saltpan.
 
 Note on procedure: the code landed inside the code-planner commit rather than its own - the plan and the build were written in one pass and staged together. The stage boundary is intact in state.json and in this log; the git history for cycle 145 has one commit fewer than usual.
+
+## Cycle 145 - qa
+
+16/16 criteria pass across both tracks. Build clean, 2267 unit green across 221 files, 624 e2e green with three reds: the standing mobile-minds one, and two controls-help specs that failed under full parallel load and pass 3/3 isolated - the older face of BACKLOG-515 rather than a fourth item. One caveat logged not failed: reachability.ts keeps its own copy of 24*60 because clock.ts keeps MINUTES_PER_DAY private, which is the exact hazard that file's header warns about.
