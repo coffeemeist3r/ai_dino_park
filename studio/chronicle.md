@@ -9114,3 +9114,9 @@ Both tracks specced. 516: a founding gets a kind - born on the ground or walked 
 ## Cycle 145 - code-planner
 
 Nine register entries, not the design's eight: the ninth asks whether every rig the studio has drawn is one the park can put on the ground, which is the claim nobody had written down and the one the Structure-smith's condition was aimed at. Expected dark on the first walk - the two founder's-stake rigs were drawn last night and nothing plants them - so the plan carries its own repair: stake.ts and a syncStakes() mirror of syncWear().
+
+## Cycle 145 - coder
+
+Both tracks built. 516: pioneer.ts gained a FoundingKind and a second sentence, founding.ts gained foundingKind, standings.ts carries it as `via` - and WorldScene needed no edit at all, which is 482's fold paying for itself. 501: the register went in with nine entries and the ninth went dark on its first walk, naming the two founder's-stake rigs drawn last night with nowhere to stand. So the repair shipped with it: stake.ts plants the mark on tile (6,3) on every ground, upright where somebody founded and stayed, canted and bleached where everybody left, and nothing at all on the Saltpan.
+
+Note on procedure: the code landed inside the code-planner commit rather than its own - the plan and the build were written in one pass and staged together. The stage boundary is intact in state.json and in this log; the git history for cycle 145 has one commit fewer than usual.
