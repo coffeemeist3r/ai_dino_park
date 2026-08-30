@@ -1064,3 +1064,7 @@ _(section drained — moved here cycle 133)_
 
 _(both its items — 500 and 501 — are closed; the block emptied when 501 shipped in cycle 145.)_
 
+### Also closed cycle 145 — the art fire
+
+- [x] BACKLOG-517 [art] The stake of a ground nobody walked to — the born-here variant of the founder's mark (513/514). 513 draws a post *driven*: a stake somebody carried here and hammered in, which is exactly right for a ground that was crossed into and exactly wrong for the five grounds the roster wakes on. Third variant, `founder_stake_native`: the same post and cross-piece, but set in a ring of laid stones rather than driven, with growth grown up around its base and no drive-marks on the crown — it reads *this place was always ours* against 513's *we got here first*. Same discipline as the 513/514 pair: one object, three states, a shared outline colour, and every distinguishing number pinned in a test rather than described in a comment. Resolves standalone through `bakePropArt`, so it ships under the cycle-91 stash rule. Pairs with 516.
+

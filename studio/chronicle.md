@@ -9253,3 +9253,26 @@ ground with a founder and nobody standing on it is exactly what hollowed means.
 *Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
 instruction not to spawn sub-agents. The rig was authored inline against one brief, with the same
 reject-your-first-draft discipline and the same unit + e2e gates.
+
+## Cycle 145 — housekeeping
+
+One closed bullet archived (517, by the Artist), on top of the two the Validator moved hours earlier (516,
+501) and the whole **cycle-139 structure block**, which had held only 501 and emptied the night it shipped.
+That is the third cycle running in which a block closed within a few cycles of being filed.
+
+The working backlog carries **0 closed bullets and 214 open items**, of which **4** sit on the Structure
+Track (495, 515, **519**, 509) — back at the cap of X=4 the moment 501 closed, exactly as 515 refilled it
+when 512 closed last cycle, so the next Structure-smith drains rather than brainstorms for the sixth cycle
+running.
+
+The art queue is at **1**, and that is the cycle's one structural change to how the studio works. `## Art`
+gains an amendment: the cycle-91 stash-ahead rule now has a **deadline**. Authoring a rig ahead of its host
+is still allowed; shipping it ahead of the host is not, because the reachability register's ninth entry
+reddens the build on any drawn key the world cannot place. 518 is held under it — its driver was left
+unchosen this morning and by evening an unchosen driver meant no host.
+
+Final gates on the closing tree: build clean, **2282 unit green** across 222 files, **627 e2e green**. One
+standing red, `mobile-minds`, filed under BACKLOG-515 — down from three, since tonight's two `controls-help`
+failures were proven flakes and folded into the same item.
+
+Milestone 16 is shipped. The smiths draft Milestone 17 at the next cycle open.
