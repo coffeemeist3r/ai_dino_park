@@ -98,8 +98,10 @@ describe('the id-keyed builders (BACKLOG-499)', () => {
   // are two of the lines a fresh save shows first, since BACKLOG-512 puts a founding standing in the book
   // on frame one. Both branches: an article-carrying ground and the one that owns none.
   it('name the ground once, in lowercase, for both kinds of name', () => {
-    expect(pioneerLine(GROVE_ID)).toBe('first across into the Grove');
-    expect(pioneerLine(BOWL_ID)).toBe('first across into the Pocket Cretaceous');
+    expect(pioneerLine(GROVE_ID, 'crossed')).toBe('first across into the Grove');
+    expect(pioneerLine(GROVE_ID, 'born')).toBe('has been in the Grove since the first morning');
+    expect(pioneerLine(BOWL_ID, 'crossed')).toBe('first across into the Pocket Cretaceous');
+    expect(pioneerLine(BOWL_ID, 'born')).toBe('has been in the Pocket Cretaceous since the first morning');
     expect(pioneerEvent(GROVE_ID, 'Bramble')).toContain('the Grove');
     expect(pioneerEvent(GROVE_ID, 'Bramble')).not.toContain('The Grove');
     expect(pioneerEvent(BOWL_ID, 'Sunny')).toContain('the Pocket Cretaceous');

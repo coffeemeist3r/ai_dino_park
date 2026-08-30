@@ -50,7 +50,7 @@ describe('zoneStandings', () => {
 
   it('emits a pioneer for a ground nobody lives on, and nothing else', () => {
     const all = zoneStandings([], { [GROVE]: 'Twitch' });
-    expect(all).toEqual([{ zone: GROVE, kind: 'pioneer', holders: ['Twitch'] }]);
+    expect(all).toEqual([{ zone: GROVE, kind: 'pioneer', holders: ['Twitch'], via: 'crossed' }]);
   });
 
   it('orders each ground council → pioneer → provider, the book order', () => {
@@ -92,7 +92,10 @@ describe('standingLine', () => {
   });
 
   it('prints the founding line for a pioneer', () => {
+    expect(standingLine({ zone: GROVE, kind: 'pioneer', holders: ['Rex'], via: 'crossed' })).toContain('first across into');
+    // BACKLOG-516: a standing with no `via` falls back to the crossing wording — an old literal stays valid.
     expect(standingLine({ zone: GROVE, kind: 'pioneer', holders: ['Rex'] })).toContain('first across into');
+    expect(standingLine({ zone: GROVE, kind: 'pioneer', holders: ['Rex'], via: 'born' })).toContain('since the first morning');
   });
 });
 

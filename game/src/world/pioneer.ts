@@ -34,9 +34,30 @@ export function pioneerOf(map: Pioneers, zoneId: string): string | undefined {
   return map[zoneId];
 }
 
-/** The founding standing as it reads in the collection book. */
-export function pioneerLine(zoneId: string): string {
-  return `first across into ${theZone(zoneById(zoneId).name)}`;
+/**
+ * How a ground came to be founded (BACKLOG-516).
+ *
+ * 343 recorded *who* and stopped there, because while a pioneer was only ever written at arrival there was
+ * only one way it could happen. 512 ended that: five grounds are founded by the dino the roster wakes on
+ * them, and calling that a crossing is a sentence the book prints on the first frame of every save about
+ * something that never happened.
+ *
+ * The kind is derived, never stored — `foundingKind` in `founding.ts` compares the record against the
+ * founding roster. It is passed *in* here rather than looked up, so this module keeps no dependency on the
+ * founding state and the two files cannot form a cycle.
+ */
+export type FoundingKind = 'born' | 'crossed';
+
+/**
+ * The founding standing as it reads in the collection book.
+ *
+ * Two sentences, and the difference between them is the difference between an inheritance and a decision:
+ * a dino that woke up on its ground has *been* there, a dino that walked in was *first across*. Both route
+ * the ground's name through `theZone` (499) — the article belongs to the sentence, not to the name.
+ */
+export function pioneerLine(zoneId: string, kind: FoundingKind): string {
+  const zone = theZone(zoneById(zoneId).name);
+  return kind === 'born' ? `has been in ${zone} since the first morning` : `first across into ${zone}`;
 }
 
 /** The one-off ticker line posted the moment a ground is founded. */

@@ -37,7 +37,10 @@ test('every ground the roster wakes on names a founder, from the first frame', a
 test('the book shows a Grove resident as its founder on a fresh save', async ({ page }) => {
   await boot(page);
   const text = await page.evaluate(() => (window as W).__bookText() as string);
-  expect(text).toContain('first across into the Grove'); // BACKLOG-499 wording
+  // BACKLOG-516 reworded this the cycle after 512 shipped: Bramble woke up in the Grove, so the book no
+  // longer says it crossed into one. The standing is the same fact; the sentence stopped lying about it.
+  expect(text).toContain('has been in the Grove since the first morning');
+  expect(text).not.toContain('first across into the Grove');
 });
 
 test('seeding the founders posts nothing — the boot ticker gains no founding beats', async ({ page }) => {

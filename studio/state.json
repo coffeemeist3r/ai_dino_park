@@ -1,6 +1,6 @@
 {
   "cycle": 145,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-516: the founding standing says \"first across\" about a dino that never crossed",
   "structureItem": "BACKLOG-501: the reachability register",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-30T03:10:00.000Z",
     "structure-smith": "2026-08-30T03:16:00.000Z",
     "designer": "2026-08-30T03:24:00.000Z",
-    "code-planner": "2026-08-29T03:30:00.000Z",
+    "code-planner": "2026-08-30T03:32:00.000Z",
     "coder": "2026-08-29T03:35:00.000Z",
     "qa": "2026-08-29T03:45:00.000Z",
     "validator": "2026-08-29T03:55:00.000Z",

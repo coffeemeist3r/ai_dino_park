@@ -107,6 +107,7 @@ import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { HATCH_TILE, HATCH_ART_KEY, HATCH_GLYPH, HATCH_SCATTER } from '../world/hatch';
+import { STAKE_TILE, STAKE_GLYPH, stakeArtKey } from '../world/stake';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
@@ -664,6 +665,8 @@ export class WorldScene extends Phaser.Scene {
   /** The worn ground under each haunt (BACKLOG-507), keyed `<dino>:<ground>`. Transient — never saved:
    *  the haunts are what persist (421), and these are one render of them. */
   private wearSprites: Record<string, Phaser.GameObjects.Image> = {};
+  /** BACKLOG-501: the founder's mark on the ground the keeper is standing on. One sprite, retextured. */
+  private stakeSprite: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** Crafted cairns (BACKLOG-286). Persisted; absent → []. `zone`: BACKLOG-308 (old saves → bowl). */
   private cairns: Landmark[] = [];
   private cairnSprites: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
@@ -1689,6 +1692,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__teach = (a: string, b: string) => this.teachBeat(a, b);
     // BACKLOG-474: which grounds nobody has ever lived on, in chain order.
     (window as any).__unsettled = () => zoneChain().filter((z) => this.isZoneUnsettled(z));
+    // BACKLOG-516: found a ground from a test the way a real crossing does — through `foundZone`, so the
+    // ticker beat and the first-write-wins guard are the ones production uses.
+    (window as any).__found = (zone: string, name: string) => { const r = this.foundZone(name, zone); this.applyObjectVisibility(); return r; };
+    // BACKLOG-501: what mark this ground is showing, or null for ground nobody has founded.
+    (window as any).__stake = () => stakeArtKey(!!pioneerOf(this.pioneers, this.zoneId), this.isZoneHollowed(this.zoneId));
     (window as any).__hollowed = () => { this.checkHollowed(); return zoneChain().filter((z) => this.isZoneHollowed(z)); }; // BACKLOG-512
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
@@ -2545,6 +2553,47 @@ export class WorldScene extends Phaser.Scene {
       this.wearSprites[id].destroy();
       delete this.wearSprites[id];
     }
+  }
+
+  /**
+   * The founder's mark on this ground (BACKLOG-501's repair, rigs 513/514).
+   *
+   * One sprite, retextured per ground rather than one per zone: the mark sits on the same tile everywhere,
+   * so there is never more than one on screen. A ground with a founder shows the upright post; one that has
+   * emptied shows the canted, bleached twin; one nobody has ever founded shows nothing at all, which is the
+   * Saltpan and is the correct picture of unclaimed ground.
+   *
+   * Called from `applyObjectVisibility`, which the zone cross, the founding pass and the save restore all
+   * already come through — the same single call site `syncWear` takes, for the same reason.
+   */
+  private syncStakes(): void {
+    const founder = pioneerOf(this.pioneers, this.zoneId);
+    const key = stakeArtKey(!!founder, this.isZoneHollowed(this.zoneId));
+    if (!key) {
+      this.stakeSprite?.destroy();
+      this.stakeSprite = null;
+      return;
+    }
+    const px = STAKE_TILE.tileX * TILE + TILE / 2;
+    const py = STAKE_TILE.tileY * TILE + TILE / 2;
+    const tex = hasPropArt(key) ? bakePropArt(this, key) : null;
+    // A rig swap changes the object type (text glyph vs image), so a state change rebuilds rather than
+    // retextures. It happens on a zone cross or a ground emptying, not per frame.
+    const wantsImage = !!tex;
+    const isImage = !!this.stakeSprite && typeof (this.stakeSprite as Phaser.GameObjects.Image).setTexture === 'function';
+    if (this.stakeSprite && wantsImage !== isImage) {
+      this.stakeSprite.destroy();
+      this.stakeSprite = null;
+    }
+    if (!this.stakeSprite) {
+      this.stakeSprite = tex
+        ? this.add.image(px, py, tex).setOrigin(0.5).setDepth(2)
+        : this.add.text(px, py, STAKE_GLYPH, { fontSize: '16px' }).setOrigin(0.5).setDepth(2);
+    } else if (tex) {
+      (this.stakeSprite as Phaser.GameObjects.Image).setTexture(tex);
+    }
+    this.stakeSprite.setPosition(px, py);
+    this.stakeSprite.setVisible(true);
   }
 
   /** The marks this ground should be showing (BACKLOG-507) — the pure read, over the live cast. A haunt
@@ -6015,6 +6064,8 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-507: and the worn ground under this ground's haunts. One call site rather than four —
     // a zone cross, the founding pass and the save restore all already come through here.
     this.syncWear();
+    // BACKLOG-501: and the founder's mark on this ground — the host the stashed 513/514 rigs were waiting for.
+    this.syncStakes();
   }
 
   /**

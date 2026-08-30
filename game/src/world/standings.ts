@@ -27,7 +27,8 @@
  */
 
 import { zoneCouncil, zoneProvider, type ProviderCandidate } from '../ai/roles';
-import { pioneerLine, pioneerOf, type Pioneers } from './pioneer';
+import { pioneerLine, pioneerOf, type FoundingKind, type Pioneers } from './pioneer';
+import { foundingKind } from './founding';
 import { zoneById, zoneChain } from './zones';
 
 export type StandingKind = 'pioneer' | 'provider' | 'council';
@@ -38,6 +39,9 @@ export interface Standing {
   zone: string;
   kind: StandingKind;
   holders: readonly string[];
+  /** How the ground was founded (BACKLOG-516) — set on the `pioneer` standing only, and derived here so no
+   *  consumer has to ask a second question to render one line. */
+  via?: FoundingKind;
 }
 
 /**
@@ -54,7 +58,7 @@ export function zoneStandings(candidates: readonly ProviderCandidate[], pioneers
     const council = zoneCouncil(candidates, zone);
     if (council.length) out.push({ zone, kind: 'council', holders: council });
     const pioneer = pioneerOf(pioneers, zone);
-    if (pioneer) out.push({ zone, kind: 'pioneer', holders: [pioneer] });
+    if (pioneer) out.push({ zone, kind: 'pioneer', holders: [pioneer], via: foundingKind(pioneers, zone) });
     const provider = zoneProvider(candidates, zone);
     if (provider) out.push({ zone, kind: 'provider', holders: [provider] });
   }
@@ -90,7 +94,7 @@ export function standingLine(s: Standing): string | null {
       return `👥 one of ${zoneById(s.zone).name}'s ${n} voice${n === 1 ? '' : 's'}`;
     }
     case 'pioneer':
-      return pioneerLine(s.zone);
+      return pioneerLine(s.zone, s.via ?? 'crossed');
     case 'provider':
       return null;
   }

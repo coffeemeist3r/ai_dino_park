@@ -19,7 +19,7 @@
 
 import { BOWL_ID, GROVE_ID, zoneChain } from './zones';
 import type { Stockpile } from './resource';
-import type { Pioneers } from './pioneer';
+import type { FoundingKind, Pioneers } from './pioneer';
 import { ROSTER } from '../entities/roster';
 import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type ProviderCandidate } from '../ai/roles';
 
@@ -148,6 +148,26 @@ export function foundingPioneers(): Pioneers {
     if (names.length) out[id] = names[0];
   }
   return out;
+}
+
+/**
+ * How a ground was founded (BACKLOG-516) — born on, or walked into.
+ *
+ * 512 gave every ground the roster wakes on a recorded founder and left `pioneerLine` rendering all of them
+ * through the sentence 343 wrote for an arrival, so the book told five dinos they had crossed into somewhere
+ * they had never left. The fact that tells the two apart already existed the moment 512 shipped: a founding
+ * is `born` exactly when the recorded pioneer is the one `foundingPioneers()` names for that ground.
+ *
+ * **Derived, never stored** — `standings.ts`'s doctrine, and the reason this needs no save field and no
+ * migration. An old save is reinterpreted correctly on load rather than carrying a flag written under the
+ * old reading.
+ *
+ * A ground nobody has founded answers `crossed`, which is the honest default: the only way it can ever gain
+ * a pioneer is for somebody to walk in.
+ */
+export function foundingKind(pioneers: Pioneers, zoneId: string): FoundingKind {
+  const recorded = pioneers[zoneId];
+  return recorded !== undefined && foundingPioneers()[zoneId] === recorded ? 'born' : 'crossed';
 }
 
 /**

@@ -9110,3 +9110,7 @@ Milestone 16 has one arc left and this is it: BACKLOG-501, the reachability regi
 ## Cycle 145 - designer
 
 Both tracks specced. 516: a founding gets a kind - born on the ground or walked into it - derived from the founding roster, no save field, and the book stops telling five dinos they crossed somewhere they woke up. 501: the reachability register, eight standing claims in one module with a walking test, shipped under the condition that whatever the first walk finds dark is fixed in the same cycle. One file overlaps (founding.ts); lore lands first.
+
+## Cycle 145 - code-planner
+
+Nine register entries, not the design's eight: the ninth asks whether every rig the studio has drawn is one the park can put on the ground, which is the claim nobody had written down and the one the Structure-smith's condition was aimed at. Expected dark on the first walk - the two founder's-stake rigs were drawn last night and nothing plants them - so the plan carries its own repair: stake.ts and a syncStakes() mirror of syncWear().
