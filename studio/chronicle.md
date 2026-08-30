@@ -9102,3 +9102,7 @@ Milestone 16 has one arc left: the reachability register (501).
 ## Cycle 145 — lore-smith
 
 A place you were born and a place you walked to are not the same standing. 512 gave five grounds a founder overnight and rendered every one of them with the sentence 343 wrote for an arrival; 516 teaches the book to tell the two apart. Social queue over cap (214 open) so nothing new seeded there; art queue at 0 and seeded with two — 517, the born-here stake, and 518, the stake somebody keeps up.
+
+## Cycle 145 — structure-smith
+
+Milestone 16 has one arc left and this is it: BACKLOG-501, the reachability register — CHARTER v7's bar as a list that breaks rather than a paragraph each verdict re-argues. Deferred last cycle because its first entries were about to change; 512 changed them, so the ground has settled. Queue at cap (4 open), drained not brainstormed, fifth cycle running. Shipped under one condition: whatever the first walk finds dark is fixed in the same cycle.
