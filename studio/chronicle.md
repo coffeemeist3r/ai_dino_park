@@ -9207,3 +9207,49 @@ One item filed: **519**, because `reachability.ts` had to write down the length 
 `MINUTES_PER_DAY` is private in `clock.ts` — in the one file whose header is a lecture about second copies.
 
 The smiths draft Milestone 17 at the next cycle open.
+
+## Cycle 145-art — the stake of a ground nobody walked to, and the night the stash rule got a deadline
+
+One subject, not two, and the reason is the best thing about this fire.
+
+**BACKLOG-517 is 516 made into an object.** The lore track taught the park to say, in the collection book,
+whether a ground's founder woke up there or walked in. 513 draws a post *driven* — carried here and
+hammered in — which is exactly right for a ground somebody crossed into and exactly wrong for the five the
+roster wakes on. So the third state is the same post **set**: standing in a ring of laid stones rather than
+ending in bare dirt, because laid stone is the oldest way of saying somebody meant to stay, with **growth**
+coming up between them — the tell 513 can never have, since a driven stake is new and nothing has had time
+to grow around it. The wood keeps its saturation against 514's bleach. This is a mark being kept.
+
+The first draft put the stones in a neat symmetrical arc and read as **a cairn with a stick in it** — the
+park already has a cairn rig, and a cairn wearing a post is that rig plus noise. The stones came down to a
+low flanking pair with the post's own base still visible between them, so the post stays the subject and the
+stone is the ground it was set into. Every distinguishing mark is a number in
+`cycle-145-native-stake.test.ts`: one post column top to bottom (a set post does not lean, which is
+precisely 514's tell), the same cord showing as 513 and more than 514, stone only in the bottom four rows, a
+green more saturated than the hollowed creep, and a shared outline with both siblings.
+
+**The tile now has four readings and one of them is nothing.** Set, for a ground somebody was born on.
+Driven, for one somebody walked into and claimed. Canted and bleached, for one everybody left. And bare —
+the Saltpan — which needs no rig, because bare is what unclaimed ground looks like.
+
+**Only one subject, because the other one could not be placed.** 518 (the stake somebody keeps up) was
+seeded this morning with its driver deliberately unchosen — "a later cycle decides which of prosperity,
+stock or upkeep steps it" — and tonight that is a blocker rather than a nicety. **The reachability register
+shipped hours ago and its ninth entry fails the build on any rig the park cannot put on the ground.** So
+517 was wired into `stakeArtKey` the same hour it was drawn, and 518 stays in the queue until it has
+something to read.
+
+That is the register changing how this routine works, on its first night, in the direction CHARTER v7
+wanted: the cycle-91 stash-ahead rule shipped with a condition and **no deadline**, and a rule with no
+deadline is how two rigs sat drawn and unplaceable long enough for a machine to have to notice. The stash
+rule is not repealed — a rig may still be authored ahead of its host — but the host now has to arrive before
+the suite goes green. Drawing something the player cannot see is a red build.
+
+Gates after the fire: build clean, **2282 unit green** across 222 files, **627 e2e green** with the standing
+`mobile-minds` red. Art queue at **1** (518, held). One spec fixed while wiring: the e2e that founds the
+Saltpan by record alone was asserting the driven post and correctly getting the *hollowed* one, because a
+ground with a founder and nobody standing on it is exactly what hollowed means.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
+instruction not to spawn sub-agents. The rig was authored inline against one brief, with the same
+reject-your-first-draft discipline and the same unit + e2e gates.

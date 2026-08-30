@@ -17,6 +17,16 @@ const hollowed = (p: Page) => p.evaluate(() => (window as W).__hollowed() as str
 
 test('a founder’s mark stands on the ground the player wakes up on', async ({ page }) => {
   await boot(page);
+  // BACKLOG-517: set in stone, not driven — the bowl's founder woke up there, it did not walk in.
+  expect(await stake(page)).toBe('founder_stake_native');
+});
+
+test('a ground somebody crossed into stands the driven post instead', async ({ page }) => {
+  await boot(page);
+  // A real crossing, not just a record: `__found` alone would leave the Saltpan founded and empty, which
+  // is `hollowed` and correctly so. Somebody has to actually be standing there.
+  await page.evaluate(() => (window as W).__migrate('Twitch', 'saltpan'));
+  await page.evaluate(() => (window as W).__setZone('saltpan'));
   expect(await stake(page)).toBe('founder_stake');
 });
 
@@ -42,5 +52,5 @@ test('the mark leans the moment its ground empties, and stands again when somebo
   await page.evaluate(() => (window as W).__migrate('Sunny', 'bowl'));
   await page.evaluate(() => (window as W).__setZone('bowl'));
   expect(await hollowed(page)).not.toContain('bowl');
-  expect(await stake(page)).toBe('founder_stake');
+  expect(await stake(page)).toBe('founder_stake_native');
 });

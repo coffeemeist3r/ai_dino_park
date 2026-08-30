@@ -108,6 +108,7 @@ import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { HATCH_TILE, HATCH_ART_KEY, HATCH_GLYPH, HATCH_SCATTER } from '../world/hatch';
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey } from '../world/stake';
+import { foundingKind } from '../world/founding';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
@@ -1696,7 +1697,7 @@ export class WorldScene extends Phaser.Scene {
     // ticker beat and the first-write-wins guard are the ones production uses.
     (window as any).__found = (zone: string, name: string) => { const r = this.foundZone(name, zone); this.applyObjectVisibility(); return r; };
     // BACKLOG-501: what mark this ground is showing, or null for ground nobody has founded.
-    (window as any).__stake = () => stakeArtKey(!!pioneerOf(this.pioneers, this.zoneId), this.isZoneHollowed(this.zoneId));
+    (window as any).__stake = () => stakeArtKey(pioneerOf(this.pioneers, this.zoneId) ? foundingKind(this.pioneers, this.zoneId) : null, this.isZoneHollowed(this.zoneId));
     (window as any).__hollowed = () => { this.checkHollowed(); return zoneChain().filter((z) => this.isZoneHollowed(z)); }; // BACKLOG-512
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
@@ -2568,7 +2569,7 @@ export class WorldScene extends Phaser.Scene {
    */
   private syncStakes(): void {
     const founder = pioneerOf(this.pioneers, this.zoneId);
-    const key = stakeArtKey(!!founder, this.isZoneHollowed(this.zoneId));
+    const key = stakeArtKey(founder ? foundingKind(this.pioneers, this.zoneId) : null, this.isZoneHollowed(this.zoneId));
     if (!key) {
       this.stakeSprite?.destroy();
       this.stakeSprite = null;

@@ -11,6 +11,7 @@ import { describe, it, expect } from 'vitest';
 import {
   STAKE_TILE,
   STAKE_ART_KEY,
+  STAKE_NATIVE_ART_KEY,
   STAKE_HOLLOWED_ART_KEY,
   stakeArtKey,
 } from '../../game/src/world/stake';
@@ -55,22 +56,29 @@ describe('the stake tile', () => {
 });
 
 describe('which mark a ground shows', () => {
-  it('stands a post on ground somebody founded and still lives on', () => {
-    expect(stakeArtKey(true, false)).toBe(STAKE_ART_KEY);
+  it('sets the post in stone on ground its founder woke up on (BACKLOG-517)', () => {
+    expect(stakeArtKey('born', false)).toBe(STAKE_NATIVE_ART_KEY);
   });
 
-  it('leans it on ground somebody founded and everybody left', () => {
-    expect(stakeArtKey(true, true)).toBe(STAKE_HOLLOWED_ART_KEY);
+  it('drives it on ground somebody crossed into and claimed', () => {
+    expect(stakeArtKey('crossed', false)).toBe(STAKE_ART_KEY);
+  });
+
+  it('leans it on ground somebody founded and everybody left, whichever way they got there', () => {
+    // Leaving looks the same either way, which is the point of the hollowed variant winning over the kind.
+    expect(stakeArtKey('born', true)).toBe(STAKE_HOLLOWED_ART_KEY);
+    expect(stakeArtKey('crossed', true)).toBe(STAKE_HOLLOWED_ART_KEY);
   });
 
   it('shows nothing at all on ground nobody has ever founded — bare is what unclaimed looks like', () => {
-    expect(stakeArtKey(false, false)).toBeNull();
+    expect(stakeArtKey(null, false)).toBeNull();
     // A ground with no founder cannot be hollowed either (isHollowed needs one), but the read is total.
-    expect(stakeArtKey(false, true)).toBeNull();
+    expect(stakeArtKey(null, true)).toBeNull();
   });
 
   it('names keys the Artist actually drew — the whole reason this host exists', () => {
     expect(PROP_RIGS[STAKE_ART_KEY]).toBeDefined();
+    expect(PROP_RIGS[STAKE_NATIVE_ART_KEY]).toBeDefined();
     expect(PROP_RIGS[STAKE_HOLLOWED_ART_KEY]).toBeDefined();
   });
 });

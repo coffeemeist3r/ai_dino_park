@@ -22,7 +22,8 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'food_roots', // BACKLOG-490 (cycle 140-art)
       'food_seeds',
       'founder_stake', // BACKLOG-513 (cycle 144-art)
-      'founder_stake_hollowed', // BACKLOG-514 // BACKLOG-490 (cycle 140-art)
+      'founder_stake_hollowed', // BACKLOG-514
+      'founder_stake_native', // BACKLOG-517 (cycle 145-art): the born-here mark, wired the night it was drawn
       'frond',
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)

@@ -1219,6 +1219,54 @@ const FOUNDER_STAKE_RIG: PropRig = {
   },
 };
 
+// ── The stake of a ground nobody walked to 🪧 (BACKLOG-517) — the born-here mark ────────────────
+// 513 draws a post *driven*: something carried here and hammered in, which is exactly right for a
+// ground somebody crossed into and exactly wrong for the five grounds the roster wakes on. BACKLOG-516
+// gave the park the distinction in words the same day; this is it in an object.
+//
+// Three changes and nothing else, which is the 513/514 discipline held for a third state. The post is
+// **set, not driven** — it stands in a ring of laid stones rather than ending in bare dirt, and laid
+// stone is the oldest way of saying somebody meant to stay. **Growth** comes up between them, which is
+// the tell 513 can never have: a driven stake is new, and nothing has had time to grow around it. And
+// the wood keeps its saturation, against 514's bleach — this is a mark being kept, not one being left.
+//
+// The first draft put the stones in a neat symmetrical arc and it read as a cairn with a stick in it —
+// the park already has a cairn rig, and a cairn wearing a post is that rig plus noise. The stones went
+// down to a low flanking pair with the post's own base still visible between them, so the *post* is
+// still the subject and the stone is the ground it was set into.
+const FOUNDER_STAKE_NATIVE_GRID: ReadonlyArray<string> = [
+  '................',
+  '......oooo......',
+  '......oLwo......',
+  '......oLwo......',
+  '...oooooooooo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oooooooooo...',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '......oLwo......',
+  '...ossoLwosso...',
+  '..osssoLwossso..',
+  '..ogssoooossgo..',
+];
+
+const FOUNDER_STAKE_NATIVE_RIG: PropRig = {
+  size: 16,
+  grid: FOUNDER_STAKE_NATIVE_GRID,
+  palette: {
+    o: 0x3a2410, // the same outline as both twins — one object, three states, not three objects
+    w: 0x8a5a2b, // the upright's wood, unchanged: this ground is still somebody's
+    L: 0xb98a4e,
+    C: 0x74491f,
+    b: 0xd9c48a, // the binding, still tight — six pixels of it, exactly as 513 has
+    s: 0x8b8b83, // laid stone: set, not driven
+    g: 0x5f9a3c, // and something growing between them, which a new stake cannot have
+  },
+};
+
 // ── The stake that outlived its ground 🪧 (BACKLOG-514) — the same mark, on ground everybody left ──
 // Same rig, three things changed and nothing else: it **cants**, the binding has gone slack, and the
 // ground has crept up the shaft. The pair is the point — one glyph reads *somebody got here first*
@@ -1311,6 +1359,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-513 / 514 (cycle 144-art): the founder's mark and the same mark on ground everybody left.
   // Stashed ahead of the tile that plants them, per the cycle-91 rule — both resolve standalone.
   founder_stake: FOUNDER_STAKE_RIG,
+  // BACKLOG-517 (cycle 145-art): the born-here mark, wired the same night it was drawn — the
+  // reachability register (501) now fails on any rig the park cannot place, which retires the
+  // stash-ahead rule's open end.
+  founder_stake_native: FOUNDER_STAKE_NATIVE_RIG,
   founder_stake_hollowed: FOUNDER_STAKE_HOLLOWED_RIG,
 };
 

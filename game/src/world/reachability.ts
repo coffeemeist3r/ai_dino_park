@@ -44,7 +44,7 @@ import { quarryGround, quarryKind } from './quarry';
 import { PILE_STEPS } from './bank';
 import { FOODS } from './foods';
 import { HATCH_ART_KEY } from './hatch';
-import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY } from './stake';
+import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_NATIVE_ART_KEY } from './stake';
 import { cropOf, ripeRigKey, type CropStage } from './plot';
 import { TIC_ASIDE } from './tic';
 import { zoneChain } from './zones';
@@ -107,6 +107,7 @@ export function worldPlacedProps(): Set<string> {
   out.add('egg'); // 491
   // BACKLOG-501's own repair: the founder's mark, in both its states (513/514), planted by `stake.ts`.
   out.add(STAKE_ART_KEY);
+  out.add(STAKE_NATIVE_ART_KEY); // 517, wired the night it was drawn
   out.add(STAKE_HOLLOWED_ART_KEY);
   return out;
 }
