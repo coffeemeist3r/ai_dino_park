@@ -1042,3 +1042,25 @@ _(section drained — moved here cycle 133)_
 > Filed by the Validator rather than a smith: cycle 143's QA escalated it out of the Saltpan's own e2e
 > rather than asserting around it. The Structure Track stood at 4 open (at the cap) when 505 closed, so
 > this refills to 4 rather than adding a fifth.
+
+## Closed cycle 145 (2026-08-30) — Milestone 16 SHIPPED
+
+> The last arc of Milestone 16. 516 taught the park to tell a birthplace from a destination; 501 built the
+> instrument that says when a system the park claims to exercise has gone dark, and its very first walk
+> found two rigs drawn the night before with nowhere in the world to stand.
+
+- [x] BACKLOG-501 [infra] The reachability register — v7's bar ("in a fresh save, watched for ten minutes, what does the player see that they could not see before?") is enforced by a human writing a paragraph in a verdict, and the *standing* answers — the ruin the Grove ships (488), the bank ledger that seats a council (492), the two-rate clock (493), the spread cast (486) — are pinned by one bespoke test each, written by whoever happened to notice. Nothing lists them together, so nothing can say when one goes dark. Give the park a declared **reachability register**: one module naming each system the founding park is claimed to exercise and the founding fact that makes it reachable, with a single test that walks the register and fails when an entry stops holding. The point is that the bar becomes a thing that breaks rather than a thing that is remembered — the `cycle-136-founding.test.ts` precedent, generalised from one item to the claim itself. Pairs with 495 (which names what founding state a *spec* wants; this names what the *shipping* park promises). Builds on 497 / 492 / 488 / 486.
+- [x] BACKLOG-516 [core] The founding standing says "first across" about a dino that never crossed — BACKLOG-512 gave every ground the roster wakes on a founder, and `pioneerLine` renders all of them with the wording 343 wrote for an *arrival*: Bramble's block now reads "first across into the Grove", and Bramble has never crossed anything. It is true in the sense the record cares about (nobody was here before) and false in the sense the sentence makes (a crossing happened). The design named this out of scope on purpose — it is a second decision, and 512 was already making one — but 512 also made it *visible on frame one of every save*, which is the reachability bar's own argument for paying it now. The shape: `Pioneers` records how a founding happened as well as who, or `standings.ts` reads the roster to tell a spawn from a crossing, and the book says "has been in the Grove since the first morning" for one and keeps "first across" for the other. Two lines rather than one, which is also the fun of it — the park would then distinguish, in the player's own book, between a place you were born and a place you walked to. Builds on 512 / 343 / 482.
+
+### Sections emptied by the cycle-145 pass
+
+## Cycle 139 structure additions — the founding park, said out loud (2026-08-24)
+
+> The Structure Track stood at **2 open**, below the cap of X=4, so the Structure-smith brainstormed before
+> draining. Both new items are the same finding from different ends: CHARTER v7 moved the founding state to
+> make systems reachable, and the *claims* it made about that state live in prose — in an amendment log, in a
+> handful of per-item tests, and in each verdict's reachability paragraph — rather than anywhere a tuning pass
+> can trip over them.
+
+_(both its items — 500 and 501 — are closed; the block emptied when 501 shipped in cycle 145.)_
+

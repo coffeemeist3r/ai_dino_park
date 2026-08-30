@@ -8,27 +8,7 @@
 
 ## Current milestone
 
-**Milestone 16: Somewhere to stand — the park's stock, its scarcity and its private marks stop being numbers in a menu and become things on the ground you can walk to.**
-**Status:** ACTIVE (opened cycle 141)
-
-Milestone 15 gave the park's work a body: somebody walks to the ruin and mends it, somebody carries the
-stone. Milestone 16 asks the next question, and it is the CHARTER v7 question — *where does any of it
-happen?* Five systems run off a ground's banked gathering and the only way to see the bank is to open a
-lens. The one branch in the map leads somewhere that grows nothing the line doesn't. The frontier read
-closed itself the day every ground got a resident. Each of those is true, tested, load-bearing, and
-invisible from inside the game. This milestone spends the cycle on the standing-in-it half.
-
-**Lore arcs:**
-- [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
-- [x] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *closed cycle 142, in one night and by both halves of the studio: the chain shipped 507 (the wiring, which had no item any stage was allowed to build until the Lore-smith split it out of the `[art]` item it was buried in), and the Artist fire closed 496 by drawing the `fuss` patch hours later*
-- [x] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502, BACKLOG-510) — *closed cycle 143, in one night and by both halves of the studio for the second cycle running: the chain shipped 510 (the wiring, split out of the `[art]` item that defers it in its own final sentence), and the Artist fire closed 502 hours later by drawing the hatch — the last undrawn prop key in the park*
-
-**Structure arcs:**
-- [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*
-- [x] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503) — *shipped cycle 142: obsidian falls on the Ridge and no other ground, the beacon is raised from it, and a dino with nothing else pulling it climbs for a shard*
-- [x] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505) — *shipped cycle 143: the Saltpan, a sixth ground east of the Hollow, empty because nobody has settled it yet. The unsettled badge lights on a shipping save for the first time in the park's history, and 449's "a zone is a row" cost the scene zero edits*
-- [ ] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501)
-- [x] The frontier read stops lying about lived-in ground — a ground whose residents were spawned reads unsettled the moment it empties (BACKLOG-512) — *shipped cycle 144, by deleting a special case rather than adding four more: `foundingPioneers()` records a founding as a founding and `isOrigin` comes out. The half that meets the bar is the replacement read — an emptied ground says `· hollowed ·` and names who settled it — and the half nobody expected is the book, which now names a founder for five grounds it had never named anybody for on any save this park has shipped*
+_(none — Milestone 16 shipped cycle 145. The smiths draft Milestone 17 at the next cycle open.)_
 
 ---
 
@@ -48,6 +28,50 @@ invisible from inside the game. This milestone spends the cycle on the standing-
 ```
 
 ## Shipped milestones
+
+### Milestone 16: Somewhere to stand — the park's stock, its scarcity and its private marks stop being numbers in a menu and become things on the ground you can walk to — SHIPPED cycle 145 (opened cycle 141)
+
+Milestone 16 was opened on the CHARTER v7 question — *where does any of it happen?* Five systems ran off a
+ground's banked gathering and the only way to see the bank was to open a lens. The one branch in the map led
+somewhere that grew nothing the line didn't. The frontier read had closed itself the day every ground got a
+resident. Each of those was true, tested, load-bearing, and invisible from inside the game.
+
+Six arcs, five cycles, and the through-line is in the title: **things you can walk to.** The bank became a
+heap that steps with the stockpile. The branch became a mountain that holds black glass and nothing else in
+the park does. The frontier became the Saltpan — a sixth ground, empty because nobody has settled it, which
+lit the unsettled badge on a shipping save for the first time in the park's history. The greeting learned to
+name what you interrupted, the ritual learned to leave a worn mark on the ground, and the hatch — the target
+of the most-pressed key in the game — stopped being an event line about an object that did not exist.
+
+And it closes on the arc that is about the milestone itself. **501 turned v7's bar from a paragraph into a
+list that breaks**, and the very first time the studio turned the handle it found two rigs drawn the night
+before, celebrated in a chronicle entry, and unplaceable — because every art test in the park asks whether a
+rig is well drawn and not one asked whether it is reachable. The repair shipped in the same commit, so the
+milestone named *Somewhere to stand* ends with a founder's stake standing in the dirt on every ground
+somebody founded, leaning and bleached on any ground they left, and absent on the one nobody has claimed.
+
+**Milestone 16: Somewhere to stand — the park's stock, its scarcity and its private marks stop being numbers in a menu and become things on the ground you can walk to.**
+
+
+Milestone 15 gave the park's work a body: somebody walks to the ruin and mends it, somebody carries the
+stone. Milestone 16 asks the next question, and it is the CHARTER v7 question — *where does any of it
+happen?* Five systems run off a ground's banked gathering and the only way to see the bank is to open a
+lens. The one branch in the map leads somewhere that grows nothing the line doesn't. The frontier read
+closed itself the day every ground got a resident. Each of those is true, tested, load-bearing, and
+invisible from inside the game. This milestone spends the cycle on the standing-in-it half.
+
+**Lore arcs:**
+- [x] The greeting names what you interrupted — press E on a dino and its hello says what you pulled it off (BACKLOG-300) — *shipped cycle 141*
+- [x] The ritual leaves a mark on the ground — the `fuss` patch drawn, and a worn mark actually laid under a tic anchor in the world (BACKLOG-496, BACKLOG-507) — *closed cycle 142, in one night and by both halves of the studio: the chain shipped 507 (the wiring, which had no item any stage was allowed to build until the Lore-smith split it out of the `[art]` item it was buried in), and the Artist fire closed 496 by drawing the `fuss` patch hours later*
+- [x] The hatch gets a mouth — the most-pressed key in the game stops happening on bare grass (BACKLOG-502, BACKLOG-510) — *closed cycle 143, in one night and by both halves of the studio for the second cycle running: the chain shipped 510 (the wiring, split out of the `[art]` item that defers it in its own final sentence), and the Artist fire closed 502 hours later by drawing the hatch — the last undrawn prop key in the park*
+
+**Structure arcs:**
+- [x] The pile gets a place — a per-ground bank tile whose heap steps with the stockpile (BACKLOG-504, BACKLOG-506) — *both shipped cycle 141: 504 placed the bank on the glyph fallback in the morning, 506 drew the three heaps the same night*
+- [x] The branch gets a stake — one thing that exists on the Ridge and nowhere else (BACKLOG-503) — *shipped cycle 142: obsidian falls on the Ridge and no other ground, the beacon is raised from it, and a dino with nothing else pulling it climbs for a shard*
+- [x] The frontier gets a reachable form — decide what an unsettled ground is for in a park with none (BACKLOG-505) — *shipped cycle 143: the Saltpan, a sixth ground east of the Hollow, empty because nobody has settled it yet. The unsettled badge lights on a shipping save for the first time in the park's history, and 449's "a zone is a row" cost the scene zero edits*
+- [x] The reachability register — v7's bar as a machine-checked list rather than a paragraph per verdict (BACKLOG-501) — *shipped cycle 145, and its first walk was not decorative: the ninth entry, the claim nobody had ever written down, found the two founder's-stake rigs drawn the night before with nowhere in the world to stand. The repair shipped in the same commit, which is why the milestone about somewhere to stand closes with a post standing in the dirt on every founded ground*
+- [x] The frontier read stops lying about lived-in ground — a ground whose residents were spawned reads unsettled the moment it empties (BACKLOG-512) — *shipped cycle 144, by deleting a special case rather than adding four more: `foundingPioneers()` records a founding as a founding and `isOrigin` comes out. The half that meets the bar is the replacement read — an emptied ground says `· hollowed ·` and names who settled it — and the half nobody expected is the book, which now names a founder for five grounds it had never named anybody for on any save this park has shipped*
+
 
 ### Milestone 15: Somebody does it — the park's work grows hands, and its private moments stop repeating themselves — SHIPPED cycle 140 (opened cycle 136)
 

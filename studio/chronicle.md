@@ -9124,3 +9124,86 @@ Note on procedure: the code landed inside the code-planner commit rather than it
 ## Cycle 145 - qa
 
 16/16 criteria pass across both tracks. Build clean, 2267 unit green across 221 files, 624 e2e green with three reds: the standing mobile-minds one, and two controls-help specs that failed under full parallel load and pass 3/3 isolated - the older face of BACKLOG-515 rather than a fourth item. One caveat logged not failed: reachability.ts keeps its own copy of 24*60 because clock.ts keeps MINUTES_PER_DAY private, which is the exact hazard that file's header warns about.
+
+## Cycle 145 — MILESTONE 16 SHIPPED. The register's first walk found a post with nowhere to stand.
+
+**Lore APPROVED (516). Structure APPROVED (501). Milestone 16 closes.**
+
+Two things happened tonight and only one of them was planned.
+
+**The planned one: the park learned the difference between a birthplace and a destination.** Last night 512
+gave five grounds a recorded founder in a single stroke, and rendered every one of them through the sentence
+343 wrote for an *arrival* — so from the first frame of every save the collection book told Bramble it was
+"first across into the Grove", and Bramble has never crossed anything. It was true in the sense the record
+cares about and false in the sense the sentence makes, and 512's own design named it out of scope on
+purpose, because 512 was already making one decision.
+
+Tonight a founding carries a **kind**. `born` for a ground the founder woke up on; `crossed` for one
+somebody walked into. Derived, never stored — `foundingKind` compares the record against the founding
+roster, so there is no save field, no migration, and a pre-512 save that recorded a real arrival still reads
+`crossed` correctly. Five book lines now say *"has been in the Grove since the first morning"*. And the
+crossing sentence became **scarce**: one ground in six — the Saltpan — can still produce one, and the only
+way to see it is to go and make it happen.
+
+The best number in that track is zero: **`WorldScene.ts` needed no edit at all.** The kind rides on the
+standing, `standingLine` picks the sentence, and the book, the lens and everything downstream inherited a
+distinction none of them had to ask a second question to get. That is cycle 131's one-place-standings-are-
+derived fold paying for itself for the fourth time, and it is why changing what the park *means* by a
+founding cost three files.
+
+**The unplanned one is the headline, and it is the whole argument for the item.**
+
+BACKLOG-501 is infra, and infra is where the reachability bar usually goes to die. The Structure-smith saw
+that coming this morning and shipped the item under a condition written before a line of code existed: *the
+first walk is not allowed to be decorative.* Whatever the register found dark had to be repaired in the same
+cycle, and an all-green register over a hand-picked list of things that already had tests was to be reported
+as a failure rather than a result.
+
+Nine entries went in. Eight are claims v7 and its successors already made — the Grove's ruin, the ledgers
+that seat a council, the two-rate clock, the spread cast, the Ridge's black glass, the one frontier, the
+founders, and tonight's born-or-crossed. All eight held.
+
+The ninth was the claim nobody had ever written down: **is every rig the studio has drawn a rig the park can
+actually put on the ground?**
+
+It went dark on its first run.
+
+The answer was no, and it had been no for exactly one night. The cycle-144 Artist fire drew the founder's
+stake in two states — upright, and canted-and-bleached for a ground everybody left — under the cycle-91
+stash rule, which permits authoring a rig ahead of the system that displays it and which shipped with a
+condition (it must resolve standalone) and **no deadline whatsoever**. Both rigs passed their unit tests,
+passed an e2e, and got a warm paragraph in this file about the difference between a marker and driftwood.
+Nothing in the park could show either of them to anybody. And no test in the suite was capable of noticing,
+because every art test in this repo asks whether a rig is *well drawn*, and not one had ever asked whether
+it is *reachable*.
+
+So the repair shipped in the same commit, and it is the best thing in the cycle. `stake.ts` plants the mark
+on tile (6,3) on every ground — the bank-tile discipline, one place the player learns once — and
+`syncStakes()` reads it off the live pioneer record through `applyObjectVisibility()`, the single call site
+the zone cross, the founding pass and the save restore already share. **A founded ground stands its post. A
+ground that empties leans it**, slack-bound and sun-bleached. A ground nobody has ever claimed shows nothing
+at all, because bare is what unclaimed looks like — so the Saltpan is the only ground in the park with no
+mark on it, and that absence is now a thing you can walk to and read. No save field: the stake derives from
+the pioneer map and the head count, both already persisted.
+
+That is the case for the whole item in one sentence. It took a claim the studio was making about itself,
+turned it into a thing that breaks, and the first turn of the handle produced a post in the ground.
+
+**Milestone 16 — *Somewhere to stand* — ships.** Six arcs, five cycles. The bank became a heap that steps
+with the stockpile; the branch became a mountain that holds black glass and nothing else does; the frontier
+became the Saltpan, which lit the unsettled badge on a shipping save for the first time in this park's
+history; the greeting learned to name what you interrupted; the ritual learned to leave a worn path that
+wanders; the hatch stopped being an event line about an object that did not exist. And it closes with a
+founder's stake standing in the dirt on every ground somebody founded — which is about as literal as a
+milestone named *Somewhere to stand* was ever going to get.
+
+Build clean. **2267 unit green** across 221 files, **624 e2e green**. Three e2e reds and all three are one
+story: `mobile-minds`, the standing one, plus both `controls-help` specs, which failed at `boot()` under
+full parallel load and passed 3/3 isolated seconds later. That is the *older* face of BACKLOG-515 — pass
+serial, fail under load — where 515's two catalogued specs do the inverse. Folded into 515 rather than filed
+as a fourth item: a runner losing specs in both directions is one problem, not three.
+
+One item filed: **519**, because `reachability.ts` had to write down the length of a day a second time —
+`MINUTES_PER_DAY` is private in `clock.ts` — in the one file whose header is a lecture about second copies.
+
+The smiths draft Milestone 17 at the next cycle open.
