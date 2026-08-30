@@ -9106,3 +9106,7 @@ A place you were born and a place you walked to are not the same standing. 512 g
 ## Cycle 145 — structure-smith
 
 Milestone 16 has one arc left and this is it: BACKLOG-501, the reachability register — CHARTER v7's bar as a list that breaks rather than a paragraph each verdict re-argues. Deferred last cycle because its first entries were about to change; 512 changed them, so the ground has settled. Queue at cap (4 open), drained not brainstormed, fifth cycle running. Shipped under one condition: whatever the first walk finds dark is fixed in the same cycle.
+
+## Cycle 145 - designer
+
+Both tracks specced. 516: a founding gets a kind - born on the ground or walked into it - derived from the founding roster, no save field, and the book stops telling five dinos they crossed somewhere they woke up. 501: the reachability register, eight standing claims in one module with a walking test, shipped under the condition that whatever the first walk finds dark is fixed in the same cycle. One file overlaps (founding.ts); lore lands first.
