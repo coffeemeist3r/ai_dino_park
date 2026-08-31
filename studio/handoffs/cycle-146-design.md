@@ -143,14 +143,60 @@ tithe is the version with teeth, deferred on purpose at cycle 142 with the measu
 *What does the player see that they could not see before?* **A dino leaving its ground and climbing to
 the Ridge, on a fresh save, before the first landmark in the park goes up.**
 
-That is not decoration and it is not free — it is the whole risk of this item, and the design pins it:
+That is not decoration and it is not free — it is the whole risk of this item, and the design traced the
+mechanism before writing the criteria rather than after. **The first trace failed, and the correction is
+the most important paragraph in this handoff.**
 
-> The four carry systems — `directedCarry` (356), `pressuredCarry` (429), `barterSwap` (358) and the
-> build check itself — all read `structureRecipe(zone)` as their **deficit driver**. Folding obsidian in
-> does not merely make a cairn cost more; it makes obsidian a shortfall every ground is carrying from the
-> first tick. That is the mechanism that sends somebody up the hill without anybody scripting an errand.
-> **If a fresh ten-minute save shows no movement toward the Ridge, this track has made the park more
-> inert and it fails its own bar.** QA tests for the movement, not for the constant.
+The obvious claim was that folding obsidian into `structureRecipe` is enough on its own, because
+`directedCarry` (356), `pressuredCarry` (429) and `barterSwap` (358) all read that recipe as their deficit
+driver. Reading them, it is not enough, twice over:
+
+- `directedCarry` only proposes a kind the **source** ground actually holds (`src[k] > 0`). Only the Ridge
+  holds obsidian, so the tithe makes the shard a deficit everywhere and a *carry* only where somebody is
+  already coming down off the Ridge. That is a delivery, not a climb.
+- The climb itself already exists — `quarryDest` (503) — and it is the **last** tier of `scarcityDestOf`,
+  under the unsettled-frontier pull and under any neighbour with better appeal. On a fresh save the
+  Saltpan is unsettled, so the frontier tier wins, and the errand is the thing that happens when nothing
+  else is pulling. 503 put it there deliberately: promoting it unconditionally "made every migration an
+  errand and took the scarcity system dormant", which is the same defect from the other side.
+
+So the recipe change alone would have shipped a cost nobody pays and a climb nobody takes. The tithe needs
+two more pieces, and both are in scope:
+
+> **The shortfall must be visible, and the errand must be able to win when it is the only thing left.**
+
+### What ships
+
+1. **`structureRecipe(zone)` returns the zone's base recipe plus one obsidian** for every structure that
+   is **not** the beacon. The Ridge is exempt because it is the source; a ground tithing to itself is a
+   rounding error dressed as a rule. Export the tithe as a named const (`TITHE`), not a bare literal, and
+   spend it through the same key loop `buildStructureFor` already runs.
+
+2. **The ground says what it is waiting on.** The zone-map lens entry gains a `short` read — the kinds a
+   ground's own next structure is missing, named, with the tithe called out as coming from the Ridge. On a
+   fresh save every non-Ridge ground reads as waiting on black glass **on frame one, with no walk and no
+   wait**, which is this track's floor under the reachability bar and the part that cannot fail to be
+   reachable. Derived from `structureRecipe(zone)` and the live pile — no second copy of the recipe.
+
+3. **The errand gets promoted, but only when it is the sole remaining shortfall.** In `scarcityDestOf`,
+   the quarry errand moves above the richest-neighbour tier **only when obsidian is the only kind this
+   ground's structure recipe still lacks** — a ground standing there with everything but the shard. A
+   ground short of two kinds still migrates on appeal exactly as it does today, so 503's finding holds and
+   the scarcity system stays live. This is the tier that turns a banked pile into a watched climb.
+
+4. **`GRANARY_RECIPE` keeps its existing single obsidian** and is not doubled — the granary already pays
+   a shard and it is a different recipe on a different path. Say so in a comment so a future cycle does
+   not "fix" the inconsistency by stacking them.
+
+5. **No founding-state seeding.** The fresh park's piles are untouched.
+
+6. **Spec repair.** Every spec that seeded a pile which used to afford a structure and now does not gets
+   the shard seeded *out loud*, in the spec that depends on it.
+
+**QA tests for the visible shortfall, which is guaranteed, and for the promotion rule directly, which is
+the mechanism.** The climb itself depends on a ground banking its other kinds first and is therefore
+timing-dependent; QA asserts the tier resolves to the Ridge for a ground short only the shard, rather than
+asserting a walk completes inside a fixed window.
 
 ### The two questions cycle 142 left open — answered
 
@@ -160,19 +206,6 @@ That is not decoration and it is not free — it is the whole risk of this item,
 2. **Does an unpaid tithe defer a build or fail it? Defer.** `buildStructureFor` already returns `null`
    on an unaffordable pile and every caller already reads that as "not yet". Reuse that path exactly.
    Do not invent a second way for a build not to happen.
-
-### What ships
-
-1. **`structureRecipe(zone)` returns the zone's base recipe plus one obsidian** for every structure that
-   is **not** the beacon. The Ridge is exempt because it is the source; a ground tithing to itself is a
-   rounding error dressed as a rule. Export the tithe as a named const (`TITHE`), not a bare literal, and
-   spend it through the same key loop `buildStructureFor` already runs.
-2. **`GRANARY_RECIPE` keeps its existing single obsidian** and is not doubled — the granary already pays
-   a shard and it is a different recipe on a different path. Say so in a comment so a future cycle does
-   not "fix" the inconsistency by stacking them.
-3. **No founding-state seeding.** The fresh park's piles are untouched.
-4. **Spec repair.** Every spec that seeded a pile which used to afford a structure and now does not gets
-   the shard seeded *out loud*, in the spec that depends on it.
 
 ### Acceptance criteria
 
@@ -185,7 +218,11 @@ That is not decoration and it is not free — it is the whole risk of this item,
       holding none — asserted directly, since this is the mechanism the reachability answer rests on
 - [ ] `GRANARY_RECIPE.obsidian` is unchanged at 1
 - [ ] A fresh save is not seeded with obsidian on any non-Ridge ground
-- [ ] e2e: from a fresh save, a dino on a non-Ridge ground moves toward the Ridge within the watched window
+- [ ] The zone-map lens names the shortfall: on a fresh save every non-Ridge ground reads as short of
+      obsidian, and the Ridge does not
+- [ ] e2e, fresh save, frame one, no clock manipulation: the zone map shows the Bowl waiting on the shard
+- [ ] The errand promotion is exact — a ground short **only** obsidian routes toward the Ridge; a ground
+      short obsidian **and** another kind still routes on appeal (503's finding holds)
 - [ ] Every spec reddened by this change is repaired by making its pile assumption explicit, not by
       weakening an assertion
 - [ ] Full suite green under the cycle's gates
