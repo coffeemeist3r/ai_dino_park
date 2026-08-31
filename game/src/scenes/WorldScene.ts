@@ -4105,7 +4105,10 @@ export class WorldScene extends Phaser.Scene {
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
       // BACKLOG-509: and what its own next landmark is waiting on — the tithe named, with where it comes
       // from, so a fresh park reads that nothing goes up here until somebody climbs, with nothing else opened.
-      if (e.short) txt += `
+      // ...but not on a ground nobody lives on. An unsettled or hollowed ground has no backs to put on a
+      // landmark, so naming what its landmark is short of is noise on the one row that says why it is empty
+      // — the same reason 477's governance glyphs come off those two. (QA, cycle 146.)
+      if (e.short && !e.unsettled && !e.hollowed) txt += `
 ${e.short}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
