@@ -1,6 +1,6 @@
 {
   "cycle": 146,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-109: Diurnal vs. nocturnal temperament — the cast splits into day-dinos and night-owls",
   "structureItem": "BACKLOG-509: The tithe — one obsidian in every ground’s structure recipe but the Ridge’s",
   "lastVerdict": null,
@@ -12,7 +12,7 @@
     "lore-smith": "2026-08-31T03:10:00.000Z",
     "structure-smith": "2026-08-31T03:18:00.000Z",
     "designer": "2026-08-31T03:30:00.000Z",
-    "code-planner": "2026-08-30T03:32:00.000Z",
+    "code-planner": "2026-08-31T03:40:00.000Z",
     "coder": "2026-08-30T03:40:00.000Z",
     "qa": "2026-08-30T03:50:00.000Z",
     "validator": "2026-08-30T04:00:00.000Z",
