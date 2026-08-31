@@ -8,7 +8,22 @@
 
 ## Current milestone
 
-_(none — Milestone 16 shipped cycle 145. The smiths draft Milestone 17 at the next cycle open.)_
+**Milestone 17: A day in the park — the park's day stops being a tint and a number in the corner and becomes something with a shape: who is awake when, what gets done between dawn and dusk, and what it costs to fetch what the day needs.**
+**Status:** ACTIVE (opened cycle 146)
+
+BACKLOG-493 gave the park a 24-minute in-game day at cycle 137 and the studio never spent it. A whole
+day and a whole night now fit inside a session, and almost nothing in the park behaves differently at
+either end of one: five dinos wake together, five sleep together, and the only thing that changes at
+dusk is the tint. This milestone makes the day the park's own rather than the clock's.
+
+**Lore arcs:**
+- [ ] Not everybody keeps the same hours — the cast splits into day-dinos and night-owls off its own traits, and *who is up* reads from across the field at both ends of the day (BACKLOG-109, -108)
+- [ ] The park at rest has tells you can name — a sleeping dino is still recognisably itself, and a dino awake at the wrong hour is doing something (BACKLOG-307, -121)
+- [ ] The hour gets into the voice — a dino's first line of the day knows what time it is and whether it has been up for it (BACKLOG-110, -279)
+
+**Structure arcs:**
+- _(Structure-smith adds these in the 1.5 fire this cycle.)_
+
 
 ---
 

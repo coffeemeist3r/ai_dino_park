@@ -9276,3 +9276,7 @@ standing red, `mobile-minds`, filed under BACKLOG-515 — down from three, since
 failures were proven flakes and folded into the same item.
 
 Milestone 16 is shipped. The smiths draft Milestone 17 at the next cycle open.
+
+## Cycle 146 — lore-smith
+
+Milestone 16 shipped and the file was left empty, so this fire drafts **Milestone 17: A day in the park** — the park's day stops being a tint and a number in the corner and becomes something with a shape. The social queue is at 214 against a cap of 12, so nothing new was invented there; the art queue was at 1 and took one seed, **BACKLOG-520**, deliberately filed with its host named and dated rather than left for a later cycle to find one. The pick is **BACKLOG-109** — day-dinos and night-owls — queued at cycle 28 and never chosen because with a 24-hour in-game day it was a feature nobody could stay awake for. `ACTIVE_SCALE = 60` retired that objection eight cycles ago and nobody went back for it. Idea Box empty.
