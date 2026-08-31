@@ -9441,3 +9441,28 @@ its driver.
 *Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
 instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with the same
 reject-your-first-draft discipline and the same unit + e2e gates.
+
+## Cycle 146 — housekeeping (close)
+
+One more closed bullet archived (520, by the Artist), on top of the three the Validator moved hours earlier
+(109, 509, 519) and the two whole blocks that emptied with them — the cycle-142 structure block, which had
+held only 509, and the cycle-145 block, which had held only 519. Fourth cycle running in which a block
+closed within a few cycles of being filed.
+
+The working backlog carries **0 closed bullets and 212 open items**, of which **3** sit on the Structure
+Track (495, 515, 521). That is **below the cap of X=4**, so the next Structure-smith brainstorms rather
+than drains for the first time since cycle 140 — six cycles of pure drain, ended by a cycle that closed two
+structure items in one night.
+
+The art queue is back to **1**: 518, still held, still waiting on somebody to pick its driver. It has now
+been held for two consecutive fires under the deadline the cycle-145 amendment attached to the stash rule,
+and both times for the same reason — its own text left the choice of prosperity, stock or upkeep to "a
+later cycle", and a later cycle has twice declined to be that cycle. Worth noting for whoever picks it up:
+520 shipped tonight precisely because it was seeded the other way, with its host named and dated in the
+item, and the difference between the two is the whole of why one is drawn and one is not.
+
+Final gates on the closing tree: build clean, **2327 unit green** across 226 files, **635 e2e green**. One
+standing red, `mobile-minds`, filed under BACKLOG-515 — the only red on the tree tonight, down from the
+two the mid-cycle runs carried, since `cycle-038-scan` came back green in the closing run and 5/5 isolated.
+
+Milestone 17 opened this cycle and closed two of its six arcs the same day.
