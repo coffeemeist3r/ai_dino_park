@@ -86,7 +86,17 @@ import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/fi
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
 // BACKLOG-109: not everybody keeps the same hours — a chronotype picks *which* window a dino rests in.
-import { chronotypeOf, atRest, awakeAtNight, chronotypeLine, ROUSE_GLYPH, type Chronotype } from '../world/chronotype';
+import {
+  chronotypeOf,
+  atRest,
+  awakeAtNight,
+  chronotypeLine,
+  DOZE_GLYPH,
+  ROUSE_GLYPH,
+  DOZE_ART_KEY,
+  ROUSE_ART_KEY,
+  type Chronotype,
+} from '../world/chronotype';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
@@ -562,10 +572,12 @@ export class WorldScene extends Phaser.Scene {
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
-  private sleepMarks: Phaser.GameObjects.Text[] = [];
+  /** BACKLOG-520: baked rig where one is drawn, the glyph where one is not — the same per-item fallback
+   *  `dropFood` and `drawPlotSprite` use, so a mark never waits on its art. */
+  private sleepMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** BACKLOG-109: the 👁 over a dino up while the park is dark — only ever an owl. Index-aligned like
    *  sleepMarks; mutually exclusive with the 💤 by construction, so it shares that slot's height. */
-  private rouseMarks: Phaser.GameObjects.Text[] = [];
+  private rouseMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** Per-dino current-activity glyph (BACKLOG-295), index-aligned with `dinos`; live-derived, not saved. */
   private activityMarks: Phaser.GameObjects.Text[] = [];
   private activityById: Record<string, Activity> = {};
@@ -3011,12 +3023,8 @@ export class WorldScene extends Phaser.Scene {
     markSeen(this.seenZones, cfg.name, this.dinoZones[cfg.name]);
     dino.sprite.setVisible(this.inView(dino));
     dino.label.setVisible(this.inView(dino));
-    this.sleepMarks.push(
-      this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
-    );
-    this.rouseMarks.push(
-      this.add.text(0, 0, ROUSE_GLYPH, { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
-    );
+    this.sleepMarks.push(this.makeHourMark(DOZE_ART_KEY, DOZE_GLYPH));
+    this.rouseMarks.push(this.makeHourMark(ROUSE_ART_KEY, ROUSE_GLYPH));
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -3316,6 +3324,15 @@ export class WorldScene extends Phaser.Scene {
 
   private isHuddling(d: Dino): boolean {
     return inHuddleWindow(getWorldClock().now().hour, this.currentSeason()) && this.nearDen(d);
+  }
+
+  /** One hour-mark (BACKLOG-520): the baked rig if it exists, the emoji if it does not. */
+  private makeHourMark(key: string, glyph: string): Phaser.GameObjects.Text | Phaser.GameObjects.Image {
+    const tex = hasPropArt(key) ? bakePropArt(this, key) : null;
+    const mark = tex
+      ? this.add.image(0, 0, tex)
+      : this.add.text(0, 0, glyph, { fontSize: '12px' });
+    return mark.setOrigin(0.5, 1).setDepth(12).setVisible(false);
   }
 
   /** This dino's chronotype (BACKLOG-109) — derived from the name-seeded traits, never persisted. */

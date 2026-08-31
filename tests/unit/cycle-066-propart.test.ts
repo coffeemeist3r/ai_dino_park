@@ -13,6 +13,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'crop_ripe_roots', // BACKLOG-432: the Fernreach's roots crop
       'crop_seed',
       'crop_sprout',
+      'doze', // BACKLOG-520: the shut end of the hours axis, drawn the night 109 shipped its host
       'egg', // BACKLOG-491: the egg by the den
       'food_berries', // BACKLOG-490
       'food_fish', // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
@@ -32,6 +33,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',
       'pile_3',
+      'rouse', // BACKLOG-520: ...and the open one
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'stone',

@@ -47,6 +47,7 @@ import { HATCH_ART_KEY } from './hatch';
 import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_NATIVE_ART_KEY } from './stake';
 import { cropOf, ripeRigKey, type CropStage } from './plot';
 import { TIC_ASIDE } from './tic';
+import { DOZE_ART_KEY, ROUSE_ART_KEY } from './chronotype';
 import { zoneChain } from './zones';
 import { PROP_RIGS } from '../art/propArt';
 
@@ -109,6 +110,10 @@ export function worldPlacedProps(): Set<string> {
   out.add(STAKE_ART_KEY);
   out.add(STAKE_NATIVE_ART_KEY); // 517, wired the night it was drawn
   out.add(STAKE_HOLLOWED_ART_KEY);
+  // BACKLOG-520/109: the two hour-marks, hung over a dino rather than laid on the ground — placed by
+  // `refreshSleepMarks` / `refreshRouseMarks`, which is why they count as seen.
+  out.add(DOZE_ART_KEY);
+  out.add(ROUSE_ART_KEY);
   return out;
 }
 

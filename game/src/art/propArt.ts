@@ -654,6 +654,93 @@ const FOOD_SEEDS_RIG: PropRig = {
   },
 };
 
+// ── The hours a dino keeps 💤 / 👁 (BACKLOG-520) — one axis, two ends ────────────────────────────────
+//
+// BACKLOG-109 split the cast into day-dinos and night-owls, and gave the world two mark slots: one over a
+// dino that is down, one over a dino that is up while the park is dark. These are those two, and the whole
+// brief is that they must read as **the same fact at opposite ends** rather than as two unrelated symbols.
+//
+// **The first draft was a `Zzz`, and it was wrong for a reason worth writing down.** Sleepy-Zs are a
+// typographic convention borrowed from comics, and nothing else in this park is typography — every other
+// mark here is an object or a wearing-away of the ground. A `Zzz` beside `tic_pace` would read as a
+// different game leaking in. Worse, it has no opposite: there is no anti-Z that means *awake*, so the pair
+// would have had to be Zzz-and-an-eye, which is the two-unrelated-symbols failure the brief rules out.
+//
+// So both ends are **an eye**, and the axis is whether it is shut. That gives the pair one silhouette, one
+// outline, and a difference a player reads without being taught it.
+//
+// `doze` is the heavy end: a lid closed over the whole eye, warm and low-contrast so it recedes, lashes
+// laid down under it, and a single slow breath drifting up and away. Nothing in it is bright.
+const DOZE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '..........ooo...',
+  '.........oPPPo..',
+  '.........oPpPo..',
+  '..........oPo...',
+  '........oo......',
+  '.......o........',
+  '..oooooooooo....',
+  '.oLLLLLLLLLLo...',
+  '.oLllllllllLo...',
+  '..oooooooooo....',
+  '...o..o..o..o...',
+  '................',
+  '................',
+  '................',
+];
+
+const DOZE_RIG: PropRig = {
+  size: 16,
+  grid: DOZE_GRID,
+  palette: {
+    // Second draft. The first used a brown-*black* outline and a near-white breath, and the unit test
+    // caught it: that is a high-contrast mark, and a high-contrast mark does not recede. A sleeping dino
+    // should be the thing your eye slides off. So the whole ramp lifts off black and stops short of white,
+    // and the mark now spans a third of the range `rouse` does.
+    o: 0x6b5a48, // warm outline — mid brown, never the cool one `rouse` uses. The pair differs in temperature.
+    L: 0x9a8368, // the closed lid, warm and dull
+    l: 0x7d6a54, // the lid's underside shade — one step, so the whole mark stays low-contrast
+    P: 0xa89880, // the breath
+    p: 0xbcae98, // ...and its one soft lift. The brightest pixel here is dimmer than `rouse`'s sclera.
+  },
+};
+
+// `rouse` is the light end: the same eye **open**, cool and high-contrast, with a pupil dark enough to
+// carry a catchlight — because the whole point of a night-owl is that it is the one thing awake, and an
+// open eye with a spark in it is the cheapest way to say *watching* at 32px. The catchlight sits
+// upper-left of the pupil rather than centred: a centred one reads as a hole, an offset one reads as wet.
+const ROUSE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '....oooooooo....',
+  '..ooWWWWWWWWoo..',
+  '.oWWWWiiiiWWWWo.',
+  '.oWWWiIcIIiWWWo.',
+  '.oWWWiIIIIiWWWo.',
+  '.oWWWiiIIiiWWWo.',
+  '.oWWWWiiiiWWWWo.',
+  '..ooWWWWWWWWoo..',
+  '....oooooooo....',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const ROUSE_RIG: PropRig = {
+  size: 16,
+  grid: ROUSE_GRID,
+  palette: {
+    o: 0x2b3344, // cool outline — blue-black against `doze`'s brown-black
+    W: 0xdfe6f0, // sclera, cool and pale
+    i: 0x6f93b8, // iris
+    I: 0x1d2735, // pupil
+    c: 0xf6faff, // the catchlight — the brightest pixel in either rig, by a distance
+  },
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -1339,6 +1426,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-496: the ritual's worn ground, keyed `tic_<TicKind>`. `fuss` is deliberately still undrawn —
   // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
   tic_pace: TIC_PACE_RIG,
+  doze: DOZE_RIG, // BACKLOG-520: the hours a dino keeps — the shut end of the axis
+  rouse: ROUSE_RIG, // BACKLOG-520: ...and the open one
   tic_circle: TIC_CIRCLE_RIG,
   // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
   // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern

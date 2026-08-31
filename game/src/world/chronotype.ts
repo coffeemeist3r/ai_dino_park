@@ -91,6 +91,11 @@ export function awakeAtNight(hour: number, c: Chronotype, season?: Season): bool
 export const DOZE_GLYPH = '💤';
 export const ROUSE_GLYPH = '👁';
 
+/** The `PROP_RIGS` keys BACKLOG-520 draws these two against. Named here, beside the glyphs they replace,
+ *  so the world and the reachability register read the same two strings from one place. */
+export const DOZE_ART_KEY = 'doze';
+export const ROUSE_ART_KEY = 'rouse';
+
 /** The collection-book standing — legible on frame one, without waiting for any particular hour. */
 export function chronotypeLine(c: Chronotype): string {
   return c === 'owl' ? 'keeps late hours' : 'up with the sun';

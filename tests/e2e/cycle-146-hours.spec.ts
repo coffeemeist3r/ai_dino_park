@@ -55,6 +55,19 @@ test.describe('BACKLOG-109 — the hours a dino keeps', () => {
     expect(roused.filter((n) => resting.includes(n))).toEqual([]);
   });
 
+  test('both hour-marks render from their baked rigs, not the emoji fallback', async ({ page }) => {
+    // BACKLOG-520: the rigs were drawn the same night 109 shipped, so the register's ninth entry — is
+    // every drawn rig one the park can put on the ground? — stays green rather than going dark the way
+    // it did for the founder's stake at cycle 145.
+    await boot(page);
+    const drawn = await page.evaluate(() => ({
+      doze: (window as W).__hasPropArt('doze'),
+      rouse: (window as W).__hasPropArt('rouse'),
+    }));
+    expect(drawn.doze).toBe(true);
+    expect(drawn.rouse).toBe(true);
+  });
+
   test('the book carries the standing, with no waiting for any particular hour', async ({ page }) => {
     await boot(page);
     const text: string = await page.evaluate(() => (window as W).__bookText());

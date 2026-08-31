@@ -9392,3 +9392,52 @@ exactly as intended on its first use — the stash rule's new deadline turned "a
 question the seeding cycle has to answer.
 
 Milestone 17 is two arcs down out of six, on its opening day.
+
+## Cycle 146-art — the eye that shuts and the eye that does not
+
+One subject in two halves, and for the second cycle running the interesting thing is a rule the studio
+wrote for itself doing its job.
+
+**BACKLOG-520 was seeded this morning with its host named and dated**, which is the cycle-145 amendment
+working exactly as intended on its first use. Last cycle's Artist held 518 rather than drawing it, because
+its driver had deliberately been left for "a later cycle to decide" and by evening an unchosen driver meant
+no host, and no host means the reachability register's ninth entry reddens the build. So the Lore-smith
+seeded this one differently: *host is BACKLOG-109, shipping in this same cycle 146*, written into the item.
+The host shipped at the Coder's fire. The rigs went in tonight. Nothing was stashed and nothing waited.
+
+**The brief's hard part was that the pair had to be one fact, not two symbols.** 109 gave the world two
+mark slots — one over a dino that is down, one over a dino up while the park is dark. The obvious drawing
+is `Zzz` for the first and an eye for the second, and that is wrong twice over. Sleepy-Zs are typography
+borrowed from comics, and nothing else in this park is typography: every other mark here is an object or a
+wearing-away of the ground, so a `Zzz` sitting next to `tic_pace` reads as a different game leaking in. And
+a Z has no opposite — there is no anti-Z that means *awake* — so the pair could never have shared an axis.
+
+So both ends are an **eye**, and the axis is whether it is shut. One silhouette, one outline, and a
+difference nobody has to be taught. `doze` is a lid closed over the whole eye with the lashes laid down
+under it and one slow breath drifting off; `rouse` is the same eye open, with a catchlight set upper-left
+of the pupil rather than centred, because a centred one reads as a hole and an offset one reads as wet.
+
+**Then the second draft was caught by its own unit test, which is the better half of the night.** The doze
+had a brown-black outline and a near-white breath — and the test that says *the sleeper must be
+low-contrast and the watcher high* failed it on the numbers, correctly. A high-contrast mark does not
+recede, and the entire job of a sleeping dino is to be the thing your eye slides off. The doze ramp now
+lifts off black and stops short of white, and the relationship is a number rather than a comment: `rouse`
+spans more than twice the luminance range `doze` does, and nothing in `doze` is brighter than `rouse`'s
+sclera. The two are also split by **temperature** — brown-black against blue-black — so the pair still
+reads apart for a player who cannot rely on brightness. And the axis itself is pinned: a lid and no pupil
+on one, a pupil and no lid on the other, so a later repaint cannot hand them the same interior and leave
+the park with two marks that mean nothing in particular.
+
+**The register stayed green from the first walk.** Both keys went into `worldPlacedProps()` in the same
+commit that drew them, and the two mark slots swapped from emoji `Text` to baked `Image` on the same
+per-item fallback `dropFood` and `drawPlotSprite` already use. That is the first time the ninth entry has
+been satisfied by a rig arriving *with* its placement rather than by a repair — the entry has existed for
+one day and this is its first honest pass.
+
+Gates after the fire: build clean, **2327 unit green** across 226 files, **635 e2e green** with the
+standing `mobile-minds` red. Art queue back to **1** — 518, still held, still waiting on somebody to pick
+its driver.
+
+*Note on procedure:* STYLE-GUIDE's per-subject sub-agent workflow was not used — this session runs under an
+instruction not to spawn sub-agents. Both rigs were authored inline against one brief, with the same
+reject-your-first-draft discipline and the same unit + e2e gates.
