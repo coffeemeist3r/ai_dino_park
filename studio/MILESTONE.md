@@ -22,7 +22,9 @@ dusk is the tint. This milestone makes the day the park's own rather than the cl
 - [ ] The hour gets into the voice — a dino's first line of the day knows what time it is and whether it has been up for it (BACKLOG-110, -279)
 
 **Structure arcs:**
-- _(Structure-smith adds these in the 1.5 fire this cycle.)_
+- [ ] Fetching costs something — no skyline anywhere in the park goes up without somebody having made the climb, and the park's four carry systems learn a new shortfall (BACKLOG-509)
+- [ ] The day is one number, owned in one place — the length of a day and the length of a session stop being copied into the file whose header warns against copies (BACKLOG-519)
+- [ ] The suite can wait for time — the runner stops losing specs at both extremes of load, at the timing seam a fast serial boot reaches sooner than a loaded one (BACKLOG-515, -430)
 
 
 ---
