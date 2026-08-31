@@ -17,13 +17,13 @@ either end of one: five dinos wake together, five sleep together, and the only t
 dusk is the tint. This milestone makes the day the park's own rather than the clock's.
 
 **Lore arcs:**
-- [ ] Not everybody keeps the same hours — the cast splits into day-dinos and night-owls off its own traits, and *who is up* reads from across the field at both ends of the day (BACKLOG-109, -108)
+- [x] Not everybody keeps the same hours — the cast splits into day-dinos and night-owls off its own traits, and *who is up* reads from across the field at both ends of the day (BACKLOG-109) — *shipped cycle 146, the cycle the milestone opened. The bar forced the shape: a fresh save opens at 08:00 and nightfall is outside the ten-minute window, so the derivation was constrained to put an owl in the Bowl's five and the frame-one read is Rex asleep at eight in the morning while its four neighbours are up. 108 (the dawn stretch) stays open as this arc's follow-up.*
 - [ ] The park at rest has tells you can name — a sleeping dino is still recognisably itself, and a dino awake at the wrong hour is doing something (BACKLOG-307, -121)
 - [ ] The hour gets into the voice — a dino's first line of the day knows what time it is and whether it has been up for it (BACKLOG-110, -279)
 
 **Structure arcs:**
-- [ ] Fetching costs something — no skyline anywhere in the park goes up without somebody having made the climb, and the park's four carry systems learn a new shortfall (BACKLOG-509)
-- [ ] The day is one number, owned in one place — the length of a day and the length of a session stop being copied into the file whose header warns against copies (BACKLOG-519)
+- [x] Fetching costs something — no skyline anywhere in the park goes up without somebody having made the climb, and the park's four carry systems learn a new shortfall (BACKLOG-509) — *shipped cycle 146, in three pieces rather than the one the item asked for. Tracing the mechanism before writing the criteria found that the recipe change alone yields a delivery and not a climb, so it ships with the shortfall named on the map and the errand promoted exactly when the shard is the only thing missing.*
+- [x] The day is one number, owned in one place — the length of a day stops being copied into the file whose header warns against copies (BACKLOG-519) — *shipped cycle 146 as a rider. `SESSION_MINUTES` deliberately stayed put: what watchable means is the register's own claim, not the clock's. The arc's sequel filed itself the same night as BACKLOG-521, when a constant on the other side of the park was found describing a relationship it no longer had.*
 - [ ] The suite can wait for time — the runner stops losing specs at both extremes of load, at the timing seam a fast serial boot reaches sooner than a loaded one (BACKLOG-515, -430)
 
 

@@ -9302,3 +9302,93 @@ Both tracks in, 22 files, build clean and **2310 unit / 633 e2e green**. The two
 ## Cycle 146 - qa
 
 **26/26 criteria pass**, both tracks, and every reachability claim was read off a fresh save on frame one rather than taken from the design. Rex asleep at eight in the morning while four Bowl neighbours are up; every walkable ground naming black glass from a Ridge it names, with the Ridge itself carrying no source arrow. Gates: build clean, **2310 unit green** across 224 files, **633 e2e green** with two reds - the standing `mobile-minds` (515) and `cycle-038-scan`, a proven flake at 5/5 isolated wearing 515's second signature. One finding fixed in the fire: the `short` row was rendering on the **Saltpan**, directly under the badge whose job is to say the ground is empty, so it is now suppressed for unsettled and hollowed grounds the way 477's governance glyphs already are.
+
+## Cycle 146 — the park keeps two sets of hours, and nothing goes up without the climb
+
+**Both tracks APPROVED.** Milestone 17 opened this morning and closed two of its six arcs by evening.
+
+**The lore track is an item that has been shippable for eight cycles and nobody noticed.** BACKLOG-109 —
+day-dinos and night-owls — was queued at cycle 28 and passed over every cycle since, and the reason was
+honest every single time: with a 24-real-hour in-game day, a feature about night was a feature nobody could
+stay awake for. Then **BACKLOG-493 gave the park a 24-minute day at cycle 137** and the studio never went
+back for the item that unblocked. That is a new shape of miss, and worth naming: CHARTER v7 was written
+about systems tuned to be dormant, and this was a *reachability that was won and then never spent*.
+
+What ships reads on the opening frame. **Rex — the first dino in the roster, in the ground the save opens
+on — is asleep at eight in the morning** while Mossback, Sunny, Twitch and Glade are up and moving. Stay
+twelve real minutes and the park inverts: Rex is the only thing awake, and the four that were up are down.
+
+The best thing about it is that **the derivation was constrained by the bar instead of checked against it
+afterwards.** A fresh save opens at 08:00; nightfall is twelve real minutes off, outside the ten-minute
+window the bar is measured in. So the constraint went into the spec before a line of code existed — *the
+split must read at 08:00, in the Bowl* — which forces the rule to put an owl among the Bowl's five. The
+obvious rule, `curiosity > energy`, was rejected on a number rather than a feeling: it puts Mossback within
+**0.001** of the line, a coin flip any future trait tweak would toss. The shipped weights clear the bar by
+~0.05 on both sides for all ten roster names, and the test asserts the Bowl owl **over the live roster**
+rather than a literal — so a cycle that reorders the cast fails a test instead of quietly shipping a
+dormant feature. The owl window is the season's own window shifted **eight** hours, not a clean twelve,
+because twelve would make the two halves of the cast photographic negatives that are never awake together:
+a park running two shifts, not a park with night-owls in it.
+
+**The structure track is the cycle's lesson in tracing a mechanism before writing the criteria.**
+BACKLOG-509 — one obsidian folded into every ground's landmark but the Ridge's — was going to be a
+one-line change, and the argument for it was completely plausible: four carry systems read
+`structureRecipe` as their deficit driver, so fold the shard in and somebody climbs. Reading those four
+systems, it is false twice. `directedCarry` only proposes a kind the **source** ground holds, and only the
+Ridge holds obsidian — so the tithe alone produces a *delivery*, not a climb. And the climb already
+existed, at the **bottom** of the migration tier chain, under the unsettled-frontier pull that the Saltpan
+lights on every fresh save. 503 put it there on purpose, having measured that promoting it unconditionally
+took the whole scarcity system dormant.
+
+So the item shipped as three pieces instead of one: the recipe, **the shortfall made visible** — every
+ground the player can walk to now says on frame one what its skyline is waiting on and names where it comes
+from, `short 🪵3 🪨2 🌑1◂The Sunward Ridge` — and **the errand promoted above the appeal read only when the
+shard is the sole remaining shortfall**, narrow enough that 503's finding survives intact and the two rules
+coexist rather than one overwriting the other. Both questions cycle 142 deliberately left open are answered
+on the page: no free founding shard, and an unpaid tithe *defers* on the null path that already exists.
+
+**And then the tithe found something.** `WORK_BUILD_FLOOR = 6` has sat in `governance.ts` since cycle 121
+under a comment saying it was set *"above the cairn recipe."* The tithe raised a cairn from 5 to 6. From
+that instant **no affordable pile could be under the floor**, so a gather-first ground never deferred
+anything again and the entire "stores before walls" work policy — a choice the player makes, with its own
+lens glyph and a persisted setting — went **unreachable**. Nothing failed. The build was clean, 2310 unit
+tests were green, and the comment above the number went on describing a relationship that had stopped being
+true. The only thing that noticed was one e2e spec that happened to *use* the deferral, and it surfaced as
+a confusing off-by-one about cairn counts.
+
+That is BACKLOG-519's class — a claim written down twice, going stale in one of the two places — except
+that this time the second copy was **load-bearing behaviour** rather than a test's arithmetic. The floor is
+derived from the recipe now, and the class is filed as **BACKLOG-521** so it gets swept rather than fixed
+once. It was found by moving a founding constant and watching what fell over, which is precisely what
+CHARTER v7 keeps asking the studio to do more of, and which has now been the only thing to reveal what this
+park was actually asserting three cycles running.
+
+**Nine spec repairs, each making an assumption explicit rather than weakening an assertion.** Three are
+worth naming. `cycle-142-obsidian` carried a Grove pile that, after the tithe, was *short only the shard* —
+so it would have silently started testing 509's new promotion instead of the 503 ordering it was written to
+guard; its pile is now short of two kinds and a new case tests the promotion from both sides. And two specs
+that walk a dino across the ground were standing at 08:00, which is inside the owls' rest window now: they
+name their hour and say why, which is **BACKLOG-495's argument about founding state, applied to time** —
+the shape 515 independently proposed for its own fix. One of them also stopped depending on who wins a
+seeded scramble, since a sleeping dino consumes no wander rolls and this cycle moved the whole stream.
+
+Gates on the closing tree: build clean, **2310 unit green** across 224 files, **633 e2e green**. Two reds,
+both accounted for: the standing `mobile-minds` (515), and `cycle-038-scan`, green 5/5 isolated and wearing
+515's second signature.
+
+## Cycle 146 — housekeeping
+
+Three closed bullets archived (109, 509, 519) and **two whole sections moved with them** — the cycle-142
+structure block, which had held only 509, and the cycle-145 block, which had held only 519. That is the
+fourth cycle running in which a block closed within a few cycles of being filed.
+
+The working backlog carries **0 closed bullets and 212 open items**. The Structure Track dropped to **2**
+when 509 and 519 closed — **below the cap of X=4 for the first time in six cycles** — and 521 refills it to
+**3**, so the next Structure-smith brainstorms rather than drains for the first time since cycle 140.
+
+The art queue is at **2**: 518, still held for want of a driver, and **520**, seeded this morning *with its
+host named and dated* and with that host shipping the same night. That is the cycle-145 amendment working
+exactly as intended on its first use — the stash rule's new deadline turned "a later cycle decides" into a
+question the seeding cycle has to answer.
+
+Milestone 17 is two arcs down out of six, on its opening day.
