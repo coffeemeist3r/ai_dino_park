@@ -78,6 +78,10 @@ test('a greet mends the funk: outsized gain, warm memory, one-shot', async ({ pa
 test('the tone path mends too', async ({ page }) => {
   await boot(page);
   await stageColdMorning(page);
+  // BACKLOG-109: the funk is staged at the window's closing edge (08:00, which 179 owns), but what follows
+  // needs the funked dinos actually up and moving — and 08:00 is inside the night-owls' rest window now.
+  // 16:00 is the stretch every chronotype is awake in every season. Named here rather than assumed.
+  await page.evaluate(() => (window as W).__setClock(22, 16, 0));
 
   const name = await page.evaluate(() => {
     const w = window as W;
@@ -107,44 +111,41 @@ test('the tone path mends too', async ({ page }) => {
 test('a meal mends: the eater gains food + bonus and the funk clears', async ({ page }) => {
   await boot(page);
   await stageColdMorning(page);
+  // BACKLOG-109: the funk is staged at the window's closing edge (08:00, which 179 owns), but what follows
+  // needs the funked dinos up and moving — and 08:00 is inside the night-owls' rest window now. 16:00 is
+  // the stretch every chronotype is awake in every season. Named here rather than assumed.
+  await page.evaluate(() => (window as W).__setClock(22, 16, 0));
 
   const result = await page.evaluate(() => {
     const w = window as W;
-    const initialPending = w.__coldPending() as string[];
+    const pending = w.__coldPending() as string[];
+    const eater = pending[0];
     const before = { ...(w.__friendship() as Record<string, number>) };
 
-    // Drop near a funked dino and let the bowl race for it; retry until a funked
-    // dino is the one that snaps it up (the loners wander — usually first drop).
-    for (let drop = 0; drop < 6; drop++) {
-      const pending = w.__coldPending() as string[];
-      if (pending.length === 0) break;
-      const target = (w.__dinoPositions() as Array<{ name: string; x: number; y: number }>).find(
-        (p) => p.name === pending[0],
-      )!;
-      w.__dropFood(Math.floor(target.x / 32), 'meat');
-      for (let i = 0; i < 40 && w.__food(); i++) w.__stepWorld();
-      const mem = w.__memory() as Record<string, string[]>;
-      const warmedEater = initialPending.find(
-        (n) =>
-          (mem[n] ?? []).some((m) => m.includes('the keeper warmed me')) &&
-          (mem[n] ?? []).some((m) => m.includes('snapped up the food')),
-      );
-      if (warmedEater) {
-        const delta =
-          ((w.__friendship() as Record<string, number>)[warmedEater] ?? 0) - (before[warmedEater] ?? 0);
-        return {
-          eater: warmedEater,
-          delta,
-          stillPending: (w.__coldPending() as string[]).includes(warmedEater),
-        };
-      }
-    }
-    return null;
+    // BACKLOG-109: this used to drop food near a funked dino and re-roll up to six times, hoping that dino
+    // won the scramble. That was a race resolved by the seeded stream, and cycle 146 shifted the stream —
+    // a sleeping dino consumes no wander rolls, so every draw after it moves. The claim this spec makes is
+    // "the dino that eats is mended", not "this dino wins a scramble", so it now names its eater through
+    // the deterministic `__eat` hook 375 added for exactly this. (BACKLOG-456's catalogue, one more entry.)
+    const target = (w.__dinoPositions() as Array<{ name: string; x: number; y: number }>).find(
+      (p) => p.name === eater,
+    )!;
+    w.__dropFood(Math.floor(target.x / 32), 'meat');
+    w.__eat(eater);
+    w.__stepWorld();
+
+    const mem = w.__memory() as Record<string, string[]>;
+    return {
+      eater,
+      warmed: (mem[eater] ?? []).some((m: string) => m.includes('the keeper warmed me')),
+      delta: ((w.__friendship() as Record<string, number>)[eater] ?? 0) - (before[eater] ?? 0),
+      stillPending: (w.__coldPending() as string[]).includes(eater),
+    };
   });
 
-  expect(result).not.toBeNull();
-  expect(result!.delta).toBeGreaterThanOrEqual(11); // FEED_GAIN 5 (min) + WARM_BONUS 6
-  expect(result!.stillPending).toBe(false);
+  expect(result.warmed).toBe(true);
+  expect(result.delta).toBeGreaterThanOrEqual(11); // FEED_GAIN 5 (min) + WARM_BONUS 6
+  expect(result.stillPending).toBe(false);
 });
 
 test('dusk thaws an unmended funk silently — no warm memory appears', async ({ page }) => {

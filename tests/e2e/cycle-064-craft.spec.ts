@@ -41,10 +41,13 @@ test('a stockpile that clears the recipe becomes a cairn', async ({ page }) => {
   await bankOne(page, 'branch');
   await bankOne(page, 'branch');
   await bankOne(page, 'stone');
-  expect(await cairns(page)).toEqual([]); // {branch:3, stone:1} — a stone short, no cairn yet
+  // BACKLOG-509: the tithe — every ground but the Ridge now owes one obsidian per landmark, so the shard
+  // is banked out loud here. This spec is about what gets built, and a build now costs a climb.
+  await bankOne(page, 'obsidian');
+  expect(await cairns(page)).toEqual([]); // {branch:3, stone:1, obsidian:1} — a stone short, no cairn yet
   expect((await stockpile(page)).branch).toBe(3);
 
-  await bankOne(page, 'stone'); // {branch:3, stone:2} → craft
+  await bankOne(page, 'stone'); // {branch:3, stone:2, obsidian:1} → craft
 
   expect((await cairns(page)).length).toBe(1);
   const pile = await stockpile(page);
@@ -61,10 +64,13 @@ test('a stockpile that clears the recipe becomes a cairn', async ({ page }) => {
 test('no second cairn without rebuilding the stockpile', async ({ page }) => {
   await boot(page);
   await emptyGrounds(page); // CHARTER v7: this spec is not about the founding state
-  for (const k of ['branch', 'branch', 'branch', 'stone', 'stone']) await bankOne(page, k);
+  // BACKLOG-509: the tithe — every ground but the Ridge now owes one obsidian per landmark, so the shard
+  // is banked out loud here. This spec is about what gets built, and a build now costs a climb.
+  for (const k of ['branch', 'branch', 'branch', 'stone', 'obsidian', 'stone']) await bankOne(page, k);
   expect((await cairns(page)).length).toBe(1);
 
-  // One more pickup leaves the pile below the recipe → still exactly one cairn.
+  // One more pickup leaves the pile below the recipe → still exactly one cairn. BACKLOG-509: and a second
+  // cairn now needs a second climb as well, which is the whole point of the tithe.
   await bankOne(page, 'branch');
   expect((await cairns(page)).length).toBe(1);
 
@@ -73,5 +79,8 @@ test('no second cairn without rebuilding the stockpile', async ({ page }) => {
   await bankOne(page, 'branch');
   await bankOne(page, 'stone');
   await bankOne(page, 'stone');
+  // BACKLOG-509: a second landmark is a second tithe. Rebuilding the *stockpile* is no longer enough on
+  // its own — the ground has to have made the climb again too, which is what this bank stands in for.
+  await bankOne(page, 'obsidian');
   expect((await cairns(page)).length).toBe(2);
 });

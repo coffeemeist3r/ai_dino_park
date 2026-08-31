@@ -14,6 +14,7 @@ import type { Personality } from '../ai/personality';
 import { YIELD_MAX, YIELD_REGROW } from './regrowth';
 import { UPKEEP_GLYPH } from './upkeep';
 import { theZone } from './zones'; // BACKLOG-499
+import { structureRecipe } from './resource'; // BACKLOG-509: the floor is derived from the landmark's cost
 
 /**
  * A zone's stance on its banked food, set by its provider:
@@ -87,9 +88,18 @@ export function spendGlyph(p: SpendPriority | null | undefined): string {
  */
 export type WorkPriority = 'gather' | 'build';
 
-/** Pile total a `'gather'` zone wants in hand before it spends on a bias landmark. Above the cairn recipe
- *  and below the granary's, so a gather-first ground visibly banks a while and still builds. */
-export const WORK_BUILD_FLOOR = 6;
+/**
+ * Pile total a `'gather'` zone wants in hand before it spends on a bias landmark: one unit above the
+ * default landmark's own cost, so a gather-first ground visibly banks a while and still builds.
+ *
+ * **Derived, not written down (BACKLOG-509).** This was the literal `6` while a cairn cost 5, and the
+ * tithe raised a cairn to 6 — which silently made the defer unreachable for the ground the rule was
+ * written for, because no affordable pile could ever be under the floor any more. A comment saying "above
+ * the cairn recipe" and a number that had stopped being above it is exactly the second-copy failure
+ * BACKLOG-519 is about, so the number now reads the recipe it is defined against.
+ */
+export const WORK_BUILD_FLOOR =
+  Object.values(structureRecipe()).reduce((t: number, n) => t + (n ?? 0), 0) + 1;
 
 /** Regrowth multipliers — a worked-and-tended ground recovers faster, a ground whose backs are on the walls
  *  slower. The calibration knobs; `null` is exactly 1 and must stay that way (the compatibility seam). */

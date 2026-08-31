@@ -31,17 +31,22 @@ describe('frond thatch (BACKLOG-417)', () => {
   });
 
   it('structureRecipe returns the frond recipe for the Fernreach, others unchanged', () => {
-    expect(structureRecipe(FERNREACH_ID)).toBe(THATCH_RECIPE);
-    expect(structureRecipe(FERNREACH_ID)).toEqual({ frond: 4 });
-    expect(structureRecipe(BOWL_ID)).toBe(CRAFT_RECIPE);
-    expect(structureRecipe(GROVE_ID)).toBe(SHELTER_RECIPE);
+    // BACKLOG-509: a ground's recipe is now its base *plus* the Ridge's tithe, so this asserts the base
+    // kinds explicitly rather than identity against the base const. The shard is stated out loud here
+    // because this spec depends on what a landmark costs.
+    expect(structureRecipe(FERNREACH_ID)).toEqual({ frond: 4, obsidian: 1 });
+    expect(structureRecipe(BOWL_ID)).toEqual({ ...CRAFT_RECIPE, obsidian: 1 });
+    expect(structureRecipe(GROVE_ID)).toEqual({ ...SHELTER_RECIPE, obsidian: 1 });
   });
 
-  it('buildStructureFor spends the Fernreach thatch recipe (frond -4)', () => {
-    const pile: Stockpile = { frond: 5, stone: 1 };
+  it('buildStructureFor spends the Fernreach thatch recipe (frond -4) and its tithe', () => {
+    // BACKLOG-509: the shard is seeded out loud, because this spec is about what a thatch costs and a
+    // thatch now costs one climb. Without it the build defers — which is 509's whole point, and is
+    // covered on its own in cycle-146-tithe.test.ts.
+    const pile: Stockpile = { frond: 5, stone: 1, obsidian: 1 };
     const after = buildStructureFor(pile, FERNREACH_ID);
-    expect(after).toEqual({ frond: 1, stone: 1 });
-    expect(pile).toEqual({ frond: 5, stone: 1 }); // pure — input untouched
+    expect(after).toEqual({ frond: 1, stone: 1, obsidian: 0 });
+    expect(pile).toEqual({ frond: 5, stone: 1, obsidian: 1 }); // pure — input untouched
   });
 
   it('buildStructureFor returns null when the pile cannot afford the recipe', () => {
@@ -49,8 +54,10 @@ describe('frond thatch (BACKLOG-417)', () => {
     expect(buildStructureFor({}, BOWL_ID)).toBeNull();
   });
 
-  it('buildStructureFor on a bowl pile spends the cairn recipe identically to craft() (parity)', () => {
-    const pile: Stockpile = { branch: 4, stone: 3 };
-    expect(buildStructureFor(pile, BOWL_ID)).toEqual(craft(pile));
+  it('buildStructureFor on a bowl pile spends the cairn recipe identically to craft() (parity, plus the tithe)', () => {
+    // BACKLOG-509: `craft` is the untithed base spend and stays that way on purpose — it is the recipe,
+    // not the bill. So parity is asserted against craft's result with the shard taken off beside it.
+    const pile: Stockpile = { branch: 4, stone: 3, obsidian: 1 };
+    expect(buildStructureFor(pile, BOWL_ID)).toEqual({ ...craft(pile), obsidian: 0 });
   });
 });

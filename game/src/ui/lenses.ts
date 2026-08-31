@@ -67,6 +67,10 @@ export interface ZoneMapEntry {
   /** This ground's council (BACKLOG-479) — its top food-bankers, most-banked first. `[]` when the ground
    *  seats nobody, which is every ground on a fresh save (nobody has banked yet). Built by `zoneCouncil`. */
   council: string[];
+  /** What this ground's next structure is still short of (BACKLOG-509) — `short 🌑◂Ridge`-shaped, built
+   *  from `recipeShortfall` so the recipe is never copied. Undefined when the ground can already afford
+   *  its next landmark (then no line shows), and for callers that pass no shortfalls. */
+  short?: string;
 }
 
 /**
@@ -135,6 +139,7 @@ export function zoneMapModel(
   works: Record<string, WorkPriority | null> = {},
   councils: Record<string, string[]> = {},
   hollowed: Record<string, boolean> = {},
+  shorts: Record<string, string> = {},
 ): ZoneMapEntry[] {
   return chain.map((id) => ({
     id,
@@ -152,6 +157,7 @@ export function zoneMapModel(
     hollowed: hollowed[id] ?? false, // BACKLOG-512: a ground everybody has left (absent → false)
     work: works[id] ?? null, // BACKLOG-473: what this ground puts its backs into (absent → no policy shown)
     council: councils[id] ?? [], // BACKLOG-479: the ground's seated voices (absent → seats nobody)
+    short: shorts[id] || undefined, // BACKLOG-509: what its next landmark is still waiting on (absent → nothing)
   }));
 }
 
@@ -188,6 +194,10 @@ export interface BookRow {
   /** Signature idle quirk label (BACKLOG-303) — the `fidget()` label, set by the live bookRows().
    *  Optional so older BookRow literals (tests) stay valid; the dossier always shows it in-game. */
   quirk?: string;
+  /** Which hours this dino keeps (BACKLOG-109) — `keeps late hours` / `up with the sun`. Optional so older
+   *  BookRow literals stay valid; always present in-game, and legible on frame one without waiting for a
+   *  particular hour to come round. */
+  hours?: string;
   /** The signature ritual, once it has actually formed in this park (BACKLOG-409) — the 405 tic named,
    *  with the friend it was caught off (407) when it is borrowed. Undefined for a dino that has never been
    *  alone long enough (then no line shows); built by `ticBookLine`. */
@@ -239,6 +249,7 @@ export function bookLines(rows: BookRow[]): string[] {
     out.push(`${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
+    if (r.hours) out.push(`  · ${r.hours}`); // BACKLOG-109: the hours it keeps, beside the quirk
     if (r.tic) out.push(`  ${r.tic}`); // BACKLOG-409: the ritual it has actually fallen into, under the quirk
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases

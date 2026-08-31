@@ -38,8 +38,10 @@ test('the bowl stacks cairns and never a lean-to (its bias is stone)', async ({ 
 
   const bowlDino = (await dinos(page))[0].name;
   // Bank three cairns' worth — the bowl stacks cairns, never escalating to a lean-to.
+  // BACKLOG-509: the tithe — every ground but the Ridge now owes one obsidian per landmark, so the shard
+  // is banked out loud here. This spec is about what gets built, and a build now costs a climb.
   for (let i = 0; i < 3; i++) {
-    for (const k of ['branch', 'branch', 'branch', 'stone', 'stone']) await bankOn(page, bowlDino, k);
+    for (const k of ['branch', 'branch', 'branch', 'stone', 'obsidian', 'stone']) await bankOn(page, bowlDino, k);
   }
   expect((await cairns(page)).length).toBe(3); // a cairn per recipe's worth
   expect((await shelters(page)).length).toBe(0); // the bowl never raises a lean-to
@@ -77,7 +79,9 @@ test('the grove raises a lean-to and never a cairn (its bias is branch)', async 
   await bankOn(page, 'Rex', 'stone');
   await bankOn(page, 'Rex', 'stone');
   await bankOn(page, 'Rex', 'stone');
-  expect((await shelters(page)).length).toBe(0); // {6,3} — a stone short
+  // BACKLOG-509: the tithe — this ground owes one obsidian per landmark now, banked out loud.
+  await bankOn(page, 'Rex', 'obsidian');
+  expect((await shelters(page)).length).toBe(0); // {6,3,🌑1} — a stone short
   await bankOn(page, 'Rex', 'stone'); // stone → 4 → build
 
   const built = await shelters(page);
@@ -88,6 +92,7 @@ test('the grove raises a lean-to and never a cairn (its bias is branch)', async 
   const pile = await zonePile(page, 'grove');
   expect(pile.branch).toBe(0); // recipe spent exactly (6 - 6)
   expect(pile.stone).toBe(0); // (4 - 4)
+  expect(pile.obsidian).toBe(0); // BACKLOG-509: and the tithe, spent with the rest
 
   // BACKLOG-344: the shelter renders as the baked lean-to prop, not the 🛖 glyph.
   expect(await page.evaluate(() => (window as W).__shelterArt())).toBe('prop_shelter');

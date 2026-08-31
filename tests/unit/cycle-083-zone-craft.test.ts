@@ -32,9 +32,12 @@ describe('zone-distinct craft (BACKLOG-377)', () => {
   });
 
   it('structureRecipe returns the cairn recipe for the bowl, the lean-to recipe for the grove', () => {
-    expect(structureRecipe(BOWL_ID)).toBe(CRAFT_RECIPE);
-    expect(structureRecipe(GROVE_ID)).toBe(SHELTER_RECIPE);
-    expect(structureRecipe()).toBe(CRAFT_RECIPE); // unknown → cairn recipe
+    // BACKLOG-509: a ground's recipe is now its base *plus* the Ridge's tithe, so this asserts the base
+    // kinds explicitly rather than identity against the base const. The shard is stated out loud here
+    // because this spec depends on what a landmark costs.
+    expect(structureRecipe(BOWL_ID)).toEqual({ ...CRAFT_RECIPE, obsidian: 1 });
+    expect(structureRecipe(GROVE_ID)).toEqual({ ...SHELTER_RECIPE, obsidian: 1 });
+    expect(structureRecipe()).toEqual({ ...CRAFT_RECIPE, obsidian: 1 }); // unknown → cairn recipe, tithed
   });
 
   it('directedCarry under the grove recipe pulls the kind it is short of for a lean-to', () => {

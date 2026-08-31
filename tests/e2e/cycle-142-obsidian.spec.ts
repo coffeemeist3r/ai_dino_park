@@ -104,8 +104,15 @@ test('a neighbour that is genuinely better off still outranks the errand', async
   await page.evaluate((n) => (window as W).__migrate(n, 'grove'), who);
 
   // Nothing pulling: the Grove is comfortably the best-off ground of the four, and it holds no black glass,
-  // so the walk may as well fetch some. Every kind but the one it cannot have.
-  await setZonePile(page, 'grove', { branch: 6, stone: 6 });
+  // so the walk may as well fetch some.
+  //
+  // BACKLOG-509: the Grove's pile here is deliberately short of **more than the tithe** — it holds stone
+  // and no branch, so it is two kinds away from its lean-to. That is what keeps this spec testing what it
+  // was written to test. 509 promotes the errand above the appeal read *only* when the shard is the sole
+  // thing missing, and the pile this spec used to carry ({branch:6, stone:6}) covered the whole lean-to
+  // recipe bar the tithe — so it would have exercised the promotion rather than the ordering. The
+  // promotion has its own case below.
+  await setZonePile(page, 'grove', { stone: 6 });
   await setZonePile(page, 'fernreach', {});
   await setZonePile(page, 'bowl', {});
   await setZonePile(page, 'ridge', {});
@@ -121,7 +128,41 @@ test('a neighbour that is genuinely better off still outranks the errand', async
 
   // Take the plenty away again and the errand is what is left.
   await setZonePile(page, 'fernreach', {});
-  await setZonePile(page, 'grove', { branch: 6, stone: 6 });
+  await setZonePile(page, 'grove', { stone: 6 });
+  expect(await scarcityDest(page, who)).toBe('ridge');
+
+  expect(errors).toEqual([]);
+});
+
+/**
+ * BACKLOG-509 — the other half of the ordering 142 pinned above.
+ *
+ * 503 put the errand at the bottom of the tier chain because promoting it unconditionally made every
+ * migration an errand. The tithe needs it to win *sometimes*, or the cost it adds is a cost nobody ever
+ * pays and the branch stays a place with one reason to visit it. The seam is exact: a ground standing there
+ * with everything its landmark needs except the shard has nothing better to do than go and get it, and a
+ * ground short of anything else does not.
+ */
+test('BACKLOG-509 — the errand beats plenty when the shard is the only thing missing', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  await boot(page);
+
+  const [who] = await dinoNames(page);
+  await page.evaluate((n) => (window as W).__migrate(n, 'grove'), who);
+
+  // The Fernreach is genuinely better off — the read that outranks the errand in the test above.
+  await setZonePile(page, 'fernreach', { branch: 8, stone: 8, frond: 8 });
+  await setZonePile(page, 'bowl', {});
+  await setZonePile(page, 'ridge', {});
+
+  // Short of two kinds: plenty wins, exactly as 503 found.
+  await setZonePile(page, 'grove', { stone: 6 });
+  expect(await scarcityDest(page, who)).toBe('fernreach');
+
+  // Now give it the whole lean-to recipe and nothing else. The only thing between this ground and its
+  // landmark is a climb, so the climb is what happens — even with plenty next door.
+  await setZonePile(page, 'grove', { branch: 6, stone: 4 });
   expect(await scarcityDest(page, who)).toBe('ridge');
 
   expect(errors).toEqual([]);

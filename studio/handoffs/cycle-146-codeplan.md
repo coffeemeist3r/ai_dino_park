@@ -148,4 +148,60 @@ BACKLOG-519 — `export const MINUTES_PER_DAY` in `clock.ts`, import in `reachab
 
 ## Shipped
 
-_(the Coder fills this in)_
+**Gates:** `npm run build` clean · **2310 unit green** across 224 files · **633 e2e green**, with one
+catalogued load flake (`cycle-038-scan`, green 5/5 isolated) and the standing `mobile-minds` red (515).
+
+### Lore track — BACKLOG-109, as planned
+
+`world/chronotype.ts` + its 12-test spec, the ladder's new top rung, the two glyph slots, the book line,
+three dev hooks, and `tests/e2e/cycle-146-hours.spec.ts` (4 tests). The derivation and the windows are
+exactly the design's; nothing was retuned.
+
+One thing the plan did not anticipate and the code decided: **the cold-night system (179) keeps reading the
+*park's* night, not any dino's own window.** `denTime` survives as a local for it. A cold night is a fact
+about the weather rather than about who chose to sleep through it — the owls are out in the same cold — and
+179's morning resolution still asks who was too loosely bonded for the den.
+
+### Structure track — BACKLOG-509, plus one thing the plan missed
+
+`TITHE`, the tithed `structureRecipe`, `recipeShortfall`, `shortOnlyTithe`, `quarry.shortfallLine`, the
+lens `short` row, the errand promotion, `__pilesByZone`, 16 unit tests and
+`tests/e2e/cycle-146-tithe.spec.ts`.
+
+**`shortOnlyTithe` needed a guard the plan did not have, and its own test found it.** On the Ridge with an
+empty pile the shortfall is `{obsidian: 3}` — the beacon's whole recipe — so the predicate read the source
+ground as owing itself a tithe. Harmless in the world (`quarryDest` returns null for a ground standing on
+itself) and wrong on the page, so the source ground now returns false explicitly.
+
+**And one real regression the fallout surfaced, which is the best finding of the fire.** `WORK_BUILD_FLOOR`
+was the literal `6`, with a comment saying it sat "above the cairn recipe". The tithe raised a cairn from 5
+to 6, so no affordable pile could be under the floor any more and the gather-first defer went **unreachable**
+— a system made inert by another system's constant, which is the CHARTER v7 corollary in miniature. It is
+now derived from `structureRecipe()`'s own total, so the comment and the number cannot disagree again.
+
+### Spec repairs — nine, each making an assumption explicit
+
+Three unit (083, 088, 093 — identity `toBe` against a base recipe that is now composed) and six e2e:
+
+- **064 craft, 074 shelter, 093 thatch, 121 work-priority** — the shard banked or seeded out loud, because
+  these specs are about what gets built and a build now costs a climb.
+- **142 obsidian** — the important one. Its "a neighbour genuinely better off still outranks the errand"
+  case carried a Grove pile of `{branch:6, stone:6}`, which after the tithe is *short only the shard* — so
+  it would have exercised 509's promotion instead of 503's ordering. The pile is now short of two kinds, so
+  it still tests what it was written to test, and **a new case was added** asserting the promotion itself
+  from both sides.
+- **047 warmth, 125 lean** — the hours named. Both drove a dino across the ground and both were standing at
+  08:00, which is now inside the owls' rest window; they now say `__setClock(_, 16, 0)` and say why (16:00
+  is the one stretch every chronotype is awake in every season). 047's meal test additionally stopped
+  depending on **who wins a seeded scramble** — a sleeping dino consumes no wander rolls, so cycle 146
+  shifted the stream and the race landed elsewhere. It now names its eater through the deterministic
+  `__eat` hook 375 added for exactly this, which is what it was always actually asserting.
+
+That last one is BACKLOG-456's catalogue getting a new entry, and the hour-naming ones are BACKLOG-495's
+argument applied to time — which is the shape 515 says the fix wants.
+
+### Rider — BACKLOG-519, taken
+
+`MINUTES_PER_DAY` exported from `clock.ts` and imported by `reachability.ts`; the register's second copy of
+the length of a day is gone. `SESSION_MINUTES` was left in `reachability.ts` — it is a claim about what
+*watchable* means, which is the register's own fact, not the clock's.

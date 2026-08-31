@@ -27,7 +27,7 @@
  * Pure TypeScript (no Phaser), so the walk runs in Node and costs a suite nothing.
  */
 
-import { ACTIVE_SCALE } from './clock';
+import { ACTIVE_SCALE, MINUTES_PER_DAY } from './clock';
 import {
   FOUNDING_PILES,
   FOUNDING_RUIN,
@@ -71,7 +71,7 @@ export interface ReachabilityEntry {
 export const SESSION_MINUTES = 30;
 
 /** In-game minutes in a day. Local, because `clock.ts` keeps its copy private and this is arithmetic. */
-const MINUTES_PER_DAY = 24 * 60;
+
 
 /**
  * Every prop key the shipping world can put on the ground, derived from the production tables that decide

@@ -34,7 +34,9 @@ interface SceneTimer {
   };
 }
 
-const MINUTES_PER_DAY = 24 * 60;
+/** BACKLOG-519: exported so `reachability.ts` can check the day against the clock that owns it, rather
+ *  than keeping a second copy of the length of a day in the one file whose header warns against copies. */
+export const MINUTES_PER_DAY = 24 * 60;
 const MS_PER_REAL_MINUTE = 60_000;
 
 /**

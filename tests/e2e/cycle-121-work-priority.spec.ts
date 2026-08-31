@@ -68,11 +68,13 @@ test('a gather-first ground holds off the landmark while its pile is thin, and r
 
   const before = (await cairns(page)).length;
   // Exactly the cairn recipe (branch 3 + stone 2 = 5) — affordable, but under WORK_BUILD_FLOOR (6).
-  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 3, stone: 2 }));
+  // BACKLOG-509: the tithe is seeded in every pile below, out loud — this spec is about the *floor*, not
+  // about affording the recipe, and without the shard nothing would build for the other reason.
+  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 3, stone: 2, obsidian: 1 }));
   await page.evaluate(() => (window as W).__runBuild('Mossback'));
   expect((await cairns(page)).length).toBe(before); // stores before walls
 
-  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 4, stone: 2 }));
+  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 4, stone: 2, obsidian: 1 }));
   await page.evaluate(() => (window as W).__runBuild('Mossback'));
   expect((await cairns(page)).length).toBe(before + 1); // the pile cleared the floor, so the walls go up
 });
@@ -84,7 +86,8 @@ test('a build-first ground never defers the same pile', async ({ page }) => {
   expect(await workPriority(page)).toBe('build');
 
   const before = (await cairns(page)).length;
-  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 3, stone: 2 }));
+  // BACKLOG-509: the tithe, out loud — the point here is that a build-first ground does not defer.
+  await page.evaluate(() => (window as W).__setZonePile('bowl', { branch: 3, stone: 2, obsidian: 1 }));
   await page.evaluate(() => (window as W).__runBuild('Rex'));
   expect((await cairns(page)).length).toBe(before + 1);
 });

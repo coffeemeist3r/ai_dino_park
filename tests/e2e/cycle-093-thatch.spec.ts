@@ -48,7 +48,9 @@ test('the Fernreach weaves a frond thatch and never a cairn (its bias is frond)'
   await bankOn(page, 'Rex', 'frond');
   await bankOn(page, 'Rex', 'frond');
   await bankOn(page, 'Rex', 'frond');
-  expect((await thatches(page)).length).toBe(0); // {frond:3} — a frond short
+  // BACKLOG-509: the tithe — the Fernreach owes one obsidian per landmark now, banked out loud.
+  await bankOn(page, 'Rex', 'obsidian');
+  expect((await thatches(page)).length).toBe(0); // {frond:3, 🌑1} — a frond short
   await bankOn(page, 'Rex', 'frond'); // frond → 4 → weave
 
   const built = await thatches(page);
@@ -57,6 +59,7 @@ test('the Fernreach weaves a frond thatch and never a cairn (its bias is frond)'
   expect((await cairns(page)).length).toBe(0); // the Fernreach never stacks a cairn now
 
   expect((await zonePile(page, 'fernreach')).frond).toBe(0); // recipe spent exactly (4 - 4)
+  expect((await zonePile(page, 'fernreach')).obsidian).toBe(0); // BACKLOG-509: and the tithe with it
 
   // BACKLOG-417/427: the thatch renders from the stashed pixel rig, not the 🥻 glyph.
   expect(await page.evaluate(() => (window as W).__thatchIsArt())).toBe(true);

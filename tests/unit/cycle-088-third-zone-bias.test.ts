@@ -83,8 +83,11 @@ describe('BACKLOG-400 third-zone resource bias', () => {
   it('the Fernreach now weaves a frond thatch (BACKLOG-417 shipped; was cairn placeholder) and is type-complete', () => {
     // Contract overturned by BACKLOG-417 (the follow-up this test's old name pointed to): frond → 'thatch'.
     expect(zoneStructure(FERNREACH_ID)).toBe('thatch');
-    expect(structureRecipe(FERNREACH_ID)).toBe(THATCH_RECIPE);
-    expect(structureRecipe(FERNREACH_ID)).not.toBe(CRAFT_RECIPE);
+    // BACKLOG-509: a ground's recipe is now its base *plus* the Ridge's tithe, so this asserts the base
+    // kinds explicitly rather than identity against the base const. The shard is stated out loud here
+    // because this spec depends on what a landmark costs.
+    expect(structureRecipe(FERNREACH_ID)).toEqual({ ...THATCH_RECIPE, obsidian: 1 });
+    expect(structureRecipe(FERNREACH_ID)).not.toEqual({ ...CRAFT_RECIPE, obsidian: 1 });
   });
 
   it('barter moves a frond-heavy Fernreach pile to a neighbour via the spare fallback', () => {

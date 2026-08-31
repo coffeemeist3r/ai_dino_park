@@ -335,13 +335,68 @@ export function zoneStructure(zone?: string): Structure {
   return bias ? STRUCTURE_BY_BIAS[bias] : 'cairn';
 }
 
-/** The recipe a zone's structure costs — the cairn (286), the lean-to (315), or the frond thatch (417). */
+/**
+ * The tithe (BACKLOG-509) — what every ground but the source owes the Ridge before it raises anything.
+ *
+ * 503 gave the Ridge an exclusive resource and gave exactly two things a reason to want it: the Ridge's own
+ * beacon, and one unit in `GRANARY_RECIPE`. So a ground that had fetched one shard had no reason to fetch a
+ * second until it was granary-ready, and a park with a granary on every ground had no reason to climb
+ * again ever. Folding a shard into every other ground's own structure makes the branch load-bearing for the
+ * **whole built landscape** rather than for one storehouse: no skyline anywhere in this park goes up
+ * without somebody having made the climb.
+ *
+ * Deliberately not stacked onto `GRANARY_RECIPE`, which already carries its own shard on its own path. A
+ * later cycle tempted to "fix" that inconsistency should read this line first: they are two recipes, and
+ * one tithe each is the rule.
+ */
+export const TITHE = 1;
+
+/** The recipe a zone's structure costs — the cairn (286), the lean-to (315), the frond thatch (417), or
+ *  the Ridge's beacon (503) — plus the tithe (509) for every ground that is not the source itself. */
 export function structureRecipe(zone?: string): Partial<Record<ResourceKind, number>> {
   const kind = zoneStructure(zone);
-  if (kind === 'shelter') return SHELTER_RECIPE;
-  if (kind === 'thatch') return THATCH_RECIPE;
-  if (kind === 'beacon') return BEACON_RECIPE; // BACKLOG-503
-  return CRAFT_RECIPE;
+  const base =
+    kind === 'shelter' ? SHELTER_RECIPE : kind === 'thatch' ? THATCH_RECIPE : kind === 'beacon' ? BEACON_RECIPE : CRAFT_RECIPE;
+  // BACKLOG-509: the source ground is exempt — a ground tithing to itself is a rounding error dressed as a
+  // rule. The kind is read off ZONE_EXCLUSIVE rather than named here, so a park that moves the stake (or
+  // grows a second one) moves it in the one place `quarryKind` already reads.
+  const tithed = Object.values(ZONE_EXCLUSIVE)[0];
+  if (!tithed || kind === 'beacon') return base;
+  return { ...base, [tithed]: (base[tithed] ?? 0) + TITHE };
+}
+
+/**
+ * What a ground's next structure is still short of, per kind (BACKLOG-509). One derivation, read by both
+ * the map lens (which says what a ground is waiting on) and the errand tier (which decides whether to send
+ * somebody for it) — so the recipe is never written down a second time. That is BACKLOG-519's lesson,
+ * applied before it could happen again.
+ */
+export function recipeShortfall(pile: Stockpile, zone?: string): Partial<Record<ResourceKind, number>> {
+  const recipe = structureRecipe(zone);
+  const out: Partial<Record<ResourceKind, number>> = {};
+  for (const k of Object.keys(recipe) as ResourceKind[]) {
+    const missing = (recipe[k] ?? 0) - (pile[k] ?? 0);
+    if (missing > 0) out[k] = missing;
+  }
+  return out;
+}
+
+/**
+ * Is the tithe the *only* thing between this ground and its next landmark (BACKLOG-509)?
+ *
+ * The narrowness is the point. 503 found that promoting the quarry errand unconditionally "made every
+ * migration an errand and took the scarcity system dormant" — the CHARTER v7 corollary arrived at from the
+ * other side. A ground short of two kinds still migrates on appeal exactly as it does today; only a ground
+ * standing there with everything but the shard is worth sending up the hill.
+ */
+export function shortOnlyTithe(pile: Stockpile, zone?: string): boolean {
+  const tithed = Object.values(ZONE_EXCLUSIVE)[0];
+  if (!tithed) return false;
+  // The source ground is never short of a *tithe* — it is short of its own recipe, which happens to be
+  // made of the same stuff. Without this the Ridge reads as owing itself an errand it can never run.
+  if (zone && zone in ZONE_EXCLUSIVE) return false;
+  const short = Object.keys(recipeShortfall(pile, zone)) as ResourceKind[];
+  return short.length === 1 && short[0] === tithed;
 }
 
 /**

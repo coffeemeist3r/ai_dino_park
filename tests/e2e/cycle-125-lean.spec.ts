@@ -80,6 +80,11 @@ test('a dino that is not a loner never leans, however many hearts it has', async
 
 test('the waiting is remembered, once per bout of loneliness', async ({ page }) => {
   await boot(page);
+  // BACKLOG-109: name the hour this spec needs. The cast splits into day-dinos and night-owls now, so
+  // "a dino walks over there" is only true while that dino is awake — and a fresh save opens at 08:00,
+  // inside the owls' rest window, with Rex an owl. 16:00 is the one stretch every chronotype is up in
+  // every season. (BACKLOG-495's argument about founding state, applied to time.)
+  await page.evaluate(() => (window as W).__setClock(1, 16, 0));
   await page.evaluate(() => (window as W).__holdAmbient());
   await setFriendship(page, 'Rex', 100);
   // Drive enough steps for the mope roll (MOPE_CHANCE 0.5) to walk Rex the width of the bowl to the

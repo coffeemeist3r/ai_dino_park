@@ -18,8 +18,9 @@
  * migration destination — BACKLOG-456 catalogues what that costs the e2e suite.
  */
 
-import { ZONE_EXCLUSIVE, type ResourceKind, type Stockpile } from './resource';
+import { ZONE_EXCLUSIVE, RESOURCE_GLYPH, recipeShortfall, type ResourceKind, type Stockpile } from './resource';
 import { hopToward } from './distance';
+import { zoneById } from './zones';
 
 /**
  * The ground that holds the park's exclusive kind, and what that kind is. Derived, not declared: exactly
@@ -72,4 +73,27 @@ export function quarryEvent(name: string, groundName: string, glyph: string): st
  */
 export function quarryMemory(groundName: string): string {
   return `nothing at home would do, so you went up to ${groundName} for the black glass`;
+}
+
+/**
+ * What a ground's next landmark is still waiting on (BACKLOG-509) — the map-lens read, and the floor under
+ * this item's reachability answer: on a fresh save every non-Ridge ground says it is waiting on black glass
+ * from the Ridge, on frame one, with no walk and no wait.
+ *
+ * Reads `recipeShortfall` rather than a recipe of its own, and names the source ground off `quarryGround`
+ * rather than a second `'ridge'` literal, so the whole line is derived. Empty string when the ground can
+ * already afford what it wants to build next (the lens shows no row).
+ */
+export function shortfallLine(pile: Stockpile, zone?: string): string {
+  const short = recipeShortfall(pile, zone);
+  const kinds = Object.keys(short) as ResourceKind[];
+  if (!kinds.length) return '';
+  const from = quarryGround();
+  const kind = quarryKind();
+  const parts = kinds.map((k) =>
+    k === kind && from && from !== zone
+      ? `${RESOURCE_GLYPH[k]}${short[k]}◂${zoneById(from).name}`
+      : `${RESOURCE_GLYPH[k]}${short[k]}`,
+  );
+  return `short ${parts.join(' ')}`;
 }

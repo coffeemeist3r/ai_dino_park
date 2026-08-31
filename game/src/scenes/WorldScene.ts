@@ -85,6 +85,8 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
+// BACKLOG-109: not everybody keeps the same hours — a chronotype picks *which* window a dino rests in.
+import { chronotypeOf, atRest, awakeAtNight, chronotypeLine, ROUSE_GLYPH, type Chronotype } from '../world/chronotype';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
@@ -187,6 +189,7 @@ import {
   buildStructureFor,
   zoneStructure,
   structureRecipe,
+  shortOnlyTithe,
   pressuredCarry,
   pileTotal,
   takeResource,
@@ -201,7 +204,7 @@ import { rollResourceAt, depleteYield, YIELD_MAX } from '../world/regrowth';
 import { dinoActivity, activityAside, ACTIVITY_GLYPH, type Activity } from '../world/activity';
 import { BANK_TILE, bankStep, pileArtKey } from '../world/bank';
 // BACKLOG-503: the quarry errand - the hard scarcity pull toward the one ground the black glass falls on.
-import { quarryDest, quarryGround, quarryEvent, quarryMemory } from '../world/quarry';
+import { quarryDest, quarryGround, quarryEvent, quarryMemory, shortfallLine } from '../world/quarry';
 // BACKLOG-507: the ritual's worn ground, laid on the haunt 421 persists.
 import { marksOn, type WornMark } from '../world/wear';
 import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
@@ -560,6 +563,9 @@ export class WorldScene extends Phaser.Scene {
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
   private sleepMarks: Phaser.GameObjects.Text[] = [];
+  /** BACKLOG-109: the 👁 over a dino up while the park is dark — only ever an owl. Index-aligned like
+   *  sleepMarks; mutually exclusive with the 💤 by construction, so it shares that slot's height. */
+  private rouseMarks: Phaser.GameObjects.Text[] = [];
   /** Per-dino current-activity glyph (BACKLOG-295), index-aligned with `dinos`; live-derived, not saved. */
   private activityMarks: Phaser.GameObjects.Text[] = [];
   private activityById: Record<string, Activity> = {};
@@ -1478,6 +1484,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__yield = (zone: string) => this.yieldByZone[zone] ?? YIELD_MAX; // BACKLOG-384: a zone's gather yield
 
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
+    // BACKLOG-509: every ground's pile at once — the tithe is a claim about the whole park, not one zone.
+    (window as any).__pilesByZone = () =>
+      Object.fromEntries(zoneChain().map((z) => [z, { ...this.pileFor(z) }] as const));
     (window as any).__zoneStockpile = (z: string) => ({ ...this.pileFor(z) }); // BACKLOG-328: a named zone's pile
     // BACKLOG-504: the heap on a ground's bank tile — what the player can see, not what the lens reports.
     // BACKLOG-510: the hatch itself — where the drop comes from, not just where the piece ended up.
@@ -3005,6 +3014,9 @@ export class WorldScene extends Phaser.Scene {
     this.sleepMarks.push(
       this.add.text(0, 0, '💤', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    this.rouseMarks.push(
+      this.add.text(0, 0, ROUSE_GLYPH, { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+    );
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -3049,6 +3061,11 @@ export class WorldScene extends Phaser.Scene {
       return bondPoints(this.bonds, a, b);
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
+    // BACKLOG-109: who is down right now, and each dino's chronotype — the two reads the hours spec needs.
+    (window as any).__resting = () => this.dinos.filter((d) => this.isResting(d)).map((d) => d.name);
+    (window as any).__roused = () => this.dinos.filter((d) => this.isRoused(d)).map((d) => d.name);
+    (window as any).__chronotypes = () =>
+      Object.fromEntries(this.dinos.map((d) => [d.name, this.chronoOf(d)] as const));
     (window as any).__activity = (name: string) => this.activityById[name] ?? null; // BACKLOG-295
     // BACKLOG-298: a dino's signature idle quirk, and the glyph currently rendered above it.
     (window as any).__fidget = (name: string) => {
@@ -3301,13 +3318,48 @@ export class WorldScene extends Phaser.Scene {
     return inHuddleWindow(getWorldClock().now().hour, this.currentSeason()) && this.nearDen(d);
   }
 
+  /** This dino's chronotype (BACKLOG-109) — derived from the name-seeded traits, never persisted. */
+  private chronoOf(d: Dino): Chronotype {
+    return chronotypeOf(d.traits);
+  }
+
+  /**
+   * Is this dino down right now (BACKLOG-109)? Distinct from `isHuddling`, and the distinction is the
+   * point: huddling is about the *den* (and still gates on a bond), resting is about *sleep*. An owl asleep
+   * at eight in the morning out in the open is exactly the frame-one read this item ships, and it is
+   * nowhere near the den.
+   */
+  private isResting(d: Dino): boolean {
+    return atRest(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason());
+  }
+
+  /** Up while the park is dark (BACKLOG-109) — by construction only ever an owl. Host for BACKLOG-520. */
+  private isRoused(d: Dino): boolean {
+    return awakeAtNight(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason());
+  }
+
   private refreshSleepMarks(): void {
     this.dinos.forEach((d, i) => {
       const mark = this.sleepMarks[i];
       if (!mark) return;
-      mark.setVisible(this.isHuddling(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
+      // BACKLOG-109: the 💤 is about sleep, not about the den — so it reads on any resting dino, which is
+      // what puts it over an owl standing in the open at 08:00 on the first frame of a fresh save.
+      mark.setVisible(this.isResting(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
     });
+    this.refreshRouseMarks();
     this.refreshColdMarks();
+  }
+
+  /**
+   * The night-owl's 👁 (BACKLOG-109) — the "only thing moving" read. Shares the 💤 slot: a dino cannot be
+   * resting and awake-at-night in the same frame, so the two can never stack.
+   */
+  private refreshRouseMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.rouseMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.isRoused(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
+    });
   }
 
   /** The cold funk's 🥶 (BACKLOG-184) — above the 💤 slot so a dusk overlap can't stack glyphs. */
@@ -3698,6 +3750,7 @@ export class WorldScene extends Phaser.Scene {
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
+      hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
@@ -3968,7 +4021,16 @@ export class WorldScene extends Phaser.Scene {
       this.zoneWorks(), // BACKLOG-473: what each ground puts its backs into (🧺/🧱 marker)
       this.zoneCouncils(), // BACKLOG-479: the ground's seated voices (👥N beside the head count)
       this.hollowedZones(), // BACKLOG-512: a ground everybody has left reads hollowed, not unsettled and not poor
+      this.zoneShorts(), // BACKLOG-509: what each ground's next landmark is still waiting on
     );
+  }
+
+  /** What each ground's next structure is short of (BACKLOG-509) — the map lens's `short` row, keyed by
+   *  zone id. Derived through `recipeShortfall`, so the tithe lives in `structureRecipe` and nowhere else. */
+  private zoneShorts(): Record<string, string> {
+    const out: Record<string, string> = {};
+    for (const z of zoneChain()) out[z] = shortfallLine(this.pileFor(z), z);
+    return out;
   }
 
   /** Which zones currently read declining (BACKLOG-460) — the map lens's ⬇ read, keyed by zone id. */
@@ -4041,6 +4103,10 @@ export class WorldScene extends Phaser.Scene {
       const gov = e.unsettled || e.hollowed ? '' : governanceLine([e.spend, e.work]); // BACKLOG-477 / 512
       if (gov) txt += `\n${gov}`;
       if (e.want) txt += `\nwants ${e.want.glyph}◂${e.want.fromName}`;
+      // BACKLOG-509: and what its own next landmark is waiting on — the tithe named, with where it comes
+      // from, so a fresh park reads that nothing goes up here until somebody climbs, with nothing else opened.
+      if (e.short) txt += `
+${e.short}`;
       if (e.banked) txt += `\n${e.banked}${e.granary ? ` ${GRANARY_GLYPH}` : ''}`; // BACKLOG-446 banked food + BACKLOG-454 granary marker
       else if (e.granary) txt += `\n${GRANARY_GLYPH}`; // BACKLOG-454: a granary reads even with an empty pantry
       this.mapLabels[i]?.setText(txt).setPosition(x + boxW / 2, y + boxH / 2 - 5);
@@ -4597,7 +4663,9 @@ export class WorldScene extends Phaser.Scene {
     for (const z of Object.keys(this.resourceByZone)) this.resourceAgeByZone[z] = (this.resourceAgeByZone[z] ?? 0) + 1;
 
     const season = this.currentSeason();
-    const denTime = inHuddleWindow(getWorldClock().now().hour, season);
+    // BACKLOG-109: the rest window is per dino now, not one boolean for the whole cast — `restingNow` reads
+    // the dino's own chronotype against this hour. A day-dino's window is still exactly `SEASON_HUDDLE`'s.
+    const hourNow = getWorldClock().now().hour;
 
     // Food web (BACKLOG-367): pair each hungry, in-view carnivore off cooldown with the nearest in-view
     // herbivore — the bowl's first hunt. Built once per step (before the movement ladder) so the hunter
@@ -4811,9 +4879,11 @@ export class WorldScene extends Phaser.Scene {
       // Decide the branch once (mutually exclusive), then both move and label off the same flags so the
       // glyph the player sees can never disagree with what the dino actually did this step (BACKLOG-295).
       // Winter opens the huddle window at dusk and lowers the bar; summer waits until late.
-      const huddling = denTime && this.maxBond(d.name) >= huddleThreshold(season);
+      const resting = atRest(hourNow, this.chronoOf(d), season); // BACKLOG-109
+      const huddling = resting && this.maxBond(d.name) >= huddleThreshold(season);
       const gathering =
         !huddling &&
+        !resting && // BACKLOG-109: a sleeping dino does not go fetch things
         !!dres &&
         resourceFetchable(this.resourceAgeByZone[dz] ?? 0) && // BACKLOG-297: ignore it until the grace elapses
         noticeResource(forageCuriosity(d.traits.curiosity, intent), resDist) === 'fetch'; // BACKLOG-393: a forage day looks wider
@@ -4823,17 +4893,17 @@ export class WorldScene extends Phaser.Scene {
       // meet someone and grow out of it (no all-unbonded deadlock). Activity stays 'wandering' — the 🥀
       // mark rides loner status, not this roll, so the tell shows the whole time.
       const moping =
-        !huddling && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && rand() < MOPE_CHANCE;
+        !huddling && !resting && !gathering && isLoner(this.bonds, d.name, this.dinoNames(), LONER_FLOOR) && rand() < MOPE_CHANCE;
       // BACKLOG-393 intent lean, then BACKLOG-178 season lean: winter tightens the drift-to-the-cluster odds,
       // summer loosens them, so the bowl's daytime social density breathes with the year (clamped, never pegs).
       const socializing =
-        !huddling && !gathering && !moping && !!other && rand() < seasonalSocializeChance(socializeChanceFor(intent), season);
+        !huddling && !resting && !gathering && !moping && !!other && rand() < seasonalSocializeChance(socializeChanceFor(intent), season);
       // Need pulls the body (BACKLOG-436): a pressing 🍖/💧 leans the wander toward relief (hatch/pond),
       // but only below every ritual above (they still win) and gated so it's a lean, not a compulsion.
       // No reachable target (thirst outside the grove) → seekTarget null → the dino just wanders.
       const need = pressingNeed(this.needs[d.name]);
       const seekTarget =
-        !huddling && !gathering && !moping && !socializing && need ? this.needTargetFor(d, need) : null;
+        !huddling && !resting && !gathering && !moping && !socializing && need ? this.needTargetFor(d, need) : null;
       const seeking = !!seekTarget && needSeeks(rand());
       // Solitary tic (BACKLOG-405): a dino truly alone — nothing pressing, nobody in its zone within range,
       // and nothing to do (not huddling/gathering) — accrues a solitary streak and, past TIC_AFTER_STEPS,
@@ -4843,7 +4913,7 @@ export class WorldScene extends Phaser.Scene {
       // toward someone a whole zone away) but below moping, so the loner's withdrawal still reads first.
       // (foodRush is already handled by an earlier `continue`, so it's false here.)
       const aloneNow =
-        !huddling && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
+        !huddling && !resting && !gathering && undisturbed(!!pressingNeed(this.needs[d.name]), false, this.companyNear(d));
       if (aloneNow) this.soloSteps[d.name] = (this.soloSteps[d.name] ?? 0) + 1;
       else this.breakTic(d); // BACKLOG-411: ...and if a body ended the stretch, the park says so before it ends
       // BACKLOG-410: a dino freshly moved *alone* into a friendless zone (not settled + no in-zone bonded
@@ -4890,6 +4960,11 @@ export class WorldScene extends Phaser.Scene {
         next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
       } else if (seeking) {
         next = stepToward(cur, seekTarget!, COLS, ROWS); // BACKLOG-436: lean toward the hatch (hunger) / pond (thirst)
+      } else if (resting) {
+        // BACKLOG-109: down, and without a bond strong enough to seek the den — so it holds its tile rather
+        // than falling through to wander. This is the half that makes the night legible: without it an
+        // unbonded day-dino mills about after dark and there is nothing to tell it from a night-owl.
+        next = cur;
       } else {
         // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.
         const dir = rerollStay(intent, Math.floor(rand() * 5), () => Math.floor(rand() * 5));
@@ -4939,7 +5014,12 @@ export class WorldScene extends Phaser.Scene {
     this.stepMend(); // ...and the patch-up resolves where that somebody is standing
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
-    // huddle window closes in the morning, resolve who slept cold. `denTime` is the live window.
+    // huddle window closes in the morning, resolve who slept cold.
+    //
+    // BACKLOG-109 left this reading the *park's* night rather than any dino's own rest window, on purpose:
+    // a cold night is a fact about the weather, not about who chose to sleep through it. The owls are out
+    // in the same cold, and 179's morning resolution still asks who was too loosely bonded for the den.
+    const denTime = inHuddleWindow(hourNow, season);
     if (denTime) {
       // Dusk thaws any funk the keeper never mended (BACKLOG-184). Fires once, on the window's
       // opening edge. Nobody came (BACKLOG-208): each still-funked dino files the colder note
@@ -6420,6 +6500,16 @@ export class WorldScene extends Phaser.Scene {
     // ground cannot grow. Putting it above this read instead made every migration an errand and took the
     // scarcity system dormant — the exact defect CHARTER v7's corollary is about, arrived at from the
     // other side.
+    // BACKLOG-509: the errand jumps the appeal read when the tithe is the *only* thing left between this
+    // ground and its next landmark. Narrow on purpose. 503 found that promoting it unconditionally made
+    // every migration an errand and took the scarcity system dormant — the CHARTER v7 corollary reached
+    // from the other side — so a ground short of two kinds still migrates on appeal exactly as before.
+    // Only a ground standing there with everything but the shard is worth sending up the hill, and that is
+    // what turns a banked pile into a climb the player can watch.
+    if (shortOnlyTithe(this.pileFor(home), home)) {
+      const errand = this.quarryDestOf(home);
+      if (errand) return errand;
+    }
     if (richest && this.zoneAppeal(richest) > this.zoneAppeal(home)) return richest;
     return this.quarryDestOf(home) ?? richest ?? otherZone(home);
   }
