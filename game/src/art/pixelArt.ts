@@ -16,6 +16,9 @@ export interface PixelRig {
   frames: ReadonlyArray<ReadonlyArray<string>>;
   /** Anim playback order into `frames` — stand between steps, the classic 4-beat amble. */
   sequence: ReadonlyArray<number>;
+  /** BACKLOG-522: the sleeping pose, two frames of breathing. Optional — a species without one keeps
+   *  its standing frame while it rests, which is the graceful fallback and the control for this path. */
+  down?: ReadonlyArray<ReadonlyArray<string>>;
   /** Char → color for a roster base color. ≤ 15 colors + transparency (GBA OBJ discipline). */
   palette(base: number): Record<string, number>;
 }
@@ -79,12 +82,130 @@ function rexPalette(base: number): Record<string, number> {
   };
 }
 
+
+// ── BACKLOG-522: the down poses ──────────────────────────────────────
+// A resting dino used to be its walk cycle stopped mid-stride, which reads as a standing animal that
+// has forgotten to move rather than a sleeping one. A `down` pair per rig fixes that, and the brief is
+// silhouette: the frill, the plates, the crest must each still be the thing you recognise the animal
+// by with the legs folded under it. TWO frames, not three — a sleeping animal is a shape that
+// breathes, and a three-beat amble played slowly is the exact thing this pose exists to stop.
+//
+// The host shipped first, which is the only reason these could be drawn at all under the cycle-145
+// amendment: BACKLOG-109's `isResting` puts a dino down out in the open at 08:00 on a fresh save, so
+// the pose has somewhere to be on frame one. Three species stay undrawn on purpose — they keep their
+// standing frame while resting, which is this path's graceful fallback and its control.
+
+/** Rex asleep: body settled, legs folded under the belly, brow horns and frill still reading,
+ *  eye a shut two-pixel slit where the open eye was. */
+const REX_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '...hh...oooo........',
+  '...hh..offffo.......',
+  '..oooooffffffo......',
+  '.obbbboffffffo......',
+  'hobeebffffffffo.....',
+  '.obbbbffffffffo.....',
+  '.obbbbfffffffobbo...',
+  '..obbofffffffbbbbo..',
+  '...obbooooooobbbbbbo',
+  '...obbbbbbbbbbbbbo..',
+  '...obllllllllllbbo..',
+  '....ollllllllllbo...',
+  '....odd......ddo....',
+  '.....oooooooooo.....',
+  '....................',
+  '....................',
+];
+
+/** ...and the same shape one breath in — the belly band lifts a row and the flank fills back. */
+const REX_DOWN_B: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '...hh...oooo........',
+  '...hh..offffo.......',
+  '..oooooffffffo......',
+  '.obbbboffffffo......',
+  'hobeebffffffffo.....',
+  '.obbbbffffffffo.....',
+  '.obbbbfffffffobbo...',
+  '..obbofffffffbbbbo..',
+  '...obbooooooobbbbbbo',
+  '...obbbbbbbbbbbbbo..',
+  '...obbllllllllbbbo..',
+  '....obllllllllbbo...',
+  '....odd......ddo....',
+  '.....oooooooooo.....',
+  '....................',
+  '....................',
+];
+
+/** Mossback asleep: the staggered plate ridge IS the silhouette, so it stays upright and untouched
+ *  while everything under it settles. A stegosaurus with its plates down is a different animal. */
+const MOSS_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....p..p..p..p......',
+  '...ppp.pp.pp.pp.....',
+  '..p.pp.pp.pp.ppp....',
+  '..ooppppppppppppo.hh',
+  '..obbbbbbbbbbbbboohh',
+  '.obbbbbbbbbbbbbbbboh',
+  'oeebbbbbbbbbbbbbbbbo',
+  'obbbbblllllllllbbbbo',
+  'obbblllllllllllllbbo',
+  '.obboooooooooooobbo.',
+  '..odd........ddo....',
+  '...ooooooooooooo....',
+  '....................',
+  '....................',
+];
+
+/** ...and one breath in. */
+const MOSS_DOWN_B: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....p..p..p..p......',
+  '...ppp.pp.pp.pp.....',
+  '..p.pp.pp.pp.ppp....',
+  '..ooppppppppppppo.hh',
+  '..obbbbbbbbbbbbboohh',
+  '.obbbbbbbbbbbbbbbboh',
+  'oeebbbbbbbbbbbbbbbbo',
+  'obbbbbllllllllbbbbbo',
+  'obbbbllllllllllllbbo',
+  '.obboooooooooooobbo.',
+  '..odd........ddo....',
+  '...ooooooooooooo....',
+  '....................',
+  '....................',
+];
+
+/** Rex's sleeping pair (BACKLOG-522). */
+const REX_DOWN: ReadonlyArray<ReadonlyArray<string>> = [REX_DOWN_A, REX_DOWN_B];
+
+/** Mossback's sleeping pair (BACKLOG-522). */
+const MOSS_DOWN: ReadonlyArray<ReadonlyArray<string>> = [MOSS_DOWN_A, MOSS_DOWN_B];
+
 export const REX_RIG: PixelRig = {
   prefix: 'tri',
   size: 20,
   frames: [REX_STAND, REX_STEP_L, REX_STEP_R],
   sequence: [0, 1, 0, 2],
   palette: rexPalette,
+  down: REX_DOWN, // BACKLOG-522
 };
 
 // ── Mossback — the stegosaurus, second through the pixel pipeline (BACKLOG-169) ─────────────
@@ -153,6 +274,7 @@ export const MOSS_RIG: PixelRig = {
   frames: [MOSS_STAND, MOSS_STEP_L, MOSS_STEP_R],
   sequence: [0, 1, 0, 2],
   palette: mossPalette,
+  down: MOSS_DOWN, // BACKLOG-522
 };
 
 // ── Sunny — the brontosaurus, third through the pixel pipeline (BACKLOG-169) ────────────────

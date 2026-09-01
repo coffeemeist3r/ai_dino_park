@@ -9598,3 +9598,50 @@ Milestone 17's second lore arc is half closed. Its third structure arc — **515
 a stated and still-correct reason, and it is now the only open structure arc while having cost four
 different specs a full-run red. Ruling for the record: it does not get a fifth skip on the same argument
 without somebody writing down what the park loses by carrying it.
+
+## Cycle 147-art — the dino asleep, drawn asleep
+
+**BACKLOG-522, two of five.** Rex and Mossback have a sleeping pose. Seeded this morning with its host
+named and dated, drawn tonight — the second fire running on the cadence the cycle-145 amendment asked for,
+and the reason it was possible at all is that the host was already on screen: 109 has put a dino down out
+in the open at 08:00 since last cycle, and this morning's lore track gave that dino a voice.
+
+**A correction to the item, worth recording.** 522 named `SPECIES_ART`'s `PoseFn` as the seam, and that is
+the **legacy vector** path. Every roster species is drawn in pixel and `PIXEL_SPECIES` overrides the vector
+rig in `bake.ts`, so a vector down-pose would have been a branch with no caller. `PixelRig` gained an
+optional `down` pair instead. Nothing about the seeding discipline was wrong — the host was real and named,
+which is the part 518 still lacks — the Lore-smith simply read the file the pipeline no longer ships on.
+
+**This is the first rig in the park that is not a new object but a second pose of an old one**, and that
+inverts the brief. Every other entry in `CREDITS.md` had to be distinct from its neighbours; these two have
+to be *the same animal*, or the swap reads as one dino swapped for another. So the test is a mass floor
+rather than a silhouette rule: a down pose keeps more than three quarters of its standing frame's painted
+pixels.
+
+**The first draft was the walk frame with the legs deleted, and it read as a dino sunk into the ground to
+the knee.** Legs fold, they do not vanish — both rigs keep a tucked stub either side under the belly. And
+it kept the head at walk height, which is not a sleeping animal but a crouching one; the whole body drops,
+head included. The unit test pins both halves as numbers: the topmost painted row must sit **below** the
+standing frame's, and the bottom row must be **exactly equal** to it, because a sprite whose feet leave the
+tile it is standing on is a bug nothing else in this park could see. (That second assertion caught the
+first Mossback grid, which floated three rows off the ground line.)
+
+Two frames where every walk rig has three, baked at 1.5fps against the walk's 6 — a sleeping animal is a
+shape that breathes, and a three-beat amble played slowly is precisely the read this pose exists to remove.
+Rex is the frill and the brow horns, so the head stays at full height off the shoulder and the eye becomes
+a shut two-pixel slit in the cell the open eye occupied. Mossback is the staggered plate ridge and nothing
+else, so the ridge stays upright and untouched while everything under it settles.
+
+**Three species stay undrawn on purpose, and the unit test asserts it.** `down` is optional; a species
+without one keeps its standing frame while it rests. That is this path's fallback and it is not a claim the
+code makes about itself — three of five dinos do it on every save. The pose is a texture swap on an
+existing sprite (`setAsleep` flips only on the state edge), so the rectangle fallback and the vector rigs
+are untouched. And it poses **before the first frame is shown**, in `create()` beside `__ready`: without
+that the park opens with its one sleeping dino ambling on the spot for a world step.
+
+Gates: build clean, **2352 unit green** across 228 files, **639 e2e green**. Two reds, both BACKLOG-515 —
+the standing `mobile-minds`, and `cycle-038-scan`, green 5/5 isolated and wearing 515's signature for the
+second time in its history. The art queue is back to **1**: 518, held for a fourth consecutive fire, still
+waiting on somebody to pick its driver. That is now four fires, and the contrast with 520 and 522 — both
+seeded with a host and both drawn within the day — has stopped being a coincidence worth noting and become
+the queue's clearest rule.

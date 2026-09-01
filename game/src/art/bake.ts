@@ -76,6 +76,52 @@ function ensurePixelWalk(scene: Phaser.Scene, species: string, baseColor: number
 }
 
 /**
+ * Ensure a **sleeping** animation exists for `species` in `baseColor` (BACKLOG-522) — the `down` frame
+ * pair, played slow. Returns the anim key, or null when this species has no down pose, in which case the
+ * caller keeps the walk anim's standing frame: a species nobody has drawn asleep still renders, which is
+ * the same draw-a-rig-or-fall-back-gracefully discipline every other art item in this park ships on.
+ *
+ * Pixel path only. The legacy vector rigs are a walk cycle by construction (`walkFrames` poses by phase)
+ * and every species in the roster is drawn in pixel, so a vector down-pose would be a branch with no
+ * caller — exactly the speculative generality the park does not need.
+ */
+export function ensureDown(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+  const rig = PIXEL_SPECIES[species];
+  if (!rig?.down?.length) return null;
+  const animKey = `${rig.prefix}_down_${baseColor.toString(16)}`;
+  if (scene.anims.exists(animKey)) return animKey;
+
+  const scale = Math.max(1, Math.floor(SIZE / rig.size));
+  const pal = rig.palette(baseColor);
+  const texKeys = rig.down.map((grid, i) => {
+    const key = `${animKey}_${i}`;
+    if (!scene.textures.exists(key)) {
+      const g = scene.add.graphics();
+      grid.forEach((row, y) => {
+        for (let x = 0; x < row.length; x++) {
+          const ch = row[x];
+          if (ch === '.') continue;
+          g.fillStyle(pal[ch], 1);
+          g.fillRect(x * scale, y * scale, scale, scale);
+        }
+      });
+      g.generateTexture(key, rig.size * scale, rig.size * scale);
+      g.destroy();
+    }
+    return { key };
+  });
+
+  // 1.5fps: a breath, not a gait. The walk runs at 6.
+  scene.anims.create({ key: animKey, frames: texKeys, frameRate: 1.5, repeat: -1 });
+  return animKey;
+}
+
+/** Is this species drawn asleep (BACKLOG-522)? Species without a down pose keep their standing frame. */
+export function hasDownArt(species: string): boolean {
+  return !!PIXEL_SPECIES[species]?.down?.length;
+}
+
+/**
  * Ensure a walk animation exists for `species` in `baseColor`; returns the anim key,
  * or null if the species has no rig. Idempotent and colour-keyed, so every dino of a
  * species+colour reuses one bake. A pixel rig (CHARTER v4) overrides the legacy vector rig.

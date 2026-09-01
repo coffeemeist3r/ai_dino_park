@@ -1073,6 +1073,11 @@ export class WorldScene extends Phaser.Scene {
     // can await the write settling before it reloads. No production call site changed.
     (window as any).__flushSave = () => this.saveGame();
 
+    // BACKLOG-522: pose the sleepers before the first frame is shown. Without this the park opens with
+    // its one sleeping dino ambling on the spot for a world step, which is the exact read the pose exists
+    // to remove — and "frame one" is where this item's reachability answer lives, not "after a tick".
+    this.refreshSleepPoses();
+
     // Readiness flag: all dev hooks are now attached. e2e boot() waits on this to
     // avoid the parallel-load flake of reading a hook before create() finishes.
     (window as any).__ready = true;
@@ -3072,6 +3077,9 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__huddlers = () => this.dinos.filter((d) => this.isHuddling(d)).map((d) => d.name);
     // BACKLOG-109: who is down right now, and each dino's chronotype — the two reads the hours spec needs.
+    // BACKLOG-522: which dinos are showing their sleeping pose (not merely resting — an undrawn species
+    // rests without one, which is the fallback this hook lets a spec assert).
+    (window as any).__downPose = () => this.dinos.filter((d) => d.isDown()).map((d) => d.name);
     (window as any).__resting = () => this.dinos.filter((d) => this.isResting(d)).map((d) => d.name);
     (window as any).__roused = () => this.dinos.filter((d) => this.isRoused(d)).map((d) => d.name);
     (window as any).__chronotypes = () =>
@@ -3358,6 +3366,15 @@ export class WorldScene extends Phaser.Scene {
   /** Up while the park is dark (BACKLOG-109) — by construction only ever an owl. Host for BACKLOG-520. */
   private isRoused(d: Dino): boolean {
     return awakeAtNight(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason());
+  }
+
+  /**
+   * BACKLOG-522: the sleeping pose follows the same `asleep()` read the murmur and the 💤 mark use, so a
+   * dino cannot be lying down and murmuring on different rules. Idempotent per dino (`setAsleep` flips only
+   * on the edge), and a species with no down pose is untouched.
+   */
+  private refreshSleepPoses(): void {
+    for (const d of this.dinos) d.setAsleep(this.asleep(d));
   }
 
   private refreshSleepMarks(): void {
@@ -5064,6 +5081,7 @@ ${e.short}`;
     this.refreshSleepMarks();
     this.refreshActivityMarks();
     this.noticeTraces(); // BACKLOG-424: whoever wandered onto a fresh scuff this step reads it
+    this.refreshSleepPoses();
     this.maybeMurmur();
     this.checkFeeding();
     this.checkPlot();
