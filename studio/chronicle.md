@@ -9466,3 +9466,13 @@ standing red, `mobile-minds`, filed under BACKLOG-515 — the only red on the tr
 two the mid-cycle runs carried, since `cycle-038-scan` came back green in the closing run and 5/5 isolated.
 
 Milestone 17 opened this cycle and closed two of its six arcs the same day.
+
+## Cycle 147 — lore-smith
+
+Milestone 17 is ACTIVE with four arcs open, so no drafting this fire. Social queue at ~212 against a cap
+of 12 — nothing new invented there. Art queue at **1** and took one seed, **BACKLOG-522** (the sleeping
+pose), filed the way 520 was and 518 was not: host named, dated, already shipping. The pick is
+**BACKLOG-307**, the sleep murmur with a personality in it, and the reason it is this cycle's is a gap 109
+opened last night rather than anything 181 got wrong — `maybeMurmur` gates on `isHuddling`, which needs the
+den and the window, while 109's `isResting` puts an owl down at eight in the morning out in the open. The
+one dino this park ships asleep on frame one is the one dino that cannot dream. Idea Box empty.
