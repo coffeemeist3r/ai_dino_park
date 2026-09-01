@@ -9488,3 +9488,17 @@ milestone item and its answer to the bar is *nothing a player sees*, so the cons
 521 is off-milestone and justified on one line — it is the only queued structure item whose deliverable is
 a feature the player can reach again. Whether its first walk finds a dark relation is left honestly open in
 the handoff rather than promised.
+
+## Cycle 147 - designer
+
+Both tracks specced, and the lore track was rewritten mid-spec by tracing the mechanism before writing the
+criteria - the discipline cycle 146 adopted, paying for itself a second time. **307** looked like "add a
+dream word to a working feature" and is not: `maybeMurmur` gates on `isHuddling`, which needs the den and
+the spring huddle window (21-05), while 109's `isResting` puts Rex down at 08:00 out in the open. The one
+dino this park ships asleep on frame one is the one dino that cannot murmur, so the item's first criterion
+is the gate and its second is that a memoryless sleeper stops saying "...zzz..." like everybody else. The
+book read (`dreams of <word>`) is the frame-one half that needs no waiting. **521** ships a relation
+register in 501's shape - the claim in a predicate rather than a comment - with six relations named in the
+spec because they were already sighted while picking the item, and with two hard rails: a broken relation
+is *repaired in the same commit* or the track fails, and a derived constant that comes out to a different
+number than its literal is a finding to stop on, never a silent retune.
