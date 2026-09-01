@@ -2,7 +2,7 @@
   "cycle": 147,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-307: Sleep murmur — a sleeping dino still sounds like itself",
-  "structureItem": "BACKLOG-509: The tithe — one obsidian in every ground’s structure recipe but the Ridge’s",
+  "structureItem": "BACKLOG-521: The constants that describe relationships they no longer have",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-01T02:05:00.000Z",
-    "structure-smith": "2026-08-31T03:18:00.000Z",
+    "structure-smith": "2026-09-01T02:20:00.000Z",
     "designer": "2026-08-31T03:30:00.000Z",
     "code-planner": "2026-08-31T03:40:00.000Z",
     "coder": "2026-08-31T04:05:00.000Z",

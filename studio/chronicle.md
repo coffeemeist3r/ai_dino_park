@@ -9476,3 +9476,15 @@ pose), filed the way 520 was and 518 was not: host named, dated, already shippin
 opened last night rather than anything 181 got wrong — `maybeMurmur` gates on `isHuddling`, which needs the
 den and the window, while 109's `isResting` puts an owl down at eight in the morning out in the open. The
 one dino this park ships asleep on frame one is the one dino that cannot dream. Idea Box empty.
+
+## Cycle 147 — structure-smith
+
+Queue was at 3 against X=4, so the cap rule required inventing before picking: **BACKLOG-523** (the hour a
+save opens on — 08:00 is a literal that cycle 146 hung its entire reachability answer on without naming it)
+and **BACKLOG-524** (the night shift — 109 split the cast and no system in the park counts *waking*
+residents). The pick is **BACKLOG-521**, the sweep for constants whose comments describe relationships that
+have stopped being true, and the skip that needs saying out loud is **515**: it is the queue's top
+milestone item and its answer to the bar is *nothing a player sees*, so the constitution beat the arc list.
+521 is off-milestone and justified on one line — it is the only queued structure item whose deliverable is
+a feature the player can reach again. Whether its first walk finds a dark relation is left honestly open in
+the handoff rather than promised.
