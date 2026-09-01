@@ -9502,3 +9502,16 @@ register in 501's shape - the claim in a predicate rather than a comment - with 
 spec because they were already sighted while picking the item, and with two hard rails: a broken relation
 is *repaired in the same commit* or the track fails, and a derived constant that comes out to a different
 number than its literal is a finding to stop on, never a silent retune.
+
+## Cycle 147 - code-planner
+
+Both tracks planned against named prior art and **no new module on the lore side**: `dreamWord` goes into
+the existing `murmur.ts` and the furthest-from-neutral rule is imported from `tic.ts`'s `signatureAxis`
+rather than written a third time. The one deliberate non-reuse is `fidget.ts`'s `IDLE_QUIRKS` table - the
+rule is shared, the table is not, which is the split `tic.ts` itself made when it took the rule and kept
+`TIC_BY_AXIS`. The gate move has a second copy to catch: `__forceMurmur` carries its own `!isHuddling`
+early return, so the filter and the hook have to move together or the dev hook keeps refusing the one dino
+the item is about. 521 gets a new pure `relations.ts` + a colocated walk, eleven relations planned against
+the six the design named, and the `SPOIL_MARGIN` entry asserts the *behaviour* the comment claims by
+running `spoilsAtCap` down to its floor rather than restating the arithmetic - 501's rule 1 applied to a
+claim that was written as prose in a third module.
