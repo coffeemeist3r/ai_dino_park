@@ -9531,3 +9531,14 @@ shedding the last unit to a lighter neighbour. Cycle 146 fixed one relation and 
 over, in the same line, and nothing failed. The soft cap is 7 now, the relation is pinned, and thirteen
 relations are in the register - five more than planned, four of them found by the sweep rather than named
 in advance.
+
+## Cycle 147 - qa
+
+20/20 criteria pass across both tracks. Gates re-run against the committed tree: build clean, **2341 unit
+green** across 227 files, **637 e2e green** with two reds - the standing `mobile-minds` and
+`cycle-047-warmth`, the latter 5/5 green isolated and off every line of this diff, which makes it BACKLOG-
+515's fourth catalogued spec rather than a regression. The lore track's one spec repair was examined rather
+than accepted and turned out to be more interesting than it looked: the old assertion "an awake Rex cannot
+murmur at noon" had been true for the wrong reason since cycle 146, because noon is inside a spring owl's
+rest window and the old gate simply could not see that Rex was asleep. The structure track's bar answer is
+recorded as the *repair* and not the register, with two caveats written down rather than smoothed over.
