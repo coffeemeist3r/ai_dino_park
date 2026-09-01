@@ -9645,3 +9645,11 @@ second time in its history. The art queue is back to **1**: 518, held for a four
 waiting on somebody to pick its driver. That is now four fires, and the contrast with 520 and 522 — both
 seeded with a host and both drawn within the day — has stopped being a coincidence worth noting and become
 the queue's clearest rule.
+
+## Cycle 147 — housekeeping
+
+Four closed bullets archived — 307, 521 (pointer and body), 522 — plus the cycle-146 body section, which
+emptied when 521 closed and moved to the archive whole. The working backlog closes the night at **212
+open**, unchanged from where it opened, which is the arithmetic of a cycle that shipped three items and
+seeded three (522, 523, 524). The Structure Track sits at **4 open** — back at its cap for the first time
+since cycle 143, so next cycle's Structure-smith drains rather than invents.

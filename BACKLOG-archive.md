@@ -1,5 +1,31 @@
 # Backlog Archive — closed items
 
+## Cycle 146 — filed by the Validator (2026-08-31)
+
+> One finding, and it is the second instance in a week of the class BACKLOG-519 named — with behaviour
+> attached this time rather than a test's arithmetic.
+
+> The cycle-146 body section emptied when 521 closed and moved here whole (cycle-147 housekeeping).
+
+## Closed cycle 147 — a sleeping dino sounds like itself, and a floor a ground could not reach (2026-09-01)
+
+> Both tracks APPROVED, and both turned out to be the same story: a feature that was true, tested and green
+> for cycles, and not doing what it said. 307's murmur gated on `isHuddling` — a den state — so the one dino
+> 109 deliberately ships asleep on frame one was the one dino that could not murmur; and a memoryless
+> sleeper said `…zzz…` like every other memoryless sleeper. 521 built the register that makes a constant's
+> claim about another constant able to fail, and its first walk found `STOCKPILE_SOFT_CAP` sitting below
+> the `WORK_BUILD_FLOOR` that cycle 146 had raised while repairing the *previous* instance of the same
+> defect — so a gather-first ground could reach its build floor only by simultaneously becoming glutted.
+> 522 was seeded and drawn the same day, the second fire on that cadence; two of five species fold.
+
+- [x] BACKLOG-521 [infra] The constant that describes a relationship it no longer has — a number whose comment asserts a tie to another constant, still sitting there after the other end moved; 519's class with behaviour attached (full text in the cycle-146 block below).
+
+- [x] BACKLOG-522 [art] The sleeping pose — the five species rigs (`SPECIES_ART`) get a **down** frame, so a resting dino reads as itself lying down rather than as its walk cycle stopped mid-stride. The host exists and ships today: BACKLOG-109's `isResting` puts a dino down *out in the open* at 08:00 on a fresh save, and `refreshSleepMarks` already hangs the `doze` mark over it, so the pose has somewhere to be on frame one — no stash, no deadline. The seam is `PoseFn`: a second pose per species beside `triceratopsPose`/`brontosaurusPose`/`parasaurolophusPose`/`compsognathusPose`/`stegosaurusPose`, baked through the same `walkFrames` path (a down frame needs no gait — one or two frames of breathing is the whole animation). Silhouette is the brief: the frill, the neck, the crest, the plates must each still be the thing you recognise the dino by with the legs folded. Fallback stays the standing frame for any species without a down pose, which keeps the graceful path live. Serves Milestone 17's *the park at rest has tells you can name* from the other side of BACKLOG-307. **(2026-09-01, cycle 147 lore-smith: seeded with its host named and dated, per the cycle-145 amendment to the stash rule — the lesson 520 taught and 518 is still sitting in the queue for.)** **(2026-09-01, cycle 147-art: SHIPPED for two of five — Rex and Mossback. The item named `SPECIES_ART`'s `PoseFn` as the seam and that is the **legacy vector** path; every roster species is drawn in pixel and `PIXEL_SPECIES` overrides the vector rig in `bake.ts`, so a vector down-pose would have been a branch with no caller. `PixelRig` gained an optional `down` pair instead. The other three species keep their standing frame while resting, which is this path's live fallback and is asserted as such; a later fire draws them.)**
+
+- [x] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
+
+- [x] BACKLOG-521 [infra] The constant that describes a relationship it no longer has — `WORK_BUILD_FLOOR = 6` sat in `governance.ts` since cycle 121 under a comment saying it was set *"above the cairn recipe and below the granary's, so a gather-first ground visibly banks a while and still builds."* BACKLOG-509 raised a cairn from 5 to 6, and from that instant **no affordable pile could be under the floor**, so a gather-first ground never deferred anything again and the whole "stores before walls" work policy — a governance choice the player makes, with its own lens glyph and a persisted setting — became **unreachable**. Nothing failed: the build was clean, 2310 unit tests were green, and the comment went on describing a relationship that had stopped being true. The only thing that noticed was an e2e spec that happened to *use* the deferral, and it surfaced as a confusing off-by-one about cairn counts. Cycle 146 fixed that one instance by deriving the floor from `structureRecipe()`'s own total. **This item is the sweep.** It is 519's class — a claim written down twice, going stale in one of the two places — but the second copy here was load-bearing *behaviour*, not a test's arithmetic, which makes it the sharper version of the same problem and worth a pass of its own. The work: find every numeric constant in `game/src/world/` whose comment or name asserts a **relationship to another constant** (above X, below Y, one more than Z, half of W, "so that N still fits") and either derive it from the thing it is defined against — the fix that landed here — or leave it a literal with a test that pins the relationship, so moving either end reddens the build instead of quietly retiring a feature. The candidates worth checking first are the ones whose relationship spans two modules, since a single-file pair at least gets read together: `STOCKPILE_SOFT_CAP` against `STOCKPILE_CAP`, `GRANARY_AFTER_STRUCTURES` against the structure recipes, `NEED_THRESHOLD` against the need rates, `LONER_FLOOR` against the bond gains, `TIC_AFTER_STEPS` against its three shorteners. The reachability bar applies directly, and is the reason this is Structure Track rather than a tidy-up: a constant that has gone false does not announce itself, it just takes a feature dormant — which is precisely what CHARTER v7 exists to catch, and the studio has now caught it twice by moving a founding constant and once by not. Builds on 519 / 509 / 501.
+
 ## Closed cycle 140 — the ritual finds its voice, and the last two grounds find residents (2026-08-25)
 
 > Both tracks APPROVED, and **Milestone 15 SHIPPED** — 423 was the last unchecked arc in it. 423 was filed
