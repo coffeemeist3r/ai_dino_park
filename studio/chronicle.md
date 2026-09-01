@@ -9542,3 +9542,59 @@ than accepted and turned out to be more interesting than it looked: the old asse
 murmur at noon" had been true for the wrong reason since cycle 146, because noon is inside a spring owl's
 rest window and the old gate simply could not see that Rex was asleep. The structure track's bar answer is
 recorded as the *repair* and not the register, with two caveats written down rather than smoothed over.
+
+## Cycle 147 — the dream a dino has when it has had no day, and the floor a ground could not reach
+
+**Lore track (BACKLOG-307): APPROVED. Structure track (BACKLOG-521): APPROVED.**
+
+Build clean, **2341 unit green** across 227 files, **637 e2e green** with two reds — the standing
+`mobile-minds` and `cycle-047-warmth`, the latter 5/5 green isolated and off every line of this diff, which
+makes it BACKLOG-515's fourth catalogued spec rather than a regression.
+
+**The bar.** Open the game and touch nothing. Rex — the first dino in the roster, in the ground the save
+opens on, asleep at eight in the morning since last cycle — *now says something*. `💭 …nobody…`, off the
+axis Rex sits furthest from neutral on. Before tonight that dino was silent and would have stayed silent
+the whole session. Press the book on the same frame and all five carry a `💭 dreams of …` line, and they
+are not the same line: nobody, company, hiding, quiet, nobody. On the structure side, a gather-first ground
+can reach the total its own work policy demands and then build — which since cycle 146 it could not.
+
+**Both tracks are about the same thing, which nobody planned.** A feature that was true, tested, green for
+cycles, and not doing what it said.
+
+The murmur shipped at cycle 73 and has read as done ever since. It gated on `isHuddling` — a *den* state,
+needing the season's window and standing near the den — and 109 added `isResting`, which is per-dino. For a
+day-dino they overlap; for an owl they do not overlap at all. So the one dino this park deliberately ships
+asleep on frame one, chosen last cycle precisely so that being at rest would be visible inside the bar's
+ten minutes, **was the one dino that could not murmur.** A feature about sleep, a park with somebody asleep,
+and no way for the two to meet. And underneath that, `murmurLine(null)` returned `…zzz…`, so on a fresh
+save the whole cast dreamed one string — in the feature whose own module note calls itself a personality
+tell. Ten words now, one per pole of the five axes, the rule imported from `tic.ts` rather than copied a
+third time, the memory branch asserted byte-identical rather than assumed, and `MURMUR_CHANCE` deliberately
+left alone with a comment saying why.
+
+The other track is the same shape wearing a constant. `WORK_BUILD_FLOOR` filed BACKLOG-521 last cycle by
+going false in silence; tonight the sweep built the register that makes such a claim breakable — thirteen
+relations, each reading both ends through the module that owns them, with an anti-shrink guard so it cannot
+be made green by deletion. Nine were planned; **four were found by writing the predicates**, which is worth
+recording on its own: stating a claim precisely is a different act from reading the comment that states it
+loosely, and it turns up things reading does not.
+
+**And the first walk found one broken — the same constant, one cycle later, in the other direction.**
+Deriving `WORK_BUILD_FLOOR` from the recipe was the right fix, and it raised the floor to 7, which put it
+above `STOCKPILE_SOFT_CAP` at 6. A gather-first ground had a policy telling it to bank to 7 before building
+and a carry system treating anything over 6 as a glut to shed, so it could arrive at its floor only by
+simultaneously becoming the ground the park wanted to unload, and the next resident crossing to a lighter
+neighbour carried the surplus away. *Cycle 146 repaired one relation and broke another one module over, in
+the same line, and every gate stayed green.* That is the class stated properly at last: not a careless
+comment, but **a correct local fix with non-local consequences nothing was watching for.** Repaired at one
+unit, whole suite green before and after.
+
+Two things this verdict declined to overstate, both raised by QA on itself before being asked: the repair is
+one unit of slack and its read is smaller than the lore track's, and the register is not itself reachable —
+the design said so in advance and staked the track on the repair rather than the file. It earned the file on
+the first walk anyway.
+
+Milestone 17's second lore arc is half closed. Its third structure arc — **515** — was skipped tonight for
+a stated and still-correct reason, and it is now the only open structure arc while having cost four
+different specs a full-run red. Ruling for the record: it does not get a fifth skip on the same argument
+without somebody writing down what the park loses by carrying it.

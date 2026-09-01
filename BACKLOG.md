@@ -22,7 +22,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-495 [infra] The fixture nobody names — two consecutive founding-constant moves turned 28 e2e specs red that were not about the founding state; give the suite a declared founding fixture (full text in the cycle-136 block below). **(2026-08-31, cycle 146: passed over a second time, for the same honest reason — its own scope is ~550 specs and that is not one Coder fire. But cycle 146 then paid its argument in instalments nine more times, and two of those instalments were about *time* rather than founding state, which is a use this item did not anticipate and which 515 arrived at independently. It is getting more expensive to defer, not less. It wants a cycle where it is the only thing in flight.)**
 - [ ] BACKLOG-515 [infra] The suite's serial/parallel split — two unrelated specs now fail at `--workers=1` and pass under load (full text in the cycle-144 block below).
-- [~] BACKLOG-521 [infra] The constant that describes a relationship it no longer has — a number whose comment asserts a tie to another constant, still sitting there after the other end moved; 519's class with behaviour attached (full text in the cycle-146 block below).
+- [x] BACKLOG-521 [infra] The constant that describes a relationship it no longer has — a number whose comment asserts a tie to another constant, still sitting there after the other end moved; 519's class with behaviour attached (full text in the cycle-146 block below).
 - [ ] BACKLOG-523 [core] The hour a save opens on — 08:00 is a literal nobody derives, and every day-shaped read the park now ships is measured from it (full text in the cycle-147 block below).
 - [ ] BACKLOG-524 [emergent] The night shift — 109 gave the park a cast that is up while it is dark, and no system in the park knows they are there (full text in the cycle-147 block below).
 
@@ -535,7 +535,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-304 [emergent] Restlessness builds — a dino left idle (wandering) too many ticks escalates its fidget and may break the idle on its own to seek company or a resource; boredom becomes a driver, not just a pose. Builds on 298 / 295.
 - [ ] BACKLOG-305 [social] Kindred tics — when two dinos sharing the *same* signature quirk (298) idle near each other, a small 😄 recognition beat fires and nudges their bond; matching idle habits read as a quiet affinity. Builds on 298 / 013.
-- [~] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
+- [x] BACKLOG-307 [emergent] Sleep murmur — a huddling/sleeping dino (041) occasionally mutters a one-word dream tied to its strongest trait or a recent memory (💤 "fish?"), so even sleep carries a personality tell. Builds on 041 / 011.
 
 ## Cycle 68 lore additions — the body language leaves the page (2026-06-22)
 
