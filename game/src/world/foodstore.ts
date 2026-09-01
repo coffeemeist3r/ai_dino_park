@@ -17,7 +17,11 @@ import { theZone } from './zones'; // BACKLOG-499
 export type FoodPile = Partial<Record<string, number>>;
 
 /**
- * Per-food-id cap (BACKLOG-446) — mirrors resource.ts STOCKPILE_CAP. Banking a kind already at cap stalls
+ * Per-food-id cap (BACKLOG-446) — the same *shape* as resource.ts's `STOCKPILE_CAP`, not the same number:
+ * food caps at 6 and loose resources at 8, deliberately, since food also spoils and resources do not.
+ * (BACKLOG-521: the comment used to say "mirrors resource.ts STOCKPILE_CAP", which read as a value claim
+ * and had never been true. It is a pattern, so it is stated as one and not registered as a relation.)
+ * Banking a kind already at cap stalls
  * (the harvest still drops into the feeding loop; only the stored surplus stops growing) until 444/447 spend
  * it back down.
  */

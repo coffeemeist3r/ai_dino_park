@@ -9515,3 +9515,19 @@ the item is about. 521 gets a new pure `relations.ts` + a colocated walk, eleven
 the six the design named, and the `SPOIL_MARGIN` entry asserts the *behaviour* the comment claims by
 running `spoilsAtCap` down to its floor rather than restating the arithmetic - 501's rule 1 applied to a
 claim that was written as prose in a third module.
+
+## Cycle 147 - coder
+
+Both tracks in, 15 files, build clean and **2341 unit / 637 e2e green**. The lore track landed as specced
+and cost one spec repair, which is the item's own thesis arriving as a test failure: `cycle-073-murmur`
+asserted that an awake Rex cannot murmur **at noon**, and Rex is an owl whose spring rest window is 05-13,
+so noon is inside it. The old gate could not see that Rex was asleep; the new one can. Named 15:00 rather
+than narrowing the gate back, and left `MURMUR_CHANCE` alone with a comment saying why.
+
+The structure track's walk **found one**. `WORK_BUILD_FLOOR` is derived from the recipe total plus one -
+the cycle-146 repair - and the tithe put that total at 6, so the floor is 7 while `STOCKPILE_SOFT_CAP` was
+6. A gather-first ground could not reach the total it needs to build without already being glutted and
+shedding the last unit to a lighter neighbour. Cycle 146 fixed one relation and broke another one module
+over, in the same line, and nothing failed. The soft cap is 7 now, the relation is pinned, and thirteen
+relations are in the register - five more than planned, four of them found by the sweep rather than named
+in advance.

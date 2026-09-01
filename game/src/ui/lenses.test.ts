@@ -142,3 +142,20 @@ describe('the council on the map lens and in the book (BACKLOG-479)', () => {
     expect(bookLines([{ ...base }]).some((l) => l.includes('👥'))).toBe(false);
   });
 });
+
+describe('the dream line (BACKLOG-307)', () => {
+  const row: BookRow = { name: 'Rex', species: 'triceratops', hearts: 0, topBond: 0, role: 'wanderer', rumorsHeard: 0 };
+
+  it('renders directly under the hours when present', () => {
+    const lines = bookLines([{ ...row, hours: 'keeps late hours', dream: '💭 dreams of thunder' }]);
+    const hours = lines.findIndex((l) => l.includes('keeps late hours'));
+    const dream = lines.findIndex((l) => l.includes('dreams of thunder'));
+    expect(hours).toBeGreaterThan(-1);
+    expect(dream).toBe(hours + 1);
+  });
+
+  it('shows no line at all when the dino has no dream', () => {
+    expect(bookLines([{ ...row }]).some((l) => l.includes('dreams of'))).toBe(false);
+  });
+});
+

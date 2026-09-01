@@ -33,9 +33,12 @@ export type PileStep = 0 | 1 | 2 | 3;
  * Chosen to sit *around* the founding state rather than above it (the CHARTER v7 corollary read forwards).
  * The Grove ships with `{ stone: 2 }` — enough to mend the founding ruin with a unit to spare — which is
  * **step 2**, a heap standing on the ground the moment a new player walks one edge east; `REPAIR_COST` is 1,
- * so watching Bramble put the ruin back up knocks the heap down a step in the same minute. Step 3 sits at 4,
- * below `STOCKPILE_SOFT_CAP` (6), so a well-gathered ground actually reaches its full heap instead of
- * capping out one short of it.
+ * so watching Bramble put the ruin back up knocks the heap down a step in the same minute. Step 3 sits
+ * below `STOCKPILE_SOFT_CAP`, so a well-gathered ground actually reaches its full heap instead of capping
+ * out one short of it.
+ *
+ * BACKLOG-521: both of those are claims about constants in three other modules, so they are pinned in
+ * `relations.ts` rather than asserted here — and the soft cap's value is no longer written down twice.
  */
 export const PILE_STEPS = [1, 2, 4] as const;
 

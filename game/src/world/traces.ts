@@ -31,9 +31,11 @@ export interface PaceTrace {
 }
 
 /**
- * How many world steps a scuffed spot stays worth noticing. 40 ≈ 2× `TIC_AFTER_STEPS` (405), so the window
- * is about as long as the solitude it took to make the mark — the calibration knob, tuned here and nowhere
- * else. Long enough that a wanderer plausibly crosses it; short enough that "lately" stays true.
+ * How many world steps a scuffed spot stays worth noticing — at least twice `TIC_AFTER_STEPS` (405), so
+ * the window is about as long as the solitude it took to make the mark. The calibration knob, tuned here
+ * and nowhere else. Long enough that a wanderer plausibly crosses it; short enough that "lately" stays
+ * true. The relation to `TIC_AFTER_STEPS` is pinned in `relations.ts` (BACKLOG-521) rather than restated
+ * as a product here, since the two constants live in different modules and only break together.
  */
 export const TRACE_FRESH_STEPS = 40;
 

@@ -133,4 +133,58 @@ Land 307 (files 1–7) and get green, then 521. Only `world/tic.ts` is touched b
 
 ## Shipped
 
-_(the Coder fills this in)_
+**15 files. Build clean. 2341 unit green across 227 files. 637 e2e green, two reds, both BACKLOG-515.**
+
+### Lore track — BACKLOG-307 (7 files)
+
+`world/murmur.ts` (+`DREAM_BY_AXIS`, `dreamWord`, `dreamBookLine`, `murmurLine`'s optional `traits`),
+`ui/lenses.ts` (+`BookRow.dream`, one render line), `scenes/WorldScene.ts` (the new `asleep()` predicate,
+`pickMurmurer`, `maybeMurmur`, both dev hooks, `bookRows`, two stale comments), plus
+`tests/unit/cycle-147-dream.test.ts`, `ui/lenses.test.ts`, `tests/e2e/cycle-147-dream.spec.ts`, and one
+repair in `tests/e2e/cycle-073-murmur.spec.ts`.
+
+Everything landed as planned, including the second copy the plan flagged: `__forceMurmur` carried its own
+`!isHuddling` early return and would have gone on refusing the one dino the item is about.
+
+**One spec repaired, and it is the assumption made explicit.** `cycle-073-murmur`'s first case asserted
+that at **noon** an awake Rex cannot murmur. Rex is an owl, and a spring owl's rest window is 05–13 — the
+21–05 huddle window shifted eight hours — so noon is inside it and Rex is asleep. The old gate could not
+see that; the new one can. Repaired by naming 15:00, with the reason in the spec, rather than by narrowing
+the gate back. `MURMUR_CHANCE` was left alone and its comment now says so out loud.
+
+### Structure track — BACKLOG-521 (8 files)
+
+`world/relations.ts` + `world/relations.test.ts` (new), and comment repairs in `bank.ts`, `fetch.ts`,
+`traces.ts`, `governance.ts`, `foodstore.ts`, plus the one value repair in `resource.ts`.
+
+**Thirteen relations registered**, five more than the plan's eight: the six the design named, the granary
+lift and the starving band from the plan, and four the sweep turned up on the way — the Grove's founding
+heap against `REPAIR_COST` (a claim `bank.ts` makes about two other modules), the owl-bar margin across
+every roster name, the roster holding both chronotypes at all, and the one below.
+
+**The walk found a broken relation, and the repair is in this commit.**
+`WORK_BUILD_FLOOR` is derived from `structureRecipe()` + 1 — the cycle-146 fix for the *last* time this
+happened — and the tithe put that total at 6, so the floor is **7**. `STOCKPILE_SOFT_CAP` was **6**. A
+gather-first ground therefore could not reach the total it needs to build without already being over its
+soft cap and shedding the last unit to a lighter neighbour under carry pressure. Cycle 146 repaired one
+relation and, in the same line, quietly broke another one module over: "stores before walls" stopped
+ending in a wall. Nothing failed. **Repair:** `STOCKPILE_SOFT_CAP = 7`, left a literal with the derivation
+in its comment and the relation pinned in the register (the design's second sanctioned outcome), so moving
+either end reddens the build. Full unit suite green before and after, so nothing else was tuned against
+the old 6.
+
+`foodstore.ts`'s *"mirrors resource.ts `STOCKPILE_CAP`"* is resolved as **a false value claim**: food caps
+at 6 and loose resources at 8, deliberately, because food spoils and resources do not. It is a claim about
+a *pattern*, so the comment now says that and no relation was registered for it. Neither number moved.
+
+### Blockers
+
+None. No derived constant came out to a different number than its literal; the one value that moved is the
+named repair above.
+
+### Gates
+
+`npm run build` clean. `npx vitest run` → **2341 passed, 3 skipped, 227 files**. `npx playwright test` →
+**637 passed, 2 failed**: `mobile-minds` (the standing BACKLOG-515 red) and `cycle-047-warmth` "the tone
+path mends too" — the latter green **5/5 isolated** seconds later, which is 515's parallel-load signature
+and its fourth catalogued spec. `@mlc-ai/web-llm` grep outside `game/src/ai/`: clean.

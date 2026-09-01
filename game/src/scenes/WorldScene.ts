@@ -104,7 +104,7 @@ import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
 import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
-import { pickMurmurMemory, murmurLine } from '../world/murmur';
+import { pickMurmurMemory, murmurLine, dreamBookLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
@@ -353,7 +353,9 @@ const BOND_PER_MEET = 4;
 /** Bond a generous feeder gains with the friend it yields a meal to (BACKLOG-375) — kindness deepens the tie. */
 const GENEROUS_BOND_BUMP = 5;
 
-/** How often a huddling dino murmurs a 💭 sleep-line per step (BACKLOG-181) — sparse, so the den isn't a wall of 💭. */
+/** How often a sleeping dino murmurs a 💭 sleep-line per step (BACKLOG-181) — sparse, so the den isn't a wall of 💭.
+ *  Untouched by BACKLOG-307: 307 widened *who* can murmur, and compensating for that with a rate cut here
+ *  would be the v7 corollary in miniature — a system tuned back down to where it was unwatchable. */
 const MURMUR_CHANCE = 0.2;
 
 export class WorldScene extends Phaser.Scene {
@@ -3113,11 +3115,14 @@ export class WorldScene extends Phaser.Scene {
     };
     // dev-only: sleep murmurs (BACKLOG-181) — the deterministic line a dino would dream now, and a hook
     // to force a murmur past the sparse roll (returns the line shown, or null if no eligible sleeper).
-    (window as any).__murmur = (name: string) => murmurLine(pickMurmurMemory(recall(this.memory, name)));
+    (window as any).__murmur = (name: string) =>
+      murmurLine(pickMurmurMemory(recall(this.memory, name)), this.dinoByName(name)?.traits);
     (window as any).__forceMurmur = (name?: string) => {
       const d = name ? this.dinoByName(name) : this.pickMurmurer();
-      if (!d || !this.isHuddling(d) || !this.inView(d)) return null;
-      const line = murmurLine(pickMurmurMemory(recall(this.memory, d.name)));
+      // BACKLOG-307: the same asleep test `pickMurmurer` uses. This was a second copy of the huddle
+      // gate, so leaving it behind would have kept the hook refusing the one dino the item is about.
+      if (!d || !this.asleep(d) || !this.inView(d)) return null;
+      const line = murmurLine(pickMurmurMemory(recall(this.memory, d.name)), d.traits);
       this.showBubble(d, line);
       return line;
     };
@@ -3768,6 +3773,7 @@ export class WorldScene extends Phaser.Scene {
       rumorsHeard: this.rumorsOf(d.name),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
+      dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
@@ -5136,19 +5142,31 @@ ${e.short}`;
   }
 
   /**
-   * Sleep murmurs (BACKLOG-181): on a sparse roll, a huddling, in-view dino floats a 💭 line drawn from its
+   * Sleep murmurs (BACKLOG-181): on a sparse roll, a sleeping, in-view dino floats a 💭 line drawn from its
    * strongest memory of the day, so the den has an audible-on-screen inner life. Deterministic (no model);
-   * out-of-view huddlers (the other zone) stay silent. The LLM-coloured murmur is a 181 follow-up.
+   * out-of-view sleepers (the other zone) stay silent. The LLM-coloured murmur is a 181 follow-up.
+   * BACKLOG-307: with no memory yet it dreams its signature trait instead of everybody's `…zzz…`.
    */
   private maybeMurmur(): void {
     if (rand() >= MURMUR_CHANCE) return;
     const d = this.pickMurmurer();
-    if (d) this.showBubble(d, murmurLine(pickMurmurMemory(recall(this.memory, d.name))));
+    if (d) this.showBubble(d, murmurLine(pickMurmurMemory(recall(this.memory, d.name)), d.traits));
   }
 
-  /** A random huddling, in-view dino (BACKLOG-181), or null when the den is empty / out of view. */
+  /**
+   * Asleep, either way the park has of being asleep (BACKLOG-307). `isHuddling` is a *den* state — the
+   * season's huddle window and standing near the den — and BACKLOG-109 added `isResting`, which is
+   * per-dino and chronotype-shaped. They do not overlap for an owl: Rex is down at 08:00 out in the open,
+   * nowhere near the den and hours outside the spring window, which is why the one dino this park ships
+   * asleep on frame one could not murmur at all until this fire.
+   */
+  private asleep(d: Dino): boolean {
+    return this.isResting(d) || this.isHuddling(d);
+  }
+
+  /** A random sleeping, in-view dino (BACKLOG-181/307), or null when nobody is down / in view. */
   private pickMurmurer(): Dino | undefined {
-    const sleepers = this.dinos.filter((d) => this.isHuddling(d) && this.inView(d));
+    const sleepers = this.dinos.filter((d) => this.asleep(d) && this.inView(d));
     return sleepers[Math.floor(rand() * sleepers.length)];
   }
 

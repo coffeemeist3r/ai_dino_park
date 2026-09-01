@@ -12,7 +12,8 @@
  * ever come. `FETCH_BOND_FLOOR` therefore sits strictly *below* `LONER_FLOOR`: the dino that comes for a
  * loner is not a close friend — a loner has none — it is the closest thing this dino has to one. If not
  * even that exists, nobody comes and it stands at the edge while the park eats. That silence is the read
- * the beat is for. (`fetch.test.ts` pins the floor relation so a tuning pass can't quietly close it.)
+ * the beat is for. (`fetch.test.ts` pins the floor relation so a tuning pass can't quietly close it, and
+ * BACKLOG-521's `relations.ts` pins it again across the module boundary, which is where it would break.)
  *
  * Pure TypeScript (no Phaser, no WebLLM): Node-testable. WorldScene owns the escort state, the two-phase
  * walk, and the beat; who comes is `closestFriend()`'s call, reused from the bond graph.
@@ -22,7 +23,9 @@ import { closestFriend, type Bonds } from '../social/bonds';
 
 /**
  * How close a peer must be to bother crossing the bowl for a withdrawn loner — half a huddle, and
- * deliberately below `LONER_FLOOR` (8) so the pick is reachable at all. See the module note.
+ * deliberately below `LONER_FLOOR` so the pick is reachable at all. See the module note. (Both halves of
+ * that sentence are relations across a module boundary; `relations.ts` carries them, and neither other end
+ * is written down here a second time — BACKLOG-521.)
  */
 export const FETCH_BOND_FLOOR = 4;
 

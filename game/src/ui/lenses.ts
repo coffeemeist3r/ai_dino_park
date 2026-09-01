@@ -198,6 +198,10 @@ export interface BookRow {
    *  BookRow literals stay valid; always present in-game, and legible on frame one without waiting for a
    *  particular hour to come round. */
   hours?: string;
+  /** What this dino dreams (BACKLOG-307) — `💭 dreams of <word>`, off its signature axis. Optional so older
+   *  BookRow literals stay valid; always present in-game, and legible on frame one with no memory and no
+   *  model, which is the half of 307 that needs no waiting for a sleeper to roll a murmur. */
+  dream?: string;
   /** The signature ritual, once it has actually formed in this park (BACKLOG-409) — the 405 tic named,
    *  with the friend it was caught off (407) when it is borrowed. Undefined for a dino that has never been
    *  alone long enough (then no line shows); built by `ticBookLine`. */
@@ -250,6 +254,7 @@ export function bookLines(rows: BookRow[]): string[] {
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
     if (r.hours) out.push(`  · ${r.hours}`); // BACKLOG-109: the hours it keeps, beside the quirk
+    if (r.dream) out.push(`  ${r.dream}`); // BACKLOG-307: what it dreams when it has had no day yet
     if (r.tic) out.push(`  ${r.tic}`); // BACKLOG-409: the ritual it has actually fallen into, under the quirk
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases

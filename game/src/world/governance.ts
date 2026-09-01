@@ -96,7 +96,11 @@ export type WorkPriority = 'gather' | 'build';
  * tithe raised a cairn to 6 — which silently made the defer unreachable for the ground the rule was
  * written for, because no affordable pile could ever be under the floor any more. A comment saying "above
  * the cairn recipe" and a number that had stopped being above it is exactly the second-copy failure
- * BACKLOG-519 is about, so the number now reads the recipe it is defined against.
+ * BACKLOG-519 is about, so the number now reads the recipe it is defined against. **BACKLOG-521 finished
+ * the job:** deriving this end fixed one relation and quietly broke another — at a recipe total of 6 the
+ * floor is 7, which sits *above* `STOCKPILE_SOFT_CAP`, so a gather-first ground could not reach its floor
+ * without already shedding as a glut. Both relations are pinned in `relations.ts` now, which is the only
+ * way a claim spanning two modules ever gets to fail out loud.
  */
 export const WORK_BUILD_FLOOR =
   Object.values(structureRecipe()).reduce((t: number, n) => t + (n ?? 0), 0) + 1;

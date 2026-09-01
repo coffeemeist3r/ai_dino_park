@@ -16,8 +16,10 @@ const bubbles = (p: import('@playwright/test').Page) =>
 test('a huddling dino murmurs a 💭 sleep-line; an awake dino stays silent', async ({ page }) => {
   await boot(page);
 
-  // At noon nobody is in the den — an awake dino cannot murmur.
-  await page.evaluate(() => (window as W).__setClock(1, 12, 0));
+  // Mid-afternoon nobody is asleep, either way the park has of being asleep — an awake dino cannot murmur.
+  // BACKLOG-307 moved the gate from huddling to asleep, and noon is inside a spring owl's rest window
+  // (05–13, the 21–05 huddle window shifted eight hours), so the hour is named rather than assumed.
+  await page.evaluate(() => (window as W).__setClock(1, 15, 0));
   expect(await huddlers(page)).toHaveLength(0);
   expect(await page.evaluate(() => (window as W).__forceMurmur('Rex'))).toBeNull();
 

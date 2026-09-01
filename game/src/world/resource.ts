@@ -251,7 +251,19 @@ export function directedCarry(
  * forever in one zone. Below the soft cap, or toward a heavier/equal neighbour, it's byte-identical to the
  * single directed carry (356/377): resources are never pushed into an already-fuller zone.
  */
-export const STOCKPILE_SOFT_CAP = 6; // per-zone total; over this a glutted zone sheds toward a lighter neighbour
+/**
+ * Per-zone total; over this a glutted zone sheds toward a lighter neighbour.
+ *
+ * **BACKLOG-521 repair.** This was `6` and it had gone quietly false. `WORK_BUILD_FLOOR` is derived from
+ * `structureRecipe()`'s total plus one (the cycle-146 fix for the *last* time this happened), and the tithe
+ * raised that total to 6 — so a gather-first ground could not reach its build floor of 7 without already
+ * being over its soft cap and shedding the last unit to a lighter neighbour every time it got there. Two
+ * constants in two modules, each correct on its own, describing a ground that banks toward a wall it is
+ * pushed back from. Nothing failed; the "stores before walls" policy just quietly stopped ending in a wall.
+ * The relation — *the soft cap is never below the work-build floor* — is pinned in `relations.ts`, so
+ * moving either end reddens the build instead of retiring the other end's feature.
+ */
+export const STOCKPILE_SOFT_CAP = 7;
 export const PRESSURE_CARRY = 2; // most units a crossing sheds under pressure (a lean, not a firehose)
 
 /** A pile's total across all kinds. */
