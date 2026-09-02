@@ -9673,3 +9673,13 @@ the Ridge each hold exactly one resident, both owls, both asleep until 13:00 —
 ten-minute window. 495 and 523 skipped with reasons written down; **515 is not skipped a fifth time — it is
 carried as a rider with the diagnosis done**, and the diagnosis is that it was two causes wearing one item
 number: a read-after-input race against Phaser's update step, and the cold-boot budget.
+
+## Cycle 148 — designer
+
+Both tracks specced, plus the 515 rider. **Lore (110+279):** the hour is already in the greeting context
+and only the model has ever read it — `cannedReply` composes nine asides and knows every fact about a dino
+except what time it is. Ships `dayStanding`, four registers derived from the dino's own `restWindow` with
+**no new hour constant**, so a spring day-dino reads `fresh` at 08:00 because its waking span starts at
+05:00 and not because 08:00 was picked. **Structure (524):** one seam — `residentZones()` stops being a
+membership read; the readouts that feed the map stay membership reads, because a lens that showed the Ridge
+empty while Ember slept there would be lying. Plus the watch: whoever is up while their ground is down.
