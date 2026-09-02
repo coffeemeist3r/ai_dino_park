@@ -9683,3 +9683,11 @@ except what time it is. Ships `dayStanding`, four registers derived from the din
 05:00 and not because 08:00 was picked. **Structure (524):** one seam — `residentZones()` stops being a
 membership read; the readouts that feed the map stay membership reads, because a lens that showed the Ridge
 empty while Ember slept there would be lying. Plus the watch: whoever is up while their ground is down.
+
+## Cycle 148 — code-planner
+
+Files, functions and a reuse ledger for both tracks and the rider. **One new module** across the whole
+cycle — `world/watch.ts`, three strings in `lastone.ts`'s shape — because everything else already exists:
+`restWindow` is the derivation source for the lore track's quarters, `checkLastOne` is the structure
+track's dedup pattern, and the 515 rider's helper is `boot()`'s own rAF await extracted rather than
+invented. Build order pinned by the shared file: 524's `chronotype.ts` block lands before 110's.
