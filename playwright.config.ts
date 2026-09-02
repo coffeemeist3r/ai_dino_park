@@ -25,6 +25,10 @@ const WORKERS = Number(process.env.E2E_WORKERS) || 2;
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // BACKLOG-515 (second cause): warm Vite's transform graph once, before any worker opens a browser, so a
+  // cold boot is never charged to whichever spec happens to go first. `webServer.url` below waits for the
+  // socket, not for the server to have transformed anything.
+  globalSetup: './tests/e2e/globalSetup.ts',
   fullyParallel: true,
   workers: WORKERS,
   timeout: 60_000, // > helpers.ts BOOT_TIMEOUT (30s), so a slow-but-correct boot still has room to assert

@@ -9809,3 +9809,19 @@ Gates: build clean, **2371 unit green** across 228 files, **649/649 e2e in both 
 closes with 515 — it has been one symptom of it since cycle 144. Milestone 17 has **one arc left**: 121,
 the half of *a dino awake at the wrong hour is doing something* that 524 built the system for and did not
 yet spend.
+
+## Cycle 148 — rider follow-up: the second half of 515
+
+The validator's all-green claim was made against the input race, which was the half the rider set out to
+fix. Running the suite again afterwards surfaced the **other** half twice — `cycle-102-book-foodweb`, then
+`cycle-139-quorum`, both `boot()` timeouts under parallel load, both green isolated. That is 515's second
+cause and it had not been touched: `webServer.url` waits for the socket to answer, **not** for Vite to have
+transformed anything, so the first spec through the door pays the entire cold Phaser transform inside
+`boot()`'s 30s ceiling while a second worker piles onto the same server and doubles the wait.
+
+It is a **budget** problem, not a hang, and the fix is to stop charging the bill to a spec's clock rather
+than to raise the ceiling until it fits. A `globalSetup` fetches the entry module once before any worker
+opens a browser; Vite transforms on request, so by the time the workers start every boot is a warm boot.
+Sixteen lines, fails open, and `BOOT_TIMEOUT` was deliberately **left at 30s** so the signal stays honest.
+
+Three full runs since: **650/650 parallel, 650/650 cold parallel, 650/650 at `--workers=1`.**
