@@ -2,7 +2,7 @@
   "cycle": 148,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-110: Hour-aware greeting (with BACKLOG-279 as its second clause)",
-  "structureItem": "BACKLOG-521: The constants that describe relationships they no longer have",
+  "structureItem": "BACKLOG-524: The night shift - a ground works on the hours its cast keeps",
   "lastVerdict": "",
   "structureVerdict": "",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-02T02:05:00.000Z",
-    "structure-smith": "2026-09-01T02:20:00.000Z",
+    "structure-smith": "2026-09-02T02:20:00.000Z",
     "designer": "2026-09-01T02:45:00.000Z",
     "code-planner": "2026-09-01T03:00:00.000Z",
     "coder": "2026-09-01T03:40:00.000Z",

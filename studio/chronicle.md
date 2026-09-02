@@ -9663,3 +9663,13 @@ WebLLM prompt — the deterministic voice that ships to every device has never k
 queue ~209 against a cap of 12, so nothing seeded there. Art queue at 1 against a cap of 3: seeded
 **BACKLOG-525**, the three species that still sleep standing up, with 522's shipped `down` pair as its host
 and its constraints already written as numbers.
+
+## Cycle 148 — structure-smith
+
+**BACKLOG-524, the night shift.** A ground rolls its resource because somebody *lives* there; nobody has
+ever asked whether anybody in it is awake. 109 has been shipping owls for two cycles and no system in the
+park knows they exist. The founding roster already exercises the fix with nothing moved: the Fernreach and
+the Ridge each hold exactly one resident, both owls, both asleep until 13:00 — five real minutes into the
+ten-minute window. 495 and 523 skipped with reasons written down; **515 is not skipped a fifth time — it is
+carried as a rider with the diagnosis done**, and the diagnosis is that it was two causes wearing one item
+number: a read-after-input race against Phaser's update step, and the cold-boot budget.
