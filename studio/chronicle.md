@@ -9701,3 +9701,13 @@ it in the same frame, so the pick landed against a menu that was not there and t
 all. That is why two of the four specs failed despite already polling: **a poll cannot recover an input that
 was dropped.** Each serial run surfaced a fresh victim until the seams ran out — four runs, four specs, one
 mechanism, the cycle-130 signature reproduced on demand and then exhausted.
+
+## Cycle 148 — qa
+
+23/23 criteria pass across both tracks. Build clean, **2371 unit green**, and the e2e suite at **649/649 in
+both directions** — parallel and `--workers=1` — which is the first all-green serial run this project has
+recorded. QA moved the 515 rider's fix a layer down mid-cycle: the per-seam version passed its own
+acceptance and then produced a seventh victim on the next serial run, so the patch went into `boot()` once
+and every per-spec edit was reverted. The rider is now one file. It also caught its own byte-identity test
+comparing a random-choice greeting to itself — **the claim was right and the test was wrong**, repaired by
+asserting over the deterministic registers rather than by softening the claim.

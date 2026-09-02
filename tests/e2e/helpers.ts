@@ -41,6 +41,48 @@ export async function boot(page: Page): Promise<void> {
   // (__stepWorld, __triggerSky, __migrate, __maybeBarter, __advanceWall), which bypass the pause. A spec
   // that genuinely needs the live timers calls __resumeAmbient() after boot.
   await page.evaluate(() => (window as Record<string, () => void>).__pauseAmbient?.());
+  settleAfterInput(page);
+}
+
+/**
+ * Make every input on this page wait for the world to have processed it (BACKLOG-515).
+ *
+ * `page.keyboard.press()` and `page.mouse.click()` resolve when CDP has **dispatched** the DOM event.
+ * Phaser's `KeyboardPlugin` queues that event and emits `Key.on('down')` from the scene's own update step —
+ * see `WorldScene.ts`'s `this.cursors.left.on('down', …)`. Whatever a spec does next is a *second*
+ * round-trip, and it can land before that frame has run.
+ *
+ * Which is why the failures always looked backwards. A **fast** round-trip (serial run, warm dev server)
+ * loses the race and a slow one (under parallel load) wins it by accident — *fails serial, passes under
+ * load*, the inverse of the parallel-load theory this studio carried from cycle 92 to cycle 135.
+ *
+ * **It is not only reads that lose.** Three of the seams found while fixing this were input-*after*-input:
+ * `KeyE` opening the tone menu and `Digit1` picking from it in the same frame, so the pick landed against a
+ * menu that was not open yet and the tone was never chosen at all. The `expect.poll` that followed then
+ * timed out on a beat that had never been requested — which is why two of the catalogued specs failed
+ * *despite* already polling. **A poll cannot recover an input that was dropped.**
+ *
+ * So the patch goes here, on the two input entry points, rather than at each seam. Six specs were fixed
+ * one seam at a time before this was written and a seventh appeared on the next serial run; the victim
+ * moves because the race is a property of the runner and not of any spec. One place, every spec that boots.
+ *
+ * None of this is a bug in the game: a real player's ArrowLeft turns the page on the next frame, sixteen
+ * milliseconds later, which is correct. It is the harness that was reading the world too early.
+ */
+function settleAfterInput(page: Page): void {
+  const p = page as Page & { __settlePatched?: boolean };
+  if (p.__settlePatched) return; // `boot()` is called twice in a few specs (a relaunch)
+  p.__settlePatched = true;
+  const press = page.keyboard.press.bind(page.keyboard);
+  page.keyboard.press = async (key, options) => {
+    await press(key, options);
+    await settle(page);
+  };
+  const click = page.mouse.click.bind(page.mouse);
+  page.mouse.click = async (x, y, options) => {
+    await click(x, y, options);
+    await settle(page);
+  };
 }
 
 /**
@@ -80,24 +122,13 @@ export async function emptyGrounds(page: Page): Promise<void> {
 }
 
 /**
- * Wait for the world to have processed an input (BACKLOG-515).
+ * Two frames of world time (BACKLOG-515) — the primitive `settleAfterInput` runs after every key and click.
  *
- * `page.keyboard.press()` / `page.mouse.click()` resolve when CDP has **dispatched** the DOM event. Phaser's
- * `KeyboardPlugin` queues that event and emits `Key.on('down')` from the scene's own update step — see
- * `WorldScene.ts`'s `this.cursors.left.on('down', …)`. A `page.evaluate` on the next line of a spec is a
- * *second* round-trip, and it can land before that frame has run.
+ * The first frame drains Phaser's input queue into the handler; the second lets the handler's effect be
+ * true when the next `evaluate` reads it. `boot()` keeps its own single-frame await unchanged.
  *
- * Which is why the failures always looked backwards: a **fast** round-trip (serial run, warm dev server)
- * loses the race and a slow one (under parallel load) wins it by accident. Four specs have been catalogued
- * on this — `mobile-minds`, `cycle-044-sound`, `cycle-047-warmth`, `cycle-038-scan` — each diagnosed as its
- * own bug, none of them a bug in the game: a real player's ArrowLeft turns the page on the next frame,
- * sixteen milliseconds later, which is correct.
- *
- * Two frames, not one: the first drains the queue into the handler, the second lets the handler's effect be
- * true when the next `evaluate` reads it.
- *
- * **Use it only at a read-that-follows-an-input seam.** It is not a general-purpose sleep, and sprinkling it
- * through specs that already pass buys nothing but wall-clock.
+ * Exported so a spec can settle after something the patch does not cover — a drag, a touch gesture, a
+ * `dispatchEvent`. It is not a general-purpose sleep: use it at an input seam or not at all.
  */
 export async function settle(page: Page): Promise<void> {
   await page.evaluate(
