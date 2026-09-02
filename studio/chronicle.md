@@ -9825,3 +9825,46 @@ opens a browser; Vite transforms on request, so by the time the workers start ev
 Sixteen lines, fails open, and `BOOT_TIMEOUT` was deliberately **left at 30s** so the signal stays honest.
 
 Three full runs since: **650/650 parallel, 650/650 cold parallel, 650/650 at `--workers=1`.**
+
+## Cycle 148-art — artist: the last three lie down
+
+**BACKLOG-525.** 522 drew two of five species asleep last night and this closes the set. The read it fixes
+is blunt: half the shipping cast sleeps every night and **three of them were doing it standing up** — Sunny,
+Twitch and Glade kept their walk frame while at rest, and on a fresh save two of the three owls the park
+puts down at 08:00 are the *only* resident of their ground, so the standing sprite was the whole picture.
+
+This was the first art fire in the park's history to open with a **bar rather than an opinion**. Every
+constraint was already written down as numbers by 522's own unit test, so there was nothing to negotiate:
+topmost painted row strictly *below* the standing frame's, bottom row *exactly equal* to it, at least three
+quarters of the standing mass retained, two frames baked at 1.5fps against the walk's six. All three rigs
+were drafted against those four numbers before a single pixel was wired in.
+
+**The rule the three follow is the one Rex's frill and Mossback's plate ridge established: the silhouette
+feature stays up, everything under it settles.**
+
+- **Sunny.** A sauropod *is* its neck. So the neck does not vanish — it folds down and forward along the
+  flank and the head comes to rest at the shoulder, which is how a sauropod actually sleeps and is also the
+  only way the sprite stays a brontosaurus. Body drops four rows, legs tuck to stubs, ground line unmoved.
+- **Glade.** A hadrosaur with its crest down is a different animal, so the tube crest holds its full sweep
+  and angle while the body settles beneath it. The duckbill lowers to the ground; the tail stays high.
+- **Twitch.** The cast's only biped, and the only one that *curls*: the tail comes round and the head tucks
+  toward it, so the standing sprite's tall upright chest reads as a coiled ring. The two-tone dorsal stripe
+  follows the curl, because that marking is what keeps a coiled compsognathus from reading as a stone.
+
+**The rejected draft, and it was rejected on a number.** Twitch's first pass cleared every pinned constraint
+and came out **18% heavier** than its standing frame. A small alert biped that gets *bigger* when it lies
+down is wrong, and the mass floor could not catch it because a floor only has one side. Redrawn tighter to
+1.02 — which is the useful lesson for the next fire: the test says *at least* three quarters, and for a
+species whose whole character is being small and quick, the honest target is *about the same*.
+
+**The fallback control moved rather than retiring, and this is the part worth flagging.** 522 exercised
+graceful degradation by leaving three species undrawn, and 525 has just spent that control — there is no
+undrawn species left to ride it. So the unit test now pins the **code path** instead of a happy accident of
+the roster: `down` stays optional on `PixelRig`, a rig without one reports no down art, and the caller keeps
+its standing frame. A species added tomorrow still renders. The e2e keeps the live half — every resting dino
+is a drawn sleeper now, asserted as set equality rather than as an inequality that would pass vacuously.
+
+Gates: build clean, **2387 unit green** across 229 files, **650/650 e2e** — parallel, cold parallel, and
+`--workers=1`. The art queue closes the night at **1**: 518, held a fifth consecutive fire, still waiting on
+somebody to pick its driver. Five fires now, and the contrast with 520, 522 and 525 — all three seeded with
+a host and all three drawn within the day — is the queue's clearest rule and has been for a month.

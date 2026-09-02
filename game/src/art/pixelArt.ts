@@ -326,6 +326,58 @@ const SUNNY_STEP_R: ReadonlyArray<string> = [
   '....................',
 ];
 
+/** Sunny asleep (BACKLOG-525). A sauropod IS its neck, so the neck is the one thing that must survive
+ *  the pose — it folds down and forward along the flank rather than vanishing, and the head comes to rest
+ *  at the shoulder. Everything drops four rows and the legs tuck to stubs; the ground line does not move. */
+const SUNNY_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '...ooo..............',
+  '..obbbo.............',
+  '..obebbo............',
+  '...obbbo..........oo',
+  '....obbo.........obo',
+  '....obbo........obo.',
+  '...obbbbo......obbo.',
+  '..obbbbbbbboo.obbo..',
+  '.obbbbbbbbbbbbbbbo..',
+  '.obbbbbbbbbbbbbbbo..',
+  '.obbllllllllllbbbo..',
+  '..obllllllllllbbo...',
+  '..odd..........ddo..',
+  '...ooo.......ooo....',
+  '....................',
+  '....................',
+];
+
+/** ...one breath in: the belly band swells a row up into the flank. */
+const SUNNY_DOWN_B: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '...ooo..............',
+  '..obbbo.............',
+  '..obebbo............',
+  '...obbbo..........oo',
+  '....obbo.........obo',
+  '....obbo........obo.',
+  '...obbbbo......obbo.',
+  '..obbbbbbbboo.obbo..',
+  '.obbbbbbbbbbbbbbbo..',
+  '.obbbllllllllbbbbo..',
+  '.obbllllllllllbbbo..',
+  '..obbllllllllbbbo...',
+  '..odd..........ddo..',
+  '...ooo.......ooo....',
+  '....................',
+  '....................',
+];
+
+const SUNNY_DOWN: ReadonlyArray<ReadonlyArray<string>> = [SUNNY_DOWN_A, SUNNY_DOWN_B];
+
 function sunnyPalette(base: number): Record<string, number> {
   return {
     o: shade(base, -0.75), // near-black warm outline (never pure black)
@@ -341,6 +393,7 @@ export const SUNNY_RIG: PixelRig = {
   size: 20,
   frames: [SUNNY_STAND, SUNNY_STEP_L, SUNNY_STEP_R],
   sequence: [0, 1, 0, 2],
+  down: SUNNY_DOWN, // BACKLOG-525
   palette: sunnyPalette,
 };
 
@@ -394,6 +447,61 @@ const COMP_STEP_R: ReadonlyArray<string> = [
   '....................',
 ];
 
+/** Twitch asleep (BACKLOG-525). The cast's only biped, and the only one that curls: the tail comes round
+ *  and the head tucks down toward it, so the standing sprite's tall upright chest reads as a coiled ring.
+ *  The two-tone dorsal stripe follows the curl — it is this species' marking and it is what keeps a curled
+ *  compsognathus from reading as a stone. **The first draft was rejected on a number:** it came out 18%
+ *  heavier than the standing frame, and a small biped that gets *bigger* when it lies down is wrong even
+ *  though the mass floor is a floor. Redrawn tighter, to 1.02. */
+const COMP_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '.....oooo...........',
+  '....obbbbo..........',
+  '...obebbbbo.........',
+  '...obbkkbbo.........',
+  '....obbkkbbo........',
+  '.....obbkkbbo.......',
+  '.....obbbkkbbbo.....',
+  '....obbbbbkkbbbbo...',
+  '...obbllllbbbbbbbo..',
+  '...obbllllbbbbbbo...',
+  '....obblllbbbbo.....',
+  '....odd....ddo......',
+  '....ooo....ooo......',
+  '....................',
+  '....................',
+];
+
+/** ...one breath in: the belly band rolls forward a column along the curl. */
+const COMP_DOWN_B: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '.....oooo...........',
+  '....obbbbo..........',
+  '...obebbbbo.........',
+  '...obbkkbbo.........',
+  '....obbkkbbo........',
+  '.....obbkkbbo.......',
+  '.....obbbkkbbbo.....',
+  '....obbbbbkkbbbbo...',
+  '...obbbllllbbbbbbo..',
+  '...obbllllbbbbbbo...',
+  '....obbllllbbbo.....',
+  '....odd....ddo......',
+  '....ooo....ooo......',
+  '....................',
+  '....................',
+];
+
+const COMP_DOWN: ReadonlyArray<ReadonlyArray<string>> = [COMP_DOWN_A, COMP_DOWN_B];
+
 function compPalette(base: number): Record<string, number> {
   return {
     o: shade(base, -0.75), // near-black warm outline (never pure black)
@@ -410,6 +518,7 @@ export const COMP_RIG: PixelRig = {
   size: 20,
   frames: [COMP_STAND, COMP_STEP_L, COMP_STEP_R],
   sequence: [0, 1, 0, 2],
+  down: COMP_DOWN, // BACKLOG-525
   palette: compPalette,
 };
 
@@ -464,6 +573,58 @@ const GLADE_STEP_R: ReadonlyArray<string> = [
   '....................',
 ];
 
+/** Glade asleep (BACKLOG-525). The tube crest is the whole silhouette — a hadrosaur with its crest down is
+ *  a different animal — so the crest holds its full sweep and angle while the body settles beneath it, the
+ *  same rule Mossback's plate ridge established. The duckbill lowers to the ground; the tail stays high. */
+const GLADE_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '..........hh........',
+  '........hhhh........',
+  '...oooo.hhh.........',
+  '..obbbbohh..........',
+  '.obebbbbo...........',
+  '.obbbbbbo...........',
+  '..obbbbo........oo..',
+  '..obbbbo.......obo..',
+  '..obbbbbo.....obbo..',
+  '.obbbbbbbbo..obbo...',
+  '.obbbbbbbbbbbbbbbo..',
+  '..obbbbbbbbbbbbbo...',
+  '..obllllllllbbbbo...',
+  '..odd.........ddo...',
+  '..ooo.......ooo.....',
+  '....................',
+  '....................',
+];
+
+/** ...one breath in: the belly band lifts a row into the flank. */
+const GLADE_DOWN_B: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '..........hh........',
+  '........hhhh........',
+  '...oooo.hhh.........',
+  '..obbbbohh..........',
+  '.obebbbbo...........',
+  '.obbbbbbo...........',
+  '..obbbbo........oo..',
+  '..obbbbo.......obo..',
+  '..obbbbbo.....obbo..',
+  '.obbbbbbbbo..obbo...',
+  '.obbbbbbbbbbbbbbbo..',
+  '..obbllllllllbbbbo..',
+  '..obllllllllbbbbo...',
+  '..odd.........ddo...',
+  '..ooo.......ooo.....',
+  '....................',
+  '....................',
+];
+
+const GLADE_DOWN: ReadonlyArray<ReadonlyArray<string>> = [GLADE_DOWN_A, GLADE_DOWN_B];
+
 function gladePalette(base: number): Record<string, number> {
   return {
     o: shade(base, -0.75), // near-black warm outline (never pure black)
@@ -480,6 +641,7 @@ export const GLADE_RIG: PixelRig = {
   size: 20,
   frames: [GLADE_STAND, GLADE_STEP_L, GLADE_STEP_R],
   sequence: [0, 1, 0, 2],
+  down: GLADE_DOWN, // BACKLOG-525
   palette: gladePalette,
 };
 

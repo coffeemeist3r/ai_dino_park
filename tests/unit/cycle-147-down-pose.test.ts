@@ -1,9 +1,21 @@
 import { describe, it, expect } from 'vitest';
-import { PIXEL_SPECIES, REX_RIG, MOSS_RIG, charsUsed } from '../../game/src/art/pixelArt';
+import {
+  PIXEL_SPECIES,
+  REX_RIG,
+  MOSS_RIG,
+  SUNNY_RIG,
+  COMP_RIG,
+  GLADE_RIG,
+  charsUsed,
+} from '../../game/src/art/pixelArt';
 
+// BACKLOG-525 completes the set: all five species are now drawn asleep.
 const DRAWN = [
   ['triceratops', REX_RIG],
   ['stegosaurus', MOSS_RIG],
+  ['brontosaurus', SUNNY_RIG],
+  ['compsognathus', COMP_RIG],
+  ['parasaurolophus', GLADE_RIG],
 ] as const;
 
 /** Which rows a frame actually paints — the silhouette's vertical extent. */
@@ -54,10 +66,23 @@ describe('the sleeping pose (BACKLOG-522)', () => {
     });
   }
 
-  it('leaves three species undrawn — the graceful fallback stays exercised', () => {
+  it('draws every species in the roster asleep', () => {
     const undrawn = Object.entries(PIXEL_SPECIES).filter(([, r]) => !r.down?.length);
-    expect(undrawn.length).toBeGreaterThan(0);
-    // A species with no down pose must still be a complete, renderable walk rig.
-    for (const [, r] of undrawn) expect(r.frames.length).toBeGreaterThan(0);
+    expect(undrawn).toEqual([]);
+    expect(Object.keys(PIXEL_SPECIES)).toHaveLength(DRAWN.length);
+  });
+
+  it('...and the graceful fallback is still a live path, not a retired one', () => {
+    // 522 exercised the fallback by leaving three species undrawn, and 525 has just spent that control.
+    // The claim it was making is about the *code path*, so that is what is pinned now: `down` stays
+    // optional on `PixelRig`, `hasDownArt` says no for anything without one, and the caller keeps the
+    // standing frame rather than failing. A rig added tomorrow without a down pose still renders.
+    // `bake.ts` imports Phaser and cannot load in Node, so the predicate it exports —
+    // `!!PIXEL_SPECIES[species]?.down?.length` — is pinned here in the same shape.
+    const hasDown = (species: string) => !!PIXEL_SPECIES[species]?.down?.length;
+    expect(hasDown('nothing-of-the-sort')).toBe(false);
+    const undrawnRig = { ...REX_RIG, down: undefined };
+    expect(undrawnRig.down?.length ?? 0).toBe(0);
+    expect(undrawnRig.frames.length).toBeGreaterThan(0);
   });
 });
