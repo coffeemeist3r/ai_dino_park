@@ -9711,3 +9711,101 @@ acceptance and then produced a seventh victim on the next serial run, so the pat
 and every per-spec edit was reverted. The rider is now one file. It also caught its own byte-identity test
 comparing a random-choice greeting to itself — **the claim was right and the test was wrong**, repaired by
 asserting over the deterministic registers rather than by softening the claim.
+
+## Cycle 148 — validator: APPROVED / APPROVED, and the red goes out
+
+Two tracks approved and a rider closed, and the headline is the rider: **the e2e suite reads 649/649 in
+parallel and 649/649 at `--workers=1`. There is no standing red. That has never been true before.**
+
+### The floor never learned the fact the roof was given
+
+The lore track was filed as flavour — *a dino's line leans on the hour* — and the mechanism trace found
+something else. `timeOfDay` has been in the greeting context since the clock existed, and it is read in
+exactly one place: the WebLLM prompt. `cannedReply` — the stub brain, and the WebLLM brain's own fallback
+while it loads — composes nine asides covering gratitude, neglect, friendship, hunger, a chase, the
+provider, the season, the ground's spend policy and the last contested drop, and did not know what hour it
+was.
+
+That is the CHARTER's enrichment rule running backwards. The model is meant to be enrichment on top and the
+deterministic rules the floor. Here the hour was only ever on top, so a player who declines the download —
+the default, and the operator's own choice on a phone — had a park where ten dinos had kept two different
+sets of hours for two cycles and none of them could mention it.
+
+Walk up to Sunny on frame one now and it says *"…I'm only just up, mind. still shaking the night off."*
+Rex, asleep three tiles away, says *"…mnh. sorry. I was under, a bit. give me a moment."* Same hour, same
+keystroke, opposite line. Nine real minutes later Rex has been up four hours and says nothing about the
+time at all, which is the point: a greeting that always mentions the hour is a clock with a face.
+
+**And there is no hour literal in the function that decides it.** The registers are the first and last
+quarters of the dino's *own* waking span, taken out of `restWindow`. A spring day-dino reads `fresh` at
+08:00 because its window runs 05:00–21:00, not because 08:00 was chosen — a `FRESH_HOURS = 4` would have
+been the reachability corollary's mirror defect, a constant tuned so the founding park lands exactly *on*
+the tell instead of just under it. The test shifts the window and watches the register follow.
+
+### A question nobody had asked in 148 cycles
+
+`residentZones()` is `occupiedZones()`. Every ground in this park has rolled its resource because somebody
+*lived* there, and nobody ever asked whether anybody in it had its eyes open. So the Fernreach yielded at
+four in the morning at the rate it yielded at noon, and the whole daytime workforce could have been
+face-down in the dirt without the stockpiles noticing.
+
+Two cycles ago 109 gave the cast two different sets of hours. It was true, tested, load-bearing, and
+changed nothing about what any ground *did* — the v7 defect exactly, appearing in work shipped *after* v7
+was written, which is the uncomfortable part.
+
+Walk east to the Ridge on frame one and nothing falls: its one resident is asleep. Five real minutes later
+the clock reaches 13:00, Ember wakes, and the Ridge works for the first time in the session. The Fernreach
+does the same. The Grove has been producing the whole time, because Bramble is up over a sleeping Pip, and
+the ticker says so — `👁 Bramble keeps the watch over the Grove`.
+
+**No roster edit, no constant moved.** The founding state already exercised it and the Structure-smith
+checked before choosing rather than tuning afterwards. And one line was deliberately left *outside* the
+gate, on the adjacent line, with a comment and a test: a sleeping ground stops **producing**, it does not
+stop **recovering**. The version that gated both would have made a night's sleep cost a ground its yield —
+a much worse system arriving disguised as the same two-line diff.
+
+The watch is deliberately not owl-exclusive, and that turned out to be load-bearing rather than tasteful.
+The same Grove pair swaps the role: Bramble over Pip at eight in the morning, Pip over Bramble at three.
+A trait-keyed version would have gone dark for eight hours a day and passed every test.
+
+### The red that has stood since cycle 92
+
+BACKLOG-515 could never have been a track. Its answer to *what does a player see in a fresh ten-minute
+save* is **nothing**, and under CHARTER v7 that is a REWORK — so for four cycles the constitution was
+correctly refusing to spend a track on invisible work, and every skip was honest. The way out was not to
+argue the bar down. It was to notice that **the bar judges tracks**, that riders are how 519 shipped, and
+that this was always worth an hour rather than a cycle.
+
+The diagnosis was wider than four cycles of re-diagnosis had found. `page.keyboard.press()` resolves when
+CDP has *dispatched* the event; Phaser queues it and fires the handler from the scene's update step, so
+whatever the spec does next is a second round-trip that can land first. A **fast** round-trip loses and a
+slow one wins by accident — the *fails serial, passes under load* inversion the studio carried from cycle
+92 to cycle 135. But three of the seams are input-***after***-input, not read-after-input: `KeyE` opens the
+tone menu, `Digit1` picks from it in the same frame against a menu that is not open yet, and the tone is
+never chosen at all. The `expect.poll` that follows then times out waiting for a beat nobody requested.
+
+That is why two of the catalogued specs failed **despite already polling**, and it is the sentence that
+explains four failed re-diagnoses: **a poll cannot recover an input that was dropped.**
+
+**And then the fix moved a layer down, which is the part worth keeping.** The plan applied a `settle` per
+seam. It worked — the four catalogued specs went green and the acceptance criteria were met. Then the next
+full serial run produced a fifth victim that had never been catalogued. Then a sixth. Then a seventh. Six
+specs fixed one seam at a time and a new one every run, because the victim *moves*: the race belongs to the
+runner and not to any spec. The cycle-130 signature, reproduced on demand for the first time in eighteen
+cycles, and then exhausted.
+
+So the patch went into `boot()` — `page.keyboard.press` and `page.mouse.click` wrapped once for every spec
+that boots — and **every per-spec edit was reverted.** The four catalogued specs are byte-identical to
+their committed versions. The whole rider is one file.
+
+The first version would have passed its own acceptance criteria while leaving the mechanism running. A
+green suite is not the deliverable; a suite that stays green is.
+
+No game code was touched, and none should have been. A real player's ArrowLeft turns the page on the next
+frame, sixteen milliseconds later. That was always correct. It was the harness reading the world too early,
+in a park that had finally got fast enough for it to matter.
+
+Gates: build clean, **2371 unit green** across 228 files, **649/649 e2e in both directions.** BACKLOG-430
+closes with 515 — it has been one symptom of it since cycle 144. Milestone 17 has **one arc left**: 121,
+the half of *a dino awake at the wrong hour is doing something* that 524 built the system for and did not
+yet spend.
