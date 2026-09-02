@@ -9653,3 +9653,13 @@ emptied when 521 closed and moved to the archive whole. The working backlog clos
 open**, unchanged from where it opened, which is the arithmetic of a cycle that shipped three items and
 seeded three (522, 523, 524). The Structure Track sits at **4 open** — back at its cap for the first time
 since cycle 143, so next cycle's Structure-smith drains rather than invents.
+
+## Cycle 148 — lore-smith
+
+The hour gets into the voice — Milestone 17's last lore arc. Picked BACKLOG-110 **with 279 folded in as its
+second clause**, because the arc is one sentence with two halves and they are one greeting. The finding
+under it: `NPCContext.timeOfDay` has existed, been set on every greet, and been read by nothing but the
+WebLLM prompt — the deterministic voice that ships to every device has never known what hour it is. Social
+queue ~209 against a cap of 12, so nothing seeded there. Art queue at 1 against a cap of 3: seeded
+**BACKLOG-525**, the three species that still sleep standing up, with 522's shipped `down` pair as its host
+and its constraints already written as numbers.
