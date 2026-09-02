@@ -100,3 +100,100 @@ export const ROUSE_ART_KEY = 'rouse';
 export function chronotypeLine(c: Chronotype): string {
   return c === 'owl' ? 'keeps late hours' : 'up with the sun';
 }
+
+/**
+ * The night shift (BACKLOG-524).
+ *
+ * BACKLOG-109 split the cast into day-dinos and night-owls and **no system in the park knew the owls
+ * existed.** A ground rolled its resource because somebody *lived* there — `residentZones()` is
+ * `occupiedZones()`, pure membership — so the Fernreach yielded at four in the morning at exactly the rate
+ * it yielded at noon, and the park's whole daytime workforce could have been face-down in the dirt without
+ * the stockpiles noticing. Two cycles of chronotype work that were true, tested, load-bearing, and changed
+ * nothing you could watch: CHARTER v7's defect, one layer along from where v7 found it.
+ *
+ * These two reads are the seam. They stay pure and parameterised on the hour, like everything else here —
+ * nothing is persisted, and a waking count is re-derived on every load exactly as the chronotype it comes
+ * from is.
+ */
+export interface Resident {
+  name: string;
+  zone: string;
+  traits: Personality;
+}
+
+/** Is this resident up right now? The one place the two reads below agree about what "awake" means. */
+function isWaking(r: Resident, hour: number, season?: Season): boolean {
+  return !atRest(hour, chronotypeOf(r.traits), season);
+}
+
+/**
+ * How many residents of each ground are awake. **Every ground in `rows` gets a key, zeros included** — the
+ * caller has to be able to tell "its cast is asleep" from "nobody lives here", and those are different
+ * grounds with different reasons for producing nothing.
+ */
+export function wakingIn(rows: readonly Resident[], hour: number, season?: Season): Record<string, number> {
+  const out: Record<string, number> = {};
+  for (const r of rows) out[r.zone] = (out[r.zone] ?? 0) + (isWaking(r, hour, season) ? 1 : 0);
+  return out;
+}
+
+/**
+ * Whoever is up while their ground is down — the one thing somebody does *because* they are the only one
+ * awake. Sorted, so the cadence that sounds this beat is order-stable.
+ *
+ * **A solo resident is never a watcher.** A ground with one dino awake on it has nobody to keep watch over,
+ * and calling that the night shift would make the beat fire on three of the park's five grounds every hour
+ * of the day. The read is about a ground with a sleeping cast and one pair of open eyes in it.
+ *
+ * Deliberately **not owl-exclusive**. The obvious design is "the owl keeps the watch" and it is wrong: it
+ * makes the beat a property of a trait rather than of an hour, and it goes dark for the eight hours a day
+ * the owl is the one asleep. Owls get it at night because that is when it is true of them, and a day-dino
+ * gets it at eight in the morning because its neighbour is an owl.
+ */
+export function watchersIn(rows: readonly Resident[], hour: number, season?: Season): string[] {
+  const byZone: Record<string, Resident[]> = {};
+  for (const r of rows) (byZone[r.zone] ??= []).push(r);
+  const out: string[] = [];
+  for (const group of Object.values(byZone)) {
+    if (group.length < 2) continue;
+    const awake = group.filter((r) => isWaking(r, hour, season));
+    if (awake.length === 1) out.push(awake[0].name);
+  }
+  return out.sort();
+}
+
+/**
+ * Where a dino stands in its own day (BACKLOG-110 / -279) — the hour, in the voice.
+ *
+ * `NPCContext.timeOfDay` has been set on every greet since the clock existed and read by exactly one
+ * consumer: the WebLLM prompt preamble. `cannedReply` — the stub brain, *and* the WebLLM brain's own
+ * fallback while it loads or errors — composes nine asides and knows every fact about a dino except what
+ * time it is. The CHARTER's Living-minds line says the model is enrichment on top and the deterministic
+ * rules are the floor; here the hour existed only on top.
+ *
+ * The register keys off **the dino's own window**, not the park's clock-phase, because the hour alone says
+ * the same thing to all ten. At 08:00 on a fresh save four Bowl dinos are three hours into a day that
+ * started at five and Rex is five hours from the end of a sleep that started at five: same hour, opposite
+ * standing. That is the read.
+ *
+ * **No hour constant appears below.** The quarters come out of `restWindow`, so a spring day-dino reads
+ * `fresh` at 08:00 because its waking span runs 05:00–21:00 and not because 08:00 was picked — which is the
+ * corollary under CHARTER v7's reachability bar obeyed rather than dodged. Move `SEASON_HUDDLE` or
+ * `OWL_SHIFT` and these boundaries move with them.
+ */
+export type DayStanding = 'roused' | 'fresh' | 'waning' | 'nightlong';
+
+export function dayStanding(hour: number, c: Chronotype, season?: Season): DayStanding | null {
+  if (atRest(hour, c, season)) return 'roused';
+  const { start, end } = restWindow(c, season);
+  // The waking span is the rest window's complement: awake from `end` round to `start`.
+  const span = (((start - end) % 24) + 24) % 24;
+  if (span === 0) return null; // a window that never opens — a guard, not a case the seasons reach
+  const awakeFor = (((hour - end) % 24) + 24) % 24;
+  const quarter = span / 4;
+  // Most specific truth first: being up at midnight beats being late in your day, and both can hold.
+  if (dayPhase(hour) === 'night') return 'nightlong';
+  if (awakeFor < quarter) return 'fresh';
+  if (awakeFor >= span - quarter) return 'waning';
+  return null; // mid-span, park lit — the aside stays quiet, so this is a tell and not a tic
+}

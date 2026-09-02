@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { makeBrain, replyPrefix, type BrainKind, type NPCBrain } from '../ai/brain';
+import { makeBrain, replyPrefix, cannedReply, type BrainKind, type NPCBrain, type NPCContext } from '../ai/brain';
 import { currentModel, isCoarsePointer, MODELS } from '../ai/deviceProbe';
 import {
   MINDS_CONSENT_KEY,
@@ -93,6 +93,11 @@ import {
   chronotypeLine,
   DOZE_GLYPH,
   ROUSE_GLYPH,
+  wakingIn,
+  watchersIn,
+  dayStanding,
+  type Resident,
+  type DayStanding,
   DOZE_ART_KEY,
   ROUSE_ART_KEY,
   type Chronotype,
@@ -126,6 +131,7 @@ import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, cour
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
 import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
+import { watchLine, watchEvent, watchMemory } from '../world/watch'; // BACKLOG-524
 import { greenerGroundMemory, greenerGroundLine } from '../world/greenerground';
 import { spoilFood, spoilFoodOverDays, spoiledLine, SPOIL_MARGIN } from '../world/spoilage';
 import { plentyWelcomeLine, plentyWelcomeEvent, plentyWelcomeMemory, plentyWelcomedMemory, PLENTY_WELCOME_BOND } from '../world/plentywelcome';
@@ -1500,6 +1506,11 @@ export class WorldScene extends Phaser.Scene {
       return r ? { ...r } : null;
     };
     (window as any).__gathered = () => ({ ...this.gathered });
+    // any: dev-only Playwright hooks — BACKLOG-524: every ground's held resource at once, and one forced
+    // spawn roll, so a spec can ask whether a *sleeping* ground produces without waiting on the cadence.
+    (window as any).__zoneResources = () =>
+      Object.fromEntries(zoneChain().map((z) => [z, this.resourceByZone[z] ? { ...this.resourceByZone[z] } : null] as const));
+    (window as any).__spawnRoll = () => this.maybeSpawnResource();
     (window as any).__yield = (zone: string) => this.yieldByZone[zone] ?? YIELD_MAX; // BACKLOG-384: a zone's gather yield
 
     (window as any).__stockpile = () => ({ ...this.pileFor(this.zoneId) }); // BACKLOG-328: the keeper's active-zone pile
@@ -2411,17 +2422,39 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
+   * Who lives where, with the traits their hours come out of (BACKLOG-524). One shared read, so the waking
+   * count and the watch can never disagree about the same frame.
+   */
+  private residentRows(): Resident[] {
+    return this.dinos.map((d) => ({
+      name: d.name,
+      zone: zoneOf(this.dinoZones, d.name, BOWL_ID),
+      traits: d.traits,
+    }));
+  }
+
+  /** How many residents of each ground are awake right now (BACKLOG-524). */
+  private wakingHeads(): Record<string, number> {
+    return wakingIn(this.residentRows(), getWorldClock().now().hour, this.currentSeason());
+  }
+
+  /**
    * A raw resource appears now and then (BACKLOG-146), now once per inhabited zone (BACKLOG-314): each
    * occupied zone rolls into its own empty slot, so the grove grows resources even while the keeper is
    * in the bowl (waiting, grace already elapsed, when you cross over).
    */
   private maybeSpawnResource(): void {
+    const waking = this.wakingHeads(); // BACKLOG-524
     for (const zone of this.residentZones()) {
       // BACKLOG-384: a zone's yield regrows a little each tick (even while a resource waits or the keeper's away),
       // and the spawn roll is scaled by it — a worked-out zone spawns rarer until it rests, a full zone unchanged.
       // BACKLOG-473: scaled by the ground's work priority — a gather-first ground is worked and tended so it
       // recovers faster; a build-first one has its backs on the walls. `null` is `regrowYield` to the bit.
       this.yieldByZone[zone] = workRegrowth(this.workPriorityFor(zone), this.yieldByZone[zone] ?? YIELD_MAX);
+      // BACKLOG-524: a ground works the hours its cast keeps. The regrowth line above stays outside this
+      // gate on purpose — a sleeping ground stops *producing*, it does not stop *recovering*, and the two
+      // live on adjacent lines precisely so nobody conflates them later.
+      if ((waking[zone] ?? 0) === 0) continue;
       if (this.resourceByZone[zone] || !rollResourceAt(RESOURCE_SPAWN_CHANCE, this.yieldByZone[zone])) continue;
       // BACKLOG-297: a natural spawn starts the fetch-grace clock; announce only the keeper's own zone.
       const landing = resourceLanding(COLS, ROWS);
@@ -3363,6 +3396,15 @@ export class WorldScene extends Phaser.Scene {
     return atRest(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason());
   }
 
+  /**
+   * Where this dino stands in its own day (BACKLOG-110 / -279), for the greeting context. Reads the same
+   * `chronoOf` + `currentSeason` the 💤 mark, the sleeping pose and the murmur read, so the pose, the dream
+   * and the voice can never disagree about whether a dino is asleep.
+   */
+  private standingOf(d: Dino): DayStanding | undefined {
+    return dayStanding(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason()) ?? undefined;
+  }
+
   /** Up while the park is dark (BACKLOG-109) — by construction only ever an owl. Host for BACKLOG-520. */
   private isRoused(d: Dino): boolean {
     return awakeAtNight(getWorldClock().now().hour, this.chronoOf(d), this.currentSeason());
@@ -3908,6 +3950,11 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__zoneDeclining = () => this.decliningZones();
     (window as any).__bumpPeaks = () => { this.bumpPeaks(); return { ...this.zonePeaks }; };
     (window as any).__checkLastOne = () => this.checkLastOne();
+    // any: dev-only Playwright hooks — the night shift (BACKLOG-524)
+    (window as any).__wakingHeads = () => this.wakingHeads();
+    (window as any).__watchers = () =>
+      watchersIn(this.residentRows(), getWorldClock().now().hour, this.currentSeason());
+    (window as any).__checkWatch = () => this.checkWatch();
     // BACKLOG-428: a zone's prosperity read — the folded signals, score, and tier the map lens shows.
     (window as any).__zoneProsperity = (zone: string) => {
       const signals = this.zoneSignals(zone);
@@ -5615,24 +5662,39 @@ ${e.short}`;
       (this.npcBrain as { lastReplySource?: () => unknown }).lastReplySource?.() ?? null;
     // any: dev-only Playwright hook — the enriched system prompt for a named dino
     (window as any).__greetPrompt = (name: string) => {
-      const d = this.dinos.find((x) => x.name === name);
-      if (!d) return null;
-      const now = getWorldClock().now();
-      const msgs = buildMessages(
-        {
-          name: d.name,
-          species: d.species,
-          personality: d.personality,
-          traits: d.traits,
-          timeOfDay: dayPhase(now.hour),
-          affection: heartsFromPoints(this.friendship[d.name] ?? 0),
-          recentMemory: recall(this.memory, d.name),
-          gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
-          keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[d.name] ?? 0)),
-        },
-        { kind: 'player_greet' },
-      );
-      return msgs[0].content;
+      const ctx = this.greetContextFor(name);
+      return ctx ? buildMessages(ctx, { kind: 'player_greet' })[0].content : null;
+    };
+    // any: dev-only Playwright hook — the *deterministic* greeting line (BACKLOG-110/-279). The canned
+    // path is what ships to a device with no model, so it needs a read of its own: `__greetPrompt` only
+    // ever showed what the enrichment layer would be told.
+    (window as any).__greetLine = (name: string) => {
+      const ctx = this.greetContextFor(name);
+      return ctx ? cannedReply(ctx).text : null;
+    };
+  }
+
+  /**
+   * The greeting context for a named dino, shared by the prompt hook and the canned-line hook so the two
+   * can never describe different dinos. Deliberately the reduced set `__greetPrompt` has always built —
+   * the live greet in `pickTone` carries the situational fields (hunger, the chase, the provider, the
+   * interrupted ritual) that only a real approach can know.
+   */
+  private greetContextFor(name: string): NPCContext | null {
+    const d = this.dinos.find((x) => x.name === name);
+    if (!d) return null;
+    const now = getWorldClock().now();
+    return {
+      name: d.name,
+      species: d.species,
+      personality: d.personality,
+      traits: d.traits,
+      timeOfDay: dayPhase(now.hour),
+      standing: this.standingOf(d), // BACKLOG-110/-279
+      affection: heartsFromPoints(this.friendship[d.name] ?? 0),
+      recentMemory: recall(this.memory, d.name),
+      gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
+      keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[d.name] ?? 0)),
     };
   }
 
@@ -6384,6 +6446,7 @@ ${e.short}`;
     this.seedPlentyWord(); // BACKLOG-458: a thriving zone's residents get first-hand word of plenty to spread
     this.seedYearning(); // BACKLOG-362: a dino long away from a ground it has stood on starts to miss it
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
+    this.checkWatch(); // BACKLOG-524: whoever is up while their ground sleeps keeps the watch
     this.checkHollowed(); // BACKLOG-512: ...and a zone that loses that last resident says whose ground it was
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
@@ -6454,6 +6517,30 @@ ${e.short}`;
       this.showBubble(d, lastoneLine());
       this.logEvent(lastoneEvent(d.name, zoneName));
       beat.push(d.name);
+    }
+    return beat;
+  }
+
+  /**
+   * The watch (BACKLOG-524): whoever is up while every other resident of their ground is at rest gets the
+   * one beat that exists *because* they are the only one awake — a 👁 bubble, a ticker line, and a memory
+   * that rides recall into their next greeting through the path that already carries every other trace.
+   *
+   * Deduped against the dino's own ring exactly as `checkLastOne` dedupes its beat, so it reads as a moment
+   * and not a tic; a ground whose cast wakes and sleeps again can sound it afresh once the memory rolls off.
+   */
+  private checkWatch(): string[] {
+    const beat: string[] = [];
+    for (const name of watchersIn(this.residentRows(), getWorldClock().now().hour, this.currentSeason())) {
+      const d = this.dinos.find((x) => x.name === name);
+      if (!d) continue;
+      const zoneName = zoneById(zoneOf(this.dinoZones, name, BOWL_ID)).name;
+      const mem = watchMemory(zoneName);
+      if (recall(this.memory, name).includes(mem)) continue;
+      this.memory = remember(this.memory, name, mem);
+      this.showBubble(d, watchLine());
+      this.logEvent(watchEvent(name, zoneName));
+      beat.push(name);
     }
     return beat;
   }
@@ -6950,6 +7037,9 @@ ${e.short}`;
     const reply = await target.greet({
       personality: this.ensurePersona(target).text, // BACKLOG-103: the stored self feeds the prompt
       timeOfDay: dayPhase(now.hour),
+      // The hour in this dino's own mouth (BACKLOG-110 / -279) — the deterministic half, which ships to
+      // every device whether or not a model ever loads. `timeOfDay` above says the same thing to all ten.
+      standing: this.standingOf(target),
       affection: heartsFromPoints(this.friendship[target.name] ?? 0),
       recentMemory: recall(this.memory, target.name),
       // A just-cleared dino names who set its record straight (BACKLOG-247).

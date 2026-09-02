@@ -78,3 +78,29 @@ export async function gatherToBowl(page: Page): Promise<void> {
 export async function emptyGrounds(page: Page): Promise<void> {
   await page.evaluate(() => (window as Record<string, () => number>).__clearFounding?.());
 }
+
+/**
+ * Wait for the world to have processed an input (BACKLOG-515).
+ *
+ * `page.keyboard.press()` / `page.mouse.click()` resolve when CDP has **dispatched** the DOM event. Phaser's
+ * `KeyboardPlugin` queues that event and emits `Key.on('down')` from the scene's own update step — see
+ * `WorldScene.ts`'s `this.cursors.left.on('down', …)`. A `page.evaluate` on the next line of a spec is a
+ * *second* round-trip, and it can land before that frame has run.
+ *
+ * Which is why the failures always looked backwards: a **fast** round-trip (serial run, warm dev server)
+ * loses the race and a slow one (under parallel load) wins it by accident. Four specs have been catalogued
+ * on this — `mobile-minds`, `cycle-044-sound`, `cycle-047-warmth`, `cycle-038-scan` — each diagnosed as its
+ * own bug, none of them a bug in the game: a real player's ArrowLeft turns the page on the next frame,
+ * sixteen milliseconds later, which is correct.
+ *
+ * Two frames, not one: the first drains the queue into the handler, the second lets the handler's effect be
+ * true when the next `evaluate` reads it.
+ *
+ * **Use it only at a read-that-follows-an-input seam.** It is not a general-purpose sleep, and sprinkling it
+ * through specs that already pass buys nothing but wall-clock.
+ */
+export async function settle(page: Page): Promise<void> {
+  await page.evaluate(
+    () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
+  );
+}

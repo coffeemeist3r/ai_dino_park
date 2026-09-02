@@ -15,6 +15,7 @@ import type { SpendPriority } from '../world/governance';
 import type { HatchOutcome } from '../world/manner';
 import type { TicKind } from '../world/tic';
 import type { Activity } from '../world/activity';
+import type { DayStanding } from '../world/chronotype';
 import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
 import { theZone } from '../world/zones'; // BACKLOG-499
@@ -67,6 +68,15 @@ export interface NPCContext {
    * truth about a dino found alone with its own habit, and the two never both fire.
    */
   doing?: Activity;
+  /**
+   * Where this dino stands in its **own** day (BACKLOG-110 / -279) — woken from its rest window, fresh out
+   * of it, winding down toward it, or up while the park is dark. Absent (`null` from `dayStanding`) →
+   * today's line exactly, which is the mid-span case and keeps the hour a tell rather than a tic.
+   *
+   * `timeOfDay` above is the park's clock-phase and says the same thing to all ten dinos; this says what
+   * the hour means *to this one*, which is the half 109 made possible and nothing had spent.
+   */
+  standing?: DayStanding;
 }
 
 export interface Observation {
@@ -312,6 +322,41 @@ export function mealtimeAside(outcome: HatchOutcome, other: string, traits?: Per
   }
 }
 
+/**
+ * The hour, in this dino's own mouth (BACKLOG-110 / -279).
+ *
+ * Twelve lines: four registers × the three temperaments every aside in this module splits on. It is
+ * `mealtimeAside`'s shape deliberately — a tenth aside that read differently from the nine before it would
+ * be a second idiom for the same job.
+ *
+ * The registers are about the dino's own window, never the clock's: `roused` is *you woke me*, `fresh` is
+ * the first quarter of its waking span, `waning` the last, `nightlong` up while the park is dark. A dino
+ * mid-span says nothing about the time, because a greeting that always mentions the hour is a clock with a
+ * face and this arc exists to avoid one.
+ */
+export function hourAside(standing: DayStanding, traits?: Personality): string {
+  const prickly = !!traits && traits.agreeableness < PRICKLY_MAX;
+  const warm = !!traits && traits.agreeableness > EFFUSIVE_MIN;
+  switch (standing) {
+    case 'roused':
+      if (prickly) return ' …you do know I was asleep. I was asleep, and now I am not.';
+      if (warm) return " …oh — oh, you caught me *right* in the middle of it, don't mind me, I'm up, I'm up.";
+      return ' …mnh. sorry. I was under, a bit. give me a moment.';
+    case 'fresh':
+      if (prickly) return " …bit early for this, isn't it. I've barely had my eyes open.";
+      if (warm) return " …and isn't it a *lovely* start to it! I've only just got up, everything still smells new.";
+      return " …I'm only just up, mind. still shaking the night off.";
+    case 'waning':
+      if (prickly) return " …make it quick, would you. I'm about done for the day.";
+      if (warm) return " …I'll be turning in before long, but I'm ever so glad you came by first.";
+      return " …getting on, isn't it. I'll be down soon enough.";
+    case 'nightlong':
+      if (prickly) return " …everyone else is asleep. I'm not. don't make it a thing.";
+      if (warm) return " …you're up too! Nobody's ever up. It's the *best* part of the day and I have it all to myself.";
+      return ' …quiet out here at this hour. I keep my own time.';
+  }
+}
+
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
@@ -368,6 +413,12 @@ export function cannedReply(ctx: NPCContext): Reply {
       ...reply,
       text: (reply.text + mealtimeAside(ctx.mealtime.outcome, ctx.mealtime.other, ctx.traits)).slice(0, 460),
     };
+  }
+  // The hour in the voice (BACKLOG-110 / -279): the most ambient tell of the lot, so it composes last of
+  // all, onto every register above it — generic, wistful, fond, grateful. `standing` absent is the mid-span
+  // case and every earlier cap is untouched, so a context without it returns byte-identical text to before.
+  if (ctx.standing) {
+    reply = { ...reply, text: (reply.text + hourAside(ctx.standing, ctx.traits)).slice(0, 540) };
   }
   return reply;
 }

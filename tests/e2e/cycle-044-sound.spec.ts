@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, settle } from './helpers';
 
 /**
  * Audio spine (BACKLOG-191). Hooks record INTENT at the call site, so nothing
@@ -28,7 +28,11 @@ test('a greeted dino answers in its own voice', async ({ page }) => {
   await page.evaluate(() => (window as W).__warpTo('Rex'));
   await page.locator('canvas').focus();
   await page.keyboard.press('KeyE'); // tone menu opens
+  // BACKLOG-515: Phaser emits the key from its update step, so Digit1 dispatched in the same frame would
+  // be picked against a menu that is not open yet — and the tone would never be chosen at all.
+  await settle(page);
   await page.keyboard.press('Digit1'); // warm — reply resolves async
+  await settle(page);
   await expect
     .poll(() => page.evaluate(() => (window as W).__lastSound()))
     .toMatchObject({ kind: 'chirp', name: 'Rex' });
@@ -80,11 +84,13 @@ test('M mutes, persists across reload, and unmutes', async ({ page }) => {
   await boot(page);
   await page.locator('canvas').focus();
   await page.keyboard.press('KeyM');
+  await settle(page); // BACKLOG-515
   expect(await page.evaluate(() => (window as W).__soundMuted())).toBe(true);
 
   // Muted: a greet records no sound intent.
   await page.evaluate(() => (window as W).__warpTo('Rex'));
   await page.keyboard.press('KeyE');
+  await settle(page);
   await page.keyboard.press('Digit1');
   await page.waitForTimeout(400);
   expect(await page.evaluate(() => (window as W).__lastSound())).toBe(null);
@@ -96,5 +102,6 @@ test('M mutes, persists across reload, and unmutes', async ({ page }) => {
 
   await page.locator('canvas').focus();
   await page.keyboard.press('KeyM');
+  await settle(page); // BACKLOG-515
   expect(await page.evaluate(() => (window as W).__soundMuted())).toBe(false);
 });

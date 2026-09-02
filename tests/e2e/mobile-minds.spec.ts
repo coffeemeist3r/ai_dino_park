@@ -1,5 +1,5 @@
 import { test, expect, devices, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, settle } from './helpers';
 
 /**
  * Mobile minds policy + inference governor (BACKLOG-107 / operator, 2026-06-11).
@@ -81,35 +81,44 @@ test('long dialogs page GBA-style: E forward, ◀ back, ✕ closes from any page
   // The keeper picker is reliably longer than one 3-line page (3 observers with
   // ability blurbs) — the same overflow that cut off the minds dialog text.
   await page.keyboard.press('KeyK');
+  await settle(page); // BACKLOG-515: Phaser emits the key from its update step, not from the dispatch
   const info = await page.evaluate(() => (window as W).__dialogPage());
   expect(info.pages).toBeGreaterThan(1);
   expect(info.page).toBe(0);
 
   // E turns the page instead of dismissing the picker.
   await page.keyboard.press('KeyE');
+  await settle(page);
   expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(1);
   expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(true);
 
   // ArrowLeft (the ◀ chip's keyboard twin) turns back.
   await page.keyboard.press('ArrowLeft');
+  await settle(page);
   expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(0);
 
   // The touch path itself (operator bug: the ◀ chip's prev() was undone by the
   // scene handler's body-tap next()): tap the dialog body forward, the chip back.
   const body = await toPage(page, 320, 430);
   await page.mouse.click(body.x, body.y);
+  await settle(page);
   expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(1);
   await tapId(page, 'chips', 'back');
+  await settle(page);
   expect((await page.evaluate(() => (window as W).__dialogPage())).page).toBe(0);
 
   // ✕ closes immediately, pages remaining or not.
   await tapId(page, 'chips', 'close');
+  await settle(page);
   expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(false);
 
   // And a number pick still works from a later page: reopen, page forward, pick.
   await page.keyboard.press('KeyK');
+  await settle(page);
   await page.keyboard.press('KeyE');
+  await settle(page);
   await tapId(page, 'chips', 'pick2');
+  await settle(page);
   expect(await page.evaluate(() => (window as W).__keeperPickerOpen())).toBe(false);
   expect(await page.evaluate(() => (window as W).__keeper())).not.toBe('aether');
 });

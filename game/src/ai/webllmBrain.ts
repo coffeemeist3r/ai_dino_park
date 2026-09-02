@@ -82,6 +82,14 @@ const OBSERVATION_PROMPT: Record<Observation['kind'], string> = {
   npc_meet: 'Another dinosaur wanders over. Greet them in one short line.',
 };
 
+/** What each `dayStanding` register tells the model about this dino's own hours (BACKLOG-110 / -279). */
+const STANDING_PROMPT: Record<NonNullable<NPCContext['standing']>, string> = {
+  roused: 'You were fast asleep until this moment — this is your rest window and you have just been woken.',
+  fresh: 'You are only just up; you are in the first stretch of your own waking day.',
+  waning: 'You are near the end of your own waking day and will be turning in before long.',
+  nightlong: 'It is dark and you are awake; almost everyone else in the park is asleep.',
+};
+
 /** Pure: build the chat messages from context + observation. No web-llm import. */
 export function buildMessages(ctx: NPCContext, obs: Observation): { role: string; content: string }[] {
   // Use BOTH the hand-written roster flavor and the seeded trait adjectives — the
@@ -89,6 +97,10 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const adjectives = ctx.traits ? describePersonality(ctx.traits) : '';
   const character = [ctx.personality, adjectives].filter(Boolean).join('; ');
   const when = ctx.timeOfDay ? `It is ${ctx.timeOfDay}. ` : '';
+  // BACKLOG-110/-279: the enrichment half. The model is told where this dino stands in its own day and
+  // answers in the colour of it; it is never asked to author the frame — that stays `hourAside`, the way
+  // 408/423 kept the bashful and interrupted frames deterministic.
+  const standing = ctx.standing ? `${STANDING_PROMPT[ctx.standing]} ` : '';
   const mood = moodFromTraits(ctx.traits) ?? 'neutral';
   const rel = relationshipLabel(ctx.affection);
   const lately = ctx.recentMemory?.length ? `Lately: ${ctx.recentMemory.slice(-3).join('; ')}. ` : '';
@@ -187,7 +199,7 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
-    `${when}You feel ${mood}, and the visitor is ${rel}. ` +
+    `${when}${standing}You feel ${mood}, and the visitor is ${rel}. ` +
     `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { makeBrain, cannedReply, replyPrefix, rattledAside } from '../../game/src/ai/brain';
+import { makeBrain, cannedReply, replyPrefix, rattledAside, hourAside, FOND_MIN } from '../../game/src/ai/brain';
+import type { DayStanding } from '../../game/src/world/chronotype';
 import type { Personality } from '../../game/src/ai/personality';
 import {
   WebLLMBrain,
@@ -249,5 +250,78 @@ describe('cleanReply', () => {
     expect(cleanReply('<think>The visitor seems friendly. I should mention rocks.</think>My rock is warmer than you.')).toBe(
       'My rock is warmer than you.',
     );
+  });
+});
+
+describe('BACKLOG-110/-279 — the hour in the voice', () => {
+  const prickly: Personality = {
+    curiosity: 0.5, bravery: 0.5, sociability: 0.5, agreeableness: 0.1, energy: 0.5,
+  };
+  const warm: Personality = {
+    curiosity: 0.5, bravery: 0.5, sociability: 0.5, agreeableness: 0.9, energy: 0.5,
+  };
+  const plain: Personality = {
+    curiosity: 0.5, bravery: 0.5, sociability: 0.5, agreeableness: 0.5, energy: 0.5,
+  };
+  const STANDINGS: DayStanding[] = ['roused', 'fresh', 'waning', 'nightlong'];
+
+  it('is twelve distinct lines — four registers by three temperaments, none repeated', () => {
+    const lines: string[] = [];
+    for (const s of STANDINGS) for (const t of [prickly, warm, plain]) lines.push(hourAside(s, t));
+    expect(lines).toHaveLength(12);
+    expect(new Set(lines).size).toBe(12);
+    expect(lines.every((l) => l.startsWith(' …'))).toBe(true);
+  });
+
+  it('a context with no standing is byte-identical to before the item shipped', () => {
+    // The whole compositional discipline in one assertion: the tenth aside must be additive. A dino
+    // mid-span carries no standing, and its line has to be the line it has always had.
+    // Asserted over the three *deterministic* registers. The generic hello picks from a canned four on
+    // `rand()`, so it could never be compared to itself twice — which is exactly why the wistful, fond and
+    // grateful branches are the ones that can carry this claim.
+    for (const extra of [{ affection: 0 }, { affection: 10, keeperName: 'AETHER-1' }, { affection: 5, gratitude: 'Sunny' }]) {
+      const base = { ...ctx, traits: plain, ...extra };
+      expect(cannedReply({ ...base, standing: undefined })).toEqual(cannedReply(base));
+    }
+  });
+
+  it('composes onto every register it can reach — generic, wistful, fond and grateful', () => {
+    const tail = hourAside('fresh', plain);
+    const at = (extra: Record<string, unknown>) =>
+      cannedReply({ ...ctx, traits: plain, standing: 'fresh', ...extra }).text;
+    expect(at({ affection: 5 })).toContain(tail); // generic
+    expect(at({ affection: 0 })).toContain(tail); // wistful
+    expect(at({ affection: 10 })).toContain(tail); // fond
+    expect(at({ affection: 5, gratitude: 'Sunny' })).toContain(tail); // grateful
+  });
+
+  it("BACKLOG-279: a fond dino's hello carries the keeper's designation and the hour in one line", () => {
+    const text = cannedReply({
+      ...ctx,
+      traits: plain,
+      affection: FOND_MIN,
+      keeperName: 'AETHER-1',
+      standing: 'fresh',
+    }).text;
+    expect(text).toContain('AETHER-1');
+    expect(text).toContain(hourAside('fresh', plain));
+  });
+
+  it('a woken dino and a fresh one do not say the same thing', () => {
+    const line = (s: DayStanding) =>
+      cannedReply({ ...ctx, traits: plain, affection: 5, standing: s }).text;
+    expect(line('roused')).not.toBe(line('fresh'));
+    expect(line('nightlong')).not.toBe(line('waning'));
+  });
+
+  it('the enrichment path is told the same fact, and is never asked to author the frame', () => {
+    const prompt = buildMessages(
+      { ...ctx, timeOfDay: 'night', standing: 'nightlong', affection: 5 },
+      { kind: 'player_greet' },
+    )[0].content;
+    expect(prompt).toContain('It is night.');
+    expect(prompt).toContain('almost everyone else in the park is asleep');
+    // The deterministic line is not in the prompt — the model colours the fact, it does not recite ours.
+    expect(prompt).not.toContain(hourAside('nightlong', plain));
   });
 });

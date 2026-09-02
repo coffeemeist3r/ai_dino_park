@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, settle } from './helpers';
 
 /**
  * Keeper's warmth (BACKLOG-184). The warm math (warmGain = greetGain + WARM_BONUS,
@@ -92,7 +92,11 @@ test('the tone path mends too', async ({ page }) => {
 
   await page.locator('canvas').focus();
   await page.keyboard.press('KeyE'); // tone menu on the nearest (warped-to) dino
+  // BACKLOG-515: the menu opens on Phaser's update step, so a Digit1 dispatched in the same frame picks
+  // against a menu that is not there — and the warming branch never runs at all.
+  await settle(page);
   await page.keyboard.press('Digit1'); // warm tone pick → recordTone → the warming branch
+  await settle(page);
 
   const result = await page.evaluate((n) => {
     const w = window as W;

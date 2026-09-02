@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot, emptyGrounds } from './helpers';
+import { boot, emptyGrounds, settle } from './helpers';
 
 // BACKLOG-157 — Field Scan, LUMEN-3's distinct ability. The dossier is pure (keeper/scan.ts), so
 // the whole flow is observable headless: pick an observer, stand by a dino, press B.
@@ -63,10 +63,12 @@ test('B again closes the dossier', async ({ page }) => {
 
   await pickKeeper(page, 'lumen');
   await page.keyboard.press('KeyE');
+  await settle(page); // BACKLOG-515: let the dialog dismissal land before the next key is dispatched
   await warpTo(page, 'Rex');
 
   await page.keyboard.press('KeyB');
   await expect.poll(() => scanOpen(page)).toBe(true);
+  await settle(page);
   await page.keyboard.press('KeyB');
   await expect.poll(() => scanOpen(page)).toBe(false);
 });

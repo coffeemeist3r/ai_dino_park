@@ -186,4 +186,42 @@ None known at plan time.
 
 ## Shipped
 
-_(the Coder fills this in)_
+14 files. Build clean, **2371 unit green** across 228 files, **649/649 e2e green — the whole suite, with no
+standing red for the first time since cycle 92.**
+
+**Structure track (BACKLOG-524).** `chronotype.ts` gained `Resident`, `wakingIn` and `watchersIn`; `watch.ts`
+is the one new module (three strings, `lastone.ts`'s shape). `WorldScene` gained `residentRows()` /
+`wakingHeads()` as the one shared read, the two-line seam in `maybeSpawnResource` with the regrowth line
+deliberately left outside the gate, and `checkWatch()` on the migration cadence beside `checkLastOne`.
+Hooks: `__wakingHeads`, `__watchers`, `__checkWatch`, `__zoneResources`, `__spawnRoll`.
+
+**Lore track (BACKLOG-110/-279).** `chronotype.ts` gained `DayStanding` + `dayStanding`, whose whole body
+contains no hour literal. `brain.ts` gained `hourAside` (twelve lines) and composes it tenth and last.
+`webllmBrain.ts` gained `STANDING_PROMPT` in the preamble. `WorldScene` gained `standingOf(d)` and passes
+it on the greet paths.
+
+**One thing the plan did not anticipate, and it is an improvement.** `__greetPrompt` built its own reduced
+greet context inline; adding a second hook beside it would have made two literals that could drift about
+the same dino. Both now route through **`greetContextFor(name)`**, and the new `__greetLine` returns the
+*deterministic* line — which is the thing this item is actually about and which no hook had ever exposed.
+
+**Rider (BACKLOG-515).** `settle(page)` exported from `helpers.ts`; `boot()` untouched. Applied at nine
+read-after-input seams across the four catalogued specs.
+
+**Two findings from the build rather than the plan.**
+
+1. **The item's own class was wider than "read-after-input".** Three of the nine seams are
+   **input-after-input**: `KeyE` opening the tone menu and `Digit1` picking from it in the same frame, so
+   the pick landed against a menu that was not open and the tone was never chosen at all. The poll that
+   followed then timed out on a beat that had never been requested — which is why `cycle-044-sound` and
+   `cycle-047-warmth` failed *despite* already using `expect.poll`. Polling cannot recover an input that
+   was dropped.
+2. **Each serial run surfaced a new victim until the file was done.** Fixing `mobile-minds` turned up
+   `cycle-044`'s tone seam; fixing that turned up `cycle-047`'s; fixing that turned up `cycle-044`'s
+   *M-mute* seam. Four runs, four different specs, one mechanism — the "different victim every run"
+   signature this item has carried since cycle 130, reproduced on demand and then exhausted.
+
+**A test that was wrong and the code that was right.** The byte-identity pin first compared the *generic*
+canned greeting to itself, which picks one of four on `rand()` and can never equal itself twice. It was
+repaired by asserting over the three deterministic registers (wistful / fond / grateful) rather than by
+loosening the claim — those are the branches that can actually carry it.

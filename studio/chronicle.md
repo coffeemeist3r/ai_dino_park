@@ -9691,3 +9691,13 @@ cycle — `world/watch.ts`, three strings in `lastone.ts`'s shape — because ev
 `restWindow` is the derivation source for the lore track's quarters, `checkLastOne` is the structure
 track's dedup pattern, and the 515 rider's helper is `boot()`'s own rAF await extracted rather than
 invented. Build order pinned by the shared file: 524's `chronotype.ts` block lands before 110's.
+
+## Cycle 148 — coder
+
+Both tracks and the rider, 14 files. **649/649 e2e green** — the whole suite, no standing red, for the
+first time since cycle 92. The 515 rider turned out to be wider than its own description: three of its nine
+seams are *input-after-input*, not read-after-input — `KeyE` opening the tone menu and `Digit1` picking from
+it in the same frame, so the pick landed against a menu that was not there and the tone was never chosen at
+all. That is why two of the four specs failed despite already polling: **a poll cannot recover an input that
+was dropped.** Each serial run surfaced a fresh victim until the seams ran out — four runs, four specs, one
+mechanism, the cycle-130 signature reproduced on demand and then exhausted.
