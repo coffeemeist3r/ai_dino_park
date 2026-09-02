@@ -9868,3 +9868,12 @@ Gates: build clean, **2387 unit green** across 229 files, **650/650 e2e** — pa
 `--workers=1`. The art queue closes the night at **1**: 518, held a fifth consecutive fire, still waiting on
 somebody to pick its driver. Five fires now, and the contrast with 520, 522 and 525 — all three seeded with
 a host and all three drawn within the day — is the queue's clearest rule and has been for a month.
+
+## Cycle 148 — housekeeping
+
+Eight closed bullets archived — 110, 279, 430, 515 (pointer and body), 524 (pointer and body), 525 — plus
+the cycle-144 Validator-filed section, which emptied when 515 closed and moved to the archive whole. The
+working backlog closes the night at **205 open**, down from 209, which is the arithmetic of a cycle that
+closed five items and seeded one. The **Structure Track sits at 2 open against X=4**, so next cycle's
+Structure-smith brainstorms before it picks — the first time it has been under its cap since cycle 143,
+and a direct consequence of 515 and 430 finally coming off it together.
