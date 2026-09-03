@@ -9877,3 +9877,15 @@ working backlog closes the night at **205 open**, down from 209, which is the ar
 closed five items and seeded one. The **Structure Track sits at 2 open against X=4**, so next cycle's
 Structure-smith brainstorms before it picks — the first time it has been under its cap since cycle 143,
 and a direct consequence of 515 and 430 finally coming off it together.
+
+## Cycle 149 — lore-smith
+
+Somebody is waiting. Milestone 17's last open arc owes one specific thing — *an owl doing something a
+day-dino would not, rather than the same behaviour under a different sky* — and BACKLOG-121 is the only
+queued item where who is awake changes **who does the thing**. Picked it: a dino learns the real hour you
+usually come back and is standing at the hatch when you do. Not owl-exclusive, which was 524's lesson;
+chronotype-shaped by construction instead, because a dino that is down cannot keep a vigil. Two reshapings
+filed with the pick, both CHARTER v7 ones: friendship **grades** the vigil rather than gating it (a fresh
+save's friendship book is empty, so the item's own gate ships dark), and the founding save records the boot
+itself as a prior visit, derived from the opening hour rather than typed. Social queue 200 against a cap of
+12, nothing seeded. Art queue at 1 against 3: seeded **BACKLOG-526**, the vigil mark, host shipping tonight.
