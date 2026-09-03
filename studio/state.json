@@ -2,7 +2,7 @@
   "cycle": 149,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-121: Keeper-shaped routine \u2014 the vigil at the hatch",
-  "structureItem": "BACKLOG-524: The night shift - a ground works on the hours its cast keeps",
+  "structureItem": "BACKLOG-523: The hour a save opens on",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-03T08:04:00.000Z",
-    "structure-smith": "2026-09-02T02:20:00.000Z",
+    "structure-smith": "2026-09-03T08:06:00.000Z",
     "designer": "2026-09-02T02:45:00.000Z",
     "code-planner": "2026-09-02T03:00:00.000Z",
     "coder": "2026-09-02T03:40:00.000Z",

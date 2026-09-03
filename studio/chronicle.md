@@ -9889,3 +9889,15 @@ filed with the pick, both CHARTER v7 ones: friendship **grades** the vigil rathe
 save's friendship book is empty, so the item's own gate ships dark), and the founding save records the boot
 itself as a prior visit, derived from the opening hour rather than typed. Social queue 200 against a cap of
 12, nothing seeded. Art queue at 1 against 3: seeded **BACKLOG-526**, the vigil mark, host shipping tonight.
+
+## Cycle 149 — structure-smith
+
+Queue at 2 against X=4, so it brainstormed before it picked — the first time under its cap since cycle 143.
+Seeded **528** (the reachability register can only make claims about a save's first frame; a played save is
+invisible to it by construction) and **529** (the vigil is the first system to read the wall clock's *hour*
+as world state, and it does it through a bare `new Date()` — an hour-of-day is not a duration). Picked
+**BACKLOG-523**, the hour a save opens on. Off-milestone by the checklist, dead-centre by the subject: the
+milestone is *A day in the park* and 08:00 is the number every one of its reads is measured from, written
+once, derived from nothing, pinned by nothing. 495 passed over a third time for the reason it states about
+itself. The work is explicitly **not** renaming the literal — it is writing down what the park claims to
+show at that hour, as a register entry that breaks.
