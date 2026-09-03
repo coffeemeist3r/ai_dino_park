@@ -1,6 +1,6 @@
 {
   "cycle": 149,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-121: Keeper-shaped routine \u2014 the vigil at the hatch",
   "structureItem": "BACKLOG-523: The hour a save opens on",
   "lastVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-03T08:04:00.000Z",
     "structure-smith": "2026-09-03T08:06:00.000Z",
-    "designer": "2026-09-02T02:45:00.000Z",
+    "designer": "2026-09-03T08:09:00.000Z",
     "code-planner": "2026-09-02T03:00:00.000Z",
     "coder": "2026-09-02T03:40:00.000Z",
     "qa": "2026-09-02T03:55:00.000Z",

@@ -9901,3 +9901,14 @@ milestone is *A day in the park* and 08:00 is the number every one of its reads 
 once, derived from nothing, pinned by nothing. 495 passed over a third time for the reason it states about
 itself. The work is explicitly **not** renaming the literal — it is writing down what the park claims to
 show at that hour, as a register entry that breaks.
+
+## Cycle 149 — designer
+
+Both tracks specced, structure first in the Coder's fire because both append to the same register array and
+121's entry wants 523's constant to already have a name. **523** ships `FOUNDING_HOUR` beside `ACTIVE_SCALE`
+and - the actual work - a register entry claiming *the park opens on an hour where its cast is split*, with a
+unit test that moves the hour and watches the claim go dark. Naming the literal would have been the dodge.
+**121** ships the vigil: a pure `vigil.ts`, an additive `visitHours` on the save, and a `checkVigil`/`stepVigil`
+pair built as the mend errand's twin. Two reachability answers pinned rather than described - at the founding
+hour the Bowl's vigil is **Glade**, because Rex is the Bowl's owl and is down; in the park's night it is
+**Rex**, because he is the only one who can be standing there. No branch in the code says "owl".
