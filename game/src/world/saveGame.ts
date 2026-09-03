@@ -179,6 +179,13 @@ export interface SaveData {
   savedAt?: number;
   /** Realtime multiplier in effect at save. Additive; absent → 1×. */
   scale?: number;
+  /**
+   * The local hours the keeper has opened the park at (BACKLOG-121). Newest last, capped at
+   * `VISIT_HISTORY_MAX`. Additive; absent → `[]`, and a park with no history simply never claims to know
+   * your hour. Hours, not timestamps, deliberately: what the vigil reasons about is *when in a day* you
+   * turn up, and storing epoch ms would put a timezone into the save file.
+   */
+  visitHours?: number[];
 }
 
 export function serialize(data: SaveData): string {
@@ -836,6 +843,12 @@ export function deserialize(json: string): SaveData | null {
     if (!isNum(o.scale)) return null;
     scale = o.scale;
   }
+  // BACKLOG-121: additive over v1 too — absent in every save written before this cycle.
+  let visitHours: number[] | undefined;
+  if (o.visitHours !== undefined) {
+    if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
+    visitHours = o.visitHours as number[];
+  }
 
   return {
     version: SAVE_VERSION,
@@ -893,5 +906,6 @@ export function deserialize(json: string): SaveData | null {
     born,
     savedAt,
     scale,
+    visitHours,
   };
 }

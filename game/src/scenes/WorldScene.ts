@@ -124,6 +124,19 @@ import { spreadPolicyWord } from '../world/policyword';
 import { GLASS, cornerRadius, rimRects, edgeBands, glarePolys, toPoints } from '../ui/glass';
 import { reactionFor, startleStep, type StartleReaction } from '../world/startle';
 import { HATCH_TILE, HATCH_ART_KEY, HATCH_GLYPH, HATCH_SCATTER } from '../world/hatch';
+import {
+  VIGIL_ART_KEY,
+  VIGIL_COOLDOWN_MS,
+  VIGIL_GLYPH,
+  VIGIL_STEPS,
+  isAnticipating,
+  noteVisit,
+  vigilEventLine,
+  vigilKeeper,
+  vigilLine,
+  vigilMemory,
+  type Vigil,
+} from '../world/vigil';
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey } from '../world/stake';
 import { foundingKind } from '../world/founding';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
@@ -628,6 +641,15 @@ export class WorldScene extends Phaser.Scene {
    *  wall clock (the 333 gate), so the cadence holds at either clock rate. */
   private mend: Mend | null = null;
   private lastMendMs = 0;
+  /** The vigil at the glass (BACKLOG-121): the live errand - a waking resident walking to the hatch around
+   *  the hour the keeper usually opens the park. One at a time, transient, never persisted (the `mend`
+   *  shape). `lastVigilMs` paces dispatch off the wall clock, the 333 gate, as every beat here does. */
+  private vigil: Vigil | null = null;
+  private lastVigilMs = 0;
+  /** The local hours the keeper has opened the park at (BACKLOG-121). Persisted as `visitHours`; the boot
+   *  appends to it, so it is non-empty by the time the first world step runs. */
+  private visitHours: number[] = [];
+  private vigilMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** Set by the `__clearFounding` spec hook. `loadFromDb()` resolves a beat *after* `__ready`, so a spec can
    *  clear the founding ruin before it has been seeded; this makes the clear win either way. */
   private foundingCleared = false;
@@ -1647,6 +1669,20 @@ export class WorldScene extends Phaser.Scene {
       this.stepMend();
       return this.mend ? { ...this.mend } : null;
     };
+    // BACKLOG-121: the live vigil, and one deterministic dispatch+resolve step (the `__stepMend` precedent).
+    (window as any).__vigil = () => (this.vigil ? { ...this.vigil } : null);
+    (window as any).__stepVigil = () => {
+      this.checkVigil();
+      this.stepVigil();
+      return this.vigil ? { ...this.vigil } : null;
+    };
+    (window as any).__visitHours = (hours?: number[]) => {
+      if (hours) {
+        this.visitHours = hours;
+        this.lastVigilMs = 0;
+      }
+      return [...this.visitHours];
+    };
     (window as any).__landmarks = (z?: string) =>
       this.landmarksIn(z ?? this.zoneId).map((l) => ({ ...l, derelict: !!l.derelict }));
     (window as any).__standing = (z?: string) => this.standingIn(z ?? this.zoneId);
@@ -2026,6 +2062,107 @@ export class WorldScene extends Phaser.Scene {
     }
     this.mend = { ...this.mend, steps: this.mend.steps - 1 };
     if (this.mend.steps <= 0) this.mend = null;
+  }
+
+  /**
+   * Dispatch a vigil (BACKLOG-121). Once per world step, for the ground the player is **looking at** - the
+   * mend's discipline, for the mend's reason: a beat nobody is present for is what CHARTER v7 was written
+   * about, and this beat is specifically *about* somebody being present.
+   *
+   * The candidate filter is the whole feature and it is one clause: `!this.isResting(d)`. A dino that is
+   * down cannot walk to the glass, so who keeps the vigil is decided by the hour rather than by a trait. At
+   * the founding hour the Bowl's owl is asleep and one of its four day-dinos goes; in the middle of the
+   * night that owl is the only Bowl resident who *can* go. **No `'owl'` appears in this method, and adding
+   * one would be the defect 524 named** - a beat keyed to a trait goes dark for the eight hours a day that
+   * trait spends asleep.
+   */
+  /**
+   * Is this dino already walking somewhere on somebody else's business?
+   *
+   * The vigil is the fifth errand in this scene to move a dino by hand, and the first four had never had to
+   * agree with each other because no two of them could ever pick the same dino: the mend takes a resident
+   * of a ground with a ruin, the fetch takes a withdrawn loner and one friend, the responder takes whoever
+   * heard a distress call, and the inspection takes the keeper's best fit. **The vigil takes whoever is
+   * awake, which is everybody**, so it is the first one that can collide — and it collided immediately, on
+   * the inspection: a dino drawn across the bowl for a look got turned around and walked to the hatch
+   * instead, and the observer-switch beat simply never landed.
+   *
+   * So the guard is one read over all four rather than a special case for whichever one broke, and the
+   * vigil yields to every one of them. It is the newest and the least urgent: the others are things that
+   * happened *to* a dino, and this is a dino's own idea about the time of day.
+   */
+  private onErrand(name: string): boolean {
+    return (
+      name === this.mend?.fixer ||
+      name === this.escort?.friend ||
+      name === this.escort?.loner ||
+      name === this.pendingRespond?.name ||
+      name === this.pendingInspect?.name
+    );
+  }
+
+  private checkVigil(): void {
+    if (this.vigil) return; // one at a time
+    if (!isAnticipating(this.visitHours, new Date().getHours())) return;
+    if (!cooldownReady(Date.now(), this.lastVigilMs, VIGIL_COOLDOWN_MS)) return;
+    const zone = this.zoneId;
+    const candidates = this.dinos
+      .filter(
+        (d) =>
+          zoneOf(this.dinoZones, d.name, BOWL_ID) === zone &&
+          !this.isResting(d) &&
+          !this.onErrand(d.name),
+      )
+      .map((d) => ({ name: d.name, friendship: this.friendship[d.name] ?? 0 }));
+    const keeper = vigilKeeper(candidates);
+    if (!keeper) return; // a ground whose whole cast is down keeps nobody at the glass - which is the read
+    this.lastVigilMs = Date.now();
+    this.vigil = { keeper, zone, steps: VIGIL_STEPS };
+  }
+
+  /**
+   * Resolve the vigil once per world step (BACKLOG-121), built as `stepMend` is: adjacency ends it, the step
+   * budget is the safety valve, and a keeper that leaves the ground or falls asleep on the way cancels the
+   * errand costing nothing. The walk lives here rather than in the movement branch so that one call -
+   * production's world step or the `__stepVigil` hook - advances and resolves it identically.
+   */
+  private stepVigil(): void {
+    if (!this.vigil) return;
+    const keeper = this.dinoByName(this.vigil.keeper);
+    if (
+      !keeper ||
+      zoneOf(this.dinoZones, keeper.name, BOWL_ID) !== this.vigil.zone ||
+      this.isResting(keeper) ||
+      this.onErrand(keeper.name)
+    ) {
+      // It left the ground, its own hours caught up with it, or something with a better claim on it
+      // started while it was walking. Dropping the vigil costs nothing and the next pass simply retries.
+      this.vigil = null;
+      this.refreshVigilMarks();
+      return;
+    }
+    const at = this.tileOf(keeper);
+    if (this.chebyTiles(at, HATCH_TILE) > 1) {
+      const step = stepToward(at, HATCH_TILE, COLS, ROWS);
+      keeper.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+    }
+    this.refreshVigilMarks();
+    if (this.chebyTiles(this.tileOf(keeper), HATCH_TILE) <= 1) {
+      const name = keeper.name;
+      this.vigil = null;
+      this.showBubble(keeper, vigilLine(name, heartsFromPoints(this.friendship[name] ?? 0)));
+      this.flashFeed(keeper, VIGIL_GLYPH);
+      this.memory = remember(this.memory, name, vigilMemory());
+      this.logEvent(vigilEventLine(name));
+      this.refreshVigilMarks();
+      void this.saveGame();
+      return;
+    }
+    this.vigil = { ...this.vigil, steps: this.vigil.steps - 1 };
+    if (this.vigil.steps <= 0) {
+      this.vigil = null;
+      this.refreshVigilMarks();
+    }
   }
 
   /** Redraw each zone's plot marker for its current stage; log the ripen note once, on the edge into ripe.
@@ -3065,6 +3202,7 @@ export class WorldScene extends Phaser.Scene {
     dino.label.setVisible(this.inView(dino));
     this.sleepMarks.push(this.makeHourMark(DOZE_ART_KEY, DOZE_GLYPH));
     this.rouseMarks.push(this.makeHourMark(ROUSE_ART_KEY, ROUSE_GLYPH));
+    this.vigilMarks.push(this.makeHourMark(VIGIL_ART_KEY, VIGIL_GLYPH)); // BACKLOG-121
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -3439,7 +3577,21 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.forEach((d, i) => {
       const mark = this.rouseMarks[i];
       if (!mark) return;
-      mark.setVisible(this.isRoused(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
+      // BACKLOG-121: the eye yields to the vigil. These two share the slot and, unlike the sleeper's mark,
+      // they are *not* mutually exclusive - an owl at midnight is exactly the dino most likely to be the
+      // one keeping the vigil. What a dino is doing beats what hours it keeps, so the vigil takes the slot.
+      const shown = this.isRoused(d) && this.inView(d) && this.vigil?.keeper !== d.name;
+      mark.setVisible(shown).setPosition(d.x, d.y - TILE);
+    });
+    this.refreshVigilMarks();
+  }
+
+  /** The waiting dino's mark (BACKLOG-121). Shares 520's hour-mark slot, above `refreshRouseMarks`. */
+  private refreshVigilMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.vigilMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.vigil?.keeper === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
     });
   }
 
@@ -5102,6 +5254,10 @@ ${e.short}`;
     this.stepEscort(); // BACKLOG-381: the fetch's two legs resolve beside the distress walk
     this.checkMend(); // BACKLOG-488: a ground the player is watching sends somebody to its ruin...
     this.stepMend(); // ...and the patch-up resolves where that somebody is standing
+    // BACKLOG-121: ...and around the hour you usually turn up, whoever is awake goes and waits at the glass.
+    // Below the mend on purpose: the ruin is the ground's errand, the vigil is a dino's own idea.
+    this.checkVigil();
+    this.stepVigil();
 
     // Cold-night shiver (BACKLOG-179): note the season the night belongs to; when the night's
     // huddle window closes in the morning, resolve who slept cold.
@@ -7891,6 +8047,7 @@ ${e.short}`;
       born: this.born,
       savedAt: Date.now(),
       scale: this.activeScale, // BACKLOG-493: the chosen watching rate, not a hidden tab's AWAY_SCALE
+      visitHours: this.visitHours, // BACKLOG-121: the hours you tend to open the park at (additive)
     };
   }
 
@@ -7903,6 +8060,27 @@ ${e.short}`;
     }
   }
 
+  /**
+   * Note that the keeper opened the park just now (BACKLOG-121).
+   *
+   * **The founding visit is here.** A history of one sighting cannot support an hour (`MIN_VISITS`), so a
+   * brand-new park would ship the vigil dark - the precise defect CHARTER v7 exists to catch, and the reason
+   * the item's own "very-high-friendship" gate was reshaped rather than obeyed. So a park with no history at
+   * all records **the boot itself as a prior visit**: two sightings of the hour the park was actually opened
+   * at. It is a founding fact of the same family as the Grove's ruin and the Bowl's piles - the park did not
+   * begin the instant you pressed play - and, like the rest of them, it is *derived*. No hour is written
+   * down anywhere in this path; the clock the player's own machine keeps decides.
+   *
+   * A save that already carries a history is never re-seeded, so this is idempotent across reloads: the
+   * second boot appends a second real sighting on top of the founding pair, and by the third the founding
+   * assumption is outvoted by evidence if the keeper actually comes at another hour.
+   */
+  private recordVisit(saved: number[] | undefined): void {
+    const hour = new Date().getHours();
+    const history = saved?.length ? saved : [hour];
+    this.visitHours = noteVisit(history, hour);
+  }
+
   private setupSave(): void {
     const clock = getWorldClock();
 
@@ -7912,6 +8090,7 @@ ${e.short}`;
       if (!save) {
         // Brand-new game: keep the default observer, but invite a choice (non-blocking).
         this.seedFounding(); // CHARTER v7: the founding park ships a ruin, so its systems are reachable
+        this.recordVisit(undefined);
         this.showKeeperInvite();
         return;
       }
@@ -7921,6 +8100,7 @@ ${e.short}`;
       // BACKLOG-493: a save carries the player's chosen *watching* rate. Restore it as the active choice
       // and then let `applyClockRate` decide what the clock actually runs at right now — a save loaded into
       // a backgrounded tab must not start ticking at watching speed.
+      this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
       this.applyClockRate();
       const away = fastForward(

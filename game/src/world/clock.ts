@@ -51,6 +51,32 @@ const MS_PER_REAL_MINUTE = 60_000;
  */
 export const ACTIVE_SCALE = 60;
 export const AWAY_SCALE = 1;
+
+/**
+ * The hour a brand-new park opens on (BACKLOG-523).
+ *
+ * It lives here, beside `ACTIVE_SCALE`, because *when a session starts* and *how fast it runs* are the two
+ * halves of one sentence — what fits inside a sitting — and until now they had never been read in the same
+ * place. `ACTIVE_SCALE` says a whole day fits; this says which end of that day you are dropped into.
+ *
+ * The number was a field initialiser: written once, derived from nothing, and pinned by nothing, while
+ * quietly becoming the most load-bearing founding constant in the park. BACKLOG-109's entire reachability
+ * answer is *"Rex is asleep at eight in the morning"* — a claim about **this hour**, not about chronotypes.
+ * 493's session claim is measured in in-game minutes from it; 520's two hour-marks, the huddle window, the
+ * crops, spoilage, upkeep, the council's term and 121's vigil all read a clock whose zero is this. Move it
+ * four hours in either direction and the park's frame-one read changes completely — one way the whole cast
+ * is up and the milestone's arcs go dark, the other way the park opens in the dark — and nothing failed.
+ *
+ * Naming it is not the fix; naming it is 519's fix, and 519 was about a number written down twice. **What
+ * this number lacked was a claim.** That claim lives in `reachability.ts` as the BACKLOG-523 entry: the park
+ * opens on an hour where its cast is *split* — somebody up, somebody down. Move this constant somewhere the
+ * roster agrees with itself and the register goes red naming the item.
+ */
+export const FOUNDING_HOUR = 8;
+
+/** The day a brand-new park opens on. Here rather than in the initialiser for the same reason as the hour,
+ *  and because every season-shaped read of the founding state has to start from it. */
+export const FOUNDING_DAY = 1;
 /**
  * Cap on per-`update()` catch-up. A gap larger than this (a long-backgrounded
  * tab) jumps the clock to the target instead of firing thousands of per-minute
@@ -86,7 +112,7 @@ export function cooldownReady(nowMs: number, lastMs: number, cooldownMs: number)
 }
 
 export class WorldClock {
-  private _time: GameTime = { day: 1, hour: 8, minute: 0 };
+  private _time: GameTime = { day: FOUNDING_DAY, hour: FOUNDING_HOUR, minute: 0 };
   private _tickListeners: TimeListener[] = [];
   private _hourListeners: TimeListener[] = [];
 

@@ -98,6 +98,28 @@ describe('saveGame', () => {
     expect(out!.savedAt).toBeUndefined();
   });
 
+  // BACKLOG-121: the visit history is additive over v1, like savedAt/scale before it.
+  it('round-trips visitHours', () => {
+    const withVisits = { ...sample, visitHours: [9, 9, 21] };
+    expect(deserialize(serialize(withVisits))).toEqual(withVisits);
+  });
+
+  it('loads a save written before the vigil existed, with no visit history', () => {
+    const old = JSON.stringify({
+      version: SAVE_VERSION,
+      time: { day: 1, hour: 8, minute: 0 },
+      player: { x: 1, y: 2 },
+    });
+    const out = deserialize(old);
+    expect(out).not.toBeNull();
+    expect(out!.visitHours).toBeUndefined();
+  });
+
+  it('returns null for a malformed visitHours', () => {
+    expect(deserialize(JSON.stringify({ ...sample, visitHours: 9 }))).toBeNull();
+    expect(deserialize(JSON.stringify({ ...sample, visitHours: ['9'] }))).toBeNull();
+  });
+
   it('returns null for a present-but-non-numeric scale', () => {
     const bad = JSON.stringify({ ...sample, scale: 'fast' });
     expect(deserialize(bad)).toBeNull();

@@ -27,7 +27,11 @@
  * Pure TypeScript (no Phaser), so the walk runs in Node and costs a suite nothing.
  */
 
-import { ACTIVE_SCALE, MINUTES_PER_DAY } from './clock';
+import { ACTIVE_SCALE, FOUNDING_DAY, FOUNDING_HOUR, MINUTES_PER_DAY } from './clock';
+import { atRest, chronotypeOf } from './chronotype';
+import { seededPersonality } from '../ai/personality';
+import { seasonFor, type Season } from './seasons';
+import { VIGIL_ART_KEY } from './vigil';
 import {
   FOUNDING_PILES,
   FOUNDING_RUIN,
@@ -48,7 +52,7 @@ import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_NATIVE_ART_KEY } from './s
 import { cropOf, ripeRigKey, type CropStage } from './plot';
 import { TIC_ASIDE } from './tic';
 import { DOZE_ART_KEY, ROUSE_ART_KEY } from './chronotype';
-import { zoneChain } from './zones';
+import { BOWL_ID, zoneChain } from './zones';
 import { PROP_RIGS } from '../art/propArt';
 
 /** One claim the shipping park makes about itself. */
@@ -114,7 +118,45 @@ export function worldPlacedProps(): Set<string> {
   // `refreshSleepMarks` / `refreshRouseMarks`, which is why they count as seen.
   out.add(DOZE_ART_KEY);
   out.add(ROUSE_ART_KEY);
+  // BACKLOG-121/526: the vigil mark, hung over the dino standing at the glass by `refreshVigilMarks`.
+  out.add(VIGIL_ART_KEY);
   return out;
+}
+
+/**
+ * Is the founding cast **split** at this hour — at least one resident down and at least one up
+ * (BACKLOG-523)?
+ *
+ * This is the claim the opening hour never had. `FOUNDING_HOUR` was a field initialiser: written once,
+ * derived from nothing, pinned by nothing, and quietly the number every day-shaped read in Milestone 17 is
+ * measured from. Moved four hours either way, the whole milestone's frame-one read goes dark — one
+ * direction wakes the entire cast, the other puts all of it down — and every gate in this studio stays
+ * green. So the constant gets a predicate rather than a nicer name.
+ *
+ * The hour is a **parameter**, not the constant, which is what lets a test move it and watch this go false
+ * without editing production. Routed through `foundingResidents` / `chronotypeOf` / `atRest`, per rule 1 of
+ * this file's header: the production functions own the fact, and nothing here restates an hour.
+ */
+export function castSplitAt(hour: number, season: Season = seasonFor(FOUNDING_DAY)): boolean {
+  const names = Object.values(foundingResidents()).flat();
+  let up = 0;
+  let down = 0;
+  for (const name of names) {
+    if (atRest(hour, chronotypeOf(seededPersonality(name)), season)) down++;
+    else up++;
+  }
+  return up > 0 && down > 0;
+}
+
+/**
+ * Which residents of a ground are up at this hour (BACKLOG-121) — the founding-state twin of the read the
+ * scene runs live, and the whole of the vigil's chronotype logic. Nothing here mentions a chronotype by
+ * name; the owl falls out of the hour, which is the arc's entire point.
+ */
+export function wakingAt(hour: number, zone: string, season: Season = seasonFor(FOUNDING_DAY)): string[] {
+  return (foundingResidents()[zone] ?? []).filter(
+    (name) => !atRest(hour, chronotypeOf(seededPersonality(name)), season),
+  );
 }
 
 /**
@@ -190,6 +232,18 @@ export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
       const frontier = zoneChain().find((z) => founders[z] === undefined);
       return born && !!frontier && foundingKind({ ...founders, [frontier]: 'Twitch' }, frontier) === 'crossed';
     },
+  },
+  {
+    id: 'BACKLOG-523',
+    system: 'the park opens on an hour where its cast is split — somebody up, somebody down',
+    fact: 'the founding hour falls inside some residents’ rest window and outside others’',
+    holds: () => castSplitAt(FOUNDING_HOUR),
+  },
+  {
+    id: 'BACKLOG-121',
+    system: 'somebody is already waiting at the hatch when you open the park',
+    fact: 'the founding hour leaves at least one resident of the hatch’s ground awake to keep the vigil',
+    holds: () => wakingAt(FOUNDING_HOUR, BOWL_ID).length > 0,
   },
   {
     id: 'BACKLOG-501',

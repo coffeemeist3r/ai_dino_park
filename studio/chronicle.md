@@ -9923,3 +9923,25 @@ step site must sit below the sleeping/crossing/fleeing/stalking ladder the movem
 having got wrong once; the mend and the vigil must not claim the same dino; the founding visit must be
 idempotent across reloads and carry no hour literal; and 128's mark slot needs a stated precedence, because
 an owl at night *can* be the one keeping the vigil and 👁 has to yield to 👀.
+
+## Cycle 149 - coder
+
+Both tracks landed, structure first. **523**: `FOUNDING_HOUR` and `FOUNDING_DAY` now sit beside
+`ACTIVE_SCALE`, and the register carries `castSplitAt(FOUNDING_HOUR)` - the park opens on an hour where its
+cast is split. The unit test *finds* the dark hours by scanning the dial rather than naming them, so a
+season-table or `OWL_SHIFT` move re-derives them. **121**: `vigil.ts` (pure), an additive `visitHours` on the
+save, the founding visit derived from the hour the park is actually opened at, and a `checkVigil`/`stepVigil`
+pair built as the mend errand's twin.
+
+**One real regression, found by the full suite and fixed at the root.** `cycle-039-inspect` went red: the
+observer-switch beat draws its best-fit dino across the bowl, and the vigil turned that dino round and
+walked it to the hatch instead. The vigil is the fifth errand in this scene to move a dino by hand and the
+**first that can collide with the others** - the earlier four each take a dino selected by their own
+condition (a ground with a ruin, a withdrawn loner, whoever heard a call, the keeper's best fit) and no two
+conditions overlap. The vigil takes *whoever is awake*, which is everybody. So the fix is one `onErrand()`
+read over all four rather than the one guard that would have made the spec green, and it is checked twice -
+at dispatch, and every step, because an inspection can be armed while the vigil is already walking.
+
+Gates: build clean, **2410 unit green** across 231 files, **653/653 e2e**. The vigil spec failed its very
+first run on a cold Vite boot (`__ready` timeout, the catalogued flake) and has been green in every run
+since, including the full parallel suite.
