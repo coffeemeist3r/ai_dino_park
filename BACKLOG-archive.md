@@ -1,5 +1,15 @@
 # Backlog Archive — closed items
 
+## Closed cycle 149 — the milestone closes on somebody waiting at the glass (2026-09-03)
+
+> Both tracks APPROVED, and Milestone 17 **SHIPPED** with them. 121 is the arc's last debt paid: a dino
+> awake at an hour its neighbours are not, doing something none of them can. 523 is the milestone's own
+> origin, pinned at last — the hour every one of its reads was measured from had been a field initialiser
+> with no claim attached to it.
+
+- [x] BACKLOG-121 [emergent] Keeper-shaped routine — a very-high-friendship dino learns the real hour you usually come back (from save timestamps) and drifts to the glass front around then, anticipating you. Anticipation as emergence. Builds on 112 + realtime (105).
+- [x] BACKLOG-523 [core] The hour a save opens on — the founding clock starts at **08:00** and that number is a literal, written once, derived from nothing and pinned by nothing. It is now the single most load-bearing founding constant in the park and nobody has noticed: BACKLOG-109's whole reachability answer is *"Rex is asleep at eight in the morning"*, which is a claim about the opening hour and not about chronotypes; BACKLOG-493's session claim is measured in in-game minutes from it; 520's two hour-marks, the huddle window, the crops, spoilage, upkeep and the council's term all read a clock whose zero is this. Move it by four hours in either direction and the park's frame-one read changes completely — in one direction every dino is up and the milestone's arcs go dark, in the other the park opens in the dark. Nothing would fail. The work: derive the opening hour from what the park claims to show at it rather than asserting it, give it a **reachability register entry** of the shape 501 established (*"the save opens inside the window where the cast is split"* — routed through `atRest`/`chronotypeOf` for the shipping roster, never restating 08:00), and put the founding hour and `ACTIVE_SCALE` beside each other so the two halves of "what fits in a session" are read together. This is 495's argument and 519's class applied to *time's origin* rather than to founding state or to a copied number — the seam cycle 146 arrived at twice from different directions and did not name. Builds on 493 / 501 / 109 / 519.
+
 ## Cycle 146 — filed by the Validator (2026-08-31)
 
 > One finding, and it is the second instance in a week of the class BACKLOG-519 named — with behaviour

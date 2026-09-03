@@ -8,23 +8,8 @@
 
 ## Current milestone
 
-**Milestone 17: A day in the park — the park's day stops being a tint and a number in the corner and becomes something with a shape: who is awake when, what gets done between dawn and dusk, and what it costs to fetch what the day needs.**
-**Status:** ACTIVE (opened cycle 146)
+_(none — Milestone 17 shipped cycle 149. The smiths draft the next one at the next cycle open.)_
 
-BACKLOG-493 gave the park a 24-minute in-game day at cycle 137 and the studio never spent it. A whole
-day and a whole night now fit inside a session, and almost nothing in the park behaves differently at
-either end of one: five dinos wake together, five sleep together, and the only thing that changes at
-dusk is the tint. This milestone makes the day the park's own rather than the clock's.
-
-**Lore arcs:**
-- [x] Not everybody keeps the same hours — the cast splits into day-dinos and night-owls off its own traits, and *who is up* reads from across the field at both ends of the day (BACKLOG-109) — *shipped cycle 146, the cycle the milestone opened. The bar forced the shape: a fresh save opens at 08:00 and nightfall is outside the ten-minute window, so the derivation was constrained to put an owl in the Bowl's five and the frame-one read is Rex asleep at eight in the morning while its four neighbours are up. 108 (the dawn stretch) stays open as this arc's follow-up.*
-- [ ] The park at rest has tells you can name — a sleeping dino is still recognisably itself, and a dino awake at the wrong hour is doing something (BACKLOG-307, -121) — **the milestone's last open arc after cycle 148.** *Cycle 148 shipped 524, the system half of the second clause: a ground now works the hours its cast keeps, and whoever is up while their ground sleeps keeps the watch. What 121 still owes is the other half — an owl doing something a day-dino would not, rather than the same behaviour under a different sky. Half closed cycle 147: **307 ships the first clause.** A memoryless sleeper dreamed `…zzz…` like everybody else, and — the half nobody had noticed — the murmur admitted only huddlers, so the one dino 109 deliberately put asleep on frame one was the one dino that could not murmur at all. Both fixed; the book carries the dream with no waiting. The second clause (121) stays open, and **524 was seeded the same night as the system half of that exact sentence**: no system in the park counts *waking* residents, so an owl at midnight does what it would do at noon.*
-- [x] The hour gets into the voice — a dino's first line of the day knows what time it is and whether it has been up for it (BACKLOG-110, -279) — *shipped cycle 148. The arc turned out to be about the **floor**, not the flavour: `timeOfDay` had been set on every greet since the clock existed and read by exactly one consumer, the WebLLM prompt — so `cannedReply`, which is what a device with no model download actually hears, composed nine asides and did not know what hour it was. The registers key off the dino's own `restWindow` rather than the park's clock-phase, with **no hour literal in the function**, because the hour alone says the same thing to all ten and a picked constant would have been the reachability corollary's mirror defect. 279 shipped without a branch — the aside composes onto whichever register was chosen, so the fond hello carried the hour for free.*
-
-**Structure arcs:**
-- [x] Fetching costs something — no skyline anywhere in the park goes up without somebody having made the climb, and the park's four carry systems learn a new shortfall (BACKLOG-509) — *shipped cycle 146, in three pieces rather than the one the item asked for. Tracing the mechanism before writing the criteria found that the recipe change alone yields a delivery and not a climb, so it ships with the shortfall named on the map and the errand promoted exactly when the shard is the only thing missing.*
-- [x] The day is one number, owned in one place — the length of a day stops being copied into the file whose header warns against copies (BACKLOG-519) — *shipped cycle 146 as a rider. `SESSION_MINUTES` deliberately stayed put: what watchable means is the register's own claim, not the clock's. The arc's sequel filed itself the same night as BACKLOG-521, when a constant on the other side of the park was found describing a relationship it no longer had.*
-- [x] The suite can wait for time — the runner stops losing specs at both extremes of load, at the timing seam a fast serial boot reaches sooner than a loaded one (BACKLOG-515, -430) — *shipped cycle 148, as a **rider** rather than as a track, which is what unlocked it. Its bar answer is *nothing a player sees*, so under CHARTER v7 it could never have been a track — the constitution was correctly refusing it for four cycles, and the resolution was to notice the bar judges **tracks**. The class was wider than the item's description: three seams were input-after-input, so two catalogued specs failed despite already polling — **a poll cannot recover an input that was dropped**. And the fix moved a layer down mid-cycle: the per-seam version passed its own acceptance and then produced a seventh victim, so the patch went into `boot()` once and every per-spec edit was reverted. **649/649 in both directions, the first all-green suite this project has recorded.** 430 closed with it.*
 
 
 ---
@@ -45,6 +30,51 @@ dusk is the tint. This milestone makes the day the park's own rather than the cl
 ```
 
 ## Shipped milestones
+
+### Milestone 17: A day in the park — the park's day stops being a tint and a number in the corner and becomes something with a shape — SHIPPED cycle 149 (opened cycle 146)
+
+Milestone 17 opened on an accusation the studio made against itself. BACKLOG-493 had given the park a
+24-minute in-game day at cycle 137, which meant a whole day and a whole night now fit inside a sitting — and
+for nine cycles the studio never spent it. Five dinos woke together, five slept together, and the only thing
+that changed at dusk was the tint.
+
+Six arcs, four cycles, and the through-line is the one the headline promised: **the day became the park's own
+rather than the clock's.** The cast split into day-dinos and night-owls off its own traits, and the split was
+constrained by the bar rather than by taste — a fresh save opens at eight in the morning with nightfall
+outside the watchable window, so the derivation had to put an owl in the Bowl's five, and the frame-one read
+is Rex asleep at eight while its four neighbours are up. Fetching learned to cost a climb. The suite learned
+to wait for time, and produced this project's first all-green run in the process. The greeting learned what
+hour it was, and the finding under it was the milestone in miniature: `timeOfDay` had been set on every greet
+since the clock existed and read by exactly one consumer, the WebLLM prompt — so the voice that ships to a
+device with no model download had never known what time of day it was.
+
+And it closes on the two items that finish the sentence from both ends. **121** gives a dino something to *do*
+with being the one who is up: the park learns the hour you tend to open it, and around then whoever is awake
+walks to the glass and waits for you. **523** goes the other way and pins the milestone's own origin — the
+opening hour, the number every single one of these reads is measured from, which had been a field
+initialiser derived from nothing and pinned by nothing for the whole life of the project. It now carries a
+claim that breaks: *the park opens on an hour where its cast is split.* Move it somewhere the roster agrees
+with itself and the register goes red naming the item.
+
+**Milestone 17: A day in the park — the park's day stops being a tint and a number in the corner and becomes something with a shape: who is awake when, what gets done between dawn and dusk, and what it costs to fetch what the day needs.**
+**Status:** SHIPPED cycle 149 (opened cycle 146)
+
+BACKLOG-493 gave the park a 24-minute in-game day at cycle 137 and the studio never spent it. A whole
+day and a whole night now fit inside a session, and almost nothing in the park behaves differently at
+either end of one: five dinos wake together, five sleep together, and the only thing that changes at
+dusk is the tint. This milestone makes the day the park's own rather than the clock's.
+
+**Lore arcs:**
+- [x] Not everybody keeps the same hours — the cast splits into day-dinos and night-owls off its own traits, and *who is up* reads from across the field at both ends of the day (BACKLOG-109) — *shipped cycle 146, the cycle the milestone opened. The bar forced the shape: a fresh save opens at 08:00 and nightfall is outside the ten-minute window, so the derivation was constrained to put an owl in the Bowl's five and the frame-one read is Rex asleep at eight in the morning while its four neighbours are up. 108 (the dawn stretch) stays open as this arc's follow-up.*
+- [x] The park at rest has tells you can name — a sleeping dino is still recognisably itself, and a dino awake at the wrong hour is doing something (BACKLOG-307, -121) — *closed cycle 149, and with it the milestone. 307 shipped the first clause at cycle 147 (the memoryless sleeper's own dream, and the murmur that had been locking out the one dino 109 deliberately puts down on frame one). 524 shipped the system half of the second at cycle 148 — a ground works the hours its cast keeps. **121 paid the half the arc kept naming and nobody had built: an owl doing something a day-dino would not.** The park learns the real hour you tend to open it and sends somebody to wait at the hatch — and the filter that decides who is one clause, `!atRest`, with no branch anywhere that says `owl`. At the founding hour it is Glade, because Rex is asleep; in the middle of the night it is Rex, because he is the only Bowl resident who can be standing there. The reshaping that made it shippable is the CHARTER v7 move: the item's own "very-high-friendship" gate would have shipped the feature dark on every fresh save, so friendship grades the vigil instead of gating it, and the founding save records the boot itself as a prior visit.*
+- [x] The hour gets into the voice — a dino's first line of the day knows what time it is and whether it has been up for it (BACKLOG-110, -279) — *shipped cycle 148. The arc turned out to be about the **floor**, not the flavour: `timeOfDay` had been set on every greet since the clock existed and read by exactly one consumer, the WebLLM prompt — so `cannedReply`, which is what a device with no model download actually hears, composed nine asides and did not know what hour it was. The registers key off the dino's own `restWindow` rather than the park's clock-phase, with **no hour literal in the function**, because the hour alone says the same thing to all ten and a picked constant would have been the reachability corollary's mirror defect. 279 shipped without a branch — the aside composes onto whichever register was chosen, so the fond hello carried the hour for free.*
+
+**Structure arcs:**
+- [x] Fetching costs something — no skyline anywhere in the park goes up without somebody having made the climb, and the park's four carry systems learn a new shortfall (BACKLOG-509) — *shipped cycle 146, in three pieces rather than the one the item asked for. Tracing the mechanism before writing the criteria found that the recipe change alone yields a delivery and not a climb, so it ships with the shortfall named on the map and the errand promoted exactly when the shard is the only thing missing.*
+- [x] The day is one number, owned in one place — the length of a day stops being copied into the file whose header warns against copies (BACKLOG-519) — *shipped cycle 146 as a rider. `SESSION_MINUTES` deliberately stayed put: what watchable means is the register's own claim, not the clock's. The arc's sequel filed itself the same night as BACKLOG-521, when a constant on the other side of the park was found describing a relationship it no longer had.*
+- [x] The suite can wait for time — the runner stops losing specs at both extremes of load, at the timing seam a fast serial boot reaches sooner than a loaded one (BACKLOG-515, -430) — *shipped cycle 148, as a **rider** rather than as a track, which is what unlocked it. Its bar answer is *nothing a player sees*, so under CHARTER v7 it could never have been a track — the constitution was correctly refusing it for four cycles, and the resolution was to notice the bar judges **tracks**. The class was wider than the item's description: three seams were input-after-input, so two catalogued specs failed despite already polling — **a poll cannot recover an input that was dropped**. And the fix moved a layer down mid-cycle: the per-seam version passed its own acceptance and then produced a seventh victim, so the patch went into `boot()` once and every per-spec edit was reverted. **649/649 in both directions, the first all-green suite this project has recorded.** 430 closed with it.*
+
+
 
 ### Milestone 16: Somewhere to stand — the park's stock, its scarcity and its private marks stop being numbers in a menu and become things on the ground you can walk to — SHIPPED cycle 145 (opened cycle 141)
 

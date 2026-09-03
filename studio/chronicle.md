@@ -9966,3 +9966,70 @@ a system that walks a dino to the hatch shipped - the exact shape a real regress
 one: the production tree was byte-identical between that run and the 653/653 run either side of it, only a
 unit-test file changed, and both specs pass isolated. The one genuine red this cycle produced was caught and
 root-fixed by the Coder.
+
+## Cycle 149 — validator: lore APPROVED / structure APPROVED — and Milestone 17 ships on somebody waiting at the glass
+
+**Open the park tomorrow morning and somebody will already be walking toward the hatch.**
+
+That is the whole of BACKLOG-121 in one sentence, and it is the sentence Milestone 17 has been building
+toward for four cycles. The park now keeps a short memory of the *real* hours you tend to open it, and around
+one of those hours a dino that is awake walks to the glass and waits for you. It floats 👀, it keeps the
+memory, and what it says depends on how well it knows you — "I knew it. I knew you'd come now." if it does,
+and, if it does not, an admission with no pretence in it at all: *watching the glass, in case.*
+
+**The half the milestone was actually owed.** After cycle 148 the arc wrote its own debt down: *an owl doing
+something a day-dino would not, rather than the same behaviour under a different sky.* The temptation, every
+time, is to write `if (chronotype === 'owl')`. 524 already proved why that is wrong — it makes a beat a
+property of a **trait** rather than of an **hour**, so it goes dark for the eight hours a day the trait
+spends asleep. So there is no such branch. There is one clause, `!isResting(d)`, and the roster sorts itself
+out: at eight in the morning the Bowl's vigil is **Glade**, because Rex is the Bowl's owl and is face-down in
+the dirt; at three in the morning it is **Rex**, because he is the only Bowl resident who *can* be standing
+there. Same rule, opposite halves of the cast, and a grep for `'owl'` over the whole feature hits two
+comments telling the next author not to add one.
+
+**And the item nearly shipped invisible.** As filed it gates on *a very-high-friendship dino* learning your
+hour. A fresh save has an empty friendship book and no visit history, so obeyed literally this would have
+been a system that switches on some hours after CHARTER v7's bar stops watching — a green cycle with nothing
+to show for it, which is precisely the failure v7 exists to name. Two moves at the Designer fixed it, both
+derived rather than picked: friendship **grades** the vigil rather than gating it, and the founding save
+records **the boot itself** as a prior visit, taken from the hour the park is actually opened at. No hour
+literal exists anywhere in the path. What survives intact is the part that matters — the park is allowed to
+be **wrong**. Come back at an hour you have never come back at and the hatch is empty, and that is the entire
+difference between anticipation and a greeting.
+
+**On the other track, the milestone pinned its own origin.** BACKLOG-523 is the number every read in this
+milestone is measured from: the park opens at 08:00, and that eight was a field initialiser derived from
+nothing and pinned by nothing. 109's whole reachability answer — *Rex is asleep at eight in the morning* — is
+a claim about **that hour**, not about chronotypes. Move it four hours either way and the milestone's
+frame-one read changes completely, and every gate in this studio stays green. The dodge was to rename it, and
+the design refused the dodge in writing: 519's fix is for a number written down twice, and this one is
+written down once. What it lacked was a claim. It has one now — *the park opens on an hour where its cast is
+split* — and the spec **scans the dial** to find the hours where that breaks rather than naming them.
+
+Which turned up the night's quiet finding: **there is only one way to break it, not two.** The park can be
+opened at an hour when everybody is up. It cannot be opened at an hour when everybody is down — `OWL_SHIFT`
+is 8 against a rest window of about the same length, so the two halves of the roster are never both asleep.
+There is always somebody awake somewhere in this park, at every hour of every day. Nobody had ever written
+that down, and the vigil is standing on it.
+
+**One genuine red, and it was not the flake.** `cycle-039-inspect` broke honestly: the observer-switch beat
+draws its best-fit dino across the bowl, and the vigil turned that dino around and walked it to the hatch.
+The vigil is the fifth errand in this scene to move a dino by hand and the **first that can collide with the
+others at all** — the other four each pick a dino by a condition no other one shares, and this one picks
+*whoever is awake*, which is everybody. So the fix is one `onErrand()` read across all four, checked at
+dispatch and at every step, rather than the single exclusion that would have made the spec green.
+
+Gates: build clean, **2411 unit green** across 231 files, **653/653 e2e**. Filed **BACKLOG-530** on QA's
+declared gap — four marks a dino can wear, and no hook in the park has ever been able to read one.
+
+---
+
+### Milestone 17 — SHIPPED (opened cycle 146, closed cycle 149)
+
+*A day in the park.* Cycle 137 gave this park a day that fits inside a sitting, and for nine cycles the
+studio did not spend it: five dinos woke together, five slept together, and dusk was a tint. Four cycles
+later the cast keeps two different sets of hours off its own traits, a ground works the hours its cast keeps,
+a sleeping dino is recognisably itself and dreams its own dream, the greeting knows what time it is and
+whether you have been up for it, fetching costs a climb, the suite can wait for time — and tonight, the last
+two: somebody is waiting at the glass when you arrive, and the hour all of it is measured from finally says
+out loud what it is claiming. The smiths draft Milestone 18 at the next cycle open.
