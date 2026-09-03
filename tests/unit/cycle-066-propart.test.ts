@@ -42,6 +42,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'tic_circle', // BACKLOG-496: the ritual's trodden ring
       'tic_fuss', // BACKLOG-496 closes (cycle 142-art) - the turned-over patch, the third and last kind
       'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss WAS undrawn — the per-kind fallback control)
+      'vigil', // BACKLOG-526: the third hour-mark, and the only one aimed at the player (BACKLOG-121's host)
     ]);
   });
 

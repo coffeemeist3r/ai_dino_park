@@ -741,6 +741,57 @@ const ROUSE_RIG: PropRig = {
   },
 };
 
+// `vigil` is the third mark on the same axis, and the only one that is **aimed at you** (BACKLOG-526, for
+// BACKLOG-121). `doze` is an eye shut and `rouse` is an eye open, both in profile — a fact about the dino.
+// The vigil is a fact about *where the dino is looking*, and there is no way to say that with one eye: a
+// single open eye at 16px reads as awake no matter which way you angle the pupil.
+//
+// So the vigil is a **pair**. Two eyes, level, both pupils forward, both catchlights struck from the same
+// side — which is the one arrangement a player reads as a face turned out of the screen rather than a dino
+// looking at something in the world. It is 👀's own logic and it is the reason that glyph was picked for
+// the beat in the first place.
+//
+// **The first draft was rejected on the same number that caught `doze`.** It drew both eyes at `rouse`'s
+// full size, iris ring and all, side by side — 132 lit cells against `rouse`'s 84, a mark half again as
+// heavy as anything else that hangs over a dino, and at 32px the two irises closed up into one dark bar.
+// Redrawn smaller and simpler: the iris ring comes out (at seven pixels across it was never a ring, only a
+// smudge between sclera and pupil), the eyes tighten to six rows, and one clear column of ground separates
+// them so the pair reads as *two* at a glance. 76 cells, between `doze` and `rouse` in weight.
+//
+// It borrows `rouse`'s outline and sclera **verbatim** rather than picking neighbours of them, because the
+// family claim is the whole design and the cheapest way to keep it true is to share the colour. What it
+// does not borrow is the catchlight: `rouse`'s is the brightest pixel in the park's hour-marks and stays
+// that way, because one eye that bright is a dino noticing something, and two would be a stare.
+const VIGIL_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.ooooo...ooooo..',
+  'oWWWWWo.oWWWWWo.',
+  'oWcIIWo.oWcIIWo.',
+  'oWIIIWo.oWIIIWo.',
+  'oWWWWWo.oWWWWWo.',
+  '.ooooo...ooooo..',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const VIGIL_RIG: PropRig = {
+  size: 16,
+  grid: VIGIL_GRID,
+  palette: {
+    o: 0x2b3344, // `rouse`'s outline, shared on purpose — same axis, same cool blue-black
+    W: 0xdfe6f0, // `rouse`'s sclera, likewise
+    I: 0x1d2735, // pupil
+    c: 0xeff4fb, // the catchlights — bright, but deliberately under `rouse`'s, which stays the park's brightest
+  },
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -1428,6 +1479,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   tic_pace: TIC_PACE_RIG,
   doze: DOZE_RIG, // BACKLOG-520: the hours a dino keeps — the shut end of the axis
   rouse: ROUSE_RIG, // BACKLOG-520: ...and the open one
+  vigil: VIGIL_RIG, // BACKLOG-526: ...and the pair that is looking at you (BACKLOG-121's host)
   tic_circle: TIC_CIRCLE_RIG,
   // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
   // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern

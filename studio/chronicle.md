@@ -10033,3 +10033,38 @@ a sleeping dino is recognisably itself and dreams its own dream, the greeting kn
 whether you have been up for it, fetching costs a climb, the suite can wait for time — and tonight, the last
 two: somebody is waiting at the glass when you arrive, and the hour all of it is measured from finally says
 out loud what it is claiming. The smiths draft Milestone 18 at the next cycle open.
+
+## Cycle 149-art — artist: the pair that is looking at you
+
+**BACKLOG-526**, seeded this morning and drawn tonight — the first art item in this park's history to be
+filed, hosted and drawn inside a single cycle. The queue's rule has been the same for a month and it held
+again: an art item seeded *with* a shipping host gets drawn; 518, whose driver was left unchosen on purpose,
+has now been held for a sixth consecutive fire.
+
+The subject is the third mark on 520's axis. `doze` is an eye shut and `rouse` is the same eye open — both
+in profile, both facts *about the dino*. The vigil is a fact about **where the dino is looking**, and there
+is no way to say that with one eye: at sixteen pixels a single open eye reads as awake whichever way you
+angle the pupil. So the vigil is a **pair** — two eyes, level, pupils forward, both catchlights struck from
+the same side, which is the one arrangement a player reads as a face turned out of the screen rather than a
+dino watching something in the world. That is 👀's own logic, and it is why the beat picked that glyph.
+
+**The first draft was rejected on the same number that caught `doze`.** It drew both eyes at `rouse`'s full
+size, iris ring and all: 132 lit cells against `rouse`'s 84 — half again the heaviest thing that hangs over a
+dino in this park — and at 32px the two irises closed up into one dark bar, which is a scowl, not a watch.
+Redrawn smaller: the iris comes out (seven pixels across, it was never a ring, only a smudge), the eyes
+tighten to six rows, and one clear column of ground separates them so the pair reads as *two* at a glance.
+76 cells, sitting between its two siblings, and the spec pins that as an inequality on both sides so the
+next repaint cannot quietly inflate it.
+
+Two decisions worth keeping. The outline and the sclera are **`rouse`'s exact values**, asserted rather than
+described, because "same family" is the whole design and a shared constant is the cheapest way to keep a
+family claim true. And the catchlight is deliberately **dimmer** than `rouse`'s, which stays the brightest
+pixel in the park's hour-marks: one eye that bright is a dino noticing something, and two would be a stare.
+
+Gates: build clean, **2421 unit green** across 232 files, **653/653 e2e**. The art queue closes the night at
+**1** — 518, still waiting on somebody to pick its driver.
+
+*Deviation from routine 7, noted rather than hidden:* the fire was run inline rather than through a
+per-subject sub-agent. One subject, one rig file, and the routine's actual disciplines — go all-out, then
+pull back to what reads at 32px, and reject your own first draft at least once — were all applied and are
+all visible in the entry above.
