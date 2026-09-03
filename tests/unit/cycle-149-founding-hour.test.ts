@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { FOUNDING_DAY, FOUNDING_HOUR, WorldClock } from '../../game/src/world/clock';
-import { REACHABILITY_REGISTER, castSplitAt, darkEntries } from '../../game/src/world/reachability';
+import { REACHABILITY_REGISTER, castSplitAt, darkEntries, wakingAt } from '../../game/src/world/reachability';
+import { foundingResidents } from '../../game/src/world/founding';
+
+/** The whole shipping cast, and how many of them are up at an hour — both derived, neither written down. */
+const cast = () => Object.values(foundingResidents()).flat();
+const wakingCount = (hour: number) =>
+  Object.keys(foundingResidents()).reduce((n, z) => n + wakingAt(hour, z).length, 0);
+const HOURS = Array.from({ length: 24 }, (_, h) => h);
 
 /**
  * BACKLOG-523 — the hour a save opens on.
@@ -24,14 +31,21 @@ describe('the founding hour (BACKLOG-523)', () => {
     expect(castSplitAt(FOUNDING_HOUR)).toBe(true);
   });
 
-  it('goes dark at an hour where the whole cast is up, and at one where it is all down', () => {
-    const hours = Array.from({ length: 24 }, (_, h) => h);
-    const dark = hours.filter((h) => !castSplitAt(h));
-    // Both failure modes exist and are reachable by moving the constant — which is the entire point of the
-    // entry. One of these is "everybody is awake, and the milestone's arcs have nothing to show"; the other
-    // is "the park opens with the lights out".
-    expect(dark.length).toBeGreaterThan(0);
+  it('goes dark at the hours where the whole cast is up — and the founding hour is not one of them', () => {
+    const dark = HOURS.filter((h) => !castSplitAt(h));
+    const allUp = dark.filter((h) => wakingCount(h) === cast().length);
+    expect(allUp.length).toBeGreaterThan(0);
     expect(dark).not.toContain(FOUNDING_HOUR);
+  });
+
+  it('and the park is never all asleep at once, at any hour, which is why only one failure mode exists', () => {
+    // 523 was filed expecting two ways to break the opening hour: wake everybody, or open in the dark. The
+    // first is real and the test above finds it. The second turns out **not** to be a property of the cast:
+    // `OWL_SHIFT` is 8 against a rest window of about the same, so the two halves of the roster are never
+    // both down, and there is no hour at which moving the constant would put every dino to sleep. Opening
+    // "in the dark" is a claim about the *sky*, not about who is up — a different entry, if anybody wants it.
+    // Pinned here because it is load-bearing for the vigil: some ground always has somebody awake on it.
+    expect(HOURS.filter((h) => wakingCount(h) === 0)).toEqual([]);
   });
 
   it('is a claim the register carries, and the register is not dark', () => {

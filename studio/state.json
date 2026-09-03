@@ -1,6 +1,6 @@
 {
   "cycle": 149,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-121: Keeper-shaped routine \u2014 the vigil at the hatch",
   "structureItem": "BACKLOG-523: The hour a save opens on",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-09-03T08:09:00.000Z",
     "code-planner": "2026-09-03T08:10:00.000Z",
     "coder": "2026-09-03T08:30:00.000Z",
-    "qa": "2026-09-02T03:55:00.000Z",
+    "qa": "2026-09-03T08:44:00.000Z",
     "validator": "2026-09-02T04:15:00.000Z",
     "artist": "2026-09-02T04:45:00.000Z"
   }

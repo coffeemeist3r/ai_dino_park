@@ -9945,3 +9945,24 @@ at dispatch, and every step, because an inspection can be armed while the vigil 
 Gates: build clean, **2410 unit green** across 231 files, **653/653 e2e**. The vigil spec failed its very
 first run on a cold Vite boot (`__ready` timeout, the catalogued flake) and has been green in every run
 since, including the full parallel suite.
+
+## Cycle 149 - qa
+
+**20/20 criteria pass. Build clean, 2411 unit green across 231 files, 653/653 e2e on a fresh full run.**
+
+Three things worth the Validator's attention. **One criterion was met differently from how it was written**:
+523's design assumed the opening hour could break two ways - wake the whole cast, or open the park in the
+dark - and only the first exists. `OWL_SHIFT` is 8 against a rest window of about the same length, so the two
+halves of the roster are never both down and no hour would put every dino to sleep. Opening in the dark is a
+claim about the sky, not about who is up. The spec pins the reachable failure mode *and* the invariant it
+uncovered - some ground always has somebody awake on it - which the vigil leans on directly.
+
+**A declared gap**: mark precedence (the vigil's mark hiding the owl's) is implemented and reviewed by
+reading, not asserted, because mark visibility has never had a dev hook for any of the four marks. Third
+cycle running that an hour-mark claim has been unpinnable; a small `__marks()` hook wants filing.
+
+**And the flake was interrogated rather than assumed.** One full run lost two hatch-adjacent specs the night
+a system that walks a dino to the hatch shipped - the exact shape a real regression would take. It is not
+one: the production tree was byte-identical between that run and the 653/653 run either side of it, only a
+unit-test file changed, and both specs pass isolated. The one genuine red this cycle produced was caught and
+root-fixed by the Coder.
