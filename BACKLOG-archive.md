@@ -1145,3 +1145,8 @@ _(both its items — 500 and 501 — are closed; the block emptied when 501 ship
 > half-describing since cycle 130, now with a second spec wearing the same signature — it refills the
 > Structure Track to 4 as 512 closes. 516 is a wording debt the design named as out of scope and the
 > cycle then made reachable enough to be worth paying.
+
+## Cycle 147 structure additions (2026-09-01)
+
+> Emptied when 523 closed at cycle 149; moved here whole (cycle-149 housekeeping).
+

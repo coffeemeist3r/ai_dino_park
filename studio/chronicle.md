@@ -10068,3 +10068,13 @@ Gates: build clean, **2421 unit green** across 232 files, **653/653 e2e**. The a
 per-subject sub-agent. One subject, one rig file, and the routine's actual disciplines — go all-out, then
 pull back to what reads at 32px, and reject your own first draft at least once — were all applied and are
 all visible in the entry above.
+
+## Cycle 149 — housekeeping
+
+Three bullets closed and already filed under the Validator and the Artist (121, 523, 526); no stray closed
+bullets left in the body. The **cycle-147 structure section emptied when 523 closed** and moved to the
+archive whole — the same shape as the cycle-144 section a cycle ago. The working backlog closes the night at
+**208 open**, up from 205, which is the arithmetic of a cycle that closed three items and seeded four (526,
+528, 529, 530). The **Structure Track sits at 3 open against X=4**, so next cycle's Structure-smith
+brainstorms once more before it picks — and 495 goes into its fourth cycle of being passed over for the
+reason it states about itself.
