@@ -9912,3 +9912,14 @@ unit test that moves the hour and watches the claim go dark. Naming the literal 
 pair built as the mend errand's twin. Two reachability answers pinned rather than described - at the founding
 hour the Bowl's vigil is **Glade**, because Rex is the Bowl's owl and is down; in the park's night it is
 **Rex**, because he is the only one who can be standing there. No branch in the code says "owl".
+
+## Cycle 149 — code-planner
+
+~9 files across both tracks, structure first. The reuse audit's two loudest lines: the vigil is the mend
+errand's twin and copies its shape wholesale (`cooldownReady` gate, `stepToward` walk, resolve on chebyshev
+1, cancel free, a `__stepVigil` hook mirroring `__stepMend`), and **no comparison against `'owl'` may appear
+anywhere in the lore track** - the filter is `atRest`, and the owl falls out of the hour. Risks named: the
+step site must sit below the sleeping/crossing/fleeing/stalking ladder the movement branch already documents
+having got wrong once; the mend and the vigil must not claim the same dino; the founding visit must be
+idempotent across reloads and carry no hour literal; and 128's mark slot needs a stated precedence, because
+an owl at night *can* be the one keeping the vigil and 👁 has to yield to 👀.
