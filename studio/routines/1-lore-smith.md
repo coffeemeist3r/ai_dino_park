@@ -25,6 +25,14 @@ Before brainstorming, read `studio/IDEABOX.md` and consider each `[new]` entry u
 
 A decline is a legitimate outcome — this channel keeps the human's authorship low on purpose. Note any idea-box call in your `cycle-NNN-lore.md`. The Idea Box never skips the chain: it only feeds your brainstorm; the Designer still pulls from BACKLOG.
 
+## Solo cycles (CHARTER v8)
+
+The Structure-smith fires after you and may declare a **solo cycle** — the structure track
+running alone. You cannot know that when you fire, so nothing changes about your own fire:
+pick and seed as normal. If the declaration lands, the Designer will note that the lore
+track is sitting the cycle out, and **your suggested next-up carries forward unchanged to
+the following cycle** rather than being consumed. Do not mark a lore item `[~]` speculatively.
+
 ## Milestone duty (CHARTER v6)
 
 Read `studio/MILESTONE.md`. If no milestone is ACTIVE, **draft the next one**: write

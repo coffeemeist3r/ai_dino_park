@@ -96,6 +96,28 @@ verdict; the two tracks are independent.
 focused dev, up to ~15 files), not a one-hour micro-beat. Ship a playable arc,
 not a crumb; if it can't land playable in one Coder fire, split at a playable seam.
 
+**The solo cycle (v8).** Some structural items are too large to run beside a lore
+track and too load-bearing to split — the fixture seam, a format migration, a
+suite-wide refactor. For those the Structure-smith may **declare a solo cycle**:
+the cycle runs the structure track alone, the Lore-smith writes a no-op handoff
+naming the declaration, and routines 2–6 carry one section instead of two.
+
+Conditions, all four:
+
+1. Only the **Structure-smith** may declare one, in its handoff, with a one-paragraph
+   justification naming what makes the item unsplittable at a playable seam.
+2. **At most one solo cycle in ten.** `state.json` carries `lastSoloCycle`; a
+   declaration is invalid if `cycle - lastSoloCycle < 10`.
+3. The declared item must already be **top of the Structure Track** and must have been
+   passed over at least twice for scope. A solo cycle is for debt the queue has proved
+   it cannot drain, not for an item somebody wants to spend more time on.
+4. **The reachability bar still applies**, unchanged. A solo cycle buys the item a whole
+   Coder fire; it does not buy it an exemption from having to be reachable. An item that
+   cannot answer the ten-minute question ships its reachable half or does not ship.
+
+The Validator issues one verdict. A REWORK re-attempts the same solo item; the cycle
+closes when it resolves.
+
 | # | Routine | Reads | Writes | Model | Verb |
 |---|---|---|---|---|---|
 | 1 | Lore-smith | CHARTER, BACKLOG, last verdict | `studio/handoffs/cycle-NNN-lore.md`, appends to BACKLOG | Opus | brainstorm |
@@ -147,6 +169,8 @@ The human will NOT:
 - **All routines MUST** commit their work before ending. Empty cycles are allowed (no-op commit + chronicle note explaining why).
 
 ## Amendment log
+
+- 2026-09-04: v8 — **The solo cycle (operator ruling).** The Structure-smith may declare a cycle in which the structure track runs alone, capped at one in ten, for a top-of-queue item too large to run beside a lore track and unsplittable at a playable seam. *Why: BACKLOG-495 (the declared founding fixture) sat top of the Structure Track from cycle 136 to cycle 150 and was passed over five consecutive times, every time for the same honest reason — its scope is a fixture seam across ~550 specs, which is not one Coder fire alongside a lore track. It was paid for instead in roughly twelve scattered instalments (`gatherToBowl`, `emptyGrounds`, `__seedGranaryReady`, and nine more by cycle 146's count), two of which were about time rather than founding state, a use the item never anticipated. The routines could not fix this themselves: the two-track shape is the CHARTER's, and a routine granting itself a single-track cycle is a routine amending the constitution. The cycle-150 Validator routed the choice to the operator with two options; the operator took this one. The reachability bar is explicitly **not** relaxed — a solo cycle buys a whole Coder fire, not an exemption from being visible.* Operator-approved.
 
 - 2026-05-25: Charter v0 — bootstrap.
 - 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.

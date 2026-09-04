@@ -33,6 +33,13 @@ and the Structure-smith picks a structure-track item (`state.structureItem`). Ro
 2–6 build **both** in the same fire (two sections per handoff: `## Lore track` /
 `## Structure track`). The Validator judges each track independently.
 
+**Unless it is a solo cycle (CHARTER v8).** The Structure-smith may declare one for a
+top-of-queue structural item too large to run beside a lore track — capped at one in ten,
+tracked by `state.lastSoloCycle`. When `state.soloCycle` is true, the lore track sits the
+cycle out (its handoff is a no-op naming the declaration), routines 2–6 carry one section,
+and the Validator issues one verdict. Clear `state.soloCycle` at the Finish step. The
+reachability bar applies exactly as it does on a normal cycle.
+
 If new routine files exist (e.g. `8-*.md`, or an inserted `3.5-*.md`), **include them in
 numeric order automatically** — the pipeline is meant to be self-extending. A cycle may even
 write a new routine file if the studio needs a new role; honor it on the next run.
@@ -92,7 +99,7 @@ tracks have resolved (APPROVED or ABANDON).
 
 ## Finish
 
-- End with `state.json.phase = "lore-pending"` and a clean working tree.
+- End with `state.json.phase = "lore-pending"`, `state.soloCycle` cleared, and a clean working tree.
 - **Push to GitHub:** after the cycle is fully committed and the tree is clean, run
   `git push origin main` so the night's work lands on the remote (origin =
   https://github.com/coffeemeist3r/ai_dino_park.git, credential manager handles auth).

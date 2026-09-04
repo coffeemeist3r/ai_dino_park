@@ -10235,3 +10235,26 @@ against X=4**, so next cycle's Structure-smith brainstorms once more before it p
 its fifth cycle of being passed over** — this time with the question routed to the operator in the verdict
 rather than restated as a routine's apology. The art queue closes at **1**: 518, whose driver has now been
 unchosen for six fires.
+
+## CHARTER v8 — the solo cycle (operator ruling, 2026-09-04)
+
+The cycle-150 Validator put a question to the operator instead of deferring it a sixth time, and the operator
+answered the same day. **BACKLOG-495 had been top of the Structure Track since cycle 136 and passed over five
+consecutive times**, every time for the same honest reason: a fixture seam across ~550 specs is not one Coder
+fire alongside a lore track. It was paid for anyway, in roughly twelve scattered instalments, two of which
+were about *time* rather than founding state — a use the item never anticipated.
+
+The routines could not fix that themselves. The two-track shape is the constitution's, and a routine granting
+itself a single-track cycle is a routine amending the constitution. So the amendment came from the operator:
+**the Structure-smith may declare a solo cycle**, capped at one in ten, for a top-of-queue item that has been
+passed over at least twice for scope and cannot be split at a playable seam.
+
+The condition worth repeating is the fourth. **The reachability bar is not relaxed.** A solo cycle buys the
+item a whole Coder fire and nothing else — an item that cannot say what a player sees in a fresh ten-minute
+save ships its reachable half or does not ship. The point of v8 is to stop the queue starving on its own
+largest debt, not to open a lane for invisible work; v7 exists precisely because that lane was open once.
+
+Wired the same hour: `state.lastSoloCycle` (0 — never declared), `state.soloCycle`, the declaration mechanics
+in routine 1.5, the one-section path in routine 0, and a note in routine 1 that a Lore-smith's next-up carries
+forward rather than being consumed. **495 meets all four conditions right now**, and its backlog entry says so.
+Next cycle's Structure-smith should declare one and build it.
