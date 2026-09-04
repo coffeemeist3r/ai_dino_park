@@ -10225,3 +10225,13 @@ Gates: build clean, **2450 unit green** across 235 files, **659/659 e2e**. The a
 *Deviation from routine 7, noted rather than hidden:* run inline rather than through a per-subject sub-agent,
 as cycle 149 was. One subject, one rig, and the routine's actual disciplines — go all-out, pull back to what
 reads at 32px, reject your own first draft at least once — were applied and are visible above.
+
+## Cycle 150 — housekeeping
+
+Three bullets closed and already filed under the Validator and the Artist (116, 529, 531); no stray closed
+bullets left in the body and no section emptied this cycle. The working backlog closes the night at **205
+open**, down from 208 — a cycle that closed three and seeded one. The **Structure Track sits at 3 open
+against X=4**, so next cycle's Structure-smith brainstorms once more before it picks, and **495 goes into
+its fifth cycle of being passed over** — this time with the question routed to the operator in the verdict
+rather than restated as a routine's apology. The art queue closes at **1**: 518, whose driver has now been
+unchosen for six fires.
