@@ -10089,3 +10089,14 @@ individually. Five lore arcs off the keeper's-absence cluster the backlog has ca
 missed-you thought-mark, seeded with its host shipping the same cycle. Next-up: **BACKLOG-116**, with two
 Designer notes attached, both about reachability rather than feel: do not inherit the nuzzle's six-in-game-hour
 gate, and give the beat something to see and not only something to read. Idea Box empty.
+
+## Cycle 150 — structure-smith
+
+Structure Track at 4 open against X=4, so nothing brainstormed. Picked **BACKLOG-529** — the keeper's own
+clock is not the park's — over the queue's top on milestone duty: Milestone 18 is arithmetic on the player's
+clock, and cycle 149's vigil left two bare `new Date()` reads at WorldScene call sites outside the discipline
+`WorldClock`'s own header states. It blocks 122 outright and is the only live candidate that gets worse by
+waiting. **495 was passed over for the fifth time**, and the note is now flagged for the Validator rather than
+repeated: it needs an operator call about a single-track cycle, which is not a thing a routine can grant
+itself. 530 stays top for cycle 151. Sequencing flagged: 529 lands before 116 so the lore track consumes the
+seam instead of adding a third bare `new Date()`.
