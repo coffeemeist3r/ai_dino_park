@@ -1,5 +1,15 @@
 # Backlog Archive — closed items
 
+## Closed cycle 150 — the park notices the gap, and learns whose clock it is measuring it against (2026-09-04)
+
+> Both tracks APPROVED on Milestone 18's opening fire, and both are about the same thing from opposite
+> ends: what happens between two visits. 116 gives every resident its own account of the absence instead of
+> one system with five identical outputs; 529 gives the park the only clock that can measure an absence in
+> the player's own terms.
+
+- [x] BACKLOG-116 [social] Missed-you memory — a long absence leaves each dino a faint "the keeper was gone a while" memory that can color the very next greeting (layers onto 110's hour-aware line). Builds on 106.
+- [x] BACKLOG-529 [core] The keeper's own clock is not the park's — cycle 149's vigil (121) is the first system in the park to treat the **wall clock's hour** as a thing the world reasons about rather than as a rate to convert, and it reaches it through a bare `new Date().getHours()` at the call site. Every other time-shaped read in the park goes through `WorldClock`, whose whole design note is that the now-source is injectable so everything stays testable in Node; `Date.now()` appears at call sites only as a *cooldown* input, which is a duration and needs no timezone. An hour-of-day is not a duration: it is local, it moves under DST, it is the one clock reading the player can be in two of at once, and it is now load-bearing for a beat the register pins. The work: one seam that owns *the keeper's local hour* the way `WorldClock` owns the park's, injectable for tests, with the DST and timezone-change answers written down once rather than per caller — and the away digest's `savedAt` arithmetic reviewed against it, since that is the other place a real timestamp crosses into world state. Foundation for 122 (visit streak) and 116 (missed-you memory), both of which need "what day was that, where the player lives" and neither of which can get it from the park's clock. Builds on 121 / 105 / 106.
+
 ## Closed cycle 149 — the milestone closes on somebody waiting at the glass (2026-09-03)
 
 > Both tracks APPROVED, and Milestone 17 **SHIPPED** with them. 121 is the arc's last debt paid: a dino

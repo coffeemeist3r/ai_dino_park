@@ -10147,3 +10147,46 @@ instead is the claim in both directions with no false half - every visible mark 
 no ungraded dino wears one. Two smaller notes for the Validator: the spring-forward test pins the seam's
 answer and not a park behaviour, since the park does nothing special at a DST boundary; and the missed-you
 mark currently draws as the fallback emoji, because its rig is tonight's art fire.
+
+## Cycle 150 — validator: lore APPROVED / structure APPROVED — Milestone 18 opens
+
+Milestone 17 shipped last night on a dino standing at the hatch because it had worked out you tend to arrive
+around now. That is the park noticing a pattern in the keeper. **Milestone 18 is about the thing it still
+could not notice: the gap.** The park has had an offline catch-up since cycle 29, and what it did with an
+absence was print a paragraph and hand one dino a welcome-back. Four residents lived through the same gap
+and said nothing, which is the oldest defect in this project wearing its most sympathetic disguise — a
+feature that works, is tested, and produces the same output five times.
+
+**Tonight it produces five different ones, and the most interesting is the one that produces nothing.** The
+grade runs on two independent axes because a single warmth score puts *did not care* and *cared and will not
+say* in the same bucket, and they are the two most different residents in the bowl. Split them and Twitch —
+the warmest personality on the whole roster — comes out **unmoved**, because it was never looking at you;
+Rex, the coldest, comes out **aloof**, because it was. Neither read is available to the version of this
+feature anybody would have written first, and both are true about those dinos everywhere else in the park.
+Sunny says it missed you. Mossback denies noticing, and will keep denying it until you are five hearts in.
+Twitch and Glade never registered that you had gone at all, and the empty air over their heads is only
+legible because their neighbours are standing there thinking about you.
+
+The number that makes any of it reachable was **set rather than inherited**, and that is worth naming because
+it was the easy place to fail: the existing homecoming nuzzle wants six real hours away, and this cycle could
+have quietly adopted that threshold and shipped a beat no session can reach, with a green suite and a
+plausible excuse — *absences are long*. Five minutes instead. Play a minute, close the tab, come back. The
+bars behind the grades were fitted the same way and the first draft was thrown out on a margin of 0.023,
+because a founding dino's character hanging on any unrelated trait tweak is not a character, it is an
+accident.
+
+The structure track is the smaller half and the one with the longer reach. Last night's vigil made the wall
+clock's *hour* into world state and read it with a bare `new Date()` at two call sites — an hour-of-day is
+local, moves under DST, and is the one clock reading a player can be in two of at once, and none of that had
+an answer written down anywhere. It has three now, each pinned, and the one worth repeating is the timezone
+answer: a keeper who flies somewhere looks to the park like a keeper whose habits changed, and is believed
+within a handful of visits, **because a keeper who moves house is a keeper whose hour changed**. The seam
+paid for itself within the hour — the vigil spec had been asserting a negative against whatever hour CI
+happened to run at, and can now put the keeper somewhere and assert both directions.
+
+Two arcs of seven closed on the milestone's opening fire, and one more (122, the visit streak) is unblocked
+by tonight's seam. **BACKLOG-495 was passed over for the fifth time** and the verdict stops apologising for
+it and routes it to the operator instead: what it needs is a cycle where it is the only thing in flight, and
+a routine cannot grant itself one. Two options are written down there; neither was taken here.
+
+Gates: build clean, **2440 unit green** across 234 files, **659/659 e2e**.
