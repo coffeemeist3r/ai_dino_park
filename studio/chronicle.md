@@ -10136,3 +10136,14 @@ frame. One draft was rejected by its own test: the greet spec asserted the line 
 it does not - the opener leads the dino's own words, after the name. Corrected to the shape the code has
 rather than bending the code to the assertion. Gates: build clean, **2440 unit green** across 234 files,
 **659/659 e2e** on a full run.
+
+## Cycle 150 - qa
+
+21 criteria scored, both tracks APPROVE-recommended. Build clean, **2440 unit green**, **659/659 e2e** on a
+full run. One criterion is **met differently from how it was written** and the difference is recorded rather
+than narrowed away: the design asked for a visible mark on *every* graded dino, which is false by
+construction, because a dino that is asleep or keeping the vigil wears a higher mark. What is asserted
+instead is the claim in both directions with no false half - every visible mark belongs to a graded dino, and
+no ungraded dino wears one. Two smaller notes for the Validator: the spring-forward test pins the seam's
+answer and not a park behaviour, since the park does nothing special at a DST boundary; and the missed-you
+mark currently draws as the fallback emoji, because its rig is tonight's art fire.
