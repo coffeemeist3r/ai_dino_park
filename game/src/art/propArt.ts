@@ -792,6 +792,57 @@ const VIGIL_RIG: PropRig = {
   },
 };
 
+// `missed` is the fourth mark on 520's axis and the first one that is not an eye (BACKLOG-531, for
+// BACKLOG-116). The three before it are facts about the dino's own hour - shut, open, aimed at you. This is
+// a fact about the *keeper*: a thought a dino is holding about somebody who was not here, worn for a few
+// seconds when they come back.
+//
+// So it is deliberately not built like its siblings. An eye says *awake*; a thought has to say *about
+// something absent*, and the only pixel vocabulary that carries that at 16px is the one the emoji uses -
+// a puff with a tail of smaller puffs rising to it, so the mark reads as coming *from* the dino rather
+// than being a thing sitting over its head.
+//
+// **The first draft was rejected for being an eye.** It drew a third eye variant with the pupil rolled up
+// and away, on the reasoning that the family should look like a family. At 32px that is indistinguishable
+// from `rouse` - both are one open eye - so the park would have shipped two marks that mean opposite things
+// and look the same. The family claim is carried by the *colour*, which is `rouse`'s outline and sclera
+// verbatim, and by the slot; the silhouette has to differ, because the meaning does.
+//
+// **64 lit cells makes this the lightest mark in the park**, under `doze`'s 67, and that is the intended
+// order rather than a coincidence: it is the faintest thing a dino can wear, half the dinos wearing one
+// wear it at `MISSED_FAINT_ALPHA`, and a thought somebody is trying not to have should not out-shout a
+// dino asleep. Its catchlight is dimmer than `vigil`'s, which is dimmer than `rouse`'s, which stays the
+// brightest pixel in the park's hour-marks - the three steps in the same order as the three weights.
+const MISSED_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....oooooo.....',
+  '...ooWWWWWWoo...',
+  '..oWWWWWWWWWWo..',
+  '..oWWcWWWWWWWo..',
+  '...ooWWWWWWoo...',
+  '.....oooooo.....',
+  '................',
+  '................',
+  '......oo........',
+  '......oo........',
+  '................',
+  '....oo..........',
+  '....oo..........',
+  '................',
+];
+
+const MISSED_RIG: PropRig = {
+  size: 16,
+  grid: MISSED_GRID,
+  palette: {
+    o: 0x2b3344, // `rouse`'s outline, shared verbatim - this is the same axis, and a shared constant is the
+    // cheapest way to keep a family claim true rather than merely stated
+    W: 0xdfe6f0, // `rouse`'s sclera, likewise - the puff is lit like the eyes are
+    c: 0xe8eef8, // the one soft lift, dimmer than `vigil`'s and far under `rouse`'s
+  },
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -1480,6 +1531,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   doze: DOZE_RIG, // BACKLOG-520: the hours a dino keeps — the shut end of the axis
   rouse: ROUSE_RIG, // BACKLOG-520: ...and the open one
   vigil: VIGIL_RIG, // BACKLOG-526: ...and the pair that is looking at you (BACKLOG-121's host)
+  missed: MISSED_RIG, // BACKLOG-531: ...and the thought about somebody who was not here (BACKLOG-116's host)
   tic_circle: TIC_CIRCLE_RIG,
   // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
   // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern

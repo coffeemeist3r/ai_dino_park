@@ -32,6 +32,7 @@ import { atRest, chronotypeOf } from './chronotype';
 import { seededPersonality } from '../ai/personality';
 import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
+import { MISSED_ART_KEY } from './missed'; // BACKLOG-116/531
 import {
   FOUNDING_PILES,
   FOUNDING_RUIN,
@@ -120,6 +121,10 @@ export function worldPlacedProps(): Set<string> {
   out.add(ROUSE_ART_KEY);
   // BACKLOG-121/526: the vigil mark, hung over the dino standing at the glass by `refreshVigilMarks`.
   out.add(VIGIL_ART_KEY);
+  // BACKLOG-116/531: the missed-you thought, hung over a dino that formed an account of the keeper's
+  // absence by `refreshMissedMarks`. Fourth of the family, and the same reason it counts: the scene hangs
+  // it over a dino rather than laying it on the ground, but a player sees it either way.
+  out.add(MISSED_ART_KEY);
   return out;
 }
 

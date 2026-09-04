@@ -29,6 +29,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)
       'hatch', // BACKLOG-502 (cycle 143-art): the last undrawn prop key in the park closes
+      'missed', // BACKLOG-531: the fourth, and the first that is about the keeper rather than the hour (BACKLOG-116's host)
       'obsidian', // BACKLOG-508: the Ridge's black glass (503) - the park's first zone-exclusive resource
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',

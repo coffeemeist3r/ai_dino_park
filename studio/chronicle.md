@@ -10190,3 +10190,38 @@ it and routes it to the operator instead: what it needs is a cycle where it is t
 a routine cannot grant itself one. Two options are written down there; neither was taken here.
 
 Gates: build clean, **2440 unit green** across 234 files, **659/659 e2e**.
+
+## Cycle 150-art — artist: the thought about somebody who was not here
+
+**BACKLOG-531**, seeded this morning and drawn tonight — the second consecutive fire on that cadence, and
+the queue's rule holding for a sixth: an art item seeded *with* a shipping host gets drawn, and 518, whose
+driver is still nobody's decision, was held again.
+
+This is the fourth mark on 520's axis and **the first that is not an eye**. `doze` is an eye shut, `rouse`
+the same eye open, `vigil` a pair aimed out of the screen — three facts about the dino's own hour. This one
+is a fact about the *keeper*, and the first draft got that wrong in the most reasonable way available: it
+drew a third eye variant with the pupil rolled up and away, because a family ought to look like a family. At
+32px that is `rouse`. The park would have shipped two marks meaning opposite things and looking identical.
+**The family claim is carried by the colour, not the shape** — `rouse`'s outline and sclera taken verbatim,
+because a shared constant is the cheapest way to keep a family claim true rather than merely stated — and
+the silhouette has to differ, because the meaning does. So it is a puff with a tail of two smaller marks
+rising to it from one side, which is 💭's own logic and the only grammar at this size that says *about
+something absent*.
+
+**64 lit cells makes it the lightest mark in the park**, under `doze`'s 67 and `vigil`'s 76, and the order is
+the point rather than an accident: half the dinos wearing one wear it at 45% alpha, and a thought somebody is
+trying not to have should not out-shout a dino asleep. The catchlight steps down the same ladder, and the
+spec asserts the two inequalities together so the four marks cannot drift out of their own order.
+
+**The register did its job before a human could.** The first run after the rig landed turned six unit tests
+red across four files — `unplacedRigs()` reporting `missed` drawn with no host, and BACKLOG-501's own entry
+going dark with it. That is the cycle-145 amendment working exactly as written: a drawn rig with no host is a
+red build. One line in `worldPlacedProps()`, the same line each of its three siblings needed. Nothing was
+deleted to make it green.
+
+Gates: build clean, **2450 unit green** across 235 files, **659/659 e2e**. The art queue closes the night at
+**1** — 518, still waiting on somebody to pick its driver.
+
+*Deviation from routine 7, noted rather than hidden:* run inline rather than through a per-subject sub-agent,
+as cycle 149 was. One subject, one rig, and the routine's actual disciplines — go all-out, pull back to what
+reads at 32px, reject your own first draft at least once — were applied and are visible above.
