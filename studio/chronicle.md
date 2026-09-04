@@ -10078,3 +10078,14 @@ archive whole — the same shape as the cycle-144 section a cycle ago. The worki
 528, 529, 530). The **Structure Track sits at 3 open against X=4**, so next cycle's Structure-smith
 brainstorms once more before it picks — and 495 goes into its fourth cycle of being passed over for the
 reason it states about itself.
+
+## Cycle 150 — lore-smith
+
+Milestone 17 shipped last cycle, so this fire drafted **Milestone 18: the park knows you were gone** — the
+keeper's absence stops being a number the offline catch-up prints and becomes something the cast felt,
+individually. Five lore arcs off the keeper's-absence cluster the backlog has carried since cycle 29
+(116 / 113 / 119 / 114 / 122), the largest coherent unbuilt cluster left in the lore queue. Social queue at
+204 open ≥ 12, so nothing new seeded there; art queue at 1 < 3, so one item was — **BACKLOG-531**, the
+missed-you thought-mark, seeded with its host shipping the same cycle. Next-up: **BACKLOG-116**, with two
+Designer notes attached, both about reachability rather than feel: do not inherit the nuzzle's six-in-game-hour
+gate, and give the beat something to see and not only something to read. Idea Box empty.

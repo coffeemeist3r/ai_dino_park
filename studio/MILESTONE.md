@@ -8,7 +8,21 @@
 
 ## Current milestone
 
-_(none — Milestone 17 shipped cycle 149. The smiths draft the next one at the next cycle open.)_
+**Milestone 18: The park knows you were gone** — the keeper's absence stops being a
+number the catch-up prints and becomes something the cast *felt*, individually, and
+says back to you when you return.
+**Status:** ACTIVE (opened cycle 150)
+
+**Lore arcs:**
+- [ ] Each dino keeps its own account of the absence, graded by who it is — one missed you, one pretends it didn't, one never noticed — readable in its next greeting and visible over its head on return (BACKLOG-116)
+- [ ] The absence is not all warmth: a pair that kept no company while you were gone comes back a little further apart, and the digest says so (BACKLOG-113)
+- [ ] The bowl throws you a look on the way out, not only on the way in (BACKLOG-119)
+- [ ] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114)
+- [ ] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122, blocked on -529)
+
+**Structure arcs:**
+- [ ] The keeper's own hour is a seam the park owns, not a bare `new Date()` at a call site — local, DST-answered, injectable (BACKLOG-529)
+- [ ] The reachability register can make a claim about a save that has been *played*, not only one that has just been founded — the absence arc's whole subject is a second frame (BACKLOG-528)
 
 
 
