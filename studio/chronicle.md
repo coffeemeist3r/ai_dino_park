@@ -10124,3 +10124,15 @@ threshold is twelve times this one (intended, and worth asserting); and a dino t
 wears a higher mark, so "every graded dino shows a mark" is false as stated and the spec says so instead of
 being quietly narrowed. The DST unit tests must skip with a stated reason on a machine with no DST - a test
 that silently no-ops in CI is worse than no test.
+
+## Cycle 150 - coder
+
+Eight files, both tracks, built in the planned order. The keeper-clock seam landed first and the `new Date(`
+grep over `game/src` now hits exactly one file. The missed-you bars were **fitted, not picked**: the first
+draft's notice bar of 0.50 left a founding resident 0.023 from the line, which is a founding dino's grade
+hanging on any unrelated trait tweak, so it moved to 0.52 where the whole roster clears or misses by at least
+0.034 - and the Bowl's five split three-noticing, two-not, which is what puts all three grades on the first
+frame. One draft was rejected by its own test: the greet spec asserted the line *started* with the mark, and
+it does not - the opener leads the dino's own words, after the name. Corrected to the shape the code has
+rather than bending the code to the assertion. Gates: build clean, **2440 unit green** across 234 files,
+**659/659 e2e** on a full run.

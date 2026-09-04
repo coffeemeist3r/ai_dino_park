@@ -1,6 +1,6 @@
 {
   "cycle": 150,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-116: Missed-you memory",
   "structureItem": "BACKLOG-529: The keeper's own clock is not the park's",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-09-04T08:04:53.000Z",
     "designer": "2026-09-04T08:08:55.000Z",
     "code-planner": "2026-09-04T08:10:17.000Z",
-    "coder": "2026-09-03T08:30:00.000Z",
+    "coder": "2026-09-04T08:24:25.000Z",
     "qa": "2026-09-03T08:44:00.000Z",
     "validator": "2026-09-03T08:47:00.000Z",
     "artist": "2026-09-03T08:56:00.000Z"

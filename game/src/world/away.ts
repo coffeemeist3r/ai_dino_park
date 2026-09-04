@@ -8,6 +8,12 @@
  * calls). Bonded pairs that keep each other company drift a little closer and
  * leave a faint memory; a short `digest` narrates the homecoming.
  *
+ * **`savedAt` is a duration input, not a clock reading (BACKLOG-529).** Everything this module does with a
+ * real timestamp is subtraction — how long the keeper was gone — and a duration is timezone-free, unmoved by
+ * DST, and correct as it stands. An *hour-of-day* is a different kind of reading, and it lives in
+ * `keeperclock.ts`. The distinction is written here because this is the file somebody reaches for when they
+ * next need "what time was that", and the answer is: not here.
+ *
  * The simulated span is capped (MAX_AWAY_DAYS) so a week-long absence rolls
  * forward instantly instead of hanging the load. Rich per-dino beats (missed-you
  * memory, drift-apart, night-owl weighting) are deliberate follow-ups

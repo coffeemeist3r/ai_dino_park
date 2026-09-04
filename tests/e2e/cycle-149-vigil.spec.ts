@@ -20,6 +20,15 @@ const stepVigil = (p: Page) => p.evaluate(() => (window as W).__stepVigil());
 const visitHours = (p: Page, hours?: number[]) =>
   p.evaluate((hh) => (window as W).__visitHours(hh) as number[], hours);
 const events = (p: Page) => p.evaluate(() => (window as W).__events() as string[]);
+const keeperNow = (p: Page, ms?: number) =>
+  p.evaluate((m) => (window as W).__keeperNow(m) as { ms: number; hour: number; day: string }, ms);
+
+/** An epoch whose *local* hour is `h` — the reading `keeperHour` will give the scene. */
+function hourEpoch(h: number): number {
+  const d = new Date();
+  d.setHours(h, 30, 0, 0);
+  return d.getTime();
+}
 const memory = (p: Page, n: string) =>
   p.evaluate((nn) => ((window as W).__memory() as Record<string, string[]>)[nn] ?? [], n);
 
@@ -55,13 +64,27 @@ test.describe('the vigil at the hatch (BACKLOG-121)', () => {
     expect((await memory(page, keeper)).some((m) => m.includes('glass'))).toBe(true);
   });
 
+  /**
+   * BACKLOG-529: this used to read `new Date().getHours()` in the spec, which is the same coin flip the
+   * keeper-clock seam exists to remove — the assertion depended on what hour CI happened to run at. Now the
+   * spec *puts* the keeper at an hour, and both halves derive that hour from the park's own learned history
+   * rather than naming one.
+   */
   test('nobody waits when the keeper turns up at an hour it has never seen', async ({ page }) => {
     await boot(page);
-    // A history that agrees with itself about a hour twelve hours from now — the far side of the dial, so
-    // no wrapping can bring it inside the anticipation window.
-    const far = (new Date().getHours() + 12) % 24;
-    await visitHours(page, [far, far, far]);
+    const known = (await visitHours(page))[0];
+
+    // Move the keeper to the far side of the dial from the hour it is anticipated at, so no wrapping can
+    // bring it inside the anticipation window. The history is untouched: what changed is when you arrived.
+    await keeperNow(page, hourEpoch((known + 12) % 24));
+    await visitHours(page, [known, known, known]); // clears the cooldown; restates the history unchanged
     await stepVigil(page);
     expect(await vigil(page)).toBeNull();
+
+    // Come back at the hour it does know, and somebody is there.
+    await keeperNow(page, hourEpoch(known));
+    await visitHours(page, [known, known, known]);
+    await stepVigil(page);
+    expect(await vigil(page)).not.toBeNull();
   });
 });

@@ -137,6 +137,17 @@ import {
   vigilMemory,
   type Vigil,
 } from '../world/vigil';
+import { getKeeperClock, setKeeperNowSource } from '../world/keeperclock'; // BACKLOG-529
+import {
+  MISSED_ART_KEY,
+  MISSED_FAINT_ALPHA,
+  MISSED_GLYPH,
+  MISSED_MARK_STEPS,
+  missedMemory,
+  missedOpener,
+  missedYou,
+  type MissedGrade,
+} from '../world/missed'; // BACKLOG-116
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey } from '../world/stake';
 import { foundingKind } from '../world/founding';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
@@ -650,6 +661,14 @@ export class WorldScene extends Phaser.Scene {
    *  appends to it, so it is non-empty by the time the first world step runs. */
   private visitHours: number[] = [];
   private vigilMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /** The missed-you mark (BACKLOG-116), index-aligned like the rest of the hour-mark family. */
+  private missedMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /**
+   * Who is holding an unspoken thought about the absence, and the `worldSteps` it was formed at. Session
+   * state, never persisted — the `companyTrace` precedent exactly: stamped, consumed by a single greeting,
+   * and expiring on its own if nobody comes over.
+   */
+  private missedTrace: Record<string, { grade: MissedGrade; at: number }> = {};
   /** Set by the `__clearFounding` spec hook. `loadFromDb()` resolves a beat *after* `__ready`, so a spec can
    *  clear the founding ruin before it has been seeded; this makes the clear win either way. */
   private foundingCleared = false;
@@ -1683,6 +1702,13 @@ export class WorldScene extends Phaser.Scene {
       }
       return [...this.visitHours];
     };
+    // BACKLOG-529: dev-only — put the keeper's clock at a chosen epoch (or read where it is), so a vigil
+    // spec asserts against an hour it chose rather than whatever hour CI happens to run at.
+    (window as any).__keeperNow = (ms?: number) => {
+      if (ms !== undefined) setKeeperNowSource(() => ms);
+      const clock = getKeeperClock();
+      return { ms: clock.now(), hour: clock.hour(), day: clock.day() };
+    };
     (window as any).__landmarks = (z?: string) =>
       this.landmarksIn(z ?? this.zoneId).map((l) => ({ ...l, derelict: !!l.derelict }));
     (window as any).__standing = (z?: string) => this.standingIn(z ?? this.zoneId);
@@ -2103,7 +2129,7 @@ export class WorldScene extends Phaser.Scene {
 
   private checkVigil(): void {
     if (this.vigil) return; // one at a time
-    if (!isAnticipating(this.visitHours, new Date().getHours())) return;
+    if (!isAnticipating(this.visitHours, getKeeperClock().hour())) return; // BACKLOG-529
     if (!cooldownReady(Date.now(), this.lastVigilMs, VIGIL_COOLDOWN_MS)) return;
     const zone = this.zoneId;
     const candidates = this.dinos
@@ -3203,6 +3229,7 @@ export class WorldScene extends Phaser.Scene {
     this.sleepMarks.push(this.makeHourMark(DOZE_ART_KEY, DOZE_GLYPH));
     this.rouseMarks.push(this.makeHourMark(ROUSE_ART_KEY, ROUSE_GLYPH));
     this.vigilMarks.push(this.makeHourMark(VIGIL_ART_KEY, VIGIL_GLYPH)); // BACKLOG-121
+    this.missedMarks.push(this.makeHourMark(MISSED_ART_KEY, MISSED_GLYPH)); // BACKLOG-116
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -3593,6 +3620,65 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       mark.setVisible(this.vigil?.keeper === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
     });
+    this.refreshMissedMarks();
+  }
+
+  /**
+   * The missed-you thought (BACKLOG-116) — the **bottom** of the hour-mark precedence order.
+   *
+   * The three marks above it are facts about the dino's own hour: it is asleep, it is up when it should not
+   * be, it is waiting at the glass. This is a thought about the keeper, and it yields to all of them — a
+   * dino that is face-down in the dirt is not visibly thinking about anything. The consequence, worth stating
+   * because it makes a plainer criterion false: a graded dino that is also asleep or on vigil wears the
+   * higher mark and no thought, so "every graded dino shows a mark" holds only for dinos wearing no
+   * higher one.
+   *
+   * `aloof` draws the same rig, fainter. Two steps of one glyph and a third step of nothing at all.
+   */
+  private refreshMissedMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.missedMarks[i];
+      if (!mark) return;
+      const trace = this.missedTrace[d.name];
+      const higher = this.isResting(d) || this.isRoused(d) || this.vigil?.keeper === d.name;
+      const shown = !!trace && !higher && this.inView(d);
+      mark
+        .setVisible(shown)
+        .setAlpha(trace?.grade === 'aloof' ? MISSED_FAINT_ALPHA : 1)
+        .setPosition(d.x, d.y - TILE);
+    });
+  }
+
+  /**
+   * Every resident's own account of the absence (BACKLOG-116), filed on the keeper's return. Called from
+   * both catch-up sites, right after the homecoming so the two beats read the same restored friendship.
+   *
+   * The nuzzle (112) fires at twelve times this threshold, so an ordinary step-away produces these traces
+   * and no nuzzle at all — which is the intended relationship between a faint, common beat and a rare one.
+   */
+  private applyMissed(minutes: number): Record<string, MissedGrade> {
+    const graded = missedYou(
+      this.dinos.map((d) => ({
+        name: d.name,
+        traits: d.traits,
+        hearts: heartsFromPoints(this.friendship[d.name] ?? 0),
+      })),
+      minutes,
+    );
+    for (const [name, grade] of Object.entries(graded)) {
+      const mem = missedMemory(grade);
+      if (mem) this.memory = remember(this.memory, name, mem);
+      this.missedTrace[name] = { grade, at: this.worldSteps };
+    }
+    this.refreshMissedMarks();
+    return graded;
+  }
+
+  /** Drop traces nobody came over for (BACKLOG-116). A thought is not wallpaper; it goes unsaid. */
+  private expireMissedTraces(): void {
+    for (const [name, t] of Object.entries(this.missedTrace)) {
+      if (this.worldSteps - t.at >= MISSED_MARK_STEPS) delete this.missedTrace[name];
+    }
   }
 
   /** The cold funk's 🥶 (BACKLOG-184) — above the 💤 slot so a dusk overlap can't stack glyphs. */
@@ -4889,6 +4975,7 @@ ${e.short}`;
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
     this.worldSteps++; // BACKLOG-424: the stamp a pacing trace ages against
+    this.expireMissedTraces(); // BACKLOG-116: an unspoken thought ages out of the frame
     if (this.convoCooldown > 0) this.convoCooldown--;
 
     // A world-scale night event (BACKLOG-144) overrides all wandering: the whole cast gathers to
@@ -7247,11 +7334,21 @@ ${e.short}`;
     const trace = caught ? undefined : this.companyTrace[target.name];
     const glad = trace && companyTraceIsFresh(this.worldSteps - trace.at) ? trace : undefined;
     if (glad) delete this.companyTrace[target.name]; // consumed by this one line
+    // BACKLOG-116: the third grade of opener, at the bottom of the same one-or-none chain. A dino caught
+    // mid-ritual, or still glad of company, is leading with something that happened *here* — the thought
+    // about the keeper's absence is the oldest of the three and yields to both. Consumed by this one line.
+    const missedTrace = caught || glad ? undefined : this.missedTrace[target.name];
+    if (missedTrace) {
+      delete this.missedTrace[target.name];
+      this.refreshMissedMarks(); // said out loud, so it stops being a thought over its head
+    }
     const opener = caught
       ? caughtOpener(register, this.ticAxisFor(target))
       : glad
         ? gladOpener(glad.friend)
-        : null;
+        : missedTrace
+          ? missedOpener(missedTrace.grade)
+          : null;
     // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
     // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
     // BACKLOG-300: and a dino that was *not* mid-ritual names what it was doing instead. One aside or the
@@ -8076,7 +8173,7 @@ ${e.short}`;
    * assumption is outvoted by evidence if the keeper actually comes at another hour.
    */
   private recordVisit(saved: number[] | undefined): void {
-    const hour = new Date().getHours();
+    const hour = getKeeperClock().hour(); // BACKLOG-529: the keeper's local hour, through the seam that owns it
     const history = saved?.length ? saved : [hour];
     this.visitHours = noteVisit(history, hour);
   }
@@ -8223,6 +8320,7 @@ ${e.short}`;
         this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();
       }
+      this.applyMissed(away.minutes); // BACKLOG-116: and everybody else's own account of the same gap
     });
 
     clock.onHour(() => void this.saveGame());
@@ -8267,8 +8365,10 @@ ${e.short}`;
         this.applyHomecomingMemory(this.lastHomecoming);
         this.playHomecoming();
       }
+      const missed = this.applyMissed(away.minutes); // BACKLOG-116
       this.refreshHeartsPanel();
       return {
+        missed,
         days: away.days,
         minutes: away.minutes,
         capped: away.capped,
@@ -8278,6 +8378,19 @@ ${e.short}`;
     };
     // any: dev-only Playwright hook — last homecoming beat (or null)
     (window as any).__homecoming = () => this.lastHomecoming;
+    // BACKLOG-116: who is holding an account of the absence, and what the player can actually see. The
+    // second reads the *sprites* rather than the model — the `__wornMarks` precedent — so a spec asserts
+    // the drawn thing and the precedence rules above it are pinned rather than reviewed by reading.
+    // any: dev-only Playwright hooks
+    (window as any).__missedYou = () =>
+      Object.fromEntries(Object.entries(this.missedTrace).map(([n, t]) => [n, t.grade]));
+    // any: dev-only Playwright hook
+    (window as any).__missedMarks = () =>
+      this.dinos.map((d, i) => ({
+        name: d.name,
+        visible: !!this.missedMarks[i]?.visible,
+        alpha: this.missedMarks[i]?.alpha ?? 0,
+      }));
     // any: dev-only Playwright hook — strings of currently-alive speech bubbles
     (window as any).__bubbleTexts = () => [...this.liveBubbles];
     // any: dev-only Playwright hook — the jealous runner-up awaiting a make-up greet (or null)

@@ -213,3 +213,40 @@ disjoint regions of `WorldScene.ts` (529: `checkVigil`/`recordVisit` + one hook;
 the mark chain, the two catch-up blocks, `pickTone`, two hooks), so after sequencing there is no
 overlapping edit — but the sequence is not optional, because 116's catch-up work sits four lines
 from `recordVisit`.
+
+---
+
+## Shipped
+
+**Files touched (8):**
+
+- `game/src/world/keeperclock.ts` (new) — the seam and its three answers.
+- `game/src/world/missed.ts` (new) — grades, builders, fitted bars.
+- `game/src/world/away.ts` — the duration-vs-hour-of-day note.
+- `game/src/scenes/WorldScene.ts` — both tracks, in the planned order.
+- `tests/unit/keeperclock.test.ts` (new), `tests/unit/missed.test.ts` (new).
+- `tests/e2e/cycle-149-vigil.spec.ts` — third test rewritten onto `__keeperNow`.
+- `tests/e2e/cycle-150-missed.spec.ts` (new).
+
+**Deviations from the plan**
+
+1. `MISSED_MARK_STEPS` and `MISSED_FAINT_ALPHA` were placed in `missed.ts` rather than in the
+   scene. The plan named them without saying where they live; the module is where every other
+   number this feature has lives, and `companyTraceIsFresh` sets that precedent for a step budget.
+2. The greet spec asserts `` `${name}: 💭` `` rather than a line *starting* with the glyph. The
+   first draft got this wrong and the test caught it: `pickTone` returns
+   `<source-prefix><name>: <opener> <reply>`, so the opener leads the dino's own words and not the
+   string. The assertion was corrected to the shape the code actually has — the opener still leads
+   everything the dino says, which is the claim that mattered.
+3. The `aloof` step ships as the same rig at `MISSED_FAINT_ALPHA` rather than a second rig. One
+   glyph, two alpha steps, and a third step of nothing — noted for the Artist, since BACKLOG-531
+   is drawn tonight against exactly this host.
+
+**Gates**
+
+- `npm run build` — clean.
+- `npx vitest run` — **2440 passed**, 3 skipped, 234 files.
+- `npx playwright test` — **659/659 passed** (5.8m), full suite, no flake on the full run.
+- `@mlc-ai/web-llm` grep outside `game/src/ai/` — no hits. Boundary intact.
+- `new Date(` grep outside tests — hits only in `keeperclock.ts`. Structure criterion one holds.
+- Save shape unchanged; no new persisted field on either track.
