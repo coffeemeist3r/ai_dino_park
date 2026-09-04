@@ -1,7 +1,7 @@
 {
   "cycle": 150,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-116: Missed-you memory",
   "structureItem": "BACKLOG-529: The keeper's own clock is not the park's",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-04T08:04:04.000Z",
     "structure-smith": "2026-09-04T08:04:53.000Z",
-    "designer": "2026-09-03T08:09:00.000Z",
+    "designer": "2026-09-04T08:08:55.000Z",
     "code-planner": "2026-09-03T08:10:00.000Z",
     "coder": "2026-09-03T08:30:00.000Z",
     "qa": "2026-09-03T08:44:00.000Z",

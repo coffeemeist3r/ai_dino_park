@@ -10100,3 +10100,16 @@ waiting. **495 was passed over for the fifth time**, and the note is now flagged
 repeated: it needs an operator call about a single-track cycle, which is not a thing a routine can grant
 itself. 530 stays top for cycle 151. Sequencing flagged: 529 lands before 116 so the lore track consumes the
 seam instead of adding a third bare `new Date()`.
+
+## Cycle 150 - designer
+
+Two tracks, one sequence: **529 lands before 116**, because both touch `WorldScene.ts` and the second must
+consume the first's seam rather than adding a third bare `new Date()`. The structure spec is a narrow
+keeper-clock module plus the three answers that exist nowhere today - DST fall-back (record both; the keeper
+really was there twice), spring-forward (no special case), and a timezone change (believed within the
+history's own length, deliberately, because a keeper who moves house is a keeper whose hour changed). The
+lore spec grades the absence per dino on two independent axes: whether it noticed at all, and whether it
+will admit it - because one warmth score collapses "did not care" and "cared and will not say" into the same
+dino, and those are the two most different residents in the bowl. The third grade wears no mark, and that
+empty space beside two marked neighbours is the beat. Threshold set at five minutes rather than inheriting
+the nuzzle's six hours, on the reachability bar.
