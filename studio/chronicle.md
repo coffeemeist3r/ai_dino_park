@@ -10113,3 +10113,14 @@ will admit it - because one warmth score collapses "did not care" and "cared and
 dino, and those are the two most different residents in the bowl. The third grade wears no mark, and that
 empty space beside two marked neighbours is the beat. Threshold set at five minutes rather than inheriting
 the nuzzle's six hours, on the reachability bar.
+
+## Cycle 150 - codeplan
+
+~11 files across the two tracks, inside the arc size. The reuse audit found the lore track's whole pattern
+already in the tree: `companyTrace` is a session-only, step-stamped trace consumed by a single greeting, which
+is exactly what a missed-you trace is, so the plan reuses that shape rather than inventing a second one. Two
+risks written down before the Coder can trip on them: `__catchUp` fires the homecoming as well, whose own
+threshold is twelve times this one (intended, and worth asserting); and a dino that is asleep or on vigil
+wears a higher mark, so "every graded dino shows a mark" is false as stated and the spec says so instead of
+being quietly narrowed. The DST unit tests must skip with a stated reason on a machine with no DST - a test
+that silently no-ops in CI is worse than no test.
