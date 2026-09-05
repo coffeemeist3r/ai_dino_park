@@ -10286,3 +10286,9 @@ becoming aliases so thirty callers move without a spec edit), and the founding-c
 to absorb — `FOUNDING_PILES` stocking three grounds so every drawn heap step exists on a fresh save.
 Fourteen acceptance criteria; the fallout from the pile move is expected and must be repaired by
 naming a fixture, never by re-flattening the constant.
+
+## Cycle 151 — code-planner
+
+Seven files, no new dev hook — `__bank(z)` already reports step, total and visibility per ground, and
+adding a twelfth instalment is the thing this item exists to stop. The plan writes the expected e2e
+fallout down in advance and fixes the repair order: name a fixture, never re-flatten the constant.
