@@ -10418,3 +10418,17 @@ honest candidate is still `pileStep` off the ground's own bank, and after tonigh
 candidate than it was this morning: three grounds boot with a heap instead of one, so a stake keyed to
 the ground's bank would have three different things to say on a fresh save rather than one.
 
+## Cycle 151 — housekeeping
+
+Three closed bullets filed to the archive (495's two entries and 532), leaving the working backlog at
+**205 open** — a cycle that closed two and seeded two, so the count is flat and the debt moved rather
+than grew. No section emptied. The **Structure Track sits at 3 open against X=4**, so next cycle's
+Structure-smith brainstorms once before it picks, with **BACKLOG-528** on top — Milestone 18's remaining
+structure arc, and cheaper tonight than it was this morning. **BACKLOG-533** goes to the bottom of that
+queue on purpose: it is the quarter of 495 that was deliberately left unbuilt, and its own text says to
+decide it from evidence the next founding-constant move will produce rather than from taste tonight.
+
+`lastSoloCycle = 151`. The next declaration is not legal before **cycle 161**, and the queue should not
+go looking for one — v8 is an escape hatch for debt the queue has proved it cannot drain, and tonight it
+drained the only item that had ever proved that.
+
