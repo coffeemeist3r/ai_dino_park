@@ -17,7 +17,8 @@
  * a restored save seeds nothing.
  */
 
-import { BOWL_ID, GROVE_ID, zoneChain } from './zones';
+import { BOWL_ID, GROVE_ID, RIDGE_ID, zoneChain } from './zones';
+import { bankStep } from './bank';
 import type { Stockpile } from './resource';
 import type { FoundingKind, Pioneers } from './pioneer';
 import { ROSTER } from '../entities/roster';
@@ -31,14 +32,48 @@ import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type Pro
 export const FOUNDING_RUIN = { zone: GROVE_ID, tileX: 4, tileY: 10 } as const;
 
 /**
- * What the founding grounds start with in the pile. Only the Grove is stocked, and only enough to cover
- * `REPAIR_COST` with a unit to spare — the point is that the ruin is *mendable*, not that the Grove starts
- * rich. `cycle-136-founding.test.ts` pins this against the repair cost: if a later tuning pass drops the
- * pile below what a mend costs, the founding beat goes unreachable again and that test says so out loud.
+ * What the founding grounds start with in the pile (BACKLOG-488, widened by BACKLOG-495).
+ *
+ * The Grove's entry is the original and is unchanged: enough stone to cover `REPAIR_COST` with a unit to
+ * spare, so the founding ruin is *mendable* rather than the Grove starting rich. `cycle-136-founding.test.ts`
+ * pins that against the repair cost, and a tuning pass that drops it says so out loud.
+ *
+ * **The other two entries are cycle 151's, and they are a reachability repair.** BACKLOG-504 draws the
+ * ground's banked heap in three steps (`PILE_STEPS = [1, 2, 4]`), and until now exactly one ground on a
+ * fresh save had anything in its pile — so a new park exercised one of the three rigs, and `pile_3` had
+ * never existed on a first frame in the park's history. That is CHARTER v7's corollary precisely: three
+ * steps drawn, the founding state calibrated to sit under two of them. So the founding piles now reach
+ * **each drawn step exactly once**, and `reachability.ts`'s `BACKLOG-495/504` entry holds them to it.
+ *
+ * The shape of each entry is not arbitrary either. The bowl gets a branch because the bowl is where the
+ * player starts and one unit is the smallest thing that can be seen. The Ridge's is mostly obsidian
+ * because obsidian is the Ridge's own exclusive kind (BACKLOG-503) — a ground's heap should be made of
+ * the thing that ground is for.
+ *
+ * The frontier (`saltpan`) is deliberately **absent**: BACKLOG-505's unsettled read is a claim about
+ * residents and founders rather than piles, but a stocked frontier would still read as lived on, and
+ * the frontier badge is the one thing on a fresh save that has to mean nobody has been there.
+ *
+ * Every total stays under `STOCKPILE_SOFT_CAP`, and `__clearFounding` derives its clear from
+ * `Object.keys` here, so widening this table needs no change on the clearing side.
  */
 export const FOUNDING_PILES: Record<string, Stockpile> = {
+  [BOWL_ID]: { branch: 1 },
   [GROVE_ID]: { stone: 2 },
+  [RIDGE_ID]: { obsidian: 3, stone: 1 },
 };
+
+/**
+ * Which drawn heap step each stocked ground boots at (BACKLOG-495/504).
+ *
+ * Derived, never typed. Three separate readers want this fact — the register entry that holds the founding
+ * piles to covering every step, the unit spec that pins the coverage, and the e2e founding fixture that
+ * asserts what the player sees on each ground — and this item exists because a founding-shaped claim
+ * written down more than once goes stale in all but one of the places.
+ */
+export const FOUNDING_PILE_STEPS: Record<string, number> = Object.fromEntries(
+  Object.entries(FOUNDING_PILES).map(([zone, pile]) => [zone, bankStep(pile)]),
+);
 
 /**
  * The founding council (CHARTER v7 / BACKLOG-492).

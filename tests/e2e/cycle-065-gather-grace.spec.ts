@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 /**
  * Legible gathering (BACKLOG-297). A freshly fallen resource lingers a grace window before any dino
@@ -34,6 +34,10 @@ test('a fresh resource lingers a grace window before it can be banked', async ({
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  // BACKLOG-495: this spec's subject is the grace window, not the founding state. It wants an empty bowl
+  // pile so `{}` means "nothing has been banked yet"; since cycle 151 the founding park stocks the bowl.
+  // Name the fixture rather than assume it.
+  await foundingState(page, 'empty-grounds');
 
   // Fresh drop on a dino: one step must NOT bank it — the grace holds it on the ground to be seen.
   await spawnOnFirstDino(page, 'branch', true);

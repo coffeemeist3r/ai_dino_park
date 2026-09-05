@@ -35,6 +35,7 @@ import { VIGIL_ART_KEY } from './vigil';
 import { MISSED_ART_KEY } from './missed'; // BACKLOG-116/531
 import {
   FOUNDING_PILES,
+  FOUNDING_PILE_STEPS,
   FOUNDING_RUIN,
   foundingCouncils,
   foundingKind,
@@ -255,6 +256,19 @@ export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
     system: 'every rig the studio has drawn is a rig the park can actually put on the ground',
     fact: 'the cycle-91 stash rule lets a rig be authored ahead of its host; nothing counted the ones still waiting',
     holds: () => unplacedRigs().length === 0,
+  },
+  {
+    id: 'BACKLOG-495/504',
+    system: 'the banked heap on a ground shows every size the studio drew for it, on the first frame',
+    fact: 'the founding piles stock enough grounds to reach each drawn step exactly once',
+    // Derived from the founding table and the step ladder, so a tuning pass that re-flattens the piles
+    // reddens the build here rather than going unnoticed. `size === PILE_STEPS.length` with no zero is
+    // "each step exactly once": a stocked ground that fell under step 1 would contribute a 0 and a
+    // duplicate step would shrink the set.
+    holds: () => {
+      const steps = Object.values(FOUNDING_PILE_STEPS);
+      return !steps.includes(0) && new Set(steps).size === PILE_STEPS.length;
+    },
   },
 ];
 

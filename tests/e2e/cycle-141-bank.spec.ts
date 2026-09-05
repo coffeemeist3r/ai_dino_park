@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 /**
  * The pile gets a place (BACKLOG-504). A ground's banked gathering has paid the upkeep bill, funded a mend,
@@ -22,7 +22,14 @@ const landmarks = (p: Page, z: string) =>
 const runUpkeep = (p: Page, days = 1) => p.evaluate((d) => (window as W).__runUpkeep(d) as string[], days);
 const stepMend = (p: Page) => p.evaluate(() => (window as W).__stepMend());
 
-test('a fresh park ships a heap on the ground with the ruin, and a bare one where you wake up', async ({ page }) => {
+/**
+ * **Amended cycle 151 (BACKLOG-495).** This asserted a bare bowl, and the reason it gave was that the
+ * first gathered stone should be the event. That was true and it cost two of the three heap rigs: with one
+ * stocked ground a fresh park exercised step 2 and nothing else, and `pile_3` had never existed on a first
+ * frame in the park's history. The founding piles now reach each drawn step once, so the claim this spec
+ * makes gets bigger rather than smaller — a fresh park ships a heap on three grounds, all three sizes.
+ */
+test('a fresh park ships a heap on three grounds, one at each size the studio drew', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
@@ -31,14 +38,20 @@ test('a fresh park ships a heap on the ground with the ruin, and a bare one wher
   expect(grove.total).toBe(2);
   expect(grove.step).toBe(2); // a heap standing on the Grove one edge east of the spawn
 
-  const bowl = await bank(page, 'bowl');
-  expect(bowl.step).toBe(0); // nothing banked here yet — the first gathered stone is the event
+  expect((await bank(page, 'bowl')).step).toBe(1); // the smallest, where you wake up
+  expect((await bank(page, 'ridge')).step).toBe(3); // the largest, at the far end of the chain
+
+  // ...and the frontier stays bare, because the unsettled badge has to mean nobody has been there.
+  expect((await bank(page, 'saltpan')).step).toBe(0);
 
   expect(errors).toEqual([]);
 });
 
 test('the heap appears when something banks and goes when it is spent', async ({ page }) => {
   await boot(page);
+  // BACKLOG-495: the subject here is the step machinery, not the founding state — it wants a bowl that
+  // starts at nothing so "appears" and "goes" mean what they say. Name the fixture rather than assume it.
+  await foundingState(page, 'empty-grounds');
   expect((await bank(page, 'bowl')).step).toBe(0);
   expect((await bank(page, 'bowl')).visible).toBe(false);
 

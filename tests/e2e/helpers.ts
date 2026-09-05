@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test';
+import { FOUNDING_PILE_STEPS, FOUNDING_RUIN } from '../../game/src/world/founding';
 
 /**
  * Boot the game and wait until the scene is fully ready.
@@ -86,6 +87,119 @@ function settleAfterInput(page: Page): void {
 }
 
 /**
+ * The founding fixture (BACKLOG-495) — the one place that says what founding state a spec wants.
+ *
+ * Three times a founding constant has moved and taken a crowd of unrelated specs down with it: cycle 135
+ * spread the cast (~15 red), cycle 136 seeded the Grove's ruin (16 red, two of them about upkeep), cycle
+ * 142 found the same class hiding inside a dev hook. Each was repaired with a helper, and each helper was
+ * the right fix and the wrong shape — a helper answers *this* spec's question and never writes the question
+ * down. A spec that does not say which founding state it wants is making an assertion nobody knows it is
+ * making, and the only instrument that has ever surfaced one is moving the constant, which is exactly what
+ * CHARTER v7 wants this studio doing more of.
+ *
+ * So the assumptions get names. A spec opts into one by calling `foundingState(page, name)`, and the name
+ * carries a **postcondition** — because a fixture that silently fails to apply is the same invisible
+ * assumption in a nicer coat. Every apply is followed by its own verify, and a failure names the fixture.
+ *
+ * Adding a fifth name (with a `why` line) is the seam working. Re-flattening a founding constant to make a
+ * spec green, or writing a twelfth ad-hoc helper, is the seam being worked around.
+ */
+export type FoundingFixtureName = 'as-shipped' | 'all-bowl' | 'empty-grounds' | 'bare';
+
+/** A verify returns the reason it did not hold, or `null`. One throw site, one message shape. */
+type Verify = (page: Page) => Promise<string | null>;
+
+interface FoundingFixture {
+  /** Why a spec would want this state. Read by a human deciding which name to call. */
+  why: string;
+  apply: (page: Page) => Promise<void>;
+  verify: Verify;
+}
+
+const verifyAllBowl: Verify = async (page) =>
+  page.evaluate(() => {
+    const w = window as Record<string, any>;
+    for (const d of w.__dinoPositions() as Array<{ name: string }>) {
+      const z = w.__homeZone(d.name);
+      if (z !== 'bowl') return `${d.name} is on ${z}`;
+    }
+    return null;
+  });
+
+const verifyEmptyGrounds: Verify = async (page) =>
+  page.evaluate((ruin) => {
+    const w = window as Record<string, any>;
+    for (const [zone, pile] of Object.entries(w.__pilesByZone() as Record<string, Record<string, number>>)) {
+      const total = Object.values(pile).reduce((a, b) => a + b, 0);
+      if (total > 0) return `${zone} still holds ${total} in its pile`;
+    }
+    const stillThere = (w.__cairns() as Array<{ zone: string; tileX: number; tileY: number }>).some(
+      (c) => c.zone === ruin.zone && c.tileX === ruin.tileX && c.tileY === ruin.tileY,
+    );
+    return stillThere ? `the founding ruin is still standing on ${ruin.zone}` : null;
+  }, FOUNDING_RUIN);
+
+/**
+ * The shipping state's own postcondition. Reads the expected steps out of the game's `FOUNDING_PILE_STEPS`
+ * rather than restating them, so moving a founding pile fails **here**, by name, once — instead of in
+ * whatever unrelated spec the change happens to reach first.
+ */
+const verifyAsShipped: Verify = async (page) =>
+  page.evaluate((expected) => {
+    const w = window as Record<string, any>;
+    for (const [zone, step] of Object.entries(expected)) {
+      const got = w.__bank(zone).step as number;
+      if (got !== step) return `${zone} boots at heap step ${got}, expected ${step}`;
+    }
+    const ruin = (w.__cairns() as Array<{ derelict?: boolean }>).length;
+    return ruin > 0 ? null : 'the founding ruin is missing';
+  }, FOUNDING_PILE_STEPS);
+
+export const FOUNDING_FIXTURES: Record<FoundingFixtureName, FoundingFixture> = {
+  'as-shipped': {
+    why: 'the founding state production actually ships — the spec is about a fresh park itself',
+    apply: async () => {},
+    verify: verifyAsShipped,
+  },
+  'all-bowl': {
+    why: 'the whole cast in one place — the spec is about two dinos meeting, not about where they live',
+    apply: async (page) => {
+      await page.evaluate(() => {
+        const w = window as Record<string, any>;
+        for (const d of w.__dinoPositions() as Array<{ name: string }>) {
+          if (w.__homeZone(d.name) !== 'bowl') w.__migrate(d.name, 'bowl');
+        }
+      });
+    },
+    verify: verifyAllBowl,
+  },
+  'empty-grounds': {
+    why: 'no founding ruin, no founding piles, no founding bank ledger — the spec is about what it puts there itself',
+    apply: async (page) => {
+      await page.evaluate(() => (window as Record<string, () => number>).__clearFounding?.());
+    },
+    verify: verifyEmptyGrounds,
+  },
+  bare: {
+    why: 'the pre-v7 park: cast co-located and every ground empty. Both of the above, in one call.',
+    apply: async (page) => {
+      await FOUNDING_FIXTURES['all-bowl'].apply(page);
+      await FOUNDING_FIXTURES['empty-grounds'].apply(page);
+    },
+    verify: async (page) => (await verifyAllBowl(page)) ?? (await verifyEmptyGrounds(page)),
+  },
+};
+
+/** Put the park into a **named** founding state, and prove it got there. Throws naming the fixture if not. */
+export async function foundingState(page: Page, name: FoundingFixtureName): Promise<void> {
+  const fixture = FOUNDING_FIXTURES[name];
+  if (!fixture) throw new Error(`unknown founding fixture '${name}'`);
+  await fixture.apply(page);
+  const reason = await fixture.verify(page);
+  if (reason) throw new Error(`founding fixture '${name}' did not hold: ${reason}`);
+}
+
+/**
  * Gather the whole cast into the bowl (CHARTER v7).
  *
  * Before v7 the roster spawned entirely into the bowl, so "everyone is co-located and every other ground is
@@ -96,14 +210,13 @@ function settleAfterInput(page: Page): void {
  * This restores that fixture **explicitly**, so the assumption is visible in the spec that depends on it
  * rather than smuggled in from the roster. Specs whose subject genuinely *is* the founding state assert the
  * new distribution instead and must not call this.
+ *
+ * @deprecated BACKLOG-495 — this is `foundingState(page, 'all-bowl')` and nothing else. Kept, and kept
+ * exported, because its ~20 callers are correct as written and rewriting them changes no behavior; new
+ * specs should name the fixture.
  */
 export async function gatherToBowl(page: Page): Promise<void> {
-  await page.evaluate(() => {
-    const w = window as Record<string, any>;
-    for (const d of w.__dinoPositions() as Array<{ name: string }>) {
-      if (w.__homeZone(d.name) !== 'bowl') w.__migrate(d.name, 'bowl');
-    }
-  });
+  await foundingState(page, 'all-bowl');
 }
 
 /**
@@ -116,9 +229,13 @@ export async function gatherToBowl(page: Page): Promise<void> {
  *
  * This restores that fixture **explicitly**, the way `gatherToBowl` restores the co-located cast. A spec
  * whose subject genuinely *is* the founding state asserts the new one instead and must not call this.
+ *
+ * @deprecated BACKLOG-495 — this is `foundingState(page, 'empty-grounds')`. Same reasoning as
+ * `gatherToBowl`: kept for its existing callers, named for new ones. It now also *verifies* that the
+ * clear landed, which the bare hook call never did.
  */
 export async function emptyGrounds(page: Page): Promise<void> {
-  await page.evaluate(() => (window as Record<string, () => number>).__clearFounding?.());
+  await foundingState(page, 'empty-grounds');
 }
 
 /**

@@ -10292,3 +10292,12 @@ naming a fixture, never by re-flattening the constant.
 Seven files, no new dev hook — `__bank(z)` already reports step, total and visibility per ground, and
 adding a twelfth instalment is the thing this item exists to stop. The plan writes the expected e2e
 fallout down in advance and fixes the repair order: name a fixture, never re-flatten the constant.
+
+## Cycle 151 — coder
+
+Nine files. The seam landed with zero call-site edits — `gatherToBowl` and `emptyGrounds` became
+aliases, so thirty specs moved onto the named fixture without being touched. The pile move then
+reddened four specs exactly as the plan predicted, and each was repaired by the rule the plan fixed in
+advance: two whose subject *is* the founding state had their expectations updated and their reasoning
+written down, two whose subject is something else now name a fixture. `FOUNDING_PILES` was never
+re-flattened. Build clean, 2458 unit green, 665/665 e2e.

@@ -133,3 +133,51 @@ carry, craft, stockpile, prosperity, capacity, spend-lens — may fail.
 ### Blockers
 
 None known at plan time.
+
+---
+
+## Shipped
+
+Nine files (seven planned + two the fallout named), all green.
+
+- `game/src/world/founding.ts` — `FOUNDING_PILES` stocks bowl/grove/ridge; new derived
+  `FOUNDING_PILE_STEPS`; the constant's doc comment rewritten to state the reachability claim.
+- `game/src/world/reachability.ts` — new `BACKLOG-495/504` register entry.
+- `tests/e2e/helpers.ts` — `FoundingFixtureName`, `FOUNDING_FIXTURES`, `foundingState(page, name)`;
+  `gatherToBowl` / `emptyGrounds` now one-line aliases, deprecated in comment, **zero call-site edits**.
+- `tests/unit/cycle-151-founding-piles.test.ts` (new) — 8 pins on the pile move + the register.
+- `tests/e2e/cycle-151-founding-fixture.spec.ts` (new) — 6 specs: four fixture names, the throw, and
+  the walk across three grounds.
+
+**Fallout, repaired by the plan's own priority order and no other way:**
+- `tests/unit/cycle-136-founding.test.ts` — *subject is the founding state* -> expectation updated
+  ("stocks only the ruin's ground" -> "stays modest"), amendment reasoning in the comment.
+- `tests/unit/cycle-141-bank.test.ts` — *subject is the founding state* -> "leaves the bowl bare"
+  became "leaves room for the first gathered unit to show", which is the reason the old test gave.
+- `tests/e2e/cycle-141-bank.spec.ts` — one test's subject is the founding state (expectation grew:
+  three grounds, three sizes, bare frontier); the other's is the step machinery -> named
+  `foundingState(page, 'empty-grounds')`.
+- `tests/e2e/cycle-065-gather-grace.spec.ts` — subject is the grace window -> named the fixture.
+
+`FOUNDING_PILES` was never re-flattened and no twelfth ad-hoc helper was written.
+
+### Deviation from plan, noted
+
+Plan item 1 said the e2e side would import the shipping steps "directly, since `tests/e2e` already
+type-checks against `game/src`". It does, and it works — `helpers.ts` imports `FOUNDING_PILE_STEPS`
+and `FOUNDING_RUIN` and passes them into `page.evaluate` as serializable arguments. Worth writing down
+because it is the mechanism that makes `'as-shipped'` self-updating: the fixture does not know any
+founding number, it asks the game.
+
+### Gates
+
+- `npm run build` — clean
+- `npx vitest run` (root) — **2458 passed**, 3 skipped, 236 files
+- `npx playwright test` — first run 4 failed / 661 passed; three were the pile move (repaired above)
+  and `cycle-011-movement` passed isolated and again on the full re-run — the known parallel-load
+  flake, noted not chased. Final full run: **665/665 passed**.
+- `@mlc-ai/web-llm` imported only by `game/src/ai/webllm.worker.ts` and `game/src/ai/webllmBrain.ts`.
+
+### Blockers
+
+None.

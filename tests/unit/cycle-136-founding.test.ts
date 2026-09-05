@@ -55,7 +55,22 @@ describe('the founding pile', () => {
     expect(pileTotal(pile)).toBeGreaterThanOrEqual(REPAIR_COST);
   });
 
-  it('stocks only the ground with the ruin — the founding park is not made rich', () => {
-    expect(Object.keys(FOUNDING_PILES)).toEqual([FOUNDING_RUIN.zone]);
+  /**
+   * **Amended cycle 151 (BACKLOG-495).** This read "stocks only the ground with the ruin", and that was
+   * the right pin for cycle 136, when the founding pile existed to make one ruin mendable. It stopped
+   * being right when BACKLOG-504 drew a heap in three steps: one stocked ground means a fresh park
+   * exercises one of the three rigs, which is CHARTER v7's corollary — a constant tuned to sit under the
+   * thing it feeds. The founding piles now reach each drawn step once, and `cycle-151-founding-piles.test.ts`
+   * pins that coverage.
+   *
+   * What survives here is the half of the claim that was never about the ruin: **the founding park is not
+   * made rich.** Every ground stays modest, and the frontier stays bare.
+   */
+  it('stays modest — no founding ground is stocked past a couple of units', () => {
+    for (const pile of Object.values(FOUNDING_PILES)) {
+      expect(pileTotal(pile)).toBeGreaterThan(0);
+      expect(pileTotal(pile)).toBeLessThanOrEqual(4);
+    }
+    expect(FOUNDING_PILES[FOUNDING_RUIN.zone]).toBeDefined();
   });
 });

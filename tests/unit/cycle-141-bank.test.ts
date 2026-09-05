@@ -80,8 +80,19 @@ describe('the founding heap (CHARTER v7 reachability)', () => {
     expect(pileStep(before - REPAIR_COST)).toBeLessThan(pileStep(before));
   });
 
-  it('leaves the starting ground bare, so the first gathered stone is a visible event', () => {
-    expect(FOUNDING_PILES[BOWL_ID]).toBeUndefined();
+  /**
+   * **Amended cycle 151 (BACKLOG-495).** This read "leaves the starting ground bare", and its stated
+   * reason was that the first gathered stone should be a *visible event*. The bare bowl was one way to buy
+   * that, and it cost the park two of the three heap rigs on a fresh save — `pile_3` had never once
+   * existed on a first frame. The bowl now boots at step 1, and the reason the old test gave is **still
+   * satisfied**: one gathered unit takes the starting ground from step 1 to step 2, which is exactly as
+   * visible as 0 to 1 was. The claim is kept; the way of paying for it is not.
+   */
+  it('leaves room on the starting ground for the first gathered unit to show', () => {
+    const bowl = FOUNDING_PILES[BOWL_ID];
+    expect(bowl).toBeDefined();
+    const before = pileTotal(bowl);
+    expect(pileStep(before + 1)).toBeGreaterThan(pileStep(before));
     expect(bankStep({})).toBe(0);
     expect(bankStep({ stone: 1 })).toBe(1);
   });
