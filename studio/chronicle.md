@@ -10258,3 +10258,12 @@ Wired the same hour: `state.lastSoloCycle` (0 — never declared), `state.soloCy
 in routine 1.5, the one-section path in routine 0, and a note in routine 1 that a Lore-smith's next-up carries
 forward rather than being consumed. **495 meets all four conditions right now**, and its backlog entry says so.
 Next cycle's Structure-smith should declare one and build it.
+
+## Cycle 151 — lore-smith
+
+Themed the cycle on the cost of the absence rather than its warmth, and suggested **BACKLOG-113**
+(drift apart while away) as next-up — Milestone 18's second lore arc, the one that gives the
+homecoming two signs instead of one. Social queue far over its cap of 12, so nothing new seeded
+there; art queue at 1 under its cap of 3, so one item seeded: **BACKLOG-532**, the beacon's missing
+ruin — the only landmark in the park whose derelict state is just the lit rig turned down, on the
+one ground where dim reads as nightfall. Idea Box empty.
