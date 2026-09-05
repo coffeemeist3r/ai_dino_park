@@ -10267,3 +10267,13 @@ homecoming two signs instead of one. Social queue far over its cap of 12, so not
 there; art queue at 1 under its cap of 3, so one item seeded: **BACKLOG-532**, the beacon's missing
 ruin — the only landmark in the park whose derelict state is just the lit rig turned down, on the
 one ground where dim reads as nightfall. Idea Box empty.
+
+## Cycle 151 — structure-smith
+
+**Declared the first solo cycle in the studio's history.** BACKLOG-495 — the declared founding
+fixture — meets all four CHARTER v8 conditions: top of the Structure Track since cycle 136, five
+recorded pass-overs for scope, `lastSoloCycle = 0`, and a reachability answer that is the item's own
+proof rather than a consolation. The lore track sits this one out; BACKLOG-113 carries forward to 152
+unconsumed. The answer to the ten-minute question: **three grounds carry a visible banked heap on the
+first frame instead of one, and one of them reaches `pile_3`** — a step no fresh park has ever shown,
+because `FOUNDING_PILES` stocks exactly one ground. Build the seam, then move the constant through it.
