@@ -16,8 +16,16 @@ import { PROP_RIGS, propCharsUsed } from '../../game/src/art/propArt';
 
 const RUINS = Object.keys(PROP_RIGS).filter((k) => k.endsWith('_derelict'));
 
-it('all four landmarks now have a fallen twin', () => {
-  expect(RUINS.sort()).toEqual(['cairn_derelict', 'granary_derelict', 'shelter_derelict', 'thatch_derelict']);
+// Amended cycle 151-art (BACKLOG-532): five, not four. The beacon was the one landmark whose derelict
+// state was the lit rig at `DERELICT_ALPHA`, and on a ground made of black glass that reads as night.
+it('all five landmarks now have a fallen twin', () => {
+  expect(RUINS.sort()).toEqual([
+    'beacon_derelict',
+    'cairn_derelict',
+    'granary_derelict',
+    'shelter_derelict',
+    'thatch_derelict',
+  ]);
 });
 
 describe.each(RUINS)('%s', (name) => {

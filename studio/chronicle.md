@@ -10382,3 +10382,39 @@ has been *played* rather than one just founded — and it is cheaper tonight tha
 because a fixture that verifies rather than assumes is the shape that claim was always going to need.
 
 BACKLOG-113 carries forward to cycle 152 untouched. The lore track sat this one out; it was not skipped.
+
+## Cycle 151-art — the beacon that went out
+
+Four of the park's five landmarks have drawn their own ruin since cycle 139. The beacon has not, so for
+twelve cycles a derelict beacon was the lit rig turned down to `DERELICT_ALPHA` — and the Ridge is a
+ground made of black glass, where dim reads as **night**. The one landmark in the park telling the wrong
+sentence, on the one ground where that particular wrong sentence is most convincing.
+
+**The rig needed no wiring at all**, which almost never happens here. `showLandmarks(this.beaconSprites,
+this.beacons, 'beacon')` has routed through `bakeRuinArt` since BACKLOG-503; it fell back to alpha for
+exactly one reason, which is that the key was absent. Drawing it was the wiring.
+
+**The first draft was rejected for being the alpha fade re-drawn in pixels** — the standing rig with the
+glints deleted and one shard shortened. Same silhouette, less light: precisely the failure the item was
+opened over, reproduced by hand. The fix came from asking what the beacon *is*. It is the one landmark
+that goes **up** — three splinters standing on end, breaking the top of the box, the skyline you can tell
+apart from a ground away. Kill the skyline and you have said everything. So the tall middle shard is gone
+below the base line, leaving a dark empty socket in the stone; the right one lies fallen against the
+base; and only a snapped stub still stands, half height, breaking nothing. Six of sixteen rows that the
+standing rig fills are now empty air, and that is the entire read at 32px.
+
+**No catchlight anywhere.** The glints were the only thing in the palette that said *lit* — by
+`BEACON_RIG`'s own header, the reason you could see it from a ground away — so a beacon that has gone out
+is the one prop in this park entitled to zero of them. Everything else is `BEACON_RIG.palette` spread
+with the glint filtered out rather than re-typed: a shared object, not a matching pair of literals.
+
+Cycle 139's generic ruin rules — shared palette, spills into columns the standing rig never used, crown
+starts lower — ran over the new rig unmodified and passed. Two inventory pins needed amending from four
+to five, which is the suite doing its job rather than the rig doing something wrong. Gates: build clean,
+**2475 unit green** across 237 files, **666/666 e2e**.
+
+The art queue closes the night at **1** — 518, whose driver has now been unchosen for seven fires. The
+honest candidate is still `pileStep` off the ground's own bank, and after tonight that is a better
+candidate than it was this morning: three grounds boot with a heap instead of one, so a stake keyed to
+the ground's bank would have three different things to say on a fresh save rather than one.
+

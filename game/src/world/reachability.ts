@@ -99,7 +99,10 @@ export function worldPlacedProps(): Set<string> {
     out.add(l);
     out.add(`${l}_derelict`);
   }
-  out.add('beacon'); // 503 — the Ridge's landmark, drawn but never derelict
+  // 503 — the Ridge's landmark. BACKLOG-532 (cycle 151-art) drew its ruin, so the beacon finally joins the
+  // `<name>` / `<name>_derelict` convention above rather than being the one landmark that only dims.
+  out.add('beacon');
+  out.add('beacon_derelict');
   // The plot's stages (145/349/434) — `crop_<stage>`, and one ripe rig per zone crop.
   const stages: CropStage[] = ['seed', 'sprout', 'ripe'];
   for (const s of stages) out.add(`crop_${s}`);

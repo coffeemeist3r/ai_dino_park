@@ -5,6 +5,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
   it('draws branch, stone, frond, and cairn (+ the crop stages, BACKLOG-317/419/418; + the stashed thatch, 427)', () => {
     expect(Object.keys(PROP_RIGS).sort()).toEqual([
       'beacon', // BACKLOG-508: the Ridge's landmark, set from the black glass
+      'beacon_derelict', // BACKLOG-532 (cycle 151-art): the fifth and last landmark to draw its own ruin
       'branch',
       'cairn',
       'cairn_derelict', // BACKLOG-494

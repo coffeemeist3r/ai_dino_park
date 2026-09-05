@@ -1323,6 +1323,51 @@ const BEACON_RIG: PropRig = {
   },
 };
 
+// -- Beacon, gone out (BACKLOG-532) - the fifth landmark finally draws its own ruin ------------------
+// Four of the park's five landmarks have a `<name>_derelict` rig; the beacon did not, so a derelict beacon
+// was the lit rig at `DERELICT_ALPHA`. On a ground made of black glass that reads as **night**, not as
+// abandoned - the wrong sentence, and the only landmark in the park telling it.
+//
+// The first draft was the standing rig with the glints deleted and one shard shortened, which is exactly
+// the alpha-dim failure re-drawn in pixels: same silhouette, less light. So the drawing had to find what
+// the beacon actually *is*. It is the one landmark that goes **up** - three splinters standing on end,
+// breaking the top of the box, the skyline you can tell apart from a ground away. Kill the skyline and you
+// have said everything: the tall middle shard is **gone below the base line**, leaving a dark empty socket
+// in the stone, the right one lies fallen against the base, and only a snapped stub still stands - half
+// height, breaking nothing. Six rows of the box that the standing rig fills are now empty air.
+//
+// **No `g` anywhere.** The glints were the only thing in the palette that said *lit*, and a beacon that has
+// gone out is the one prop in the park entitled to have zero catchlights. Everything else is BEACON_RIG's
+// palette verbatim - a shared constant is the cheapest way to keep a family claim true rather than merely
+// stated, the same reasoning the missed-mark took from `rouse`.
+const BEACON_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.rbr............',
+  '.rkr............',
+  '.rkr............',
+  '.rkr............',
+  '.rkroo..kk......',
+  '..oosskkssoo....',
+  '.ossshkkssdo.rbr',
+  '.osssssssddorkkr',
+  '..oooooooooo....',
+  '.....oo...o.....',
+];
+
+const BEACON_RUIN_RIG: PropRig = {
+  size: 16,
+  grid: BEACON_RUIN_GRID,
+  // BEACON_RIG's palette minus `g`. Not re-typed values: the same object, spread, with the glint dropped.
+  palette: Object.fromEntries(
+    Object.entries(BEACON_RIG.palette).filter(([key]) => key !== 'g'),
+  ) as PropRig['palette'],
+};
+
 // ── Feeding hatch 🕳️ (BACKLOG-502, wired by BACKLOG-510) — the last undrawn prop key in the park, and the
 // one the player looks at most: `H` drops food through it and every social system downstream reads where
 // that food lands. It is the **odd artefact** among the reed, stone and plaster landmarks, because it is the
@@ -1525,6 +1570,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   shelter_derelict: SHELTER_RUIN_RIG,
   thatch_derelict: THATCH_RUIN_RIG,
   granary_derelict: GRANARY_RUIN_RIG,
+  // BACKLOG-532 (cycle 151-art): the fifth landmark's ruin. Its host has been wired end to end since
+  // BACKLOG-503 — `showLandmarks(this.beaconSprites, this.beacons, 'beacon')` routes through `bakeRuinArt`
+  // and only fell back to `DERELICT_ALPHA` because this key was absent — so drawing it is the whole wiring.
+  beacon_derelict: BEACON_RUIN_RIG,
   // BACKLOG-496: the ritual's worn ground, keyed `tic_<TicKind>`. `fuss` is deliberately still undrawn —
   // the per-kind fallback draws nothing for it, which is the control that keeps the graceful path live.
   tic_pace: TIC_PACE_RIG,
