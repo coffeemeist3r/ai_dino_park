@@ -1,6 +1,6 @@
 {
   "cycle": 151,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": null,
   "structureItem": "BACKLOG-495: the declared founding fixture (solo cycle)",
   "lastVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-05T08:02:24.000Z",
     "structure-smith": "2026-09-05T08:04:59.000Z",
-    "designer": "2026-09-04T08:08:55.000Z",
+    "designer": "2026-09-05T08:07:06.000Z",
     "code-planner": "2026-09-04T08:10:17.000Z",
     "coder": "2026-09-04T08:24:25.000Z",
     "qa": "2026-09-04T08:25:38.000Z",

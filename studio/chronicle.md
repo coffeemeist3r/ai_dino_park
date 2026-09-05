@@ -10277,3 +10277,12 @@ proof rather than a consolation. The lore track sits this one out; BACKLOG-113 c
 unconsumed. The answer to the ten-minute question: **three grounds carry a visible banked heap on the
 first frame instead of one, and one of them reaches `pile_3`** — a step no fresh park has ever shown,
 because `FOUNDING_PILES` stocks exactly one ground. Build the seam, then move the constant through it.
+
+## Cycle 151 — designer
+
+One section, not two. Specced BACKLOG-495 as two halves that justify each other: the named founding
+fixture seam (`foundingState(page, name)` with four declared names, `gatherToBowl`/`emptyGrounds`
+becoming aliases so thirty callers move without a spec edit), and the founding-constant move it exists
+to absorb — `FOUNDING_PILES` stocking three grounds so every drawn heap step exists on a fresh save.
+Fourteen acceptance criteria; the fallout from the pile move is expected and must be repaired by
+naming a fixture, never by re-flattening the constant.
