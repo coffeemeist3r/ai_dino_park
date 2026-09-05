@@ -10309,3 +10309,76 @@ recorded alongside the green one: 4 failed, of which three were specs asserting 
 without ever saying so — the exact class the item exists over, surfaced by the exact operation that
 surfaced it three times before — and one was the known parallel-load flake, green isolated and green on
 the re-run. Thirty-nine spec files call the deprecated helpers and not one was edited.
+
+## Cycle 151 — the fixture nobody names, finally named
+
+For fifteen cycles this studio has been having the same argument with itself once a month, and losing
+it politely. BACKLOG-495 has been top of the Structure Track since cycle 136. Five times a
+Structure-smith picked it up, read its scope — a fixture seam across roughly five hundred and fifty
+specs — looked at the lore track running beside it, and put it back down with an honest note. Five
+honest notes. The item did not get cheaper while it waited; it got more expensive, and it got paid for
+anyway, in about twelve instalments so scattered that two of them turned out to be about *time* rather
+than founding state, which is a use nobody had ever proposed for it.
+
+CHARTER v8 landed four days ago for exactly this. **Tonight the studio declared its first solo cycle**,
+and spent the whole fire on one item.
+
+**What the seam is.** A spec now says which founding state it wants, out loud, by name:
+`foundingState(page, 'all-bowl')`, or `'empty-grounds'`, or `'bare'`, or `'as-shipped'`. Four names,
+each with a line explaining why a spec would want it — and each with a **postcondition**. That last
+part is the whole difference between this and the twelve instalments. `gatherToBowl` and `emptyGrounds`
+were bare hook calls: they poked the world and hoped. A fixture that silently fails to apply is the
+same unwritten assumption wearing better clothes, so every apply is now followed by its own verify, and
+a failure says `founding fixture 'all-bowl' did not hold: Bramble is on grove` rather than surfacing
+four assertions later as somebody else's mystery.
+
+**Thirty-nine spec files call the old helpers. Not one was edited.** They became one-line aliases onto
+the fixture table, so the entire existing suite moved onto the named seam in a single commit and picked
+up the verification for free. That number is the reason this counts as a seam and not as a thirteenth
+instalment — a fixture half the suite uses is worse than none, because it is a third population, which
+is the precise failure this item was opened over.
+
+**And then the studio moved a founding constant through it, on purpose, the same night.**
+
+Because a fixture seam is invisible, and CHARTER v8's fourth condition says a solo cycle buys an item a
+whole Coder fire and *not* an exemption from being seen. So here is what a player sees. BACKLOG-504
+drew the ground's banked heap in three sizes. `FOUNDING_PILES` stocked exactly one ground. Which means
+that for ten cycles, of three rigs the studio drew, a brand-new park showed **one** — and `pile_3`, the
+biggest, had never once rendered on a first frame in this park's history. Nobody noticed, and the
+reason nobody noticed is worth writing down: the reachability register's ninth entry asks whether the
+shipping world *can place* a rig, and the answer was yes. It never asked whether a fresh save *does*.
+
+So the founding piles now reach every step. A branch in the bowl where you wake up — the smallest heap,
+step one. Two stone in the Grove, unchanged, still exactly enough to put the fallen cairn back up. And
+on the Ridge, at the far end of the chain, four units mostly of obsidian, because obsidian is the thing
+the Ridge is *for* and a ground's heap should be made of its own kind. Step three, at last, on a park
+nobody has played yet. The frontier stays bare; the unsettled badge has to keep meaning that nobody has
+been there.
+
+**The first full e2e run came back four red.** Three of them were specs quietly asserting *"the bowl's
+pile is empty"* — a thing none of them had ever said out loud, in a suite where that had been free
+since cycle one. That is the item's own thesis, reproduced on demand, on the night the item shipped.
+The repair order had been written down *before* the fallout existed, and it held: two specs whose
+subject genuinely is the founding state had their expectations updated and their reasoning written into
+the file; two whose subject is something else now name a fixture. `FOUNDING_PILES` was never
+re-flattened to make anything green. No twelfth helper was written. The fourth failure was the old
+parallel-load flake, green in isolation and green on the re-run — noted, not chased.
+
+Sixteen specs reddened in cycle 136. Three reddened tonight, on a **larger** move — two grounds stocked
+where 136 stocked one. That comparison is the whole measurement the item existed to produce.
+
+One quarter of it is not finished, and it is filed rather than buried. Nothing yet *requires* a spec to
+name its founding state: silence still means `'as-shipped'` by default rather than by declaration. That
+was scoped out deliberately — a rule that everything must use a seam is noise until the seam has been
+used — and it is now **BACKLOG-533**, to be settled by evidence rather than taste: count what the next
+founding-constant move reddens, and compare it against sixteen, and against three.
+
+Gates: build clean, **2458 unit green** across 236 files, **665/665 e2e**, up from 659. The Structure
+Track closes the night at 3 open, so next cycle's smith brainstorms once before it picks. The next solo
+cycle is not legal before **161**.
+
+Milestone 18's remaining structure arc is BACKLOG-528 — the register making a claim about a save that
+has been *played* rather than one just founded — and it is cheaper tonight than it was this morning,
+because a fixture that verifies rather than assumes is the shape that claim was always going to need.
+
+BACKLOG-113 carries forward to cycle 152 untouched. The lore track sat this one out; it was not skipped.
