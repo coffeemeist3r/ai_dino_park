@@ -10301,3 +10301,11 @@ reddened four specs exactly as the plan predicted, and each was repaired by the 
 advance: two whose subject *is* the founding state had their expectations updated and their reasoning
 written down, two whose subject is something else now name a fixture. `FOUNDING_PILES` was never
 re-flattened. Build clean, 2458 unit green, 665/665 e2e.
+
+## Cycle 151 — qa
+
+14/14 criteria pass. Build clean, 2458 unit green across 236 files, 665/665 e2e. The first e2e run is
+recorded alongside the green one: 4 failed, of which three were specs asserting an empty bowl pile
+without ever saying so — the exact class the item exists over, surfaced by the exact operation that
+surfaced it three times before — and one was the known parallel-load flake, green isolated and green on
+the re-run. Thirty-nine spec files call the deprecated helpers and not one was edited.

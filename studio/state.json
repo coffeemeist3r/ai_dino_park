@@ -1,6 +1,6 @@
 {
   "cycle": 151,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": null,
   "structureItem": "BACKLOG-495: the declared founding fixture (solo cycle)",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-09-05T08:07:06.000Z",
     "code-planner": "2026-09-05T08:08:10.000Z",
     "coder": "2026-09-05T08:24:55.000Z",
-    "qa": "2026-09-04T08:25:38.000Z",
+    "qa": "2026-09-05T08:25:44.000Z",
     "validator": "2026-09-04T08:26:55.000Z",
     "artist": "2026-09-04T08:38:00.000Z"
   },
