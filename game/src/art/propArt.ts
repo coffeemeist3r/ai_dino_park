@@ -843,6 +843,65 @@ const MISSED_RIG: PropRig = {
   },
 };
 
+// ── The thought it will not admit to 💭 (BACKLOG-534, cycle 152-art) ──────────────────────────────
+//
+// `missed.ts` grades an absence on two axes and gets three answers out of them, and the whole reason for
+// the second axis is that *did not care* and *cared and would not say* are the two most different residents
+// in the bowl. The park drew two of the three. `unmoved` is the empty space over a head, which is correct
+// and costs nothing. `missed` is the rig above. `aloof` was the rig above at `MISSED_FAINT_ALPHA` — and
+// after cycle 151 drew the beacon's ruin, that was the last alpha-as-state read left in this park.
+//
+// The beacon settled the argument about why that is wrong. Dim does not mean *withheld*. It means far
+// away, or night, or nearly gone — a 💭 at 45% over a dino's head reads as a thought fading out, which is
+// almost the opposite of a dino deciding not to tell you something. So this rig has to carry
+// *noticed, and chose not to say*, and it carries it three ways at once:
+//
+//   1. **The puff is hollow.** Outline where the lit rig is filled. A thought with nothing in it, from the
+//      outside, is what a thought somebody is holding back looks like — you can see there is one.
+//   2. **The tail points the other way.** `missed`'s two dots trail down-*left*, back toward the dino that
+//      is having the thought. These trail down-*right*, away from it: the thought is turned aside. Same
+//      slot, same footprint, and the read at 32px is the direction rather than the detail.
+//   3. **It is off the vertical.** The upper half sits one column right of the lower, so the whole shape
+//      leans away from the head it hangs over. `missed` stands square; this one will not look at you.
+//
+// **No catchlight.** `c` is the only pixel in the family that says *lit*, and this is the one mark in the
+// park entitled to none of it — a thought the dino is refusing to have out loud gets no highlight. The
+// palette is `MISSED_RIG.palette` spread with `c` filtered out rather than a matching pair of literals, so
+// the family claim stays true by construction: change `rouse`'s outline and both marks follow.
+//
+// The two trailing dots keep the sclera `W` and are the **only** solid pixels in the rig, which is the
+// sentence in one detail: you can see there is a thought, and you cannot see any of it.
+//
+// 32 lit cells against `missed`'s 64 — exactly half, and the lightest thing in this park by some way.
+// That is right twice over: it is the faintest of the four marks, and it is the half of that mark that is
+// being withheld.
+const MISSED_ALOOF_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '......oooooo....',
+  '....oo......oo..',
+  '...o..........o.',
+  '..o..........o..',
+  '...oo......oo...',
+  '.....oooooo.....',
+  '................',
+  '................',
+  '........WW......',
+  '........WW......',
+  '................',
+  '..........WW....',
+  '..........WW....',
+  '................',
+];
+
+const MISSED_ALOOF_RIG: PropRig = {
+  size: 16,
+  grid: MISSED_ALOOF_GRID,
+  // The shared object, minus the one key that means *lit*. Not a second copy of two hex literals: change
+  // `rouse`'s outline and every mark on this axis follows, which is what makes the family claim a fact.
+  palette: Object.fromEntries(Object.entries(MISSED_RIG.palette).filter(([k]) => k !== 'c')),
+};
+
 // ── The egg by the den 🥚 — speckled shell, a warm ground-shadow so it reads as *set down* ────────────
 const EGG_GRID: ReadonlyArray<string> = [
   '................',
@@ -1581,6 +1640,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   rouse: ROUSE_RIG, // BACKLOG-520: ...and the open one
   vigil: VIGIL_RIG, // BACKLOG-526: ...and the pair that is looking at you (BACKLOG-121's host)
   missed: MISSED_RIG, // BACKLOG-531: ...and the thought about somebody who was not here (BACKLOG-116's host)
+  missed_aloof: MISSED_ALOOF_RIG, // BACKLOG-534: ...and the same thought, turned away and unlit
   tic_circle: TIC_CIRCLE_RIG,
   // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
   // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern

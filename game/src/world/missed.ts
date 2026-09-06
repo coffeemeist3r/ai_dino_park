@@ -70,6 +70,8 @@ export const HEART_LIFT = 0.05;
 /** The mark a dino wears on the keeper's return, and the rig key BACKLOG-531 draws it against. */
 export const MISSED_GLYPH = '💭';
 export const MISSED_ART_KEY = 'missed';
+/** The `aloof` step's own rig (BACKLOG-534). Absent, the scene falls back to `MISSED_FAINT_ALPHA` below. */
+export const MISSED_ALOOF_ART_KEY = 'missed_aloof';
 
 /**
  * How long an unspoken thought stays over a dino's head, in world steps. Sized so the mark is a *reason to
@@ -78,7 +80,15 @@ export const MISSED_ART_KEY = 'missed';
  */
 export const MISSED_MARK_STEPS = 40;
 
-/** The `aloof` step of the same glyph: it is thinking about you and would rather you did not notice. */
+/**
+ * The `aloof` step's fallback: it is thinking about you and would rather you did not notice.
+ *
+ * **BACKLOG-534 demoted this from the read to the fallback.** Dimming the lit rig was the honest
+ * placeholder while nothing was drawn, and it was wrong for the reason cycle 151's beacon settled: dim
+ * reads as *far away, or night, or nearly gone*, not as *withheld*. `missed_aloof` now carries the grade
+ * with a silhouette of its own. This stays because the mark must not depend on the draw landing — the
+ * scene uses it whenever that rig is absent.
+ */
 export const MISSED_FAINT_ALPHA = 0.45;
 
 /** How much it was looking at you in the first place, 0..1. */

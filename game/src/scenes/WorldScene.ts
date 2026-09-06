@@ -139,6 +139,7 @@ import {
 } from '../world/vigil';
 import { getKeeperClock, setKeeperNowSource } from '../world/keeperclock'; // BACKLOG-529
 import {
+  MISSED_ALOOF_ART_KEY,
   MISSED_ART_KEY,
   MISSED_FAINT_ALPHA,
   MISSED_GLYPH,
@@ -663,6 +664,10 @@ export class WorldScene extends Phaser.Scene {
   private vigilMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** The missed-you mark (BACKLOG-116), index-aligned like the rest of the hour-mark family. */
   private missedMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /** BACKLOG-534: the two textures the missed mark swaps between, baked once. Null where a rig is
+   *  absent, which is what keeps the `MISSED_FAINT_ALPHA` fallback a live path rather than dead code. */
+  private missedTex: string | null = null;
+  private missedAloofTex: string | null = null;
   /**
    * Who is holding an unspoken thought about the absence, and the `worldSteps` it was formed at. Session
    * state, never persisted — the `companyTrace` precedent exactly: stamped, consumed by a single greeting,
@@ -3249,6 +3254,9 @@ export class WorldScene extends Phaser.Scene {
     this.rouseMarks.push(this.makeHourMark(ROUSE_ART_KEY, ROUSE_GLYPH));
     this.vigilMarks.push(this.makeHourMark(VIGIL_ART_KEY, VIGIL_GLYPH)); // BACKLOG-121
     this.missedMarks.push(this.makeHourMark(MISSED_ART_KEY, MISSED_GLYPH)); // BACKLOG-116
+    this.missedTex ??= hasPropArt(MISSED_ART_KEY) ? bakePropArt(this, MISSED_ART_KEY) : null;
+    this.missedAloofTex ??= hasPropArt(MISSED_ALOOF_ART_KEY) ? bakePropArt(this, MISSED_ALOOF_ART_KEY) : null;
+    this.missedAloofTex ??= hasPropArt(MISSED_ALOOF_ART_KEY) ? bakePropArt(this, MISSED_ALOOF_ART_KEY) : null;
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
@@ -3652,7 +3660,10 @@ export class WorldScene extends Phaser.Scene {
    * higher mark and no thought, so "every graded dino shows a mark" holds only for dinos wearing no
    * higher one.
    *
-   * `aloof` draws the same rig, fainter. Two steps of one glyph and a third step of nothing at all.
+   * `aloof` draws its **own rig** since BACKLOG-534 — hollow, unlit, turned away — because dimming the lit
+   * one read as a thought fading out rather than one being withheld, which is nearly the opposite grade.
+   * The alpha stays as the fallback for a build where that rig is absent, so the mark never depends on the
+   * draw. Two steps of one glyph and a third step of nothing at all.
    */
   private refreshMissedMarks(): void {
     this.dinos.forEach((d, i) => {
@@ -3661,9 +3672,14 @@ export class WorldScene extends Phaser.Scene {
       const trace = this.missedTrace[d.name];
       const higher = this.isResting(d) || this.isRoused(d) || this.vigil?.keeper === d.name;
       const shown = !!trace && !higher && this.inView(d);
+      const aloof = trace?.grade === 'aloof';
+      const tex = aloof ? this.missedAloofTex : this.missedTex;
+      if (tex && mark instanceof Phaser.GameObjects.Image) mark.setTexture(tex);
       mark
         .setVisible(shown)
-        .setAlpha(trace?.grade === 'aloof' ? MISSED_FAINT_ALPHA : 1)
+        // Only the *undrawn* aloof mark falls back to dimming. With the rig present the two steps differ by
+        // silhouette and both draw at full strength, which is the whole point of drawing it.
+        .setAlpha(aloof && !this.missedAloofTex ? MISSED_FAINT_ALPHA : 1)
         .setPosition(d.x, d.y - TILE);
     });
   }
@@ -8409,6 +8425,9 @@ ${e.short}`;
         name: d.name,
         visible: !!this.missedMarks[i]?.visible,
         alpha: this.missedMarks[i]?.alpha ?? 0,
+        // BACKLOG-534: which rig is on the sprite. The two steps used to differ only by alpha, so `alpha`
+        // was the whole read; now they differ by silhouette, and this is what a spec asserts instead.
+        tex: (this.missedMarks[i] as Phaser.GameObjects.Image | undefined)?.texture?.key ?? null,
       }));
     // any: dev-only Playwright hook — strings of currently-alive speech bubbles
     (window as any).__bubbleTexts = () => [...this.liveBubbles];

@@ -10554,3 +10554,39 @@ that the park's economy now has a heartbeat and that heartbeat is twenty-four mi
 day-boundary beat in this park shares it. **BACKLOG-493 — the default clock — is still the largest
 unreachable surface left**, exactly as v7 said when it queued the item rather than rushing it. Tonight put one
 more system on the list of things waiting on it.
+
+## Cycle 152-art — the thought it will not admit to
+
+The last alpha-as-state read in the park closes, and it was hiding in the one place it most changed the
+meaning. `missed.ts` grades an absence on two axes because *did not care* and *cared and would not say*
+are the two most different residents in the bowl — and the park drew two of the three answers. `unmoved`
+is the empty space over a head. `missed` is the rig. `aloof` was **that same rig at 45% opacity**: the
+exact failure last night's fire spent itself retiring on the beacon, still standing one file over.
+
+The beacon settled the argument. Dim means far away, or night, or nearly gone. A 💭 fading out over a
+dino's head is nearly the opposite of a dino deciding not to tell you something.
+
+So the rig says it three ways at once. **The puff is hollow** — outline where the lit one is filled, a
+thought you can see the shape of and nothing inside. **The tail points the other way**: `missed`'s two
+dots step left as they descend, trailing back toward the dino having the thought; these step right,
+turned aside. And **it leans off the vertical**, so the mark will not look at the head it hangs over.
+Same slot, same footprint; the read at 32px is the direction, not the detail.
+
+**No catchlight anywhere.** `c` is the only pixel in this family that says *lit*, so a thought being
+withheld gets none of it — and the palette is `MISSED_RIG.palette` with that one key filtered out rather
+than a matching pair of literals, so change `rouse`'s outline and every mark on the axis follows. The two
+trailing dots keep the sclera and are the only solid pixels in the whole rig, which is the sentence in one
+detail: you can see there is a thought, and you cannot see any of it. 32 lit cells against `missed`'s 64 —
+exactly half, and right twice over.
+
+The alpha branch stays as the fallback, so the mark never depends on the draw. And `__missedMarks` gained
+a `tex` field, which retired the one assertion in this suite that had the defect written into it: cycle
+150's spec said *"the aloof step is drawn fainter."* That was true, and making it false was the item.
+
+Gates: build clean, **2515 unit green** across 240 files, **670/670 e2e**. Two inventory pins amended.
+
+The art queue closes the night at **1** — 518, whose driver has now been unchosen for eight fires. It is
+no longer the Artist's problem to solve: **BACKLOG-535** was seeded this morning to decide it in the
+structure lane, where "is this ground still being looked after" is a number somebody has to define. And
+after tonight there is a new candidate that did not exist this morning — the upkeep ledger, which finally
+moves on a fresh save.

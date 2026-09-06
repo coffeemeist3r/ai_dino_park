@@ -32,7 +32,7 @@ import { atRest, chronotypeOf } from './chronotype';
 import { seededPersonality } from '../ai/personality';
 import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
-import { MISSED_ART_KEY } from './missed'; // BACKLOG-116/531
+import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
 import {
   FOUNDING_LANDMARKS,
   FOUNDING_PILES,
@@ -153,6 +153,8 @@ export function worldPlacedProps(): Set<string> {
   // absence by `refreshMissedMarks`. Fourth of the family, and the same reason it counts: the scene hangs
   // it over a dino rather than laying it on the ground, but a player sees it either way.
   out.add(MISSED_ART_KEY);
+  // BACKLOG-534: and the aloof step's own rig, swapped onto the same sprite by `refreshMissedMarks`.
+  out.add(MISSED_ALOOF_ART_KEY);
   return out;
 }
 

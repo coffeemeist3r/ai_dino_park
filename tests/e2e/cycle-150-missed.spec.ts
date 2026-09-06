@@ -17,7 +17,15 @@ const catchUp = (p: Page, realMs: number) =>
   p.evaluate((ms) => (window as W).__catchUp(ms) as { minutes: number; missed: Record<string, string> }, realMs);
 const missedYou = (p: Page) => p.evaluate(() => (window as W).__missedYou() as Record<string, string>);
 const missedMarks = (p: Page) =>
-  p.evaluate(() => (window as W).__missedMarks() as Array<{ name: string; visible: boolean; alpha: number }>);
+  p.evaluate(
+    () =>
+      (window as W).__missedMarks() as Array<{
+        name: string;
+        visible: boolean;
+        alpha: number;
+        tex: string | null;
+      }>,
+  );
 const memory = (p: Page, n: string) =>
   p.evaluate((nn) => ((window as W).__memory() as Record<string, string[]>)[nn] ?? [], n);
 const stepWorld = (p: Page) => p.evaluate(() => (window as W).__stepWorld());
@@ -75,12 +83,25 @@ test.describe('missed-you memory (BACKLOG-116)', () => {
     for (const m of shown) expect(m.name in graded).toBe(true);
     // Nobody who formed no account is wearing one.
     for (const m of marks) if (!(m.name in graded)) expect(m.visible).toBe(false);
-    // The aloof step is drawn fainter than the missed one.
+    // The two steps are visibly different marks.
+    //
+    // **BACKLOG-534 changed how.** This used to assert that `aloof` draws the *same* rig at a lower alpha,
+    // which was true and was the defect: dim reads as far-away-or-nearly-gone, not as withheld, and the
+    // whole reason `missed.ts` grades on two axes is that "did not care" and "cared and would not say" are
+    // the two most different residents in the bowl. `aloof` now has a rig of its own — hollow, unlit,
+    // turned away — so the claim is about the silhouette, and both steps draw at full strength.
+    const rigs = new Set(shown.map((m) => m.tex));
     for (const m of shown) {
-      expect(m.alpha).toBeLessThanOrEqual(1);
-      if (graded[m.name] === 'aloof') expect(m.alpha).toBeLessThan(1);
-      if (graded[m.name] === 'missed') expect(m.alpha).toBe(1);
+      expect(m.alpha).toBe(1);
+      expect(m.tex).not.toBeNull();
     }
+    const aloof = shown.filter((m) => graded[m.name] === 'aloof').map((m) => m.tex);
+    const missed = shown.filter((m) => graded[m.name] === 'missed').map((m) => m.tex);
+    for (const a of aloof) for (const t of missed) expect(a).not.toBe(t);
+    // Within a grade the rig is the same one — this is two steps of one glyph, not per-dino art.
+    expect(new Set(aloof).size).toBeLessThanOrEqual(1);
+    expect(new Set(missed).size).toBeLessThanOrEqual(1);
+    expect(rigs.size).toBeLessThanOrEqual(2);
   });
 
   test('greeting it says the thought out loud, and the mark goes', async ({ page }) => {
