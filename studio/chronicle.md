@@ -10440,3 +10440,13 @@ at 1 < 3 got one seed — **BACKLOG-534**, the `aloof` mark drawn instead of dim
 night's beacon is the last alpha-as-state read left in the park. Suggested next-up is **BACKLOG-113**,
 Milestone 18's second lore arc, carried forward unconsumed from the solo cycle: the digest learns to
 report a falling-out, not only companionship. Idea Box empty.
+
+## Cycle 152 — structure-smith
+
+Queue at 3 < X=4, so it brainstormed once: **535** (the stake's undecided driver — the reason 518 has sat
+undrawn for seven fires is structural, not artistic) and **536** (the economy has an outflow and no pinned
+inflow). Picked **BACKLOG-528**, Milestone 18's remaining structure arc: the reachability register learns
+to make a claim about a save that has been *played*, not only one just founded. 530 sits above it and was
+skipped for file collision with the lore track's mark neighbourhood. Not a solo cycle — `152 - 151 = 1`.
+The handoff carries a prediction for the chain to disprove: that upkeep is dormant on every fresh save
+this park has ever shipped, and calibrated to be.
