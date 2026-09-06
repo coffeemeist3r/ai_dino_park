@@ -10450,3 +10450,13 @@ to make a claim about a save that has been *played*, not only one just founded. 
 skipped for file collision with the lore track's mark neighbourhood. Not a solo cycle — `152 - 151 = 1`.
 The handoff carries a prediction for the chain to disprove: that upkeep is dormant on every fresh save
 this park has ever shipped, and calibrated to be.
+
+## Cycle 152 — designer
+
+Both tracks landed on the same finding from opposite ends: each item turns out to be about a system this
+park has shipped for cycles and never shown anybody. **113**'s drift beats are gated on `days >= 1` at
+`AWAY_SCALE = 1` — twenty-four real hours away — so the homecoming digest has never printed anything but
+"Barely long enough to notice"; the day gate becomes a minutes curve that agrees with today's numbers at
+every day boundary and moves a bond by one after five minutes. **528**'s stepped register predicts that
+the upkeep economy is dormant on every fresh save, because the founding world places one landmark and it
+is derelict. Both fixes are one table in the item's own module, and v7 says they ship in the same cycle.

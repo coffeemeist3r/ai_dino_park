@@ -1,6 +1,6 @@
 {
   "cycle": 152,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-113: drift apart while away",
   "structureItem": "BACKLOG-528: the register can only see the first frame",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-06T08:00:00.000Z",
     "structure-smith": "2026-09-06T08:06:00.000Z",
-    "designer": "2026-09-05T08:07:06.000Z",
+    "designer": "2026-09-06T08:20:00.000Z",
     "code-planner": "2026-09-05T08:08:10.000Z",
     "coder": "2026-09-05T08:24:55.000Z",
     "qa": "2026-09-05T08:25:44.000Z",
