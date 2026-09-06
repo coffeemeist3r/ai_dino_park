@@ -10469,3 +10469,13 @@ is written down before the fallout exists, per the 495 discipline. Structure add
 pure stepped park routed through `runUpkeep`'s live form rather than its away form, because the frame
 this item is for is a park somebody is *in*. Two questions are flagged as blockers-if-wrong rather than
 assumed: whether `strengthen` floors at 0, and whether the mend's pile-spend already has a pure owner.
+
+## Cycle 152 — qa
+
+24/24 criteria pass across both tracks, one deviation recorded (three played claims shipped across two
+entries, not three). Build clean, **2502 unit green** across 239 files, **670/670 e2e** twice over with no
+flake. The structure handoff's prediction was correct and QA confirmed it off cycle 136's own spec: the
+founding park asserted `standing('grove') === 0` and an empty upkeep pass, and called that "480's rule is
+unchanged" rather than a system that could never fire. Fifteen e2e reddened; six of them were repaired by
+one edit to the `empty-grounds` fixture with no spec touched, which is the first evidence that BACKLOG-495's
+seam does what its verdict claimed.

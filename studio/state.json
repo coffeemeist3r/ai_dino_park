@@ -1,6 +1,6 @@
 {
   "cycle": 152,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-113: drift apart while away",
   "structureItem": "BACKLOG-528: the register can only see the first frame",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-09-06T08:20:00.000Z",
     "code-planner": "2026-09-06T08:32:00.000Z",
     "coder": "2026-09-06T09:10:00.000Z",
-    "qa": "2026-09-05T08:25:44.000Z",
+    "qa": "2026-09-06T09:20:00.000Z",
     "validator": "2026-09-05T08:27:29.000Z",
     "artist": "2026-09-05T08:36:44.000Z"
   },
