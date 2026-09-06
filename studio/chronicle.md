@@ -10479,3 +10479,78 @@ founding park asserted `standing('grove') === 0` and an empty upkeep pass, and c
 unchanged" rather than a system that could never fire. Fifteen e2e reddened; six of them were repaired by
 one edit to the `empty-grounds` fixture with no spec touched, which is the first evidence that BACKLOG-495's
 seam does what its verdict claimed.
+
+## Cycle 152 — two smiths, one finding
+
+Two tracks, picked independently by two smiths who do not read each other's brainstorm, and they landed on
+the same sentence from opposite ends: **this park has been shipping a system nobody could reach.**
+
+**BACKLOG-113 — APPROVED.** The absence gets its cold half. Since cycle 29 the catch-up has been able to
+report exactly one kind of news about a gap — that two dinos who were already close got closer — and
+everybody else in the bowl lived through the same absence and did nothing about it. Now the acquaintances
+have something to say: the pair the player met once and never followed up comes back further apart, files
+its own memory, and the digest carries it beside the warm lines. Not companions, who have their own beat.
+Not strangers, because a park that invents estrangement between two dinos who have never met is inventing
+drama rather than reporting it. It is the friendship *the keeper started and left*, which is the first
+thing this park has ever said that costs the player something for being gone.
+
+**And the finding under it, which is larger than the item.** Every drift beat in `away.ts` was gated on
+`days >= 1`. An offline gap replays at `AWAY_SCALE = 1`. So one in-game day is **twenty-four real hours
+away**, and the homecoming digest has printed *"Barely long enough to notice."* for every gap a human being
+has ever actually left this park alone for. The warm half has been unreachable for a hundred and
+twenty-three cycles, and one spec in the suite said so out loud — *"no away-drift on a sub-day span"* —
+without anybody reading it that way. The threshold is now imported from `missed.ts` rather than chosen,
+because that module answered this exact question one cycle ago and wrote down why, and the same absence
+should not be long enough for one system and too short for another.
+
+**BACKLOG-528 — APPROVED.** The register learns to look at the second frame, and the first thing it sees
+is that the upkeep economy has never once run. `upkeepDue(standing) = floor(standing / 2)`; the founding
+world placed exactly one landmark, the Grove's fallen cairn; a derelict landmark is not standing. So the
+founding park owed nothing on every ground, and owed nothing **still** after somebody mended it, because
+one standing landmark is under the bill's floor. Sixteen cycles of BACKLOG-480 — the daily bill, the
+lapse, the convergence, the disrepair state four Artist fires have drawn ruins for — dormant on every
+fresh save this park has ever written.
+
+Dormant **by calibration**, and `upkeep.ts` says so in its own header as a virtue: *"a ground with a single
+landmark owes nothing, so a fresh park is inert."* That is the `TILES_PER_HEAD` sentence with a different
+constant in it. CHARTER v7's corollary exists because of that sentence in a different file, and tonight it
+caught its sequel. **501 could not have found this from where it stood** — all twelve of its entries were
+claims about a save that had just been created, so *"the park ships X"* was expressible and *"the park
+ships X and then nothing ever happens to it"* was not. 501's own thesis turned on 501.
+
+The reachable half is a lean-to standing on the Grove. Walk one edge east on a fresh save and there is a
+built thing beside a broken one, where this park has shipped only the broken one since cycle 136.
+
+**The fallout, and what it measured.** Fifteen e2e specs reddened — more than 151's three, fewer than
+136's sixteen — and the raw number is the least interesting thing about it. **Six were repaired by one
+edit with no spec touched.** They call the `empty-grounds` fixture, whose declared contract is *"no
+founding ruin, no founding piles, no founding bank ledger"*, and the founding state grew a landmark
+tonight; teaching `__clearFounding` and its postcondition about the lean-to fixed all six at once.
+
+That is the first hard evidence that BACKLOG-495 did what its verdict claimed. Last night's verdict closed
+on a reservation — the seam existed and the whole suite was on it, but *"the next founding-constant move is
+the thing that will say whether the naming happens without being asked."* This was that move. It arrived
+one cycle later, and six specs absorbed it in silence because they had named their assumption instead of
+inheriting it. Five more were repaired by naming a fixture (appeal-ordering specs, since a built structure
+is one of prosperity's own signals and *"Rex alone in the poor grove"* quietly stopped being true), and
+four moved expectations in `cycle-136-mending`, whose subject genuinely is the founding skyline — including
+one real behavioural change asserted rather than smoothed over: a week-long absence used to end with the
+cairn patched and the ground finished, and now it patches, pays a bill, cannot pay the next, and lets one
+landmark back down. `upkeep.ts`'s convergence promise, doing something for the first time in its life.
+
+Nothing was re-flattened, no ad-hoc helper was written, no register entry was deleted.
+
+Gates: build clean, **2502 unit green** across 239 files, **670/670 e2e** run twice with no flake — the
+usual parallel-load flake did not appear, which is worth noting because it usually does.
+
+**Milestone 18's structure arcs are closed.** Three lore arcs remain (119, 114, 122) and no structure arc
+does, so the next Structure-smith either picks off-milestone with a justification or the smiths declare the
+spine finished.
+
+**One reservation, recorded not hidden.** The bill lands at the day boundary — twenty-four real minutes,
+inside `SESSION_MINUTES` and outside the bar's literal ten. This cycle is inside the rules as the studio has
+written them, and the approval rests on the first-frame read rather than the bill. But the honest sentence is
+that the park's economy now has a heartbeat and that heartbeat is twenty-four minutes long, and every
+day-boundary beat in this park shares it. **BACKLOG-493 — the default clock — is still the largest
+unreachable surface left**, exactly as v7 said when it queued the item rather than rushing it. Tonight put one
+more system on the list of things waiting on it.
