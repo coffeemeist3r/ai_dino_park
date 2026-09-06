@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot, gatherToBowl } from './helpers';
+import { boot, foundingState, gatherToBowl } from './helpers';
 
 /**
  * Scarcity moves the herd (BACKLOG-450) + Left for greener ground (BACKLOG-457). Migration now reads the
@@ -47,6 +47,10 @@ async function crossUntilArrived(page: import('@playwright/test').Page, name: st
 test('a migrant heads for the richest neighbour — destination tracks appeal, not adjacency order', async ({ page }) => {
   await boot(page);
   const roster = await names(page);
+  // BACKLOG-528: the founding skyline now ships something standing on the Grove, and a built structure is
+  // one of prosperity's own signals — so a spec whose subject is *appeal ordering* has to say that it
+  // starts from grounds it stocked itself, rather than inheriting a founding state that outranks its setup.
+  await foundingState(page, 'empty-grounds');
 
   // Rex alone in the grove; everyone else in the Fernreach → the grove's east neighbour (Fernreach) far
   // outweighs its west/primary neighbour (the empty bowl). The scarcity dest must be the Fernreach, NOT the
@@ -74,6 +78,10 @@ test('a zone appeal rises with its banked food', async ({ page }) => {
 test('the poorest zone empties first — the ambient pick is a resident of the least-appealing zone', async ({ page }) => {
   await boot(page);
   await gatherToBowl(page); // CHARTER v7: this case needs "Rex ALONE in the grove", so clear its residents
+  // BACKLOG-528: the founding skyline now ships something standing on the Grove, and a built structure is
+  // one of prosperity's own signals — so a spec whose subject is *appeal ordering* has to say that it
+  // starts from grounds it stocked itself, rather than inheriting a founding state that outranks its setup.
+  await foundingState(page, 'empty-grounds');
   // Rex alone in the grove (1 head), everyone else in the richer bowl → the grove is strictly the poorest
   // occupied zone, so with no grove-news or homesickness pulling anyone, the ambient migrant pick is Rex.
   await migrate(page, 'Rex', 'grove');
@@ -83,6 +91,10 @@ test('the poorest zone empties first — the ambient pick is a resident of the l
 test('a dino that crossed toward plenty files the greener-ground reason it left; a plain crossing does not', async ({ page }) => {
   await boot(page);
   await gatherToBowl(page); // as above — the grove must start with nobody but Rex in it
+  // BACKLOG-528: the founding skyline now ships something standing on the Grove, and a built structure is
+  // one of prosperity's own signals — so a spec whose subject is *appeal ordering* has to say that it
+  // starts from grounds it stocked itself, rather than inheriting a founding state that outranks its setup.
+  await foundingState(page, 'empty-grounds');
 
   // Rex alone in the grove, everyone else in the richer bowl. The ambient roll sends Rex back to the bowl as
   // a scarcity move (dest richer than home), so the greener-ground beat fires on arrival.

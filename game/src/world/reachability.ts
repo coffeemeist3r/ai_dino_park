@@ -34,6 +34,7 @@ import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
 import { MISSED_ART_KEY } from './missed'; // BACKLOG-116/531
 import {
+  FOUNDING_LANDMARKS,
   FOUNDING_PILES,
   FOUNDING_PILE_STEPS,
   FOUNDING_RUIN,
@@ -44,10 +45,10 @@ import {
   groundsWithoutResidents,
 } from './founding';
 import { isUnsettled } from './frontier';
-import { pileTotal, type ResourceKind } from './resource';
-import { REPAIR_COST } from './upkeep';
+import { pileTotal, type ResourceKind, type Stockpile } from './resource';
+import { REPAIR_COST, runUpkeep, upkeepDue } from './upkeep';
 import { quarryGround, quarryKind } from './quarry';
-import { PILE_STEPS } from './bank';
+import { PILE_STEPS, bankStep } from './bank';
 import { FOODS } from './foods';
 import { HATCH_ART_KEY } from './hatch';
 import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_NATIVE_ART_KEY } from './stake';
@@ -67,7 +68,30 @@ export interface ReachabilityEntry {
   fact: string;
   /** Does it still hold? Pure, and routed through the production function that owns the fact. */
   holds: () => boolean;
+  /**
+   * The same question, asked of a park that has been **played** rather than founded (BACKLOG-528).
+   *
+   * Every entry above this line is a claim about `founding*()` — a save that has just been created and not
+   * yet touched. That was the register's blind spot by construction: the park's second-commonest state is
+   * one that has been open for twenty minutes, and no frame-one predicate can express *a ruin mended, a
+   * pile spent, a bill paid, a landmark gone over*. So a tuning pass could make the shipping park
+   * interesting for ninety seconds and empty for the rest of the session and pass this file clean.
+   *
+   * Optional on purpose. Not every claim has a second frame — "the roster carries a spawn zone" is a fact
+   * about the founding table and stays one — and forcing every entry to invent one would fill this list
+   * with predicates nobody believes. An entry with no `played` claim is not a gap; an entry whose subject
+   * obviously moves and has no `played` claim is.
+   */
+  played?: {
+    /** What the player watches happen, in the bar's own register. */
+    system: string;
+    /** Does it still hold, against `afterOneSession()`? Same two rules as `holds`. */
+    holds: () => boolean;
+  };
 }
+
+/** Which frame of a claim went dark. */
+export type Frame = 'founded' | 'played';
 
 /**
  * How long a session is, for the purpose of the clock's claim. The bar says ten minutes of *watching*; a
@@ -171,6 +195,62 @@ export function wakingAt(hour: number, zone: string, season: Season = seasonFor(
 /**
  * The register. Ordered oldest claim first, which is also roughly the order a player meets them.
  */
+/** The founding park, and the same park after one watched session (BACKLOG-528). */
+export interface PlayedPark {
+  piles: Record<string, Stockpile>;
+  standing: Record<string, number>;
+  derelict: Record<string, number>;
+}
+
+/**
+ * The founding park stepped through the beats a player actually watches inside one session.
+ *
+ * Two steps, in the order they happen in front of somebody:
+ *
+ * 1. **The mend.** A resident of the ruin's ground walks over and puts the cairn back up, spending
+ *    `REPAIR_COST` off that ground's bank. Routed through `runUpkeep(pile, 0, 1)` — which is not a
+ *    convenient approximation, it is *literally the call the mend errand makes* (`WorldScene.resolveMend`).
+ *    A second implementation of a spend is BACKLOG-495's thesis with resources in it.
+ * 2. **One in-game day of upkeep**, in the **live** form (`derelict = 0`), which is what `runUpkeepPass`
+ *    calls on a watched park; repairing is the mend errand's job now. Using the away form here would model
+ *    a park nobody is in, which is the exact opposite of the frame this helper exists for.
+ *
+ * One day fits: `MINUTES_PER_DAY / ACTIVE_SCALE` real minutes against `SESSION_MINUTES`, which is the
+ * `BACKLOG-493` entry below and is asserted there, so this relies on it rather than re-deriving it.
+ *
+ * Pure — no Phaser, no `Date`, no randomness. Called twice it returns equal output.
+ */
+export function afterOneSession(): PlayedPark {
+  const piles: Record<string, Stockpile> = {};
+  const standing: Record<string, number> = {};
+  const derelict: Record<string, number> = {};
+
+  for (const z of zoneChain()) {
+    piles[z] = { ...(FOUNDING_PILES[z] ?? {}) };
+    standing[z] = FOUNDING_LANDMARKS.filter((l) => l.zone === z).length;
+    derelict[z] = FOUNDING_RUIN.zone === z ? 1 : 0;
+  }
+
+  // 1 — the mend.
+  const mendZone = FOUNDING_RUIN.zone;
+  const mend = runUpkeep(piles[mendZone] ?? {}, 0, derelict[mendZone] ?? 0);
+  if (mend.repaired > 0) {
+    piles[mendZone] = mend.pile;
+    standing[mendZone] = (standing[mendZone] ?? 0) + mend.repaired;
+    derelict[mendZone] = (derelict[mendZone] ?? 0) - mend.repaired;
+  }
+
+  // 2 — one day's bill.
+  for (const z of zoneChain()) {
+    const plan = runUpkeep(piles[z] ?? {}, standing[z] ?? 0, 0);
+    piles[z] = plan.pile;
+    standing[z] = (standing[z] ?? 0) - plan.lapsed;
+    derelict[z] = (derelict[z] ?? 0) + plan.lapsed;
+  }
+
+  return { piles, standing, derelict };
+}
+
 export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
   {
     id: 'BACKLOG-486/500',
@@ -185,6 +265,44 @@ export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
     holds: () =>
       (foundingResidents()[FOUNDING_RUIN.zone] ?? []).length > 0 &&
       pileTotal(FOUNDING_PILES[FOUNDING_RUIN.zone] ?? {}) >= REPAIR_COST,
+    // BACKLOG-528, the first stepped claim: the ground *changes* while you stand on it. `bank.ts` chose
+    // `PILE_STEPS` around the founding state for exactly this reason and said so in its own header —
+    // "watching Bramble put the ruin back up knocks the heap down a step in the same minute" — and until
+    // now nothing in the tree could hold that claim, because it is not a fact about a founded save.
+    played: {
+      system: 'the cairn goes back up and the heap it was mended out of drops a step, while you watch',
+      holds: () => {
+        const z = FOUNDING_RUIN.zone;
+        const after = afterOneSession();
+        return (
+          (after.derelict[z] ?? 1) === 0 &&
+          bankStep(after.piles[z] ?? {}) < bankStep(FOUNDING_PILES[z] ?? {})
+        );
+      },
+    },
+  },
+  {
+    id: 'BACKLOG-480/528',
+    system: 'a skyline somebody has to keep up — a bill, and a landmark that goes over when it goes unpaid',
+    fact: 'the founding grounds ship enough standing landmarks that some ground owes upkeep once the ruin is mended',
+    // Derived from the founding tables through `upkeepDue`, never restating its floor, so a later pass that
+    // thins the founding skyline reddens the build here naming this item rather than going quiet.
+    holds: () =>
+      zoneChain().some((z) => {
+        // The skyline the ground keeps up once the ruin is back: what it ships standing, plus the ruin if
+        // it is that ground's. Read off the founding tables, not off the stepped park, so this stays a
+        // claim about what ships rather than a claim about what the bill did to it.
+        const standing =
+          FOUNDING_LANDMARKS.filter((l) => l.zone === z).length + (FOUNDING_RUIN.zone === z ? 1 : 0);
+        return upkeepDue(standing) >= 1;
+      }),
+    played: {
+      system: 'and the bill actually lands — a ground pays for its skyline out of the heap you watched it bank',
+      holds: () => {
+        const after = afterOneSession();
+        return zoneChain().some((z) => pileTotal(after.piles[z] ?? {}) < pileTotal(FOUNDING_PILES[z] ?? {}));
+      },
+    },
   },
   {
     id: 'BACKLOG-492/497',
@@ -281,7 +399,20 @@ export function unplacedRigs(): string[] {
   return Object.keys(PROP_RIGS).filter((k) => !placed.has(k));
 }
 
-/** The claims that no longer hold. Empty is the only shipping state. */
-export function darkEntries(): ReachabilityEntry[] {
-  return REACHABILITY_REGISTER.filter((e) => !e.holds());
+/**
+ * The claims that no longer hold, each with the frame it went dark on. Empty is the only shipping state.
+ *
+ * The frame is reported rather than flattened because *"the park no longer ships X"* and *"the park ships
+ * X and then nothing happens to it"* are different bugs with different fixes, and a failure that cannot
+ * tell them apart is half a register (BACKLOG-528).
+ */
+export function darkEntries(
+  register: ReachabilityEntry[] = REACHABILITY_REGISTER,
+): Array<{ entry: ReachabilityEntry; frame: Frame }> {
+  const out: Array<{ entry: ReachabilityEntry; frame: Frame }> = [];
+  for (const entry of register) {
+    if (!entry.holds()) out.push({ entry, frame: 'founded' });
+    else if (entry.played && !entry.played.holds()) out.push({ entry, frame: 'played' });
+  }
+  return out;
 }

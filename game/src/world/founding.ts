@@ -32,6 +32,33 @@ import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type Pro
 export const FOUNDING_RUIN = { zone: GROVE_ID, tileX: 4, tileY: 10 } as const;
 
 /**
+ * The founding skyline that is **standing** (BACKLOG-528) — a lean-to on the Grove, raised by whoever
+ * founded that ground and still up.
+ *
+ * It exists because of what the stepped half of the reachability register found. `upkeepDue(standing)` is
+ * `floor(standing / 2)`, the founding world placed exactly one landmark, and that one was the fallen
+ * cairn — which is not standing. So the founding park owed **nothing, anywhere**, and still owed nothing
+ * after somebody walked over and mended the cairn, because one standing landmark is under the bill's
+ * floor. The whole upkeep economy of BACKLOG-480 — the daily bill, the lapse, the disrepair state four
+ * Artist fires have drawn ruins for, the granary cap lift and the prosperity index that both read past it
+ * — had been dormant on every fresh save in this park's history.
+ *
+ * And dormant *by calibration*: `upkeep.ts` states in its own header, as a virtue, that "a ground with a
+ * single landmark owes nothing, so a fresh park is inert." That is the `TILES_PER_HEAD` sentence with a
+ * different constant in it, and CHARTER v7's corollary makes it a defect rather than a compatibility win.
+ *
+ * With the cairn mended the Grove keeps two, which owes one unit a day against a bank of one — so the
+ * ground pays its first bill and then has to choose. That is the first time this park's own economy does
+ * anything to a save nobody has played yet.
+ *
+ * Tile: grass by `groveTileAt(9, 3, 20, 15)` and clear of every fixture the Grove pins — the NE pond
+ * (x ∈ [15,18], y ∈ [2,4]), the trail (the two middle rows, y ∈ {6,7}), `FOUNDING_RUIN` at (4,10) and
+ * `BANK_TILE` at (16,11). Asserted in `cycle-152-played.test.ts` against the production tile function
+ * rather than eyeballed, the way `cycle-141-bank.test.ts` asserts the bank tile.
+ */
+export const FOUNDING_LANDMARKS = [{ zone: GROVE_ID, tileX: 9, tileY: 3 }] as const;
+
+/**
  * What the founding grounds start with in the pile (BACKLOG-488, widened by BACKLOG-495).
  *
  * The Grove's entry is the original and is unchanged: enough stone to cover `REPAIR_COST` with a unit to

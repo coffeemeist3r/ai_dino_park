@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 /**
  * Come for the plenty (BACKLOG-459) — a scarcity migrant arriving in a richer zone is met by the nearest
@@ -47,6 +47,10 @@ test('a scarcity migrant into a populated richer zone gets a wry welcome + a sma
   await boot(page);
   const roster = await names(page);
 
+  // BACKLOG-528: the founding skyline ships something standing on the Grove now, and a built structure is
+  // one of prosperity's own signals — so "the poor grove" is a claim this spec has to make rather than
+  // inherit. It stocks the two grounds itself; the named fixture is what it starts from.
+  await foundingState(page, 'empty-grounds');
   // Rex alone in the poor grove, everyone else in the richer bowl → the ambient roll sends Rex to the bowl
   // as a scarcity move, and a resident is there to size him up.
   for (const n of roster) if (n !== 'Rex') await migrate(page, n, 'bowl');
@@ -76,6 +80,10 @@ test('a homecoming crossing fires welcome-home, NOT the wry welcome', async ({ p
   await boot(page);
   const roster = await names(page);
 
+  // BACKLOG-528: the founding skyline ships something standing on the Grove now, and a built structure is
+  // one of prosperity's own signals — so "the poor grove" is a claim this spec has to make rather than
+  // inherit. It stocks the two grounds itself; the named fixture is what it starts from.
+  await foundingState(page, 'empty-grounds');
   // Rex's root is the bowl; everyone else crowds the bowl so it's the richest neighbour. Rex sits alone in
   // the poor grove. The scarcity roll sends him back to the bowl — his root — so this is a homecoming.
   await page.evaluate(() => (window as W).__setRoot('Rex', 'bowl'));

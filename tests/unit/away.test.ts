@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { awayMinutes, fastForward, MAX_AWAY_DAYS, type AwayInput } from '../../game/src/world/away';
+import {
+  AWAY_BEAT_MIN_MINUTES,
+  awayMinutes,
+  fastForward,
+  MAX_AWAY_DAYS,
+  type AwayInput,
+} from '../../game/src/world/away';
 import { pairKey } from '../../game/src/social/meetings';
 import type { GameTime } from '../../game/src/world/clock';
 
@@ -68,10 +74,28 @@ describe('fastForward', () => {
     expect(r.bonds[key]).toBe(32);
   });
 
-  it('leaves sub-threshold pairs untouched', () => {
+  /**
+   * **Updated by BACKLOG-113, and the update is the item.** This spec's subject was "a pair under the
+   * companion threshold is not a companion", and it asserted that by asserting the pair was untouched —
+   * which was true only because the absence's cold half did not exist. It does now: a bond of 4 is an
+   * acquaintance, and three days away costs it `apartFor(3 days) = 3`.
+   *
+   * What the spec still guards is the part that was always its real subject: this pair does not get the
+   * *warm* treatment. It is not counted as a companion, it gains nothing, and it does not appear in a
+   * "grew closer" line.
+   */
+  it('moves a sub-threshold pair apart rather than closer', () => {
     const key = pairKey('Rex', 'Twitch');
     const r = fastForward(input({ bonds: { [key]: 4 } }), 3 * MIN_PER_DAY * 60_000);
-    expect(r.bonds[key]).toBe(4);
+    expect(r.bonds[key]).toBe(4 - 3);
+    expect(r.digest.some((l) => l.includes('grew closer'))).toBe(false);
+    expect(r.digest.some((l) => l.includes('drifted apart'))).toBe(true);
+  });
+
+  it('leaves strangers untouched, and invents no entry for them', () => {
+    const r = fastForward(input({ bonds: { [pairKey('Rex', 'Twitch')]: 0 } }), 3 * MIN_PER_DAY * 60_000);
+    expect(r.bonds[pairKey('Rex', 'Twitch')]).toBe(0);
+    expect(r.bonds[pairKey('Rex', 'Glade')]).toBeUndefined();
     expect(r.digest.some((l) => l.includes('kept to themselves'))).toBe(true);
   });
 
@@ -91,12 +115,31 @@ describe('fastForward', () => {
     expect(r.digest[0]).toContain('and then some');
   });
 
-  it('a sub-day gap notes the time but changes no bonds', () => {
+  /**
+   * **Rewritten by BACKLOG-113, and this one is the reachability fix itself.** The old assertion was that
+   * three in-game hours away change nothing — and it was the single spec in this park that pinned the
+   * defect. An offline gap replays at `AWAY_SCALE = 1`, so the old `days >= 1` gate meant twenty-four
+   * *real* hours, and in a fresh save watched for ten minutes the digest had never printed anything but
+   * "Barely long enough to notice." The catch-up's whole warm half had been unreachable since cycle 29,
+   * and this file said so out loud without anybody reading it that way.
+   *
+   * So the boundary moves to `AWAY_BEAT_MIN_MINUTES` and the spec now pins both sides of it: under it,
+   * nothing and the old line; over it — which a five-minute step away clears — the bonds move.
+   */
+  it('is silent under AWAY_BEAT_MIN_MINUTES', () => {
     const key = pairKey('Rex', 'Glade');
-    // 3 in-game hours.
-    const r = fastForward(input({ bonds: { [key]: 20 } }), 3 * 60 * 60_000);
+    const r = fastForward(input({ bonds: { [key]: 20 } }), (AWAY_BEAT_MIN_MINUTES - 1) * 60_000);
     expect(r.days).toBe(0);
     expect(r.bonds[key]).toBe(20);
     expect(r.digest.some((l) => l.includes('Barely'))).toBe(true);
+  });
+
+  it('a five-minute step away is long enough to notice', () => {
+    const key = pairKey('Rex', 'Glade');
+    const r = fastForward(input({ bonds: { [key]: 20 } }), AWAY_BEAT_MIN_MINUTES * 60_000);
+    expect(r.days).toBe(0);
+    expect(r.bonds[key]).toBe(21);
+    expect(r.digest.some((l) => l.includes('Barely'))).toBe(false);
+    expect(r.digest.some((l) => l.includes('grew closer'))).toBe(true);
   });
 });

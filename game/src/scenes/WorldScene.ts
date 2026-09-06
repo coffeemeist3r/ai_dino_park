@@ -183,7 +183,7 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers } from '../world/founding';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -1663,6 +1663,17 @@ export class WorldScene extends Phaser.Scene {
         this.cairns.splice(i, 1);
         this.cairnSprites.splice(i, 1).forEach((sp) => sp.destroy());
       }
+      // BACKLOG-528: and the standing half of the founding skyline. `empty-grounds` means *all* of the
+      // founding state — the same reasoning the bank ledger below is cleared for. Leaving the lean-to would
+      // hand every caller of this fixture a landmark it never raised, which is the unnamed assumption this
+      // hook exists to name, in the exact shape the fixture was built to catch.
+      for (const l of FOUNDING_LANDMARKS) {
+        const j = this.shelters.findIndex((s) => s.zone === l.zone && s.tileX === l.tileX && s.tileY === l.tileY);
+        if (j >= 0) {
+          this.shelters.splice(j, 1);
+          this.shelterSprites.splice(j, 1).forEach((sp) => sp.destroy());
+        }
+      }
       for (const zone of Object.keys(FOUNDING_PILES)) this.setPile(zone, {});
       // BACKLOG-492/495: the founding council goes with the founding ruin. A spec that asks for the pre-v7
       // fixture means *all* of it — an empty council, an unset lens glyph, a null Grove policy — and letting
@@ -2003,6 +2014,14 @@ export class WorldScene extends Phaser.Scene {
     const ruin: Landmark = { ...FOUNDING_RUIN, derelict: true };
     this.cairns.push(ruin);
     this.drawCairn(ruin);
+    // BACKLOG-528: and one that is still up. Inside the one-shot guard above, so a restored save keeps
+    // exactly the skyline it was written with. With the ruin mended this is the Grove's second standing
+    // landmark, which is what makes `upkeepDue` non-zero on a fresh save for the first time.
+    for (const l of FOUNDING_LANDMARKS) {
+      const shelter: Landmark = { ...l };
+      this.shelters.push(shelter);
+      this.drawShelter(shelter);
+    }
     for (const [zone, pile] of Object.entries(FOUNDING_PILES)) {
       this.setPile(zone, { ...pile, ...(this.stockpileByZone[zone] ?? {}) });
     }

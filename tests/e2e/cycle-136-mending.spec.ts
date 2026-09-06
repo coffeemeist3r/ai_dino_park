@@ -11,6 +11,13 @@ import { boot } from './helpers';
  *
  * The subject of this spec **is** the founding state, so it asserts the new distribution and does not call
  * `gatherToBowl`.
+ *
+ * **Amended by BACKLOG-528.** The founding Grove now ships a lean-to standing beside the fallen cairn, and
+ * every expectation below that counted landmarks or read `standing` moved because of it. That is not
+ * incidental damage: this file was the closest thing the suite had to a description of the founding
+ * skyline, and until this cycle the skyline it described owed nothing — one landmark, and that one down,
+ * against an `upkeepDue` floor of two. The upkeep economy was dormant on every fresh save, by calibration.
+ * The numbers here are what it costs for it not to be.
  */
 
 type W = Record<string, any>;
@@ -46,11 +53,14 @@ test('a fresh park ships a ruin, and it costs the ground nothing', async ({ page
 
   // CHARTER v7: the founding park exercises its own systems instead of sitting inert beneath them.
   const grove = await landmarks(page, 'grove');
-  expect(grove.length).toBe(1);
-  expect(grove[0].derelict).toBe(true);
-  expect(await standing(page, 'grove')).toBe(0);
+  expect(grove.length).toBe(2); // BACKLOG-528: the fallen cairn, and a lean-to still standing
+  expect(grove.filter((l) => l.derelict).length).toBe(1);
+  expect(grove[0].derelict).toBe(true); // `landmarkRecords` order: cairns first, so the ruin leads
+  expect(await standing(page, 'grove')).toBe(1);
 
-  // 480s rule is unchanged: a derelict landmark owes no upkeep, so the founding park still owes nothing.
+  // 480s rule is unchanged and this is still the day-one bill: `upkeepDue(1)` is 0, so a fresh park owes
+  // nothing *yet*. What changed is that it is now one mend away from owing something, rather than
+  // permanently one landmark short of the floor.
   expect(await runUpkeep(page, 1)).toEqual([]);
 
   expect(errors).toEqual([]);
@@ -73,7 +83,7 @@ test('somebody walks over and puts it back up', async ({ page }) => {
 
   // It stands back up, where it fell, because a dino was standing there.
   expect((await landmarks(page, 'grove')).every((l) => !l.derelict)).toBe(true);
-  expect(await standing(page, 'grove')).toBe(1);
+  expect(await standing(page, 'grove')).toBe(2); // the mended cairn, and BACKLOG-528's lean-to
   expect(await mend(page)).toBeNull(); // the errand resolved
 
   const log = (await events(page)).join(' ');
@@ -119,9 +129,17 @@ test('the errand does not fire in a ground the player has left', async ({ page }
 test('an absence still settles arithmetically — nobody is there to walk', async ({ page }) => {
   await boot(page);
   // The away catch-up keeps 480s full arithmetic: an unattended park has no hands to send.
-  const lines = await runUpkeep(page, 7);
-  expect(lines.join(' ')).toContain('patched up');
-  expect((await landmarks(page, 'grove')).every((l) => !l.derelict)).toBe(true);
+  //
+  // BACKLOG-528 changed what that arithmetic *says*, and the change is the point. A week away used to end
+  // with the cairn patched and the ground finished, because a one-landmark skyline owed nothing and the
+  // convergence had nowhere to go. Now the patch-up puts the ground on two standing, which owes a unit a
+  // day against a bank of one — so it pays once, cannot pay again, and lets one back down. That is
+  // `upkeep.ts`'s own promise ("converges on a skyline the ground can afford") doing something for the
+  // first time on a save nobody has played.
+  const lines = (await runUpkeep(page, 7)).join(' ');
+  expect(lines).toContain('patched up');
+  expect(lines).toContain('fell into disrepair');
+  expect(await standing(page, 'grove')).toBe(1); // the skyline it can afford, not the one it started with
 });
 
 test('a restored save seeds nothing — the founding ruin is written once, ever', async ({ page }) => {
@@ -135,8 +153,10 @@ test('a restored save seeds nothing — the founding ruin is written once, ever'
   await page.locator('canvas').waitFor({ state: 'visible' });
   await page.waitForFunction(() => (window as W).__ready === true);
 
-  // One landmark, mended — not a second founding cairn stacked on the restore.
+  // The founding skyline, mended — not a second copy of it stacked on the restore. The one-shot guard in
+  // `seedFounding` covers BACKLOG-528's lean-to for the same reason it covers the cairn, so the count here
+  // is the assertion that a restored save gains nothing.
   const after = await landmarks(page, 'grove');
-  expect(after.length).toBe(1);
-  expect(after[0].derelict).toBe(false);
+  expect(after.length).toBe(2);
+  expect(after.every((l) => !l.derelict)).toBe(true);
 });

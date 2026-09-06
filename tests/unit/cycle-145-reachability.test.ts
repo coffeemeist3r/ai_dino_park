@@ -22,11 +22,22 @@ import { PROP_RIGS } from '../../game/src/art/propArt';
 describe('the reachability register (BACKLOG-501)', () => {
   it('holds — every system the shipping park claims to exercise still is', () => {
     const dark = darkEntries();
-    const report = dark.map((e) => `  ${e.id} — ${e.system}\n    was reachable because: ${e.fact}`).join('\n');
+    // BACKLOG-528: the report names the frame. "the park no longer ships X" and "the park ships X and
+    // then nothing happens to it" are different bugs, and a message that cannot tell them apart sends
+    // whoever reads it to the wrong module.
+    const report = dark
+      .map(
+        ({ entry, frame }) =>
+          `  [${frame}] ${entry.id} — ${frame === 'played' ? entry.played!.system : entry.system}\n` +
+          `    was reachable because: ${entry.fact}`,
+      )
+      .join('\n');
     expect(
       dark,
       dark.length
-        ? `\nThe founding park no longer exercises ${dark.length} system(s) it claims to:\n${report}\n\n` +
+        ? `\nThe park no longer exercises ${dark.length} system(s) it claims to:\n${report}\n\n` +
+            'A [founded] failure means the fresh save stopped shipping the fact. A [played] failure means ' +
+            'it still ships it and then nothing happens to it — the shape CHARTER v7 calls dormant.\n' +
             'Repair the founding state, or remove the entry and say why in the verdict. A claim deleted to ' +
             'make this green is the defect this file exists to catch.'
         : '',

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { boot, gatherToBowl } from './helpers';
+import { driftFor } from '../../game/src/world/away';
 
 type W = Record<string, unknown>;
 type Jealousy = { name: string; line: string; memory: string } | null;
@@ -7,8 +8,9 @@ type Homecoming = { name: string; hearts: number; line: string; memory: string; 
 type CatchUp = { days: number; minutes: number; capped: boolean; digest: string[]; homecoming: Homecoming };
 type Comfort = { comforter: string; sulker: string } | null;
 
-// 12 in-game hours of real time at 1×: past the 6h homecoming gate, under the 1-day
-// away-drift threshold — so the only bond change is the comfort beat itself.
+// 12 in-game hours of real time at 1×: past the 6h homecoming gate. It also clears
+// `AWAY_BEAT_MIN_MINUTES` (BACKLOG-113), so a companion pair drifts as well — the specs below name that
+// drift through `driftFor` rather than assuming it away, which is what they used to do.
 const HALF_DAY_MS = 12 * 60 * 60_000;
 const COMFORT_BOND = 2;
 
@@ -45,10 +47,16 @@ test('a sulking runner-up is consoled by its closest friend with a 🫂 and a bo
   expect(bubbles.some((t) => t.includes('🫂') && t.includes('Twitch'))).toBe(true);
   expect(bubbles.some((t) => t.includes('😒') && t.includes(sulker))).toBe(true);
 
-  // The Twitch↔sulker bond grew by exactly COMFORT_BOND (no away-drift on a sub-day span).
+  // The Twitch↔sulker bond grew by COMFORT_BOND, plus what the absence itself is worth.
+  //
+  // BACKLOG-113: the parenthetical that used to sit here read "no away-drift on a sub-day span", and it was
+  // an assumption this spec was standing on rather than a fact it had checked. It was true only because the
+  // catch-up's drift beats were gated on a whole in-game day, which at `AWAY_SCALE = 1` is twenty-four real
+  // hours — the reason the digest was unreachable in a session at all. Now a half-day away moves a
+  // companion pair, and this pair is one. The subject of the spec is unchanged: what the *comfort* is worth.
   const after = await bonds();
   const key = bondKey('Twitch', sulker);
-  expect(after[key] - before[key]).toBe(COMFORT_BOND);
+  expect(after[key] - before[key]).toBe(COMFORT_BOND + driftFor(HALF_DAY_MS / 60_000));
 });
 
 test('with no close friend, the sulk stands alone and the repair path is untouched (BACKLOG-130)', async ({ page }) => {

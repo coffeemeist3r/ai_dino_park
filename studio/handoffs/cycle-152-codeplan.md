@@ -181,3 +181,44 @@ they come out the other way:
 2. Is the pile-spend helper in `upkeep.ts` exportable, or does the mend already have a pure owner in
    `mending.ts` / `repair.ts`? Prefer whichever already exists. `repair.ts` and `mending.ts` are both in
    the tree and neither was read at plan time — read them first.
+
+---
+
+## Shipped
+
+Both blocker questions came out the way the plan hoped, so the plan held:
+
+1. `strengthen` already clamps to `[0, 100]` — criterion 5 is free, no call-site floor, no change to a
+   function eleven callers depend on.
+2. The mend does **not** need a new spend helper. `WorldScene.resolveMend` spends via
+   `runUpkeep(pile, 0, 1)`, so `afterOneSession()` calls the identical production function rather than a
+   second implementation. `spendOne` stays private.
+
+### Fallout, and how it was repaired
+
+Unit: 2 red, both in `tests/unit/away.test.ts`, both asserting the sub-day silence — repair category 1,
+expectations updated with the reasoning written into the file.
+
+E2E: **15 red**, and the shape of the repair is the finding worth recording.
+
+- **6 of the 15 were one edit.** `cycle-074-shelter`, `cycle-096-prosperity` and four others call the
+  `empty-grounds` fixture, whose contract is *"no founding ruin, no founding piles, no founding bank
+  ledger"* — and the founding state grew a landmark this cycle. Teaching `__clearFounding` and
+  `verifyEmptyGrounds` about it repaired all six at once, without touching a spec. That is BACKLOG-495's
+  seam doing precisely the job it was built for, one cycle after it was built.
+- **5 more were category 2** — `cycle-109-scarcity` and `cycle-111-plentywelcome`, whose subject is
+  appeal ordering. A built structure is one of prosperity's own signals, so "Rex alone in the poor grove"
+  stopped being true. Each now names `empty-grounds` and stocks the grounds it is actually measuring.
+- **4 were category 1** — `cycle-136-mending`, which is the closest thing the suite had to a description
+  of the founding skyline. Its numbers moved and its reasoning was written in. One of them is a genuine
+  behavioural change worth naming: a week-long absence used to end with the cairn patched and the ground
+  finished; it now patches, pays a bill, cannot pay the next one, and lets one landmark back down —
+  `upkeep.ts`'s convergence promise doing something for the first time on a save nobody has played.
+- **Nothing was re-flattened.** `FOUNDING_LANDMARKS`, `AWAY_BEAT_MIN_MINUTES` and `ceil` all ship as
+  designed; no ad-hoc helper was added; no register entry was deleted.
+
+### Gates
+
+`npm run build` clean. **2502 unit green** across 239 files (up from 2475/237). **670/670 e2e**, up from
+666. `@mlc-ai/web-llm` still imported only under `game/src/ai/`. Save format additive — the lean-to seeds
+on the `!save` branch inside the existing one-shot guard and rides the existing `shelters` array.

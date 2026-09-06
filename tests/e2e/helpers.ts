@@ -136,7 +136,12 @@ const verifyEmptyGrounds: Verify = async (page) =>
     const stillThere = (w.__cairns() as Array<{ zone: string; tileX: number; tileY: number }>).some(
       (c) => c.zone === ruin.zone && c.tileX === ruin.tileX && c.tileY === ruin.tileY,
     );
-    return stillThere ? `the founding ruin is still standing on ${ruin.zone}` : null;
+    if (stillThere) return `the founding ruin is still standing on ${ruin.zone}`;
+    // BACKLOG-528: and the standing half. The founding state grew a lean-to this cycle, and a fixture that
+    // clears half of what it names is exactly the silent failure this postcondition exists for.
+    const shelters = w.__shelters() as Array<{ zone: string; tileX: number; tileY: number }>;
+    const left = shelters.length;
+    return left ? `${left} founding landmark(s) still standing` : null;
   }, FOUNDING_RUIN);
 
 /**
@@ -152,7 +157,12 @@ const verifyAsShipped: Verify = async (page) =>
       if (got !== step) return `${zone} boots at heap step ${got}, expected ${step}`;
     }
     const ruin = (w.__cairns() as Array<{ derelict?: boolean }>).length;
-    return ruin > 0 ? null : 'the founding ruin is missing';
+    if (ruin === 0) return 'the founding ruin is missing';
+    // BACKLOG-528: and something still standing beside it. This is the postcondition that makes the upkeep
+    // economy's reachability a thing the suite holds rather than a thing a verdict claimed once — a later
+    // pass that thins the founding skyline fails here, by name, instead of somewhere unrelated.
+    const standing = (w.__shelters() as unknown[]).length;
+    return standing > 0 ? null : 'the founding skyline ships nothing standing';
   }, FOUNDING_PILE_STEPS);
 
 export const FOUNDING_FIXTURES: Record<FoundingFixtureName, FoundingFixture> = {

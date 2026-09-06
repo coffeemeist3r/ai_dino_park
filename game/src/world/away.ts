@@ -24,15 +24,91 @@ import { advanceTime, type GameTime } from './clock';
 import { strengthen, type Bonds } from '../social/bonds';
 import { bondedPairs } from '../ui/lenses';
 import { remember, type MemoryStore } from '../ai/memory';
+import { MISSED_MIN_MINUTES } from './missed';
 
 const MINUTES_PER_DAY = 24 * 60;
 /** Cap on simulated away span. A longer gap still advances the clock but its effects stop here. */
 export const MAX_AWAY_DAYS = 7;
 const MAX_AWAY_MINUTES = MAX_AWAY_DAYS * MINUTES_PER_DAY;
 /** Min bond for a pair to count as "keeping each other company" — mirrors WorldScene HUDDLE_THRESHOLD. */
-const COMPANION_MIN_BOND = 8;
+export const COMPANION_MIN_BOND = 8;
 const DRIFT_PER_DAY = 2;
 const MAX_DRIFT = 12;
+
+/**
+ * How far apart an acquaintance pair comes back, per in-game day, and the most it can ever lose
+ * (BACKLOG-113).
+ *
+ * Both are **half** the warm rates on purpose. This park is deathless and cozy by charter, so coming apart
+ * is slower than coming together: a falling-out is a nudge the keeper can undo in one visit, not a
+ * punishment that outruns them. And `strengthen` clamps at 0, so a bond is never a wound — the worst an
+ * absence can do to two dinos is return them to strangers.
+ */
+const APART_PER_DAY = 1;
+const MAX_APART = 6;
+
+/**
+ * The gap at which any away beat happens at all, in in-game minutes.
+ *
+ * **Imported from `missed.ts` rather than chosen here**, and that is the whole reachability fix of
+ * BACKLOG-113. Until this cycle every drift beat in this module was gated on `days >= 1`, and an offline
+ * gap replays at `AWAY_SCALE = 1` — so one in-game day is *twenty-four real hours away*, and in a fresh
+ * save watched for ten minutes, or a hundred, the homecoming digest had never printed anything but
+ * "Barely long enough to notice." The catch-up's whole warm half has been unreachable since cycle 29.
+ *
+ * `missed.ts` faced this exact question one cycle ago and wrote down the answer: a threshold tuned so the
+ * shipping park sits under it is the defect CHARTER v7's corollary names. The same absence should not be
+ * long enough for one system and too short for another, so this is that constant, not a second copy of it.
+ */
+export const AWAY_BEAT_MIN_MINUTES = MISSED_MIN_MINUTES;
+
+/**
+ * A per-day rate, asked about a span measured in minutes.
+ *
+ * `ceil` is doing the reachability work: it is what turns a five-minute step away into one point of
+ * movement instead of zero. At every **whole-day** input it lands on exactly the integer
+ * `rate * days` gave before this cycle (an integer's ceiling is itself), so no day-boundary behaviour
+ * changed — `cycle-152-drift.test.ts` pins that for days 1 through 7 rather than leaving it as a claim in
+ * a comment.
+ */
+function perMinute(rate: number, cap: number, minutes: number): number {
+  if (minutes < AWAY_BEAT_MIN_MINUTES) return 0;
+  return Math.min(cap, Math.ceil((rate * minutes) / MINUTES_PER_DAY));
+}
+
+/** How much closer a companion pair comes back, for an absence of `minutes`. */
+export function driftFor(minutes: number): number {
+  return perMinute(DRIFT_PER_DAY, MAX_DRIFT, minutes);
+}
+
+/** How much further apart an acquaintance pair comes back, for an absence of `minutes`. */
+export function apartFor(minutes: number): number {
+  return perMinute(APART_PER_DAY, MAX_APART, minutes);
+}
+
+/**
+ * The pairs that know each other and keep no company — a bond above zero and under the companion
+ * threshold. The band the whole item is about: the friendship the player *started* and did not finish.
+ *
+ * Strangers (bond 0, or no entry at all) are excluded by the floor of 1 and stay excluded, because a park
+ * that invents estrangement between two dinos who have never met is inventing drama rather than reporting
+ * it. Built off `bondedPairs`, which already walks `Bonds` once and returns it sorted descending, so this
+ * is a filter rather than a second traversal.
+ */
+export function driftingPairs(bonds: Bonds): Array<{ a: string; b: string; points: number }> {
+  return bondedPairs(bonds, 1).filter((p) => p.points < COMPANION_MIN_BOND);
+}
+
+/** The memory a drifted dino files about the other one. One builder, not a template literal at the call
+ *  site (the BACKLOG-483 rule `missed.ts` follows) — two modules read this string back out. */
+export function apartMemory(other: string): string {
+  return `while the keeper was away, you and ${other} had nothing to say to each other`;
+}
+
+/** The digest's cold line, the counterpart to "grew closer". */
+export function apartLine(a: string, b: string): string {
+  return `${a} and ${b} drifted apart.`;
+}
 
 export interface AwayInput {
   time: GameTime;
@@ -90,22 +166,39 @@ export function fastForward(input: AwayInput, nowMs: number): AwayResult {
   let memory = input.memory;
   const digest: string[] = [`The bowl ran on for ${fmtSpan(minutes)}${capped ? ' (and then some)' : ''}.`];
 
-  if (days >= 1) {
-    const drift = Math.min(DRIFT_PER_DAY * days, MAX_DRIFT);
-    const pairs = bondedPairs(bonds, COMPANION_MIN_BOND);
-    for (const p of pairs) {
+  const drift = driftFor(minutes);
+  const apart = apartFor(minutes);
+
+  if (drift > 0 || apart > 0) {
+    const warm = bondedPairs(bonds, COMPANION_MIN_BOND);
+    for (const p of warm) {
       bonds = strengthen(bonds, p.a, p.b, drift);
       memory = remember(memory, p.a, `while the keeper was away, you and ${p.b} kept each other company`);
       memory = remember(memory, p.b, `while the keeper was away, you and ${p.a} kept each other company`);
     }
-    if (pairs.length) {
+
+    // BACKLOG-113: the cold half. Read the band off the bonds as they were *before* the warm pass, so a
+    // pair cannot be counted twice — `strengthen` above can lift nobody across the threshold (it only
+    // touches pairs already over it), but the read order is the thing that guarantees that rather than an
+    // argument about it.
+    const cold = driftingPairs(input.bonds);
+    for (const p of cold) {
+      bonds = strengthen(bonds, p.a, p.b, -apart);
+      memory = remember(memory, p.a, apartMemory(p.b));
+      memory = remember(memory, p.b, apartMemory(p.a));
+    }
+
+    if (warm.length) {
       // bondedPairs returns descending by bond, so the first two are the strongest companions.
       for (const p of bondedPairs(bonds, COMPANION_MIN_BOND).slice(0, 2)) {
         digest.push(`${p.a} and ${p.b} grew closer.`);
       }
-    } else {
-      digest.push('The cast kept to themselves.');
     }
+    // The furthest-apart pair leads — `driftingPairs` is descending by bond, so the tail is the faintest
+    // acquaintance, which is the one the absence cost the most.
+    for (const p of cold.slice(-2).reverse()) digest.push(apartLine(p.a, p.b));
+
+    if (!warm.length && !cold.length) digest.push('The cast kept to themselves.');
   } else {
     digest.push('Barely long enough to notice.');
   }
