@@ -10590,3 +10590,24 @@ no longer the Artist's problem to solve: **BACKLOG-535** was seeded this morning
 structure lane, where "is this ground still being looked after" is a number somebody has to define. And
 after tonight there is a new candidate that did not exist this morning — the upkeep ledger, which finally
 moves on a fresh save.
+
+## Cycle 152 — housekeeping
+
+Four closed bullets filed to the archive (528's two entries, 113 and 534), and the **cycle-136 structure
+additions section moved whole** — its last open item was 528, and the section that opened over *"the
+fixture nobody names"* closes on the cycle where that fixture absorbed six spec failures without a spec
+being touched. The working backlog lands at **206 open**: a cycle that closed three and seeded three, so
+the count is flat and the debt moved rather than grew.
+
+The **Structure Track sits at exactly 4 against X=4**, so next cycle's Structure-smith drains rather than
+brainstorms, with **BACKLOG-530** on top — the marks nobody can assert, skipped this cycle only for file
+collision with the lore track's mark neighbourhood, and cheaper tonight than it was this morning because
+`__missedMarks` grew a `tex` field for the art fire. **535** and **536** sit below it and both were seeded
+by what this cycle's own picks uncovered, which is the queue working the way it should.
+
+**Milestone 18's structure arcs are closed and three lore arcs remain** (119, 114, 122). Next cycle's
+Structure-smith either justifies an off-milestone pick or the smiths declare the spine finished — either
+is legal, and the choice should be made out loud in the handoff rather than by default.
+
+`lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in the
+queue is asking for one.

@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-530 [infra] The marks nobody can assert — four glyphs a dino can wear and no dev hook to read any of them (full text in the cycle-149 block below).
-- [x] BACKLOG-528 [infra] The register can only see the first frame — every one of the ten reachability entries is a claim about a save that has just been created, and nothing in the park pins a claim about a save that has been *played* (full text in the cycle-149 block below).
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state (full text in the cycle-151 block below).
 - [ ] BACKLOG-535 [core] The stake's undecided driver — pick which world number means “this ground is still being looked after”, so BACKLOG-518 finally has a host (full text in the cycle-152 block below).
 - [ ] BACKLOG-536 [emergent] The economy has an outflow and no pinned inflow — `upkeep.ts` promises convergence and nothing measures the refill rate against the drain rate (full text in the cycle-152 block below).
@@ -69,7 +68,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-518 [art] The stake somebody keeps up — the third axis of the founder's mark: not who founded a ground, but whether the ground is still being looked after. `pile_1..3` already proves the pattern reads at 32px — one glyph, three steps, legible from the map without a lens. Give the stake the same: fresh binding and a small offering laid at its base for a ground that is thriving, against 513's plain post for a ground merely lived on and 514's canted, slack, bleached one for a ground everybody left. Four states in one family means the founding mark stops being a nameplate and becomes the park's cheapest health read. Standalone via `bakePropArt`; a later cycle decides which of prosperity, stock, or upkeep drives the step. **(2026-08-30, cycle 145-art: held rather than drawn, on the amendment above. Its driver was left unchosen on purpose this morning, and by that evening an unchosen driver meant no host, and no host means the register's ninth entry reddens the build. Pick the driver first — the honest candidate is `pileStep` off the ground's own bank, since 504/506 already prove that read at 32px — then draw it.)**
 
-- [x] BACKLOG-534 [art] The thought it will not admit to — the `aloof` mark is currently the `missed` rig at `MISSED_FAINT_ALPHA = 0.45`, and after cycle 151 it is the **last** alpha-as-state read left in the park. The beacon proved why that is wrong: dim does not mean *withheld*, it means *far away, or night, or nearly gone*, and a 💭 at 45% over a dino's head reads as a mark fading out rather than a dino declining to say something. The three grades in `missed.ts` are two axes on purpose — `unmoved` is the empty space, `missed` is the thought said out loud, and `aloof` is the one that has to carry *noticed, and chose not to tell you*. Draw it: same family, same footprint, one glyph, but the read is a thought turned away — the bubble's tail pointing off rather than down, the interior emptied to outline where the lit rig is filled, the whole shape canted a few degrees off the vertical the `missed` rig stands on. Key it `missed_aloof`, wire it where `WorldScene.ts:3647` currently sets alpha, and keep the alpha branch as the fallback so the build never depends on the draw landing. Host exists today (the mark ships and the register pins it), so this is drawable on the next Artist fire, not stashed. Builds on 531 / 116 / 503.
 
 
 ## Infra
@@ -114,7 +112,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 29 lore additions — the keeper goes away (2026-06-02)
 
-- [x] BACKLOG-113 [emergent] Drift apart while away — the away fast-forward isn't all warmth: a low-bond pair that never huddles loses a little bond over a long absence (capped decay), so the homecoming digest can carry a falling-out, not just companionship. Builds on 106.
 - [ ] BACKLOG-114 [pokemon] Away-log in the book — the collection book keeps the last "while you were away" digest so you can re-read what the bowl got up to. Builds on 106 + 021.
 - [ ] BACKLOG-115 [emergent] Night-owl absence — once diurnal/nocturnal temperament (109) lands, feed it into the away fast-forward: night-owls rack up more shared nights while away, so *who* grew closer becomes a personality tell. Cross-links 106 + 109.
 
@@ -681,15 +678,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
 
-## Cycle 136 structure additions — the fixture nobody names (2026-08-21)
-
-> Filed by the cycle-136 validator. Two cycles running, a founding-constant move has been the only thing to
-> reveal what the suite was actually asserting — and both times the answer was "a fixture nobody wrote down".
-
-
 ## Cycle 149 structure additions (2026-09-03)
 
-- [x] BACKLOG-528 [infra] The register can only see the first frame — BACKLOG-501 turned CHARTER v7's bar into a list that breaks, and it has caught real defects twice. But read the ten entries together and they share a hidden shape: **every one of them is a claim about `founding*()`** — a save that has just been created and not yet played. The park's second-commonest state is a save that has been *open for a while*, and the register is blind to it by construction. A ruin mended, a pile spent, a council's term run out, a crop harvested, the frontier settled — each of those is a legal end state that no entry can express, so a tuning pass that makes the shipping park interesting for ninety seconds and empty for the rest of the session passes the bar clean. The work: give `ReachabilityEntry` an optional second predicate that runs against a **stepped** world rather than a founded one (the suite already knows how to advance one — `__stepMend`, `forceStep`, `runUpkeepPass` are all in the tree), and write the first two or three such claims. Not a rewrite: `holds()` stays exactly as it is and the existing ten are untouched, because the frame-one claims are correct and load-bearing. This is 501's own thesis — *a claim nobody wrote down is an assertion nobody knows they are making* — applied to the axis 501 could not see from where it stood. Builds on 501 / 495.
 - [ ] BACKLOG-530 [infra] The marks nobody can assert — a dino can wear four hour-and-mood marks (the sleeper's, the owl's, the cold funk's, and now the vigil's) and **no spec in this park has ever been able to read one.** There is no `__marks()` hook, so every claim about which glyph is showing — including the precedence rules that decide which of two mutually-exclusive marks wins a shared slot — is implemented and then reviewed by reading the source. Cycle 149 is the third consecutive cycle in which a mark claim was raised as a criterion and could not be pinned: 520 asserted its two rigs bake, not that either is ever *shown*; 522/525 asserted the sleeping pose swaps, via `setAsleep`; 121 asserted the vigil dispatches and arrives, but not that the owl's mark yields to it. The work is small and the discipline is the point: one hook returning, per dino, which marks are visible — built off the same `refresh*Marks` reads production uses, not a parallel calculation — plus the precedence claims each existing mark family already makes in its comments, turned into specs. Filed by the cycle-149 Validator on QA's declared gap. Builds on 520 / 121 / 184.
 
 ## Cycle 152 structure additions (2026-09-06)
