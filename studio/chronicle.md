@@ -10432,3 +10432,11 @@ decide it from evidence the next founding-constant move will produce rather than
 go looking for one — v8 is an escape hatch for debt the queue has proved it cannot drain, and tonight it
 drained the only item that had ever proved that.
 
+
+## Cycle 152 — lore-smith
+
+The absence has a cold half. Social queue at 199 ≥ 12, so nothing new was invented there; the art queue
+at 1 < 3 got one seed — **BACKLOG-534**, the `aloof` mark drawn instead of dimmed, which after last
+night's beacon is the last alpha-as-state read left in the park. Suggested next-up is **BACKLOG-113**,
+Milestone 18's second lore arc, carried forward unconsumed from the solo cycle: the digest learns to
+report a falling-out, not only companionship. Idea Box empty.
