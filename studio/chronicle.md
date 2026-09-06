@@ -10460,3 +10460,12 @@ park has shipped for cycles and never shown anybody. **113**'s drift beats are g
 every day boundary and moves a bond by one after five minutes. **528**'s stepped register predicts that
 the upkeep economy is dormant on every fresh save, because the founding world places one landmark and it
 is derelict. Both fixes are one table in the item's own module, and v7 says they ship in the same cycle.
+
+## Cycle 152 — code-planner
+
+Two disjoint file sets. Lore adds no module — `away.ts` already owns the company logic and a `drift.ts`
+beside it would split one rule across two headers — and the repair order for the expected sub-day fallout
+is written down before the fallout exists, per the 495 discipline. Structure adds `afterOneSession()`, a
+pure stepped park routed through `runUpkeep`'s live form rather than its away form, because the frame
+this item is for is a park somebody is *in*. Two questions are flagged as blockers-if-wrong rather than
+assumed: whether `strengthen` floors at 0, and whether the mend's pile-spend already has a pure owner.
