@@ -10773,3 +10773,31 @@ Three full runs tonight: two with a moving victim, one clean. That is what inter
 exactly why 538's first deliverable is named as a reproduction rather than a fix.
 
 The art queue closes the night at **1** — 537, and now with a written reason it cannot be drawn yet.
+
+## Cycle 153 — housekeeping
+
+Three closed bullets filed to the archive — 114, 535 and **518, which had been sitting open in the art
+queue since cycle 145 and is the oldest thing this cycle closed**. No section emptied. The working backlog
+lands at **205 open**: a cycle that closed three and seeded three, so the count moved by one and the debt
+moved rather than grew.
+
+The **Structure Track sits at exactly 4 against X=4**, so next cycle's Structure-smith drains rather than
+brainstorms, and the order it inherits is worth reading rather than re-deriving. **BACKLOG-530 is back on
+top with a written reason it should ride rather than track** — its bar answer is *nothing a player sees*,
+which is the BACKLOG-515 shape from cycle 148, and QA has now declared its absence a gap in two consecutive
+cycles. Below it: **533** (the fixture nobody is required to name — and this cycle gave it a fourth data
+point, since both new e2e specs named their founding state without being made to), **538** (tonight's flake
+trend, filed with the first deliverable named as a reproduction), and **536**.
+
+The art queue closes at **1**, and for the first time in eight fires that 1 is not 518. It is **537**, which
+this morning's Lore-smith seeded and this evening's Artist declined to draw, with the reason written into
+the entry: the errand is live and reachable, the *host* is not. That is the same class of blockage 518 spent
+seven fires in, caught one fire later this time instead of seven.
+
+**Milestone 18 has two lore arcs left** (119, 122) and its structure arcs closed last cycle. Next cycle's
+Structure-smith is on the same footing cycle 152 left it: either justify an off-milestone pick out loud or
+the smiths declare the spine finished. Both are legal; the choice should be made in the handoff rather than
+by default.
+
+`lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in the
+queue is asking for one.
