@@ -18,6 +18,7 @@ import type { MemoryStore } from '../ai/memory';
 import type { Bonds } from '../social/bonds';
 import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
+import type { AwayEntry } from './awaylog';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -116,6 +117,9 @@ export interface SaveData {
   /** BACKLOG-409: dino → the friend it caught its ritual off (407). Additive; absent → {} (an echo without a
    *  recorded source reads as "picked up from a friend"). */
   ticEchoFrom?: Record<string, string>;
+  /** The last few homecoming digests, newest first (BACKLOG-114) — what the book re-reads back to you.
+   *  Additive; absent → [] (a save written before this cycle has thrown its digests away already). */
+  awayLog?: AwayEntry[];
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -506,6 +510,22 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // awayLog (BACKLOG-114) — the kept digests. Array of {at, minutes, lines}; a malformed one is refused
+  // rather than loaded half-read, the same rule every field above it follows.
+  let awayLog: AwayEntry[] | undefined;
+  if (o.awayLog !== undefined) {
+    if (!Array.isArray(o.awayLog)) return null;
+    awayLog = [];
+    for (const raw of o.awayLog as unknown[]) {
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+      const e = raw as Record<string, unknown>;
+      if (!isNum(e.at) || !isNum(e.minutes)) return null;
+      if (!Array.isArray(e.lines)) return null;
+      for (const l of e.lines) if (typeof l !== 'string') return null;
+      awayLog.push({ at: e.at, minutes: e.minutes, lines: [...(e.lines as string[])] });
+    }
+  }
+
   // ticsFormed / ticEchoFrom (BACKLOG-409) — the lifetime "this ritual happened" set and who each echo was
   // caught off. Additive; absent → undefined.
   let ticsFormed: string[] | undefined;
@@ -884,6 +904,7 @@ export function deserialize(json: string): SaveData | null {
     ticWatches,
     ticsFormed,
     ticEchoFrom,
+    awayLog,
     leftDays,
     catchWarmth,
     ticHaunts,

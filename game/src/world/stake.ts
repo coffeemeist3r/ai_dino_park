@@ -39,6 +39,38 @@ export const STAKE_NATIVE_ART_KEY = 'founder_stake_native';
 /** The same mark on ground everybody left (BACKLOG-514). */
 export const STAKE_HOLLOWED_ART_KEY = 'founder_stake_hollowed';
 
+/** The mark on ground somebody is still keeping up (BACKLOG-518, hosted by 535). */
+export const STAKE_KEPT_ART_KEY = 'founder_stake_kept';
+
+/**
+ * Is this ground still being **looked after** (BACKLOG-535)?
+ *
+ * The fourth stake state had a rig waiting for it since cycle 144 and no host for seven Artist fires, for
+ * one reason: no number in this park meant *looked after*. 513 reads the pioneer record and 514 reads the
+ * head count; the third axis had no source. This is the source, and the choice is the item, so it lives
+ * here rather than only in a handoff.
+ *
+ * **The upkeep ledger.** A ground is looked after when it has raised something and none of it is broken.
+ * After BACKLOG-528 that is a number that finally moves on a save nobody has played: the founding Grove
+ * ships one fallen cairn and one standing lean-to, so it boots *not* kept, and the mend errand somebody
+ * runs in the first minute is what changes it. That makes this the only state in the founder's-mark family
+ * the player watches *change* rather than finds already set.
+ *
+ * The two candidates that lost:
+ * - **`pileStep` off the ground's bank** — BACKLOG-504 already draws that number as a heap standing on the
+ *   same ground, so a bank-keyed stake would say one number in two alphabets. It also answers the wrong
+ *   question: a ground can be piled high because nobody has spent anything, which is nearer neglect.
+ * - **The prosperity index (428)** — a composite, so the player cannot tell which of four things went
+ *   right, and it reads *past* upkeep, diluting the one number we actually mean with three we do not.
+ *
+ * `standing > 0` is load-bearing and is the easy half to drop. A ground with nothing raised has nothing to
+ * keep up; calling that kept would say the bare Bowl is better looked after than the Grove, which ships a
+ * ruin somebody is about to fix. **Nothing is not the same as nothing broken.**
+ */
+export function stakeUpkeepStep(standing: number, derelict: number): boolean {
+  return standing > 0 && derelict === 0;
+}
+
 /** The stand-in where a rig is missing — the per-item fallback 490/494/496/504/510 all ship. */
 export const STAKE_GLYPH = '🪧';
 
@@ -55,9 +87,16 @@ export const STAKE_GLYPH = '🪧';
  *
  * Hollowed wins over kind on purpose: a ground everybody left looks the same whether they were born there
  * or walked in. That is what leaving does.
+ *
+ * BACKLOG-535 adds the fourth: a founded ground that is **kept up** (`stakeUpkeepStep`) shows the tended
+ * post whichever way it was founded. Precedence is **hollowed > kept > kind**, for the same reason
+ * hollowed already beat kind — an abandoned ground is an abandoned ground, and the last thing anybody did
+ * to its skyline is not the news. `kept` is required rather than defaulted: every call site is in this
+ * repo, so the compiler can find them all, and a default would let a later one opt out in silence.
  */
-export function stakeArtKey(kind: FoundingKind | null, hollowed: boolean): string | null {
+export function stakeArtKey(kind: FoundingKind | null, hollowed: boolean, kept: boolean): string | null {
   if (!kind) return null;
   if (hollowed) return STAKE_HOLLOWED_ART_KEY;
+  if (kept) return STAKE_KEPT_ART_KEY;
   return kind === 'born' ? STAKE_NATIVE_ART_KEY : STAKE_ART_KEY;
 }

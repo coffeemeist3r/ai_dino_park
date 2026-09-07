@@ -51,7 +51,7 @@ import { quarryGround, quarryKind } from './quarry';
 import { PILE_STEPS, bankStep } from './bank';
 import { FOODS } from './foods';
 import { HATCH_ART_KEY } from './hatch';
-import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_NATIVE_ART_KEY } from './stake';
+import { STAKE_ART_KEY, STAKE_HOLLOWED_ART_KEY, STAKE_KEPT_ART_KEY, STAKE_NATIVE_ART_KEY, stakeUpkeepStep } from './stake';
 import { cropOf, ripeRigKey, type CropStage } from './plot';
 import { TIC_ASIDE } from './tic';
 import { DOZE_ART_KEY, ROUSE_ART_KEY } from './chronotype';
@@ -143,6 +143,9 @@ export function worldPlacedProps(): Set<string> {
   out.add(STAKE_ART_KEY);
   out.add(STAKE_NATIVE_ART_KEY); // 517, wired the night it was drawn
   out.add(STAKE_HOLLOWED_ART_KEY);
+  // BACKLOG-535/518: the tended post. Placeable from the moment the founding ruin is mended, which is what
+  // finally gave 518 a host after seven Artist fires held it for want of one.
+  out.add(STAKE_KEPT_ART_KEY);
   // BACKLOG-520/109: the two hour-marks, hung over a dino rather than laid on the ground — placed by
   // `refreshSleepMarks` / `refreshRouseMarks`, which is why they count as seen.
   out.add(DOZE_ART_KEY);
@@ -303,6 +306,27 @@ export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
       holds: () => {
         const after = afterOneSession();
         return zoneChain().some((z) => pileTotal(after.piles[z] ?? {}) < pileTotal(FOUNDING_PILES[z] ?? {}));
+      },
+    },
+  },
+  {
+    id: 'BACKLOG-535/518',
+    system: "the founder's mark says whether the ground is still being kept up, not only who claimed it",
+    // The founded frame is a claim that the *change is there to be watched*, not that the state is already
+    // on. A founding Grove that shipped kept would be a stake that never moves, which is the whole defect
+    // 518 was held over — a fourth state nobody can reach is a nameplate with an extra picture on it.
+    fact: 'the founding Grove ships a ruin, so its stake starts not-kept and the mend is what changes it',
+    holds: () => {
+      const z = FOUNDING_RUIN.zone;
+      const standing = FOUNDING_LANDMARKS.filter((l) => l.zone === z).length;
+      return !stakeUpkeepStep(standing, 1);
+    },
+    played: {
+      system: 'the cairn goes back up and the stake changes to the tended mark, in the same minute',
+      holds: () => {
+        const z = FOUNDING_RUIN.zone;
+        const after = afterOneSession();
+        return stakeUpkeepStep(after.standing[z] ?? 0, after.derelict[z] ?? 0);
       },
     },
   },

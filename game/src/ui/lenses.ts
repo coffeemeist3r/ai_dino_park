@@ -246,9 +246,16 @@ function heartBar(hearts: number): string {
   return '♥'.repeat(hearts) + '·'.repeat(Math.max(0, 10 - hearts));
 }
 
-/** Render the collection book as display lines — one block per dino. */
-export function bookLines(rows: BookRow[]): string[] {
-  const out: string[] = ['— Collection Book —'];
+/**
+ * Render the collection book as display lines — one block per dino.
+ *
+ * `away` (BACKLOG-114) is the away-log block, already rendered by `awayLogLines`, and it goes at the head
+ * of the book above the first dino: it is the one thing in here that is about the keeper rather than about
+ * the cast. Defaulted to empty, so every call site and every test literal that predates the log keeps
+ * producing exactly the lines it always did.
+ */
+export function bookLines(rows: BookRow[], away: string[] = []): string[] {
+  const out: string[] = ['— Collection Book —', ...away];
   for (const r of rows) {
     out.push(`${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);

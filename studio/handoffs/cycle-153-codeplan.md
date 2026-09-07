@@ -141,3 +141,44 @@ short-gap test.
 
 Gates before the Coder may commit: build clean, full vitest green, full playwright green,
 `@mlc-ai/web-llm` still imported only under `game/src/ai/`, tree clean.
+
+---
+
+## Shipped
+
+Both tracks. 11 files: 1 new module, 4 new test files, 6 edits.
+
+- `game/src/world/awaylog.ts` (new) · `game/src/ui/lenses.ts` · `game/src/world/saveGame.ts` ·
+  `game/src/world/stake.ts` · `game/src/world/reachability.ts` · `game/src/scenes/WorldScene.ts`
+- `tests/unit/cycle-153-awaylog.test.ts` (new, 9) · `tests/unit/cycle-153-stake.test.ts` (new, 10) ·
+  `tests/e2e/cycle-153-awaylog.spec.ts` (new, 3) · `tests/e2e/cycle-153-stake.spec.ts` (new, 2) ·
+  `tests/unit/cycle-145-stake.test.ts` (six `stakeArtKey` calls take the third argument)
+
+### Deviation from the plan — the span stamp, and it is a reuse call
+
+The plan said to **export `fmtSpan`** from `away.ts` and stamp each log entry with how long ago the return
+happened. Neither shipped, and the reason is the plan's own reuse doctrine pointed the other way once the
+code was in front of it:
+
+1. **The span is already there.** The digest's own first line is `The bowl ran on for <span>.` — written by
+   `away.ts`, in `away.ts`'s words. A stamp in the log would be that fact written down twice, which is the
+   defect BACKLOG-495 exists over.
+2. **`fmtSpan` is the wrong unit for "ago".** It divides by `MINUTES_PER_DAY`, an *in-game* day. `at` is
+   wall-clock. Feeding one to the other would have printed a real half-hour as an in-game span, and it would
+   have looked right in every test that used a round number.
+
+So `awayLogLines(log)` takes no `now`, exports no formatter, and orders newest-first with a divider between
+returns. `at` and `minutes` are still **kept in the entry and in the save** — they are cheap, they are the
+two different facts (your afternoon, the bowl's), and the third e2e spec asserts ordering off both.
+
+### Gates
+
+- `npm run build` — clean.
+- `npx vitest run` — **2534 passed**, 3 skipped, 242 files.
+- `npx playwright test` — **674 passed, 1 failed**, twice, with a **different victim each run**
+  (`cycle-082-comfort-food`, then `cycle-121-yearning`), both boot timeouts in `helpers.boot`, both green
+  when re-run isolated. That is the parallel-load flake the routine names, not a regression — but it is
+  worth the Validator's attention that it is **back**: cycle 148 recorded this project's first all-green
+  suite and cycle 152 ran 670/670. See the QA handoff.
+- `@mlc-ai/web-llm` — grep clean outside `game/src/ai/`.
+- Save changes additive, no version bump. Tree clean at commit.

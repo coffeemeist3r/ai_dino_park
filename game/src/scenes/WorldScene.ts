@@ -117,6 +117,7 @@ import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget,
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
+import { awayLogLines, keepAwayLog, type AwayEntry } from '../world/awaylog';
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
@@ -149,7 +150,7 @@ import {
   missedYou,
   type MissedGrade,
 } from '../world/missed'; // BACKLOG-116
-import { STAKE_TILE, STAKE_GLYPH, stakeArtKey } from '../world/stake';
+import { STAKE_TILE, STAKE_GLYPH, stakeArtKey, stakeUpkeepStep } from '../world/stake';
 import { foundingKind } from '../world/founding';
 import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
@@ -542,6 +543,9 @@ export class WorldScene extends Phaser.Scene {
   private memory: MemoryStore = {};
   private bonds: Bonds = {};
   private lastAwayDigest: string[] = [];
+  /** The last few homecoming digests, newest first (BACKLOG-114). Persisted: the point of the log is that
+   *  it is still there tomorrow, not only until the next keypress clears the modal. */
+  private awayLog: AwayEntry[] = [];
   private lastHomecoming: Homecoming | null = null;
   private liveBubbles = new Set<string>();
   /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
@@ -1814,7 +1818,12 @@ export class WorldScene extends Phaser.Scene {
     // ticker beat and the first-write-wins guard are the ones production uses.
     (window as any).__found = (zone: string, name: string) => { const r = this.foundZone(name, zone); this.applyObjectVisibility(); return r; };
     // BACKLOG-501: what mark this ground is showing, or null for ground nobody has founded.
-    (window as any).__stake = () => stakeArtKey(pioneerOf(this.pioneers, this.zoneId) ? foundingKind(this.pioneers, this.zoneId) : null, this.isZoneHollowed(this.zoneId));
+    (window as any).__stake = () =>
+      stakeArtKey(
+        pioneerOf(this.pioneers, this.zoneId) ? foundingKind(this.pioneers, this.zoneId) : null,
+        this.isZoneHollowed(this.zoneId),
+        stakeUpkeepStep(this.standingIn(this.zoneId), this.derelictIn(this.zoneId)), // BACKLOG-535
+      );
     (window as any).__hollowed = () => { this.checkHollowed(); return zoneChain().filter((z) => this.isZoneHollowed(z)); }; // BACKLOG-512
     (window as any).__seePond = (name: string) => {
       const d = this.dinoByName(name);
@@ -2817,7 +2826,13 @@ export class WorldScene extends Phaser.Scene {
    */
   private syncStakes(): void {
     const founder = pioneerOf(this.pioneers, this.zoneId);
-    const key = stakeArtKey(founder ? foundingKind(this.pioneers, this.zoneId) : null, this.isZoneHollowed(this.zoneId));
+    const key = stakeArtKey(
+      founder ? foundingKind(this.pioneers, this.zoneId) : null,
+      this.isZoneHollowed(this.zoneId),
+      // BACKLOG-535: and whether anybody is keeping the place up. Read off the same two counts upkeep bills
+      // against, so the mark and the bill can never disagree about what standing means.
+      stakeUpkeepStep(this.standingIn(this.zoneId), this.derelictIn(this.zoneId)),
+    );
     if (!key) {
       this.stakeSprite?.destroy();
       this.stakeSprite = null;
@@ -2952,6 +2967,7 @@ export class WorldScene extends Phaser.Scene {
           this.setPile(zone, spent);
           this.placeGranary(this.tileOf(taker), taker);
           this.refreshPlaque();
+          this.syncStakes(); // BACKLOG-535: raising is the one skyline change that does not go through applyObjectVisibility
         }
       }
       return;
@@ -2968,6 +2984,7 @@ export class WorldScene extends Phaser.Scene {
       else if (kind === 'beacon') this.placeBeacon(this.tileOf(taker), taker); // BACKLOG-503
       else this.placeCairn(this.tileOf(taker), taker);
       this.refreshPlaque();
+      this.syncStakes(); // BACKLOG-535: ...and the ground may have gone from nothing raised to kept up
     }
   }
 
@@ -4242,7 +4259,7 @@ export class WorldScene extends Phaser.Scene {
     };
     (window as any).__bookRows = () => this.bookRows();
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
-    (window as any).__bookText = () => bookLines(this.bookRows()).join('\n');
+    (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
     (window as any).__roleStore = () => ({ ...this.roles });
     // BACKLOG-448: the per-dino banked-food tally the provider role reads.
@@ -4325,7 +4342,7 @@ export class WorldScene extends Phaser.Scene {
     });
 
     if (L === 'book') {
-      this.bookPanel.setText(bookLines(this.bookRows()).join('\n'));
+      this.bookPanel.setText(bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n'));
     } else if (L === 'ticker') {
       const news = tickerLines(this.eventLog);
       this.tickerPanel.setText(['— Park News —', ...(news.length ? news : ['(quiet so far…)'])].join('\n'));
@@ -7870,6 +7887,21 @@ ${e.short}`;
    * Shared by the live day hook and the `__runUpkeep` dev hook, so production and test drive one path.
    * `days > 1` runs the away catch-up form (the 455 → 462 shape) and returns its digest lines.
    */
+  /**
+   * File this return in the book (BACKLOG-114).
+   *
+   * Called from **both** homecoming paths (the save restore and `__catchUp`) and, on each, only *after* the
+   * spoilage and upkeep tail has been appended to the digest — there are two `lastAwayDigest` assignments on
+   * each path and the first one is the pre-tail half. Capturing at the wrong one produces a book that is
+   * missing the 🥀 and 🛠️ lines exactly when there were any, which every short-gap test would pass.
+   *
+   * The `minutes > 0` gate is the dialog's own gate: a reload with no gap shows no modal and logs no entry.
+   */
+  private logAway(away: { minutes: number }): void {
+    if (away.minutes <= 0) return;
+    this.awayLog = keepAwayLog(this.awayLog, { at: Date.now(), minutes: away.minutes, lines: [...this.lastAwayDigest] });
+  }
+
   private runUpkeepPass(days = 1): string[] {
     const lines: string[] = [];
     let changed = false;
@@ -8172,6 +8204,7 @@ ${e.short}`;
       // BACKLOG-409: the lifetime "this ritual happened" set + who each echo was caught off (additive).
       ticsFormed: [...this.ticsFormed],
       ticEchoFrom: this.ticEchoFrom,
+      awayLog: this.awayLog, // BACKLOG-114
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8320,6 +8353,7 @@ ${e.short}`;
       this.councilTermDay = save.councilTermDay ?? 0;
       this.leftDays = save.leftDays ?? {}; // BACKLOG-362 (absent → {}: nothing to miss until it leaves somewhere)
       this.cameFrom = save.cameFrom ?? {}; // BACKLOG-347 (absent → {}: nothing carried until it crosses)
+      this.awayLog = save.awayLog ?? []; // BACKLOG-114 (absent → []: a pre-114 save threw its digests away)
       this.lastProviderByZone = (save.lastProviderByZone as Record<string, string>) ?? {}; // BACKLOG-467 (absent → {})
       this.plotStageShownByZone = emptyPlotStages();
       this.refreshPlot();
@@ -8343,6 +8377,7 @@ ${e.short}`;
         away.digest.push(...awaySpoil);
         this.lastAwayDigest = away.digest;
       }
+      this.logAway(away); // BACKLOG-114: after the tail, so the book keeps the whole digest
       this.refreshHeartsPanel();
       if (away.minutes > 0) {
         this.dialogOpen = true;
@@ -8378,6 +8413,8 @@ ${e.short}`;
     };
     // any: dev-only Playwright hook — last "while you were away" digest
     (window as any).__awayDigest = () => [...this.lastAwayDigest];
+    // any: dev-only Playwright hook — the kept digests the book re-reads (BACKLOG-114)
+    (window as any).__awayLog = () => this.awayLog.map((e) => ({ ...e, lines: [...e.lines] }));
     // any: dev-only Playwright hook — run offline catch-up for `realMs` of real time at the
     // current scale (savedAt 0 so elapsed === realMs, deterministic), apply + return the result.
     (window as any).__catchUp = (realMs: number) => {
@@ -8395,6 +8432,7 @@ ${e.short}`;
         away.digest.push(...awaySpoil);
         this.lastAwayDigest = away.digest;
       }
+      this.logAway(away); // BACKLOG-114: the same capture point on the mirrored path
       this.lastHomecoming = homecoming(this.friendship, away.minutes, (name) => this.dinoQuirkLabel(name));
       if (this.lastHomecoming) {
         this.applyHomecomingMemory(this.lastHomecoming);
