@@ -1,6 +1,6 @@
 {
   "cycle": 153,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-114: Away-log in the book",
   "structureItem": "BACKLOG-535: The stake's undecided driver",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-09-07T08:05:11.000Z",
     "structure-smith": "2026-09-07T08:07:14.000Z",
     "designer": "2026-09-07T08:09:48.000Z",
-    "code-planner": "2026-09-06T08:32:00.000Z",
+    "code-planner": "2026-09-07T08:10:53.000Z",
     "coder": "2026-09-06T09:10:00.000Z",
     "qa": "2026-09-06T09:20:00.000Z",
     "validator": "2026-09-06T09:35:00.000Z",
