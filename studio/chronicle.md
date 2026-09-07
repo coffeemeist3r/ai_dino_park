@@ -10611,3 +10611,8 @@ is legal, and the choice should be made out loud in the handoff rather than by d
 
 `lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in the
 queue is asking for one.
+
+
+## Cycle 153 — lore-smith
+
+The absence arc has spent three cycles learning to write, and every word of it lands in a modal that the next keypress destroys. **BACKLOG-114** is the next-up: the book keeps the away-log, so what the bowl got up to survives the dismissal. 119 and 122 both stay queued and both were passed over for a reason worth writing down — 119's beat fires on a frame the tab has stopped drawing, and 122 needs a dev seam that can move the real-world date without lying about it. Neither is a scope problem; both want a cycle that designs for them. Art queue at 1 and under cap, so one item seeded: **BACKLOG-537**, a mark for the dino walking to a ruin, whose host has been live and reachable since the founding ruin shipped. Idea Box empty.

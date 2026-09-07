@@ -68,6 +68,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-518 [art] The stake somebody keeps up — the third axis of the founder's mark: not who founded a ground, but whether the ground is still being looked after. `pile_1..3` already proves the pattern reads at 32px — one glyph, three steps, legible from the map without a lens. Give the stake the same: fresh binding and a small offering laid at its base for a ground that is thriving, against 513's plain post for a ground merely lived on and 514's canted, slack, bleached one for a ground everybody left. Four states in one family means the founding mark stops being a nameplate and becomes the park's cheapest health read. Standalone via `bakePropArt`; a later cycle decides which of prosperity, stock, or upkeep drives the step. **(2026-08-30, cycle 145-art: held rather than drawn, on the amendment above. Its driver was left unchosen on purpose this morning, and by that evening an unchosen driver meant no host, and no host means the register's ninth entry reddens the build. Pick the driver first — the honest candidate is `pileStep` off the ground's own bank, since 504/506 already prove that read at 32px — then draw it.)**
 
+- [ ] BACKLOG-537 [art] The hands on the ruin — a mark for the dino that has been *sent to mend something*. BACKLOG-488 dispatches a resident to its ground's derelict landmark and the walk takes real seconds, but the errand is invisible while it happens: the ticker prints a line when the mend *resolves* and nothing at all says why that dino changed course. Give the walk the same treatment the doze/rouse/vigil/missed family got — one mark over the head of a dino currently carrying a mend, keyed `mend`, in the same palette register so the whole mark axis stays one family. The host is live and reachable on a fresh save: the founding Grove ships a fallen cairn and enough stone to pay for it, and somebody walks over within the first minute. Standalone via `bakePropArt`. Builds on 488 / 520 / 531.
 
 
 ## Infra
@@ -112,7 +113,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 29 lore additions — the keeper goes away (2026-06-02)
 
-- [ ] BACKLOG-114 [pokemon] Away-log in the book — the collection book keeps the last "while you were away" digest so you can re-read what the bowl got up to. Builds on 106 + 021.
+- [~] BACKLOG-114 [pokemon] Away-log in the book — the collection book keeps the last "while you were away" digest so you can re-read what the bowl got up to. Builds on 106 + 021.
 - [ ] BACKLOG-115 [emergent] Night-owl absence — once diurnal/nocturnal temperament (109) lands, feed it into the away fast-forward: night-owls rack up more shared nights while away, so *who* grew closer becomes a personality tell. Cross-links 106 + 109.
 
 ## Cycle 30 lore additions — the keeper's comings and goings (2026-06-03)
