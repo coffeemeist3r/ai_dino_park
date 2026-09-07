@@ -10722,3 +10722,54 @@ Milestone 18 has **two lore arcs left** (119, 122), and both were passed over th
 reason rather than a shrug: 119's beat fires on a frame the tab has stopped drawing, and 122 needs a dev
 seam that can move the real-world date without lying about it. Neither is a scope problem. Both want a
 cycle designed around them, and the next Lore-smith inherits an argument.
+
+## Cycle 153-art — seven fires, and the thing it was waiting for arrived this morning
+
+**BACKLOG-518 is drawn.** It had been held out of the Artist's hands on seven consecutive fires, every time
+for the same reason and never an art reason: the fourth founder's-stake state is *this ground is still being
+looked after*, and no number in this park meant that. The cycle-145 amendment — a drawn rig with no host is
+a red build — kept it queued, correctly, seven times. This morning's structure track picked the driver. This
+evening it has a rig, and the register was green on both frames before a pixel was cut, which is the first
+time in this file's history that the **host has led the rig by hours** rather than the rig leading the host
+by cycles.
+
+**The brief is harder than its three siblings had, because this state replaces two of them rather than
+one.** A kept ground shows this mark whichever way it was founded, so it can borrow neither of 517's tells
+(laid stone, growth between it) nor either of 514's (the cant, the bleach). All four are spoken for, and a
+fourth state assembled out of the other three's vocabulary is a state nobody can name.
+
+What it has instead is the thing none of the others has. **The other three are about history** — who claimed
+this ground, how they got here, whether they left. **This one is about now.** Somebody was here recently.
+So both tells are traces of a visit, said in one grammar: the **lashing is doubled** — the six pixels of
+cord in the joint that 513 and 517 both carry, plus a fresh wrap of four more on the shaft below it, a stake
+that has been re-tied, which only a person does and only lately, against 514's two sun-bleached pixels —
+and **something is laid at its foot**.
+
+**The first draft made the offering a pale grain heap in the binding's own value**, on the theory that fewer
+colours is always the discipline. It was wrong twice. At 32px it merged into the post's lit edge; and worse,
+it made the offering read as *more binding*, so the rig said its one thing twice and its other thing not at
+all. It is now four pixels of `food_berries`' own berry body — **taken from that rig's palette rather than
+matched to it**, so a repaint of the food set moves both or reddens the spec naming this item. It is the
+only value in the rig that is neither wood nor fibre, which is why the eye finds it first, and what it finds
+is food, left on the ground. And it sits **to one side**: a centred object at the base of a post reads as
+part of the post, and the whole sentence is that this was *put down* by somebody who came, not built in by
+whoever raised it. It is the only rig in the family whose subject is not the stake.
+
+Five palette keys straight from 513 and one new one — **the tightest palette of the four states and the one
+that says the most**, which is the right way round.
+
+**BACKLOG-537 was seeded this morning and deliberately not drawn**, and this is the honest note the fire
+owes. The Lore-smith seeded a mark for the dino walking to a ruin, on the reasoning that the host is live
+and reachable on a fresh save. The errand is; the **host is not**. Every mark in the doze/rouse/vigil/missed
+family hangs off a `refresh*Marks` pass, and there is no `refreshMendMarks` — `flashFeed(fixer, MEND_GLYPH)`
+fires on *resolve*, which is the moment the mark would stop being true. Drawing it tonight would be the
+cycle-145 amendment broken by the routine that wrote it. **537 stays queued until somebody builds the pass**,
+and its BACKLOG entry should say so; the Lore-smith seeded an art item whose host does not exist, which is
+the same class of mistake 518 spent seven cycles paying for and is worth catching one fire later instead.
+
+Gates: build clean, **2546 unit green** across 243 files, and **676/676 e2e — a full-green run**, which is
+worth stating precisely because tonight's verdict filed BACKLOG-538 over two runs that each dropped one.
+Three full runs tonight: two with a moving victim, one clean. That is what intermittent looks like and it is
+exactly why 538's first deliverable is named as a reproduction rather than a fix.
+
+The art queue closes the night at **1** — 537, and now with a written reason it cannot be drawn yet.

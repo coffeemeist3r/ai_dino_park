@@ -51,3 +51,19 @@ test('a ground with nothing raised is not "kept" — nothing is not the same as 
   expect(await stake(page)).not.toBe(STAKE_KEPT_ART_KEY);
   expect(await stake(page)).toBeTruthy(); // it still shows a founder's mark
 });
+
+/**
+ * BACKLOG-518 (cycle 153-art) — and the mark it changes *to* is drawn, not the fallback glyph.
+ *
+ * The cycle-145 amendment to the stash rule runs the other way round: a drawn rig with no host is a red
+ * build. This is the far end of the same claim — the host shipped first this cycle and the rig followed the
+ * same night, so the state the player watches the ground change into is a pixel stake and not a 🪧.
+ */
+test('the kept mark is a drawn rig, not the glyph fallback', async ({ page }) => {
+  await boot(page);
+  const drawn = await page.evaluate(
+    (k) => ((window as W).__hasPropArt as (n: string) => boolean)(k),
+    STAKE_KEPT_ART_KEY,
+  );
+  expect(drawn).toBe(true);
+});

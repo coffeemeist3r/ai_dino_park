@@ -1601,6 +1601,71 @@ const FOUNDER_STAKE_HOLLOWED_RIG: PropRig = {
   },
 };
 
+// ── The stake somebody keeps up 🪧 (BACKLOG-518) — the fourth state, and the only one about *now* ──
+// Held out of the Artist's hands for seven consecutive fires, and never for an art reason: the state is
+// "this ground is still being looked after" and no number in this park meant that until BACKLOG-535 picked
+// one this cycle (the upkeep ledger — a ground with a skyline and nothing broken in it).
+//
+// It has a harder job than its three siblings, because it replaces **two** of them rather than one: a kept
+// ground shows this whichever way it was founded. So it cannot borrow either of 517's tells (laid stone,
+// growth between the stones) or either of 514's (the cant, the bleach) — all four are already spoken for,
+// and a fourth state assembled out of the other three's vocabulary is a state nobody can name.
+//
+// What it has instead is the thing the other three do not: **they are all about history** — who claimed
+// this ground, how they got here, whether they left — and this one is about *now*. Somebody was here
+// recently. So both tells are traces of a recent visit, in the same grammar:
+//
+// **The lashing is doubled.** 513 and 517 each carry six pixels of `b` in the cross-piece joint; 514 has
+// two, sun-bleached. This carries those six and a fresh wrap of four more on the shaft below the joint —
+// a stake that has been re-tied, which is a thing only a person does and only recently.
+//
+// **And there is something laid at its foot.** Four pixels of the berry body value out of `food_berries`,
+// outlined and set to one side. To one side, not centred: a centred object at the base of a post reads as
+// part of the post, and the whole sentence here is that this was *put down* by somebody who came, rather
+// than built in by whoever raised it. It is the only rig in the founder's-stake family whose subject is
+// not the stake.
+//
+// The first draft carried the offering as a pale grain heap in the binding's own `b` value, on the theory
+// that fewer colours is always the discipline. It was wrong twice over: at 32px it merged into the post's
+// lit edge, and — worse — it made the offering read as *more binding*, so the rig said its one thing twice
+// and its other thing not at all. The berry red is the only value in this rig that is not wood or fibre,
+// which is exactly why it survives the read: the eye finds it before it finds anything else, and what it
+// finds is food, from the park's own food set, sitting on the ground where somebody left it.
+//
+// Five palette keys carried straight from 513 and one new one. The tightest palette of the four states,
+// and the one that says the most, which is the right way round.
+const FOUNDER_STAKE_KEPT_GRID: ReadonlyArray<string> = [
+  '................',
+  '......oooo......',
+  '......oLwo......',
+  '......oLwo......',
+  '...oooooooooo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oCCCbbCCCo...',
+  '...oooooooooo...',
+  '......obbo......',
+  '......obbo......',
+  '......oLwo......',
+  '......oLwo..oo..',
+  '......oLwo.offo.',
+  '......oLwo.offo.',
+  '......oooo.oooo.',
+];
+
+const FOUNDER_STAKE_KEPT_RIG: PropRig = {
+  size: 16,
+  grid: FOUNDER_STAKE_KEPT_GRID,
+  palette: {
+    o: 0x3a2410, // the same outline as all three siblings — one object, four states, not four objects
+    w: 0x8a5a2b, // the post, at 513's full saturation: this is the opposite end of the axis from 514's bleach
+    L: 0xb98a4e,
+    C: 0x74491f,
+    b: 0xd9c48a, // the binding — ten pixels of it here against 513's six and 514's two, which is the read
+    f: 0xc22f43, // the offering: `food_berries`' own berry body, so what was left is a thing the park has
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1666,6 +1731,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // stash-ahead rule's open end.
   founder_stake_native: FOUNDER_STAKE_NATIVE_RIG,
   founder_stake_hollowed: FOUNDER_STAKE_HOLLOWED_RIG,
+  // BACKLOG-518 (cycle 153-art): the fourth state, drawn the night BACKLOG-535 finally gave it a host.
+  founder_stake_kept: FOUNDER_STAKE_KEPT_RIG,
 };
 
 /**
