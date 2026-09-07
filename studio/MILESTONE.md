@@ -17,7 +17,7 @@ says back to you when you return.
 - [x] Each dino keeps its own account of the absence, graded by who it is — one missed you, one pretends it didn't, one never noticed — readable in its next greeting and visible over its head on return (BACKLOG-116)
 - [x] The absence is not all warmth: a pair that kept no company while you were gone comes back a little further apart, and the digest says so (BACKLOG-113 — shipped cycle 152)
 - [ ] The bowl throws you a look on the way out, not only on the way in (BACKLOG-119)
-- [ ] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114)
+- [x] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114 — shipped cycle 153) — *the arc turned out to be about the milestone's own gap: three of these five arcs had been spent teaching the park to say something about an absence, and none of them noticed the park had nowhere to say it twice. The book now keeps the last three returns at its head, above the cast, because they are the one thing in it that is about the keeper. Three rather than the item's one, and the refusal is the better half of that call — an absence the park had no news about cannot spend a slot.*
 - [ ] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122 — unblocked cycle 150)
 
 **Structure arcs:**

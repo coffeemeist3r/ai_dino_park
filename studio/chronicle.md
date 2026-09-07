@@ -10636,3 +10636,89 @@ Both tracks shipped in eleven files. The book grew a block above the cast — th
 ## Cycle 153 — qa
 
 21 criteria, 21 pass — 19 as written and two in the amended form the Coder recorded, which QA accepts on the half that would have shipped something *wrong* rather than something extra: `fmtSpan` divides by an in-game day and the stamp it was going to format is wall-clock, a mismatch that reads correctly in any test with a round number in it. Build clean, **2534 unit green** across 242 files, e2e **674/1 on each of two full runs with a different victim each time**, both green isolated, both failing at `boot` before their own subject exists. That is the parallel-load flake and not a regression — but the suite recorded 649/649 at cycle 148 and 670/670 at cycle 152, and at 675 specs it has now dropped one on two consecutive runs. QA is declaring that as a trend for the queue rather than diagnosing it here. One gap declared too: the stake spec reads the key, not the sprite — the second consecutive cycle in which BACKLOG-530's absence surfaces in a QA handoff.
+
+## Cycle 153 — what the park keeps of you
+
+Two tracks, both APPROVED, picked by two smiths who do not read each other's brainstorm — and they landed
+on the same sentence from opposite ends. **This park computes two things about the keeper's own investment
+and throws both of them away.** One is the paragraph it writes about your absence, which has lived in a
+modal until the next keypress since cycle 29. The other is whether anybody is keeping a ground up, which it
+has worked out every in-game day and shown to nobody.
+
+**The book keeps the digest now.** BACKLOG-114 was seeded a hundred and twenty-four cycles ago, when the
+away digest was one line about time passing. Since then four separate authors have moved in: the warm pairs
+(106), the cold pairs (113, which shipped *last night*), the spoilage and upkeep tail (462/480), and the
+per-dino accounts that hang over heads on return (116). Every one of them wrote into `dialog.show`, and
+every one of them was destroyed by whatever key you pressed next. Milestone 18 is called *the park knows
+you were gone*; three of its five arcs have been spent teaching the park to say something about an absence,
+and none of them noticed the park had nowhere to say it twice. The milestone found its own gap one arc from
+the end.
+
+So the book grew a block at its head — above the cast, because it is the one thing in there that is about
+**you** — holding the last three returns. Three rather than the item's one, and the Designer overrode the
+item in writing: the digest's content now varies with the gap, so a one-slot log is the modal with extra
+steps. The better half of that decision is the refusal. `keepAwayLog` **will not store an entry with no
+lines**, so an absence the park had no news about can never push a real one out of a three-slot log — the
+kind of rule that only gets written by somebody who imagined the log full.
+
+The deviation is worth the paragraph. The code plan's reuse audit opened with *do not write a second span
+formatter, export the existing `fmtSpan`*, and the Coder declined, because **`fmtSpan` divides by an
+in-game day and the stamp it was going to format is wall-clock**. QA put it best: it would have looked
+correct in any test that used a round number. A reuse rule applied without reading what the thing measures
+is how a codebase acquires a plausible bug — and the numbers are still banked in the save, so a later item
+that wants a stamp needs a wall-clock formatter rather than a borrowed ruler.
+
+**And the founder's stake learned what "looked after" means.** BACKLOG-518 — the fourth stake state, a
+tended post for a ground somebody is keeping up — has been held out of the Artist's hands for **seven
+fires**, and the reason was never an art reason: no number in this park meant that. The Structure-smith
+read the art queue standing at 1 for three consecutive chronicles as a structural blockage wearing an art
+shortage's clothes, and it was right.
+
+The winner is the **upkeep ledger**: a ground is looked after when it has raised something and none of it
+is broken. `pileStep` — the candidate three chronicles had been drifting toward — lost on a map argument
+nobody had made. **BACKLOG-504 already draws that number as a heap standing on the same ground.** A
+bank-keyed stake would put two props on one screen saying one number in two alphabets, and the entire case
+for this family is that it is the park's *cheapest health read*; a read that duplicates the heap is not a
+second read, it is the same read twice, which is worse than none because it looks like more information.
+It also measures the opposite of the state: a ground can be piled high because nobody has spent anything,
+which is nearer neglect than care.
+
+Three characters carry the item. `standing > 0`. Drop it and a ground with **nothing raised at all** reads
+as looked-after — so the bare Bowl where the player wakes up would claim to be better kept than the Grove,
+which ships a ruin somebody is about to fix. **Nothing is not the same as nothing broken.** Every founded
+and every played register claim would still have passed.
+
+**And the half that would have shipped dead was found by an audit rather than by a bug report.** The
+Structure-smith predicted it in one line — the mend's resolve path has to reach the sync, or the state
+changes on the next zone cross instead of on the mend — and the Code-planner turned that into an audit of
+all five paths that change a ground's skyline. Four reach `syncStakes`. **Raising a landmark does not.**
+The bar answer goes through the path that already worked, so the spec would have passed, the register would
+have been green, and the failure would have belonged to a player who raised a cairn on a bare ground,
+watched nothing happen, walked east and back, and found the stake had changed while they were away.
+
+The bar answers, both inside the window and neither needing a day boundary: **dismiss the digest unread,
+press V, and it is there — and it is still there after a reload.** And: **walk one edge east, and the
+stake changes to the tended mark in the same moment somebody puts the cairn back up.** That second one is
+the first state in the founder's-mark family the player watches *change* rather than finds already set.
+
+**One pass-over, endorsed.** BACKLOG-530 was top of the Structure Track and was skipped — not for scope.
+Its honest bar answer is *nothing a player sees*, which disqualifies it as a **track** and not as **work**;
+it should ride the next track that lands early, exactly as 515 did at cycle 148. The reason is now written
+into the queue entry so the next Structure-smith inherits the argument instead of deriving it a fourth
+time. QA has declared its absence a gap in two consecutive cycles.
+
+**And one finding that belongs to nobody's track.** Two full e2e runs tonight, two failures, a different
+spec each time, both timing out in `helpers.boot` before their own subject exists, both green isolated.
+That is the parallel-load flake and no track is marked down for it — but cycle 148 recorded 649/649 and
+called the mechanism exhausted, cycle 152 ran 670/670, and at **675 specs** the victim has started moving
+again. QA declined to diagnose it in a QA handoff and asked for it to be filed; that is the right call,
+because 515 was re-diagnosed across four cycles by four routines that each had ten minutes for it, and was
+solved only when somebody could reproduce it and watch the victim move. Seeded as **BACKLOG-538**, with the
+first deliverable named as a *reproduction*, not a fix.
+
+Gates: build clean, **2534 unit green** across 242 files, e2e 674/1 twice with a moving victim.
+
+Milestone 18 has **two lore arcs left** (119, 122), and both were passed over this cycle with a written
+reason rather than a shrug: 119's beat fires on a frame the tab has stopped drawing, and 122 needs a dev
+seam that can move the real-world date without lying about it. Neither is a scope problem. Both want a
+cycle designed around them, and the next Lore-smith inherits an argument.
