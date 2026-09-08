@@ -1,6 +1,6 @@
 {
   "cycle": 154,
-  "phase": "artist-pending",
+  "phase": "lore-pending",
   "currentItem": null,
   "structureItem": null,
   "lastVerdict": "APPROVED",
@@ -16,7 +16,7 @@
     "coder": "2026-09-08T08:25:00.000Z",
     "qa": "2026-09-08T08:33:00.000Z",
     "validator": "2026-09-08T08:45:00.000Z",
-    "artist": "2026-09-07T08:42:53.000Z"
+    "artist": "2026-09-08T09:10:00.000Z"
   },
   "lastSoloCycle": 151,
   "soloCycle": false

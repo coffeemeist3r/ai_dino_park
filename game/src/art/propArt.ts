@@ -1666,6 +1666,66 @@ const FOUNDER_STAKE_KEPT_RIG: PropRig = {
   },
 };
 
+// ── The hands on the ruin 🛠️ (BACKLOG-537, cycle 154-art) ─────────────────────────────
+//
+// The sixth mark on 520's axis, and the one this queue held for nine fires because the *host* did not
+// exist. BACKLOG-488 has sent a resident walking to its ground's derelict landmark since cycle 137, and the
+// errand was invisible the whole way: `flashFeed(fixer, MEND_GLYPH)` fired on **resolve**, which is the
+// moment the mark stops being true. Two Artist fires declined to draw it and wrote down why. Cycle 154's
+// BACKLOG-530 rider built `refreshMendMarks`, so there is now something to hang this on for the duration of
+// the walk, which is the only span during which it means anything.
+//
+// **It is the first mark in the family that is not a face or a feeling.** Three of the five are eyes (shut,
+// open, aimed at you), two are a thought. Those are all facts about the dino's *interior*. This one is a
+// fact about what its hands are busy with, and the silhouette has to carry that difference or the mark
+// axis becomes five variations on a circle. So: a **mallet**, head up and left, haft running down-right on
+// a clean diagonal. Every other mark in this family is radially symmetric; this is the only one with an
+// axis, and at 32px the diagonal is what you read before you read anything else.
+//
+// **The first draft was rejected for being two crossed tools.** A hammer over a wrench, the emoji's own
+// composition. It is legible at 64px and at 32px it is a dark blob with a notch in it — the crossing point
+// eats four cells of outline and the two hafts stop being separable. One tool, one diagonal, and the
+// meaning survives the shrink.
+//
+// **72 lit cells makes this the heaviest mark in the park**, over `doze`'s 67 and `missed`'s 64, and that
+// ordering is deliberate rather than incidental. The family's weights already run in the order of how much
+// the dino is *doing*: a thought it is trying not to have is the faintest thing it can wear, sleep is next,
+// and an errand somebody is actually walking is the loudest. A mark that means "this dino changed course
+// for a reason" should out-read one that means "this dino is asleep".
+//
+// The outline is `rouse`'s, verbatim and shared, which is the family claim carried in the one place a
+// claim survives — the palette rather than a comment.
+const MEND_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '..oooooooo......',
+  '.ommmmmmmmo.....',
+  '.ommMMMmmmo.....',
+  '.ommmmmmmmo.....',
+  '..oooohhoo......',
+  '.....ohho.......',
+  '......ohho......',
+  '.......ohho.....',
+  '........ohho....',
+  '.........ohho...',
+  '..........ohho..',
+  '...........oo...',
+  '................',
+  '................',
+];
+
+const MEND_RIG: PropRig = {
+  size: 16,
+  grid: MEND_GRID,
+  palette: {
+    o: 0x2b3344, // `rouse`'s outline, shared verbatim — same axis, same rim
+    m: 0x8a94a6, // the head: cool steel, deliberately duller than any eye's sclera so it does not read as one
+    M: 0xe8eef8, // the one specular on the striking face — the same lift `missed` gets, and for the same reason
+    h: 0x8f6232, // the haft: wood, and by a wide margin the most saturated colour on this axis — every
+    // other mark here is a grey or a blue, so the diagonal reads as a thing being *held*
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1706,6 +1766,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   vigil: VIGIL_RIG, // BACKLOG-526: ...and the pair that is looking at you (BACKLOG-121's host)
   missed: MISSED_RIG, // BACKLOG-531: ...and the thought about somebody who was not here (BACKLOG-116's host)
   missed_aloof: MISSED_ALOOF_RIG, // BACKLOG-534: ...and the same thought, turned away and unlit
+  // BACKLOG-537 (cycle 154-art): ...and the sixth, which is not a face at all. Its host — `refreshMendMarks`
+  // — was built the same day by BACKLOG-530's rider, which is the only reason this could be drawn tonight.
+  mend: MEND_RIG,
   tic_circle: TIC_CIRCLE_RIG,
   // BACKLOG-496 closes cycle 142-art. `fuss` was held back for four cycles as the per-kind fallback
   // control; with all three kinds drawn, the control for the whole draw-a-rig-or-draw-nothing pattern

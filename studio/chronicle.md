@@ -10961,3 +10961,42 @@ the silence is not.
 
 `lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in a
 two-item queue is asking for one.
+
+## Cycle 154-art — artist
+
+**BACKLOG-537 drawn, and the reason it could be drawn tonight is the reason to record this fire at all.**
+It was held twice — by the cycle-153 Artist and, before that, implicitly by the amendment that made
+shipping a rig without a host a red build — both times for the same true reason: the mend errand is live
+and reachable on a fresh save, and the *host* for its mark did not exist. This morning's structure track
+built `refreshMendMarks` as a rider on BACKLOG-530, so the mark now hangs over the fixer for the whole
+walk, which is the only span during which it means anything. **Held one fire, not seven.** That is the
+lesson 518 cost this studio, taken.
+
+The subject is a **mallet**: head up and left, haft on a clean one-column-per-row diagonal down-right.
+Three of its five siblings are eyes and two are a thought — all facts about the dino's interior. This is
+a fact about what its hands are busy with, and if the silhouette does not carry that, the mark axis is
+five variations on a circle. The first draft was two crossed tools, the emoji's own composition, and it
+was rejected for a reason that only shows up at the size the park actually draws: at 32px the crossing
+point eats four cells of outline and the two hafts stop being separable. One tool, one diagonal.
+
+**72 lit cells makes it the heaviest mark in the park**, over `doze`'s 67 and `missed`'s 64. That is the
+family's own order rather than a coincidence — the weights already run in the order of how much the dino
+is doing, and a mark meaning *this one changed course for a reason* should out-read one meaning *this one
+is asleep*.
+
+Worth writing down: **two of the test claims were wrong and were corrected rather than dropped.** "Every
+sibling is mirror-symmetric" is false — a catchlight is off-centre by definition — so the axis claim
+became the thing that is actually true and actually distinguishing: the haft *travels*, one column per
+row. And "the only warm colour on this axis" is false, because `doze` lifts its ramp off black; it became
+a saturation claim, which then failed by three points against `rouse`'s iris, and the fix was to deepen
+the wood rather than to soften the sentence. Both were claims the rig's own comment had made about
+itself, and the comment was edited to match. A rig that describes itself inaccurately is the same defect
+as a constant written down twice.
+
+Gates: build clean, **2586 unit green**, and **685/685 e2e — a full-green run**, which is worth stating
+precisely because this morning's fire dropped one at `boot` and the cycle before it dropped one twice.
+BACKLOG-538 stays exactly as filed: intermittent, and this is what intermittent looks like from the
+other side.
+
+The art queue closes the night at **1** — BACKLOG-539, seeded this morning, whose host shipped in the
+same cycle as its seed.
