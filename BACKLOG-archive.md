@@ -1200,3 +1200,7 @@ _(both its items — 500 and 501 — are closed; the block emptied when 501 ship
 ### Cycle 149 structure additions (2026-09-03) (section closed, cycle 154)
 
 ### Cycle 152 structure additions (2026-09-06) (section closed, cycle 154)
+
+## Closed in cycle 154 (2026-09-08)
+
+- [x] BACKLOG-537 [art] The hands on the ruin — a mark for the dino that has been *sent to mend something*. BACKLOG-488 dispatches a resident to its ground's derelict landmark and the walk takes real seconds, but the errand is invisible while it happens: the ticker prints a line when the mend *resolves* and nothing at all says why that dino changed course. Give the walk the same treatment the doze/rouse/vigil/missed family got — one mark over the head of a dino currently carrying a mend, keyed `mend`, in the same palette register so the whole mark axis stays one family. The host is live and reachable on a fresh save: the founding Grove ships a fallen cairn and enough stone to pay for it, and somebody walks over within the first minute. Standalone via `bakePropArt`. **(Cycle 154: UNBLOCKED. BACKLOG-530's rider built `refreshMendMarks` and `MEND_ART_KEY`, so the mark now hangs over the fixer for the whole walk and `worldPlacedProps()` counts it. The host exists; the rig is the only thing missing. One fire held, not seven.)** Builds on 488 / 520 / 531.
