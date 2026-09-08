@@ -10823,3 +10823,16 @@ Two complaints one layer apart: a thing the park computes every day and nothing 
 rider takes one deliberate scope addition, written into the handoff: the mark family has no
 `refreshMendMarks`, which is the whole reason 537 has been held, and a hook that walks the family has
 to touch every one of those functions anyway. No solo cycle (3 since the last, 10 required).
+
+## Cycle 154 — designer
+
+Two specs, and the shape they share is that each builds on a seam somebody cut and left unused.
+**122** consumes `keeperDay()`, which has carried a comment naming this item since cycle 152 — a pure
+`streak.ts` with three branches, an optional plaque line that renders nothing when absent, and one
+genuinely subtle line (adjacency across a DST boundary, computed by adding 24 hours to local midnight
+and re-naming the result, never by string arithmetic). **536** derives the park's gather ceiling from
+the constants that produce it and calls `upkeepDue` for the drain, then puts the rate on the brass —
+which is the reachability answer, because the Grove has been billed every in-game day since cycle 152
+and the player has only ever seen the result. The design tells the Coder in advance **not** to invent
+a tuning pass if the numbers come back comfortable. **530** rides, and takes the mark family's missing
+sixth member with it.
