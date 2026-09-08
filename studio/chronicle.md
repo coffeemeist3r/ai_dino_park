@@ -10861,3 +10861,21 @@ Four deviations, all written up in the codeplan. The one that matters: adding tw
 surfaced that `__plaque` was a hand-copied duplicate of `refreshPlaque`'s six fields — so every
 plaque spec in this suite would have gone on reading the pre-154 brass and nothing would have failed.
 Both now read one `plaqueStats()`. That is BACKLOG-495's defect found inside the test seam itself.
+
+## Cycle 154 — qa
+
+**21/21 criteria pass.** Build clean, **2573 unit green** across 245 files, **684/1 e2e** — and the
+one is the BACKLOG-538 signature exactly: `cycle-123-wandering` down at `boot`, not at an assertion,
+green 6/6 on an isolated re-run. Third consecutive cycle with a single boot-time victim and a
+different one each time; a fourth data point for 538, not a regression.
+
+Two things QA put on the record rather than in a checkbox. **122's bar answer is honestly the weak
+reading and a true one** — the line a player sees tonight says `first day`, and the interesting states
+cost a real day each; that is acceptable under v7 because there is no threshold tuned to sit above,
+only a first day being a first day. And **536's real output is a number**: 480 pumps an in-game day,
+17 per gather, a ceiling of ~28.2 against a bill of 1, affordable skyline 57. "Converges" is true with
+twenty-eight to spare, and the yield regrowth binds while the spawn chance does not.
+
+Also recorded, because the code plan required it: a dino on a mend errand no longer shows a missed-you
+thought. Real change to something 116 shipped, no existing spec covered the overlap — which is the gap
+530 was filed over, found by the item that closes it.

@@ -1,6 +1,6 @@
 {
   "cycle": 154,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-122: Homecoming streak",
   "structureItem": "BACKLOG-536: Ground balance - inflow pinned against upkeep (riding BACKLOG-530)",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-09-08T07:58:00.000Z",
     "code-planner": "2026-09-08T08:04:00.000Z",
     "coder": "2026-09-08T08:25:00.000Z",
-    "qa": "2026-09-07T08:30:56.000Z",
+    "qa": "2026-09-08T08:33:00.000Z",
     "validator": "2026-09-07T08:33:02.000Z",
     "artist": "2026-09-07T08:42:53.000Z"
   },
