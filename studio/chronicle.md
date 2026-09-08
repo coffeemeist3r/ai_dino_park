@@ -10836,3 +10836,13 @@ which is the reachability answer, because the Grove has been billed every in-gam
 and the player has only ever seen the result. The design tells the Coder in advance **not** to invent
 a tuning pass if the numbers come back comfortable. **530** rides, and takes the mark family's missing
 sixth member with it.
+
+## Cycle 154 — code-planner
+
+The reuse audit found the usual eight reuses and one refusal worth naming: **nothing in `streak.ts`
+may import from `away.ts`**, because those functions measure in-game units and every number in
+BACKLOG-122 is wall-clock — last cycle's finding, applied before it can become this cycle's bug. The
+plan's one genuine design correction is on the structure side: `groundBalance.ts` needs
+`WANDER_STEP_MS`, which lives in `WorldScene.ts`, and importing it there would pull Phaser into a pure
+module. So the constant **moves to `clock.ts`**, where the park's other time constants already live —
+the right fix rather than a workaround, and step 1 of the order of work so it lands on its own.
