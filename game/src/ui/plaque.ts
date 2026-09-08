@@ -52,9 +52,22 @@ export interface PlaqueStats {
   stockpile?: string;
   /** Per-zone population readout (BACKLOG-316), e.g. '▸Pocket Cretaceous 4 · The Grove 2'. Absent/empty → no line. */
   zoneTally?: string;
+  /** What this ground owes a day (BACKLOG-536), from `upkeepLine`. Absent/empty → no line — and a ground
+   *  under the bill's floor produces an empty string, so most grounds stay exactly as they read before. */
+  upkeep?: string;
+  /** The keeper's own attendance (BACKLOG-122), from `streakLine`. Absent/empty → no line. Last on the
+   *  brass on purpose: every line above it is about the park, and this one is about you. */
+  streak?: string;
 }
 
-/** The engraved lines of the plaque — two stats lines, an optional stores line, an optional zones line. */
+/**
+ * The engraved lines of the plaque — two stats lines, then four optional ones: stores, zones, what this
+ * ground owes a day (536) and how many days running the keeper has turned up (122).
+ *
+ * Every optional line is absent-means-nothing, so a caller that passes none of them gets byte-identical
+ * output to the pre-154 plaque — which is what lets a hundred existing literals across this suite stay
+ * untouched, the `bookLines(rows, away = [])` precedent from cycle 153.
+ */
 export function plaqueLines(s: PlaqueStats): string[] {
   const place = s.zone ?? 'Pocket Cretaceous';
   const specimens = `${s.population} specimen${s.population === 1 ? '' : 's'}`;
@@ -62,6 +75,8 @@ export function plaqueLines(s: PlaqueStats): string[] {
   const lines = [`VIVARIUM · ${place}`, `Day ${s.day} · ${specimens} · ${gens}`];
   if (s.stockpile) lines.push(`Stores · ${s.stockpile}`);
   if (s.zoneTally) lines.push(`Zones · ${s.zoneTally}`);
+  if (s.upkeep) lines.push(`Upkeep · ${s.upkeep}`);
+  if (s.streak) lines.push(`Keeper · ${s.streak}`);
   return lines;
 }
 

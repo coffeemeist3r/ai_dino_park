@@ -20,7 +20,7 @@ import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
-import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, type GameTime } from '../world/clock';
+import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
@@ -118,6 +118,7 @@ import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH,
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
 import { awayLogLines, keepAwayLog, type AwayEntry } from '../world/awaylog';
+import { NO_STREAK, noteDay, streakLine, type Streak } from '../world/streak'; // BACKLOG-122
 import { nextLens, bondedPairs, tickerLines, bookLines, zoneMapModel, zoneWant, LENS_LABEL, type Lens, type BookRow, type ZoneMapEntry } from '../ui/lenses';
 import { deriveRole, settleRole, ROLE_ICON, type Role, type ProviderCandidate } from '../ai/roles';
 import { spreadProviderWord } from '../world/providerword';
@@ -171,6 +172,8 @@ import {
   patchedLine,
   DERELICT_ALPHA,
   REPAIR_COST,
+  upkeepDue,
+  upkeepLine,
   type Landmark,
 } from '../world/upkeep';
 // BACKLOG-488: the patch-up stops being arithmetic and becomes a job a resident walks to.
@@ -179,6 +182,7 @@ import {
   mendLine,
   mendMemory,
   mendEventLine,
+  MEND_ART_KEY,
   MEND_GLYPH,
   MEND_STEPS,
   MEND_COOLDOWN_MS,
@@ -302,7 +306,7 @@ import {
 } from '../world/taught';
 import { cropStage, plotAdjacent, cropOf, stageGlyph, ripeRigKey, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
 import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
-import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine } from '../ui/plaque';
+import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
@@ -367,13 +371,6 @@ const MIGRATE_COOLDOWN_MS = 20_000; // BACKLOG-333: real-time floor between ambi
 const HUNT_COOLDOWN_MS = 30_000; // BACKLOG-367: after an empty hunt a carnivore rests before stalking again
 const BARTER_COOLDOWN_MS = 45_000; // BACKLOG-358: real-time floor between edge-meet barters (paces the beat)
 const EDGE_DWELL = 2; // BACKLOG-358: force-steps a dino must linger at the edge column to count as *meeting* (not transiting)
-
-/**
- * Wander cadence (BACKLOG-333) — `forceStep` runs on this real-time timer instead of the in-game-minute
- * clock, so the bowl mills about at a watchable pace at any time scale (at 1× an in-game minute is 60 real
- * seconds, so the old "every 5 in-game minutes" was one step per ~5 real minutes — the park looked frozen).
- */
-const WANDER_STEP_MS = 3_000;
 
 /** How long a recovered dino's idle quirk reads perkier after a flourish (BACKLOG-325), in real ms. */
 const LIFT_WINDOW_MS = 8_000;
@@ -546,6 +543,9 @@ export class WorldScene extends Phaser.Scene {
   /** The last few homecoming digests, newest first (BACKLOG-114). Persisted: the point of the log is that
    *  it is still there tomorrow, not only until the next keypress clears the modal. */
   private awayLog: AwayEntry[] = [];
+
+  /** The keeper's own attendance (BACKLOG-122). Persisted as `streak`; `recordVisit` notes the day. */
+  private streak: Streak = NO_STREAK;
   private lastHomecoming: Homecoming | null = null;
   private liveBubbles = new Set<string>();
   /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
@@ -668,6 +668,10 @@ export class WorldScene extends Phaser.Scene {
   private vigilMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** The missed-you mark (BACKLOG-116), index-aligned like the rest of the hour-mark family. */
   private missedMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+
+  /** The mend errand's mark (BACKLOG-530/537) - the family's sixth member, and the one whose absence
+   *  had held an art item in the queue since cycle 145 for want of a host. */
+  private mendMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** BACKLOG-534: the two textures the missed mark swaps between, baked once. Null where a rig is
    *  absent, which is what keeps the `MISSED_FAINT_ALPHA` fallback a live path rather than dead code. */
   private missedTex: string | null = null;
@@ -1217,15 +1221,10 @@ export class WorldScene extends Phaser.Scene {
     this.refreshPlaque();
     getWorldClock().onTick(() => this.refreshPlaque());
 
-    // dev-only Playwright hook — current plaque stats
-    (window as any).__plaque = () => ({
-      population: this.dinos.length,
-      day: getWorldClock().now().day,
-      generations: maxGeneration(this.born),
-      zone: zoneById(this.zoneId).name,
-      stockpile: this.zoneStores(),
-      zoneTally: this.zoneTally(),
-    });
+    // dev-only Playwright hook — current plaque stats. Reads `plaqueStats()`, the same object the brass is
+    // engraved from, rather than rebuilding it: cycle 154 added two lines and found this hook was a second
+    // copy of the first six, which is the defect BACKLOG-495 exists over, sitting in the test seam itself.
+    (window as any).__plaque = () => this.plaqueStats();
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
     (window as any).__zone = () => this.zoneId;
     (window as any).__setZone = (id: string) => {
@@ -1272,18 +1271,23 @@ export class WorldScene extends Phaser.Scene {
     });
   }
 
+  /** What the brass says right now. One source for the render and the dev hook (BACKLOG-536). */
+  private plaqueStats(): PlaqueStats {
+    return {
+      population: this.dinos.length,
+      day: getWorldClock().now().day,
+      generations: maxGeneration(this.born),
+      zone: zoneById(this.zoneId).name,
+      stockpile: this.zoneStores(),
+      zoneTally: this.zoneTally(),
+      upkeep: upkeepLine(upkeepDue(this.standingIn(this.zoneId))), // BACKLOG-536
+      streak: streakLine(this.streak), // BACKLOG-122
+    };
+  }
+
   private refreshPlaque(): void {
     if (!this.plaque) return;
-    this.plaque.setText(
-      plaqueLines({
-        population: this.dinos.length,
-        day: getWorldClock().now().day,
-        generations: maxGeneration(this.born),
-        zone: zoneById(this.zoneId).name,
-        stockpile: this.zoneStores(),
-        zoneTally: this.zoneTally(),
-      }).join('\n'),
-    );
+    this.plaque.setText(plaqueLines(this.plaqueStats()).join('\n'));
   }
 
   /** Per-zone population readout (BACKLOG-316): each zone's resident count, '▸' on the keeper's active zone. */
@@ -1714,6 +1718,60 @@ export class WorldScene extends Phaser.Scene {
       this.checkVigil();
       this.stepVigil();
       return this.vigil ? { ...this.vigil } : null;
+    };
+    // BACKLOG-122: read the keeper's day-count, or put it somewhere. Reading is the common case; setting is
+    // for the states that would otherwise cost a real week. A spec that only needs *tomorrow* should move
+    // `__keeperNow` and reload instead, so the increment happens through production code.
+    (window as any).__streak = (s?: Streak) => {
+      if (s) {
+        this.streak = s;
+        this.refreshPlaque();
+      }
+      return { ...this.streak };
+    };
+    /**
+     * BACKLOG-530: which marks each dino is wearing right now.
+     *
+     * Reads `.visible` off the production mark objects themselves rather than recomputing the predicates —
+     * which is the item's own requirement, satisfied by construction. A hook that re-derived "is this dino
+     * resting" would agree with the scene right up until the day it stopped, and the whole complaint was
+     * that nothing could tell.
+     */
+    (window as any).__marks = () => {
+      // Refresh first, off the root of the production chain. The family is redrawn on the world step, so a
+      // hook that only read would be asserting about whatever the last frame happened to leave behind — and
+      // the marks a spec most wants to read are the ones it just arranged the state for. `__stepMend` set
+      // this precedent: drive the production path, then report.
+      this.refreshSleepMarks();
+      const families: Array<[string, Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image>]> = [
+        ['sleep', this.sleepMarks],
+        ['rouse', this.rouseMarks],
+        ['vigil', this.vigilMarks],
+        ['mend', this.mendMarks],
+        ['missed', this.missedMarks],
+        ['cold', this.coldMarks],
+        ['mope', this.mopeMarks],
+        ['need', this.needMarks],
+        ['activity', this.activityMarks],
+      ];
+      const out: Record<string, string[]> = {};
+      this.dinos.forEach((d, i) => {
+        // Every mark in this family is in-view gated, so a dino on another ground wears nothing by design.
+        // Reported as `offscreen` rather than as an empty list, because "not shown" and "not here" are
+        // different answers and a spec that cannot tell them apart is the gap this item was filed on.
+        out[d.name] = this.inView(d)
+          ? families.filter(([, arr]) => !!arr[i]?.visible).map(([key]) => key)
+          : ['offscreen'];
+      });
+      return out;
+    };
+    // BACKLOG-122: re-run the boot-time visit read. A real reload calls `recordVisit`; a spec that moves
+    // `__keeperNow` and then calls this is exercising the same path, so the increment happens in production
+    // code rather than being asserted about a value the spec handed the park itself.
+    (window as any).__recordVisit = () => {
+      this.recordVisit(this.visitHours);
+      this.refreshPlaque();
+      return { ...this.streak };
     };
     (window as any).__visitHours = (hours?: number[]) => {
       if (hours) {
@@ -3270,6 +3328,7 @@ export class WorldScene extends Phaser.Scene {
     this.sleepMarks.push(this.makeHourMark(DOZE_ART_KEY, DOZE_GLYPH));
     this.rouseMarks.push(this.makeHourMark(ROUSE_ART_KEY, ROUSE_GLYPH));
     this.vigilMarks.push(this.makeHourMark(VIGIL_ART_KEY, VIGIL_GLYPH)); // BACKLOG-121
+    this.mendMarks.push(this.makeHourMark(MEND_ART_KEY, MEND_GLYPH)); // BACKLOG-530/537
     this.missedMarks.push(this.makeHourMark(MISSED_ART_KEY, MISSED_GLYPH)); // BACKLOG-116
     this.missedTex ??= hasPropArt(MISSED_ART_KEY) ? bakePropArt(this, MISSED_ART_KEY) : null;
     this.missedAloofTex ??= hasPropArt(MISSED_ALOOF_ART_KEY) ? bakePropArt(this, MISSED_ALOOF_ART_KEY) : null;
@@ -3664,6 +3723,30 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       mark.setVisible(this.vigil?.keeper === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
     });
+    this.refreshMendMarks();
+  }
+
+  /**
+   * The mend errand's mark (BACKLOG-530, and the host BACKLOG-537 has been held for since cycle 145).
+   *
+   * BACKLOG-488 sends a resident to its ground's derelict landmark and the walk takes real seconds, but
+   * until now the errand was invisible while it happened: `flashFeed(fixer, MEND_GLYPH)` fires when the mend
+   * *resolves*, which is the moment the mark would stop being true. So the one dino in the park that had
+   * changed course for a reason was the one dino wearing nothing.
+   *
+   * Its place in the precedence order follows the family's own stated principle. It sits **below** the vigil
+   * — both are things a dino is *doing*, and a dino cannot be walking to a ruin and standing at the glass at
+   * once, so the ordering between them is a formality rather than a contest — and **above** the missed
+   * thought, because what a dino is doing beats what it is thinking. That last one is not a formality: a
+   * fixer on an errand really can also be a dino that formed an account of the absence, and it now wears the
+   * errand.
+   */
+  private refreshMendMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.mendMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.mend?.fixer === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
+    });
     this.refreshMissedMarks();
   }
 
@@ -3687,7 +3770,10 @@ export class WorldScene extends Phaser.Scene {
       const mark = this.missedMarks[i];
       if (!mark) return;
       const trace = this.missedTrace[d.name];
-      const higher = this.isResting(d) || this.isRoused(d) || this.vigil?.keeper === d.name;
+      // BACKLOG-530: the mend joins the three above it. A dino walking to a ruin is doing something,
+      // and the family's rule is that doing beats thinking.
+      const higher =
+        this.isResting(d) || this.isRoused(d) || this.vigil?.keeper === d.name || this.mend?.fixer === d.name;
       const shown = !!trace && !higher && this.inView(d);
       const aloof = trace?.grade === 'aloof';
       const tex = aloof ? this.missedAloofTex : this.missedTex;
@@ -8205,6 +8291,7 @@ ${e.short}`;
       ticsFormed: [...this.ticsFormed],
       ticEchoFrom: this.ticEchoFrom,
       awayLog: this.awayLog, // BACKLOG-114
+      streak: this.streak, // BACKLOG-122: the keeper's own day-count (additive)
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8244,6 +8331,9 @@ ${e.short}`;
     const hour = getKeeperClock().hour(); // BACKLOG-529: the keeper's local hour, through the seam that owns it
     const history = saved?.length ? saved : [hour];
     this.visitHours = noteVisit(history, hour);
+    // BACKLOG-122: the same boot, the other clock reading. `keeperDay` is the only place in this park
+    // that decides what day it is - see its own comment on why `toISOString` would hand this the wrong one.
+    this.streak = noteDay(this.streak, getKeeperClock().day());
   }
 
   private setupSave(): void {
@@ -8265,6 +8355,9 @@ ${e.short}`;
       // BACKLOG-493: a save carries the player's chosen *watching* rate. Restore it as the active choice
       // and then let `applyClockRate` decide what the clock actually runs at right now — a save loaded into
       // a backgrounded tab must not start ticking at watching speed.
+      // BACKLOG-122: restored *before* `recordVisit` notes today, so a resumed streak continues rather
+      // than restarting. A pre-154 save has none and starts its count on this boot.
+      this.streak = save.streak ?? NO_STREAK;
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
       this.applyClockRate();

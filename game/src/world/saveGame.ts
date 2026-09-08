@@ -19,6 +19,7 @@ import type { Bonds } from '../social/bonds';
 import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
 import type { AwayEntry } from './awaylog';
+import type { Streak } from './streak';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -120,6 +121,10 @@ export interface SaveData {
   /** The last few homecoming digests, newest first (BACKLOG-114) — what the book re-reads back to you.
    *  Additive; absent → [] (a save written before this cycle has thrown its digests away already). */
   awayLog?: AwayEntry[];
+  /** The keeper's own attendance (BACKLOG-122) — the last day they opened the park, how many days
+   *  running, and the best run this save has had. Additive; absent → NO_STREAK, so a pre-154 save
+   *  starts counting on its next boot rather than being refused. */
+  streak?: Streak;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -526,6 +531,17 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // streak (BACKLOG-122) — the keeper's day-count. Absent is the normal pre-154 case and means "not yet
+  // counted"; present-and-malformed is refused, the same rule `awayLog` above it follows.
+  let streak: Streak | undefined;
+  if (o.streak !== undefined) {
+    if (typeof o.streak !== 'object' || o.streak === null || Array.isArray(o.streak)) return null;
+    const st = o.streak as Record<string, unknown>;
+    if (st.last !== null && typeof st.last !== 'string') return null;
+    if (!isNum(st.run) || !isNum(st.best)) return null;
+    streak = { last: st.last as string | null, run: st.run, best: st.best };
+  }
+
   // ticsFormed / ticEchoFrom (BACKLOG-409) — the lifetime "this ritual happened" set and who each echo was
   // caught off. Additive; absent → undefined.
   let ticsFormed: string[] | undefined;
@@ -905,6 +921,7 @@ export function deserialize(json: string): SaveData | null {
     ticsFormed,
     ticEchoFrom,
     awayLog,
+    streak,
     leftDays,
     catchWarmth,
     ticHaunts,

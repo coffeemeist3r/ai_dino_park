@@ -103,3 +103,32 @@ describe('both-zone stores readout (BACKLOG-357)', () => {
     expect(lines[lines.length - 1]).toBe('Stores · ▸Pocket Cretaceous 🪨 2 · The Grove 🪵 3');
   });
 });
+
+/**
+ * BACKLOG-536 / BACKLOG-122 — the two lines cycle 154 added, and the rule that let them be added at all.
+ *
+ * Both are absent-means-nothing, which is what kept every plaque literal in this suite (and the two dozen
+ * above this block) byte-identical without one of them being edited. That is the `bookLines(rows, away = [])`
+ * precedent from cycle 153, applied a second time and on purpose.
+ */
+describe('plaqueLines — the optional lines (BACKLOG-536 / 122)', () => {
+  const base = { population: 5, day: 1, generations: 1 };
+
+  it('renders exactly the pre-154 plaque when neither is supplied', () => {
+    expect(plaqueLines(base)).toEqual(['VIVARIUM · Pocket Cretaceous', 'Day 1 · 5 specimens · 1 generation']);
+  });
+
+  it('an empty string is the same as absent, for both', () => {
+    expect(plaqueLines({ ...base, upkeep: '', streak: '' })).toEqual(plaqueLines(base));
+  });
+
+  it('engraves what the ground owes, under Stores and Zones', () => {
+    const lines = plaqueLines({ ...base, stockpile: '🪨 2', upkeep: '🛠️ 1/day' });
+    expect(lines[lines.length - 1]).toBe('Upkeep · 🛠️ 1/day');
+  });
+
+  it('engraves the keeper last, because it is the only line about them', () => {
+    const lines = plaqueLines({ ...base, upkeep: '🛠️ 1/day', streak: '3 days running' });
+    expect(lines.slice(-2)).toEqual(['Upkeep · 🛠️ 1/day', 'Keeper · 3 days running']);
+  });
+});

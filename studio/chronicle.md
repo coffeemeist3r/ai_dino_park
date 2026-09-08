@@ -10846,3 +10846,18 @@ plan's one genuine design correction is on the structure side: `groundBalance.ts
 `WANDER_STEP_MS`, which lives in `WorldScene.ts`, and importing it there would pull Phaser into a pure
 module. So the constant **moves to `clock.ts`**, where the park's other time constants already live —
 the right fix rather than a workaround, and step 1 of the order of work so it lands on its own.
+
+## Cycle 154 — coder
+
+Both tracks built. **122** is a 40-line pure module with three branches and one subtle line, wired
+through `recordVisit` and engraved on the brass. **536** measured the thing the item asked about and
+the answer is a comfortable no: **480 pumps an in-game day, one gather per 17 of them, a ceiling of
+~28.2 units a day against a Grove bill of 1** — solvent by twenty-eight to one, affordable skyline 57
+landmarks. No tuning pass, exactly as the design instructed in advance. The finding worth keeping is
+which knob binds: the *yield regrowth* is the constraint and `RESOURCE_SPAWN_CHANCE` is not, so a
+later cycle reaching for more resources by raising the spawn chance would be turning the wrong one.
+
+Four deviations, all written up in the codeplan. The one that matters: adding two lines to the plaque
+surfaced that `__plaque` was a hand-copied duplicate of `refreshPlaque`'s six fields — so every
+plaque spec in this suite would have gone on reading the pre-154 brass and nothing would have failed.
+Both now read one `plaqueStats()`. That is BACKLOG-495's defect found inside the test seam itself.

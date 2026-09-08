@@ -143,8 +143,46 @@ criterion 5 by passing a standing large enough to exceed the ceiling.
 
 ## Blockers
 
-_(none — filled by the Coder if a gate fails)_
+None. Build clean, 2573 unit green across 245 files, e2e 684/1 with the failure at `boot` in
+`cycle-123-wandering` — the BACKLOG-538 signature exactly, green on an isolated re-run (6/6).
 
 ## Shipped
 
-_(filled by the Coder)_
+**New:** `game/src/world/streak.ts`, `game/src/world/groundBalance.ts`,
+`tests/unit/streak.test.ts`, `tests/unit/groundBalance.test.ts`,
+`tests/e2e/cycle-154-streak.spec.ts`, `tests/e2e/cycle-154-marks.spec.ts`,
+`tests/e2e/cycle-154-upkeep-line.spec.ts`.
+
+**Edited:** `world/clock.ts` (`WANDER_STEP_MS` moved in), `world/upkeep.ts` (`upkeepLine`),
+`world/mending.ts` (`MEND_ART_KEY`), `world/reachability.ts` (entry + placed prop),
+`world/saveGame.ts` (`streak`), `ui/plaque.ts` (two optional lines),
+`scenes/WorldScene.ts`, `tests/unit/plaque.test.ts`.
+
+### Deviations from the plan, and why
+
+**1. `plaqueStats()` was extracted, which the plan did not ask for.** Adding the two lines to
+`refreshPlaque` surfaced that `__plaque` was a hand-copied duplicate of the same six fields — so the
+dev hook every plaque spec in this suite reads would have gone on reporting the pre-154 plaque while
+the brass showed two more lines, and nothing would have failed. That is BACKLOG-495's defect sitting
+inside the test seam itself. Both now read one `plaqueStats()`. Three lines net, and it is the
+difference between a hook that observes the plaque and a hook that resembles it.
+
+**2. `__marks()` refreshes before it reads, and reports `offscreen`.** Two findings from the first
+run of its own spec, both worth keeping. The family is redrawn on the world step, so a pure read
+reports whatever the last frame left behind rather than the state the spec just arranged — the hook
+now drives `refreshSleepMarks()` first, the `__stepMend` precedent. And every mark in the family is
+`inView`-gated, so a dino on another ground wears nothing *by design*; returning `[]` for it made
+"not shown" and "not here" the same answer, which is the exact ambiguity this item was filed over.
+A dino off the keeper's ground reports `['offscreen']`.
+
+**3. `__recordVisit` was added.** The streak's increment lives in `recordVisit`, which only runs on
+boot. Without a hook, the two-consecutive-days spec would have had to set the streak itself and then
+assert about the value it set. It now moves `__keeperNow` and re-runs the production read.
+
+**4. No tuning pass, as the design instructed.** The numbers: **480 sim pumps per in-game day**, a
+ground can cash one gather per **17** of them, so the ceiling is **~28.2 units per in-game day**
+against a Grove bill of **1**. The affordable skyline is **57 landmarks**. Every founding ground is
+solvent by a factor of twenty-eight and the finding runs the other way — the yield regrowth is the
+binding constraint and `RESOURCE_SPAWN_CHANCE` is not, which means a future cycle reaching for more
+resources by raising the spawn chance would be turning the wrong knob. Written into the module header
+rather than left in this file.

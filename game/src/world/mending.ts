@@ -25,6 +25,17 @@ import { UPKEEP_GLYPH } from './upkeep';
 export const MEND_GLYPH = UPKEEP_GLYPH;
 
 /**
+ * The art key for the mark a dino wears while it is *carrying* a mend (BACKLOG-530/537).
+ *
+ * Distinct from `MEND_GLYPH` above, which is the ticker's word for a mend that has already *resolved*. The
+ * two are the same symbol and opposite moments, and conflating them is exactly what left BACKLOG-537 with
+ * no host for seven Artist fires: there was a flash on completion and nothing at all during the walk.
+ * `refreshMendMarks` hangs this over the fixer for the duration, and it renders as the glyph until an
+ * Artist fire draws the rig — the way every mark in this family started.
+ */
+export const MEND_ART_KEY = 'mend';
+
+/**
  * Steps the errand gets. `stepToward` moves one axis per step, so the walk costs *manhattan* distance and
  * a corner-to-corner crossing of the 20×15 map is ~33. Sized to cover the ordinary case with room, not the
  * pathological one; the budget is the safety valve that stops a fixer chasing a ruin it can't reach.

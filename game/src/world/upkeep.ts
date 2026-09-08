@@ -51,6 +51,22 @@ export function upkeepDue(standing: number): number {
   return Math.floor(Math.max(0, standing) / STRUCTURES_PER_UPKEEP);
 }
 
+/**
+ * What this ground owes, for the plaque (BACKLOG-536).
+ *
+ * It lives here rather than in the UI because it is a sentence about the bill and the bill is computed on
+ * the line above; a ground's rate written down in `plaque.ts` would be the second copy this codebase keeps
+ * filing items about. A ground that owes nothing says **nothing** — the bowl and the frontier read exactly
+ * as they did before this cycle, and only a ground with a skyline over the floor gets a line.
+ *
+ * This is the reachability half of 536. The Grove has been billed a unit an in-game day since BACKLOG-528
+ * put a second landmark on its skyline, and until now the player was only ever handed the *result* — a
+ * stores line one lower, twenty-four real minutes later, with nothing anywhere saying what the rate was.
+ */
+export function upkeepLine(due: number): string {
+  return due > 0 ? `${UPKEEP_GLYPH} ${due}/day` : '';
+}
+
 export interface UpkeepPlan {
   /** The pile after upkeep. The **same reference** as the input when nothing happened at all. */
   pile: Stockpile;

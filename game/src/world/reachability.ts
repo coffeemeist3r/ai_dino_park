@@ -32,6 +32,7 @@ import { atRest, chronotypeOf } from './chronotype';
 import { seededPersonality } from '../ai/personality';
 import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
+import { MEND_ART_KEY } from './mending'; // BACKLOG-530/537
 import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
 import {
   FOUNDING_LANDMARKS,
@@ -46,7 +47,8 @@ import {
 } from './founding';
 import { isUnsettled } from './frontier';
 import { pileTotal, type ResourceKind, type Stockpile } from './resource';
-import { REPAIR_COST, runUpkeep, upkeepDue } from './upkeep';
+import { REPAIR_COST, runUpkeep, upkeepDue, upkeepLine } from './upkeep';
+import { solvent } from './groundBalance'; // BACKLOG-536
 import { quarryGround, quarryKind } from './quarry';
 import { PILE_STEPS, bankStep } from './bank';
 import { FOODS } from './foods';
@@ -156,6 +158,9 @@ export function worldPlacedProps(): Set<string> {
   // absence by `refreshMissedMarks`. Fourth of the family, and the same reason it counts: the scene hangs
   // it over a dino rather than laying it on the ground, but a player sees it either way.
   out.add(MISSED_ART_KEY);
+  // BACKLOG-530/537: the mend errand's mark, hung over the fixer by `refreshMendMarks` for the whole walk.
+  // Its host exists as of cycle 154, which is what unblocks 537 from the art queue it has sat in since 145.
+  out.add(MEND_ART_KEY);
   // BACKLOG-534: and the aloof step's own rig, swapped onto the same sprite by `refreshMissedMarks`.
   out.add(MISSED_ALOOF_ART_KEY);
   return out;
@@ -306,6 +311,31 @@ export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
       holds: () => {
         const after = afterOneSession();
         return zoneChain().some((z) => pileTotal(after.piles[z] ?? {}) < pileTotal(FOUNDING_PILES[z] ?? {}));
+      },
+    },
+  },
+  {
+    id: 'BACKLOG-536',
+    system: 'the plaque names what this ground owes a day, instead of only handing you the result an in-game day later',
+    // Two claims in one entry, and the order is deliberate. The *readout* is what a player sees; the
+    // *solvency* is what makes the readout worth reading rather than a countdown to a ruin. Both route
+    // through production functions — `upkeepDue` for the bill, `solvent` for the arithmetic — because a
+    // register entry that restated either number would be the second copy this file exists to prevent.
+    fact: 'some founding ground owes a bill once its ruin is mended, and every founding skyline is inside the gather ceiling',
+    holds: () =>
+      zoneChain().some((z) => {
+        const standing =
+          FOUNDING_LANDMARKS.filter((l) => l.zone === z).length + (FOUNDING_RUIN.zone === z ? 1 : 0);
+        return upkeepLine(upkeepDue(standing)) !== '';
+      }) && zoneChain().every((z) => solvent(FOUNDING_LANDMARKS.filter((l) => l.zone === z).length)),
+    played: {
+      system: 'and the ground can actually afford the skyline the line is about — the bill it names is one it can pay',
+      // The stepped frame is where this claim belongs, because the skyline the plaque is *about* on a played
+      // save is the post-mend one, not the founding one. `upkeep.ts` has promised convergence since 480; this
+      // is the first thing in the tree that checks the promise against the rate resources actually arrive at.
+      holds: () => {
+        const after = afterOneSession();
+        return zoneChain().every((z) => solvent(after.standing[z] ?? 0));
       },
     },
   },

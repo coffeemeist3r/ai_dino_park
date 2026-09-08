@@ -53,6 +53,20 @@ export const ACTIVE_SCALE = 60;
 export const AWAY_SCALE = 1;
 
 /**
+ * Wander cadence (BACKLOG-333) — `forceStep` runs on this real-time timer instead of the in-game-minute
+ * clock, so the bowl mills about at a watchable pace at any time scale (at 1x an in-game minute is 60 real
+ * seconds, so the old "every 5 in-game minutes" was one step per ~5 real minutes — the park looked frozen).
+ *
+ * It lives here as of BACKLOG-536, beside the two rates, because it is the third number in the same
+ * sentence: `ACTIVE_SCALE` says how long an in-game day takes in real time and this says how often the sim
+ * pumps inside it, so *how many times anything happens in a day* is their quotient. `groundBalance.ts` is
+ * the first module to need that quotient, and it is pure — importing this from `WorldScene.ts`, where it
+ * used to live, would have dragged Phaser into a Node-tested module. `WorldScene` imports it from here now
+ * and `__wanderStepMs` still publishes it, unchanged.
+ */
+export const WANDER_STEP_MS = 3_000;
+
+/**
  * The hour a brand-new park opens on (BACKLOG-523).
  *
  * It lives here, beside `ACTIVE_SCALE`, because *when a session starts* and *how fast it runs* are the two
