@@ -10801,3 +10801,13 @@ by default.
 
 `lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in the
 queue is asking for one.
+
+## Cycle 154 — lore-smith
+
+The park learns what day it is where the keeper lives. Social queue over cap at 200 open, so nothing
+new was brainstormed on that side; the pick is **BACKLOG-122**, the homecoming streak, and the
+argument for it is that `keeperDay()` has been sitting in `keeperclock.ts` since cycle 152 with a
+comment naming this exact item and no consumer at all. An unblocked arc whose seam was built for it
+by name is the cheapest real work on the queue. One art item seeded — **BACKLOG-539**, the streak's
+own engraved register — and seeded specifically because its host ships tonight, which is the
+condition 537 could not meet and was correctly held for. Idea Box empty.

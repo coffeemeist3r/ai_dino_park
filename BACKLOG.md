@@ -67,6 +67,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
+- [ ] BACKLOG-539 [art] The day-count on the brass — the plaque has been an engraved *stat* board since 058: population, generations, stores, zones, and now (BACKLOG-122, this cycle) the keeper's own visit streak. Every line on it is set in the same plain text at the same weight, which is fine for a tally of specimens and wrong for the one line on the brass that is about the *player*. Draw the streak its own small engraved register — a day-count glyph in the plaque's palette, keyed `streak`, standing off the stat lines the way the founder's mark stands off the ground. Standalone via `bakePropArt`; the host ships in the same cycle as the seed, which is the condition the cycle-145 amendment asks for and the reason this one is seeded while 537 is not. Builds on 122 / 058 / 504.
+
 - [ ] BACKLOG-537 [art] The hands on the ruin — a mark for the dino that has been *sent to mend something*. BACKLOG-488 dispatches a resident to its ground's derelict landmark and the walk takes real seconds, but the errand is invisible while it happens: the ticker prints a line when the mend *resolves* and nothing at all says why that dino changed course. Give the walk the same treatment the doze/rouse/vigil/missed family got — one mark over the head of a dino currently carrying a mend, keyed `mend`, in the same palette register so the whole mark axis stays one family. The host is live and reachable on a fresh save: the founding Grove ships a fallen cairn and enough stone to pay for it, and somebody walks over within the first minute. Standalone via `bakePropArt`. **(Cycle 153-art: held, not drawn — the *errand* is live and reachable on a fresh save but the **host is not**. Every mark in this family hangs off a `refresh*Marks` pass and there is no `refreshMendMarks`; `flashFeed(fixer, MEND_GLYPH)` fires on *resolve*, which is the moment the mark stops being true. Blocked on somebody building that pass — the same class of blockage 518 spent seven fires in, caught one fire later this time.)** Builds on 488 / 520 / 531.
 
 
@@ -117,7 +119,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 30 lore additions — the keeper's comings and goings (2026-06-03)
 
 - [ ] BACKLOG-119 [emergent] Goodbye glance — the inverse of the homecoming: as the tab leaves (`visibilitychange` → hidden) after a real session, the closest dino throws a brief 👀 toward the keeper before the bowl goes quiet. A living bookend to 112.
-- [ ] BACKLOG-122 [pokemon] Homecoming streak — returning on consecutive real days builds a "visit streak" surfaced on the plaque; miss a day and it resets. A gentle Stardew daily pull.
+- [~] BACKLOG-122 [pokemon] Homecoming streak — returning on consecutive real days builds a "visit streak" surfaced on the plaque; miss a day and it resets. A gentle Stardew daily pull.
 
 ## Cycle 31 lore additions — the keeper's little court (2026-06-04)
 
