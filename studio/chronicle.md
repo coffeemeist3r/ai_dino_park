@@ -10811,3 +10811,15 @@ comment naming this exact item and no consumer at all. An unblocked arc whose se
 by name is the cheapest real work on the queue. One art item seeded — **BACKLOG-539**, the streak's
 own engraved register — and seeded specifically because its host ships tonight, which is the
 condition 537 could not meet and was correctly held for. Idea Box empty.
+
+## Cycle 154 — structure-smith
+
+Off-milestone, and the justification is that Milestone 18's structure arcs closed two cycles ago and
+nobody has drafted the next spine, so the track's duty is to the queue. **BACKLOG-536** is the track —
+pin the park's resource inflow against the upkeep drain, which `upkeep.ts` has been promising
+converges since cycle 480 without anybody ever measuring the two numbers against each other — and
+**BACKLOG-530** rides on it, exactly as its own entry has been asking to be picked since cycle 153.
+Two complaints one layer apart: a thing the park computes every day and nothing can look at. The
+rider takes one deliberate scope addition, written into the handoff: the mark family has no
+`refreshMendMarks`, which is the whole reason 537 has been held, and a hook that walks the family has
+to touch every one of those functions anyway. No solo cycle (3 since the last, 10 required).

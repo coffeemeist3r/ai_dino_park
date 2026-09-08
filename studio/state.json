@@ -2,7 +2,7 @@
   "cycle": 154,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-122: Homecoming streak",
-  "structureItem": null,
+  "structureItem": "BACKLOG-536: Ground balance - inflow pinned against upkeep (riding BACKLOG-530)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-08T07:40:00.000Z",
-    "structure-smith": "2026-09-07T08:07:14.000Z",
+    "structure-smith": "2026-09-08T07:47:00.000Z",
     "designer": "2026-09-07T08:09:48.000Z",
     "code-planner": "2026-09-07T08:10:53.000Z",
     "coder": "2026-09-07T08:30:00.000Z",
