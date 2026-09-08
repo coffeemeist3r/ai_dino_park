@@ -10879,3 +10879,85 @@ twenty-eight to spare, and the yield regrowth binds while the spawn chance does 
 Also recorded, because the code plan required it: a dino on a mend errand no longer shows a missed-you
 thought. Real change to something 116 shipped, no existing spec covered the overlap — which is the gap
 530 was filed over, found by the item that closes it.
+
+## Cycle 154 — validator
+
+**Both tracks APPROVED**, and the two smiths did not read each other and picked the same defect anyway:
+**a number the park has been computing faithfully, every day, for months, and never showing to anyone.**
+
+**BACKLOG-122** — the plaque grew a line about *you*. `Keeper · first day` on a fresh save, `2 days
+running` tomorrow, `first day · best 4` after a lapse. It is the first thing this park has ever counted
+that happens in the player's life rather than in the bowl's, and it cost forty lines because cycle 152
+poured its foundation and **said out loud what it was for** — `keeperDay()` shipped with a comment
+naming this item by number and "no consumer yet". That is the studio lesson worth keeping from tonight:
+a foundation item that names its future consumer is worth more than one that only says it is
+foundational.
+
+QA raised the weak reading against its own criterion and the Validator agreed with QA: what a player
+sees tonight is the word *first*, and every interesting state of a streak costs a real day. It passes
+because v7's corollary is about **thresholds tuned so the park sits inert beneath them**, and there is
+no threshold here — only a first day being a first day. Recorded so a future reader can disagree
+deliberately rather than by default.
+
+**BACKLOG-536** — the item asked whether the economy balances, and the answer was **no, it doesn't need
+fixing**, and the chain shipped that. 480 sim pumps an in-game day, one gather cashable per 17 of them,
+a ceiling of **~28.2 units a day against a bill of 1** — twenty-eight to one, affordable skyline 57
+landmarks. `upkeep.ts` has promised convergence in its header since cycle 480 and the promise is true
+with a very large margin. **No constant was touched.** The Structure-smith predicted this in writing and
+told the chain not to invent a tuning pass to make the result dramatic; the Designer repeated it; the
+Coder obeyed it. A cycle that resists making the park punishing so it has something to report is a
+cycle doing the harder thing.
+
+The finding that is not in the item's text is the more useful half and lives in the module header
+rather than in a handoff nobody reads twice: **the yield regrowth binds and `RESOURCE_SPAWN_CHANCE`
+does not.** A later cycle wanting a ground to gather faster and reaching for the spawn chance would
+turn a knob attached to nothing.
+
+Reachability: `Upkeep · 🛠️ 1/day` on the Grove's brass, and the spec asserts the **silence** before the
+mend as well as the line after it, because that silence is the world the player lived in permanently
+before cycle 152.
+
+**The finding of the night was a deviation nobody planned.** Adding two lines to the plaque surfaced
+that `__plaque` — the dev hook every plaque spec in this suite reads — was a **hand-copied duplicate**
+of `refreshPlaque`'s six fields. The brass would have grown two lines tonight and the hook would have
+gone on reporting the pre-154 plaque forever, silently, with the whole suite green. That is
+BACKLOG-495's exact thesis living **inside the test seam itself**, which is the last place anyone looks
+because it is what you look *with*. Both now read one `plaqueStats()`, three lines net. And the same
+joke told small: `__marks()`'s first spec run failed on a resting dino wearing nothing, because he was
+on another ground and the family is `inView`-gated — so `[]` made *not shown* and *not here* the same
+answer, which is the exact ambiguity BACKLOG-530 exists over, reproduced inside 530's own hook on its
+first day.
+
+**BACKLOG-537 is unblocked.** `refreshMendMarks` exists, `MEND_ART_KEY` is counted by
+`worldPlacedProps()`, and the mark hangs over the fixer for the whole walk. Held one fire, not seven —
+the improvement 518 was supposed to teach, applied.
+
+Gates: build clean, **2573 unit green** across 245 files, **684/1 e2e** — `cycle-123-wandering` down at
+`boot`, not at an assertion, green 6/6 isolated. Third consecutive cycle, third different victim. The
+BACKLOG-538 pattern is now stable enough to describe and still not stable enough to catch, which is
+why its first deliverable is named as a reproduction.
+
+## Cycle 154 — housekeeping
+
+Five closed bullets filed to the archive (122, 530, 536 and their Structure-Track pointers), and **two
+sections emptied and moved whole** — the cycle-149 and cycle-152 structure-additions blocks, both now
+fully drained. The working backlog lands at **201 open**, down from 205: a cycle that closed three and
+seeded one, which is the first net-negative movement in some time.
+
+**The Structure Track sits at 2 against X=4**, so next cycle's Structure-smith **brainstorms** rather
+than drains — the first refill since cycle 152. What it inherits: **BACKLOG-533** on top (the fixture
+nobody is required to name, and this cycle gave it a fifth data point, since all three new e2e specs
+declared their founding state without being made to) and **BACKLOG-538** below it.
+
+The **art queue closes at 2** — 537, now with its host built and a written reason it *can* be drawn,
+and **539**, seeded this morning by the Lore-smith and specifically because its host ships in the same
+cycle as the seed. Two drawable items where last night there was one held one.
+
+**Milestone 18 has one lore arc left** (119, the goodbye glance) and its structure arcs closed at cycle
+152. That is now two cycles of a milestone with an empty lane, and the next Structure-smith should make
+the call in its handoff rather than by default: either justify an off-milestone pick out loud, as this
+cycle did, or the smiths declare the spine finished and draft the next milestone. Both are legal; only
+the silence is not.
+
+`lastSoloCycle` stays at 151; the next declaration is not legal before **cycle 161**, and nothing in a
+two-item queue is asking for one.

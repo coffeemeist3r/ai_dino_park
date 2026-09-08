@@ -20,10 +20,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-530 [infra] The marks nobody can assert — four glyphs a dino can wear and no dev hook to read any of them (full text in the cycle-149 block below). **(Cycle 153: passed over, and not for scope — its honest bar answer is *nothing a player sees*, which under CHARTER v7 disqualifies it as a track and not as work. Ship it as a rider on a track that has its own answer, the BACKLOG-515 precedent from cycle 148. Stays first in line for exactly that.)**
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state (full text in the cycle-151 block below).
 - [ ] BACKLOG-538 [infra] The victim moves again — two full e2e runs, two different specs down, both at `boot` (full text in the cycle-153 block below).
-- [~] BACKLOG-536 [emergent] The economy has an outflow and no pinned inflow — `upkeep.ts` promises convergence and nothing measures the refill rate against the drain rate (full text in the cycle-152 block below).
 
 ---
 
@@ -69,7 +67,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-539 [art] The day-count on the brass — the plaque has been an engraved *stat* board since 058: population, generations, stores, zones, and now (BACKLOG-122, this cycle) the keeper's own visit streak. Every line on it is set in the same plain text at the same weight, which is fine for a tally of specimens and wrong for the one line on the brass that is about the *player*. Draw the streak its own small engraved register — a day-count glyph in the plaque's palette, keyed `streak`, standing off the stat lines the way the founder's mark stands off the ground. Standalone via `bakePropArt`; the host ships in the same cycle as the seed, which is the condition the cycle-145 amendment asks for and the reason this one is seeded while 537 is not. Builds on 122 / 058 / 504.
 
-- [ ] BACKLOG-537 [art] The hands on the ruin — a mark for the dino that has been *sent to mend something*. BACKLOG-488 dispatches a resident to its ground's derelict landmark and the walk takes real seconds, but the errand is invisible while it happens: the ticker prints a line when the mend *resolves* and nothing at all says why that dino changed course. Give the walk the same treatment the doze/rouse/vigil/missed family got — one mark over the head of a dino currently carrying a mend, keyed `mend`, in the same palette register so the whole mark axis stays one family. The host is live and reachable on a fresh save: the founding Grove ships a fallen cairn and enough stone to pay for it, and somebody walks over within the first minute. Standalone via `bakePropArt`. **(Cycle 153-art: held, not drawn — the *errand* is live and reachable on a fresh save but the **host is not**. Every mark in this family hangs off a `refresh*Marks` pass and there is no `refreshMendMarks`; `flashFeed(fixer, MEND_GLYPH)` fires on *resolve*, which is the moment the mark stops being true. Blocked on somebody building that pass — the same class of blockage 518 spent seven fires in, caught one fire later this time.)** Builds on 488 / 520 / 531.
+- [ ] BACKLOG-537 [art] The hands on the ruin — a mark for the dino that has been *sent to mend something*. BACKLOG-488 dispatches a resident to its ground's derelict landmark and the walk takes real seconds, but the errand is invisible while it happens: the ticker prints a line when the mend *resolves* and nothing at all says why that dino changed course. Give the walk the same treatment the doze/rouse/vigil/missed family got — one mark over the head of a dino currently carrying a mend, keyed `mend`, in the same palette register so the whole mark axis stays one family. The host is live and reachable on a fresh save: the founding Grove ships a fallen cairn and enough stone to pay for it, and somebody walks over within the first minute. Standalone via `bakePropArt`. **(Cycle 154: UNBLOCKED. BACKLOG-530's rider built `refreshMendMarks` and `MEND_ART_KEY`, so the mark now hangs over the fixer for the whole walk and `worldPlacedProps()` counts it. The host exists; the rig is the only thing missing. One fire held, not seven.)** Builds on 488 / 520 / 531.
 
 
 ## Infra
@@ -119,7 +117,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 30 lore additions — the keeper's comings and goings (2026-06-03)
 
 - [ ] BACKLOG-119 [emergent] Goodbye glance — the inverse of the homecoming: as the tab leaves (`visibilitychange` → hidden) after a real session, the closest dino throws a brief 👀 toward the keeper before the bowl goes quiet. A living bookend to 112.
-- [~] BACKLOG-122 [pokemon] Homecoming streak — returning on consecutive real days builds a "visit streak" surfaced on the plaque; miss a day and it resets. A gentle Stardew daily pull.
 
 ## Cycle 31 lore additions — the keeper's little court (2026-06-04)
 
@@ -682,11 +679,3 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
-
-## Cycle 149 structure additions (2026-09-03)
-
-- [~] BACKLOG-530 [infra] The marks nobody can assert — a dino can wear four hour-and-mood marks (the sleeper's, the owl's, the cold funk's, and now the vigil's) and **no spec in this park has ever been able to read one.** There is no `__marks()` hook, so every claim about which glyph is showing — including the precedence rules that decide which of two mutually-exclusive marks wins a shared slot — is implemented and then reviewed by reading the source. Cycle 149 is the third consecutive cycle in which a mark claim was raised as a criterion and could not be pinned: 520 asserted its two rigs bake, not that either is ever *shown*; 522/525 asserted the sleeping pose swaps, via `setAsleep`; 121 asserted the vigil dispatches and arrives, but not that the owl's mark yields to it. The work is small and the discipline is the point: one hook returning, per dino, which marks are visible — built off the same `refresh*Marks` reads production uses, not a parallel calculation — plus the precedence claims each existing mark family already makes in its comments, turned into specs. Filed by the cycle-149 Validator on QA's declared gap. Builds on 520 / 121 / 184.
-
-## Cycle 152 structure additions (2026-09-06)
-
-- [~] BACKLOG-536 [emergent] The economy has an outflow and no pinned inflow — `upkeep.ts`'s header promises that a struggling ground "converges on a skyline the ground can afford instead of cascading it to zero", and after 528 that promise is load-bearing for the first time, because the founding park can now actually be billed. But the convergence argument rests entirely on a ground *refilling* its bank, and nothing in this park pins the refill rate against the drain rate. The gathering spine (146 → 285/328) drops a resource and a dino carries it; the drain is one unit per two standing landmarks per in-game day. Nobody has ever measured those two numbers against each other, so "converges" is a claim in a comment. The work: a pure `groundBalance(zone)` that states expected inflow per in-game day against `upkeepDue` for that ground's skyline, a register claim that no founding ground is structurally insolvent, and — if one is — the tuning that fixes it. This is the same defect class 528 was opened over, one layer down: an unwritten assumption that is only ever surfaced by the thing going wrong in front of a player. Builds on 480 / 528 / 285.

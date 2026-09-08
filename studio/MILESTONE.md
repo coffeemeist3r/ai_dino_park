@@ -18,7 +18,7 @@ says back to you when you return.
 - [x] The absence is not all warmth: a pair that kept no company while you were gone comes back a little further apart, and the digest says so (BACKLOG-113 — shipped cycle 152)
 - [ ] The bowl throws you a look on the way out, not only on the way in (BACKLOG-119)
 - [x] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114 — shipped cycle 153) — *the arc turned out to be about the milestone's own gap: three of these five arcs had been spent teaching the park to say something about an absence, and none of them noticed the park had nowhere to say it twice. The book now keeps the last three returns at its head, above the cast, because they are the one thing in it that is about the keeper. Three rather than the item's one, and the refusal is the better half of that call — an absence the park had no news about cannot spend a slot.*
-- [ ] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122 — unblocked cycle 150)
+- [x] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122 — shipped cycle 154) — *the arc cost forty lines because cycle 152 poured its foundation and said out loud what it was for: `keeperDay()` shipped with a comment naming this item by number and "no consumer yet". A foundation item that names its future consumer is worth more than one that only says it is foundational.*
 
 **Structure arcs:**
 - [x] The keeper's own hour is a seam the park owns, not a bare `new Date()` at a call site — local, DST-answered, injectable (BACKLOG-529)
