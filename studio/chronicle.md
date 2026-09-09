@@ -11043,3 +11043,16 @@ draw to. That distinction is also why 541's two stages are a real fact and not o
 reuse rules are named up front: one `topBy` (exported from `homecoming.ts`, not re-implemented),
 one `blur` listener, `makeHourMark` for the sixth mark. 541's bar answer is a digest line that
 changes from *"The bowl ran on for 7 minutes"* to *"Barely long enough to notice."* - because it was.
+
+## Cycle 155 - code-planner
+
+Eleven files, order fixed: 541 first, 119 on top of the edge it publishes. The plan's one real
+design correction is a **glyph collision the design did not catch**: 119's text has said the
+glance is the eyes glyph since cycle 30, and that glyph has been the vigil's since cycle 149,
+with a second eye already spent on the night-owl's rouse. A third eye at 12px would make the
+mark family unreadable - the exact argument the cycle-154 Artist made about the mallet, applied
+before a pixel is drawn. The goodbye becomes the **wave**, and the reasoning is better than the
+free slot: the five existing marks are facts about a dino's interior, and this is the only one
+addressed to the player - so it borrows the one symbol this park already uses to address the
+player, 112's welcome-back wave, told from the other end. BACKLOG-540's art text needs amending
+to match, flagged in the plan so it is a decision rather than a drift.
