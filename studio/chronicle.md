@@ -11031,3 +11031,15 @@ lands at 4. 533 skipped **for cause**: its own text says decide from evidence, a
 founding-constant move is scheduled to supply it. And the milestone call, made out loud rather
 than by silence: the structure arcs closed at 152, 119 is the last lore arc and ships tonight,
 so **Milestone 18 closes this cycle** and the next cycle's smiths draft 19.
+
+## Cycle 155 - designer
+
+Two tracks that are **one seam and its first consumer**, so the design orders them: 541 first,
+119 on top. The design's central call is the Lore-smith's warning, adopted in full and written
+into the spec rather than left as advice - 119 has named the hidden-tab event as its trigger
+since cycle 30, which is the one moment nobody is looking at the canvas, so the glance fires on
+**`leaving`** (focus lost, still painting) and `gone` draws nothing because there is nothing to
+draw to. That distinction is also why 541's two stages are a real fact and not over-design. The
+reuse rules are named up front: one `topBy` (exported from `homecoming.ts`, not re-implemented),
+one `blur` listener, `makeHourMark` for the sixth mark. 541's bar answer is a digest line that
+changes from *"The bowl ran on for 7 minutes"* to *"Barely long enough to notice."* - because it was.
