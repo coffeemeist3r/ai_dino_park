@@ -11068,3 +11068,16 @@ the `focus`/`blur` events themselves, which *are* the browser's answer, and seed
 once. The half worth keeping: the same run reddened **two `controls-help` specs that touch none of this
 cycle's files**, and they went green with that one line, untouched. A cycle that had repaired its own
 three specs by loosening them would have left those two red and gone hunting a second, imaginary bug.
+
+## Cycle 155 - qa
+
+**18/18 criteria pass.** Build clean, **2602 unit green** across 248 files, **696/696 e2e - a
+full-green run**, no flake and no isolated re-run, which is a fourth data point for BACKLOG-538
+pointing the same way the cycle-154 Artist's full-green run did. Three things on the record. The e2e
+layer **caught a real defect on its first run and the defect was in the code plan** - `hasFocus()`
+reports true inside a `blur` handler, so both tracks were entirely non-functional with a clean build and
+2602 green unit tests. Only the e2e could tell. The two `controls-help` specs that fell were
+**evidence, not collateral**: repairing only this cycle's own three by loosening them would have left
+two red and sent the studio hunting an imaginary second bug. And 541's bar answer is honestly the slower
+one - a changed number rather than a new pixel - which passes because it corrects a reading that was
+already firing and firing wrong, not a threshold tuned to sit dormant.
