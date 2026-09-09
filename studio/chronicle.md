@@ -11150,3 +11150,26 @@ exception. *A rig that describes itself inaccurately is the same defect as a con
 
 Gates: build clean, **2616 unit green** across 249 files, **696/696 e2e - a second full-green run
 tonight**. The art queue closes at **1** (539, the plaque's day-count register).
+
+## Cycle 155 - housekeeping
+
+Four closed bullets filed to the archive (119, 540, 541 and its Structure-Track pointer) and **one
+section moved whole** - the cycle-30 lore-additions block, drained at last by the item it had been
+holding since 2026-06-03. The working backlog closes at **201 open**: a cycle that closed three and
+seeded three, two of which it also shipped the same day.
+
+The **Structure Track sits at 3 against X=4**, so next cycle's Structure-smith **brainstorms** again.
+What it inherits: **BACKLOG-533** still on top and still skipped for cause rather than for scope - its
+own text says decide from evidence, and the evidence is *how many specs the next founding-constant move
+reddens*, which nothing has supplied yet; **BACKLOG-542** (the session as a measured unit), unblocked as
+of tonight because 541 shipped; and **BACKLOG-538** below them.
+
+The **art queue closes at 1** - BACKLOG-539, the plaque's day-count register, whose host shipped at
+cycle 154.
+
+**Milestone 18 is shipped and there is no ACTIVE milestone.** Next cycle's Lore-smith drafts the
+headline and the feel arcs of **Milestone 19**, the Structure-smith the spine arcs, per CHARTER v6. That
+is the first duty of the next fire, before either smith picks an item.
+
+`lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**, and nothing in a
+three-item queue is asking for one.

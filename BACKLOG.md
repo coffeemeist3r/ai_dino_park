@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state (full text in the cycle-151 block below).
-- [x] BACKLOG-541 [core] The departure seam (shipped cycle 155) — the park has four modules about the keeper coming back and none about the keeper going; `savedAt` means *when you last did something*, not *when you left* (full text in the cycle-155 block below).
 - [ ] BACKLOG-542 [core] The session as a measured unit — how long you stayed is a fact the park does not hold (full text in the cycle-155 block below).
 - [ ] BACKLOG-538 [infra] The victim moves again — two full e2e runs, two different specs down, both at `boot` (full text in the cycle-153 block below).
 
@@ -67,7 +66,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
-- [x] BACKLOG-540 [art] The parting look (drawn cycle 155-art — three fingers, not five; the wave, not the eye) — the mark family has five faces and a mallet, and every one of them is something the dino is doing *while you watch*. BACKLOG-119 (cycle 155) added the seventh, and it is the only one addressed to the **player**: a goodbye thrown toward the keeper as the window loses the bowl. **Amended at the cycle-155 codeplan:** the seed asked for an eye turned aside, and it cannot be one — 👀 has been `VIGIL_GLYPH` since cycle 149 and 👁 has been `ROUSE_GLYPH` since 109, so two of the family are already eyes and a third would be unreadable at 12px (the cycle-154 Artist's own mallet argument, applied before a pixel was drawn). The shipped glyph is the **wave**, borrowed deliberately from BACKLOG-112's welcome-back, because this park has exactly one symbol for addressing the player and the goodbye should be the welcome told from the other end. So: draw a raised hand, keyed `glance`, and the silhouette must read as a *hand* and not as a fifth circle — the axis's whole problem. It holds for `GLANCE_MS` (2.5s) and no longer, so it may be the most legible mark in the park rather than the subtlest. Standalone via `bakePropArt`; the host shipped in the same cycle as the seed. Builds on 119 / 112 / 537.
 
 - [ ] BACKLOG-539 [art] The day-count on the brass — the plaque has been an engraved *stat* board since 058: population, generations, stores, zones, and now (BACKLOG-122, this cycle) the keeper's own visit streak. Every line on it is set in the same plain text at the same weight, which is fine for a tally of specimens and wrong for the one line on the brass that is about the *player*. Draw the streak its own small engraved register — a day-count glyph in the plaque's palette, keyed `streak`, standing off the stat lines the way the founder's mark stands off the ground. Standalone via `bakePropArt`; the host ships in the same cycle as the seed, which is the condition the cycle-145 amendment asks for and the reason this one is seeded while 537 is not. Builds on 122 / 058 / 504.
 
@@ -116,10 +114,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 29 lore additions — the keeper goes away (2026-06-02)
 
 - [ ] BACKLOG-115 [emergent] Night-owl absence — once diurnal/nocturnal temperament (109) lands, feed it into the away fast-forward: night-owls rack up more shared nights while away, so *who* grew closer becomes a personality tell. Cross-links 106 + 109.
-
-## Cycle 30 lore additions — the keeper's comings and goings (2026-06-03)
-
-- [x] BACKLOG-119 [emergent] Goodbye glance (shipped cycle 155 — fires on `leaving`, not on hidden; the wave, not the eyes) — the inverse of the homecoming: as the tab leaves (`visibilitychange` → hidden) after a real session, the closest dino throws a brief 👀 toward the keeper before the bowl goes quiet. A living bookend to 112.
 
 ## Cycle 31 lore additions — the keeper's little court (2026-06-04)
 
@@ -685,6 +679,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 155 structure additions — the park has no idea you left (2026-09-09)
 
-- [x] BACKLOG-541 [core] The departure seam (shipped cycle 155) — the park owns `arrival.ts`, `homecoming.ts`, `away.ts` and `awaylog.ts`: four modules about the keeper coming back, and not one about the keeper going. Departure is handled in exactly one place — an inline `visibilitychange` listener in `WorldScene.setupGovernor` that does nothing but retune the clock rate — and the consequence is a measurable lie at the centre of Milestone 18. `savedAt` is stamped by whichever of the twenty-odd scattered `void this.saveGame()` calls fired last, so it records **when the keeper last did something**, not when the keeper left. Watch the bowl quietly for twenty minutes and close the tab, and every number the return prints — the absence in the digest, the drift a pair accrued, the streak's day boundary — is computed from an absence twenty minutes longer than the one that happened. Ship a pure `departure.ts` that owns the leaving as a two-stage fact: **focus lost while the canvas still paints** (blur / pointer out — the stage a player can still see), and **gone** (`visibilitychange → hidden` / `pagehide` — the stage nobody sees). One typed departure event, one stamp of the save at the moment of leaving, and one seam for anything that wants to happen on the way out. BACKLOG-119 is its first consumer this same cycle and is the reason the two-stage split is not over-design: the glance must fire on the stage that still renders. Builds on 529 / 456 / 112.
 
 - [ ] BACKLOG-542 [core] The session as a measured unit — once 541 knows when a session ends, the park can hold the thing it currently cannot: **how long you stayed**. Right now every keeper-facing number is about the gap between sessions and none is about the session itself, so the park cannot tell a keeper who looked in for ninety seconds from one who sat with it for an hour, and several queued items want exactly that distinction (the vigil's hour-learning, the digest's tone, anything that should not fire twice in one sitting). Ship the session as a persisted record — opened at boot, closed by 541's departure event, with the last few kept the way the book keeps the last three returns — and one consumer that proves it. Blocked on 541. Builds on 541 / 121 / 114.
