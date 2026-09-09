@@ -11056,3 +11056,15 @@ free slot: the five existing marks are facts about a dino's interior, and this i
 addressed to the player - so it borrows the one symbol this park already uses to address the
 player, 112's welcome-back wave, told from the other end. BACKLOG-540's art text needs amending
 to match, flagged in the plan so it is a decision rather than a drift.
+
+## Cycle 155 - coder
+
+Both tracks built, nine code files, **2602 unit green and 696/696 e2e - a full-green run**. The finding
+of the fire is that **the code plan's own reasoning was wrong and the suite caught it in the first
+run.** The plan said to read `document.hasFocus()` inside the departure handler because the browser's
+answer beats a tracked flag; it does not - `hasFocus()` still returns true inside a `blur` handler, so
+the stage computed `here`, `shouldStamp` said no, and **the keeper could never leave.** The fix believes
+the `focus`/`blur` events themselves, which *are* the browser's answer, and seeds from `hasFocus()`
+once. The half worth keeping: the same run reddened **two `controls-help` specs that touch none of this
+cycle's files**, and they went green with that one line, untouched. A cycle that had repaired its own
+three specs by loosening them would have left those two red and gone hunting a second, imaginary bug.

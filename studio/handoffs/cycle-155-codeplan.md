@@ -224,3 +224,69 @@ None known at plan time.
 ## Deviations (Coder fills this in)
 
 _(to be completed by the Coder before QA)_
+
+---
+
+## Shipped
+
+**Files touched (9 code + 1 backlog):**
+
+```
+game/src/world/departure.ts             new   (~80 lines with the header)
+game/src/world/departure.test.ts        new   (9 cases)
+game/src/world/parting.ts               new   (~90 lines with the header)
+game/src/world/parting.test.ts          new   (10 cases)
+game/src/world/homecoming.ts            topBy exported + a comment naming the second consumer
+game/src/world/reachability.ts          + GLANCE_ART_KEY
+game/src/scenes/WorldScene.ts           listeners, applyDeparture, onDeparture, refreshGlanceMarks,
+                                        five precedence clauses, __marks, __departure, __ageSession
+tests/e2e/cycle-155-departure.spec.ts   new   (5 specs)
+tests/e2e/cycle-155-glance.spec.ts      new   (6 specs)
+BACKLOG.md                              540's text amended for the glyph
+```
+
+Nine code files against a ~15 cap.
+
+### Deviations
+
+**1. The focus source — a real bug the first e2e run caught, and the plan's own reasoning was wrong.**
+The plan said to read `document.hasFocus()` inside the handler, on the grounds that the browser's own
+answer beats a hand-tracked flag. It does not, and the suite said so immediately: `hasFocus()` still
+returned true inside a `blur` handler, so `departureStage` computed `'here'`, `shouldStamp` returned
+false, and **the keeper could never leave**. Three specs went red. The fix is the root cause rather
+than the symptom: the `focus`/`blur` events *are* the browser's answer about focus, so they are
+believed directly (`applyDeparture(false)` / `applyDeparture(true)`), `hasFocus()` seeds the field and
+is never re-read, and `visibilitychange`/`pagehide` — which say nothing about focus — pass `undefined`
+and keep whatever the last focus event established. The module's own contract did not change; only
+who supplies its `focused` boolean.
+
+**Worth recording:** the same run also reddened **two `controls-help` specs**, which touch none of this
+cycle's files. They were collateral from the identical root cause and went green with the one-line fix,
+untouched. A cycle that had "fixed" its own three specs by loosening their assertions would have left
+those two red and gone looking for a second, imaginary bug.
+
+**2. `__ageSession(ms)` dev hook, not in the plan.** `SESSION_MIN_MS` is 20s and a spec must not sleep
+twenty real seconds six times over. The hook winds `sessionStartedAt` back rather than mocking the
+clock, so the specs drive the production guard instead of bypassing it. Same shape as `__stepMend`.
+
+**3. `GLANCE_GLYPH` is the wave, not the eyes** — the codeplan's stated correction, applied, plus the
+BACKLOG-540 amendment it asked for. `parting.test.ts` asserts the glyph is none of the four already in
+the family, so a later edit cannot quietly re-collide.
+
+**4. Precedence implemented as five one-clause edits**, exactly as planned: `refreshGlanceMarks` runs
+at the head of the chain and each of the five existing predicates gains `&& this.glancer !== d.name`.
+No restructure of the family.
+
+**5. The sleeping-dino exclusion is tested adversarially.** Rather than asserting that no sleeper
+happened to wear the glance, the spec first makes *every sleeper* the best-liked dino in the park — so
+if the candidate list did not filter them, the top of the friendship table would be face-down and the
+spec would catch it.
+
+### Gates
+
+- `npm run build` — clean.
+- `npx vitest run` — **2602 passed**, 3 skipped, 248 files.
+- `npx playwright test` — **696/696, a full-green run.** No flake, no isolated re-run needed.
+- `@mlc-ai/web-llm` grep outside `game/src/ai/` — no hits. Boundary intact.
+- Save changes: none. This cycle changes *when* `savedAt` is written, not the save's shape, so old
+  saves are unaffected and a pre-155 `savedAt` is still a valid duration input.

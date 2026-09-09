@@ -44,8 +44,13 @@ export interface Homecoming {
  * The top befriended dino, skipping `exclude`: max points > 0, ties broken by
  * lexicographically smallest name. Shared by the homecomer and the runner-up so
  * both use the same tie-break.
+ *
+ * **Exported since BACKLOG-119** for `parting.ts`, which asks the same question at the other
+ * end of the session — who notices you *going*. One tie-break in this codebase, not two: a
+ * second implementation that agreed today and drifted tomorrow is exactly the defect
+ * BACKLOG-483 is filed over.
  */
-function topBy(friendship: Friendship, exclude?: string): { name: string; points: number } | null {
+export function topBy(friendship: Friendship, exclude?: string): { name: string; points: number } | null {
   let best: { name: string; points: number } | null = null;
   for (const [name, points] of Object.entries(friendship)) {
     if (points <= 0 || name === exclude) continue;

@@ -33,6 +33,7 @@ import { seededPersonality } from '../ai/personality';
 import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
 import { MEND_ART_KEY } from './mending'; // BACKLOG-530/537
+import { GLANCE_ART_KEY } from './parting'; // BACKLOG-119/540
 import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
 import {
   FOUNDING_LANDMARKS,
@@ -161,6 +162,10 @@ export function worldPlacedProps(): Set<string> {
   // BACKLOG-530/537: the mend errand's mark, hung over the fixer by `refreshMendMarks` for the whole walk.
   // Its host exists as of cycle 154, which is what unblocks 537 from the art queue it has sat in since 145.
   out.add(MEND_ART_KEY);
+  // BACKLOG-119/540: the goodbye glance, hung over the dino that looks up as the keeper goes by
+  // `refreshGlanceMarks`. The one mark in this family addressed to the player rather than describing
+  // the dino, and the one with a deadline — it holds for `GLANCE_MS` and then the bowl goes quiet.
+  out.add(GLANCE_ART_KEY);
   // BACKLOG-534: and the aloof step's own rig, swapped onto the same sprite by `refreshMissedMarks`.
   out.add(MISSED_ALOOF_ART_KEY);
   return out;

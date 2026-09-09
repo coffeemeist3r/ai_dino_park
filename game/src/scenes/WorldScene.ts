@@ -41,6 +41,8 @@ import {
 } from '../world/skyEvent';
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
+import { departureStage, shouldStamp, type DepartureStage } from '../world/departure'; // BACKLOG-541
+import { GLANCE_ART_KEY, GLANCE_GLYPH, GLANCE_MS, partingGlance } from '../world/parting'; // BACKLOG-119
 import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, bareZone, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, theZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import {
   bumpTenure,
@@ -672,6 +674,20 @@ export class WorldScene extends Phaser.Scene {
   /** The mend errand's mark (BACKLOG-530/537) - the family's sixth member, and the one whose absence
    *  had held an art item in the queue since cycle 145 for want of a host. */
   private mendMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+
+  /** The goodbye glance (BACKLOG-119) — the family's seventh member and the only one addressed to the
+   *  player rather than describing the dino. Top of the precedence order because it is the only one
+   *  with a deadline: it holds for `GLANCE_MS` and then the bowl goes quiet. */
+  private glanceMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /** Who is mid-goodbye right now (BACKLOG-119). Transient, one-shot, never persisted. */
+  private glancer: string | null = null;
+  /** Where the keeper is (BACKLOG-541), and how many departures this session has stamped. */
+  private departure: DepartureStage = 'here';
+  /** Live focus, seeded from the browser and thereafter maintained by the `focus`/`blur` events. */
+  private focused = true;
+  private departureStamps = 0;
+  /** When this sitting began — the input to `SESSION_MIN_MS`, so a boot-time alt-tab is not a goodbye. */
+  private sessionStartedAt = Date.now();
   /** BACKLOG-534: the two textures the missed mark swaps between, baked once. Null where a rig is
    *  absent, which is what keeps the `MISSED_FAINT_ALPHA` fallback a live path rather than dead code. */
   private missedTex: string | null = null;
@@ -1744,6 +1760,7 @@ export class WorldScene extends Phaser.Scene {
       // this precedent: drive the production path, then report.
       this.refreshSleepMarks();
       const families: Array<[string, Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image>]> = [
+        ['glance', this.glanceMarks],
         ['sleep', this.sleepMarks],
         ['rouse', this.rouseMarks],
         ['vigil', this.vigilMarks],
@@ -3330,6 +3347,7 @@ export class WorldScene extends Phaser.Scene {
     this.vigilMarks.push(this.makeHourMark(VIGIL_ART_KEY, VIGIL_GLYPH)); // BACKLOG-121
     this.mendMarks.push(this.makeHourMark(MEND_ART_KEY, MEND_GLYPH)); // BACKLOG-530/537
     this.missedMarks.push(this.makeHourMark(MISSED_ART_KEY, MISSED_GLYPH)); // BACKLOG-116
+    this.glanceMarks.push(this.makeHourMark(GLANCE_ART_KEY, GLANCE_GLYPH)); // BACKLOG-119
     this.missedTex ??= hasPropArt(MISSED_ART_KEY) ? bakePropArt(this, MISSED_ART_KEY) : null;
     this.missedAloofTex ??= hasPropArt(MISSED_ALOOF_ART_KEY) ? bakePropArt(this, MISSED_ALOOF_ART_KEY) : null;
     this.missedAloofTex ??= hasPropArt(MISSED_ALOOF_ART_KEY) ? bakePropArt(this, MISSED_ALOOF_ART_KEY) : null;
@@ -3687,13 +3705,58 @@ export class WorldScene extends Phaser.Scene {
     for (const d of this.dinos) d.setAsleep(this.asleep(d));
   }
 
+  /**
+   * The goodbye glance (BACKLOG-119) — the **top** of the hour-mark precedence order.
+   *
+   * Every other mark in this family is a fact about the dino: it is asleep, it is up when it should not
+   * be, it is waiting at the glass, it is carrying a mend, it is thinking about you. This one is a fact
+   * about *you* — it is thrown at the keeper, it holds for `GLANCE_MS`, and then it is gone. A mark with
+   * a deadline outranks five that do not, because the others will still be true in three seconds and this
+   * one will not.
+   *
+   * The glancer is never a sleeping dino: `onDeparture` builds its candidate list from dinos that are in
+   * view **and** awake, so the doze mark and this one can never contend for the same head.
+   */
+  private refreshGlanceMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.glanceMarks[i];
+      if (!mark) return;
+      mark.setVisible(this.glancer === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
+    });
+  }
+
+  /**
+   * The keeper is leaving (BACKLOG-541's edge, BACKLOG-119's beat).
+   *
+   * Fires **only** on `leaving` — focus lost while the canvas is still painting. On `gone` the tab is
+   * hidden and nothing drawn can be seen, so nothing is drawn; that is the correction this cycle made to
+   * an item whose own text had named the hidden event as its trigger since cycle 30.
+   */
+  private onDeparture(stage: DepartureStage): void {
+    if (stage !== 'leaving') return;
+    // Who is asleep and who is on another ground are the scene's facts, not `parting.ts`'s.
+    const present = this.dinos.filter((d) => this.inView(d) && !this.isResting(d)).map((d) => d.name);
+    const p = partingGlance(this.friendship, present, Date.now() - this.sessionStartedAt);
+    if (!p) return;
+    this.glancer = p.name;
+    const dino = this.dinos.find((d) => d.name === p.name);
+    if (dino) this.showBubble(dino, p.line);
+    this.refreshSleepMarks();
+    this.time.delayedCall(GLANCE_MS, () => {
+      if (this.glancer !== p.name) return;
+      this.glancer = null;
+      this.refreshSleepMarks();
+    });
+  }
+
   private refreshSleepMarks(): void {
+    this.refreshGlanceMarks(); // BACKLOG-119: the top of the family, and the only mark with a deadline
     this.dinos.forEach((d, i) => {
       const mark = this.sleepMarks[i];
       if (!mark) return;
       // BACKLOG-109: the 💤 is about sleep, not about the den — so it reads on any resting dino, which is
       // what puts it over an owl standing in the open at 08:00 on the first frame of a fresh save.
-      mark.setVisible(this.isResting(d) && this.inView(d)).setPosition(d.x, d.y - TILE);
+      mark.setVisible(this.isResting(d) && this.inView(d) && this.glancer !== d.name).setPosition(d.x, d.y - TILE);
     });
     this.refreshRouseMarks();
     this.refreshColdMarks();
@@ -3710,7 +3773,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-121: the eye yields to the vigil. These two share the slot and, unlike the sleeper's mark,
       // they are *not* mutually exclusive - an owl at midnight is exactly the dino most likely to be the
       // one keeping the vigil. What a dino is doing beats what hours it keeps, so the vigil takes the slot.
-      const shown = this.isRoused(d) && this.inView(d) && this.vigil?.keeper !== d.name;
+      const shown = this.isRoused(d) && this.inView(d) && this.vigil?.keeper !== d.name && this.glancer !== d.name;
       mark.setVisible(shown).setPosition(d.x, d.y - TILE);
     });
     this.refreshVigilMarks();
@@ -3721,7 +3784,9 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.forEach((d, i) => {
       const mark = this.vigilMarks[i];
       if (!mark) return;
-      mark.setVisible(this.vigil?.keeper === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
+      mark
+        .setVisible(this.vigil?.keeper === d.name && this.inView(d) && this.glancer !== d.name)
+        .setPosition(d.x, d.y - TILE);
     });
     this.refreshMendMarks();
   }
@@ -3745,7 +3810,9 @@ export class WorldScene extends Phaser.Scene {
     this.dinos.forEach((d, i) => {
       const mark = this.mendMarks[i];
       if (!mark) return;
-      mark.setVisible(this.mend?.fixer === d.name && this.inView(d)).setPosition(d.x, d.y - TILE);
+      mark
+        .setVisible(this.mend?.fixer === d.name && this.inView(d) && this.glancer !== d.name)
+        .setPosition(d.x, d.y - TILE);
     });
     this.refreshMissedMarks();
   }
@@ -3774,7 +3841,7 @@ export class WorldScene extends Phaser.Scene {
       // and the family's rule is that doing beats thinking.
       const higher =
         this.isResting(d) || this.isRoused(d) || this.vigil?.keeper === d.name || this.mend?.fixer === d.name;
-      const shown = !!trace && !higher && this.inView(d);
+      const shown = !!trace && !higher && this.inView(d) && this.glancer !== d.name;
       const aloof = trace?.grade === 'aloof';
       const tex = aloof ? this.missedAloofTex : this.missedTex;
       if (tex && mark instanceof Phaser.GameObjects.Image) mark.setTexture(tex);
@@ -6092,9 +6159,34 @@ ${e.short}`;
 
   /** Visibility + battery listeners feeding the ambient gate, plus the dev hooks. */
   private setupGovernor(): void {
+    /**
+     * The departure seam (BACKLOG-541). Every listener that can tell us the keeper is going routes
+     * through this one function, so `savedAt` is stamped at the moment of leaving rather than by
+     * whichever interaction happened to fire a save last. `shouldStamp` makes the ordinary alt-tab —
+     * a `blur` followed a moment later by a `visibilitychange` — one departure and one stamp.
+     */
+    const applyDeparture = (focused?: boolean): void => {
+      // The `focus`/`blur` events **are** the browser's answer about focus, so they are believed directly
+      // rather than re-queried. `document.hasFocus()` is only the seed: it disagrees with a just-fired
+      // blur often enough to matter (and always, under a synthetic one), so a handler that re-read it
+      // would decide the keeper never left. `visibilitychange` and `pagehide` say nothing about focus and
+      // pass `undefined`, keeping whatever the last focus event established.
+      if (focused !== undefined) this.focused = focused;
+      const next = departureStage({ focused: this.focused, hidden: document.hidden });
+      const prev = this.departure;
+      this.departure = next;
+      if (!shouldStamp(prev, next)) return;
+      this.departureStamps++;
+      this.onDeparture(next); // BACKLOG-119 — the one call site; do not add a second blur listener
+      void this.saveGame();
+    };
+    window.addEventListener('blur', () => applyDeparture(false));
+    window.addEventListener('focus', () => applyDeparture(true));
+    window.addEventListener('pagehide', () => applyDeparture());
     document.addEventListener('visibilitychange', () => {
       this.tabHidden = document.hidden;
       this.applyClockRate(); // BACKLOG-493: a hidden tab's world runs at real time, not at watching speed
+      applyDeparture();
     });
     const nav = navigator as unknown as {
       getBattery?: () => Promise<{ level: number; addEventListener(ev: string, fn: () => void): void }>;
@@ -6116,6 +6208,10 @@ ${e.short}`;
     (window as any).__mindsConfirmOpen = () => this.mindsConfirm !== null;
     (window as any).__mindsConfirmMode = () => this.mindsConfirm;
     (window as any).__mindsCache = () => this.lastCacheAction;
+    // any: dev-only Playwright hook — where the keeper is, and how many departures stamped the save
+    (window as any).__departure = () => ({ stage: this.departure, stamps: this.departureStamps });
+    // any: dev-only Playwright hook — wind this sitting's start back so a spec need not sleep 20s
+    (window as any).__ageSession = (ms: number) => (this.sessionStartedAt = Date.now() - ms);
     (window as any).__governor = () => ({
       coarse: this.coarsePointer,
       consent: this.readMindsConsent(),
