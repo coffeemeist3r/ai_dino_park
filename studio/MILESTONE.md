@@ -8,22 +8,7 @@
 
 ## Current milestone
 
-**Milestone 18: The park knows you were gone** — the keeper's absence stops being a
-number the catch-up prints and becomes something the cast *felt*, individually, and
-says back to you when you return.
-**Status:** ACTIVE (opened cycle 150)
-
-**Lore arcs:**
-- [x] Each dino keeps its own account of the absence, graded by who it is — one missed you, one pretends it didn't, one never noticed — readable in its next greeting and visible over its head on return (BACKLOG-116)
-- [x] The absence is not all warmth: a pair that kept no company while you were gone comes back a little further apart, and the digest says so (BACKLOG-113 — shipped cycle 152)
-- [ ] The bowl throws you a look on the way out, not only on the way in (BACKLOG-119)
-- [x] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114 — shipped cycle 153) — *the arc turned out to be about the milestone's own gap: three of these five arcs had been spent teaching the park to say something about an absence, and none of them noticed the park had nowhere to say it twice. The book now keeps the last three returns at its head, above the cast, because they are the one thing in it that is about the keeper. Three rather than the item's one, and the refusal is the better half of that call — an absence the park had no news about cannot spend a slot.*
-- [x] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122 — shipped cycle 154) — *the arc cost forty lines because cycle 152 poured its foundation and said out loud what it was for: `keeperDay()` shipped with a comment naming this item by number and "no consumer yet". A foundation item that names its future consumer is worth more than one that only says it is foundational.*
-
-**Structure arcs:**
-- [x] The keeper's own hour is a seam the park owns, not a bare `new Date()` at a call site — local, DST-answered, injectable (BACKLOG-529)
-- [x] The reachability register can make a claim about a save that has been *played*, not only one that has just been founded — the absence arc's whole subject is a second frame (BACKLOG-528 — shipped cycle 152; **the structure arcs are closed**)
-
+_(none — Milestone 18 shipped at cycle 155; the next cycle's smiths draft Milestone 19.)_
 
 
 ---
@@ -44,6 +29,59 @@ says back to you when you return.
 ```
 
 ## Shipped milestones
+
+### Milestone 18: The park knows you were gone — the keeper's absence stops being a number the catch-up prints and becomes something the cast *felt* — SHIPPED cycle 155 (opened cycle 150)
+
+Six cycles, seven items, and a headline that turned out to be a claim the park could not honestly make
+until its last night.
+
+The milestone opened at cycle 150 on a real complaint: the keeper's absence was a **number the catch-up
+printed**, and nothing more. It closes with the absence being something each dino formed its own account
+of (116), something that costs a neglected pair a little distance (113), something you can re-read after
+the modal is gone (114), something counted in the days of the player's own life (122) — and, on the last
+night, something the park **notices beginning** (119, 541).
+
+The through-line worth keeping is not the feature list. It is that **five of these seven arcs were about
+the return, and the milestone did not notice.** Cycle 153's arc found a version of the same gap — three
+cycles spent teaching the park to say something about an absence, and none of them noticing it had
+nowhere to say it twice. Cycle 155 found the deeper one: the whole milestone was measuring from a moment
+it had never defined. `savedAt` was stamped by whichever scattered interaction-save fired last, so the
+park was counting the time you spent watching it as time you spent away from it — and every arc above
+read from that number.
+
+Two lessons, both cheap, both already spent twice:
+
+1. **A foundation item that names its future consumer is worth more than one that only says it is
+   foundational.** Cycle 154 learned it from `keeperDay()`; cycle 155 spent it again on
+   `SESSION_MIN_MS`, exported from `departure.ts` rather than `parting.ts` precisely so the stamp and
+   the glance can never disagree about whether the keeper was here.
+2. **Read the backlog item; do not trust it.** BACKLOG-119 carried a trigger that could not work for a
+   hundred and twenty-five cycles.
+
+The structure arcs closed at cycle 152 and the lane sat empty for three cycles, which the cycle-154
+housekeeping flagged as something to decide out loud rather than by silence. The cycle-155
+Structure-smith decided it out loud, picked off-checklist and on-subject, and the pick turned out to be
+the milestone's missing half. That is the amendment working.
+
+
+**Milestone 18: The park knows you were gone** — the keeper's absence stops being a
+number the catch-up prints and becomes something the cast *felt*, individually, and
+says back to you when you return.
+**Status:** SHIPPED cycle 155 (opened cycle 150)
+
+**Lore arcs:**
+- [x] Each dino keeps its own account of the absence, graded by who it is — one missed you, one pretends it didn't, one never noticed — readable in its next greeting and visible over its head on return (BACKLOG-116)
+- [x] The absence is not all warmth: a pair that kept no company while you were gone comes back a little further apart, and the digest says so (BACKLOG-113 — shipped cycle 152)
+- [x] The bowl throws you a look on the way out, not only on the way in (BACKLOG-119 — shipped cycle 155) — *the arc that closed the milestone also exposed it. Five of these seven arcs were about the **return**, and the milestone never noticed the door only had a handle on one side. 119's own text had named the hidden-tab event as its trigger since cycle 30 — the one moment nobody is looking at the canvas — and it survived a hundred and twenty-five cycles because a queued item is easier to inherit than to check.*
+- [x] You can re-read what the bowl got up to without having caught the digest live (BACKLOG-114 — shipped cycle 153) — *the arc turned out to be about the milestone's own gap: three of these five arcs had been spent teaching the park to say something about an absence, and none of them noticed the park had nowhere to say it twice. The book now keeps the last three returns at its head, above the cast, because they are the one thing in it that is about the keeper. Three rather than the item's one, and the refusal is the better half of that call — an absence the park had no news about cannot spend a slot.*
+- [x] Returning on consecutive real days is a thing the park counts and shows you, because it finally knows what day it is where you live (BACKLOG-122 — shipped cycle 154) — *the arc cost forty lines because cycle 152 poured its foundation and said out loud what it was for: `keeperDay()` shipped with a comment naming this item by number and "no consumer yet". A foundation item that names its future consumer is worth more than one that only says it is foundational.*
+
+**Structure arcs:**
+- [x] The park knows when the keeper *left*, not only when they last did something — leaving is a two-stage fact the park owns, and `savedAt` is stamped at the door (BACKLOG-541 — shipped cycle 155; picked off-checklist and on-subject, and it turned out to be the milestone's missing half)
+- [x] The keeper's own hour is a seam the park owns, not a bare `new Date()` at a call site — local, DST-answered, injectable (BACKLOG-529)
+- [x] The reachability register can make a claim about a save that has been *played*, not only one that has just been founded — the absence arc's whole subject is a second frame (BACKLOG-528 — shipped cycle 152; **the structure arcs are closed**)
+
+
 
 ### Milestone 17: A day in the park — the park's day stops being a tint and a number in the corner and becomes something with a shape — SHIPPED cycle 149 (opened cycle 146)
 

@@ -11081,3 +11081,43 @@ reports true inside a `blur` handler, so both tracks were entirely non-functiona
 two red and sent the studio hunting an imaginary second bug. And 541's bar answer is honestly the slower
 one - a changed number rather than a new pixel - which passes because it corrects a reading that was
 already firing and firing wrong, not a threshold tuned to sit dormant.
+
+## Cycle 155 - validator
+
+**Both tracks APPROVED, and Milestone 18 is SHIPPED.** Two smiths who did not read each other picked the
+two halves of the same door.
+
+**BACKLOG-541** - the park has four modules about the keeper coming back and, until tonight, none about
+the keeper going. `savedAt` was stamped by whichever of twenty-odd scattered interaction-saves fired last,
+so the park's record of *when you left* was a record of *when you last did something*. In the units a
+player lives in: sit with the bowl six minutes and touch nothing, step away for one, and the park computed
+a **seven-minute absence** - traces filed, a pair drifted, a digest line about a gap that never happened.
+The park was counting the time you spent watching it as time you spent away from it. The half worth
+keeping is the shape rather than the fix: leaving is **two facts**, and `leaving` (canvas still painting)
+versus `gone` (nobody looking) is the entire reason the other track is shippable. A structure item earning
+its lane looks like this - it made tonight's beat possible, it was not groundwork for a later cycle.
+
+**BACKLOG-119** - the goodbye glance, seeded cycle 30, whose own text has named the hidden-tab event as
+its trigger ever since. **It could never have worked**: that is precisely the moment nobody is looking at
+the canvas. It survived a hundred and twenty-five cycles and every smith who read the backlog, because a
+queued item is easier to inherit than to check. The Lore-smith read it out loud this morning and made the
+Designer answer it - **the most valuable paragraph produced in this cycle, and it cost nothing.** A second,
+smaller correction landed at the codeplan: the eyes glyph has been the vigil's since 149 and 👁 the
+rouse's since 109, so the goodbye became the **wave**, borrowed from 112 and told from the other end. *A
+living bookend to 112* is what the item asked to be, by a route it did not anticipate.
+
+**The finding of the night belongs to the e2e suite.** The first full run went red on three of this
+cycle's specs *and two `controls-help` specs that touch none of this cycle's files*, and the defect was in
+the **code plan**: `document.hasFocus()` still reports true inside a `blur` handler, so the stage computed
+`here` and **the keeper could never leave.** Both tracks were entirely non-functional behind a clean build
+and 2602 green unit tests. Only the e2e could tell - recorded in the same breath as BACKLOG-538, the item
+about e2e trustworthiness currently sitting in this studio's structure queue. The two outsider specs are
+the sharper half: loosening three assertions would have left two red and sent the studio hunting an
+imaginary second bug. **A red spec in a file you did not edit is evidence, not noise.**
+
+Gates: build clean, **2602 unit green** across 248 files, **696/696 e2e - a full-green run**, no flake and
+no isolated re-run. Save shape unchanged.
+
+**Milestone 18 closes on the gap it never saw in itself:** five of its seven arcs were about the *return*,
+and it took a structure pick made off-checklist and on-subject to notice the door only had a handle on one
+side. Next cycle's smiths draft Milestone 19.
