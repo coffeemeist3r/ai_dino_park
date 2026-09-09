@@ -11121,3 +11121,32 @@ no isolated re-run. Save shape unchanged.
 **Milestone 18 closes on the gap it never saw in itself:** five of its seven arcs were about the *return*,
 and it took a structure pick made off-checklist and on-subject to notice the door only had a handle on one
 side. Next cycle's smiths draft Milestone 19.
+
+## Cycle 155-art - artist
+
+**BACKLOG-540 drawn, seeded this morning and drawn tonight** - the second consecutive fire where the host
+led the rig by hours rather than the rig leading the host by cycles. The seventh mark on 520's axis and
+the **first addressed to the player**: five siblings are facts about the dino's interior, the sixth is a
+fact about its hands, and this one is a fact about *you*.
+
+The seed asked for an eye turned aside and it could not be one - two of the family are already eyes - so
+the **codeplan made that call before a pixel was authored**, which is the cheapest place to make it. The
+goodbye is the **wave**, borrowed from 112's welcome-back, because this park has exactly one symbol for
+addressing the player.
+
+**The first draft was a five-finger splayed palm**, rejected for a reason that only appears at sixteen
+cells: five fingers with gaps between them is one lit column and one dark column repeated, which does not
+bake into a hand, it bakes into a comb. Three fingers, two cells of hide each with a shared dark
+separator, and the middle one standing one row proud - a flat-topped hand is a mitten, and the difference
+costs two cells.
+
+**The fire owes cycle 154 a correction, and found it by checking its own weight claim against every
+sibling instead of two.** `mend`'s comment, chronicle entry and CHANGELOG line all say 72 lit cells makes
+it *the heaviest mark in the park*, "over `doze`'s 67 and `missed`'s 64" - and it is false: `rouse` is 110
+and `vigil` is 76. Those two comparisons are the only two its spec makes. The comment is corrected in
+place rather than deleted, and this rig's claim is written against **every** sibling with one named
+exception. *A rig that describes itself inaccurately is the same defect as a constant written down twice*
+- cycle 154's own sentence, one fire later, about cycle 154.
+
+Gates: build clean, **2616 unit green** across 249 files, **696/696 e2e - a second full-green run
+tonight**. The art queue closes at **1** (539, the plaque's day-count register).

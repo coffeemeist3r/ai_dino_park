@@ -1687,8 +1687,11 @@ const FOUNDER_STAKE_KEPT_RIG: PropRig = {
 // eats four cells of outline and the two hafts stop being separable. One tool, one diagonal, and the
 // meaning survives the shrink.
 //
-// **72 lit cells makes this the heaviest mark in the park**, over `doze`'s 67 and `missed`'s 64, and that
-// ordering is deliberate rather than incidental. The family's weights already run in the order of how much
+// **72 lit cells puts this above both thought marks** — `doze`'s 67 and `missed`'s 64 — and that ordering
+// is deliberate rather than incidental. *(Corrected cycle 155-art: this comment, its chronicle entry and
+// its CHANGELOG line originally said "the heaviest mark in the park", which is false — `rouse` is 110 and
+// `vigil` is 76. The two comparisons its spec actually makes are the two above, and they are the two the
+// claim is now scoped to.)* The family's weights already run in the order of how much
 // the dino is *doing*: a thought it is trying not to have is the faintest thing it can wear, sleep is next,
 // and an errand somebody is actually walking is the loudest. A mark that means "this dino changed course
 // for a reason" should out-read one that means "this dino is asleep".
@@ -1723,6 +1726,76 @@ const MEND_RIG: PropRig = {
     M: 0xe8eef8, // the one specular on the striking face — the same lift `missed` gets, and for the same reason
     h: 0x8f6232, // the haft: wood, and by a wide margin the most saturated colour on this axis — every
     // other mark here is a grey or a blue, so the diagonal reads as a thing being *held*
+  },
+};
+
+/**
+ * BACKLOG-540 (cycle 155-art) — the goodbye (BACKLOG-119's host, shipped the same morning).
+ *
+ * The seventh mark on BACKLOG-520's axis and the first one that is **addressed to the player**. Its five
+ * older siblings are facts about the dino's interior — it is asleep, it is up at the wrong hour, it is
+ * waiting, it is thinking of you — and the sixth is a fact about its hands. This one is a fact about *you*:
+ * the keeper is going, and one dino looks up.
+ *
+ * The seed asked for an eye turned aside and it could not be one. `vigil` is 👀 and `rouse` is 👁, so two
+ * of the family are already eyes; a third would have made the axis unreadable at the size the park draws.
+ * The cycle-155 codeplan made that call before a pixel was authored, which is the cheapest place to make
+ * it, and picked the **wave** — borrowed from BACKLOG-112's welcome-back, because this park has exactly
+ * one symbol for addressing the player and the goodbye should be the welcome told from the other end.
+ *
+ * **The first draft was a five-finger splayed palm and was rejected for a reason that only appears at 16
+ * cells.** Five fingers with gaps between them is one lit column and one dark column repeated, which does
+ * not render as a hand — it renders as a comb, and after the nearest-neighbour bake it is a fringe. The
+ * shipped silhouette is **three fingers**, each two cells of skin with a shared dark separator, which is
+ * both what survives the size and what this park's cast actually has.
+ *
+ * The middle finger stands one row proud of its neighbours. A flat-topped hand is a mitten; one staggered
+ * row is the whole difference, and it costs two cells.
+ *
+ * **97 lit cells: heavier than every sibling but `rouse`**, and `rouse` is a single wide-open eye that is
+ * mostly sclera by construction. The family's ordering principle is extended rather than broken. The
+ * existing order runs by how much the dino is *doing*; this one is ordered by how long it has. Every other
+ * mark holds for as long as it is true, and this one holds for `GLANCE_MS` — two and a half seconds — so it
+ * is the only mark that must be read before it is gone. That is also why it takes the top of the scene's
+ * precedence order.
+ *
+ * **A correction to cycle 154, made while checking this against its siblings.** `mend`'s own comment, its
+ * chronicle entry and its CHANGELOG line all say 72 lit cells makes it *the heaviest mark in the park*,
+ * "over `doze`'s 67 and `missed`'s 64". Those two comparisons are the only two its spec makes, and the
+ * claim is false against the other three: `rouse` is 110 and `vigil` is 76. A rig that describes itself
+ * inaccurately is the same defect as a constant written down twice — cycle 154's own words, one fire
+ * later, about cycle 154. `mend`'s comment is corrected in place rather than deleted, and the claim this
+ * rig makes about its own weight is asserted against **every** sibling rather than against two.
+ *
+ * The hide stays **under `mend`'s haft for saturation**, deliberately, so cycle 154's claim that the wood
+ * is by a distance the most saturated colour on this axis survives a seventh sibling.
+ */
+const GLANCE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.......oo.......',
+  '....ooossoooo...',
+  '...ossossosso...',
+  '...ossossosso...',
+  '...ossossosso...',
+  '...osssssssso...',
+  '.osssSSssssso...',
+  '..ossSsssssso...',
+  '...osssssssso...',
+  '....oSSssso.....',
+  '.....oooooo.....',
+  '................',
+  '................',
+  '................',
+];
+
+const GLANCE_RIG: PropRig = {
+  size: 16,
+  grid: GLANCE_GRID,
+  palette: {
+    o: 0x2b3344, // `rouse`'s outline, shared verbatim — one axis, one rim
+    s: 0xb0885e, // dino hide: warm, and kept under the mend haft's saturation so 537's claim still holds
+    S: 0xd8b78d, // the light along the thumb and the heel of the palm — enough to say *hand*, not enough to model one
   },
 };
 
@@ -1796,6 +1869,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   founder_stake_hollowed: FOUNDER_STAKE_HOLLOWED_RIG,
   // BACKLOG-518 (cycle 153-art): the fourth state, drawn the night BACKLOG-535 finally gave it a host.
   founder_stake_kept: FOUNDER_STAKE_KEPT_RIG,
+  // BACKLOG-540 (cycle 155-art): the seventh mark, and the only one addressed to the player. Its host —
+  // `refreshGlanceMarks` — shipped the same morning as this seed, which is the condition the cycle-145
+  // amendment asks for and the reason this could be drawn on the night it was queued.
+  glance: GLANCE_RIG,
 };
 
 /**

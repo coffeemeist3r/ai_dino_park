@@ -28,6 +28,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'founder_stake_kept', // BACKLOG-518 (cycle 153-art): the fourth state, drawn the night 535 gave it a host
       'founder_stake_native', // BACKLOG-517 (cycle 145-art): the born-here mark, wired the night it was drawn
       'frond',
+      'glance', // BACKLOG-540 (cycle 155-art): the seventh hour-mark, and the only one addressed to the player
       'granary', // BACKLOG-454: the food-cap-lifting granary landmark
       'granary_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the cracked dome)
       'hatch', // BACKLOG-502 (cycle 143-art): the last undrawn prop key in the park closes
