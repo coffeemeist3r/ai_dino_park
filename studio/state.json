@@ -2,7 +2,7 @@
   "cycle": 155,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-119: Goodbye glance",
-  "structureItem": null,
+  "structureItem": "BACKLOG-541: The departure seam",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-09T05:10:00.000Z",
-    "structure-smith": "2026-09-08T07:47:00.000Z",
+    "structure-smith": "2026-09-09T05:22:00.000Z",
     "designer": "2026-09-08T07:58:00.000Z",
     "code-planner": "2026-09-08T08:04:00.000Z",
     "coder": "2026-09-08T08:25:00.000Z",

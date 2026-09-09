@@ -11018,3 +11018,16 @@ Social queue at 198 ≥ 12, so nothing new was seeded there; the art queue at 1 
 warning handed to the Designer in writing: 119's own text has named `visibilitychange →
 hidden` as its trigger since cycle 30, which is precisely the moment nobody is looking at the
 canvas. The glance must fire on the leaving that still renders.
+
+## Cycle 155 — structure-smith
+
+**BACKLOG-541, the departure seam.** The park has four modules about the keeper coming back and
+none about the keeper going, and the cost is a lie at the centre of the milestone: `savedAt` is
+stamped by whichever of twenty-odd scattered save calls fired last, so it records when you last
+*did* something, not when you *left*. Watch quietly for twenty minutes, close the tab, and every
+number the return prints is wrong by twenty minutes in the same direction. Queue was at 2 < X=4,
+so this fire brainstormed — 541 and 542 (the session as a measured unit, blocked on 541) — and
+lands at 4. 533 skipped **for cause**: its own text says decide from evidence, and no
+founding-constant move is scheduled to supply it. And the milestone call, made out loud rather
+than by silence: the structure arcs closed at 152, 119 is the last lore arc and ships tonight,
+so **Milestone 18 closes this cycle** and the next cycle's smiths draft 19.
