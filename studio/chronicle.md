@@ -11007,3 +11007,14 @@ BACKLOG-537 filed to the archive. Working backlog closes the night at **200 open
 at **2** (533, 538 — under X=4, so next cycle's Structure-smith brainstorms), and the art queue at **1**
 (539, seeded this morning with its host shipping the same cycle). A cycle that closed **four** items and
 seeded one.
+
+## Cycle 155 — lore-smith
+
+**The bookend.** Milestone 18 has one lore arc left and it is the only one that faces
+outward: **BACKLOG-119**, the goodbye glance. Five cycles of teaching the park to speak about
+an absence, all of them about the return; this is the one on the other side of the door.
+Social queue at 198 ≥ 12, so nothing new was seeded there; the art queue at 1 < 3 took one —
+**BACKLOG-540**, the `glance` mark, seeded because its host ships in the same cycle. And one
+warning handed to the Designer in writing: 119's own text has named `visibilitychange →
+hidden` as its trigger since cycle 30, which is precisely the moment nobody is looking at the
+canvas. The glance must fire on the leaving that still renders.

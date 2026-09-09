@@ -65,6 +65,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
+- [ ] BACKLOG-540 [art] The parting look — the mark family has five faces and a mallet, and every one of them is something the dino is doing *while you watch*. BACKLOG-119 (this cycle) adds the one that is about you going: a brief look thrown toward the keeper as the window loses the bowl. Draw it a rig keyed `glance` — an eye turned aside rather than forward, the pupil pushed to one edge of the sclera so the silhouette reads as *looking off* at 32px, which is the one thing none of the five existing eyes do (doze is shut, rouse is a catchlight, missed and aloof are direction-neutral). Standalone via `bakePropArt`; the host ships in the same cycle as the seed, which is the condition the cycle-145 amendment asks for. Builds on 119 / 116 / 537.
+
 - [ ] BACKLOG-539 [art] The day-count on the brass — the plaque has been an engraved *stat* board since 058: population, generations, stores, zones, and now (BACKLOG-122, this cycle) the keeper's own visit streak. Every line on it is set in the same plain text at the same weight, which is fine for a tally of specimens and wrong for the one line on the brass that is about the *player*. Draw the streak its own small engraved register — a day-count glyph in the plaque's palette, keyed `streak`, standing off the stat lines the way the founder's mark stands off the ground. Standalone via `bakePropArt`; the host ships in the same cycle as the seed, which is the condition the cycle-145 amendment asks for and the reason this one is seeded while 537 is not. Builds on 122 / 058 / 504.
 
 
