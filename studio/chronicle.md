@@ -11210,3 +11210,17 @@ expire, so it is out of scope by name rather than by silence. The structure trac
 **one consumer that is the whole point**: a `Sitting ·` line on the plaque, on a fresh save, growing while
 you stand there. `SESSION_MIN_MS` is imported from `departure.ts`, not re-declared — the defect cycle 155
 corrected one fire ago. Both tracks edit `WorldScene.ts` in different regions; flagged for sequencing.
+
+## Cycle 156 — code-planner
+
+The survey found **three things the design assumed had to be built and that already exist**, and the
+third one changed a decision. `worldSteps` and `stingIsFresh` give the sulk clock its shape; `liftMood`
+gives it its beat; and **`sessionStartedAt` already exists** — BACKLOG-119 added it last cycle as the
+input to `SESSION_MIN_MS`. So 542 does not add a session start, it adopts one. That forces a real choice:
+`sessionStartedAt` is set at boot and **never reset**, so today "this sitting" quietly means "this page
+load". Adding a second field beside it was rejected as the constant-written-twice defect; the plan resets
+the existing one on the return to `here` instead, and states in writing that this **changes BACKLOG-119's
+behavior** — a ten-second second sitting no longer earns a goodbye glance, which is what that constant's
+own doc comment always said it meant. If a 119 spec reddens, the plan forbids loosening it: update it and
+say so. Both new specs must declare their founding fixture with `foundingState`, because 533 sits in the
+queue over specs that get away with silence and a spec written tonight should not add to the count.
