@@ -11184,3 +11184,15 @@ seed: **BACKLOG-543**, the sulk in pixels, whose host has been live since cycle 
 is **BACKLOG-123** (sulk shakeoff), with the item's "after a short while" flagged for the Designer as
 exactly the kind of unnamed window this studio has a documented habit of pinning below the founding
 state. Idea Box: empty.
+
+## Cycle 156 — structure-smith
+
+Milestone 19's spine is the half of cycle 155 that did not ship: 541 taught the park **when** a session
+ends without ever giving it a session. **BACKLOG-542** is chosen — a persisted session record opened at
+boot, closed by the departure stamp, with one on-screen consumer proving it inside a ten-minute save.
+Queue was at 3 < X=4, so two seeds, both filed deliberately *behind* work rather than ahead of it:
+**544** (the expiry seam, to be extracted after 123 supplies its first real instance) and **545** (once
+per sitting, blocked on tonight). Track now at 5 open. **BACKLOG-533 passed over a third time — for
+cause, not for scope**: its own text says decide from evidence, this cycle moves no founding constant,
+and so the evidence still is not there. If a fourth cycle passes it the same way, the entry condition is
+what needs editing, not the item. No solo cycle: 156 − 151 = 5 < 10, illegal until 161.

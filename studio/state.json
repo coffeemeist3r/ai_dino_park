@@ -2,7 +2,7 @@
   "cycle": 156,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-123: Sulk shakeoff",
-  "structureItem": null,
+  "structureItem": "BACKLOG-542: The session as a measured unit",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-10T04:10:00.000Z",
-    "structure-smith": "2026-09-09T05:22:00.000Z",
+    "structure-smith": "2026-09-10T04:22:00.000Z",
     "designer": "2026-09-09T05:40:00.000Z",
     "code-planner": "2026-09-09T05:55:00.000Z",
     "coder": "2026-09-09T06:35:00.000Z",

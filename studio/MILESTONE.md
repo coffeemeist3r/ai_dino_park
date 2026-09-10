@@ -23,7 +23,9 @@ itself becomes a measured thing, and a ten-minute save has a beginning and a mid
 - [ ] The keeper chooses what goes in the hatch instead of throwing a random handful (BACKLOG-067)
 
 **Structure arcs:**
-_(Structure-smith adds these on its fire this cycle.)_
+- [ ] The session is a measured unit — the park holds how long you stayed, not only how long you were gone (BACKLOG-542)
+- [ ] States end by a named rule instead of four bespoke ones — the expiry seam, extracted after 123 supplies its first instance (BACKLOG-544)
+- [ ] A greeting happens once a sitting instead of every time its gap condition is true (BACKLOG-545)
 
 
 ---
