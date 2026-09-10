@@ -1,6 +1,6 @@
 {
   "cycle": 156,
-  "phase": "coder-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-123: Sulk shakeoff",
   "structureItem": "BACKLOG-542: The session as a measured unit",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-09-10T04:40:00.000Z",
     "code-planner": "2026-09-10T04:55:00.000Z",
     "coder": "2026-09-09T06:35:00.000Z",
-    "qa": "2026-09-09T06:50:00.000Z",
+    "qa": "2026-09-10T05:40:00.000Z",
     "validator": "2026-09-09T07:05:00.000Z",
     "artist": "2026-09-09T07:40:00.000Z"
   },

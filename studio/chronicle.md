@@ -11224,3 +11224,15 @@ behavior** — a ten-second second sitting no longer earns a goodbye glance, whi
 own doc comment always said it meant. If a 119 spec reddens, the plan forbids loosening it: update it and
 say so. Both new specs must declare their founding fixture with `foundingState`, because 533 sits in the
 queue over specs that get away with silence and a spec written tonight should not add to the count.
+
+## Cycle 156 — qa
+
+22/22 criteria pass across both tracks. Build clean, **2650 unit** (251 files), **706/706 e2e**. The
+finding of the night is a **green board that proved nothing**: the code plan predicted, in writing and in
+advance, that resetting `sessionStartedAt` would change BACKLOG-119's goodbye — and not one of the six
+glance specs reddened, because not one of them has a *second* sitting. Every one boots, blurs once and
+ends, so the path the change altered was never walked. A real user-visible semantics change sailed through
+706 green tests without leaving a mark on any. The seventh spec was written rather than the green
+accepted; it fails on the pre-156 code and passes on this one. QA also records two weaknesses instead of
+rounding them up: feeding-as-kindness has a reviewer and no spec, and the sulk glyph is inferred from
+`pendingRepair` rather than read off the mark. Cold-boot flake logged once more (BACKLOG-538, third cycle running).
