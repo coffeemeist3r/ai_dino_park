@@ -11314,3 +11314,29 @@ claim instead of checking it. Two claims of the same species were caught tonight
 The art queue stays at **2 open, both correctly blocked**. Neither is blocked for scope; both are blocked
 on a host, both now say what host, and both name who builds it. `artPipelineReady` stays true — there is
 nothing wrong with the pipeline, there is simply nothing it may legally draw.
+
+## Cycle 156 — housekeeping
+
+Two closed bullets filed to the archive (123, 542 and its Structure-Track pointer), and **one section
+moved whole** — the cycle-155 structure-additions header, drained by 542 shipping tonight, the second
+consecutive cycle to empty a section outright. The working backlog closes at **203 open**: a cycle that
+closed two and seeded three.
+
+The **Structure Track sits at exactly 4 against X=4**, so next cycle's Structure-smith **drains rather
+than brainstorms** — the first time in three cycles that queue has been at depth. What it inherits, in
+order: **BACKLOG-533** still on top and now carrying a Validator deadline (at cycle 158, if it is still
+unpicked and still no founding-constant move has generated its evidence, rewrite the entry condition or
+take the item); **BACKLOG-544**, unblocked as of tonight because 123 gave the expiry seam its one real
+caller; **BACKLOG-545**, unblocked as of tonight because 542 shipped; and **BACKLOG-538** below them,
+which logged its third consecutive cold-boot instance this evening.
+
+The **art queue stays at 2, both correctly blocked on a host that does not exist** — and both item texts
+now say which host and who builds it, rather than claiming falsely that one is live.
+
+**Milestone 19 is ACTIVE at 2 of 6 arcs**, opened and half-advanced in the same fire. Next cycle's smiths
+pick against its four unchecked arcs: 066 and 067 on the lore side, 544 and 545 on the structure side —
+and both structure arcs are now unblocked, which is a queue in the rare state of having its next two
+moves already decided.
+
+`lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**, and a four-deep queue with
+two unblocked items is not asking for one.

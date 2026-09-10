@@ -680,10 +680,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
 
-## Cycle 155 structure additions — the park has no idea you left (2026-09-09)
-
-
-
 ## Cycle 156 structure additions — the visit has an inside (2026-09-10)
 
 - [ ] BACKLOG-544 [core] The state that ends — this cycle's lore track (BACKLOG-123) gives the sulk an ending: a short clock, a kind-gesture early exit, a "got over it" memory. That is one instance of a shape the park now wears in at least four places and has never named. `pendingRepair`'s sulk, the standoff's flash, the cold mood in `fidget.ts`, and the jealous flag `homecoming.ts` sets are each a state entered by a rule and left by a *different* bespoke rule, or by none at all — which is why 123 had to be filed as a feature rather than as a bug. **123 shipped at cycle 156, so the seam now has its one real caller.** Extract it: a pure `expiry.ts` that holds `{ enteredAtStep, windowSteps, clearedBy }` per state and answers *has this ended, and how* — with 123's sulk as its first and only caller, and the second and third moved over only when a cycle has a reason to touch them. **Deliberately queued behind 123, not before it:** a seam built before it has one real instance is the thing this studio keeps having to un-build. The reachability bar is satisfied through its callers, not on its own. Builds on 123 / 310 / 120.
