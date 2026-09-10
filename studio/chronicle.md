@@ -11196,3 +11196,17 @@ per sitting, blocked on tonight). Track now at 5 open. **BACKLOG-533 passed over
 cause, not for scope**: its own text says decide from evidence, this cycle moves no founding constant,
 and so the evidence still is not there. If a fourth cycle passes it the same way, the entry condition is
 what needs editing, not the item. No solo cycle: 156 − 151 = 5 < 10, illegal until 161.
+
+## Cycle 156 — designer
+
+Both tracks specced. The lore track's spec opens with a correction the Lore-smith's own instruction
+invited: **half of BACKLOG-123 already shipped.** BACKLOG-125 has cleared the jealous sulk on a greet
+since cycle 31, with an outsized bump, a 😊 and a recovery flourish — so *ship the gesture* inverts on
+contact with the code, and what is actually missing is **the clock**. `pendingRepair` is a flag with one
+exit; a dino the keeper never walks back to sulks until the tab closes. `SULK_FADES_AFTER_STEPS = 40` —
+two minutes, sized against `STING_FADES_AFTER_STEPS = 24` and its stated reasoning, named in steps so a
+test can drive it and a player can beat it on foot. BACKLOG-062's 😤 is a one-frame flash with nothing to
+expire, so it is out of scope by name rather than by silence. The structure track ships `session.ts` and
+**one consumer that is the whole point**: a `Sitting ·` line on the plaque, on a fresh save, growing while
+you stand there. `SESSION_MIN_MS` is imported from `departure.ts`, not re-declared — the defect cycle 155
+corrected one fire ago. Both tracks edit `WorldScene.ts` in different regions; flagged for sequencing.
