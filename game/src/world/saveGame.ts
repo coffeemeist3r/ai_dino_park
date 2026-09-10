@@ -20,6 +20,7 @@ import type { Gratitude } from './comfort';
 import type { Egg, BornDino } from '../social/breeding';
 import type { AwayEntry } from './awaylog';
 import type { Streak } from './streak';
+import type { SessionRecord } from './session';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -125,6 +126,10 @@ export interface SaveData {
    *  running, and the best run this save has had. Additive; absent → NO_STREAK, so a pre-154 save
    *  starts counting on its next boot rather than being refused. */
   streak?: Streak;
+  /** The last few closed sittings, newest first (BACKLOG-542) — how long the keeper stayed, as opposed to
+   *  how long they were gone. Additive; absent → [] on a save written before this cycle, which has no
+   *  record of its own visits and is not refused for it. */
+  sessions?: SessionRecord[];
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -542,6 +547,22 @@ export function deserialize(json: string): SaveData | null {
     streak = { last: st.last as string | null, run: st.run, best: st.best };
   }
 
+  // sessions (BACKLOG-542) — the last few closed sittings. Array of {startedAt, endedAt?}; an open record
+  // is never persisted (a sitting is written down when it ends), so a present `endedAt` must be a number
+  // when it is there at all. Malformed is refused, the same rule `awayLog` and `streak` above it follow.
+  let sessions: SessionRecord[] | undefined;
+  if (o.sessions !== undefined) {
+    if (!Array.isArray(o.sessions)) return null;
+    sessions = [];
+    for (const raw of o.sessions as unknown[]) {
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+      const e = raw as Record<string, unknown>;
+      if (!isNum(e.startedAt)) return null;
+      if (e.endedAt !== undefined && !isNum(e.endedAt)) return null;
+      sessions.push(e.endedAt === undefined ? { startedAt: e.startedAt } : { startedAt: e.startedAt, endedAt: e.endedAt });
+    }
+  }
+
   // ticsFormed / ticEchoFrom (BACKLOG-409) — the lifetime "this ritual happened" set and who each echo was
   // caught off. Additive; absent → undefined.
   let ticsFormed: string[] | undefined;
@@ -921,6 +942,7 @@ export function deserialize(json: string): SaveData | null {
     ticsFormed,
     ticEchoFrom,
     awayLog,
+    sessions,
     streak,
     leftDays,
     catchWarmth,

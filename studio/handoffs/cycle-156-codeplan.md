@@ -224,3 +224,52 @@ except types. Verify before committing:
 ## Blockers
 
 _(none at plan time — the Coder appends here if the build or suite will not go green.)_
+
+---
+
+## Shipped (Coder, cycle 156)
+
+Both tracks landed as planned. Gates: `npm run build` clean, **2650 unit** across 251 files (2602 → 2650,
++48), **706/706 e2e**.
+
+### Structure — BACKLOG-542
+- NEW `game/src/world/session.ts` (pure) + `session.test.ts`.
+- `plaque.ts` gains optional `sitting?`, rendered `Sitting · …` immediately above `Keeper ·`; the streak
+  did not move. Doc comment updated from "four optional ones" to five.
+- `saveGame.ts`: `sessions?: SessionRecord[]` on the type, a validating parse block in the `awayLog`/`streak`
+  style, and the field on the returned object. Additive — no version bump.
+- `WorldScene.ts`: `sessions` field, `closeSitting()`, the reset in `applyDeparture`, the plaque line, the
+  save write/read, `__sessions()`.
+- Three new plaque unit cases including the byte-identical no-`sitting` assertion.
+
+### Lore — BACKLOG-123
+- NEW `game/src/world/sulk.ts` (pure) + `sulk.test.ts`.
+- `WorldScene.ts`: `pendingRepairAt`, the stamp in `playHomecoming`, `checkSulk()` called after
+  `checkFeeding()` in the `forceStep` tail, the feed-as-kindness branch at the eat site, `__sulkAge()`.
+
+### The predicted BACKLOG-119 breakage did not happen, and that is itself a finding
+
+The plan warned that resetting `sessionStartedAt` changes 119's behavior and that a reddened glance spec
+would be a true change, not a flake. **No glance spec reddened.** All six passed untouched — because not
+one of them exercises a *second* sitting: each boots, ages the session once, blurs once, and asserts.
+
+So the behavior change was real and **entirely uncovered**. Absorbing that silently was the available
+move and it was the wrong one. A seventh spec was added to `cycle-155-glance.spec.ts` —
+*the second sitting has to earn its own goodbye* — which fails on the pre-156 code (a ten-second second
+sitting used to earn a glance, because elapsed was measured from boot) and passes on this one. It cost one
+test and it is the difference between a documented semantics change and an undocumented one.
+
+Its first draft failed for an unrelated reason worth recording: it waited 1200ms between the return and
+the second blur, and `GLANCE_MS` is 2500 — so it was reading the *first* glance's mark still on screen and
+calling it the second. The fix was the spec's timing, not its assertion; the sibling spec two tests down
+already waits 3200 for exactly this reason and was the answer sitting in the same file.
+
+### One known flake, recorded
+
+The first run of the two new specs in parallel dropped `cycle-156-sitting`'s first two tests at `boot`
+(`__ready` timeout, 30s). Re-run isolated: 5/5 in 4.7s. Both subsequent full-suite runs: green. This is the
+cold Vite/Phaser start named in BACKLOG-538, which is in the Structure Track for precisely this reason.
+
+## Blockers
+
+_(none — all gates green.)_

@@ -24,6 +24,7 @@ import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS,
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
+import { sulkHasFaded, shookItOffMemory, shookItOffLine } from '../world/sulk'; // BACKLOG-123
 import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
@@ -42,6 +43,8 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { departureStage, shouldStamp, type DepartureStage } from '../world/departure'; // BACKLOG-541
+import { openSession, closeSession, sessionMs, pushSession, sittingLine, type SessionRecord } from '../world/session'; // BACKLOG-542
+import { SESSION_MIN_MS } from '../world/departure'; // BACKLOG-541: what makes a sitting a sitting
 import { GLANCE_ART_KEY, GLANCE_GLYPH, GLANCE_MS, partingGlance } from '../world/parting'; // BACKLOG-119
 import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, bareZone, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, theZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
 import {
@@ -552,6 +555,9 @@ export class WorldScene extends Phaser.Scene {
   private liveBubbles = new Set<string>();
   /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
   private pendingRepair: string | null = null;
+  /** BACKLOG-123: the `worldSteps` the sulk above began at, so it can end without the keeper. One field
+   *  rather than a map because `pendingRepair` is one name — the bowl only ever has one sulker. */
+  private pendingRepairAt = 0;
   /** The last recovery flourish fired (BACKLOG-318), for the dev hook; transient, not persisted. */
   private lastMoodLift: string | null = null;
   /** Per-dino wall-clock ms until which a recovered dino idles perkier (BACKLOG-325); transient. */
@@ -686,8 +692,13 @@ export class WorldScene extends Phaser.Scene {
   /** Live focus, seeded from the browser and thereafter maintained by the `focus`/`blur` events. */
   private focused = true;
   private departureStamps = 0;
-  /** When this sitting began — the input to `SESSION_MIN_MS`, so a boot-time alt-tab is not a goodbye. */
+  /** When this sitting began — the input to `SESSION_MIN_MS`, so a boot-time alt-tab is not a goodbye.
+   *  BACKLOG-542 made this the **open session's** start: it is re-stamped on every return, so it means
+   *  *this sitting* rather than *this page load*. `this.sessions` holds the closed ones. */
   private sessionStartedAt = Date.now();
+  /** The last three closed sittings, newest first (BACKLOG-542). The open one is `sessionStartedAt`;
+   *  a sitting is only written down when it ends, and only if it lasted at all. */
+  private sessions: SessionRecord[] = [];
   /** BACKLOG-534: the two textures the missed mark swaps between, baked once. Null where a rig is
    *  absent, which is what keeps the `MISSED_FAINT_ALPHA` fallback a live path rather than dead code. */
   private missedTex: string | null = null;
@@ -1297,6 +1308,7 @@ export class WorldScene extends Phaser.Scene {
       stockpile: this.zoneStores(),
       zoneTally: this.zoneTally(),
       upkeep: upkeepLine(upkeepDue(this.standingIn(this.zoneId))), // BACKLOG-536
+      sitting: sittingLine(Date.now() - this.sessionStartedAt), // BACKLOG-542
       streak: streakLine(this.streak), // BACKLOG-122
     };
   }
@@ -2638,6 +2650,15 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, d.name, warmMemory());
       this.clearColdFunk(d.name, true);
     }
+    // BACKLOG-123: a meal is a kind gesture too. The slighted dino takes the repair ending — the same one
+    // a make-up greet earns — rather than being left to shake it off alone. The affinity bump stays the
+    // feed's own: 125's outsized bonus belongs to walking over and saying something.
+    if (this.pendingRepair === d.name) {
+      this.pendingRepair = null;
+      this.memory = remember(this.memory, d.name, repairMemory(d.name));
+      this.showBubble(d, repairLine(d.name));
+      this.liftMood(d);
+    }
     this.flashFeed(d, r.emoji);
     // BACKLOG-374: a moping loner soothed by its *favorite* food gets a quiet solace beat a plain meal never
     // gives. The 🥀 itself only lifts when a real bond forms (369) — this is a momentary per-palate comfort.
@@ -2664,6 +2685,28 @@ export class WorldScene extends Phaser.Scene {
     }
     this.lastMeal = { name: d.name, at: now };
     this.refreshHeartsPanel();
+    void this.saveGame();
+  }
+
+  /**
+   * The sulk shakes itself off (BACKLOG-123).
+   *
+   * Runs after `checkFeeding` in the `forceStep` tail on purpose: if a slighted dino eats on the very step
+   * its window elapses, the meal is what ended the funk and the book should say so. An attended ending
+   * outranks an unattended one whenever both are available in the same step.
+   */
+  private checkSulk(): void {
+    if (!this.pendingRepair) return;
+    if (!sulkHasFaded(this.worldSteps - this.pendingRepairAt)) return;
+    const name = this.pendingRepair;
+    this.pendingRepair = null;
+    this.memory = remember(this.memory, name, shookItOffMemory(name));
+    const dino = this.dinoByName(name);
+    if (dino) {
+      this.showBubble(dino, shookItOffLine(name));
+      this.liftMood(dino); // the same recovery the make-up greet earns, arriving by the other road
+    }
+    this.logEvent(`✨ ${name} got over its sulk on its own`);
     void this.saveGame();
   }
 
@@ -3732,6 +3775,20 @@ export class WorldScene extends Phaser.Scene {
    * hidden and nothing drawn can be seen, so nothing is drawn; that is the correction this cycle made to
    * an item whose own text had named the hidden event as its trigger since cycle 30.
    */
+  /**
+   * Close the open sitting and file it (BACKLOG-542).
+   *
+   * A sitting shorter than `SESSION_MIN_MS` is not written down at all — the same twenty seconds that
+   * decide whether leaving is a goodbye decide whether staying was a visit, and the constant is imported
+   * rather than restated. Called from the one departure site, before the save, so the record lands in it.
+   */
+  private closeSitting(): void {
+    const now = Date.now();
+    const rec = closeSession(openSession(this.sessionStartedAt), now);
+    if (sessionMs(rec) < SESSION_MIN_MS) return;
+    this.sessions = pushSession(this.sessions, rec);
+  }
+
   private onDeparture(stage: DepartureStage): void {
     if (stage !== 'leaving') return;
     // Who is asleep and who is on another ground are the scene's facts, not `parting.ts`'s.
@@ -5579,6 +5636,7 @@ ${e.short}`;
     this.refreshSleepPoses();
     this.maybeMurmur();
     this.checkFeeding();
+    this.checkSulk(); // BACKLOG-123: after checkFeeding, so a meal this step outranks the shakeoff
     this.checkPlot();
     this.checkPondSight(); // BACKLOG-359: a grove dino reaching the pond for the first time
     this.checkNeeds(); // BACKLOG-371: hunger/thirst build; a dino at the pond drinks
@@ -5961,6 +6019,7 @@ ${e.short}`;
       if (rival) this.showBubble(rival, hc.jealous.line);
       // The slighted dino now waits for a make-up greet (BACKLOG-125).
       this.pendingRepair = hc.jealous.name;
+      this.pendingRepairAt = this.worldSteps; // BACKLOG-123: the clock the funk ages against
       // ...and a friend crosses over to console it: a dino it once consoled comes first
       // (gratitude echo, BACKLOG-132), else its closest friend above the floor (BACKLOG-130).
       const who = comforter(hc.jealous.name, this.bonds, this.dinos.map((d) => d.name), this.gratitude);
@@ -6175,8 +6234,13 @@ ${e.short}`;
       const next = departureStage({ focused: this.focused, hidden: document.hidden });
       const prev = this.departure;
       this.departure = next;
+      // BACKLOG-542: coming back opens a new sitting. This sits *above* the `shouldStamp` guard because a
+      // return is never a stamp — `shouldStamp` only fires on the way out — so a reset placed below it
+      // would never run, and `sessionStartedAt` would go on meaning "this page load" forever.
+      if (next === 'here' && prev !== 'here') this.sessionStartedAt = Date.now();
       if (!shouldStamp(prev, next)) return;
       this.departureStamps++;
+      this.closeSitting(); // BACKLOG-542 — before the save below, so the record lands in it
       this.onDeparture(next); // BACKLOG-119 — the one call site; do not add a second blur listener
       void this.saveGame();
     };
@@ -6210,6 +6274,8 @@ ${e.short}`;
     (window as any).__mindsCache = () => this.lastCacheAction;
     // any: dev-only Playwright hook — where the keeper is, and how many departures stamped the save
     (window as any).__departure = () => ({ stage: this.departure, stamps: this.departureStamps });
+    // any: dev-only Playwright hook — the closed sittings this save holds (BACKLOG-542)
+    (window as any).__sessions = () => this.sessions;
     // any: dev-only Playwright hook — wind this sitting's start back so a spec need not sleep 20s
     (window as any).__ageSession = (ms: number) => (this.sessionStartedAt = Date.now() - ms);
     (window as any).__governor = () => ({
@@ -8388,6 +8454,7 @@ ${e.short}`;
       ticEchoFrom: this.ticEchoFrom,
       awayLog: this.awayLog, // BACKLOG-114
       streak: this.streak, // BACKLOG-122: the keeper's own day-count (additive)
+      sessions: this.sessions, // BACKLOG-542: the last three closed sittings, newest first (additive)
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8454,6 +8521,9 @@ ${e.short}`;
       // BACKLOG-122: restored *before* `recordVisit` notes today, so a resumed streak continues rather
       // than restarting. A pre-154 save has none and starts its count on this boot.
       this.streak = save.streak ?? NO_STREAK;
+      // BACKLOG-542: the sittings this save has already closed. A save written before this cycle has none
+      // and gets an empty list — the plaque then simply shows the live sitting, which starts at this boot.
+      this.sessions = save.sessions ?? [];
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
       this.applyClockRate();
@@ -8660,6 +8730,8 @@ ${e.short}`;
     (window as any).__bubbleTexts = () => [...this.liveBubbles];
     // any: dev-only Playwright hook — the jealous runner-up awaiting a make-up greet (or null)
     (window as any).__pendingRepair = () => this.pendingRepair;
+    // any: dev-only Playwright hook — how many steps the live sulk has run (BACKLOG-123), null when none
+    (window as any).__sulkAge = () => (this.pendingRepair ? this.worldSteps - this.pendingRepairAt : null);
     // any: dev-only Playwright hook — last dino-to-dino comfort beat {comforter, sulker} (or null)
     (window as any).__lastComfort = () => this.lastComfort;
     // any: dev-only Playwright hook — gratitude ledger (consoled → comforters it owes), BACKLOG-132

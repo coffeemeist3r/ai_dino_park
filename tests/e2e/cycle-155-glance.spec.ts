@@ -77,6 +77,35 @@ test('a blur before the session floor is not a goodbye', async ({ page }) => {
   expect(await glancers(page)).toEqual([]);
 });
 
+/**
+ * BACKLOG-542 changed this, and the change is recorded here rather than absorbed.
+ *
+ * `sessionStartedAt` was stamped once at boot and never touched again, so "this sitting" quietly meant
+ * "this page load": a keeper who sat five minutes, alt-tabbed, came back and alt-tabbed again ten seconds
+ * later still earned a goodbye, because the elapsed time was measured from boot. 542 re-stamps it on every
+ * return, which makes the floor mean what its own doc comment always said — *how long a session must have
+ * run before leaving it counts as a goodbye*. The old behavior was the accidental one, and no spec in the
+ * suite covered the second sitting, so this is the one that pins it.
+ */
+test('the second sitting has to earn its own goodbye (BACKLOG-119 + 542)', async ({ page }) => {
+  await boot(page);
+  await foundingState(page, 'as-shipped');
+  const who = await befriend(page);
+
+  await ageSession(page);
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await page.waitForTimeout(300);
+  expect(await glancers(page), 'a five-minute sitting earns its goodbye').toContain(who);
+
+  // Back in, and straight out again. The new sitting is seconds old, so it has not earned one.
+  await page.evaluate(() => window.dispatchEvent(new Event('focus')));
+  await page.waitForTimeout(3200); // GLANCE_MS (2500) plus a beat — the first look must be gone before
+  //                                  the second blur, or this asserts the old mark rather than a new one
+  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+  await page.waitForTimeout(300);
+  expect(await glancers(page)).toEqual([]);
+});
+
 test('the look does not outlive its welcome', async ({ page }) => {
   await boot(page);
   await foundingState(page, 'as-shipped');

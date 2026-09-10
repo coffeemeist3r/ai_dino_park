@@ -131,4 +131,22 @@ describe('plaqueLines — the optional lines (BACKLOG-536 / 122)', () => {
     const lines = plaqueLines({ ...base, upkeep: '🛠️ 1/day', streak: '3 days running' });
     expect(lines.slice(-2)).toEqual(['Upkeep · 🛠️ 1/day', 'Keeper · 3 days running']);
   });
+
+  // BACKLOG-542 — the sitting.
+  it('engraves how long this sitting has run, directly above the streak', () => {
+    const lines = plaqueLines({ ...base, sitting: '4m', streak: '3 days running' });
+    expect(lines.slice(-2)).toEqual(['Sitting · 4m', 'Keeper · 3 days running']);
+  });
+
+  it('shows the sitting with no streak yet — a first-ever visit still knows how long it has been', () => {
+    const lines = plaqueLines({ ...base, sitting: '40s' });
+    expect(lines.at(-1)).toBe('Sitting · 40s');
+  });
+
+  it('is byte-identical to the pre-156 plaque when no sitting is passed', () => {
+    expect(plaqueLines({ ...base, streak: '3 days running' })).toEqual(
+      plaqueLines({ ...base, sitting: undefined, streak: '3 days running' }),
+    );
+    expect(plaqueLines({ ...base, streak: '3 days running' }).some((l) => l.startsWith('Sitting'))).toBe(false);
+  });
 });

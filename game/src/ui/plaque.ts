@@ -55,14 +55,18 @@ export interface PlaqueStats {
   /** What this ground owes a day (BACKLOG-536), from `upkeepLine`. Absent/empty → no line — and a ground
    *  under the bill's floor produces an empty string, so most grounds stay exactly as they read before. */
   upkeep?: string;
+  /** How long this sitting has run (BACKLOG-542), from `sittingLine`. Absent/empty → no line. Sits
+   *  directly above the streak: both lines are about the keeper, and this is the one about *now*. */
+  sitting?: string;
   /** The keeper's own attendance (BACKLOG-122), from `streakLine`. Absent/empty → no line. Last on the
    *  brass on purpose: every line above it is about the park, and this one is about you. */
   streak?: string;
 }
 
 /**
- * The engraved lines of the plaque — two stats lines, then four optional ones: stores, zones, what this
- * ground owes a day (536) and how many days running the keeper has turned up (122).
+ * The engraved lines of the plaque — two stats lines, then five optional ones: stores, zones, what this
+ * ground owes a day (536), how long this sitting has run (542) and how many days running the keeper has
+ * turned up (122).
  *
  * Every optional line is absent-means-nothing, so a caller that passes none of them gets byte-identical
  * output to the pre-154 plaque — which is what lets a hundred existing literals across this suite stay
@@ -76,6 +80,7 @@ export function plaqueLines(s: PlaqueStats): string[] {
   if (s.stockpile) lines.push(`Stores · ${s.stockpile}`);
   if (s.zoneTally) lines.push(`Zones · ${s.zoneTally}`);
   if (s.upkeep) lines.push(`Upkeep · ${s.upkeep}`);
+  if (s.sitting) lines.push(`Sitting · ${s.sitting}`);
   if (s.streak) lines.push(`Keeper · ${s.streak}`);
   return lines;
 }
