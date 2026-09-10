@@ -1,7 +1,7 @@
 {
-  "cycle": 155,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 156,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-123: Sulk shakeoff",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-09-09T05:10:00.000Z",
+    "lore-smith": "2026-09-10T04:10:00.000Z",
     "structure-smith": "2026-09-09T05:22:00.000Z",
     "designer": "2026-09-09T05:40:00.000Z",
     "code-planner": "2026-09-09T05:55:00.000Z",

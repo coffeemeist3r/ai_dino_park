@@ -11173,3 +11173,14 @@ is the first duty of the next fire, before either smith picks an item.
 
 `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**, and nothing in a
 three-item queue is asking for one.
+
+## Cycle 156 — lore-smith
+
+Milestone 18 is shipped and **Milestone 19 is drafted**: *something changes while you sit there*. The
+park holds five numbers about the gap between sittings and none about the sitting itself, and no state
+inside a visit has ever ended without the keeper reaching in to end it. Social queue at 198 ≥ 12, so
+nothing new seeded there — the cycle is themed from what is already queued. Art queue at 1 < 3, so one
+seed: **BACKLOG-543**, the sulk in pixels, whose host has been live since cycle 310. Suggested next-up
+is **BACKLOG-123** (sulk shakeoff), with the item's "after a short while" flagged for the Designer as
+exactly the kind of unnamed window this studio has a documented habit of pinning below the founding
+state. Idea Box: empty.

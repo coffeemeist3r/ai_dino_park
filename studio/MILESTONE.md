@@ -8,7 +8,22 @@
 
 ## Current milestone
 
-_(none — Milestone 18 shipped at cycle 155; the next cycle's smiths draft Milestone 19.)_
+**Milestone 19: Something changes while you sit there — the park's clock runs inside your visit, not only between them.**
+**Status:** ACTIVE (opened cycle 156)
+
+Milestone 18 taught the park to hold the *gap* between sittings. Every keeper-facing number it owns
+is about time the player was away. Nothing it holds is about the time the player is *here*, and
+nothing inside a sitting resolves on its own — a mood entered at minute two is still worn at minute
+ten unless the keeper reaches in and ends it. This milestone closes that: states end, the session
+itself becomes a measured thing, and a ten-minute save has a beginning and a middle.
+
+**Lore arcs:**
+- [ ] A funk ends while you watch — on its own short clock, or early because the keeper was kind (BACKLOG-123)
+- [ ] What a dino just ate reaches its mouth — a palate you learn by talking, not only by the 😋 (BACKLOG-066)
+- [ ] The keeper chooses what goes in the hatch instead of throwing a random handful (BACKLOG-067)
+
+**Structure arcs:**
+_(Structure-smith adds these on its fire this cycle.)_
 
 
 ---
