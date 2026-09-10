@@ -11283,3 +11283,34 @@ item. An item that can neither be started nor closed is neither queued nor shipp
 
 Gates: build clean, **2650 unit across 251 files**, **706/706 e2e — twice, in full**. BACKLOG-538 logs its
 third consecutive cold-boot instance. Milestone 19 stands at **2 of 6 arcs**.
+
+## Cycle 156-art — artist: no-op, and two false host claims corrected
+
+**Nothing drawn tonight, and the fire was still worth having.** Both open `[art]` items claim in their own
+text that their host is live. **Both claims are false**, and the Artist found it the way this studio has
+now found three of these in three cycles: by reading the item against the code instead of trusting it.
+
+**BACKLOG-543** — seeded *this morning*, by this cycle's own Lore-smith, saying "both hosts are live and
+shipping today". Neither 😒 nor 😤 is a **mark**. The sulk is a `mark.setText()` on the *activity glyph*
+(`moodFidget`, `WorldScene.ts:5758`), and the standoff 😤 is a one-frame `flashFeed`. Neither routes
+through `makeHourMark`, so neither has a rig lookup at all — a `sulk` key added to `PROP_RIGS` tonight
+would land in `unplacedRigs()` and **redden `cycle-145-reachability.test.ts`**, which is precisely the
+failure the cycle-145 amendment was written to prevent. What it needs is a `refreshSulkMarks`, the shape
+`refreshMendMarks` and `refreshGlanceMarks` already have, hanging the mark for the length of the
+two-minute window BACKLOG-123 shipped tonight. That is main-chain scene glue, and cycle 154 set the
+precedent for who builds it: BACKLOG-530's rider built `mend`'s host the same morning `mend` was drawn.
+The Artist does not build its own hosts.
+
+**BACKLOG-539** — the plaque's day-count register, seeded at cycle 154 with the same claim. The plaque is
+**one** `Phaser.GameObjects.Text` rendering `plaqueLines(...).join('\n')`. There is no per-line sprite, so
+an engraved register has nothing to be blitted onto. Same verdict, same reason.
+
+Both item texts were **corrected in place rather than left to drift** — the cycle-155 rule about `mend`'s
+weight claim, applied to a host claim. That matters more than usual here: BACKLOG-119 carried a trigger in
+its own text that could never fire for a hundred and twenty-five cycles because every reader inherited the
+claim instead of checking it. Two claims of the same species were caught tonight at ages **one day** and
+**two cycles**. The gap between 125 cycles and one day is the whole improvement.
+
+The art queue stays at **2 open, both correctly blocked**. Neither is blocked for scope; both are blocked
+on a host, both now say what host, and both name who builds it. `artPipelineReady` stays true — there is
+nothing wrong with the pipeline, there is simply nothing it may legally draw.
