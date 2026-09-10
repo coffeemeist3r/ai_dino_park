@@ -11236,3 +11236,50 @@ ends, so the path the change altered was never walked. A real user-visible seman
 accepted; it fails on the pre-156 code and passes on this one. QA also records two weaknesses instead of
 rounding them up: feeding-as-kindness has a reviewer and no spec, and the sulk glyph is inferred from
 `pendingRepair` rather than read off the mark. Cold-boot flake logged once more (BACKLOG-538, third cycle running).
+
+## Cycle 156 — validator: lore APPROVED / structure APPROVED
+
+**Milestone 19 opened tonight and both tracks landed its first arc the same night.** *Something changes
+while you sit there* — the counterweight to Milestone 18's whole subject, and the two items that answer
+it were drafted and shipped in one fire.
+
+**The brass now says how long you have been in the park.** `Sitting · 4m`, above the keeper's streak, on
+a fresh save, at second zero, changing while you stand and look at it. Of every reachability answer this
+studio has written since CHARTER v7, it is the one that needs the fewest qualifiers. Cycle 155 taught the
+park *when* a sitting ends and spent the knowledge entirely on the gap; every number this park owned was a
+fact about absence, so a keeper who looked in for ninety seconds and one who sat for an hour were the same
+keeper. Two refusals carry it: `SESSION_MIN_MS` is imported rather than restated, so one constant now
+decides both whether leaving was a goodbye and whether staying was a visit; and a closed sitting comes
+back as the *same object*, so the blur-then-visibilitychange pair cannot file it twice.
+
+**And a sulk now ends without you.** The Lore-smith told the Designer to read BACKLOG-123 out loud before
+building it, and added a steer: ship the kind-gesture half, it is the reachable one. The Designer read it
+out loud and **the steer inverted** — BACKLOG-125 has cleared that exact sulk on a greet since cycle 33.
+What was missing was the *clock*: `pendingRepair` had one exit, so a funk in this park was **permanent**
+unless the keeper personally came and ended it, in a park whose charter calls dormant systems a defect.
+Forty steps, two minutes, sized against `tic.ts`'s sting rather than invented — and short enough that
+crossing the bowl to make it right is still a race you win. The unattended ending refuses to take credit:
+*got over it without being asked*, with a test asserting the word "keeper" never appears in it. The book
+reads differently depending on whether you turned up.
+
+**The finding of the night is a green board that proved nothing.** The code plan predicted, in advance and
+in writing, that this cycle would change BACKLOG-119's goodbye, and forbade loosening any spec that
+reddened. **Nothing reddened** — all six glance specs passed first run and would have passed forever,
+because not one of them has a *second* sitting: each boots, blurs once, asserts, ends. The altered path
+was never walked, so a deliberate user-visible change went through 706 green tests without touching one.
+One night after cycle 155 shipped a clean build and 2602 green unit tests over two features that did
+nothing at all, the studio has now produced both halves of the same lesson: **a gate speaks only about the
+paths it walks, and how many it walks is not visible from its colour.** What saved it was not a test — it
+was that the prediction was written down before the run, so green could be read as *failed to answer*
+rather than as *yes*. The seventh spec was written; it fails on last night's code and passes on tonight's.
+
+QA declined to round up two weaknesses and they are recorded rather than buried: feeding-as-kindness has a
+reviewer and no spec, and the sulk glyph is inferred from `pendingRepair` rather than read off the mark.
+
+**A deadline set for BACKLOG-533.** Passed over a third time, for cause rather than for scope — its entry
+condition wants evidence from the next founding-constant move and this cycle made none. At **cycle 158**,
+if it is still unpicked with still no such move, the Structure-smith rewrites the condition or takes the
+item. An item that can neither be started nor closed is neither queued nor shipped.
+
+Gates: build clean, **2650 unit across 251 files**, **706/706 e2e — twice, in full**. BACKLOG-538 logs its
+third consecutive cold-boot instance. Milestone 19 stands at **2 of 6 arcs**.
