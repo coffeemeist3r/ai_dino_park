@@ -11461,3 +11461,37 @@ format unchanged. **Milestone 19 stands at 4 of 6** — and 067 is a better item
 morning, because a hatch selector matters more once the dinos have opinions about what comes out of it. That
 dependency emerged from the work rather than being planned into it, which is the kind of thing this studio
 is supposed to produce.
+
+## Cycle 157-art — artist: nothing drawn, and the false claim was ours
+
+**Third consecutive Artist fire to find a host claim that does not survive contact with the code — and this
+time the claim was the Validator's own, written an hour earlier in this same cycle.**
+
+Tonight's verdict declared BACKLOG-543 unblocked, reasoning that 544's `shoulder` funk had given the sulk a
+durable state with a live visual host. **The state is real. The host is not.** The 😒 is still a `setText`
+on `activityMarks`, declared `Phaser.GameObjects.Text[]` — a typed array of Text objects. `makeHourMark` is
+the thing that swaps a Text for an `Image` when `hasPropArt(key)` is true, and the activity mark does not go
+through it, so a rig has nowhere to land. And `worldPlacedProps()` is a **hand-maintained list**: a `sulk`
+key would fall into `unplacedRigs()` and redden `cycle-145-reachability.test.ts`, and adding `sulk` to that
+list to quiet it would be a false entry in the register that exists to catch false entries.
+
+So 543's text is corrected for the third time, more precisely than before: what it needs is a mood mark
+built by `makeHourMark` — the `mend` / `glance` / `vigil` shape — refreshed over a dino for the length of
+its funk. 544 delivered the half that was genuinely missing (a state that lasts long enough to be worth
+hanging a mark on); the mark itself is still main-chain glue nobody has built. **The art queue stays at 2,
+both correctly blocked.** `artPipelineReady` stays true: nothing is wrong with the pipeline, there is
+simply nothing it may legally draw.
+
+**The second finding is better, because it turned green.** QA reported criterion 13 — *the idle glyph reads
+😒 while the funk holds* — as uncoverable without inventing a hook that reads back a `setText`. That was
+wrong. **`__activityMark` has existed since BACKLOG-295** and returns exactly that text. No hook was
+needed; the assertion was simply not found. It is written now, and **the structure track closes at 13 of
+13, not 12 of 13.** Reading the code beat reasoning about it, for the third night running — and the lesson
+this time cuts toward the studio's caution as well as its optimism: a disclosed gap can be as wrong as a
+false claim, and "we couldn't test that" deserves the same grep that "the host is live" now gets.
+
+Writing the spec turned up a real ordering fact, asserted rather than papered over: `refreshActivityMarks`
+runs near the top of the step tail and `checkFunks` near the bottom, so the 😒 clears on the step *after*
+the funk ends — a one-step, three-second lag. It is the same ordering that lets a meal on the expiring step
+outrank the unattended ending, which is deliberate, so the lag is a consequence of a decision rather than an
+oversight. Full e2e re-run after the added spec: **714/714**.

@@ -158,3 +158,34 @@ condition or take the item — that deadline stands, unchanged, and is now one c
 
 Gates: build clean; **2683 unit across 253 files**; **713/713 e2e, full run**; web-llm boundary intact;
 reachability register 8/8; save format unchanged. Milestone 19 at **4 of 6**.
+
+---
+
+## Validator's correction (appended at the Artist fire, same cycle)
+
+Two claims in the sections above were wrong, and the Artist caught both by reading the code. They are
+corrected here rather than silently edited above, because a verdict that quietly rewrites itself is the
+failure mode this studio is trying to stop.
+
+**1. "BACKLOG-543 is unblocked" — WRONG.** The 😒 is a `setText` on `activityMarks`, which is declared
+`Phaser.GameObjects.Text[]`. `makeHourMark` is what swaps a Text for an `Image` when a rig exists, and the
+activity mark does not go through it. A `sulk` key would land in `unplacedRigs()` and redden
+`cycle-145-reachability.test.ts`; adding it to `worldPlacedProps()` to silence that would be a false entry
+in the register that exists to catch false entries. **543 stays blocked**, and its text is corrected in
+place for the third time. What 544 actually delivered is the half that was genuinely missing — a state that
+lasts long enough to be worth hanging a mark on. The mark itself is still main-chain glue nobody has built.
+
+**2. QA's criterion 13 was called uncoverable, and it was not.** `__activityMark` has existed since
+BACKLOG-295 and returns exactly the glyph text the assertion needed. No new hook was required; the
+assertion was simply not found. It is written now (`cycle-157-funk.spec.ts:53`) and **criterion 13 is a
+full PASS** — the structure track closes at 13 of 13, not 12 of 13.
+
+Writing that spec turned up a real ordering fact worth recording: `refreshActivityMarks` runs near the top
+of the step tail and `checkFunks` near the bottom, so the glyph clears on the step *after* the funk ends —
+a one-step, three-second lag. It is asserted as the behavior it is rather than papered over with a
+frame-wait, and it is the same ordering that lets a meal on the expiring step outrank the unattended
+ending, which is deliberate.
+
+**The verdicts stand: both tracks APPROVED.** Neither correction touches what shipped or whether a player
+can reach it. E2e re-run in full after the added spec: **714/714**.
+

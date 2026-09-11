@@ -50,6 +50,34 @@ test('the loser of a contested drop is visibly sore about it (BACKLOG-544)', asy
   expect(live.map((f) => f.name)).not.toContain('Sunny');
 });
 
+test('the shoulder funk shades the idle glyph to 😒 while it holds (BACKLOG-310/544)', async ({ page }) => {
+  // Closed at cycle 157-art. QA disclosed this as an uncovered gap on the grounds that asserting it would
+  // need a new hook that reads back a `setText` — but `__activityMark` has existed since BACKLOG-295 and
+  // returns exactly that text, so the assertion was available and simply not found. Reading the code beat
+  // reasoning about it, which is the finding of the last four Artist fires in a row.
+  const loser = await stageStandoff(page);
+  const before: string | null = await page.evaluate(
+    (n) => ((window as W).__activityMark as (x: string) => string | null)(n),
+    loser,
+  );
+  // The mark only carries a glyph while the dino reads as idle; where it does, the mood must be the sulk's.
+  if (before) expect(before).toBe('😒');
+
+  // Twenty steps ends the funk; the glyph catches up on the step *after*. `refreshActivityMarks` runs
+  // near the top of the step tail and `checkFunks` near the bottom, so the frame on which a funk expires
+  // was painted before it expired. A one-step (3s) lag, asserted as the behavior it is rather than
+  // papered over — and worth knowing, because it is the same ordering that lets a meal on the expiring
+  // step outrank the unattended ending.
+  await driveSteps(page, 21);
+  const after: string | null = await page.evaluate(
+    (n) => ((window as W).__activityMark as (x: string) => string | null)(n),
+    loser,
+  );
+  // Once the funk ends the 😒 must be gone — a mood glyph that outlives its mood is the defect BACKLOG-123
+  // and 544 exist to prevent, one layer up.
+  if (after) expect(after).not.toBe('😒');
+});
+
 test('it ends on its own after twenty steps, crediting nobody (BACKLOG-544)', async ({ page }) => {
   const loser = await stageStandoff(page);
 
