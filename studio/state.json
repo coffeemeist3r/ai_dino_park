@@ -1,6 +1,6 @@
 {
   "cycle": 157,
-  "phase": "validator-pending",
+  "phase": "artist-pending",
   "currentItem": "BACKLOG-066: Taste talk",
   "structureItem": "BACKLOG-544: The state that ends \u2014 the expiry seam",
   "lastVerdict": "APPROVED",
@@ -15,7 +15,7 @@
     "code-planner": "2026-09-11T03:55:00.000Z",
     "coder": "2026-09-11T04:25:00.000Z",
     "qa": "2026-09-11T04:40:00.000Z",
-    "validator": "2026-09-10T05:55:00.000Z",
+    "validator": "2026-09-11T04:55:00.000Z",
     "artist": "2026-09-10T06:15:00.000Z"
   },
   "lastSoloCycle": 151,

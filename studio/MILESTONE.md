@@ -19,12 +19,12 @@ itself becomes a measured thing, and a ten-minute save has a beginning and a mid
 
 **Lore arcs:**
 - [x] A funk ends while you watch — on its own short clock, or early because the keeper was kind (BACKLOG-123)
-- [ ] What a dino just ate reaches its mouth — a palate you learn by talking, not only by the 😋 (BACKLOG-066)
+- [x] What a dino just ate reaches its mouth — a palate you learn by talking, not only by the 😋 (BACKLOG-066)
 - [ ] The keeper chooses what goes in the hatch instead of throwing a random handful (BACKLOG-067)
 
 **Structure arcs:**
 - [x] The session is a measured unit — the park holds how long you stayed, not only how long you were gone (BACKLOG-542)
-- [ ] States end by a named rule instead of four bespoke ones — the expiry seam, extracted after 123 supplies its first instance (BACKLOG-544)
+- [x] States end by a named rule instead of four bespoke ones — the expiry seam, extracted after 123 supplies its first instance (BACKLOG-544)
 - [ ] A greeting happens once a sitting instead of every time its gap condition is true (BACKLOG-545)
 
 

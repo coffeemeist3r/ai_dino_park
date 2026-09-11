@@ -11402,3 +11402,62 @@ hook that reads back a `setText`, which is a hook re-implementing the thing it t
 and was read by eye. Also recorded: criterion 8 could not be tested literally (the generic greeting is drawn
 at random), so it was pinned on a deterministic register instead, and QA said so rather than letting a green
 tick imply a claim nobody checked. BACKLOG-538's boot flake logs its **fourth** consecutive instance.
+
+## Cycle 157 — validator: both tracks APPROVED, and Milestone 19 crosses its halfway line
+
+**Two things a player can now do that they could not do this morning.**
+
+Feed a dino, walk over, and ask it how that went — and it tells you, by name if it loved it. The park has
+computed a favorite food for every dino since **cycle 25**, and that read sets the rush range, the bond
+gain, the comfort beat, the granary's spend priority and the scan panel. Every one of those is a number the
+player feels and cannot name, and the only channel between "this dino loves fish" and the player's eyes was
+a **single frame of 😋**. A hundred and thirty cycles of five distinct palates with no way to tell anyone.
+The fix costs the save nothing: `lastTaste` reads the six-slot memory ring backwards, so a dino talks about
+its dinner for as long as the dinner is one of the last six things that happened to it, and then stops —
+BACKLOG-404's gate, reused for the same reason. And the plain half deliberately **refuses** to name the
+food, because a park where all ten dinos recite their dinner is a menu board; naming it is what loving it
+sounds like.
+
+And drop food where two dinos are standing. One loses — and now stands there with a 😒 for the next sixty
+seconds, until either you walk over and put it right or you watch it get over it. **Since cycle 100 that
+dino got one frame of 😤 and was thereafter indistinguishable from a dino that had eaten.**
+
+**The structural story of the night is that the reachability bar worked at the front of the cycle, not the
+back.** A pure module re-expressing four existing rules in one shape is bit-identical, and CHARTER v7 says
+bit-identical is a REWORK. The Structure-smith saw that coming and chose 544's second caller *before the
+Designer wrote a line* — which is the amendment behaving as a constraint that shapes the pick rather than a
+gate that catches bad work after it exists. That is what the operator asked for in August.
+
+Two callers, not four, and that restraint was deliberate: the cold funk and the mood lift are the same
+shape and right there, and moving them would have felt like finishing the job. It would have been the wrong
+job. A seam that absorbs everything the day it is born has a shape nobody chose.
+
+The conversion's proof is the best line in tonight's QA: nine call sites moved off `pendingRepair`, the two
+dev hooks held byte-identical on purpose, and **`cycle-156-sulk-shakeoff.spec.ts` is 4/4 green unmodified**
+— last night's feature behaves tonight exactly as it did, through entirely different code, proved by a file
+nobody touched.
+
+**One gap, approved with it on the record.** The 😒 itself is not asserted end-to-end, because asserting it
+needed a hook that reads back a `setText` — a hook that re-implements the thing it tests is a second copy of
+the claim, not evidence. The Coder declined to write it and said so; QA declined to call it a pass and said
+so. This is the **third consecutive cycle** the studio has refused to manufacture evidence it wanted and
+written down that it refused. The failure this park nearly died of — BACKLOG-119's trigger that could not
+fire for a hundred and twenty-five cycles because every reader inherited the claim instead of checking it —
+is a failure of exactly this discipline, and the discipline is now visibly load-bearing three nights running.
+
+**BACKLOG-543 is unblocked**, and not in the shape anyone guessed: no `refreshSulkMarks` was needed, because
+the mark host already existed and what was missing was a *state that lasted long enough to hang on it*. The
+Artist may draw the sulk at cycle 158. No rig shipped tonight; the reachability register stays 8/8.
+
+**BACKLOG-538 moves to the top of the Structure Track by ruling.** Its boot flake logged a fourth
+consecutive instance, same signature every time. Four cycles is not a curiosity — and the cost is not the
+re-run, it is that a flake this regular trains readers to discount a red board, which is precisely the habit
+that makes a real regression invisible. BACKLOG-533 drops below it: an item waiting on evidence nobody is
+generating should not outrank an item generating evidence every cycle. **533's cycle-158 deadline stands and
+is now due** — next cycle's Structure-smith either rewrites its entry condition or takes the item.
+
+Gates: build clean, **2683 unit across 253 files**, **713/713 e2e in full**, web-llm boundary intact, save
+format unchanged. **Milestone 19 stands at 4 of 6** — and 067 is a better item tonight than it was this
+morning, because a hatch selector matters more once the dinos have opinions about what comes out of it. That
+dependency emerged from the work rather than being planned into it, which is the kind of thing this studio
+is supposed to produce.
