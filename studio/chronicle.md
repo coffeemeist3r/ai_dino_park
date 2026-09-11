@@ -11349,3 +11349,12 @@ host that does not exist, and a third blocked item is not a queue, it is a landf
 **BACKLOG-066 — taste talk**, a Milestone 19 lore arc: a dino that just ate lets the meal into its next
 line, in its own temperament, so a palate is something you learn by talking rather than by catching one
 frame of 😋.
+
+## Cycle 157 — structure-smith: the state that ends
+
+**BACKLOG-544** picked, off a queue at exactly its cap. BACKLOG-533 passed over a third time — its entry
+condition is evidence from a founding-constant move that has still not happened, and its cycle-158 deadline
+is now one cycle out. 544 ships the pure expiry seam *plus* its reachable second caller: the contested-drop
+loser, which since cycle 100 has got one frame of 😤 and nothing else, gets a real funk with a clock, an
+early exit for a kind keeper, and the 😒 idle glyph — which is also the host BACKLOG-543 has been blocked
+on for two Artist fires.

@@ -2,7 +2,7 @@
   "cycle": 157,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-066: Taste talk",
-  "structureItem": null,
+  "structureItem": "BACKLOG-544: The state that ends \u2014 the expiry seam",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-11T03:10:00.000Z",
-    "structure-smith": "2026-09-10T04:22:00.000Z",
+    "structure-smith": "2026-09-11T03:22:00.000Z",
     "designer": "2026-09-10T04:40:00.000Z",
     "code-planner": "2026-09-10T04:55:00.000Z",
     "coder": "2026-09-10T05:20:00.000Z",
