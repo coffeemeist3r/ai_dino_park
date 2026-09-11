@@ -11340,3 +11340,12 @@ moves already decided.
 
 `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**, and a four-deep queue with
 two unblocked items is not asking for one.
+
+## Cycle 157 — lore-smith: the meal gets a mouth
+
+Cycle bumped to 157 on two APPROVED verdicts. No seeding on either queue: the social backlog is far over
+its cap, and the art queue was under its cap but declined anyway — both queued art items are blocked on a
+host that does not exist, and a third blocked item is not a queue, it is a landfill. Suggested next-up is
+**BACKLOG-066 — taste talk**, a Milestone 19 lore arc: a dino that just ate lets the meal into its next
+line, in its own temperament, so a palate is something you learn by talking rather than by catching one
+frame of 😋.
