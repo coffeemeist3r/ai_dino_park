@@ -1222,3 +1222,9 @@ _(both its items — 500 and 501 — are closed; the block emptied when 501 ship
 ## Cycle 155 structure additions — the park has no idea you left (2026-09-09)
 
 _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-542 both shipped.)_
+
+## Cycle 157 closures (2026-09-11)
+
+- [x] BACKLOG-066 [emergent] Taste talk (shipped cycle 157) — a dino that just ate its favorite can let it slip in dialogue/gossip ("oh, I love fish"); learn a palate by chatting, not only by the 😋. Builds on 061.
+- [x] BACKLOG-544 [core] The state that ends (shipped cycle 157) — this cycle's lore track (BACKLOG-123) gives the sulk an ending: a short clock, a kind-gesture early exit, a "got over it" memory. That is one instance of a shape the park now wears in at least four places and has never named. `pendingRepair`'s sulk, the standoff's flash, the cold mood in `fidget.ts`, and the jealous flag `homecoming.ts` sets are each a state entered by a rule and left by a *different* bespoke rule, or by none at all — which is why 123 had to be filed as a feature rather than as a bug. **123 shipped at cycle 156, so the seam now has its one real caller.** Extract it: a pure `expiry.ts` that holds `{ enteredAtStep, windowSteps, clearedBy }` per state and answers *has this ended, and how* — with 123's sulk as its first and only caller, and the second and third moved over only when a cycle has a reason to touch them. **Deliberately queued behind 123, not before it:** a seam built before it has one real instance is the thing this studio keeps having to un-build. The reachability bar is satisfied through its callers, not on its own. Builds on 123 / 310 / 120.
+

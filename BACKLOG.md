@@ -99,7 +99,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 27 lore additions — taste (2026-06-01)
 
-- [x] BACKLOG-066 [emergent] Taste talk — a dino that just ate its favorite can let it slip in dialogue/gossip ("oh, I love fish"); learn a palate by chatting, not only by the 😋. Builds on 061.
 - [ ] BACKLOG-067 [social] Keeper-loaded hatch — choose which food to drop (cycle the loaded feed, shown in HUD) instead of a random handful; the mirror of the `[`/`]` gift selector, for the hatch.
 - [ ] BACKLOG-068 [emergent] Acquired taste — a dino fed the same non-favorite food many times slowly warms to it (tiny capped preference drift in memory); palates aren't fixed forever.
 - [ ] BACKLOG-069 [pokemon] Menu in the book — the collection book reveals each dino's favorite food, but only after you've fed it that food once. A "fill in the menu" sub-goal.
@@ -681,6 +680,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 156 structure additions — the visit has an inside (2026-09-10)
 
-- [x] BACKLOG-544 [core] The state that ends — this cycle's lore track (BACKLOG-123) gives the sulk an ending: a short clock, a kind-gesture early exit, a "got over it" memory. That is one instance of a shape the park now wears in at least four places and has never named. `pendingRepair`'s sulk, the standoff's flash, the cold mood in `fidget.ts`, and the jealous flag `homecoming.ts` sets are each a state entered by a rule and left by a *different* bespoke rule, or by none at all — which is why 123 had to be filed as a feature rather than as a bug. **123 shipped at cycle 156, so the seam now has its one real caller.** Extract it: a pure `expiry.ts` that holds `{ enteredAtStep, windowSteps, clearedBy }` per state and answers *has this ended, and how* — with 123's sulk as its first and only caller, and the second and third moved over only when a cycle has a reason to touch them. **Deliberately queued behind 123, not before it:** a seam built before it has one real instance is the thing this studio keeps having to un-build. The reachability bar is satisfied through its callers, not on its own. Builds on 123 / 310 / 120.
 
 - [ ] BACKLOG-545 [core] Once per sitting — BACKLOG-542's own text names the consumer it does not ship: *anything that should not fire twice in one sitting*. The park has several beats that are meant to be a greeting and instead are a tic — the welcome-back wave, the digest modal, the arrival line — each currently gated on a *gap* between sessions rather than on the session being a new one. With 542's session record in hand this becomes one predicate (`firstThisSession(key)`) and a small persisted set of keys spent this sitting, cleared when the session closes. Ship it with the single loudest offender converted, not all of them. **Unblocked — 542 shipped at cycle 156.** Builds on 542 / 541 / 112 / 114.

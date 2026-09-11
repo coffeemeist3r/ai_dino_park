@@ -11495,3 +11495,27 @@ runs near the top of the step tail and `checkFunks` near the bottom, so the 😒
 the funk ends — a one-step, three-second lag. It is the same ordering that lets a meal on the expiring step
 outrank the unattended ending, which is deliberate, so the lag is a consequence of a decision rather than an
 oversight. Full e2e re-run after the added spec: **714/714**.
+
+## Cycle 157 — housekeeping
+
+Two closed bullets filed to the archive (066 and 544, each with its own Structure-Track or body entry
+resolved). No section drained whole this time — the cycle-27 taste section still carries 067/068/069/070,
+and the cycle-156 structure section still carries 545. The working backlog closes at **200 open**, down
+three: a cycle that closed two and seeded none, on either queue.
+
+The **Structure Track sits at 3 against X=4**, so next cycle's Structure-smith **brainstorms before it
+drains** — the first time in four cycles that queue has been under depth. What it inherits, in order:
+**BACKLOG-538** promoted to the top by tonight's ruling on its fourth consecutive flake instance;
+**BACKLOG-545**, unblocked since cycle 156 and a live Milestone 19 arc; and **BACKLOG-533** below them, whose
+**cycle-158 deadline is now due** — next cycle either rewrites its entry condition or takes the item, and
+"passed over again for the same reason" is no longer an available answer.
+
+The **art queue stays at 2, both correctly blocked on a host that does not exist** — and 543's text now
+names the host precisely (a `makeHourMark` mood mark reading the 544 funk record) instead of claiming, for
+the third time in three cycles, that one is already live.
+
+**Milestone 19 stands at 4 of 6**, crossing its halfway line in the cycle that opened its second half. Next
+cycle's smiths pick against its two unchecked arcs: BACKLOG-067 on the lore side and BACKLOG-545 on the
+structure side — and both are unblocked, so the milestone can close inside two cycles if nothing intervenes.
+
+`lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
