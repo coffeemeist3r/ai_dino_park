@@ -11392,3 +11392,13 @@ stop talking about its dinner.
 
 Gates: build clean, **2683 unit across 253 files**, **713/713 e2e in full**. One cold-boot flake on a
 two-spec run, green isolated and green in the full suite — BACKLOG-538's fourth instance.
+
+## Cycle 157 — qa: 23 of 24 criteria pass, one partial, and the gap is named
+
+Both tracks clear their gates: build clean, **2683 unit across 253 files** (+33), **713/713 e2e in full**
+(+7). Lore track 11/11. Structure track 12/13, with the thirteenth partial and disclosed — the reachability
+half is green, the *glyph* half was not asserted end-to-end because asserting it would have meant adding a
+hook that reads back a `setText`, which is a hook re-implementing the thing it tests. The branch is one line
+and was read by eye. Also recorded: criterion 8 could not be tested literally (the generic greeting is drawn
+at random), so it was pinned on a deterministic register instead, and QA said so rather than letting a green
+tick imply a claim nobody checked. BACKLOG-538's boot flake logs its **fourth** consecutive instance.
