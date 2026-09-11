@@ -24,7 +24,15 @@ import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS,
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
-import { sulkHasFaded, shookItOffMemory, shookItOffLine } from '../world/sulk'; // BACKLOG-123
+import {
+  shookItOffMemory,
+  shookItOffLine,
+  shookOffShoulderMemory,
+  shookOffShoulderLine,
+  shoulderMendedMemory,
+  shoulderMendedLine,
+} from '../world/sulk'; // BACKLOG-123 / -544
+import { enterFunk, clearFunk, funkOf, inFunk, expiredFunks, type Funks } from '../world/expiry'; // BACKLOG-544
 import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
@@ -310,7 +318,16 @@ import {
   type SeenZones,
 } from '../world/taught';
 import { cropStage, plotAdjacent, cropOf, stageGlyph, ripeRigKey, PLOT_TILE_BY_ZONE, type CropStage } from '../world/plot';
-import { FOODS, favoriteFood, foodReaction, seasonCraving, type Food } from '../world/foods';
+import {
+  FOODS,
+  favoriteFood,
+  foodReaction,
+  seasonCraving,
+  ateFavoriteMemory,
+  ateMemory,
+  lastTaste,
+  type Food,
+} from '../world/foods'; // BACKLOG-066
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
@@ -553,11 +570,15 @@ export class WorldScene extends Phaser.Scene {
   private streak: Streak = NO_STREAK;
   private lastHomecoming: Homecoming | null = null;
   private liveBubbles = new Set<string>();
-  /** The jealous runner-up awaiting a make-up greet (BACKLOG-125); transient, one-shot, not persisted. */
-  private pendingRepair: string | null = null;
-  /** BACKLOG-123: the `worldSteps` the sulk above began at, so it can end without the keeper. One field
-   *  rather than a map because `pendingRepair` is one name — the bowl only ever has one sulker. */
-  private pendingRepairAt = 0;
+  /**
+   * Who is in a funk, and since which world step (BACKLOG-544).
+   *
+   * Replaces the `pendingRepair` / `pendingRepairAt` pair: a jealous runner-up awaiting a make-up greet is
+   * now one entry of kind `sulk`, and the dino that came away from a contested drop with nothing is one of
+   * kind `shoulder`. Transient — a funk is a thing that happens while you are watching, so it is not
+   * persisted, exactly as `pendingRepair` was not.
+   */
+  private funks: Funks = {};
   /** The last recovery flourish fired (BACKLOG-318), for the dev hook; transient, not persisted. */
   private lastMoodLift: string | null = null;
   /** Per-dino wall-clock ms until which a recovered dino idles perkier (BACKLOG-325); transient. */
@@ -2593,6 +2614,7 @@ export class WorldScene extends Phaser.Scene {
       this.flashFeed(gobbler, '😖');
       this.logEvent(`😖 ${gobblerName} slunk off — ${eater.name} wouldn't budge`);
       this.sting(gobblerName); // BACKLOG-412: it came away with nothing, and takes to its ritual sooner for it
+      this.shoulderFunk(gobblerName); // BACKLOG-544: and it is visibly sore about it for the next minute
       this.eatFood(eater);
     } else {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
@@ -2602,6 +2624,7 @@ export class WorldScene extends Phaser.Scene {
       this.flashFeed(gobbler, '😤');
       this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food${because}`);
       this.sting(eater.name); // BACKLOG-412: the ceding winner is the one left with nothing here
+      this.shoulderFunk(eater.name); // BACKLOG-544: and it is visibly sore about it for the next minute
       this.eatFood(gobbler);
     }
   }
@@ -2620,6 +2643,48 @@ export class WorldScene extends Phaser.Scene {
   private stungNow(name: string): boolean {
     const at = this.stungAt[name];
     return at !== undefined && stingIsFresh(this.worldSteps - at);
+  }
+
+  /**
+   * The one jealous sulker, if there is one (BACKLOG-544).
+   *
+   * `pendingRepair` was a single field because the bowl only ever has one — the homecoming picks at most
+   * one near-tied runner-up. That stays true; this just reads it off the seam instead of off its own field.
+   */
+  private sulker(): string | null {
+    const hit = Object.entries(this.funks).find(([, f]) => f.kind === 'sulk');
+    return hit ? hit[0] : null;
+  }
+
+  /**
+   * Take the shoulder (BACKLOG-544) — this dino came away from the contested drop with nothing, and unlike
+   * the sting (412, which only changes how soon a private ritual starts) this one is visible: a 😒 over its
+   * head for the next minute, ending on its own or early if the keeper comes.
+   */
+  private shoulderFunk(name: string): void {
+    this.funks = enterFunk(this.funks, name, 'shoulder', this.worldSteps);
+    this.logEvent(`😒 ${name} is sore about the hatch`);
+  }
+
+  /**
+   * The keeper turned up while a dino was still sore about a lost scramble (BACKLOG-544) — by feeding it or
+   * by greeting it, either door. One method for all three call sites: the keeper's attention is the keeper's
+   * attention however it arrives, and three copies of this would be three places for the ending to drift.
+   *
+   * Returns whether it fired, so a caller that wants to know can ask. No affinity change — 125's outsized
+   * repair bonus belongs to the *jealous* sulk, and 395 owns the social ledger of a contested drop.
+   */
+  private cheerShoulder(name: string): boolean {
+    if (funkOf(this.funks, name)?.kind !== 'shoulder') return false;
+    this.funks = clearFunk(this.funks, name);
+    this.memory = remember(this.memory, name, shoulderMendedMemory(name));
+    const dino = this.dinoByName(name);
+    if (dino) {
+      this.showBubble(dino, shoulderMendedLine(name));
+      this.liftMood(dino);
+    }
+    this.logEvent(`🙂 ${name} was cheered up after the hatch`);
+    return true;
   }
 
   /** Chebyshev distance in tiles (king's-move). Used by the feeding swarm (BACKLOG-375). */
@@ -2642,9 +2707,8 @@ export class WorldScene extends Phaser.Scene {
     this.memory = remember(
       this.memory,
       d.name,
-      r.favorite
-        ? `you snapped up the food at the hatch — your favorite ${kind!.label}!`
-        : 'you scrambled to the hatch and snapped up the food',
+      // BACKLOG-066: through the builders, so `lastTaste` can never be emptied by a reword of the string.
+      r.favorite ? ateFavoriteMemory(kind!.label) : ateMemory(),
     );
     if (warming) {
       this.memory = remember(this.memory, d.name, warmMemory());
@@ -2653,12 +2717,15 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-123: a meal is a kind gesture too. The slighted dino takes the repair ending — the same one
     // a make-up greet earns — rather than being left to shake it off alone. The affinity bump stays the
     // feed's own: 125's outsized bonus belongs to walking over and saying something.
-    if (this.pendingRepair === d.name) {
-      this.pendingRepair = null;
+    if (this.sulker() === d.name) {
+      this.funks = clearFunk(this.funks, d.name);
       this.memory = remember(this.memory, d.name, repairMemory(d.name));
       this.showBubble(d, repairLine(d.name));
       this.liftMood(d);
     }
+    // BACKLOG-544: the other funk a meal can mend. A dino still sore about losing the *last* scramble,
+    // handed this one, is a keeper who turned up — the same door the make-up greet comes through.
+    this.cheerShoulder(d.name);
     this.flashFeed(d, r.emoji);
     // BACKLOG-374: a moping loner soothed by its *favorite* food gets a quiet solace beat a plain meal never
     // gives. The 🥀 itself only lifts when a real bond forms (369) — this is a momentary per-palate comfort.
@@ -2689,24 +2756,33 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * The sulk shakes itself off (BACKLOG-123).
+   * The funks that ran out their window shake themselves off (BACKLOG-123 / -544).
    *
-   * Runs after `checkFeeding` in the `forceStep` tail on purpose: if a slighted dino eats on the very step
+   * Runs after `checkFeeding` in the `forceStep` tail on purpose: if a funked dino eats on the very step
    * its window elapses, the meal is what ended the funk and the book should say so. An attended ending
    * outranks an unattended one whenever both are available in the same step.
+   *
+   * Was `checkSulk`, which knew about exactly one funk and read its own two fields. It now asks the seam
+   * which funks are due and answers per kind — the same recovery in both cases (a float, a memory that
+   * refuses to credit a keeper who did nothing, and `liftMood`'s flourish), with the words that belong to
+   * the door the dino came in by.
    */
-  private checkSulk(): void {
-    if (!this.pendingRepair) return;
-    if (!sulkHasFaded(this.worldSteps - this.pendingRepairAt)) return;
-    const name = this.pendingRepair;
-    this.pendingRepair = null;
-    this.memory = remember(this.memory, name, shookItOffMemory(name));
-    const dino = this.dinoByName(name);
-    if (dino) {
-      this.showBubble(dino, shookItOffLine(name));
-      this.liftMood(dino); // the same recovery the make-up greet earns, arriving by the other road
+  private checkFunks(): void {
+    const due = expiredFunks(this.funks, this.worldSteps);
+    if (!due.length) return;
+    for (const { name, kind } of due) {
+      this.funks = clearFunk(this.funks, name);
+      const sulking = kind === 'sulk';
+      this.memory = remember(this.memory, name, sulking ? shookItOffMemory(name) : shookOffShoulderMemory(name));
+      const dino = this.dinoByName(name);
+      if (dino) {
+        this.showBubble(dino, sulking ? shookItOffLine(name) : shookOffShoulderLine(name));
+        this.liftMood(dino); // the same recovery the make-up greet earns, arriving by the other road
+      }
+      this.logEvent(
+        sulking ? `✨ ${name} got over its sulk on its own` : `✨ ${name} got over the hatch on its own`,
+      );
     }
-    this.logEvent(`✨ ${name} got over its sulk on its own`);
     void this.saveGame();
   }
 
@@ -5636,7 +5712,7 @@ ${e.short}`;
     this.refreshSleepPoses();
     this.maybeMurmur();
     this.checkFeeding();
-    this.checkSulk(); // BACKLOG-123: after checkFeeding, so a meal this step outranks the shakeoff
+    this.checkFunks(); // BACKLOG-123/-544: after checkFeeding, so a meal this step outranks the shakeoff
     this.checkPlot();
     this.checkPondSight(); // BACKLOG-359: a grove dino reaching the pond for the first time
     this.checkNeeds(); // BACKLOG-371: hunger/thirst build; a dino at the pond drinks
@@ -5755,7 +5831,9 @@ ${e.short}`;
         // keep their glyph; activityById is untouched (the 295 __activity hook still reads 'wandering').
         // BACKLOG-310: a jealous sulk (pendingRepair) shades that idle glyph to 😒 — mood over motion.
         // Cold keeps its signature glyph (the floating 🥶 mark already signals the cold funk).
-        const mood: Mood | undefined = this.pendingRepair === d.name ? 'sulk' : undefined;
+        // BACKLOG-544: either funk shades it — a slight at homecoming and a lost scramble at the hatch are
+        // the same feeling from the player's side, and the glyph family has one 😒 for both.
+        const mood: Mood | undefined = inFunk(this.funks, d.name) ? 'sulk' : undefined;
         // BACKLOG-325: a just-recovered dino (no current mood) idles with the brightened flourish glyph
         // for a short window before settling back to its plain signature quirk.
         const lifted = !mood && Date.now() < (this.liftedUntil[d.name] ?? 0);
@@ -6018,8 +6096,8 @@ ${e.short}`;
       const rival = this.dinos.find((d) => d.name === hc.jealous!.name);
       if (rival) this.showBubble(rival, hc.jealous.line);
       // The slighted dino now waits for a make-up greet (BACKLOG-125).
-      this.pendingRepair = hc.jealous.name;
-      this.pendingRepairAt = this.worldSteps; // BACKLOG-123: the clock the funk ages against
+      // BACKLOG-123/-544: the clock the funk ages against now lives on the seam with the kind.
+      this.funks = enterFunk(this.funks, hc.jealous.name, 'sulk', this.worldSteps);
       // ...and a friend crosses over to console it: a dino it once consoled comes first
       // (gratitude echo, BACKLOG-132), else its closest friend above the floor (BACKLOG-130).
       const who = comforter(hc.jealous.name, this.bonds, this.dinos.map((d) => d.name), this.gratitude);
@@ -6202,6 +6280,7 @@ ${e.short}`;
       recentMemory: recall(this.memory, d.name),
       gratitude: whoClearedMyName(this.memory, d.name) ?? undefined,
       keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[d.name] ?? 0)),
+      tasted: lastTaste(recall(this.memory, d.name)) ?? undefined, // BACKLOG-066
     };
   }
 
@@ -7606,6 +7685,9 @@ ${e.short}`;
       // Mealtime mood in the voice (BACKLOG-404): how its last contested drop went, while that beat is still
       // on the ring. The ring is the freshness gate — when the memory rolls off, the dino stops mentioning it.
       mealtime: lastHatchOutcome(recall(this.memory, target.name)) ?? undefined,
+      // Taste talk (BACKLOG-066): what it last ate and what it thought of it, while the meal is still on
+      // the ring. Same freshness gate as `mealtime` above, one line below it, for the same reason.
+      tasted: lastTaste(recall(this.memory, target.name)) ?? undefined,
       // The ritual colours the voice (BACKLOG-423): the enrichment half. Goes through the same `ticFor` the
       // aside and the memory filing use, so the three can never name different rituals.
       interrupted: caught
@@ -7886,7 +7968,7 @@ ${e.short}`;
    * tone delta — a make-up greet still earns the outsized repair bump and its 😊 beat.
    */
   private recordTone(name: string, id: ToneId, traits?: Dino['traits']): void {
-    const repairing = this.pendingRepair === name;
+    const repairing = this.sulker() === name;
     // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
     const warming = !repairing && this.coldPending.has(name);
     // The loner (BACKLOG-135): a tone pick to a friendless dino lands extra-hard too.
@@ -7908,13 +7990,16 @@ ${e.short}`;
       if (dino) this.showBubble(dino, perkUpLine(name));
     }
     if (repairing) {
-      this.pendingRepair = null;
+      this.funks = clearFunk(this.funks, name);
       const dino = this.dinos.find((d) => d.name === name);
       if (dino) {
         this.showBubble(dino, repairLine(name));
         this.liftMood(dino); // BACKLOG-318: the make-up greet bounces its signature quirk back
       }
     }
+    // BACKLOG-544: a greet also reaches a dino still sore about a lost scramble. Never both — a dino is in
+    // one funk at a time — so this costs the repair path nothing.
+    if (!repairing) this.cheerShoulder(name);
     if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
     this.refreshHeartsPanel();
@@ -7923,7 +8008,7 @@ ${e.short}`;
   /** Raise a dino's affinity from a greet, persist, and refresh the panel. */
   private recordGreet(name: string, traits?: Dino['traits']): void {
     // A make-up greet to the jealous runner-up (BACKLOG-125): outsized bump, 😊, one-shot.
-    const repairing = this.pendingRepair === name;
+    const repairing = this.sulker() === name;
     // Warming a cold-funked dino (BACKLOG-184): the repair shape, repair itself still winning.
     const warming = !repairing && this.coldPending.has(name);
     // The loner (BACKLOG-135): the keeper's notice lands extra-hard on a dino with no dino-friends.
@@ -7944,13 +8029,16 @@ ${e.short}`;
       if (dino) this.showBubble(dino, perkUpLine(name));
     }
     if (repairing) {
-      this.pendingRepair = null;
+      this.funks = clearFunk(this.funks, name);
       const dino = this.dinos.find((d) => d.name === name);
       if (dino) {
         this.showBubble(dino, repairLine(name));
         this.liftMood(dino); // BACKLOG-318: the make-up greet bounces its signature quirk back
       }
     }
+    // BACKLOG-544: a greet also reaches a dino still sore about a lost scramble. Never both — a dino is in
+    // one funk at a time — so this costs the repair path nothing.
+    if (!repairing) this.cheerShoulder(name);
     if (repairing || warming) this.clearColdFunk(name, warming);
     void this.saveGame();
     this.refreshHeartsPanel();
@@ -8729,9 +8817,15 @@ ${e.short}`;
     // any: dev-only Playwright hook — strings of currently-alive speech bubbles
     (window as any).__bubbleTexts = () => [...this.liveBubbles];
     // any: dev-only Playwright hook — the jealous runner-up awaiting a make-up greet (or null)
-    (window as any).__pendingRepair = () => this.pendingRepair;
+    (window as any).__pendingRepair = () => this.sulker();
     // any: dev-only Playwright hook — how many steps the live sulk has run (BACKLOG-123), null when none
-    (window as any).__sulkAge = () => (this.pendingRepair ? this.worldSteps - this.pendingRepairAt : null);
+    (window as any).__sulkAge = () => {
+      const s = this.sulker();
+      return s ? this.worldSteps - funkOf(this.funks, s)!.since : null;
+    };
+    // any: dev-only Playwright hook — every live funk on the 544 seam, with its age in world steps
+    (window as any).__funks = () =>
+      Object.entries(this.funks).map(([name, f]) => ({ name, kind: f.kind, age: this.worldSteps - f.since }));
     // any: dev-only Playwright hook — last dino-to-dino comfort beat {comforter, sulker} (or null)
     (window as any).__lastComfort = () => this.lastComfort;
     // any: dev-only Playwright hook — gratitude ledger (consoled → comforters it owes), BACKLOG-132

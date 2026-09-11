@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { SULK_FADES_AFTER_STEPS, sulkHasFaded, shookItOffMemory, shookItOffLine } from './sulk';
+import {
+  SULK_FADES_AFTER_STEPS,
+  sulkHasFaded,
+  shookItOffMemory,
+  shookItOffLine,
+  shookOffShoulderMemory,
+  shookOffShoulderLine,
+  shoulderMendedMemory,
+  shoulderMendedLine,
+} from './sulk';
 import { repairMemory } from './repair';
 import { STING_FADES_AFTER_STEPS } from './tic';
 
@@ -46,5 +55,32 @@ describe('BACKLOG-123 — what the unattended ending says', () => {
 
   it('reads differently from the repaired ending, so the book can tell them apart', () => {
     expect(shookItOffMemory('Thornback')).not.toBe(repairMemory('Thornback'));
+  });
+});
+
+describe('BACKLOG-544 — the standoff funk has the same two endings', () => {
+  it('names the dino in all four strings', () => {
+    for (const s of [
+      shookOffShoulderMemory('Thornback'),
+      shookOffShoulderLine('Thornback'),
+      shoulderMendedMemory('Thornback'),
+      shoulderMendedLine('Thornback'),
+    ]) {
+      expect(s).toContain('Thornback');
+    }
+  });
+
+  it('the unattended ending does not credit the keeper, and the attended one does', () => {
+    // BACKLOG-123's register assertion, applied to its sibling. The book must read differently depending
+    // on whether the keeper turned up, and it can only do that if the unattended line refuses the credit.
+    expect(shookOffShoulderMemory('Thornback')).not.toContain('keeper');
+    expect(shoulderMendedMemory('Thornback')).toContain('keeper');
+  });
+
+  it('reads as a different beat from the jealous sulk it sits beside', () => {
+    // Same feeling, different door. If these ever collapse into one string the player loses the ability
+    // to tell "you came home to somebody else" from "I lost a scramble" in the collection book.
+    expect(shookOffShoulderMemory('Thornback')).not.toBe(shookItOffMemory('Thornback'));
+    expect(shookOffShoulderLine('Thornback')).not.toBe(shookItOffLine('Thornback'));
   });
 });

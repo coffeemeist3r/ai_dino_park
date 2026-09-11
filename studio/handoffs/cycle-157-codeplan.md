@@ -126,3 +126,52 @@ meal on the very step a window elapses is what ended the funk.
 None known at plan time. Risk noted: the `pendingRepair` conversion touches nine sites read by roughly
 thirty e2e assertions through `__pendingRepair` / `__sulkAge`; the hook contracts are held identical on
 purpose so those assertions are the conversion's own regression net.
+
+---
+
+## Shipped (Coder, cycle 157)
+
+Build order held: the 544 field conversion went into `eatFood` first, the 066 builder swap on top of it.
+
+**Structure track — BACKLOG-544**
+- `game/src/world/expiry.ts` (new, pure) — `FunkKind` / `Funk` / `Funks`, `FUNK_WINDOW`, `enterFunk`,
+  `clearFunk`, `funkOf`, `inFunk`, `expiredFunks`. `FUNK_WINDOW.sulk` imports `SULK_FADES_AFTER_STEPS`
+  rather than restating 40.
+- `game/src/world/sulk.ts` — four standoff strings appended (`shookOffShoulderMemory` / `Line`,
+  `shoulderMendedMemory` / `Line`).
+- `game/src/scenes/WorldScene.ts` — `pendingRepair` + `pendingRepairAt` deleted, replaced by one `funks`
+  record; `sulker()`, `shoulderFunk()` and `cheerShoulder()` added; `checkSulk` became `checkFunks`;
+  `resolveContest` enters a `shoulder` funk on the dino it already stings in both branches; the idle mood
+  glyph now reads `inFunk` so either kind shades to 😒; `__pendingRepair` / `__sulkAge` held byte-identical;
+  `__funks` added.
+- Tests: `game/src/world/expiry.test.ts` (14), `sulk.test.ts` +3, `tests/e2e/cycle-157-funk.spec.ts` (4).
+
+**Lore track — BACKLOG-066**
+- `game/src/world/foods.ts` — `ateFavoriteMemory`, `ateMemory`, `lastTaste` appended.
+- `game/src/ai/brain.ts` — `NPCContext.tasted`, `tasteAside` (six lines), composed last at cap 620.
+- `game/src/ai/webllmBrain.ts` — one taste clause in `buildMessages`.
+- `game/src/scenes/WorldScene.ts` — `eatFood` files through the builders; the live greet literal and
+  `greetContextFor` both carry `tasted`.
+- Tests: `tests/unit/cycle-157-taste.test.ts` (16), `tests/e2e/cycle-157-taste.spec.ts` (3).
+
+**Two plan deviations, both because the plan named a hook that does not exist.**
+1. The e2e reads the canned greeting through `__greetLine`, not `__cannedLine` — the latter was the plan's
+   invention. `__greetLine` is the existing hook and returns exactly what the plan wanted.
+2. The planned "idle glyph reads 😒" e2e assertion was **dropped**, not faked. There is no `__moodGlyph`
+   hook and inventing one to assert a `setText` would be a hook that re-implements the thing it tests —
+   the cycle-128 discipline, in reverse. The glyph path is covered where it is decidable: `inFunk` is
+   unit-tested, `moodFidget(traits, 'sulk')` already has cycle-070's spec, and the e2e asserts the funk
+   record the glyph reads from. Noted for QA rather than quietly deleted.
+3. Also dropped: an e2e assertion on the non-favorite food's *label* being absent, which would have needed
+   a `__foods` hook. Replaced with the stronger and hook-free assertion that the line mentions the hatch
+   but never the word `favorite`.
+
+**Gates:** `npm run build` clean. `npx vitest run` — **2683 passed, 3 skipped, 253 files**.
+`npx playwright test` — **713/713 passed in full** (6.2m), including `mobile-minds` long-dialog.
+`@mlc-ai/web-llm` imported only under `game/src/ai/`. `cycle-145-reachability` green (8/8) — no rig shipped
+without a host. No save-format change.
+
+**One flake, noted not hidden.** On the first (two-spec) run, two `cycle-157-funk` specs failed at
+`boot`'s `__ready` wait while two others in the same file passed. Re-run isolated: 4/4 green. Re-run in the
+full 713-spec suite: green. The known cold-Vite parallel-load flake (BACKLOG-538's third instance was
+logged last cycle); this is its fourth, and it remains a boot-timing failure rather than a regression.

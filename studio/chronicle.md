@@ -11379,3 +11379,16 @@ it. 544 is one new pure module, four new strings in `sulk.ts`, and nine mechanic
 whose `__pendingRepair` / `__sulkAge` hook contracts are held byte-identical so the existing thirty-odd e2e
 assertions act as the conversion's own regression net. 066 is two builders, one backwards ring read modelled
 on `lastHatchOutcome`, and the tenth aside.
+
+## Cycle 157 — coder: the seam, and the dino who lost the scramble
+
+`expiry.ts` landed pure and small, and the jealous sulk moved onto it without changing a byte of its own
+behavior — `__pendingRepair` and `__sulkAge` were held identical on purpose so the thirty-odd e2e assertions
+that read them were the conversion's regression net, and they stayed green. The reachable half landed too:
+the dino that comes away from a contested drop with nothing now wears a 😒 for sixty seconds instead of one
+frame, and gets the same two endings — its own, or the keeper's. On the lore side the tenth aside went in,
+and `lastTaste` reads the meal off the six-slot ring so nothing had to be added to the save to make a dino
+stop talking about its dinner.
+
+Gates: build clean, **2683 unit across 253 files**, **713/713 e2e in full**. One cold-boot flake on a
+two-spec run, green isolated and green in the full suite — BACKLOG-538's fourth instance.

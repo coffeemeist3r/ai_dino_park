@@ -77,6 +77,15 @@ export interface NPCContext {
    * the hour means *to this one*, which is the half 109 made possible and nothing had spent.
    */
   standing?: DayStanding;
+  /**
+   * What this dino last ate and whether it was its favorite (BACKLOG-066), set only while the meal is still
+   * on the 6-slot recall ring. `label` is empty for a plain meal — a dino that got something it merely
+   * chewed does not name it, because naming it is what loving it sounds like.
+   *
+   * The park has computed a favorite food for every dino since cycle 25 and never once let one *say* it;
+   * until this field the player's only route to a palate was catching a 😋 in the single frame it renders.
+   */
+  tasted?: { label: string; loved: boolean };
 }
 
 export interface Observation {
@@ -358,6 +367,33 @@ export function hourAside(standing: DayStanding, traits?: Personality): string {
 }
 
 /** Canned reply used by the stub brain and as the WebLLM brain's fallback (while loading or on error). */
+/**
+ * The meal, in this dino's own mouth (BACKLOG-066) — the tenth aside, and the first that is about a thing
+ * the *keeper* did rather than a thing the world did.
+ *
+ * Six lines: loved / merely-ate × the three temperaments every aside in this module splits on. The loved
+ * half always names the food, because that is the whole point — a palate you learn by talking is a palate
+ * somebody told you. The plain half never does: a dino that ate something unremarkable does not remember
+ * which unremarkable thing it was, and a park where every dino recites its dinner is a park with a menu
+ * board rather than five opinions.
+ *
+ * The grid is not uniform, for the same reason `mealtimeAside`'s is not. A prickly dino handed its favorite
+ * will not admit to being pleased and gets as close as it can; a warm one cannot stop. A prickly dino
+ * handed something else complains about it; a warm one is gracious about it and means it.
+ */
+export function tasteAside(label: string, loved: boolean, traits?: Personality): string {
+  const prickly = !!traits && traits.agreeableness < PRICKLY_MAX;
+  const warm = !!traits && traits.agreeableness > EFFUSIVE_MIN;
+  if (loved) {
+    if (prickly) return ` …that was ${label}, at the hatch. I'm not going to make a fuss about it. it was good ${label} though.`;
+    if (warm) return ` …oh, and there was ${label} at the hatch! I do love ${label}. you remembered, didn't you.`;
+    return ` …got ${label} at the hatch earlier. my favorite, as it happens.`;
+  }
+  if (prickly) return ` …something turned up at the hatch. I ate it. I'd rather it had been something else.`;
+  if (warm) return ` …I did have a bite at the hatch, which was kind. not quite my thing, but I'd never say so.`;
+  return ` …ate at the hatch earlier. it was fine.`;
+}
+
 export function cannedReply(ctx: NPCContext): Reply {
   let reply: Reply;
   // A just-cleared dino leads with gratitude, naming its clearer (BACKLOG-247) — the deterministic
@@ -419,6 +455,16 @@ export function cannedReply(ctx: NPCContext): Reply {
   // case and every earlier cap is untouched, so a context without it returns byte-identical text to before.
   if (ctx.standing) {
     reply = { ...reply, text: (reply.text + hourAside(ctx.standing, ctx.traits)).slice(0, 540) };
+  }
+  // The meal in the voice (BACKLOG-066): the newest thing that happened to this dino and the one it is
+  // gladdest about, so it goes last where the player is most likely to still be reading. `tasted` absent
+  // is every dino that hasn't eaten lately, and every earlier cap is untouched, so a context without it
+  // returns byte-identical text to before.
+  if (ctx.tasted) {
+    reply = {
+      ...reply,
+      text: (reply.text + tasteAside(ctx.tasted.label, ctx.tasted.loved, ctx.traits)).slice(0, 620),
+    };
   }
   return reply;
 }

@@ -57,3 +57,43 @@ export function shookItOffMemory(name: string): string {
 export function shookItOffLine(name: string): string {
   return `${name}: ...anyway.`;
 }
+
+// ── The other door into a sulk (BACKLOG-544) ──────────────────────────────────────────────────────
+//
+// Everything above is the *jealous* sulk: the keeper came home to somebody else. The park has a second
+// way to end up feeling like that, and until this cycle it lasted one frame. A dino that loses a scramble
+// at the hatch — it slunk off from a winner that wouldn't budge (394), or it was the winner that ceded to
+// a gobbler (387) — got a 😖 or a 😤 for a single flash and was then, from the player's side, identical to
+// a dino that had never been at the hatch at all. It now carries a `shoulder` funk on the 544 seam for a
+// minute, and gets the same two endings its jealous sibling got last cycle.
+//
+// These live here rather than in a module of their own because they are the same feeling. A second file
+// for the standoff sulk would be a second idiom for one job, which is the debt 544 exists to stop.
+
+/**
+ * The memory a dino files when it gets over a bad turn at the hatch by itself.
+ *
+ * Twin of `shookItOffMemory`, and under the same rule: **it must not name the keeper**, because the keeper
+ * did nothing. That the book reads differently depending on whether you turned up is the whole beat.
+ */
+export function shookOffShoulderMemory(name: string): string {
+  return `${name} stopped chewing over the hatch and let it go`;
+}
+
+/** The float over a dino that has shaken off a lost scramble. No glyph — `liftMood`'s flourish fires beside it. */
+export function shookOffShoulderLine(name: string): string {
+  return `${name}: ...it's only food.`;
+}
+
+/**
+ * The memory a dino files when the keeper turned up while it was still sore about the hatch — by feeding
+ * it, by greeting it, either door. Names the keeper, because this time the keeper is why.
+ */
+export function shoulderMendedMemory(name: string): string {
+  return `the keeper came over while ${name} was still sore about the hatch`;
+}
+
+/** The float over a dino the keeper cheered up after a lost scramble. */
+export function shoulderMendedLine(name: string): string {
+  return `${name}: ...alright. alright.`;
+}

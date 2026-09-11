@@ -95,3 +95,48 @@ export function foodReaction(food: Food, traits?: Personality, season?: Season):
     emoji: favorite ? '😋' : '🙂',
   };
 }
+
+// ── Taste talk (BACKLOG-066) ─────────────────────────────────────────────────────────────────────
+//
+// Every dino has had an opinion about food since cycle 25, and until this cycle none of them could say
+// it. `favoriteFood` drives the rush range, the bond gain, the solace beat, the granary's spend priority
+// and the keeper's scan panel — and the only route the *player* had to "Thornback loves fish" was to be
+// looking at Thornback during the single frame its 😋 is on screen.
+//
+// The two meal memories are exported as builders rather than written at the call site, which is
+// BACKLOG-483's rule applied at the moment a read is created instead of a hundred cycles later: three
+// modules already parse the four *contested-drop* strings back out, and every one of those parses was
+// written long after the string it depends on. `lastTaste` below is the first reader of these two, and
+// it matches against the builders, so a reword can never silently empty it.
+
+/** The memory a dino files when the hatch gave it the thing it likes best. */
+export function ateFavoriteMemory(label: string): string {
+  return `you snapped up the food at the hatch — your favorite ${label}!`;
+}
+
+/** The memory a dino files for a plain meal — deliberately nameless, because a plain meal is a plain meal. */
+export function ateMemory(): string {
+  return 'you scrambled to the hatch and snapped up the food';
+}
+
+const ATE_FAVORITE = /^you snapped up the food at the hatch — your favorite (.+)!$/;
+const ATE_PLAIN = /^you scrambled to the hatch and snapped up the food$/;
+
+/**
+ * The most recent meal this dino still carries, and whether it loved it (BACKLOG-066).
+ *
+ * The 6-slot recall ring **is** the freshness gate — no new field, no new save key, no timer. A dino
+ * mentions its dinner while the dinner is still one of the last six things that happened to it and stops
+ * when it rolls off, which is the same gate `lastHatchOutcome` (404) uses for the contested drop and for
+ * the same reason: a passing feeling should pass without anything having to remember to end it.
+ *
+ * `remember` appends, so the newest memory is last: scan backwards.
+ */
+export function lastTaste(memories: readonly string[]): { label: string; loved: boolean } | null {
+  for (let i = memories.length - 1; i >= 0; i--) {
+    const hit = ATE_FAVORITE.exec(memories[i]);
+    if (hit) return { label: hit[1], loved: true };
+    if (ATE_PLAIN.test(memories[i])) return { label: '', loved: false };
+  }
+  return null;
+}

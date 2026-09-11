@@ -194,13 +194,22 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
   const doing = ctx.doing && ctx.doing !== 'wandering'
     ? `The keeper just walked up while you were ${DOING_PHRASE[ctx.doing]}; you still sound like it. `
     : '';
+  // Taste talk (BACKLOG-066): the model is told what the keeper's last drop was and whether this dino
+  // loved it, and colours the line with it. It is never asked to invent the palate — that is
+  // `favoriteFood`'s deterministic read, and `tasteAside` carries the same fact to every device whether
+  // or not a model ever loads.
+  const tasted = ctx.tasted
+    ? ctx.tasted.loved
+      ? `The keeper dropped ${ctx.tasted.label} at the hatch a little while ago and you got it — it is your favorite food, and you are still pleased about it. `
+      : `You ate at the hatch a little while ago. It was not your favorite, but it was food. `
+    : '';
   // Positive-led: vivid character first, one light anti-assistant clause, room for color.
   const system =
     `You are ${ctx.name}, a ${ctx.species} dinosaur with big feelings and strong opinions, living in a lively prehistoric park. ` +
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}${standing}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}` +
+    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}${tasted}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).
