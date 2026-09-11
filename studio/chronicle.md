@@ -11358,3 +11358,15 @@ is now one cycle out. 544 ships the pure expiry seam *plus* its reachable second
 loser, which since cycle 100 has got one frame of 😤 and nothing else, gets a real funk with a clock, an
 early exit for a kind keeper, and the 😒 idle glyph — which is also the host BACKLOG-543 has been blocked
 on for two Artist fires.
+
+## Cycle 157 — designer: two tracks, both about the middle of a sitting
+
+**Lore (066):** the tenth aside. A dino's last meal reaches its mouth — food named, opinion coloured by
+temperament — read off the 6-slot memory ring exactly as 404 reads the last contested drop, so the ring is
+the freshness gate and no new state, field or save change is needed. Pays down BACKLOG-483's complaint for
+the two feeding strings on the way past by exporting them as builders.
+
+**Structure (544):** `expiry.ts`, pure, two callers. The jealous sulk moves on unchanged; the contested-drop
+loser gets a `shoulder` funk it never had — a 😒 for sixty seconds, ending on its own or early if the keeper
+comes. The cold funk and the mood lift deliberately do not move: two callers make it a rule, four make it a
+migration nobody asked for.
