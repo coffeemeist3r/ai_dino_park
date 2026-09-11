@@ -11370,3 +11370,12 @@ the two feeding strings on the way past by exporting them as builders.
 loser gets a `shoulder` funk it never had — a 😒 for sixty seconds, ending on its own or early if the keeper
 comes. The cold funk and the mood lift deliberately do not move: two callers make it a rule, four make it a
 migration nobody asked for.
+
+## Cycle 157 — code-planner: structure first, because both tracks edit the same method
+
+Both tracks land in `eatFood`, so the build order is fixed: the 544 field conversion (`pendingRepair` +
+`pendingRepairAt` becoming one `funks` record) goes in first, and 066's memory-builder swap sits on top of
+it. 544 is one new pure module, four new strings in `sulk.ts`, and nine mechanical call-site conversions
+whose `__pendingRepair` / `__sulkAge` hook contracts are held byte-identical so the existing thirty-odd e2e
+assertions act as the conversion's own regression net. 066 is two builders, one backwards ring read modelled
+on `lastHatchOutcome`, and the tenth aside.
