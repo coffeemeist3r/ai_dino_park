@@ -11567,3 +11567,11 @@ would have read "random handful" until the next keypress. The predicted coverage
 __favoriteFood has existed since BACKLOG-061 and gave the aim-a-meal criterion its assertion without a
 new hook. Build clean, 2700 unit green, 727/728 e2e with a single re-run-green victim that moved between
 runs: BACKLOG-538's signature, fifth consecutive cycle.
+
+## Cycle 158 — qa
+
+20/20 criteria pass across both tracks, one with a disclosed scope note: the aim-a-meal spec asserts
+that the keeper put a named dino's favorite on the ground, not that the dino rushed — pinning a wander
+position to assert the rush would manufacture the evidence rather than find it. 2700 unit, 728 e2e
+green under the flake protocol. BACKLOG-538 logged its fifth consecutive instance, two runs, two
+different victims, both green isolated.
