@@ -11692,3 +11692,26 @@ was entitled to seed 1–2 `[art]` items and did not.** Nothing is lost tonight 
 hosts, not depth, and two more blocked rigs would not have given this fire anything to draw — but next
 cycle's Lore-smith should count `^- \[ \] BACKLOG.*\[art\]` against the tag column rather than against
 the line, and may seed if it finds a subject whose host already exists.
+
+## Cycle 158 — housekeeping
+
+Two closed bullets filed to `BACKLOG-archive.md` (067 and 545, the latter also removed from the
+Structure Track pointer list). **One section drained whole** — *Cycle 156 structure additions — the
+visit has an inside* — its only item being 545; the header moved to the archive with it. The working
+backlog closes at **201 open**, up one: a cycle that closed two and seeded two, both on the structure
+queue, where each new item carries a pointer as well as a body entry.
+
+The **Structure Track sits at 4 against X=4**, so next cycle's Structure-smith **drains without
+brainstorming** — the queue is back at target depth for the first time in two cycles. What it inherits,
+in order: **BACKLOG-538**, still top and still un-takeable until the operator rules on the infra
+reachability question; **BACKLOG-533**, whose rewritten condition puts its own deadline at cycle 165;
+and the two seeded tonight, **BACKLOG-546** (the hatch draws on something — the food ledger's one hole,
+made louder by 067) and **BACKLOG-547** (the touch bar has no selectors — the Android PWA cannot reach
+either of the game's two keeper selectors).
+
+The **art queue is 2, both blocked on hosts that do not exist**, re-verified against the code tonight
+rather than against last night's note.
+
+**No milestone is ACTIVE.** Milestone 19 shipped tonight, so the first duty of next cycle's Lore-smith
+is to draft Milestone 20's headline and lore arcs, and the Structure-smith's is to add the spine arcs
+underneath it. `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
