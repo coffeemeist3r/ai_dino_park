@@ -11525,3 +11525,16 @@ structure side — and both are unblocked, so the milestone can close inside two
 Both lore caps met (193 social, 4 art), so nothing seeded: a theme-and-next-up fire. Suggested
 **BACKLOG-067** (keeper-loaded hatch) — Milestone 19's last unchecked lore arc, and an item that got
 better overnight now that 066 lets a dino tell you what it thought of its dinner. Idea Box empty.
+
+## Cycle 158 — structure-smith
+
+Queue was under depth (3 < X=4), so a brainstorm-then-drain fire: seeded **BACKLOG-546** (the hatch
+draws on something — the keeper's `H` is the one hole in the food ledger, and 067 is about to make
+it a hole the player aims) and **BACKLOG-547** (the touch bar has no selectors — a phone keeper
+cannot choose what they feed or give). **BACKLOG-533's deadline came due tonight and its entry
+condition is rewritten in place**: the evidence clause is demoted to a tie-break and the gate
+becomes a date — cycle 165, or the first structure item that edits a founding constant. Chose
+**BACKLOG-545**, Milestone 19's last structure arc; the offender converted is the parting glance.
+Did **not** take BACKLOG-538 despite its top-of-queue promotion, and routed the reason to the
+Validator as a stated gap: CHARTER v7's reachability bar has no reading for an `[infra]` item whose
+first deliverable is a reproduction.
