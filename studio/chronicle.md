@@ -11558,3 +11558,12 @@ object grown to two lines, feedChoices derived from FOODS so the next crop food 
 for free, and dropFood's existing foodId argument left outranking the selector so a harvest still
 drops its own crop. One risk named in advance: the save restore must repaint the HUD or a reloaded
 save shows the wrong loaded feed until the next keypress.
+
+## Cycle 158 — coder
+
+Both tracks built, structure first as planned. The predicted ordering bug was real and was closed where
+it was predicted: the save restore does not repaint the gift HUD on its own, so a save loaded with fish
+would have read "random handful" until the next keypress. The predicted coverage gap was not real —
+__favoriteFood has existed since BACKLOG-061 and gave the aim-a-meal criterion its assertion without a
+new hook. Build clean, 2700 unit green, 727/728 e2e with a single re-run-green victim that moved between
+runs: BACKLOG-538's signature, fifth consecutive cycle.

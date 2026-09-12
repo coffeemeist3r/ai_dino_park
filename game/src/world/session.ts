@@ -77,3 +77,37 @@ export function sittingLine(ms: number): string {
   if (m > 0) return s > 0 ? `${m}m ${s}s` : `${m}m`;
   return `${s}s`;
 }
+
+/**
+ * The keys a **visit** has already spent (BACKLOG-545).
+ *
+ * A plain list, not a `Set`, because every other record in this file is a plain value the caller owns —
+ * and because the thing a caller most wants to do with it is read it back in a dev hook.
+ *
+ * **The unit is the visit, not the sitting.** 542 made `sessionStartedAt` re-stamp on every return, so a
+ * sitting is a *focus period*: alt-tab out and back and you are in a new one. That is the right unit for
+ * "how long did you stay" and the wrong unit for "has this greeting happened yet", because the whole point
+ * of a greeting gate is to survive the alt-tab. The visit — one page load — is what a player means by
+ * *this time I opened the park*, and it is what these predicates are keyed to.
+ *
+ * **Not persisted**, against BACKLOG-545's own guess. A reload is a new visit, so a spent set carried into
+ * it would make a restored save silently owe the keeper a goodbye it had already given. The persisted
+ * `SessionRecord` above is *history* and belongs in the save; this is the current visit's scratch, and it
+ * follows the `companyTrace` precedent instead.
+ */
+export type SpentKeys = readonly string[];
+
+/** Has `key` not yet happened this visit? */
+export function firstThisSession(spent: SpentKeys, key: string): boolean {
+  return !spent.includes(key);
+}
+
+/**
+ * Mark `key` spent. **Idempotent by value** — spending twice returns a list with one copy, the same
+ * discipline `closeSession` applies by identity one screen up. A set that can hold a key twice is a set
+ * whose contents depend on how many times a browser event fired, which is the exact hazard this gate exists
+ * to remove.
+ */
+export function spendKey(spent: SpentKeys, key: string): string[] {
+  return spent.includes(key) ? [...spent] : [...spent, key];
+}

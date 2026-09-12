@@ -130,6 +130,8 @@ export interface SaveData {
    *  how long they were gone. Additive; absent → [] on a save written before this cycle, which has no
    *  record of its own visits and is not refused for it. */
   sessions?: SessionRecord[];
+  /** BACKLOG-067: the food id the keeper left loaded in the hatch, or `'auto'`. Absent → the random handful. */
+  loadedFood?: string;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -901,6 +903,11 @@ export function deserialize(json: string): SaveData | null {
     scale = o.scale;
   }
   // BACKLOG-121: additive over v1 too — absent in every save written before this cycle.
+  // loadedFood (BACKLOG-067) — shape only. An id this build does not know is accepted here and normalised
+  // to the random handful by `feedChoiceIndex`: the parser's job is the shape, not the vocabulary.
+  if (o.loadedFood !== undefined && typeof o.loadedFood !== 'string') return null;
+  const loadedFood = o.loadedFood as string | undefined;
+
   let visitHours: number[] | undefined;
   if (o.visitHours !== undefined) {
     if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
@@ -943,6 +950,7 @@ export function deserialize(json: string): SaveData | null {
     ticEchoFrom,
     awayLog,
     sessions,
+    loadedFood,
     streak,
     leftDays,
     catchWarmth,

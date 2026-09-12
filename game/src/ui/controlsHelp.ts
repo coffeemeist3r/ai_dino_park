@@ -18,6 +18,11 @@ export function holdingLine(label: string): string {
   return `Holding: ${label}`;
 }
 
+/** The loaded-feed line (BACKLOG-067), the hatch's half of the same HUD. Keys omitted, as above. */
+export function feedLine(label: string): string {
+  return `Feed: ${label}`;
+}
+
 export interface HelpRow {
   keys: string;
   action: string;
@@ -29,6 +34,7 @@ export const HELP_ROWS: ReadonlyArray<HelpRow> = [
   { keys: 'E or Z', action: 'talk' },
   { keys: 'F', action: 'give held item' },
   { keys: '[ ]', action: 'switch held item' },
+  { keys: ', .', action: 'switch loaded feed' },
   { keys: 'H', action: 'drop food' },
   { keys: 'C', action: 'friendship hearts' },
   { keys: 'V', action: 'lens (book / news)' },

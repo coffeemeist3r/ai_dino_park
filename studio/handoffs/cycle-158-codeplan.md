@@ -242,3 +242,60 @@ none.
 ### Estimated touch count
 
 `~6 files`. Combined cycle: **~10 files**, inside the CHARTER v6 arc budget.
+
+---
+
+## Shipped
+
+### Files touched
+
+**Structure track (BACKLOG-545)**
+- `game/src/world/session.ts` — `SpentKeys`, `firstThisSession`, `spendKey`, with the header note on why
+  the unit is the visit and why the set is not persisted.
+- `game/src/scenes/WorldScene.ts` — `GLANCE_KEY` module constant; `visitStartedAt` + `spentThisVisit`
+  fields; `onDeparture` gated and measured against the visit; `__ageSession` winds both clocks;
+  `__spentThisVisit` hook.
+- `tests/unit/cycle-158-session-gate.test.ts` (6)
+- `tests/e2e/cycle-158-once-per-visit.spec.ts` (6)
+
+**Lore track (BACKLOG-067)**
+- `game/src/world/foods.ts` — `FEED_AUTO`, `FEED_AUTO_LABEL`, `FeedChoice`, `feedChoices`, `cycleFeed`,
+  `feedChoiceIndex`. `FOODS` untouched.
+- `game/src/ui/controlsHelp.ts` — `feedLine`, plus the `, .` help row.
+- `game/src/scenes/WorldScene.ts` — `loadedFeedIndex` field; `feedKind` precedence helper; `dropFood`
+  now one line; `,`/`.` bindings; `cycleFeedBy`; two-line `refreshGiftHud`; save write + restore.
+- `game/src/world/saveGame.ts` — `loadedFood?: string` + its shape guard.
+- `tests/unit/cycle-158-loaded-feed.test.ts` (11)
+- `tests/e2e/cycle-158-loaded-feed.spec.ts` (8)
+
+**10 files** (8 source/test files created or modified per track, `WorldScene.ts` shared), inside the plan's
+estimate and inside the CHARTER v6 arc budget.
+
+### Deviations from the plan
+
+1. **`GLANCE_KEY` is a module constant, not scene-local.** It sits beside the other module constants
+   after the import block rather than inline, which is where every other scene constant lives.
+2. **The plan's uncertainty about the save restore repainting the HUD resolved as "it does not".**
+   `refreshGiftHud()` is called explicitly in the restore, immediately after `feedChoiceIndex`. Without it
+   a save loaded with `fish` would have shown `random handful` until the next keypress — the one ordering
+   bug the plan flagged in advance, found and closed where it was predicted.
+3. **The "aiming a meal" criterion needed no new hook.** `__favoriteFood` has existed since BACKLOG-061's
+   e2e and returns exactly the food id the assertion wanted. The plan authorised disclosing a gap instead;
+   the gap did not exist. Reading the code beat reasoning about it, again.
+4. **The e2e asserts the favorite *lands*, not that the dino rushes.** The rush is `reactionToFood`'s and
+   is unit-tested there against distance and energy; what 067 changes is which food the question is asked
+   about. Asserting a rush would have meant pinning a wander position, which is the kind of manufactured
+   evidence cycle 157 declined twice. Stated as a scope choice, not as coverage.
+
+### Build + test status
+
+- `npm --prefix game run build` — **clean**.
+- `npx vitest run` — **2700 passed, 3 skipped, across 255 files**. Up 17 from cycle 157's 2683.
+- `npx playwright test` (full, after `kill-port 5173`) — **727 passed, 1 failed**, then green isolated,
+  then a fresh full run with **a different victim**. Two full runs, two different single victims
+  (`mobile-minds.spec.ts` boot ×2, then `cycle-038-scan.spec.ts`), every one green when re-run alone.
+  That is **BACKLOG-538's documented one-victim-per-run signature**, logged here as its **fifth
+  consecutive cycle**, not as a regression. Total suite: **728 specs**, up 14.
+- `cycle-155-glance.spec.ts` **7/7 unmodified** and `cycle-156-sitting.spec.ts` **5/5 unmodified** — the
+  conversion reaches the same answers those files already pinned, through different code.
+- `@mlc-ai/web-llm` boundary: untouched; nothing this cycle imports it.

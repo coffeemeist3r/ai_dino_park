@@ -140,3 +140,50 @@ export function lastTaste(memories: readonly string[]): { label: string; loved: 
   }
   return null;
 }
+
+/**
+ * The loaded feed (BACKLOG-067) — what the keeper has put in the hatch.
+ *
+ * `dropFood` has rolled `FOODS[Math.floor(rand() * FOODS.length)]` since cycle 59, and seven systems
+ * downstream read one question off that roll: *was this its favorite?* The rush or the amble, the escort,
+ * the pecking order, the bond a meal is worth, the 😋, the comfort meal, the granary's spend priority. The
+ * player has never been allowed to call the coin.
+ *
+ * The list is **derived from `FOODS`**, never hand-copied: a crop food added next cycle joins the selector
+ * without anyone remembering to add it, which is the failure BACKLOG-483 is filed over.
+ */
+
+/** The slot at the front of the list: the as-shipped random roll, and the default on a fresh save. */
+export const FEED_AUTO = 'auto';
+export const FEED_AUTO_LABEL = 'random handful';
+
+export interface FeedChoice {
+  id: string;
+  label: string;
+}
+
+/** What the keeper can load: the random handful, then every food, in `FOODS` order. */
+export function feedChoices(): ReadonlyArray<FeedChoice> {
+  return [
+    { id: FEED_AUTO, label: FEED_AUTO_LABEL },
+    ...FOODS.map((f) => ({ id: f.id, label: `${f.emoji} ${f.label}` })),
+  ];
+}
+
+/** Step the selection, wrapping both ways — the same arithmetic the held-gift selector does inline. */
+export function cycleFeed(index: number, dir: number, len = feedChoices().length): number {
+  return (index + dir + len) % len;
+}
+
+/**
+ * The save-restore read: where `id` sits in the list, or the auto slot.
+ *
+ * An **unknown** id answers auto rather than throwing. A save written against a food roster this build
+ * does not have is a save from a future (or edited) game, and the right response to "I have never heard of
+ * kelp" is a random handful, not a refused load.
+ */
+export function feedChoiceIndex(id: string | undefined): number {
+  if (id === undefined) return 0;
+  const i = feedChoices().findIndex((c) => c.id === id);
+  return i < 0 ? 0 : i;
+}

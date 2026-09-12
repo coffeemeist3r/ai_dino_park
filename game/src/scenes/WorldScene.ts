@@ -51,7 +51,16 @@ import {
 import { buildMessages } from '../ai/webllmBrain';
 import { SAVE_VERSION, serialize, type SaveData } from '../world/saveGame';
 import { departureStage, shouldStamp, type DepartureStage } from '../world/departure'; // BACKLOG-541
-import { openSession, closeSession, sessionMs, pushSession, sittingLine, type SessionRecord } from '../world/session'; // BACKLOG-542
+import {
+  openSession,
+  closeSession,
+  sessionMs,
+  pushSession,
+  sittingLine,
+  firstThisSession,
+  spendKey,
+  type SessionRecord,
+} from '../world/session'; // BACKLOG-542 / 545
 import { SESSION_MIN_MS } from '../world/departure'; // BACKLOG-541: what makes a sitting a sitting
 import { GLANCE_ART_KEY, GLANCE_GLYPH, GLANCE_MS, partingGlance } from '../world/parting'; // BACKLOG-119
 import { BOWL_ID, GROVE_ID, FERNREACH_ID, HOLLOW_ID, RIDGE_ID, ZONES, type Edge, atMigrationEdge, atWater, bareZone, crossEntryTile, crossing, edgeIndicators, linkedZone, migrationStepTarget, nearLinkEdge, occupiedZones, otherZone, setZone, theZone, zoneById, zoneChain, zoneNeighbors, zoneOf, zonePopulations, zoneTileAt, zoneTint, zoneWaterTile } from '../world/zones';
@@ -327,9 +336,13 @@ import {
   ateMemory,
   lastTaste,
   type Food,
-} from '../world/foods'; // BACKLOG-066
+  FEED_AUTO,
+  feedChoices,
+  cycleFeed,
+  feedChoiceIndex,
+} from '../world/foods'; // BACKLOG-066 / 067
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
-import { HELP_CHIP, helpLines, holdingLine } from '../ui/controlsHelp';
+import { HELP_CHIP, helpLines, holdingLine, feedLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
   STICK,
@@ -408,6 +421,9 @@ const GENEROUS_BOND_BUMP = 5;
  *  Untouched by BACKLOG-307: 307 widened *who* can murmur, and compensating for that with a rate cut here
  *  would be the v7 corollary in miniature — a system tuned back down to where it was unwatchable. */
 const MURMUR_CHANCE = 0.2;
+
+/** BACKLOG-545: the once-a-visit key the goodbye glance spends. Written once, read twice. */
+const GLANCE_KEY = 'glance';
 
 export class WorldScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Sprite | Phaser.GameObjects.Rectangle;
@@ -554,6 +570,9 @@ export class WorldScene extends Phaser.Scene {
   private npcBrain!: NPCBrain;
   private giftHud!: Phaser.GameObjects.Text;
   private heldItemIndex = 0;
+  /** What the keeper has loaded into the hatch (BACKLOG-067) — an index into `feedChoices()`, whose slot
+   *  0 is the as-shipped random handful. Persisted, so the hatch is still loaded with what you left in it. */
+  private loadedFeedIndex = 0;
   /** Controls help (HUD overhaul): the [?] chip and the panel it toggles. */
   private helpChip!: Phaser.GameObjects.Text;
   private helpPanel!: Phaser.GameObjects.Text;
@@ -720,6 +739,17 @@ export class WorldScene extends Phaser.Scene {
   /** The last three closed sittings, newest first (BACKLOG-542). The open one is `sessionStartedAt`;
    *  a sitting is only written down when it ends, and only if it lasted at all. */
   private sessions: SessionRecord[] = [];
+  /**
+   * When this **visit** began (BACKLOG-545) — one page load, stamped once and never re-stamped.
+   *
+   * Deliberately not `sessionStartedAt`. 542 made that field mean a *focus period*: it is re-stamped on
+   * every return, which is right for "how long did you stay" and wrong for anything that should happen
+   * once however many times the keeper alt-tabs. The two units are different questions and now they are
+   * different fields.
+   */
+  private visitStartedAt = Date.now();
+  /** The once-a-visit keys already spent (BACKLOG-545). Transient by design — a reload is a new visit. */
+  private spentThisVisit: string[] = [];
   /** BACKLOG-534: the two textures the missed mark swaps between, baked once. Null where a rig is
    *  absent, which is what keeps the `MISSED_FAINT_ALPHA` fallback a live path rather than dead code. */
   private missedTex: string | null = null;
@@ -2394,9 +2424,7 @@ export class WorldScene extends Phaser.Scene {
   /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
   private dropFood(col?: number, foodId?: string): { tileX: number; tileY: number } {
     if (this.food) return this.food; // already a piece in play — ignore the drop
-    const kind = foodId
-      ? FOODS.find((f) => f.id === foodId) ?? FOODS[0]
-      : FOODS[Math.floor(rand() * FOODS.length)];
+    const kind = this.feedKind(foodId);
     const landing = foodLanding(COLS, ROWS, col);
     this.food = landing;
     this.foodKind = kind;
@@ -2430,6 +2458,21 @@ export class WorldScene extends Phaser.Scene {
     this.logEvent(`${kind.emoji} food dropped from the hatch (${kind.label})`);
     this.startEscort(landing, kind);
     return landing;
+  }
+
+  /**
+   * What comes out of the hatch (BACKLOG-067), in precedence order.
+   *
+   * An explicit `foodId` still wins outright: the plot harvest drops the crop it grew, and `__dropFood`
+   * forces a kind for a spec. The selector is for the *hatch key*, and a harvest is not a hatch key.
+   * Then the loaded feed, if the keeper has loaded one. Then the original roll — which is the default and
+   * is therefore still the path the founding park takes.
+   */
+  private feedKind(foodId?: string): Food {
+    if (foodId) return FOODS.find((f) => f.id === foodId) ?? FOODS[0];
+    const loaded = feedChoices()[this.loadedFeedIndex];
+    if (loaded && loaded.id !== FEED_AUTO) return FOODS.find((f) => f.id === loaded.id) ?? FOODS[0];
+    return FOODS[Math.floor(rand() * FOODS.length)];
   }
 
   /**
@@ -3867,10 +3910,18 @@ export class WorldScene extends Phaser.Scene {
 
   private onDeparture(stage: DepartureStage): void {
     if (stage !== 'leaving') return;
+    // BACKLOG-545: once a visit, not once a focus period. Checked before the work, spent after the beat
+    // actually resolves — a park with no friendship yet must not burn its one goodbye on a blur that
+    // showed nothing.
+    if (!firstThisSession(this.spentThisVisit, GLANCE_KEY)) return;
     // Who is asleep and who is on another ground are the scene's facts, not `parting.ts`'s.
     const present = this.dinos.filter((d) => this.inView(d) && !this.isResting(d)).map((d) => d.name);
-    const p = partingGlance(this.friendship, present, Date.now() - this.sessionStartedAt);
+    // BACKLOG-545: measured against the **visit**, not the sitting. Under 542's re-stamp a keeper who
+    // never held focus for twenty unbroken seconds could never earn this beat at all, because the floor
+    // restarted from every return. Twenty seconds since you opened the park is what the floor always meant.
+    const p = partingGlance(this.friendship, present, Date.now() - this.visitStartedAt);
     if (!p) return;
+    this.spentThisVisit = spendKey(this.spentThisVisit, GLANCE_KEY);
     this.glancer = p.name;
     const dino = this.dinos.find((d) => d.name === p.name);
     if (dino) this.showBubble(dino, p.line);
@@ -6356,7 +6407,14 @@ ${e.short}`;
     // any: dev-only Playwright hook — the closed sittings this save holds (BACKLOG-542)
     (window as any).__sessions = () => this.sessions;
     // any: dev-only Playwright hook — wind this sitting's start back so a spec need not sleep 20s
-    (window as any).__ageSession = (ms: number) => (this.sessionStartedAt = Date.now() - ms);
+    // BACKLOG-545: winds **both** clocks. A sitting whose start predates its own visit is incoherent, and
+    // every existing caller of this hook means "wind time back", not "wind one of two clocks back".
+    (window as any).__ageSession = (ms: number) => {
+      this.visitStartedAt = Date.now() - ms;
+      return (this.sessionStartedAt = Date.now() - ms);
+    };
+    // any: dev-only Playwright hook — the once-a-visit keys spent so far (BACKLOG-545)
+    (window as any).__spentThisVisit = () => [...this.spentThisVisit];
     (window as any).__governor = () => ({
       coarse: this.coarsePointer,
       consent: this.readMindsConsent(),
@@ -8543,6 +8601,7 @@ ${e.short}`;
       awayLog: this.awayLog, // BACKLOG-114
       streak: this.streak, // BACKLOG-122: the keeper's own day-count (additive)
       sessions: this.sessions, // BACKLOG-542: the last three closed sittings, newest first (additive)
+      loadedFood: feedChoices()[this.loadedFeedIndex].id, // BACKLOG-067: what is in the hatch (additive)
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8612,6 +8671,11 @@ ${e.short}`;
       // BACKLOG-542: the sittings this save has already closed. A save written before this cycle has none
       // and gets an empty list — the plaque then simply shows the live sitting, which starts at this boot.
       this.sessions = save.sessions ?? [];
+      // BACKLOG-067: what the keeper left in the hatch. Absent (pre-158) or unknown → the random handful.
+      // The HUD is repainted here rather than waiting for the next keypress, which is the one ordering bug
+      // this track could have shipped.
+      this.loadedFeedIndex = feedChoiceIndex(save.loadedFood);
+      this.refreshGiftHud();
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
       this.applyClockRate();
@@ -8962,12 +9026,21 @@ ${e.short}`;
     const kb = this.input.keyboard!;
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET).on('down', () => this.cycleItem(1));
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.OPEN_BRACKET).on('down', () => this.cycleItem(-1));
+    // BACKLOG-067: the hatch's own selector, the mirror of [ ] one line up.
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.PERIOD).on('down', () => this.cycleFeedBy(1));
+    kb.addKey(Phaser.Input.Keyboard.KeyCodes.COMMA).on('down', () => this.cycleFeedBy(-1));
     // F is the primary give key; G kept as an alias.
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.F).on('down', () => this.giveGift());
     kb.addKey(Phaser.Input.Keyboard.KeyCodes.G).on('down', () => this.giveGift());
 
     // any: dev-only Playwright hooks — mirror the __clockNow pattern
     (window as any).__heldItem = () => GIFTS[this.heldItemIndex].id;
+    // any: dev-only Playwright hooks — the loaded feed, mirroring __heldItem/__cycleItem (BACKLOG-067)
+    (window as any).__loadedFeed = () => feedChoices()[this.loadedFeedIndex].id;
+    (window as any).__cycleFeed = (dir = 1) => {
+      this.cycleFeedBy(dir);
+      return feedChoices()[this.loadedFeedIndex].id;
+    };
     (window as any).__cycleItem = () => {
       this.cycleItem(1);
       return GIFTS[this.heldItemIndex].id;
@@ -8980,6 +9053,13 @@ ${e.short}`;
     };
   }
 
+  /** Step the loaded feed and persist the choice — the hatch keeps what you put in it. */
+  private cycleFeedBy(dir: number): void {
+    this.loadedFeedIndex = cycleFeed(this.loadedFeedIndex, dir);
+    this.refreshGiftHud();
+    void this.saveGame();
+  }
+
   private cycleItem(dir: number): void {
     this.heldItemIndex = (this.heldItemIndex + dir + GIFTS.length) % GIFTS.length;
     this.refreshGiftHud();
@@ -8987,7 +9067,13 @@ ${e.short}`;
 
   private refreshGiftHud(): void {
     if (!this.giftHud) return;
-    this.giftHud.setText(holdingLine(GIFTS[this.heldItemIndex].label));
+    // Two lines, one text object (BACKLOG-067). A second object would need its own layout rule in
+    // `layoutGiftHud`, and the desktop origin (0,1) grows this one upward for free.
+    this.giftHud.setText(
+      [holdingLine(GIFTS[this.heldItemIndex].label), feedLine(feedChoices()[this.loadedFeedIndex].label)].join(
+        '\n',
+      ),
+    );
   }
 
   /** Bottom-left on desktop; tucked under the build stamp on touch (the stick owns bottom-left). */
