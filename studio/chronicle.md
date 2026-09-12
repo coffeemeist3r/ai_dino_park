@@ -11519,3 +11519,9 @@ cycle's smiths pick against its two unchecked arcs: BACKLOG-067 on the lore side
 structure side — and both are unblocked, so the milestone can close inside two cycles if nothing intervenes.
 
 `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
+
+## Cycle 158 — lore-smith
+
+Both lore caps met (193 social, 4 art), so nothing seeded: a theme-and-next-up fire. Suggested
+**BACKLOG-067** (keeper-loaded hatch) — Milestone 19's last unchecked lore arc, and an item that got
+better overnight now that 066 lets a dino tell you what it thought of its dinner. Idea Box empty.
