@@ -11548,3 +11548,13 @@ measured against the visit rather than the focus period, which is the additive h
 never holds focus for twenty unbroken seconds has never been said goodbye to, and now is. The spent
 set is specced transient against the item's own text, with the reason written down. Both tracks
 touch WorldScene.ts and controlsHelp.ts; structure builds first.
+
+## Cycle 158 — codeplan
+
+~10 files across both tracks, inside the arc budget. Structure builds first: the predicates go into
+session.ts rather than a new module, and the whole conversion is two one-line changes in
+onDeparture plus a visitStartedAt field. Lore reuses the gift selector wholesale — one HUD text
+object grown to two lines, feedChoices derived from FOODS so the next crop food joins the selector
+for free, and dropFood's existing foodId argument left outranking the selector so a harvest still
+drops its own crop. One risk named in advance: the save restore must repaint the HUD or a reloaded
+save shows the wrong loaded feed until the next keypress.
