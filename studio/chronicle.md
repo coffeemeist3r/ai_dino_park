@@ -11653,3 +11653,42 @@ the dinner. The visit has a beginning, a middle and an end.
 
 Gates: build clean; **2700 unit across 255 files**; **728 e2e** green under the flake protocol; web-llm
 boundary clean; save additive. Milestone 20 is the smiths' to draft at the next cycle open.
+
+## Cycle 158-art — artist: no-op, both hosts re-verified absent
+
+Two open `[art]` items, both blocked, and both blocks re-checked against the code rather than against
+last night's note — which is the whole reason this fire is worth the commit it costs.
+
+**BACKLOG-543 (the sulk, in pixels) stays blocked, for the fourth consecutive fire.** The cycle-157
+Validator declared it unblocked on the grounds that BACKLOG-544's `shoulder` funk had given the sulk a
+durable state with a live visual host, and then retracted that an hour later at the cycle-157 Artist
+fire. Tonight's check is the same one and reaches the same answer: `activityMarks` is declared
+`Phaser.GameObjects.Text[]` at `WorldScene.ts:667`, and `makeHourMark` (`:3824`) — the function that
+swaps a `Text` for an `Image` when `hasPropArt(key)` is true — is not on the activity mark's path. The
+😒 is still a `setText`. A `sulk` key added to `PROP_RIGS` tonight would land in `unplacedRigs()` and
+redden `cycle-145-reachability.test.ts`, and adding it to `worldPlacedProps()` to silence that would be
+a false entry in the register that exists to catch false entries. **Nothing in cycle 158 touched this.**
+BACKLOG-545 edited `onDeparture` and BACKLOG-067 edited `dropFood` and the gift HUD; neither went near
+the mark family. The item's text is already correct as of the cycle-157 correction and needs no fourth
+rewrite — it names the host precisely (a mood mark built by `makeHourMark`, refreshed over a dino for
+the length of its funk, reading the 544 record) and that host is still main-chain glue nobody has built.
+
+**BACKLOG-539 (the day-count on the brass) stays blocked** for the same structural reason, re-verified:
+the plaque is a single `Phaser.GameObjects.Text` (`:1288`) rendering `plaqueLines(...).join('\n')`
+(`:1368`). There is no per-line sprite for an engraved register to be blitted onto. Note that BACKLOG-542
+added a `Sitting` line to that same string two cycles ago, so the plaque now carries *two* keeper-facing
+lines set in the same plain serif as the specimen tally — which strengthens 539's case without changing
+its block.
+
+`artPipelineReady` stays **true**: nothing is wrong with the pipeline. There is simply nothing it may
+legally draw. The six sibling marks (`mend`, `doze`, `missed`, `rouse`, `vigil`, `wave`) are all authored
+pixel rigs and the funk is still the loudest un-drawn thing in that family.
+
+**One correction to tonight's own lore fire, for the record.** The Lore-smith counted the art queue at
+**4** and skipped seeding on the cap. The real count is **2** — the other two matches were `[infra]` and
+`[core]` items whose body text contains the token. The call was unaffected (2 is not under the cap of 3
+either... it is, in fact, *below* it), so the correction matters: **at a true count of 2 the Lore-smith
+was entitled to seed 1–2 `[art]` items and did not.** Nothing is lost tonight — the queue's problem is
+hosts, not depth, and two more blocked rigs would not have given this fire anything to draw — but next
+cycle's Lore-smith should count `^- \[ \] BACKLOG.*\[art\]` against the tag column rather than against
+the line, and may seed if it finds a subject whose host already exists.
