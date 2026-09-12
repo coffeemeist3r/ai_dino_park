@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-538 [infra] The victim moves again — **fourth consecutive instance at cycle 157; moved to the top of this queue by Validator ruling.** Same signature every time: the `__ready` boot wait times out on a parallel cold start, never an assertion, green isolated and green in a full run. Four cycles makes it the longest-lived known defect in the suite, and the real cost is not the re-run — it is that a flake this regular trains readers to discount a red board, which is the habit that makes a genuine regression invisible (full text in the cycle-153 block below).
-- [~] BACKLOG-545 [core] Once per sitting — the session record as a gate, so a beat that should happen once a visit does (full text in the cycle-156 block below). **Chosen cycle 158**; offender converted is the parting glance (119).
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state. **Entry condition rewritten at cycle 158, its deadline night: the evidence clause is now a tie-break on which option to take, not a gate on taking it. Taken at cycle 165, or at the first cycle whose structure item edits a founding constant, whichever comes first** (full text in the cycle-151 block below).
 - [ ] BACKLOG-546 [core] The hatch draws on something — `dropFood` conjures a piece out of nothing; every other food in the park is accounted for. A keeper supply the drop spends from, so choosing *which* food to drop is a choice with a cost (full text in the cycle-158 block below).
 - [ ] BACKLOG-547 [infra] The touch bar has no selectors — a phone keeper can drop food and give gifts but cannot choose what either one is (full text in the cycle-158 block below).
@@ -101,7 +100,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 27 lore additions — taste (2026-06-01)
 
-- [~] BACKLOG-067 [social] Keeper-loaded hatch — choose which food to drop (cycle the loaded feed, shown in HUD) instead of a random handful; the mirror of the `[`/`]` gift selector, for the hatch.
 - [ ] BACKLOG-068 [emergent] Acquired taste — a dino fed the same non-favorite food many times slowly warms to it (tiny capped preference drift in memory); palates aren't fixed forever.
 - [ ] BACKLOG-069 [pokemon] Menu in the book — the collection book reveals each dino's favorite food, but only after you've fed it that food once. A "fill in the menu" sub-goal.
 - [ ] BACKLOG-070 [emergent] Picky vs. gobble — prickly (low-agreeableness) dinos refuse non-favorite food and leave it; warm dinos eat anything. Personality shapes who'll settle, not just who rushes.
@@ -679,11 +677,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
-
-## Cycle 156 structure additions — the visit has an inside (2026-09-10)
-
-
-- [~] BACKLOG-545 [core] Once per sitting — BACKLOG-542's own text names the consumer it does not ship: *anything that should not fire twice in one sitting*. The park has several beats that are meant to be a greeting and instead are a tic — the welcome-back wave, the digest modal, the arrival line — each currently gated on a *gap* between sessions rather than on the session being a new one. With 542's session record in hand this becomes one predicate (`firstThisSession(key)`) and a small persisted set of keys spent this sitting, cleared when the session closes. Ship it with the single loudest offender converted, not all of them. **Unblocked — 542 shipped at cycle 156.** Builds on 542 / 541 / 112 / 114.
 
 ## Cycle 158 structure additions — the keeper's end of the ledger (2026-09-12)
 

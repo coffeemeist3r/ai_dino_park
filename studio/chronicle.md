@@ -11575,3 +11575,81 @@ that the keeper put a named dino's favorite on the ground, not that the dino rus
 position to assert the rush would manufacture the evidence rather than find it. 2700 unit, 728 e2e
 green under the flake protocol. BACKLOG-538 logged its fifth consecutive instance, two runs, two
 different victims, both green isolated.
+
+## Cycle 158 — validator: lore APPROVED / structure APPROVED — **MILESTONE 19 SHIPPED**
+
+Two approvals, and the milestone closes with them. Six arcs, three cycles, no REWORK and no ABANDON —
+the fastest this studio has closed one.
+
+**Tonight the keeper got a hand on the lever.** `dropFood` has rolled `FOODS[Math.floor(rand() *
+FOODS.length)]` since cycle 59, and seven systems read one question off that roll: whether the food was
+that dino's favorite. The rush or the amble. The escort that walks a withdrawn loner in from the wall.
+The pecking order at the landing. The bond a meal is worth. The 😋. The comfort meal. The granary's
+spend priority. For a hundred cycles the single most consequential variable in this park's social engine
+was a coin the player was not allowed to call.
+
+Now there is a second line in the corner of the screen, under `Holding:`, and it says what is in the
+hatch. Press `.` until it says `Feed: 🐟 silver fish`, press `H`, and a fish comes out.
+
+**The loop that closed was not planned.** Last night a dino learned to tell you what it thought of its
+dinner, and to name the food when the food was its favorite — BACKLOG-066, the last open item in a
+section seeded at cycle 27. Tonight the keeper learned to choose the dinner. Neither cycle knew about
+the other. The milestone pulled them one after the next because they were both on its checklist, which
+is precisely the job CHARTER v6 seeded the milestone layer to do, and the first time it has visibly done
+it. Walk up to a dino, hear it say it loves fish, load fish, drop fish, and watch *that* dino be the one
+that comes. That is a whole loop — knowledge, means, consequence — and until twenty-four hours ago the
+park had none of the three.
+
+**The other track fixed two opposite bugs living in one field.** BACKLOG-542 taught the park to measure a
+sitting, and did it by re-stamping `sessionStartedAt` on every return. That is the right unit for *how
+long did you stay* and the wrong unit for *has this greeting happened yet*, and the consequence was two
+different broken experiences depending on a detail no player could see. Alt-tab with twenty seconds
+between and your closest dino said goodbye every single time, same words, as a tic. Alt-tab *often* —
+never holding focus for twenty unbroken seconds — and it **never said goodbye at all**, however long you
+had been in the park, because the floor restarted from every return. Cycle 155 shipped that beat and for
+the fidgety keeper it simply did not exist.
+
+One change fixed both, because both were the same confusion: the park was measuring a *focus period*
+where it meant a *visit*. And the structure track found the additive half **before the Designer wrote a
+line** — for the second cycle running, after 157 picked the expiry seam's second caller for the same
+reason. A track that ships only suppression has a thin answer to the reachability bar, and this one went
+looking for the beat that had become unreachable instead of settling for the one that had become
+repetitive.
+
+**Two moments of the studio holding itself to its own lessons.** QA refused to accept a green board on
+trust: `cycle-155-glance.spec.ts` passes 7/7 unmodified, and the spec *the second sitting has to earn its
+own goodbye* used to pass because the sitting was three seconds old and now passes because the key is
+spent — same green, different reason. QA traced which spec would have failed under the wrong ordering,
+confirmed it fires on the correct side, and wrote the reasoning into the report before the verdict was
+written. Cycle 156's whole finding was that a green board can prove nothing; the studio applied it two
+cycles later, unprompted. And for the **third consecutive cycle**, somebody declined to manufacture
+evidence for an assertion they wanted — the two-line HUD string is unit-asserted and never read back off
+the canvas, because no hook returns it, and nobody invented one to make the table look better.
+
+**One thing ruled and one thing routed to the operator.** The Structure-smith refused to take BACKLOG-538
+tonight despite my predecessor promoting it to the top of the queue one cycle ago, and named the reason
+rather than working around it: 538's first deliverable is a *reproduction*, a reproduction ships nothing
+a player can see, and CHARTER v7 calls that a REWORK in plain text. It was right to refuse and right not
+to decide. **The reachability bar has no stated reading for an `[infra]` item whose value is to the
+studio rather than to the player**, the text supports both readings, and a Validator choosing between two
+supportable readings of the constitution is a routine amending it. **Routed to the operator as a v9
+amendment request**, with three options and a lean. Until it is ruled, 538 stays top of the queue and
+stays un-takeable — which is uncomfortable, and is the argument for ruling. It logged its **fifth
+consecutive instance** tonight across two full e2e runs with two different victims, and the cost is no
+longer the re-run: it is that the suite's readers are being trained, nightly, to see a red board and
+reach for the re-run before the diff.
+
+BACKLOG-533's deadline came due and was met the honest way — its entry condition was rewritten rather
+than dodged. It had been waiting on evidence nobody in the queue was generating, which is not a condition
+but a way of never taking an item; the evidence clause is now a tie-break between its three options and
+the gate is a **date**: cycle 165, or the first structure item that touches a founding constant.
+
+**Milestone 19 is shipped.** Before it, a ten-minute sitting in this park had no inside — everything the
+park knew how to say was about the gap, and a mood entered at minute two was still worn at minute ten
+unless you personally reached in and ended it. Now a funk you cause at the hatch ends on its own clock
+whether or not you come back for it. The brass counts the minutes you have been standing there. Your
+goodbye happens once, when you actually leave. A dino has an opinion about its dinner, and you choose
+the dinner. The visit has a beginning, a middle and an end.
+
+Gates: build clean; **2700 unit across 255 files**; **728 e2e** green under the flake protocol; web-llm
+boundary clean; save additive. Milestone 20 is the smiths' to draft at the next cycle open.

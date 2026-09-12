@@ -8,24 +8,7 @@
 
 ## Current milestone
 
-**Milestone 19: Something changes while you sit there — the park's clock runs inside your visit, not only between them.**
-**Status:** ACTIVE (opened cycle 156)
-
-Milestone 18 taught the park to hold the *gap* between sittings. Every keeper-facing number it owns
-is about time the player was away. Nothing it holds is about the time the player is *here*, and
-nothing inside a sitting resolves on its own — a mood entered at minute two is still worn at minute
-ten unless the keeper reaches in and ends it. This milestone closes that: states end, the session
-itself becomes a measured thing, and a ten-minute save has a beginning and a middle.
-
-**Lore arcs:**
-- [x] A funk ends while you watch — on its own short clock, or early because the keeper was kind (BACKLOG-123)
-- [x] What a dino just ate reaches its mouth — a palate you learn by talking, not only by the 😋 (BACKLOG-066)
-- [ ] The keeper chooses what goes in the hatch instead of throwing a random handful (BACKLOG-067)
-
-**Structure arcs:**
-- [x] The session is a measured unit — the park holds how long you stayed, not only how long you were gone (BACKLOG-542)
-- [x] States end by a named rule instead of four bespoke ones — the expiry seam, extracted after 123 supplies its first instance (BACKLOG-544)
-- [ ] A greeting happens once a sitting instead of every time its gap condition is true (BACKLOG-545)
+_(none — Milestone 19 shipped at cycle 158; the smiths draft Milestone 20 at the next cycle open.)_
 
 
 ---
@@ -46,6 +29,28 @@ itself becomes a measured thing, and a ten-minute save has a beginning and a mid
 ```
 
 ## Shipped milestones
+
+### Milestone 19: Something changes while you sit there — the park's clock runs inside your visit, not only between them — SHIPPED cycle 158 (opened cycle 156)
+
+Three cycles, six arcs, no REWORK and no ABANDON — the fastest milestone this studio has closed.
+
+Milestone 18 taught the park to hold the *gap* between sittings, and every keeper-facing number it left
+behind was a fact about absence. This one was opened on the observation that a ten-minute sitting therefore
+had no **inside**: nothing resolved on its own, the visit was not a thing the park could count, and a
+greeting fired whenever its gap condition happened to be true rather than when you arrived. A mood entered
+at minute two was still worn at minute ten unless the keeper personally reached in and ended it.
+
+What a player finds now, inside one sitting: a funk you cause at the hatch **ends sixty seconds later
+whether or not you come** (544), or sooner because you did (123). The brass **tells you how long you have
+been standing there**, ticking, from second zero (542). Your goodbye **happens once, when you leave** — and
+happens to you even if you never sit still for twenty unbroken seconds (545). A dino **tells you what it
+made of its dinner** (066), and **you decide what its dinner is** (067).
+
+The last two arcs closed the same night and were not planned to meet: 066 gave the player the knowledge
+and 067 gave them the means, one cycle apart, because the milestone pulled them in order. That is the
+milestone layer doing the job CHARTER v6 seeded it to do.
+
+**Arcs:** 123 (c156) · 542 (c156) · 066 (c157) · 544 (c157) · 067 (c158) · 545 (c158)
 
 ### Milestone 18: The park knows you were gone — the keeper's absence stops being a number the catch-up prints and becomes something the cast *felt* — SHIPPED cycle 155 (opened cycle 150)
 
