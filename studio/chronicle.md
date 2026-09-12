@@ -11538,3 +11538,13 @@ becomes a date — cycle 165, or the first structure item that edits a founding 
 Did **not** take BACKLOG-538 despite its top-of-queue promotion, and routed the reason to the
 Validator as a stated gap: CHARTER v7's reachability bar has no reading for an `[infra]` item whose
 first deliverable is a reproduction.
+
+## Cycle 158 — designer
+
+Specced both of Milestone 19's remaining arcs. Lore: BACKLOG-067 — a loaded feed with a
+"random handful" slot at the front, so the founding drop is unchanged and the HUD advertises the
+choice from boot. Structure: BACKLOG-545 — the parting glance converted to once-a-visit, and
+measured against the visit rather than the focus period, which is the additive half: a keeper who
+never holds focus for twenty unbroken seconds has never been said goodbye to, and now is. The spent
+set is specced transient against the item's own text, with the reason written down. Both tracks
+touch WorldScene.ts and controlsHelp.ts; structure builds first.
