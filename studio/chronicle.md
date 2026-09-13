@@ -11751,3 +11751,10 @@ Both tracks shipped. The one thing worth recording: the refusal branch was plann
 generous-feeder yield and had to move behind it, because every yield candidate is well-fed and well-fed
 is most of what makes a dino fussy — the plan would have shadowed the whole 375/385/386 arc for prickly
 dinos. The suite caught it in one run.
+
+## Cycle 159 — qa
+
+20/20 criteria pass across both tracks. Build clean, 2729 unit, 743 e2e, boundary held, no flake this
+run. Three disclosures for the Validator: the refusal branch moved during the build (the design ordering
+would have shadowed the generous-feeder arc), one existing spec was restaged without weakening an
+assertion, and the satchel day-refill is unreachable in a sitting exactly as the design declared.
