@@ -11,7 +11,9 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'cairn_derelict', // BACKLOG-494
       'crop_ripe',
       'crop_ripe_greens', // BACKLOG-418: the grove's greens crop, stashed ahead of the drawPlotSprite wiring
+      'crop_ripe_mushrooms', // BACKLOG-548: the Hollow's mushroom crop — 5 of 5, the per-crop set closes
       'crop_ripe_roots', // BACKLOG-432: the Fernreach's roots crop
+      'crop_ripe_seeds', // BACKLOG-548: the Ridge's pine-seed crop
       'crop_seed',
       'crop_sprout',
       'doze', // BACKLOG-520: the shut end of the hours axis, drawn the night 109 shipped its host

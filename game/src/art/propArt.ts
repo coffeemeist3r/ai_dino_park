@@ -244,6 +244,82 @@ const CROP_RIPE_ROOTS_RIG: PropRig = {
   palette: { ...SOIL, ...LEAF, t: ROOT_BODY, T: ROOT_LIT },
 };
 
+// Ripe mushrooms 🍄 (BACKLOG-548) — the Hollow's crop, and the fourth of five ripe plots. The damp fen
+// grows no *head*: where the berry bush and the greens put a canopy above the mound and the roots put a
+// tuber shouldering out of it, this one puts a low clump of caps **sitting on** the soil, so the fourth
+// ground reads as the one with nothing growing upward. Three caps, the tallest centre-left, each with the
+// gill band underneath that nothing else in this park draws.
+//
+// **The first draft was the food rig scaled onto a mound, and it was wrong.** `food_mushrooms` is three
+// free-standing mushrooms with long stalks — read at plot size on top of the mound it became a pale blob
+// with a brown lump under it, and worse, it made the Hollow's *plot* and the Hollow's *dropped food* the
+// same picture at the two places a player sees them side by side. The caps came down onto the soil and the
+// stalks went to almost nothing, which is both more like a real fen mushroom and the silhouette that
+// separates the two.
+const CAP_PALE = 0xd8cfc0; // pale cap — shared with `food_mushrooms` on purpose: same crop, same colour
+const CAP_GILL = 0x6b5f70; // the gill band, the underside nothing else here has
+const CAP_STEM = 0xe6e0d4; // the short stem
+const CROP_RIPE_MUSHROOMS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '.....oooo.......',
+  '....oCCCCo......',
+  '...oCCCCCCo.....',
+  '..oCCCCCCCCo....',
+  '..oGGGGGGGGo....',
+  '...osso..oooo...',
+  '.oooss..oCCCCo..',
+  'oCCCCo.oCCCCCCo.',
+  'oCGGGo.oGGGGGGo.',
+  '.osso...osso....',
+  '......ommo......',
+  '...ohhhhhhhho...',
+  '................',
+];
+
+const CROP_RIPE_MUSHROOMS_RIG: PropRig = {
+  size: 16,
+  grid: CROP_RIPE_MUSHROOMS_GRID,
+  palette: { ...SOIL, ...LEAF, C: CAP_PALE, G: CAP_GILL, s: CAP_STEM },
+};
+
+// Ripe seeds 🌰 (BACKLOG-548) — the Ridge's crop, and the fifth of five. The one ripe plot that grows
+// **upward**: a single facetted pine cone standing proud of the mound on a short woody stalk, scales
+// stepped so the silhouette is a taper rather than a blob. The high ground is bare and windy and its crop
+// is the hardest thing in the food roster; a cone is the only shape in this set with corners.
+//
+// Kept deliberately apart from `food_seeds`, which is a *heap* of six loose nuts — many small things on
+// the floor. This is one large thing on a stalk. Same palette, opposite composition, and that is the whole
+// trick: the player reads them as the same crop in two states (growing, and picked) without being told.
+const CONE_SHELL = 0x8a6236; // scale body — `food_seeds`' shell, verbatim
+const CONE_LIT = 0xc49456; // sun-caught scale edge — and `food_seeds`' lit facet
+const CONE_DEEP = 0x5d4223; // the shadow between scales — `food_seeds`' crack tone
+const CROP_RIPE_SEEDS_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.......oo.......',
+  '......oNNo......',
+  '.....onNNno.....',
+  '.....okNNko.....',
+  '....onNNNNno....',
+  '....okNNNNko....',
+  '...onNNNNNNno...',
+  '...okkNNNNkko...',
+  '....onnnnnno....',
+  '.....o.gg.o.....',
+  '.......gg.......',
+  '......ommo......',
+  '...ohhhhhhhho...',
+  '................',
+];
+
+const CROP_RIPE_SEEDS_RIG: PropRig = {
+  size: 16,
+  grid: CROP_RIPE_SEEDS_GRID,
+  palette: { ...SOIL, ...LEAF, n: CONE_SHELL, N: CONE_LIT, k: CONE_DEEP },
+};
+
 // ── Lean-to shelter 🛖 (BACKLOG-315/344) — the dino-built landmark beyond the cairn, drawn as branches.
 // A single sloped roof of lashed wood rising from a back post down to a wide front eave, with the open
 // shaded interior tapering underneath. Built of branches, so it shares the branch's wood/outline tones.
@@ -1809,6 +1885,12 @@ export const PROP_RIGS: Record<string, PropRig> = {
   crop_ripe: CROP_RIPE_RIG,
   crop_ripe_greens: CROP_RIPE_GREENS_RIG, // BACKLOG-418: the grove's greens crop, stashed ahead of drawPlotSprite wiring
   crop_ripe_roots: CROP_RIPE_ROOTS_RIG, // BACKLOG-432: the Fernreach's roots crop, so all three ripe crops bake a rig
+  // BACKLOG-548 (cycle 159-art) — 5 of 5. `ripeRigKey` has asked `zoneChain()` for one rig per ground
+  // since 434 and `PROP_RIGS` answered three of five, so a keeper walking east past the Fernreach watched
+  // the farming arc *downgrade* into two emoji plots. The per-crop set closes; `drawPlotSprite`'s glyph
+  // fallback is untouched and is still the shipping path for any crop a later zone adds without a rig.
+  crop_ripe_mushrooms: CROP_RIPE_MUSHROOMS_RIG,
+  crop_ripe_seeds: CROP_RIPE_SEEDS_RIG,
   shelter: SHELTER_RIG, // BACKLOG-344: the dino-built lean-to (315)
   thatch: THATCH_RIG, // BACKLOG-427: the frond thatch, stashed ahead of 417 (which wires it into the world)
   granary: GRANARY_RIG, // BACKLOG-454: the food-cap-lifting granary — a domed plaster storehouse

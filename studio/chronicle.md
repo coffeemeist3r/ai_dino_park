@@ -11847,3 +11847,49 @@ other two (543, 539) remain correctly blocked on hosts nobody has built. The Art
 for the first time since cycle 155.
 
 `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
+
+## Cycle 159-art — artist: the last two plots
+
+Three fires in a row this routine has no-op'd, and every one of them gave the same honest reason: the
+two `[art]` items in the queue want hosts nobody has built. That diagnosis was right and it stayed right,
+so the cycle-159 Lore-smith went looking from the other end — **not what is worth drawing, but what does
+the code already ask for and not get.**
+
+`ripeRigKey` has mapped a ground's crop to `crop_ripe_<food>` since BACKLOG-434, `drawPlotSprite` bakes
+that rig where it exists and falls back to the emoji where it does not, and `reachability.ts` walks
+`zoneChain()` and registers a key for all five grounds. `PROP_RIGS` answered **three**. So a keeper
+walking east past the Fernreach has, for twenty-five cycles, watched the farming arc *downgrade* —
+the Hollow's ripe plot a 🍄 and the Ridge's a 🌰, sitting in a pixel world beside a pixel sprout.
+
+Nothing in the tree could see it. `unplacedRigs()` catches a rig with no host, because cycle 145 was
+burned by stashed art; nobody had ever written the mirror, a **host with no rig**. Both registers now
+carry it — the unit suite walks the chain, and the e2e ripens every ground in turn and asserts that no
+glyph fallback survives anywhere on it.
+
+Neither rig needed a line of wiring. Drawing them was the wiring.
+
+**The mushroom's first draft was the food rig on a mound, and it failed twice.** `food_mushrooms` is
+three free-standing mushrooms on long stalks; at plot size over the soil it became a pale blob on a brown
+lump, and — worse — it made the Hollow's *plot* and the Hollow's *dropped food* the same picture at the
+two places a player sees them next to each other. The caps came down onto the soil and the stalks went to
+almost nothing. That is both more like a real fen mushroom and the thing that separates the two pictures:
+where the berry bush and the greens put a canopy *above* the mound, and the roots put a tuber shouldering
+*out* of it, the Hollow is the one ground with nothing growing upward.
+
+**The seed crop is the opposite composition, deliberately.** `food_seeds` is a heap of six loose nuts —
+many small things on the floor — so the plot is one large thing on a stalk: a single facetted pine cone
+standing proud of the mound, scales stepped so the silhouette tapers, the only shape in the ripe set with
+corners. Its three colours are `food_seeds`' own shell, lit facet and crack, taken from that rig rather
+than matched to it, so a repaint moves both and the player reads them as one crop in two states —
+growing, and picked — without being told.
+
+Both palettes land at exactly eight keys by sharing `SOIL` and `LEAF` with their three siblings. **The
+per-crop ripe set closes at 5 of 5.** `artPipelineReady` stays true; 543 and 539 remain correctly blocked
+on hosts nobody has built, and next cycle's Lore-smith may seed against the tag column as before.
+
+**Gate:** build clean, **2748 unit** green across 258 files, **744/745 e2e**. The one red was
+`cycle-137-meat-greens-art` failing at `page.goto` with `net::ERR_NO_BUFFER_SPACE` — a socket-exhaustion
+flake from running the full e2e suite three times in one session on this machine, not the boot-timeout
+signature BACKLOG-538 tracks and not an assertion. Green 3/3 on an isolated re-run. Noted rather than
+absorbed: it is a *different* flake from 538's, and if it recurs it wants its own item rather than being
+filed under the one that already exists.
