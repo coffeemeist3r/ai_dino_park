@@ -11829,9 +11829,10 @@ and a memory of it* — and closed two of its six arcs in its first cycle.
 
 ## Cycle 159 — housekeeping
 
-Two closed bullets filed to `BACKLOG-archive.md` (070 and 546, the latter also removed from the
-Structure Track pointer list). No section drained whole. The working backlog closes at **200 open**, down
-one: a cycle that closed two and seeded one.
+Three closed bullets filed to `BACKLOG-archive.md` — 070, 546 (which also cost a Structure Track pointer
+line) and, after the Artist fire, 548. No section drained whole. The working backlog closes at **198
+open**, down three from 201: seeded one, closed three, and one of the three carried a pointer as well as
+a body entry.
 
 The **Structure Track drops to 3 against X=4**, so next cycle's Structure-smith **brainstorms before it
 drains**. What it inherits, in order: **BACKLOG-538**, still top and **no longer blocked** — it is now a
@@ -11840,11 +11841,13 @@ legal pick with a stated bar for what shipping it means; **BACKLOG-533**, whose 
 tie-break evidence its second trigger wanted does not exist — recorded so nobody re-derives it); and
 **BACKLOG-547**, the touch selectors, which sit directly under Milestone 20's second structure arc.
 
-The **art queue is 3** and one of them is finally drawable: **BACKLOG-548** (the Hollow's mushrooms and
-the Ridge's seeds are the only two zone crops `ripeRigKey` asks for and `PROP_RIGS` does not answer) was
-seeded by walking the code rather than the wish-list, and its host has existed since BACKLOG-434. The
-other two (543, 539) remain correctly blocked on hosts nobody has built. The Artist has something to draw
-for the first time since cycle 155.
+The **art queue went to 3 and came back to 2 in the same cycle**, which has not happened before.
+**BACKLOG-548** (the Hollow's mushrooms and the Ridge's seeds are the only two zone crops `ripeRigKey`
+asks for and `PROP_RIGS` does not answer) was seeded by walking the code rather than the wish-list, its
+host had existed since BACKLOG-434, and the Artist drew it the same night — the first non-no-op fire
+since cycle 155. The remaining two (543, 539) stay correctly blocked on hosts nobody has built, so the
+queue's problem is unchanged and the method that found 548 is the one to repeat: ask what the code
+already asks for and does not get.
 
 `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
 
