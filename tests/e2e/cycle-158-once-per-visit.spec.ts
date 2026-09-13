@@ -31,9 +31,21 @@ const blur = async (p: Page) => {
   await p.evaluate(() => window.dispatchEvent(new Event('blur')));
   await p.waitForTimeout(300);
 };
+/**
+ * Come back in, and wait for the old look to be **gone** rather than for a number of milliseconds
+ * (BACKLOG-549).
+ *
+ * `GLANCE_MS` is counted by `this.time.delayedCall` — the scene clock, which advances with the game loop
+ * and so with `requestAnimationFrame`. `waitForTimeout` counts wall clock. Sleeping 3200ms outlasts a
+ * 2500ms scene timer on a fast machine and does not on a loaded CI runner, where the first look was still
+ * on screen at the second blur — which this spec then read as a goodbye that repeated. It was a stale
+ * mark; the gate under test was holding the whole time.
+ */
 const back = async (p: Page) => {
   await p.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await p.waitForTimeout(3200); // GLANCE_MS (2500) and a beat — the old look must be gone first
+  await expect.poll(() => glancers(p), { timeout: 15_000, message: 'the goodbye never expired' }).toEqual(
+    [],
+  );
 };
 
 /**

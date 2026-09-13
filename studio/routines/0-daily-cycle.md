@@ -105,6 +105,13 @@ tracks have resolved (APPROVED or ABANDON).
   https://github.com/coffeemeist3r/ai_dino_park.git, credential manager handles auth).
   If the push fails (offline / auth), don't fail the cycle — append a one-line chronicle
   note "push deferred: <reason>"; the next run will push the accumulated commits.
+- **Check the PREVIOUS run's CI before you finish, every cycle.** Run
+  `gh run list --workflow=CI --limit 3`. A local green board says nothing about the Linux runner:
+  cycles 156–159 each reported a full green e2e suite and each pushed onto a CI that had been red
+  since cycle 156, for four days, on the same two specs — nobody looked, because nothing in this file
+  said to. If the last run is `failure`, `gh run view <id> --log-failed` and either fix it in this
+  cycle or write the failure into the chronicle by name. **A red CI you have not named is the defect
+  CHARTER v7 exists to stop, one layer up: work reported as shipped that is not.**
 - The Validator's chronicle entry is the human-facing journal — make it a good read.
 - If something blocks hard (e.g. build won't pass and can't be fixed), STOP gracefully: do not
   commit broken code to `main`; append a chronicle note explaining the block and leave state

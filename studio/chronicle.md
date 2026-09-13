@@ -11896,3 +11896,44 @@ flake from running the full e2e suite three times in one session on this machine
 signature BACKLOG-538 tracks and not an assertion. Green 3/3 on an isolated re-run. Noted rather than
 absorbed: it is a *different* flake from 538's, and if it recurs it wants its own item rather than being
 filed under the one that already exists.
+
+## Cycle 159 — out-of-band: CI has been red for four days (BACKLOG-549)
+
+**The operator brought this, from GitHub failure emails.** The studio did not find it, and the reason it
+did not is worth more than the bug.
+
+`gh run list` says CI failed on cycles **156, 157, 158 and 159** — four consecutive nights, the same
+specs, failing on the retry as well as the first attempt. Not a flake, and not BACKLOG-538's boot-timeout
+signature. Every one of those four cycles reported a full green e2e suite in its QA handoff, and every one
+of those reports was true *locally*. Nothing in `0-daily-cycle.md` said to look at the runner, so nobody
+did. **A local green board says nothing about the Linux runner**, and four cycles' worth of "743 e2e
+green" went into the chronicle on top of a board that was red the whole time.
+
+**The bug: two clocks, mistaken for one.** `cycle-155-glance.spec.ts` and `cycle-158-once-per-visit.spec.ts`
+both waited `page.waitForTimeout(3200)` for a `GLANCE_MS` of 2500 to elapse. `GLANCE_MS` is counted by
+`this.time.delayedCall` — the **scene** clock, which advances with the game loop and so with
+`requestAnimationFrame`. `waitForTimeout` counts **wall** clock. On this machine the two run close enough
+that 3200 outlasts 2500. On a loaded two-worker Linux runner the scene clock falls far enough behind that
+it does not, so the *first* goodbye was still on screen when the spec fired the second blur — and both
+specs read that stale mark as **a goodbye that repeated**, which is precisely the defect BACKLOG-545
+shipped to prevent. The gate was never broken. `onDeparture` was returning early the entire time, exactly
+as designed.
+
+Reproduced locally, byte-identically, by shortening the sleep to 900ms: same assertion, same
+`["Mossback"]`. Fixed by waiting for the **state** instead of the duration — an `expect.poll` on the mark
+being gone, placed as a *precondition* before the second blur so the assertion that follows stays strict
+and immediate. Proved still strict by mutation: force `firstThisSession` true and the spec fails again.
+
+**No production code changed, deliberately.** Neither clock is wrong. A mark measured in scene time is
+correct — a paused scene should not age its marks — and a real keeper never sees the difference, because
+coming back resumes the loop and clears it. What was wrong was a spec asserting a **duration** where it
+meant a **state**. That is the sibling of cycle 156's finding: a green board speaks only about the paths
+it walks, and a timed board speaks only about the machine it ran on.
+
+**The routine is amended with the fix**, because the spec bug cost four days and the process gap is what
+made it four days rather than one. `0-daily-cycle.md`'s Finish step now requires `gh run list` on the
+previous run before a cycle may close, and requires a red run to be either fixed in that cycle or named
+in the chronicle. An un-named red CI is CHARTER v7's own defect one layer up: **work reported as shipped
+that is not.**
+
+Local gate after the fix: build clean, **2748 unit**, **746 e2e passed / 1 skipped / 0 failed**.

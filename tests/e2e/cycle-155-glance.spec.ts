@@ -10,6 +10,23 @@ const glancers = async (p: Page) =>
     .filter(([, worn]) => worn.includes('glance'))
     .map(([name]) => name);
 
+/**
+ * Wait for the goodbye to expire, rather than for a number of milliseconds (BACKLOG-549).
+ *
+ * `GLANCE_MS` is counted by `this.time.delayedCall` — the **scene** clock, which advances with the game
+ * loop and therefore with `requestAnimationFrame`. A `waitForTimeout` counts **wall** clock. On a fast
+ * machine the two are close enough that sleeping 3200ms outlasts a 2500ms scene timer; on a loaded CI
+ * runner the scene clock falls far enough behind that it does not, and the *first* look is still on screen
+ * when the spec fires the second blur. That read as a repeated goodbye and was a stale mark.
+ *
+ * Neither clock is wrong — a mark measured in scene time is right, because a paused scene should not age
+ * its marks. What was wrong was a spec asserting a duration where it meant a state.
+ */
+const quiet = async (p: Page) => {
+  await expect.poll(glancersOf(p), { timeout: 15_000, message: 'the goodbye never expired' }).toEqual([]);
+};
+const glancersOf = (p: Page) => () => glancers(p);
+
 /** Wind this sitting back past `SESSION_MIN_MS` so the spec need not sleep twenty real seconds. */
 const ageSession = (p: Page, ms = 60_000) =>
   p.evaluate((n) => ((window as W).__ageSession as (m: number) => number)(n), ms);
@@ -99,8 +116,9 @@ test('the second sitting has to earn its own goodbye (BACKLOG-119 + 542)', async
 
   // Back in, and straight out again. The new sitting is seconds old, so it has not earned one.
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await page.waitForTimeout(3200); // GLANCE_MS (2500) plus a beat — the first look must be gone before
-  //                                  the second blur, or this asserts the old mark rather than a new one
+  // The first look must be gone before the second blur, or this asserts the old mark rather than a new
+  // one. Waited for as a *state*: see `quiet` on why a 3200ms sleep is not the same thing.
+  await quiet(page);
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
   await page.waitForTimeout(300);
   expect(await glancers(page)).toEqual([]);
@@ -112,8 +130,9 @@ test('the look does not outlive its welcome', async ({ page }) => {
   await ageSession(page);
 
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-  await page.waitForTimeout(3200); // GLANCE_MS (2500) plus a beat
-  expect(await glancers(page), 'the bowl goes quiet').toEqual([]);
+  // This one is *about* the expiry, so it is the assertion rather than a precondition — but it is still a
+  // state and not a duration, for the reason `quiet` records.
+  await quiet(page);
 });
 
 test('a hidden tab is not drawn to', async ({ page }) => {
