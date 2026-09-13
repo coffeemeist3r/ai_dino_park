@@ -1,6 +1,6 @@
 {
   "cycle": 159,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-070: Picky vs. gobble \u2014 personality decides who will settle for the wrong dinner",
   "structureItem": "BACKLOG-546: The hatch draws on something \u2014 a keeper supply the drop spends from",
   "lastVerdict": null,
@@ -12,7 +12,7 @@
     "lore-smith": "2026-09-13T02:10:00.000Z",
     "structure-smith": "2026-09-13T02:26:00.000Z",
     "designer": "2026-09-13T02:44:00.000Z",
-    "code-planner": "2026-09-12T03:56:00.000Z",
+    "code-planner": "2026-09-13T02:58:00.000Z",
     "coder": "2026-09-12T04:28:00.000Z",
     "qa": "2026-09-12T04:42:00.000Z",
     "validator": "2026-09-12T04:58:00.000Z",

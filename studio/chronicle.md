@@ -11737,3 +11737,10 @@ Both tracks spec'd against the hatch from opposite ends — **070** (a dino turn
 it) and **546** (the keeper's satchel, which the drop spends from). The seam between them is decided in
 the design rather than left to the Coder: a refused piece stays on the ground and is never refunded,
 because a refunded drop is a free drop and that is the thing 546 exists to end.
+
+## Cycle 159 — code-planner
+
+Build order set: structure first (it moves `dropFood`), lore on top, one combined register edit. The
+plan is mostly a reuse list — the satchel is a `FoodPile`, the refill is `checkSpoilage` copied, the
+plaque line is an optional field, and the prickly cutoff is pinned to `PRICKLY_MAX` by a test rather
+than by an import that would cross the brain boundary.
