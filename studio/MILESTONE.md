@@ -8,7 +8,25 @@
 
 ## Current milestone
 
-_(none — Milestone 19 shipped at cycle 158; the smiths draft Milestone 20 at the next cycle open.)_
+**Milestone 20: What you feed them is a decision — the park has an opinion about it, and a memory of it**
+**Status:** ACTIVE (opened cycle 159)
+
+Milestone 19 gave a sitting an inside. This one gives the keeper's one repeated verb — the `H` that
+drops food — a *consequence*. As of cycle 158 the keeper chooses which food goes in the hatch (067),
+and for a hundred and thirty cycles before that the choice was `Math.floor(rand() * FOODS.length)`.
+A choice nothing pushes back on is not yet a decision. By the end of this milestone, a keeper who
+drops the wrong thing sees it refused and left on the ground, a keeper who drops the right thing sees
+it recorded, a keeper who drops the same thing forever changes the dino that eats it, and a dino that
+watches somebody else get the good dinner has something to say about it.
+
+**Lore arcs:**
+- [ ] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
+- [ ] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069)
+- [ ] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068)
+- [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
+
+**Structure arcs:**
+_(Structure-smith adds these at the cycle-159 structure fire.)_
 
 
 ---

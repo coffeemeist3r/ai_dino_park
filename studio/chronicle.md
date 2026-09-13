@@ -11715,3 +11715,10 @@ rather than against last night's note.
 **No milestone is ACTIVE.** Milestone 19 shipped tonight, so the first duty of next cycle's Lore-smith
 is to draft Milestone 20's headline and lore arcs, and the Structure-smith's is to add the spine arcs
 underneath it. `lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
+
+## Cycle 159 — lore-smith
+
+Milestone 20 drafted — *what you feed them is a decision*. Next-up **BACKLOG-070** (a dino can refuse
+the wrong dinner), the first arc under it. One art item seeded, **BACKLOG-548**: the Hollow's mushrooms
+and the Ridge's seeds are the only two zone crops `ripeRigKey` asks for and `PROP_RIGS` does not answer —
+the first drawable-tonight art subject the queue has held since cycle 155.
