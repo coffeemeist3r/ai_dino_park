@@ -11722,3 +11722,11 @@ Milestone 20 drafted — *what you feed them is a decision*. Next-up **BACKLOG-0
 the wrong dinner), the first arc under it. One art item seeded, **BACKLOG-548**: the Hollow's mushrooms
 and the Ridge's seeds are the only two zone crops `ripeRigKey` asks for and `PROP_RIGS` does not answer —
 the first drawable-tonight art subject the queue has held since cycle 155.
+
+## Cycle 159 — structure-smith
+
+**BACKLOG-546** chosen — the hatch draws on something. Drain fire (4 open ≥ X=4), no brainstorming.
+Milestone 20's first structure arc, and the ledger's last hole: the keeper's `H` is the only food in
+this park that comes from nowhere. 538 asked the Validator a second time to rule on whether the
+reachability bar reads for studio-facing infra; it is now blocking two items from the top of a
+drain-the-top queue. No solo cycle (8 < 10).

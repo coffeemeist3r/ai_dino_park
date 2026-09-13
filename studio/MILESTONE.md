@@ -26,7 +26,8 @@ watches somebody else get the good dinner has something to say about it.
 - [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
 
 **Structure arcs:**
-_(Structure-smith adds these at the cycle-159 structure fire.)_
+- [ ] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
+- [ ] The phone keeper can reach the selector — the two most expressive keeper verbs stop being keyboard-only on the shipping Android surface (BACKLOG-547)
 
 
 ---
