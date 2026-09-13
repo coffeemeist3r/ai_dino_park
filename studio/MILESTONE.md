@@ -20,13 +20,13 @@ it recorded, a keeper who drops the same thing forever changes the dino that eat
 watches somebody else get the good dinner has something to say about it.
 
 **Lore arcs:**
-- [ ] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
+- [x] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
 - [ ] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069)
 - [ ] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068)
 - [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
 
 **Structure arcs:**
-- [ ] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
+- [x] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
 - [ ] The phone keeper can reach the selector — the two most expressive keeper verbs stop being keyboard-only on the shipping Android surface (BACKLOG-547)
 
 

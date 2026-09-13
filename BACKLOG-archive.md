@@ -1239,3 +1239,11 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 > Sections drained whole and filed at cycle 158 housekeeping.
 
 ## Cycle 156 structure additions — the visit has an inside (2026-09-10)
+
+## Cycle 159 — closed (2026-09-13)
+
+- [x] BACKLOG-546 [core] The hatch draws on something — `dropFood` conjures a piece out of nothing; every other food in the park is accounted for. A keeper supply the drop spends from, so choosing *which* food to drop is a choice with a cost (full text in the cycle-158 block below).
+
+- [x] BACKLOG-070 [emergent] Picky vs. gobble — prickly (low-agreeableness) dinos refuse non-favorite food and leave it; warm dinos eat anything. Personality shapes who'll settle, not just who rushes.
+
+- [x] BACKLOG-546 [core] The hatch draws on something — `dropFood` conjures a piece of food out of nothing. Every other food in this park is accounted for: the granary banks it (446), spoilage bleeds it (455/461), the ferry moves it between grounds (457), the tithe takes a cut (146), the plots grow it (145). The keeper's `H` is the one hole in the ledger, and it has been one since cycle 59 because nothing pointed at it — a random handful out of thin air reads as weather, not as a decision. BACKLOG-067 changes that: the moment the keeper *aims* the drop, the drop becomes an act with no cost, which is the shape of a cheat rather than a mechanic. The spine: a keeper supply the drop spends from, refilled on the day boundary and by harvest, an empty-handed `H` that says so in the HUD rather than silently no-opping, and the supply on the plaque beside the other stores. Deliberately **not** a difficulty knob — the point is a closed loop, so that choosing which food goes in the hatch is a choice between foods you have rather than a menu of all of them. The interesting failure state is the one where you have three greens and the dino you are trying to reach eats meat. Builds on 067 / 446 / 510 / 145.

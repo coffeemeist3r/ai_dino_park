@@ -11758,3 +11758,92 @@ dinos. The suite caught it in one run.
 run. Three disclosures for the Validator: the refusal branch moved during the build (the design ordering
 would have shadowed the generous-feeder arc), one existing spec was restaged without weakening an
 assertion, and the satchel day-refill is unreachable in a sitting exactly as the design declared.
+
+## Cycle 159 — validator: lore APPROVED / structure APPROVED — the hatch has a cost, and the dinos have opinions
+
+Two items closed, both about the same eighteen inches of ground: the tile the food lands on.
+
+For a hundred and thirty-four cycles this park has been building the politics of the hatch. It has a
+rush and an amble. It has an escort that walks a withdrawn loner in from the wall. It has a generous
+dino that steps back for a hungrier friend, a greedy one that shoulders past, a bold one that will not
+be shouldered, a magnanimous victor that spares a rival it beat before, and a ledger of who owes whom a
+meal. Six branches, four cycles apart, each one a small essay on character. **Every one of them decides
+who eats.** Not one of them, until tonight, could decide *whether*.
+
+So: a prickly dino, not especially hungry, handed something that is not its favorite, now looks at it
+and walks away. The food stays where it fell. Somebody less fussy comes along and eats it. That is the
+whole beat, and it is the first time in this project's history that a dino has reached a meal and
+declined it.
+
+The other half is the keeper's. `dropFood` conjured its piece out of nothing from cycle 59 to tonight,
+and it was the last hole in a ledger this studio has spent forty cycles closing — the granary banks
+food, spoilage bleeds it, the ferry carries it, the tithe takes its cut, the plots grow it, and the
+keeper's `H` *created* it. The brass now says what you are carrying, the number goes down when you press
+the key, and when you run out of the thing the dino at the glass actually wants, the park tells you so
+while you are still holding three of something it will not touch.
+
+Those two arrived on the same night by design and they are better together than apart. A selector with
+no scarcity is a menu. Scarcity with no opinions on the other side is bookkeeping. Put them in the same
+cycle and pressing `H` becomes a small argument you can lose.
+
+**The finding of the night was a bug that prose could not see.** The Designer put the refusal check
+ahead of the generous yield and gave a reason that reads perfectly well — a dino that will not eat is
+not a winner. But `WELL_FED` is 0.3 and the picky bar is 0.5, so every candidate for the yield sits
+inside the refusal window, and the ordering would have quietly killed three shipped beats for every
+prickly dino in the park. Three specs, written at cycles 83 and 98 by routines that had never heard of
+this one, went red in the first full run. The branch moved, and the version that survives reads better
+than the one that was planned: generosity is about giving the meal away, and a dino that does not want
+it is the most willing giver in the park; the contest is about *keeping* it, and a refuser has no stake
+in a fight over food it will not eat. It gives first, then leaves, and the hungry gobbler beside it
+reaches the piece on the next step and eats it anyway.
+
+Set that beside cycle 156's lesson — *a green board can prove nothing, because a gate speaks only about
+paths it walks* — and tonight is the mirror image, which is worth having both halves of: **a red board
+is sometimes the suite doing its job, and the correct response is to name the case, not to widen the
+assertion until it stops complaining.** One spec was restaged tonight. Not one assertion was loosened.
+
+**A ruling, twice asked for, finally given.** The cycle-158 Structure-smith noticed a real gap in
+CHARTER v7 — the reachability bar has no stated reading for an `[infra]` item whose value is to the
+studio rather than to the player — and asked the Validator to rule or route it. It was not answered. The
+cycle-159 Structure-smith asked again, and pointed out the cost: an un-takeable item now sits permanently
+at the top of a queue whose entire rule is *drain the top*.
+
+The ruling is that infra answers a **substituted** question, not an exempted one: *what can the next
+cycle do that it could not do before, and what is the evidence, produced in this cycle, that it works?*
+— with one condition that is not negotiable, that the thing be **run and demonstrated in the cycle that
+ships it**, not described. A harness that reproduces the boot flake on demand, with the verdict carrying
+the run and the victim it caught, passes. A harness that would *let a future cycle* investigate does
+not; that is groundwork in a lab coat, and it is the exact sentence v7 makes a REWORK. **BACKLOG-538 is
+unblocked.**
+
+**Operator, two things for you.** First: that ruling is a routine-level interpretation of your
+amendment, not a CHARTER change, and it is written into the verdict and into 538's own text rather than
+into the constitution. If you read v7 differently, one line anywhere overturns it. Second, a number
+rather than a request: the satchel's day-boundary refill is the **fourth** system shipped since v7 that
+is honestly built, honestly disclosed as unreachable in a sitting, and approved on its reachable
+remainder — after upkeep, spoilage and the council's term. Each one was right to ship. Four of them is a
+fact about **BACKLOG-493, the clock**, which remains the largest unreachable surface in this park.
+
+**Milestone 20 opened tonight** — *what you feed them is a decision — the park has an opinion about it,
+and a memory of it* — and closed two of its six arcs in its first cycle.
+
+## Cycle 159 — housekeeping
+
+Two closed bullets filed to `BACKLOG-archive.md` (070 and 546, the latter also removed from the
+Structure Track pointer list). No section drained whole. The working backlog closes at **200 open**, down
+one: a cycle that closed two and seeded one.
+
+The **Structure Track drops to 3 against X=4**, so next cycle's Structure-smith **brainstorms before it
+drains**. What it inherits, in order: **BACKLOG-538**, still top and **no longer blocked** — it is now a
+legal pick with a stated bar for what shipping it means; **BACKLOG-533**, whose date gate stands at cycle
+165 (546 *added* a founding constant rather than moving one, so no red count was generated and the
+tie-break evidence its second trigger wanted does not exist — recorded so nobody re-derives it); and
+**BACKLOG-547**, the touch selectors, which sit directly under Milestone 20's second structure arc.
+
+The **art queue is 3** and one of them is finally drawable: **BACKLOG-548** (the Hollow's mushrooms and
+the Ridge's seeds are the only two zone crops `ripeRigKey` asks for and `PROP_RIGS` does not answer) was
+seeded by walking the code rather than the wish-list, and its host has existed since BACKLOG-434. The
+other two (543, 539) remain correctly blocked on hosts nobody has built. The Artist has something to draw
+for the first time since cycle 155.
+
+`lastSoloCycle` stays at 151; the next declaration is legal from **cycle 161**.
