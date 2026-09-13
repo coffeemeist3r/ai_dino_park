@@ -175,8 +175,8 @@ import {
 } from '../world/missed'; // BACKLOG-116
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey, stakeUpkeepStep } from '../world/stake';
 import { foundingKind } from '../world/founding';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
-import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, type FoodPile } from '../world/foodstore';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, refusesFood, refusedMemory, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
+import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, foodPileLine, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
 import { lastoneLine, lastoneEvent, lastoneMemory } from '../world/lastone';
@@ -342,6 +342,15 @@ import {
   feedChoiceIndex,
 } from '../world/foods'; // BACKLOG-066 / 067
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
+// BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
+import {
+  FOUNDING_SATCHEL,
+  bankToSatchel,
+  refillSatchel,
+  rollFromSatchel,
+  satchelCount,
+  spendFromSatchel,
+} from '../world/satchel';
 import { HELP_CHIP, helpLines, holdingLine, feedLine } from '../ui/controlsHelp';
 import { hudAlpha, isIdle } from '../world/idle';
 import {
@@ -645,6 +654,17 @@ export class WorldScene extends Phaser.Scene {
   /** A pantry that spoils (BACKLOG-455): transient — the last in-game day the spoilage pass ran (0 = none
    *  yet). Reset on restore/jump so a clock catch-up never fires a spurious pass (mirrors lastSeasonDay). */
   private lastSpoilDay = 0;
+  /** Who has already turned down the piece currently on the ground (BACKLOG-070). Transient by design —
+   *  a new drop is a fresh decision, so this is cleared in `dropFood` and `eatFood` and never persisted. */
+  private refusedThisDrop = new Set<string>();
+  /** BACKLOG-070: the last refusal, for the e2e — the `lastStand` / `lastGobble` shape. */
+  private lastRefusal: { name: string; foodId: string } | null = null;
+  /** The keeper's satchel (BACKLOG-546) — what the hatch has left to drop. Persisted (additive); a save
+   *  without one restores the founding stock. */
+  private satchel: FoodPile = { ...FOUNDING_SATCHEL };
+  /** BACKLOG-546: the last in-game day the satchel's top-up ran. Armed on boot/restore like
+   *  `lastSpoilDay`, so a clock jump never fires a spurious refill. */
+  private lastSatchelDay = 0;
   /** BACKLOG-480: the day the last upkeep pass ran. Armed on boot/restore like `lastSpoilDay`, so a jump
    *  never fires a spurious live pass — the away days go through `runUpkeepPass(days)` instead. */
   private lastUpkeepDay = 0;
@@ -1357,6 +1377,7 @@ export class WorldScene extends Phaser.Scene {
       generations: maxGeneration(this.born),
       zone: zoneById(this.zoneId).name,
       stockpile: this.zoneStores(),
+      satchel: foodPileLine(this.satchel), // BACKLOG-546: what the keeper has left to drop
       zoneTally: this.zoneTally(),
       upkeep: upkeepLine(upkeepDue(this.standingIn(this.zoneId))), // BACKLOG-536
       sitting: sittingLine(Date.now() - this.sessionStartedAt), // BACKLOG-542
@@ -2123,6 +2144,10 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone[zone] = bankFood(this.foodStoreFor(zone), crop.food, cap);
       this.creditHauler(zone);
     }
+    // BACKLOG-546: the keeper's own share of the harvest. The plots are the only route to roots,
+    // mushrooms and seeds — the three foods the founding satchel deliberately starts without.
+    this.satchel = bankToSatchel(this.satchel, crop.food);
+    this.refreshGiftHud();
     this.logEvent(`${crop.ripe} you harvested the crop`);
     const yieldLine = harvestYieldLine(crop.ripe, crop.food, season);
     if (yieldLine) this.logEvent(yieldLine);
@@ -2422,14 +2447,28 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Drop one piece of food through the hatch. One at a time; returns its landing tile. */
-  private dropFood(col?: number, foodId?: string): { tileX: number; tileY: number } {
+  private dropFood(col?: number, foodId?: string): { tileX: number; tileY: number } | null {
     if (this.food) return this.food; // already a piece in play — ignore the drop
-    const kind = this.feedKind(foodId);
+    // BACKLOG-546: the keeper's own drop now spends the satchel. An explicit `foodId` does not — the plot
+    // harvest drops the crop it just grew and `__dropFood` forces a kind for a spec, and neither is a
+    // hatch key. That is the same precedence `feedKind` has stated since 067.
+    let kind: Food;
+    if (foodId) {
+      kind = this.feedKind(foodId);
+    } else {
+      const id = this.keeperFeedId();
+      if (!id) return null; // empty-handed — `keeperFeedId` has already said so in the ticker
+      kind = FOODS.find((f) => f.id === id) ?? FOODS[0];
+      this.satchel = spendFromSatchel(this.satchel, kind.id) ?? this.satchel;
+      this.refreshGiftHud();
+      this.refreshPlaque();
+    }
     const landing = foodLanding(COLS, ROWS, col);
     this.food = landing;
     this.foodKind = kind;
     this.foodLanded = false;
     this.berthedThisDrop.clear(); // BACKLOG-389: a new drop is a fresh chance to hang back
+    this.refusedThisDrop.clear(); // BACKLOG-070: ...and a fresh chance to want it
     this.lastBerth = null;
     const px = landing.tileX * TILE + TILE / 2;
     const landY = landing.tileY * TILE + TILE / 2;
@@ -2473,6 +2512,56 @@ export class WorldScene extends Phaser.Scene {
     const loaded = feedChoices()[this.loadedFeedIndex];
     if (loaded && loaded.id !== FEED_AUTO) return FOODS.find((f) => f.id === loaded.id) ?? FOODS[0];
     return FOODS[Math.floor(rand() * FOODS.length)];
+  }
+
+  /**
+   * What the keeper's own `H` will drop, or null when there is none of it (BACKLOG-546).
+   *
+   * The loaded slot and the satchel can never disagree because this is the only thing that answers the
+   * question: a named food comes out of the satchel or not at all, and the random handful rolls over the
+   * ids the keeper actually holds rather than over all of `FOODS` — which is how the hatch used to
+   * produce roots on a day nobody had ever grown one.
+   *
+   * The empty case is never silent (CHARTER: no silent failures). It names what ran out, and for the
+   * random handful it says the satchel itself is empty — different sentences, because they send the
+   * keeper to different places: the selector, or the plots.
+   */
+  private keeperFeedId(): string | null {
+    const loaded = feedChoices()[this.loadedFeedIndex];
+    if (loaded && loaded.id !== FEED_AUTO) {
+      if (satchelCount(this.satchel, loaded.id) > 0) return loaded.id;
+      this.logEvent(`🫙 the satchel has no ${loaded.label} left — load something else, or grow some`);
+      return null;
+    }
+    const rolled = rollFromSatchel(this.satchel, rand);
+    if (rolled) return rolled;
+    this.logEvent('🫙 the satchel is empty — the plots refill it, and so does the turn of the day');
+    return null;
+  }
+
+  /** The stock behind the loaded slot (BACKLOG-546) — the whole satchel for the auto slot, which rolls
+   *  over all of it. */
+  private loadedFeedCount(): number {
+    const loaded = feedChoices()[this.loadedFeedIndex];
+    if (loaded && loaded.id !== FEED_AUTO) return satchelCount(this.satchel, loaded.id);
+    return FOODS.reduce((n, f) => n + satchelCount(this.satchel, f.id), 0);
+  }
+
+  /**
+   * The satchel's day-boundary top-up (BACKLOG-546) — the staples back to their founding counts once an
+   * in-game day. A copy of `checkSpoilage`'s shape, day-guard and all, for the same reason: a live pass
+   * must never fire twice in a day, and a clock jump must not fire one at all.
+   */
+  private checkSatchel(t: { day: number }): void {
+    if (t.day <= this.lastSatchelDay) return;
+    this.lastSatchelDay = t.day;
+    const before = this.satchel;
+    this.satchel = refillSatchel(this.satchel);
+    if (this.satchel !== before) {
+      this.logEvent('🫙 the satchel is restocked for the day');
+      this.refreshGiftHud();
+      this.refreshPlaque();
+    }
   }
 
   /**
@@ -2552,7 +2641,11 @@ export class WorldScene extends Phaser.Scene {
   private checkFeeding(): void {
     if (!this.food || !this.foodLanded) return;
     const food = this.food;
-    const eater = this.dinos.find((d) => this.inView(d) && reachedFood(this.tileOf(d), food));
+    // BACKLOG-070: a dino that already turned this piece down is not a candidate for it. Without this it
+    // would stand over the meal refusing it once per step forever, which is a tic, not a decision.
+    const eater = this.dinos.find(
+      (d) => this.inView(d) && !this.refusedThisDrop.has(d.name) && reachedFood(this.tileOf(d), food),
+    );
     if (!eater) return;
     // BACKLOG-375: a well-fed winner standing beside a hungrier high-bond friend in the swarm gives up
     // the meal and lets the friend eat first — the need-drive (371) shaping kindness between dinos.
@@ -2618,6 +2711,16 @@ export class WorldScene extends Phaser.Scene {
       return;
     }
     this.lastMercy = null;
+    // BACKLOG-070: the dish itself, at last. It sits *after* the yield (375) and the mercy (403) and
+    // *before* the contest (387) on purpose, and the seam is where the beats actually differ.
+    //
+    // Generosity and grace are about giving the meal away, and a dino that does not want it is the most
+    // willing giver in the park — putting refusal ahead of them would have shadowed both, since every
+    // yield candidate is well-fed and well-fed is most of what makes a dino fussy. The contest is the
+    // opposite: it is about *keeping* the food, and a dino that will not eat has no stake in a fight
+    // over it. So it gives first, then walks away, and the hungry gobbler beside it simply reaches the
+    // piece on the next step and eats it — the same outcome, arrived at honestly.
+    if (this.refuseFood(eater)) return;
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
     const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
@@ -2735,8 +2838,31 @@ export class WorldScene extends Phaser.Scene {
     return Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY));
   }
 
+  /**
+   * The dish turned down (BACKLOG-070) — this dino reached the food and wants nothing to do with it.
+   *
+   * The piece is left exactly where it is: still landed, still edible, still the same piece to every
+   * system downstream. It is emphatically *not* refunded to the keeper's satchel (546) — a drop you get
+   * back whenever you guess wrong is a drop that cost nothing, which is the thing 546 exists to end.
+   *
+   * Returns whether it fired, so `checkFeeding` can stop without re-deriving the answer.
+   */
+  private refuseFood(d: Dino): boolean {
+    const kind = this.foodKind;
+    if (!kind) return false;
+    const { favorite } = foodReaction(kind, d.traits, this.currentSeason());
+    if (!refusesFood(d.traits.agreeableness, favorite, this.needs[d.name]?.hunger ?? 0)) return false;
+    this.refusedThisDrop.add(d.name);
+    this.lastRefusal = { name: d.name, foodId: kind.id };
+    this.memory = remember(this.memory, d.name, refusedMemory(kind.label));
+    this.flashFeed(d, '😑');
+    this.logEvent(`😑 ${d.name} looked at the ${kind.label} and walked away`);
+    return true;
+  }
+
   private eatFood(d: Dino): void {
     const kind = this.foodKind;
+    this.refusedThisDrop.clear(); // BACKLOG-070: the piece is gone; nobody is refusing it any more
     const r = foodReaction(kind!, d.traits, this.currentSeason());
     this.foodSprite?.destroy();
     this.foodSprite = null;
@@ -8145,6 +8271,7 @@ ${e.short}`;
       .setDepth(4);
     this.lastSeasonDay = clock.now().day;
     this.lastSpoilDay = clock.now().day; // BACKLOG-455: arm the spoilage day tracker (no pass on day 1)
+    this.lastSatchelDay = clock.now().day; // BACKLOG-546: same arming for the satchel top-up
     this.lastUpkeepDay = clock.now().day; // BACKLOG-480: same arming for upkeep
     this.councilTermDay = Math.max(this.councilTermDay, clock.now().day); // BACKLOG-484: same arming for the term
 
@@ -8152,6 +8279,7 @@ ${e.short}`;
     // A pantry that spoils (BACKLOG-455) — its own live-only onHour listener, so a hoard at/near cap bleeds
     // one unit per in-game day. Separate from the season turn / dawn chorus so none disturbs the others.
     clock.onHour((t) => this.checkSpoilage(t));
+    clock.onHour((t) => this.checkSatchel(t)); // BACKLOG-546: the keeper's stock tops up with the day
     clock.onHour((t) => this.checkUpkeep(t)); // BACKLOG-480: a landmark costs its ground a unit a day
     clock.onHour((t) => this.checkTerm(t)); // BACKLOG-484: the council's seats are re-held once a day
     // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
@@ -8190,6 +8318,7 @@ ${e.short}`;
     const day = getWorldClock().now().day;
     this.lastSeasonDay = day;
     this.lastSpoilDay = day; // BACKLOG-455: a restore/jump re-arms spoilage too — no spurious catch-up pass
+    this.lastSatchelDay = day; // BACKLOG-546: and the satchel
     this.lastUpkeepDay = day; // BACKLOG-480: and upkeep
     this.councilTermDay = Math.max(this.councilTermDay, day); // BACKLOG-484: and the term — a jump holds no election
     const tint = SEASON_TINT[seasonFor(day)];
@@ -8602,6 +8731,9 @@ ${e.short}`;
       streak: this.streak, // BACKLOG-122: the keeper's own day-count (additive)
       sessions: this.sessions, // BACKLOG-542: the last three closed sittings, newest first (additive)
       loadedFood: feedChoices()[this.loadedFeedIndex].id, // BACKLOG-067: what is in the hatch (additive)
+      // BACKLOG-546: the keeper's own stock (additive). `FoodPile` is partial and `SaveData.satchel` is
+      // not, so the absent-is-zero read is made explicit here rather than cast away.
+      satchel: Object.fromEntries(Object.entries(this.satchel).map(([id, n]) => [id, n ?? 0])),
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8675,6 +8807,10 @@ ${e.short}`;
       // The HUD is repainted here rather than waiting for the next keypress, which is the one ordering bug
       // this track could have shipped.
       this.loadedFeedIndex = feedChoiceIndex(save.loadedFood);
+      // BACKLOG-546: the keeper's stock. Additive — a save written before this cycle has no `satchel`
+      // field and restores the founding one, so an old save opens with a full hatch rather than an empty
+      // one. A saved stock is taken as written (it may legitimately hold zero of something).
+      if (save.satchel) this.satchel = { ...save.satchel };
       this.refreshGiftHud();
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
@@ -9036,7 +9172,28 @@ ${e.short}`;
     // any: dev-only Playwright hooks — mirror the __clockNow pattern
     (window as any).__heldItem = () => GIFTS[this.heldItemIndex].id;
     // any: dev-only Playwright hooks — the loaded feed, mirroring __heldItem/__cycleItem (BACKLOG-067)
+    // BACKLOG-070: the last dish somebody walked away from.
+    (window as any).__refused = () => (this.lastRefusal ? { ...this.lastRefusal } : null);
     (window as any).__loadedFeed = () => feedChoices()[this.loadedFeedIndex].id;
+    // BACKLOG-546: the keeper's satchel, and a setter — a spec needs to zero a food to reach the
+    // empty-handed drop without pressing H four times and waiting on four fall tweens.
+    // BACKLOG-546: take the piece off the ground without feeding anybody, so a spec can drop repeatedly
+    // (the roll-only-what-you-have check) without staging an eater for each drop.
+    (window as any).__clearFood = () => {
+      this.foodSprite?.destroy();
+      this.foodSprite = null;
+      this.food = null;
+      this.foodKind = null;
+      this.foodLanded = false;
+      this.refusedThisDrop.clear();
+    };
+    (window as any).__satchel = () => JSON.parse(JSON.stringify(this.satchel)) as Record<string, number>;
+    (window as any).__setSatchel = (pile: Record<string, number>) => {
+      this.satchel = { ...pile };
+      this.refreshGiftHud();
+      this.refreshPlaque();
+      return JSON.parse(JSON.stringify(this.satchel)) as Record<string, number>;
+    };
     (window as any).__cycleFeed = (dir = 1) => {
       this.cycleFeedBy(dir);
       return feedChoices()[this.loadedFeedIndex].id;
@@ -9070,9 +9227,12 @@ ${e.short}`;
     // Two lines, one text object (BACKLOG-067). A second object would need its own layout rule in
     // `layoutGiftHud`, and the desktop origin (0,1) grows this one upward for free.
     this.giftHud.setText(
-      [holdingLine(GIFTS[this.heldItemIndex].label), feedLine(feedChoices()[this.loadedFeedIndex].label)].join(
-        '\n',
-      ),
+      [
+        holdingLine(GIFTS[this.heldItemIndex].label),
+        // BACKLOG-546: the count ticking down on every H is how the keeper feels the satchel at all. The
+        // auto slot shows the whole stock, since that is exactly what it will roll over.
+        feedLine(feedChoices()[this.loadedFeedIndex].label, this.loadedFeedCount()),
+      ].join('\n'),
     );
   }
 

@@ -112,3 +112,29 @@ Two register entries added in one edit:
 - `dropFood` returning `null` changes a signature two call sites read. Both are in `WorldScene`.
 - The refusal `return` sits in the hottest function in the scene; it must come after the
   `inView`/`reachedFood` filter so the cost is unchanged on the no-food path.
+
+---
+
+## Shipped
+
+Both tracks landed. `npm run build` clean, **2729 unit** green (257 files, 3 skipped), **743 e2e** green.
+
+**One design change during the build, and it is worth reading.** The plan put the refusal check ahead of
+`yieldFoodTo`, on the reasoning that a dino which will not eat is not a winner. That was wrong, and the
+suite said so immediately: three specs across `cycle-083-generous` and `cycle-098-provision` went red
+because **every yield candidate is well-fed, and well-fed is most of what makes a dino fussy** — so a
+refusal placed first shadowed the entire generous-feeder arc (375/385/386) for any prickly dino.
+
+The branch now sits **after** the yield and the mercy and **before** the contest, and the seam is where
+the beats actually differ: generosity and grace are about *giving the meal away*, and a dino that does
+not want it is the most willing giver in the park; the contest is about *keeping* it, which a refuser has
+no stake in. Two of the three specs went green on the move alone.
+
+**One spec was edited, deliberately.** `cycle-083-generous`'s passthrough case ("no qualifying friend →
+the winner eats") staged a well-fed winner and asserted it eats. That is no longer unconditionally true —
+which is the entire point of BACKLOG-070 — so the winner is now forced warm, with a comment naming the
+branch the test is actually about. No assertion was weakened; a case was named.
+
+**Files:** `world/satchel.ts` (new), `world/feeding.ts`, `world/reachability.ts`, `world/saveGame.ts`,
+`ui/plaque.ts`, `ui/controlsHelp.ts`, `scenes/WorldScene.ts`, plus two unit suites and two e2e suites,
+and the one spec edit above. Thirteen files, inside the arc cap.

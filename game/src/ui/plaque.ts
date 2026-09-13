@@ -50,6 +50,10 @@ export interface PlaqueStats {
   zone?: string;
   /** Park stockpile readout line content (BACKLOG-285), e.g. '🪵 3 · 🪨 1'. Absent/empty → no line. */
   stockpile?: string;
+  /** The keeper's own stock (BACKLOG-546), from `foodPileLine`. Absent/empty → no line. Sits with the
+   *  park's stores rather than with the keeper lines below: it is a count of food, and it reads next to
+   *  the other count of food. */
+  satchel?: string;
   /** Per-zone population readout (BACKLOG-316), e.g. '▸Pocket Cretaceous 4 · The Grove 2'. Absent/empty → no line. */
   zoneTally?: string;
   /** What this ground owes a day (BACKLOG-536), from `upkeepLine`. Absent/empty → no line — and a ground
@@ -78,6 +82,7 @@ export function plaqueLines(s: PlaqueStats): string[] {
   const gens = `${s.generations} generation${s.generations === 1 ? '' : 's'}`;
   const lines = [`VIVARIUM · ${place}`, `Day ${s.day} · ${specimens} · ${gens}`];
   if (s.stockpile) lines.push(`Stores · ${s.stockpile}`);
+  if (s.satchel) lines.push(`Satchel · ${s.satchel}`);
   if (s.zoneTally) lines.push(`Zones · ${s.zoneTally}`);
   if (s.upkeep) lines.push(`Upkeep · ${s.upkeep}`);
   if (s.sitting) lines.push(`Sitting · ${s.sitting}`);

@@ -18,9 +18,15 @@ export function holdingLine(label: string): string {
   return `Holding: ${label}`;
 }
 
-/** The loaded-feed line (BACKLOG-067), the hatch's half of the same HUD. Keys omitted, as above. */
-export function feedLine(label: string): string {
-  return `Feed: ${label}`;
+/**
+ * The loaded-feed line (BACKLOG-067), the hatch's half of the same HUD. Keys omitted, as above.
+ *
+ * BACKLOG-546: an optional stock count, appended as ` ×N`. The number ticking down on every `H` is how
+ * the keeper feels the satchel at all — the plaque says what you have, this says what you are about to
+ * spend. Omitting `count` reproduces the cycle-158 line exactly.
+ */
+export function feedLine(label: string, count?: number): string {
+  return count === undefined ? `Feed: ${label}` : `Feed: ${label} ×${count}`;
 }
 
 export interface HelpRow {

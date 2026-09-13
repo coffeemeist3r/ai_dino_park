@@ -29,7 +29,6 @@
 
 import { ACTIVE_SCALE, FOUNDING_DAY, FOUNDING_HOUR, MINUTES_PER_DAY } from './clock';
 import { atRest, chronotypeOf } from './chronotype';
-import { seededPersonality } from '../ai/personality';
 import { seasonFor, type Season } from './seasons';
 import { VIGIL_ART_KEY } from './vigil';
 import { MEND_ART_KEY } from './mending'; // BACKLOG-530/537
@@ -60,6 +59,10 @@ import { TIC_ASIDE } from './tic';
 import { DOZE_ART_KEY, ROUSE_ART_KEY } from './chronotype';
 import { BOWL_ID, zoneChain } from './zones';
 import { PROP_RIGS } from '../art/propArt';
+import { refusesFood } from './feeding'; // BACKLOG-070
+import { FOUNDING_SATCHEL } from './satchel'; // BACKLOG-546
+import { seededPersonality } from '../ai/personality';
+import { ROSTER } from '../entities/roster';
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -267,6 +270,30 @@ export function afterOneSession(): PlayedPark {
 }
 
 export const REACHABILITY_REGISTER: ReachabilityEntry[] = [
+  {
+    // BACKLOG-070: the first branch in this park's history where a dino reaches a meal and does not eat
+    // it. The claim is about the *roster*, because that is the thing a later cycle could quietly break —
+    // a trait re-seed or a nudge to PICKY_AGREE that leaves the founding bowl with nobody prickly enough
+    // to ever turn a dish down would make this system dormant while every one of its own tests stayed
+    // green. The founding hunger is 0: nothing has made the cast hungry on the first frame.
+    id: 'BACKLOG-070',
+    system: 'a dino turns down the dish the keeper dropped and leaves it on the ground',
+    fact: 'the founding roster holds dinos prickly enough to refuse a food that is not their favorite',
+    holds: () => ROSTER.some((r) => refusesFood(seededPersonality(r.name).agreeableness, false, 0)),
+  },
+  {
+    // BACKLOG-546: the keeper's own stock. Two halves to the claim, and the second is the one worth
+    // pinning: a satchel that merely *exists* is invisible if it is generous in every food, so the fact
+    // names the thin one. A later "make it kinder" tuning pass that flattens the founding stock erases
+    // the whole point of the item and will redden here rather than pass quietly.
+    id: 'BACKLOG-546',
+    system: 'the hatch spends a keeper supply, and runs out of one food before the others',
+    fact: 'the founding satchel is stocked, unevenly, with at least one food at two or fewer',
+    holds: () => {
+      const counts = Object.values(FOUNDING_SATCHEL).map((n) => n ?? 0).filter((n) => n > 0);
+      return counts.length > 0 && Math.min(...counts) <= 2 && new Set(counts).size > 1;
+    },
+  },
   {
     id: 'BACKLOG-486/500',
     system: 'every ground you can walk to has somebody living on it',

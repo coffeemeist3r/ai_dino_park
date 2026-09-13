@@ -78,6 +78,11 @@ test('no qualifying friend → the winner eats as before (passthrough)', async (
     w.__setNeed(winner, 'hunger', 0.1);
     w.__setNeed(friend, 'hunger', 0.9); // hungry, but no bond
     w.__setTrait(friend, 'agreeableness', 0.9); // warm → waits its turn (no greedy gobble)
+    // BACKLOG-070: the winner has to be warm too, now. This spec isolates the 375 *passthrough* — the
+    // branch where nobody is yielded to and the winner simply eats — and as of cycle 159 a well-fed
+    // prickly dino handed a food it does not love turns it down instead, which is a different branch
+    // with its own specs. Making the winner warm names the case this test was always about.
+    w.__setTrait(winner, 'agreeableness', 0.9);
   }, { winner, friend, DROP_COL, DROP_ROW });
 
   await page.evaluate(({ DROP_COL }) => (window as W).__dropFood(DROP_COL), { DROP_COL });

@@ -11744,3 +11744,10 @@ Build order set: structure first (it moves `dropFood`), lore on top, one combine
 plan is mostly a reuse list — the satchel is a `FoodPile`, the refill is `checkSpoilage` copied, the
 plaque line is an optional field, and the prickly cutoff is pinned to `PRICKLY_MAX` by a test rather
 than by an import that would cross the brain boundary.
+
+## Cycle 159 — coder
+
+Both tracks shipped. The one thing worth recording: the refusal branch was planned ahead of the
+generous-feeder yield and had to move behind it, because every yield candidate is well-fed and well-fed
+is most of what makes a dino fussy — the plan would have shadowed the whole 375/385/386 arc for prickly
+dinos. The suite caught it in one run.

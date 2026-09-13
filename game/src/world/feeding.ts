@@ -107,6 +107,47 @@ export function gobblesFood(hunger: number, agreeableness: number): boolean {
 }
 
 /**
+ * Turning the dish down (BACKLOG-070) — the branch `eatFood` has never had.
+ *
+ * Every feeding beat in this park is about *who gets there first*: the rush, the escort, the yield, the
+ * mercy, the gobble, the stand. None of them is about whether the dino actually wants what landed — a
+ * dino that reached the food ate the food, and its palate only ever changed which emoji flashed after.
+ * Now that the keeper picks what comes out of the hatch (067), "it didn't want that" is the most useful
+ * thing the park can say back.
+ *
+ * Three conditions, all of them already in the park:
+ *
+ * - **not its favorite** — a favorite is never refused, by anyone, at any temperament;
+ * - **prickly** — `agreeableness <= PICKY_AGREE`;
+ * - **not actually hungry** — `hunger < PICKY_HUNGER`. A hungry dino eats what it is given.
+ *
+ * The hunger bar is `GOBBLE_HUNGER` deliberately, not incidentally: the gobbler shoulders in *because*
+ * it is hungry, so a gobbler can never also be a refuser — the two poles are disjoint by arithmetic
+ * rather than by a special case somebody has to remember. `feeding.test.ts` pins that as a property.
+ */
+
+/** Agreeableness at/below which a dino is prickly enough to turn a dish down. Pinned to `ai/brain.ts`'s
+ *  `PRICKLY_MAX` — declared here rather than imported because `brain.ts` pulls in `WebLLMBrain`, and the
+ *  CHARTER's hard boundary says the backend does not cross into a pure world module. `feeding.test.ts`
+ *  asserts the two values are equal, so a move of either is caught rather than silently drifting. */
+export const PICKY_AGREE = 0.4;
+
+/** Hunger at/above which nobody is picky. The gobbler's own bar, for the disjointness above. */
+export const PICKY_HUNGER = GOBBLE_HUNGER;
+
+/** Does this dino turn down what landed and leave it for somebody else (BACKLOG-070)? */
+export function refusesFood(agreeableness: number, isFavorite: boolean, hunger: number): boolean {
+  if (isFavorite) return false;
+  return agreeableness <= PICKY_AGREE && hunger < PICKY_HUNGER;
+}
+
+/** What a dino remembers about the dish it walked away from. A builder, per BACKLOG-483's rule: the
+ *  reader is written with the writer, so a reword can never silently empty it. */
+export function refusedMemory(label: string): string {
+  return `the hatch gave you ${label} and you left it where it fell`;
+}
+
+/**
  * The greedy gobbler that shoulders the `winner` aside, or null when none does (the winner eats as
  * normal). A candidate qualifies when it's `gobblesFood` AND at least `HUNGRIER_BY` hungrier than the
  * winner (so it has real cause to push). Hungriest first, ties broken toward the pricklier dino.

@@ -132,6 +132,8 @@ export interface SaveData {
   sessions?: SessionRecord[];
   /** BACKLOG-067: the food id the keeper left loaded in the hatch, or `'auto'`. Absent → the random handful. */
   loadedFood?: string;
+  /** The keeper's satchel (BACKLOG-546) — food id → count. Additive; absent restores the founding stock. */
+  satchel?: Record<string, number>;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -908,6 +910,20 @@ export function deserialize(json: string): SaveData | null {
   if (o.loadedFood !== undefined && typeof o.loadedFood !== 'string') return null;
   const loadedFood = o.loadedFood as string | undefined;
 
+  // satchel (BACKLOG-546) — food id → a finite, non-negative count. Shape only, like `foodPileByZone`:
+  // an id this build does not know is kept rather than rejected, since a save from a future food roster
+  // is a save, not a corruption, and nothing reads an id it cannot resolve.
+  let satchel: Record<string, number> | undefined;
+  if (o.satchel !== undefined) {
+    if (typeof o.satchel !== 'object' || o.satchel === null || Array.isArray(o.satchel)) return null;
+    const raw = o.satchel as Record<string, unknown>;
+    satchel = {};
+    for (const [id, n] of Object.entries(raw)) {
+      if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return null;
+      satchel[id] = Math.floor(n);
+    }
+  }
+
   let visitHours: number[] | undefined;
   if (o.visitHours !== undefined) {
     if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
@@ -951,6 +967,7 @@ export function deserialize(json: string): SaveData | null {
     awayLog,
     sessions,
     loadedFood,
+    satchel,
     streak,
     leftDays,
     catchWarmth,
