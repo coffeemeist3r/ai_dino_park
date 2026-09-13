@@ -11730,3 +11730,10 @@ Milestone 20's first structure arc, and the ledger's last hole: the keeper's `H`
 this park that comes from nowhere. 538 asked the Validator a second time to rule on whether the
 reachability bar reads for studio-facing infra; it is now blocking two items from the top of a
 drain-the-top queue. No solo cycle (8 < 10).
+
+## Cycle 159 — designer
+
+Both tracks spec'd against the hatch from opposite ends — **070** (a dino turns the dish down and leaves
+it) and **546** (the keeper's satchel, which the drop spends from). The seam between them is decided in
+the design rather than left to the Coder: a refused piece stays on the ground and is never refunded,
+because a refunded drop is a free drop and that is the thing 546 exists to end.
