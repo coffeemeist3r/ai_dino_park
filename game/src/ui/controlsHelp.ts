@@ -53,6 +53,16 @@ export const HELP_ROWS: ReadonlyArray<HelpRow> = [
 ];
 
 /**
+ * The one gesture the touch layer has that no key spells (BACKLOG-547).
+ *
+ * The action buttons are one-verb buttons and the More sheet is at its geometric ceiling at ten rows
+ * (BACKLOG-552), so the loaded-feed selector lives on a hold of the feed button. A gesture nobody is told
+ * about is a gesture nobody finds, so the manual says it — on desktop too, where it is documentation of
+ * the game rather than of the device in the reader's hand.
+ */
+export const TOUCH_HINT = 'hold 🍖 (touch)  switch loaded feed';
+
+/**
  * The rendered panel lines: a title, then keys padded into a tidy column, then the governance legend
  * (BACKLOG-477) — the map lens's per-zone call row is glyphs, and a glyph a player can't decode is
  * decoration. Derived from `GOVERNANCE_CALLS`, so it can never drift from what the map actually draws.
@@ -62,6 +72,7 @@ export function helpLines(rows: ReadonlyArray<HelpRow> = HELP_ROWS): string[] {
   return [
     '— Controls —',
     ...rows.map((r) => `${r.keys.padEnd(pad)}  ${r.action}`),
+    TOUCH_HINT,
     '',
     ...governanceLegend(),
   ];

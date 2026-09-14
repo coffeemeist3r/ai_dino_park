@@ -240,6 +240,10 @@ export interface BookRow {
    *  contested-drop beats read *per opponent*, or undefined when this dino holds no disposition toward
    *  anyone (then no line shows). Built by `peckingLine`. */
   pecking?: string;
+  /** The menu (BACKLOG-069) — one cell per food, filled in as this dino eats them, and the favorite
+   *  named only once it has eaten that one. Always present in-game; optional so older BookRow literals
+   *  stay valid. Built by `menuLine`. */
+  menu?: string;
 }
 
 function heartBar(hearts: number): string {
@@ -259,6 +263,9 @@ export function bookLines(rows: BookRow[], away: string[] = []): string[] {
   for (const r of rows) {
     out.push(`${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
+    // BACKLOG-069: the menu, directly under the hearts — the one line in the block that is about what the
+    // *keeper* has learned rather than about what the dino is, which is why it sits above the fingerprints.
+    if (r.menu) out.push(`  ${r.menu}`);
     if (r.quirk) out.push(`  · ${r.quirk}`); // BACKLOG-303: signature idle quirk as a kept fingerprint
     if (r.hours) out.push(`  · ${r.hours}`); // BACKLOG-109: the hours it keeps, beside the quirk
     if (r.dream) out.push(`  ${r.dream}`); // BACKLOG-307: what it dreams when it has had no day yet

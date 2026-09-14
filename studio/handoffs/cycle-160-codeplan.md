@@ -233,3 +233,26 @@ panel), so the only reader who sees it is a desktop player reading the manual.
 ## Blockers
 
 None known at plan time.
+
+---
+
+## Shipped
+
+Both tracks landed as planned, with three deviations worth naming.
+
+1. **`tests/unit/controlsHelp.test.ts` needed updating**, and it was right to fail. It asserts the
+   *structure* of the panel (rows, then a blank, then the governance legend) and the touch hint adds a
+   line to that block. The spec was extended rather than relaxed: it now pins the hint's position and
+   asserts `helpLines()` contains it.
+2. **`__giftHudText` was added** as a dev hook. The design's criterion "the gift HUD's second line
+   reflects the new loaded feed" had no way to be read from a spec, and a criterion nothing can check is
+   not a criterion. One line, beside `__loadedFeed`.
+3. **The menu e2e's feeding helper does not force `agreeableness`.** The first draft did — and it broke
+   the favorite-food test, because `greens` scores on `agreeableness` and forcing the trait to 1 *moved
+   Rex's favorite onto the food the test had picked as the wrong one*. Setting hunger alone is enough
+   (`refusesFood` clears at `PICKY_HUNGER`), and the spec is now measuring the record rather than a
+   trait it perturbed. Recorded because it is a live hazard for every future spec that stages a palate:
+   **the trait setters move the favorite.**
+
+Gate: `npm run build` clean · **2764 unit** passed / 3 skipped · **758 e2e** passed / 0 failed ·
+`@mlc-ai/web-llm` still imported only under `game/src/ai/`.

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { HELP_CHIP, HELP_ROWS, helpLines, holdingLine } from '../../game/src/ui/controlsHelp';
+import { HELP_CHIP, HELP_ROWS, TOUCH_HINT, helpLines, holdingLine } from '../../game/src/ui/controlsHelp';
 import { governanceLegend } from '../../game/src/world/governance';
 
 describe('controls help (HUD overhaul)', () => {
@@ -17,14 +17,23 @@ describe('controls help (HUD overhaul)', () => {
     expect(lines[0]).toBe('— Controls —');
     // BACKLOG-477: the controls block is still exactly the rows, and the legend follows it after a blank.
     expect(lines.slice(0, HELP_ROWS.length + 1).length).toBe(HELP_ROWS.length + 1);
-    expect(lines[HELP_ROWS.length + 1]).toBe('');
-    expect(lines.slice(HELP_ROWS.length + 2)).toEqual(governanceLegend());
+    // BACKLOG-547: the touch hint closes the controls block — it is a binding like the rest, it just has
+    // no key to put in the key column, so it gets its own line rather than a fake row in HELP_ROWS.
+    expect(lines[HELP_ROWS.length + 1]).toBe(TOUCH_HINT);
+    expect(lines[HELP_ROWS.length + 2]).toBe('');
+    expect(lines.slice(HELP_ROWS.length + 3)).toEqual(governanceLegend());
     // every action starts at the same column: pad + 2
     const pad = Math.max(...HELP_ROWS.map((r) => r.keys.length));
     for (const [i, row] of HELP_ROWS.entries()) {
       expect(lines[i + 1].slice(0, pad).trimEnd()).toBe(row.keys);
       expect(lines[i + 1].slice(pad + 2)).toBe(row.action);
     }
+  });
+
+  it('names the one gesture no key spells (BACKLOG-547)', () => {
+    expect(TOUCH_HINT).toContain('hold');
+    expect(TOUCH_HINT).toContain('feed');
+    expect(helpLines()).toContain(TOUCH_HINT);
   });
 
   it('covers every key the scene binds', () => {

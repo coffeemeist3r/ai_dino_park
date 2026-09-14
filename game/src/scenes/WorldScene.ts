@@ -341,6 +341,8 @@ import {
   cycleFeed,
   feedChoiceIndex,
 } from '../world/foods'; // BACKLOG-066 / 067
+// BACKLOG-069: the menu the keeper fills in by feeding — the record and the book's line for it.
+import { menuLine, noteTaste, type TastedRecord } from '../world/menu';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 // BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
 import {
@@ -362,6 +364,7 @@ import {
   sheetRows,
   menuChips,
   type Vec2,
+  LONG_PRESS_MS,
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, type Bonds } from '../social/bonds';
 import type { Personality } from '../ai/personality';
@@ -662,6 +665,8 @@ export class WorldScene extends Phaser.Scene {
   /** The keeper's satchel (BACKLOG-546) — what the hatch has left to drop. Persisted (additive); a save
    *  without one restores the founding stock. */
   private satchel: FoodPile = { ...FOUNDING_SATCHEL };
+  /** BACKLOG-069: dino name → the foods it has been seen to eat. Lifetime, persisted, never cleared. */
+  private tasted: TastedRecord = {};
   /** BACKLOG-546: the last in-game day the satchel's top-up ran. Armed on boot/restore like
    *  `lastSpoilDay`, so a clock jump never fires a spurious refill. */
   private lastSatchelDay = 0;
@@ -1108,6 +1113,9 @@ export class WorldScene extends Phaser.Scene {
   private lastConversation: { speaker: string; text: string; source?: string } | null = null;
   /** Touch controls (BACKLOG-189): live drag vector, the dragging pointer, and the UI layer. */
   private touchEnabled = false;
+  /** BACKLOG-547: a press on the feed button, until it resolves as a tap (drop) or a hold (selector).
+   *  Null the moment the hold fires, which is how the release knows it has nothing left to do. */
+  private feedPress: Phaser.Time.TimerEvent | null = null;
   private touchVec: Vec2 = { x: 0, y: 0 };
   private stickPointerId = -1;
   private touchObjects: Phaser.GameObjects.GameObject[] = [];
@@ -2847,6 +2855,21 @@ export class WorldScene extends Phaser.Scene {
    *
    * Returns whether it fired, so `checkFeeding` can stop without re-deriving the answer.
    */
+  /**
+   * The one place a discovered food is written (BACKLOG-069). Three callers — the hatch, a ground feeding
+   * its own, and the scan — and one record, which is BACKLOG-483's rule applied at the moment the read is
+   * created rather than a hundred cycles later.
+   *
+   * `noteTaste` returns the identical object when nothing changed, so a dino eating the same dinner for
+   * the tenth time costs no save.
+   */
+  private noteMenu(name: string, foodId: string): void {
+    const next = noteTaste(this.tasted, name, foodId);
+    if (next === this.tasted) return;
+    this.tasted = next;
+    void this.saveGame();
+  }
+
   private refuseFood(d: Dino): boolean {
     const kind = this.foodKind;
     if (!kind) return false;
@@ -2879,6 +2902,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-066: through the builders, so `lastTaste` can never be emptied by a reword of the string.
       r.favorite ? ateFavoriteMemory(kind!.label) : ateMemory(),
     );
+    this.noteMenu(d.name, kind!.id); // BACKLOG-069: the keeper learns a palate by watching it swallow
     if (warming) {
       this.memory = remember(this.memory, d.name, warmMemory());
       this.clearColdFunk(d.name, true);
@@ -4312,6 +4336,7 @@ export class WorldScene extends Phaser.Scene {
       this.shortsByZone[zone] = 0; // BACKLOG-471: a ground that feeds its own has nothing to grumble about
       this.foodPileByZone[zone] = takeFood(pile, id);
       this.needs = satisfy(this.needs, d.name, 'hunger');
+      this.noteMenu(d.name, id); // BACKLOG-069: the keeper did not choose it, but the book records facts
       this.memory = remember(this.memory, d.name, storesFedMemory(zoneName));
       this.flashFeed(d, emoji);
       this.logEvent(storesFedLine(zoneName, d.name, emoji));
@@ -4583,6 +4608,9 @@ export class WorldScene extends Phaser.Scene {
       role: this.roleOf(d.name),
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
+      // BACKLOG-069: the favorite is read live (season-aware) on every open; the record only stores
+      // which foods went down. A palate that moves in winter shows the winter answer.
+      menu: menuLine(this.tasted[d.name] ?? [], favoriteFood(d.traits, this.currentSeason())),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
@@ -4721,6 +4749,8 @@ export class WorldScene extends Phaser.Scene {
       return isSeeded();
     };
     (window as any).__bookRows = () => this.bookRows();
+    // BACKLOG-069: the menu record — which foods this dino has been seen to eat.
+    (window as any).__tasted = (name: string) => [...(this.tasted[name] ?? [])];
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
@@ -6684,6 +6714,10 @@ ${e.short}`;
     (window as any).__touchEnabled = () => this.touchEnabled;
     (window as any).__touchOwns = (x: number, y: number) => this.touchUiOwns(x, y);
     (window as any).__touchVec = () => ({ ...this.touchVec });
+    // BACKLOG-547: press/release on the feed button, so a spec can time a hold without synthesising raw
+    // pointer events against Phaser's input manager. The real pointer path is covered by the spec too.
+    (window as any).__feedPressStart = () => this.beginFeedPress();
+    (window as any).__feedPressEnd = () => this.endFeedPress();
     (window as any).__touchLayout = () => ({
       stick: { ...STICK },
       buttons: actionButtons(this.scale.width, this.scale.height),
@@ -6715,6 +6749,7 @@ ${e.short}`;
       if (this.touchEnabled && p.id === this.stickPointerId) this.dragStick(p.x, p.y);
     });
     const release = (p: Phaser.Input.Pointer) => {
+      this.endFeedPress(); // BACKLOG-547: independent of the stick — a feed press never owns the stick id
       if (p.id !== this.stickPointerId) return;
       this.stickPointerId = -1;
       this.touchVec = { x: 0, y: 0 };
@@ -6781,6 +6816,7 @@ ${e.short}`;
   private disableTouch(): void {
     if (!this.touchEnabled) return;
     this.touchEnabled = false;
+    this.cancelFeedPress(); // BACKLOG-547: never leak a pending hold into a scene with no buttons
     this.stickPointerId = -1;
     this.touchVec = { x: 0, y: 0 };
     this.sheetOpen = false;
@@ -6801,6 +6837,34 @@ ${e.short}`;
       STICK.x + this.touchVec.x * (STICK.r - 8),
       STICK.y + this.touchVec.y * (STICK.r - 8),
     );
+  }
+
+  /**
+   * The feed button's press (BACKLOG-547) — the phone's route to the hatch selector.
+   *
+   * Held for `LONG_PRESS_MS`, it steps the loaded feed and drops nothing; released before that, it drops,
+   * exactly as a tap always did. The hold fires **once**, on the threshold: a hold is a step, not a
+   * scroll. No per-object handler is added anywhere — the press is this one field, and `endFeedPress`
+   * reading it as null is the whole state machine.
+   */
+  private beginFeedPress(): void {
+    this.cancelFeedPress();
+    this.feedPress = this.time.delayedCall(LONG_PRESS_MS, () => {
+      this.feedPress = null; // consumed before the step, so the release that follows does nothing
+      this.cycleFeedBy(1);
+    });
+  }
+
+  /** The release. A press still pending was a tap; one the hold already consumed is nothing. */
+  private endFeedPress(): void {
+    if (!this.feedPress) return;
+    this.cancelFeedPress();
+    this.dropFood();
+  }
+
+  private cancelFeedPress(): void {
+    this.feedPress?.remove();
+    this.feedPress = null;
   }
 
   private onTouchButton(id: string): void {
@@ -6873,7 +6937,11 @@ ${e.short}`;
       inCircle(b.x, b.y, b.r, px, py),
     );
     if (button) {
-      this.onTouchButton(button.id);
+      // BACKLOG-547: the feed button is the one button with two verbs, so it is the one button that
+      // resolves on the *release* — a tap drops, a hold steps the loaded feed. Every other button still
+      // resolves here, on pointerdown, from pre-tap state. The single-dispatch rule is untouched.
+      if (button.id === 'feed') this.beginFeedPress();
+      else this.onTouchButton(button.id);
       return;
     }
     if (this.sheetOpen) {
@@ -8111,6 +8179,10 @@ ${e.short}`;
     this.scanPanel.setText(scanLines(this.scanSubject(target), this.currentSeason()).join('\n'));
     this.scanPanel.setVisible(true);
     this.scanOpen = true;
+    // BACKLOG-069: the scan stays a spoiler — it is the one ability in this game that reads a mind — but
+    // now it *counts*. What LUMEN-3 reads, the book keeps, so the roster means something at the
+    // collection layer: a Scholar fills the menu by looking, everyone else fills it by feeding.
+    this.noteMenu(target.name, favoriteFood(target.traits, this.currentSeason()).id);
   }
 
   private setupScan(): void {
@@ -8734,6 +8806,8 @@ ${e.short}`;
       // BACKLOG-546: the keeper's own stock (additive). `FoodPile` is partial and `SaveData.satchel` is
       // not, so the absent-is-zero read is made explicit here rather than cast away.
       satchel: Object.fromEntries(Object.entries(this.satchel).map(([id, n]) => [id, n ?? 0])),
+      // BACKLOG-069: the menu filled in so far (additive). Absent in every save before this cycle.
+      tasted: Object.fromEntries(Object.entries(this.tasted).map(([n, ids]) => [n, [...ids]])),
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8811,6 +8885,7 @@ ${e.short}`;
       // field and restores the founding one, so an old save opens with a full hatch rather than an empty
       // one. A saved stock is taken as written (it may legitimately hold zero of something).
       if (save.satchel) this.satchel = { ...save.satchel };
+      this.tasted = save.tasted ?? {}; // BACKLOG-069: additive — a pre-160 save opens with a blank menu
       this.refreshGiftHud();
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;
@@ -9175,6 +9250,8 @@ ${e.short}`;
     // BACKLOG-070: the last dish somebody walked away from.
     (window as any).__refused = () => (this.lastRefusal ? { ...this.lastRefusal } : null);
     (window as any).__loadedFeed = () => feedChoices()[this.loadedFeedIndex].id;
+    // BACKLOG-547: the two HUD lines as painted — the phone keeper's only readout of what a hold did.
+    (window as any).__giftHudText = () => this.giftHud?.text ?? '';
     // BACKLOG-546: the keeper's satchel, and a setter — a spec needs to zero a food to reach the
     // empty-handed drop without pressing H four times and waiting on four fall tweens.
     // BACKLOG-546: take the piece off the ground without feeding anybody, so a spec can drop repeatedly

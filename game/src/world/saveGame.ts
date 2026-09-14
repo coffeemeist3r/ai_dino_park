@@ -134,6 +134,9 @@ export interface SaveData {
   loadedFood?: string;
   /** The keeper's satchel (BACKLOG-546) — food id → count. Additive; absent restores the founding stock. */
   satchel?: Record<string, number>;
+  /** The menu the keeper has filled in (BACKLOG-069) — dino name → the food ids it has been seen to eat.
+   *  Additive; absent restores an empty record (nothing discovered yet), which is the fresh-save read. */
+  tasted?: Record<string, string[]>;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -924,6 +927,20 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // tasted (BACKLOG-069) — dino name → food ids. Shape only, the `satchel` discipline one block up: a
+  // name or a food id this build does not know is *kept*, not rejected, because a save from a future
+  // roster is a save. `menuLine` only ever asks whether a known id is in the list, so a stray one is inert.
+  let tasted: Record<string, string[]> | undefined;
+  if (o.tasted !== undefined) {
+    if (typeof o.tasted !== 'object' || o.tasted === null || Array.isArray(o.tasted)) return null;
+    const raw = o.tasted as Record<string, unknown>;
+    tasted = {};
+    for (const [name, ids] of Object.entries(raw)) {
+      if (!Array.isArray(ids) || !ids.every((i) => typeof i === 'string')) return null;
+      tasted[name] = ids as string[];
+    }
+  }
+
   let visitHours: number[] | undefined;
   if (o.visitHours !== undefined) {
     if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
@@ -968,6 +985,7 @@ export function deserialize(json: string): SaveData | null {
     sessions,
     loadedFood,
     satchel,
+    tasted,
     streak,
     leftDays,
     catchWarmth,

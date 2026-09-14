@@ -11971,3 +11971,12 @@ one optional `BookRow` field, one additive save key beside `satchel`, and exactl
 a single `noteMenu` recorder. 547 is one constant plus one predicate in `input/touch.ts`, and a
 three-method press state in the scene's touch block that moves the feed button's verb to pointerup
 without adding a single per-object handler. Noted for the e2e: poll the state, never sleep the duration.
+
+## Cycle 160 - coder
+
+Both tracks shipped. 069: `world/menu.ts` (new, pure), an optional `BookRow.menu`, an additive `tasted`
+save key beside `satchel`, and one `noteMenu` recorder called from the hatch, the stores-feed and the
+scan. 547: `LONG_PRESS_MS` + `isLongPress` in `input/touch.ts`, and a three-method press state that moves
+the feed button's verb to pointerup without a single per-object handler. One hazard found and written
+down: the trait setters move a dino's favorite food, which broke the first draft of the menu spec.
+Gate: build clean, 2764 unit, 758 e2e, 0 failed.

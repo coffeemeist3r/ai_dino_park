@@ -47,6 +47,23 @@ export function stickVector(
   return { x: dx * scale, y: dy * scale };
 }
 
+/**
+ * How long a press must be held before it reads as a **hold** rather than a tap (BACKLOG-547).
+ *
+ * The touch layer's action buttons are one-verb buttons, and the loaded-feed selector (067) had nowhere
+ * to live: the More sheet is at its geometric ceiling at ten rows (see `sheetRows`, and BACKLOG-552), so
+ * the second verb goes on the button it belongs to instead of on a row that does not fit.
+ *
+ * 400ms is the band where a hold is deliberate but not a wait — long enough that a hurried drop is never
+ * misread as a selector step, short enough that nobody thinks the button is broken.
+ */
+export const LONG_PRESS_MS = 400;
+
+/** Has a press that went down at `downAt` become a hold by `now`? */
+export function isLongPress(downAt: number, now: number, ms: number = LONG_PRESS_MS): boolean {
+  return now - downAt >= ms;
+}
+
 export function inCircle(cx: number, cy: number, r: number, px: number, py: number): boolean {
   return Math.hypot(px - cx, py - cy) <= r;
 }
