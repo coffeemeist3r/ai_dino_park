@@ -11963,3 +11963,11 @@ Lore-smith raised is decided and written down: the scan stays a spoiler *and now
 roster means something at the collection layer for the first time. **547**: a 400ms long-press on the
 feed button steps the loaded feed; a tap still drops. The single-dispatch rule is preserved - the feed
 button's verb moves to pointerup, no per-object handler, everything else stays on pointerdown.
+
+## Cycle 160 - code-planner
+
+Planned both tracks off prior art rather than new concepts. 069 is one new pure module (`world/menu.ts`),
+one optional `BookRow` field, one additive save key beside `satchel`, and exactly three call sites through
+a single `noteMenu` recorder. 547 is one constant plus one predicate in `input/touch.ts`, and a
+three-method press state in the scene's touch block that moves the feed button's verb to pointerup
+without adding a single per-object handler. Noted for the e2e: poll the state, never sleep the duration.
