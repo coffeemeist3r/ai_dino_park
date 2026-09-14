@@ -11944,3 +11944,12 @@ Picked **BACKLOG-069** (menu in the book) — Milestone 20's second lore arc: th
 favorite food only once you have fed it that food. Seeded **BACKLOG-550** [art] (the 🍖/💧 need marks)
 knowingly blocked, with its host written out — and flagged to the Structure-smith that all three open
 art items are now host-blocked, 550's host being a ~10-line `makeHourMark` rider on `refreshNeedMarks`.
+
+## Cycle 160 — structure-smith
+
+Picked **BACKLOG-547** (the touch bar has no selectors), Milestone 20's second structure arc. Read the
+item first: its held-item half has been false since 486 — only the *loaded feed* is unreachable on
+touch — and the obvious fix (a sheet row) is impossible, because `sheetRows` is at its geometric ceiling
+at ten. So the spine is the item's own: a long-press on the 🍖 button. Queue was at 3 < X=4, so seeded
+**551** (the `makeHourMark` host the need marks never got) and **552** (the full More sheet, found while
+scoping 547). Recommended 538 to cycle 161 as the first legal solo-cycle declaration.
