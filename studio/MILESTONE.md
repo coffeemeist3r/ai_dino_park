@@ -21,13 +21,13 @@ watches somebody else get the good dinner has something to say about it.
 
 **Lore arcs:**
 - [x] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
-- [ ] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069)
+- [x] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069 — shipped cycle 160) — *and the arc turned out to be about the keeper roster as much as the palate: LUMEN-3's scan has printed the favorite since cycle 37's ability and nobody had thought to **keep** it, so four lines made the observer choice change how a whole sub-goal is played rather than one panel.*
 - [ ] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068)
 - [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
 
 **Structure arcs:**
 - [x] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
-- [ ] The phone keeper can reach the selector — the two most expressive keeper verbs stop being keyboard-only on the shipping Android surface (BACKLOG-547)
+- [x] The phone keeper can reach the selector — the loaded feed stops being keyboard-only on the shipping Android surface (BACKLOG-547 — shipped cycle 160) — *half the arc was already shipped: the held-item selector has had a touch route since 486, and the item's text had said otherwise since the night it was written. Scoping the other half found the phone's real wall — the More sheet cannot take an eleventh row — which is now BACKLOG-552 rather than a surprise.*
 
 
 ---

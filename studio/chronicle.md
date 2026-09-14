@@ -11988,3 +11988,70 @@ real bug caught by the acceptance set and fixed inside the fire: the first 547 i
 food on a release that landed anywhere, so a thumb sliding off the button still fed the park; the release
 now checks it is still inside the button. One flake named rather than swallowed - `cycle-042-art-pixel-sunny`
 failed once, passed isolated and passed again on a fresh full run, the BACKLOG-538 signature.
+
+## Cycle 160 — APPROVED / APPROVED — the book keeps a menu you have to earn, and the phone can finally choose
+
+Two tracks, twenty of twenty criteria, no rework. Both of tonight's items are about the same small
+thing: a fact the park already knew, that the player had no route to.
+
+**The book learns the menu (069).** Every dino in this bowl has had a favorite food since cycle 25.
+Until tonight the only ways to find out what it was were to be looking at that dino during the single
+frame its 😋 is on screen, or to be playing LUMEN-3 and press the scan. The collection book — the one
+surface in this game whose entire job is *what I have learned about this dino* — never carried it.
+
+Now it does, and it carries it the Pokemon way: blank until earned. Open the book on a fresh save and
+every dino reads `🍽 menu: ·······  (favorite unknown)`. One cell per food. Press `H`, watch somebody
+eat, and that dino's cell for that food fills in — for that dino only. Feed it the thing it actually
+likes and the line stops hedging and names it. A menu is a sub-goal only if the blank is visible, so
+the blank ships on frame one rather than the line being hidden until it has something in it.
+
+The deliberate refusals are the better half of the design. **A refusal records nothing** — 070's
+walked-away-from dish teaches the keeper nothing about what a dino *likes*, so the menu records
+swallowing, not offering, and the way that was honoured was by writing no code at that site at all. And
+**the favorite is read live**, season-aware, on every open, while the record stores only which foods
+went down: a palate that moves in winter shows the winter answer, and the record never has to be
+migrated when a craving shifts.
+
+**The decision that will outlast the feature.** LUMEN-3's field scan still prints the favorite
+unconditionally — it is the one ability in this game that reads a mind, and a Scholar who has to guess
+like everybody else is a worse roster, not a fairer one. But the scan now **counts**: what LUMEN-3
+reads, the book keeps. The keeper roster has existed since cycle 37, and until tonight choosing an
+observer changed one panel. Now it changes how an entire collection sub-goal is played — the Scholar
+fills the menu by looking, everybody else fills it by feeding. It cost four lines, because BACKLOG-157
+had put the fact on screen a hundred and twenty cycles ago and nobody had thought to *keep* it.
+
+**The phone can finally choose (547).** The Android PWA auto-deploys off `main`. It is a shipping
+surface, not a someday. And on it the keeper's hatch selector — the thing cycle 158 shipped, the thing
+this whole milestone is named after — did not exist: no gesture on any screen reached it. Hold the 🍖
+button for half a second now and the loaded feed steps; tap and it drops as it always did; slide your
+thumb off and let go and nothing happens, because the drop is the one verb here you cannot take back
+and sliding off a button is how every touch UI in the world says *never mind*. That last one is not a
+nicety — it was a real bug in the first implementation, and it was caught because the Designer had
+written the criterion from how people use their thumbs before any code existed.
+
+**Two habits paid out tonight, both of them cheap.** The item's own text claimed both selectors were
+keyboard-only; half of that had been false since BACKLOG-486, and the Structure-smith checked instead
+of building it twice. That is *read the item, do not trust it* — the cycle-155 lesson — spending itself
+for the third time. And scoping the work produced a finding nobody was looking for: the phone's More
+sheet is at a **geometric ceiling**, ten rows, with an eleventh landing on top of the button that opens
+it. Every future keeper verb hits that wall. It is now BACKLOG-552 with three options weighed, and it
+was explicitly not forced tonight. A wall you have named is not a wall you have to climb this evening.
+
+Also seeded: **551**, the `makeHourMark` host the 🍖/💧 need marks never got — a ten-line rider that
+would unblock a third of an art queue in which all three items are currently host-blocked. The
+Lore-smith found it by checking what the code already asks for and does not get, which is the method
+that ended three consecutive Artist no-ops last cycle.
+
+**Milestone 20 is four arcs of six, and its structure lane is closed.** What remains is 068 (a palate
+that drifts) and 126 (the dino watching somebody else get the good dinner) — and both now have the
+thing they were waiting for, because a palate has to be *visible* before drifting or envying it means
+anything. The checklist pulled them into this order and the order was right, which is the second time
+in three milestones that layer has earned its keep.
+
+Gate: build clean, **2768 unit**, **759 e2e**, 0 failed. One flake named rather than swallowed
+(`cycle-042-art-pixel-sunny`, green isolated and green on a fresh full run — the 538 signature). CI
+checked per the Finish step: the last run is **success**, and the four-day red streak of cycles 156–159
+is closed.
+
+Cycle 161 is the first cycle in which a **solo cycle** may be declared. Both this cycle's Structure
+handoff and this verdict recommend BACKLOG-538 and a declaration.

@@ -22,7 +22,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-538 [infra] The victim moves again — **fourth consecutive instance at cycle 157; moved to the top of this queue by Validator ruling.** Same signature every time: the `__ready` boot wait times out on a parallel cold start, never an assertion, green isolated and green in a full run. Four cycles makes it the longest-lived known defect in the suite, and the real cost is not the re-run — it is that a flake this regular trains readers to discount a red board, which is the habit that makes a genuine regression invisible (full text in the cycle-153 block below). **UNBLOCKED at cycle 159 by Validator ruling:** CHARTER v7's reachability bar has a reading for `[infra]` — a substituted question, *what can the next cycle do that it could not do before, and what is the evidence produced in this cycle that it works* — with one hard condition: the deliverable must be **run and demonstrated inside the cycle that ships it**, not described. A harness that reproduces the flake on demand, with the verdict carrying the run and the victim it caught, satisfies it; a harness that would *let a future cycle* investigate does not. Full reasoning and its scope (a routine-level interpretation, overturnable by the operator) in `cycle-159-verdict.md`.
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state. **Entry condition rewritten at cycle 158, its deadline night: the evidence clause is now a tie-break on which option to take, not a gate on taking it. Taken at cycle 165, or at the first cycle whose structure item edits a founding constant, whichever comes first** (full text in the cycle-151 block below).
-- [~] BACKLOG-547 [infra] The touch bar has no selectors — a phone keeper can drop food and give gifts but cannot choose what either one is (full text in the cycle-158 block below).
 - [ ] BACKLOG-551 [infra] Two marks that are not in the mark family — `needMarks` is built inline as Text, so the 🍖/💧 tells can never be drawn (full text in the cycle-160 block below).
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 
@@ -105,8 +104,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 27 lore additions — taste (2026-06-01)
 
 - [ ] BACKLOG-068 [emergent] Acquired taste — a dino fed the same non-favorite food many times slowly warms to it (tiny capped preference drift in memory); palates aren't fixed forever.
-- [~] BACKLOG-069 [pokemon] Menu in the book — the collection book reveals each dino's favorite food, but only after you've fed it that food once. A "fill in the menu" sub-goal.
-
 ## Realtime fishbowl (2026-06-01 — operator: "make time realtime so I can just leave it running")
 
 - [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary. *(progress: the governor SPINE shipped as operator work 2026-06-11 with the mobile minds policy (BACKLOG-190): pure `ai/governor.ts` — ambient dino↔dino chatter pauses on `visibilitychange`-hidden and battery <20%, convo cooldown 8→24 steps on coarse-pointer devices, player interaction never gated. Remaining 107 scope — per-beat budgeting, on-screen-only inference — lands when the 104 action layer exists to budget.)*
@@ -683,8 +680,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 158 structure additions — the keeper's end of the ledger (2026-09-12)
 
-
-- [~] BACKLOG-547 [infra] The touch bar has no selectors — the touch action bar carries `feed` and `item`, so a phone keeper can drop food and give a gift, but nothing on the bar *cycles* either one. Every held-item choice is `[`/`]` and every loaded-feed choice (after 067) is `,`/`.`, both keyboard-only. The Android PWA is a shipping surface that auto-deploys off `main`, not a someday, and on it the two most expressive keeper verbs in the game are stuck on whatever the defaults happen to be. The spine is one gesture — a long-press, or a swipe across the button — on each of the two existing action buttons, mapped to the same `cycleItem` / feed-cycle calls the keys reach, with the HUD that `layoutGiftHud` already repositions for touch showing the result. No new bar, no new panel: the buttons are there and they are already the right two. Builds on 067 / 486 / 331.
 
 ## Cycle 160 (Structure-smith)
 
