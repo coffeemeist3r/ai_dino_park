@@ -12055,3 +12055,29 @@ is closed.
 
 Cycle 161 is the first cycle in which a **solo cycle** may be declared. Both this cycle's Structure
 handoff and this verdict recommend BACKLOG-538 and a declaration.
+
+## Cycle 160-art — no-op, and the reason is now written down as an item rather than as a note
+
+The art queue holds three items — **543** (the sulk), **539** (the day-count on the brass), **550** (the
+🍖/💧 need marks) — and **all three are blocked on the same kind of thing: somewhere to hang.** None of
+them is blocked on taste, difficulty, or the Artist's time.
+
+Before no-opping I checked whether the queue's depth was the problem, and it is not. Every key in
+`worldPlacedProps()` has a rig. All five roster species have pixel rigs. All seven foods have `food_<id>`
+rigs. Both keeper avatars are drawn. There is nothing left in this park that the Artist can take without
+somebody first building it a host — which is exactly the finding the cycle-158 Artist made, made again
+tonight with the whole surface swept rather than sampled.
+
+What is different this cycle is that the finding stopped being a chronicle note and became **BACKLOG-551**,
+queued on the Structure Track by name, with the host specified to the line: route `needMarks` through
+`makeHourMark` and give it a two-key swap, the shape `refreshMissedMarks` already runs for
+`missed`/`missed_aloof`. Ten lines of scene glue and two `worldPlacedProps()` entries. It is the cheapest
+of the three blockers by a wide margin, and once it lands the Artist has a subject that is arguably the
+**most-seen** un-drawn thing in the game: every dino carries a need, needs build on every tick, and the
+mark is up long before anything else in the mark family fires.
+
+No rig authored ahead. The cycle-145 amendment to the stash rule is explicit — authoring ahead of the
+host is allowed, *shipping* ahead of it is not, because a drawn rig with no host lands in `unplacedRigs()`
+and reddens the reachability register. Adding `need_hunger` to `PROP_RIGS` tonight would do exactly that,
+and adding it to `worldPlacedProps` to silence it would be a false entry in the register that exists to
+catch false entries.
