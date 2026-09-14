@@ -6749,7 +6749,7 @@ ${e.short}`;
       if (this.touchEnabled && p.id === this.stickPointerId) this.dragStick(p.x, p.y);
     });
     const release = (p: Phaser.Input.Pointer) => {
-      this.endFeedPress(); // BACKLOG-547: independent of the stick — a feed press never owns the stick id
+      this.endFeedPress(p.x, p.y); // BACKLOG-547: independent of the stick — a feed press never owns its id
       if (p.id !== this.stickPointerId) return;
       this.stickPointerId = -1;
       this.touchVec = { x: 0, y: 0 };
@@ -6855,11 +6855,23 @@ ${e.short}`;
     });
   }
 
-  /** The release. A press still pending was a tap; one the hold already consumed is nothing. */
-  private endFeedPress(): void {
+  /**
+   * The release. A press still pending was a tap; one the hold already consumed is nothing.
+   *
+   * A release that lands **off** the button cancels rather than drops — sliding a thumb off a button is
+   * how every touch UI in the world says "never mind", and the drop is the one verb here you cannot take
+   * back. Called with no position (the dev hook) it is treated as on-target.
+   */
+  private endFeedPress(px?: number, py?: number): void {
     if (!this.feedPress) return;
     this.cancelFeedPress();
+    if (px !== undefined && py !== undefined && !this.onFeedButton(px, py)) return;
     this.dropFood();
+  }
+
+  private onFeedButton(px: number, py: number): boolean {
+    const b = actionButtons(this.scale.width, this.scale.height).find((x) => x.id === 'feed');
+    return !!b && inCircle(b.x, b.y, b.r, px, py);
   }
 
   private cancelFeedPress(): void {

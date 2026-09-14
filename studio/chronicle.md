@@ -11980,3 +11980,11 @@ scan. 547: `LONG_PRESS_MS` + `isLongPress` in `input/touch.ts`, and a three-meth
 the feed button's verb to pointerup without a single per-object handler. One hazard found and written
 down: the trait setters move a dino's favorite food, which broke the first draft of the menu spec.
 Gate: build clean, 2764 unit, 758 e2e, 0 failed.
+
+## Cycle 160 - qa
+
+20/20 criteria pass, both tracks. Build clean, **2768 unit**, **759 e2e**, web-llm boundary intact. One
+real bug caught by the acceptance set and fixed inside the fire: the first 547 implementation dropped
+food on a release that landed anywhere, so a thumb sliding off the button still fed the park; the release
+now checks it is still inside the button. One flake named rather than swallowed - `cycle-042-art-pixel-sunny`
+failed once, passed isolated and passed again on a fresh full run, the BACKLOG-538 signature.

@@ -102,3 +102,16 @@ test('the other buttons still resolve on pointerdown, exactly as before', async 
 
   await expect.poll(() => page.evaluate(() => (window as W).__toneMenuOpen())).toBe(true);
 });
+
+test('sliding the thumb off the button before letting go drops nothing', async ({ page }) => {
+  const layout = await bootTouch(page);
+  const at = await feedButton(page, layout);
+  const away = await toPage(page, 320, 240); // the middle of the glass, far from the cluster
+
+  await page.mouse.move(at.x, at.y);
+  await page.mouse.down();
+  await page.mouse.move(away.x, away.y, { steps: 4 });
+  await page.mouse.up();
+
+  expect(await foodInPlay(page), 'never mind is a thing a thumb can say').toBeNull();
+});
