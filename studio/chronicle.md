@@ -11937,3 +11937,10 @@ in the chronicle. An un-named red CI is CHARTER v7's own defect one layer up: **
 that is not.**
 
 Local gate after the fix: build clean, **2748 unit**, **746 e2e passed / 1 skipped / 0 failed**.
+
+## Cycle 160 — lore-smith
+
+Picked **BACKLOG-069** (menu in the book) — Milestone 20's second lore arc: the book keeps a dino's
+favorite food only once you have fed it that food. Seeded **BACKLOG-550** [art] (the 🍖/💧 need marks)
+knowingly blocked, with its host written out — and flagged to the Structure-smith that all three open
+art items are now host-blocked, 550's host being a ~10-line `makeHourMark` rider on `refreshNeedMarks`.
