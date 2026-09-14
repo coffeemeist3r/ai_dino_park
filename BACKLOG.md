@@ -678,9 +678,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 *Closed items + closed log live in `BACKLOG-archive.md`.*
 
-## Cycle 158 structure additions — the keeper's end of the ledger (2026-09-12)
-
-
 ## Cycle 160 (Structure-smith)
 
 - [ ] BACKLOG-551 [infra] Two marks that are not in the mark family — every floating mark this park hangs over a dino goes through `makeHourMark` (`WorldScene.ts:3950`), which swaps a `Text` glyph for a baked `Image` the moment `hasPropArt(key)` answers true: `doze`, `rouse`, `vigil`, `missed`, `missed_aloof`, `mend`, `glance`. Two do not. The need-drive tells (371) — 🍖 hunger and 💧 thirst — are built inline as `this.add.text(0, 0, '', …)` at `WorldScene.ts:3651` and painted by `setText(NEED_GLYPH[need])` in `refreshNeedMarks` (`WorldScene.ts:4241`), so there is no rig lookup on that path and **no rig can ever be shown there**, which is why BACKLOG-550 was seeded blocked. The fix is the smallest host in the art queue's three blockers and it is not a new pattern: `refreshMissedMarks` already swaps two rigs onto one sprite (`missed` / `missed_aloof`), and that is exactly the shape needed here — one mark per dino, two keys, chosen by `pressingNeed`. Scope: build the mark via `makeHourMark('need_hunger', NEED_GLYPH.hunger)`, have `refreshNeedMarks` set the texture per pressing need (falling back to `setText` when the rig is absent, so the build is green before either rig exists), add `need_hunger` / `need_thirst` to `worldPlacedProps()`, and keep the `needMarks` array's declared type wide enough for `Image`. Roughly ten lines of scene glue plus a register entry. Unblocks 550, and is the template for whatever the sulk (543) eventually needs.

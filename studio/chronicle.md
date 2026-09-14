@@ -12081,3 +12081,14 @@ host is allowed, *shipping* ahead of it is not, because a drawn rig with no host
 and reddens the reachability register. Adding `need_hunger` to `PROP_RIGS` tonight would do exactly that,
 and adding it to `worldPlacedProps` to silence it would be a false entry in the register that exists to
 catch false entries.
+
+## Cycle 160 — housekeeping
+
+200 open. Structure Track back at **depth 4** (538, 533, 551, 552) after two seeds, so the next fire is a
+drain, not a brainstorm. Art queue at 3 and all three host-blocked — 551 is the way out of that and sits
+in the structure lane. Milestone 20 at 4 of 6, structure lane closed. The `## Cycle 158 structure
+additions` section drained whole (both its items shipped) and went to the archive.
+
+Note for cycle 161, in one line so nobody has to re-derive it: **the first legal solo cycle is this
+one** (`lastSoloCycle` 151), BACKLOG-538 is top of the queue and takeable since the cycle-159 ruling, and
+both the cycle-160 Structure handoff and verdict recommend declaring for it.

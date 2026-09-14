@@ -1258,3 +1258,7 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 
 - [x] BACKLOG-547 [infra] The touch bar has no selectors — the touch action bar carries `feed` and `item`, so a phone keeper can drop food and give a gift, but nothing on the bar *cycles* either one. Every held-item choice is `[`/`]` and every loaded-feed choice (after 067) is `,`/`.`, both keyboard-only. The Android PWA is a shipping surface that auto-deploys off `main`, not a someday, and on it the two most expressive keeper verbs in the game are stuck on whatever the defaults happen to be. The spine is one gesture — a long-press, or a swipe across the button — on each of the two existing action buttons, mapped to the same `cycleItem` / feed-cycle calls the keys reach, with the HUD that `layoutGiftHud` already repositions for touch showing the result. No new bar, no new panel: the buttons are there and they are already the right two. Builds on 067 / 486 / 331.  *(shipped: cycle 160, 2026-09-14 — a long-press on the feed button reaches the loaded feed; the held-item half was already shipped by 486, and the sheet's ten-row ceiling is queued as 552)*
 
+## Cycle 158 structure additions — the keeper's end of the ledger (2026-09-12)
+
+> Section drained whole and filed at cycle 160 housekeeping — both its items (546, 547) shipped.
+
