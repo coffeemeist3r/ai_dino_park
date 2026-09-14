@@ -11953,3 +11953,13 @@ touch — and the obvious fix (a sheet row) is impossible, because `sheetRows` i
 at ten. So the spine is the item's own: a long-press on the 🍖 button. Queue was at 3 < X=4, so seeded
 **551** (the `makeHourMark` host the need marks never got) and **552** (the full More sheet, found while
 scoping 547). Recommended 538 to cycle 161 as the first legal solo-cycle declaration.
+
+## Cycle 160 - designer
+
+Specced both tracks. **069**: a menu line per dino in the book - seven dots that fill in as that dino
+eats, with the favorite named only once it has eaten it. Three recording sites (the hatch, a ground
+feeding its own, and LUMEN-3's scan) through one call; a refusal records nothing. The scan question the
+Lore-smith raised is decided and written down: the scan stays a spoiler *and now counts*, so the keeper
+roster means something at the collection layer for the first time. **547**: a 400ms long-press on the
+feed button steps the loaded feed; a tap still drops. The single-dispatch rule is preserved - the feed
+button's verb moves to pointerup, no per-object handler, everything else stays on pointerdown.
