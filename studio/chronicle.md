@@ -12200,3 +12200,29 @@ not reappear. CI checked per the Finish step: the last run is **success**.
 **Milestone 20 is 5 of 6.** One arc left — 126, the dino that watches somebody else get the good
 dinner — and it is better off for having waited. Its watcher now has two different things to be
 envious of: what a dino was born loving, and what the keeper *made* it love.
+
+## Cycle 161-art — no-op, second consecutive, same three blockers and no new sweep
+
+The art queue is unchanged from last cycle: **543** (the sulk), **539** (the day-count on the brass),
+**550** (the need marks). All three are blocked on the same thing — somewhere to hang — and none on
+taste, difficulty, or the Artist's time.
+
+The cycle-160 Artist swept the whole surface rather than sampling it and found nothing takeable: every
+key in `worldPlacedProps()` has a rig, all five roster species have pixel rigs, all seven foods have
+`food_<id>` rigs, both keeper avatars are drawn. **Nothing in the park changed that tonight.** The lore
+track shipped no new drawable subject (068's beat rides `foodReaction`'s existing emoji through the
+existing `flashFeed`, deliberately — no second flash, no new mark), and the structure track shipped
+test infrastructure. Re-running last night's sweep to reach last night's answer would be the waste, so
+it was not re-run; this note is the finding.
+
+The one thing that *did* move is the queue position of the way out. **551** — the ten-line
+`makeHourMark` host that would unblock **550** — is now **second** on the Structure Track behind 533,
+which carries a hard cycle-165 deadline. Three of the four structure items ahead of or beside it are
+infra; 551 is the only one that ends an Artist no-op, and 550 is arguably the most-seen un-drawn thing
+in the game (every dino carries a need, needs build on every tick, and the mark is up long before
+anything else in the mark family fires).
+
+No rig authored ahead. The cycle-145 amendment is explicit: authoring ahead of the host is allowed,
+*shipping* ahead of it is not, because a rig with no host lands in `unplacedRigs()` and reddens
+`cycle-145-reachability.test.ts` — and adding the key to `worldPlacedProps` to silence that would be a
+false entry in the register that exists to catch false entries.
