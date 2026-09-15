@@ -12116,3 +12116,7 @@ Two plans, no shared file. **068**: a new pure `palate.ts` holding a meal-count 
 Both tracks shipped. Build clean, **2806 unit** (+38), full e2e **763/763** on its first run.
 
 The structure track produced a number this project has never had. 780 boots logged across the full suite: median **642ms**, p95 **740ms**, worst **878ms** — against a 30,000ms ceiling. Under the harness's deliberately hostile cold-parallel load the worst boot is **1197ms**. BACKLOG-538's leading hypothesis was that boots had crept up into the ceiling; they have not, by a factor of thirty. A boot that times out at 30s is not slow, it is **hung**, and that is a different bug from the one four cycles have been hunting.
+
+## Cycle 161 — qa
+
+23/23 criteria pass. Build clean, 2806 unit, **763 e2e green on two consecutive full runs** with no flake and no isolated re-run. Both tracks APPROVE.
