@@ -12100,3 +12100,9 @@ Both queues at cap, so nothing seeded. Milestone 20 sits at 4 of 6 with both rem
 ## Cycle 161 — structure-smith
 
 Took **BACKLOG-538** (top of queue, four cycles old) as the item its own text asks for: a reproduction, not a fix — a boot clock on every ordinary run plus a standalone cold-parallel harness, run and demonstrated inside the cycle per the 159 ruling. **Solo cycle considered and declined**: the item splits cleanly at measurement/repair (failing CHARTER v8 condition 1), and three of its four pass-overs were for blockage rather than scope (failing condition 3). Queue drained at depth 4, nothing seeded.
+
+## Cycle 161 — designer
+
+**Lore track BACKLOG-068** — three meals of the same non-favorite and a dino warms to it: a distinct flash on the crossing meal, a lifted feed gain, a book clause, and the sharp read — 070's prickly refuser stops refusing. Warming gets its own record rather than reusing 069's `tasted` set, because `tasted` is written from LUMEN-3's scan and a scan is a read, not a dinner. WARM_AT=3 against a founding satchel that ships four greens, so it is reachable with the stock a fresh save hands you.
+
+**Structure track BACKLOG-538** — the instrument, not the fix: a boot clock on every ordinary run and a cold-parallel repro harness, run in-cycle with its real numbers in the verdict. Explicitly out of scope: moving any of the constants being measured.

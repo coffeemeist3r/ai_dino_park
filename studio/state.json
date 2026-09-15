@@ -1,8 +1,8 @@
 {
   "cycle": 161,
-  "phase": "designer-pending",
-  "currentItem": null,
-  "structureItem": "BACKLOG-538: the boot-flake instrument \u2014 a boot clock on every run, and a cold-parallel repro harness",
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-068: acquired taste — a palate that moves",
+  "structureItem": "BACKLOG-538: the boot-flake instrument — a boot clock on every run, and a cold-parallel repro harness",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-15T12:28:59.000Z",
     "structure-smith": "2026-09-15T12:29:34.000Z",
-    "designer": "2026-09-14T02:44:00.000Z",
+    "designer": "2026-09-15T12:33:33.000Z",
     "code-planner": "2026-09-14T02:58:00.000Z",
     "coder": "2026-09-14T03:32:00.000Z",
     "qa": "2026-09-14T03:40:00.000Z",
