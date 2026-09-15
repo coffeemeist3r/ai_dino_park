@@ -1278,3 +1278,14 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 
 > Section drained whole and filed at cycle 160 housekeeping — both its items (546, 547) shipped.
 
+## Drained sections, retired at cycle 161 (2026-09-15)
+
+> Both went empty the same night: 068 was the last open item under the cycle-27 taste block, and
+> 538 the last under the cycle-153 structure block. Kept whole rather than dissolved, because the
+> grouping is the record of what a cycle was thinking about.
+
+### Cycle 27 lore additions — taste (2026-06-01)
+
+### Cycle 153 structure additions (2026-09-07)
+
+

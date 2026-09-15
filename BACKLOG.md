@@ -103,8 +103,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-064 [emergent] Hoarder role — the dino that wins the food scramble most often emerges as the `hoarder` role tag, derived from feed tallies.
 - [ ] BACKLOG-065 [pokemon] Feeding log in the book — per-dino "fed Nx · last Day M" line in the collection book.
 
-## Cycle 27 lore additions — taste (2026-06-01)
-
 ## Realtime fishbowl (2026-06-01 — operator: "make time realtime so I can just leave it running")
 
 - [ ] BACKLOG-107 [ai] Inference budget for continuous life — realtime + persona-driven action (BACKLOG-104) means dinos would think 24/7 and peg the GPU. Add a global inference governor: sparse cadence, procedural actions by default, LLM reserved for notable beats / on-screen dinos / player interaction; pause/slow generation when the tab is idle or backgrounded (`visibilitychange`). Mandatory before continuous action ships — protects battery/thermals. Behind the `NPCBrain` boundary. *(progress: the governor SPINE shipped as operator work 2026-06-11 with the mobile minds policy (BACKLOG-190): pure `ai/governor.ts` — ambient dino↔dino chatter pauses on `visibilitychange`-hidden and battery <20%, convo cooldown 8→24 steps on coarse-pointer devices, player interaction never gated. Remaining 107 scope — per-beat budgeting, on-screen-only inference — lands when the 104 action layer exists to budget.)*
@@ -664,9 +662,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > a dino keeps to itself (415), and two loners ticcing in sight of each other feel a wordless kinship (416).
 
 - [ ] BACKLOG-415 [pokemon] Kept-to-itself read — the collection book shows how *often* each dino falls into its tic (a "keeps to itself" ↔ "always among others" temperament bar), a distinctness stat the player collects over time, distinct from naming the tic (409). Builds on 405 / 021.
-
-## Cycle 153 structure additions (2026-09-07)
-
 
 ## Mobile (deferred, do not pick until charter clears)
 
