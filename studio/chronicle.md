@@ -12092,3 +12092,7 @@ additions` section drained whole (both its items shipped) and went to the archiv
 Note for cycle 161, in one line so nobody has to re-derive it: **the first legal solo cycle is this
 one** (`lastSoloCycle` 151), BACKLOG-538 is top of the queue and takeable since the cycle-159 ruling, and
 both the cycle-160 Structure handoff and verdict recommend declaring for it.
+
+## Cycle 161 — lore-smith
+
+Both queues at cap, so nothing seeded. Milestone 20 sits at 4 of 6 with both remaining arcs on the lore lane; suggested **BACKLOG-068** (acquired taste) ahead of 126, because envy of a favorite wants a legible menu underneath it and 068 is what makes the rest of that menu mean something. Idea Box empty.
