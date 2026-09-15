@@ -12096,3 +12096,7 @@ both the cycle-160 Structure handoff and verdict recommend declaring for it.
 ## Cycle 161 — lore-smith
 
 Both queues at cap, so nothing seeded. Milestone 20 sits at 4 of 6 with both remaining arcs on the lore lane; suggested **BACKLOG-068** (acquired taste) ahead of 126, because envy of a favorite wants a legible menu underneath it and 068 is what makes the rest of that menu mean something. Idea Box empty.
+
+## Cycle 161 — structure-smith
+
+Took **BACKLOG-538** (top of queue, four cycles old) as the item its own text asks for: a reproduction, not a fix — a boot clock on every ordinary run plus a standalone cold-parallel harness, run and demonstrated inside the cycle per the 159 ruling. **Solo cycle considered and declined**: the item splits cleanly at measurement/repair (failing CHARTER v8 condition 1), and three of its four pass-overs were for blockage rather than scope (failing condition 3). Queue drained at depth 4, nothing seeded.
