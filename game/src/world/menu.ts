@@ -27,6 +27,9 @@ export const MENU_BLANK = '·';
 /** The clause that stands in for a favorite the keeper has not found yet. */
 export const FAVORITE_UNKNOWN = '(favorite unknown)';
 
+/** BACKLOG-068: the clause for a food the dino was not born liking and came round to anyway. */
+export const WARMED_CLAUSE = 'warmed to';
+
 export function hasTasted(rec: TastedRecord, name: string, foodId: string): boolean {
   return (rec[name] ?? []).includes(foodId);
 }
@@ -52,9 +55,13 @@ export function noteTaste(rec: TastedRecord, name: string, foodId: string): Tast
  * record stores the food that was eaten; which of those foods is the favorite is answered fresh on
  * every open.
  */
-export function menuLine(tasted: readonly string[], favorite: Food): string {
+export function menuLine(tasted: readonly string[], favorite: Food, warmed: readonly Food[] = []): string {
   const cells = FOODS.map((f) => (tasted.includes(f.id) ? f.emoji : MENU_BLANK)).join('');
   const found = tasted.includes(favorite.id);
   const tail = found ? `loves ${favorite.emoji} ${favorite.label}` : FAVORITE_UNKNOWN;
-  return `${MENU_GLYPH} menu: ${cells}  ${tail}`;
+  // BACKLOG-068: what the keeper *made*, beside what the keeper found. It stands next to
+  // `(favorite unknown)` quite happily — for a dino nobody has cracked yet it is the first thing this
+  // line has ever been able to say, which is a better early book than 069 alone shipped.
+  const warm = warmed.map((f) => ` · ${WARMED_CLAUSE} ${f.emoji} ${f.label}`).join('');
+  return `${MENU_GLYPH} menu: ${cells}  ${tail}${warm}`;
 }

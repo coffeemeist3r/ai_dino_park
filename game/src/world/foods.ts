@@ -11,7 +11,7 @@
 
 import type { Personality } from '../ai/personality';
 import { giftScore, type Gift } from '../social/gifts';
-import { FEED_GAIN, FEED_GAIN_FAV } from './feeding';
+import { FEED_GAIN, FEED_GAIN_FAV, FEED_GAIN_WARM } from './feeding';
 import type { Season } from './seasons';
 import type { FoodKind } from './diet';
 
@@ -82,17 +82,33 @@ export function favoriteFood(traits: Personality, season?: Season): Food {
 
 export interface FoodReaction {
   favorite: boolean;
+  /** BACKLOG-068: not its favorite, but a food it has come round to. Never true alongside `favorite`. */
+  warmed: boolean;
   gain: number;
   emoji: string;
 }
 
-/** How a dino feels about eating `food`: its favorite delights it, anything else is plain feed. */
-export function foodReaction(food: Food, traits?: Personality, season?: Season): FoodReaction {
+/**
+ * How a dino feels about eating `food`: its favorite delights it, a food it has come round to pleases
+ * it, anything else is plain feed.
+ *
+ * `warmed` (BACKLOG-068) is passed in rather than derived, because the warming record lives in the
+ * scene and this module stays a pure read of personality. **The favorite outranks it**: a food that is
+ * both is still a favorite, so the three gains never overlap and the emoji never argues with itself.
+ */
+export function foodReaction(
+  food: Food,
+  traits?: Personality,
+  season?: Season,
+  warmed = false,
+): FoodReaction {
   const favorite = !!traits && food.id === favoriteFood(traits, season).id;
+  const warm = !favorite && warmed;
   return {
     favorite,
-    gain: favorite ? FEED_GAIN_FAV : FEED_GAIN,
-    emoji: favorite ? '😋' : '🙂',
+    warmed: warm,
+    gain: favorite ? FEED_GAIN_FAV : warm ? FEED_GAIN_WARM : FEED_GAIN,
+    emoji: favorite ? '😋' : warm ? '😌' : '🙂',
   };
 }
 

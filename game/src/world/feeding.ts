@@ -18,6 +18,10 @@ export const FEED_RANGE = 7; // tiles — beyond this a food drop goes unnoticed
 export const FEED_RANGE_FAV = 12; // a dino will cross most of the bowl for its favorite (BACKLOG-061)
 export const FEED_GAIN = 5; // friendship points a fed dino gains (keeping reframed)
 export const FEED_GAIN_FAV = 9; // a favorite is extra-happy: > plain feed, < a loved gift (12)
+// BACKLOG-068: a food the dino has come round to. Strictly between the two above — liked, not loved —
+// so the keeper who kept dropping the same wrong dinner is paid for it without ever reaching a
+// favorite's welcome. `cycle-161-taste.test.ts` pins that ordering as a property.
+export const FEED_GAIN_WARM = 7;
 const EAGER = 0.4; // energy at/above which a dino bothers to rush the food
 const EAGER_FAV = 0.15; // even a fairly calm dino rouses for its favorite
 
@@ -136,8 +140,16 @@ export const PICKY_AGREE = 0.4;
 export const PICKY_HUNGER = GOBBLE_HUNGER;
 
 /** Does this dino turn down what landed and leave it for somebody else (BACKLOG-070)? */
-export function refusesFood(agreeableness: number, isFavorite: boolean, hunger: number): boolean {
-  if (isFavorite) return false;
+export function refusesFood(
+  agreeableness: number,
+  isFavorite: boolean,
+  hunger: number,
+  warmed = false,
+): boolean {
+  // BACKLOG-068: a warmed food takes the exemption the favorite already had, rather than getting a rule
+  // of its own — a food this dino has come round to is a food this dino now wants. The sharpest read in
+  // the whole item is the same prickly dino turning greens down on Monday and eating them on Friday.
+  if (isFavorite || warmed) return false;
   return agreeableness <= PICKY_AGREE && hunger < PICKY_HUNGER;
 }
 

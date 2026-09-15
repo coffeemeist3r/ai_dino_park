@@ -343,6 +343,7 @@ import {
 } from '../world/foods'; // BACKLOG-066 / 067
 // BACKLOG-069: the menu the keeper fills in by feeding — the record and the book's line for it.
 import { menuLine, noteTaste, type TastedRecord } from '../world/menu';
+import { isWarm, justWarmed, noteMeal, warmedLine, warmedMemory, warmedTo, type PalateRecord } from '../world/palate';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 // BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
 import {
@@ -667,6 +668,9 @@ export class WorldScene extends Phaser.Scene {
   private satchel: FoodPile = { ...FOUNDING_SATCHEL };
   /** BACKLOG-069: dino name → the foods it has been seen to eat. Lifetime, persisted, never cleared. */
   private tasted: TastedRecord = {};
+  /** BACKLOG-068: dino name -> food id -> meals eaten, to `WARM_AT`. Written only where food goes
+   *  down a throat — never from LUMEN-3's scan, which is a read and not a dinner. Persisted. */
+  private palate: PalateRecord = {};
   /** BACKLOG-546: the last in-game day the satchel's top-up ran. Armed on boot/restore like
    *  `lastSpoilDay`, so a clock jump never fires a spurious refill. */
   private lastSatchelDay = 0;
@@ -2863,6 +2867,21 @@ export class WorldScene extends Phaser.Scene {
    * `noteTaste` returns the identical object when nothing changed, so a dino eating the same dinner for
    * the tenth time costs no save.
    */
+  /**
+   * One dino's menu line (BACKLOG-069 + 068).
+   *
+   * The favorite is read live and season-aware on every open — the record only ever stores which foods
+   * went down. `warmedTo` is handed that same live favorite so a food warmed in spring that becomes the
+   * favorite in summer reads `loves` all summer and goes back to `warmed to` in the fall.
+   */
+  private menuFor(d: Dino): string {
+    const fav = favoriteFood(d.traits, this.currentSeason());
+    const warm = warmedTo(this.palate, d.name, fav.id)
+      .map((id) => FOODS.find((f) => f.id === id))
+      .filter((f): f is Food => !!f);
+    return menuLine(this.tasted[d.name] ?? [], fav, warm);
+  }
+
   private noteMenu(name: string, foodId: string): void {
     const next = noteTaste(this.tasted, name, foodId);
     if (next === this.tasted) return;
@@ -2870,11 +2889,26 @@ export class WorldScene extends Phaser.Scene {
     void this.saveGame();
   }
 
+  /**
+   * Count a meal toward a warming (BACKLOG-068), and answer whether *this* one crossed the line.
+   *
+   * It does not save: both call sites already save on their own tail, and a second save in the same
+   * frame is the churn `noteMeal`'s same-object contract exists to avoid.
+   */
+  private noteWarming(name: string, foodId: string): boolean {
+    const next = noteMeal(this.palate, name, foodId);
+    if (next === this.palate) return false;
+    const crossed = justWarmed(this.palate, next, name, foodId);
+    this.palate = next;
+    return crossed;
+  }
+
   private refuseFood(d: Dino): boolean {
     const kind = this.foodKind;
     if (!kind) return false;
     const { favorite } = foodReaction(kind, d.traits, this.currentSeason());
-    if (!refusesFood(d.traits.agreeableness, favorite, this.needs[d.name]?.hunger ?? 0)) return false;
+    const warm = isWarm(this.palate, d.name, kind.id); // BACKLOG-068: a food it came round to is never refused
+    if (!refusesFood(d.traits.agreeableness, favorite, this.needs[d.name]?.hunger ?? 0, warm)) return false;
     this.refusedThisDrop.add(d.name);
     this.lastRefusal = { name: d.name, foodId: kind.id };
     this.memory = remember(this.memory, d.name, refusedMemory(kind.label));
@@ -2886,7 +2920,10 @@ export class WorldScene extends Phaser.Scene {
   private eatFood(d: Dino): void {
     const kind = this.foodKind;
     this.refusedThisDrop.clear(); // BACKLOG-070: the piece is gone; nobody is refusing it any more
-    const r = foodReaction(kind!, d.traits, this.currentSeason());
+    // BACKLOG-068: count the meal *before* the reaction, so the meal that crosses the line is the meal
+    // that pays the lifted gain and flashes the 😌 — the beat and its reward in the same bite.
+    const cameRound = this.noteWarming(d.name, kind!.id);
+    const r = foodReaction(kind!, d.traits, this.currentSeason(), isWarm(this.palate, d.name, kind!.id));
     this.foodSprite?.destroy();
     this.foodSprite = null;
     this.food = null;
@@ -2903,6 +2940,11 @@ export class WorldScene extends Phaser.Scene {
       r.favorite ? ateFavoriteMemory(kind!.label) : ateMemory(),
     );
     this.noteMenu(d.name, kind!.id); // BACKLOG-069: the keeper learns a palate by watching it swallow
+    if (cameRound) {
+      // BACKLOG-068: no second flash — the 😌 already rides `r.emoji` below, because this meal counted.
+      this.memory = remember(this.memory, d.name, warmedMemory(kind!.label));
+      this.logEvent(warmedLine(d.name, kind!.label));
+    }
     if (warming) {
       this.memory = remember(this.memory, d.name, warmMemory());
       this.clearColdFunk(d.name, true);
@@ -4337,6 +4379,11 @@ export class WorldScene extends Phaser.Scene {
       this.foodPileByZone[zone] = takeFood(pile, id);
       this.needs = satisfy(this.needs, d.name, 'hunger');
       this.noteMenu(d.name, id); // BACKLOG-069: the keeper did not choose it, but the book records facts
+      // BACKLOG-068: a meal from the ground's own pantry is a meal, and counts toward a warming.
+      if (this.noteWarming(d.name, id)) {
+        this.memory = remember(this.memory, d.name, warmedMemory(FOODS.find((f) => f.id === id)?.label ?? id));
+        this.logEvent(warmedLine(d.name, FOODS.find((f) => f.id === id)?.label ?? id));
+      }
       this.memory = remember(this.memory, d.name, storesFedMemory(zoneName));
       this.flashFeed(d, emoji);
       this.logEvent(storesFedLine(zoneName, d.name, emoji));
@@ -4610,7 +4657,7 @@ export class WorldScene extends Phaser.Scene {
       rumorsHeard: this.rumorsOf(d.name),
       // BACKLOG-069: the favorite is read live (season-aware) on every open; the record only stores
       // which foods went down. A palate that moves in winter shows the winter answer.
-      menu: menuLine(this.tasted[d.name] ?? [], favoriteFood(d.traits, this.currentSeason())),
+      menu: this.menuFor(d),
       quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
@@ -4751,6 +4798,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__bookRows = () => this.bookRows();
     // BACKLOG-069: the menu record — which foods this dino has been seen to eat.
     (window as any).__tasted = (name: string) => [...(this.tasted[name] ?? [])];
+    // BACKLOG-068: the warming record — food id -> meals eaten, counted to WARM_AT.
+    (window as any).__palate = (name: string) => ({ ...(this.palate[name] ?? {}) });
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
@@ -8820,6 +8869,8 @@ ${e.short}`;
       satchel: Object.fromEntries(Object.entries(this.satchel).map(([id, n]) => [id, n ?? 0])),
       // BACKLOG-069: the menu filled in so far (additive). Absent in every save before this cycle.
       tasted: Object.fromEntries(Object.entries(this.tasted).map(([n, ids]) => [n, [...ids]])),
+      // BACKLOG-068: the palate the keeper moved (additive). Absent in every save before this cycle.
+      palate: Object.fromEntries(Object.entries(this.palate).map(([n, c]) => [n, { ...c }])),
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8898,6 +8949,7 @@ ${e.short}`;
       // one. A saved stock is taken as written (it may legitimately hold zero of something).
       if (save.satchel) this.satchel = { ...save.satchel };
       this.tasted = save.tasted ?? {}; // BACKLOG-069: additive — a pre-160 save opens with a blank menu
+      this.palate = save.palate ?? {}; // BACKLOG-068: additive — a pre-161 save opens with nobody warm
       this.refreshGiftHud();
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;

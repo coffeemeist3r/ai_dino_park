@@ -12110,3 +12110,9 @@ Took **BACKLOG-538** (top of queue, four cycles old) as the item its own text as
 ## Cycle 161 — codeplan
 
 Two plans, no shared file. **068**: a new pure `palate.ts` holding a meal-count record with the same same-object-on-no-change contract `noteTaste` already uses, plus optional fourth parameters on `foodReaction`, `refusesFood` and `menuLine` so every existing call site and test compiles untouched. ~9 files. **538**: `scripts/bootstats.mjs` (the arithmetic, unit-tested), `scripts/boot-flake.mjs` (the cold-parallel harness), and a fail-open boot clock inside `boot()` that leaves a distribution behind every ordinary run. `BOOT_TIMEOUT` gets exported so the number has one home instead of three. No new dependency on either track. Build order: structure first, since it touches `boot()` and every spec would say so.
+
+## Cycle 161 — coder
+
+Both tracks shipped. Build clean, **2806 unit** (+38), full e2e **763/763** on its first run.
+
+The structure track produced a number this project has never had. 780 boots logged across the full suite: median **642ms**, p95 **740ms**, worst **878ms** — against a 30,000ms ceiling. Under the harness's deliberately hostile cold-parallel load the worst boot is **1197ms**. BACKLOG-538's leading hypothesis was that boots had crept up into the ceiling; they have not, by a factor of thirty. A boot that times out at 30s is not slow, it is **hung**, and that is a different bug from the one four cycles have been hunting.

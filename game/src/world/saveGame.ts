@@ -137,6 +137,10 @@ export interface SaveData {
   /** The menu the keeper has filled in (BACKLOG-069) — dino name → the food ids it has been seen to eat.
    *  Additive; absent restores an empty record (nothing discovered yet), which is the fresh-save read. */
   tasted?: Record<string, string[]>;
+  /** The palate the keeper has *moved* (BACKLOG-068) — dino name → food id → meals eaten, counted only
+   *  to `WARM_AT`. Deliberately not the `tasted` set: that one is also written by LUMEN-3's scan, and a
+   *  scan is a read, not a dinner. Additive; absent → {} (nobody has come round to anything). */
+  palate?: Record<string, Record<string, number>>;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -941,6 +945,24 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // palate (BACKLOG-068) — dino name → food id → meals eaten. The `tasted` block's discipline directly
+  // above, plus the `satchel` block's number check: an unknown name or food id is *kept* (a save from a
+  // future roster is a save), but a count that is not a finite non-negative number is a corrupt save.
+  let palate: Record<string, Record<string, number>> | undefined;
+  if (o.palate !== undefined) {
+    if (typeof o.palate !== 'object' || o.palate === null || Array.isArray(o.palate)) return null;
+    palate = {};
+    for (const [name, counts] of Object.entries(o.palate as Record<string, unknown>)) {
+      if (typeof counts !== 'object' || counts === null || Array.isArray(counts)) return null;
+      const per: Record<string, number> = {};
+      for (const [id, n] of Object.entries(counts as Record<string, unknown>)) {
+        if (typeof n !== 'number' || !Number.isFinite(n) || n < 0) return null;
+        per[id] = Math.floor(n);
+      }
+      palate[name] = per;
+    }
+  }
+
   let visitHours: number[] | undefined;
   if (o.visitHours !== undefined) {
     if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
@@ -986,6 +1008,7 @@ export function deserialize(json: string): SaveData | null {
     loadedFood,
     satchel,
     tasted,
+    palate,
     streak,
     leftDays,
     catchWarmth,

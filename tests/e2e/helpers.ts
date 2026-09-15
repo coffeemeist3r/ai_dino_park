@@ -1,4 +1,5 @@
-import type { Page } from '@playwright/test';
+import { appendFileSync } from 'node:fs';
+import { test, type Page } from '@playwright/test';
 import { FOUNDING_PILE_STEPS, FOUNDING_RUIN } from '../../game/src/world/founding';
 
 /**
@@ -21,13 +22,58 @@ import { FOUNDING_PILE_STEPS, FOUNDING_RUIN } from '../../game/src/world/foundin
  * assertion the clock landed on — a different victim every run, always green in
  * isolation. If you raise this ceiling, raise that timeout first.
  */
-const BOOT_TIMEOUT = 30_000;
+export const BOOT_TIMEOUT = 30_000;
+
+/**
+ * The boot clock (BACKLOG-538) — where the boot log goes. Overridable so the fail-open test can point
+ * it somewhere unwritable without touching the real log.
+ */
+export const BOOT_LOG = process.env.E2E_BOOT_LOG ?? '.e2e-boot-times.jsonl';
+
+/**
+ * Append one line to the boot log, and **never** throw (BACKLOG-538).
+ *
+ * This is the same fail-open discipline `globalSetup.ts`'s `warm()` documents, for a sharper reason: a
+ * boot clock that can fail a spec is a worse instrument than no boot clock. The whole item exists
+ * because a flaky harness trains readers to discount a red board; an instrument that adds a second way
+ * to go red would deepen exactly the defect it was built to measure.
+ *
+ * Exported so the fail-open behavior is *proven* by a test rather than claimed by this comment.
+ */
+export function recordBootLine(path: string, entry: Record<string, unknown>): void {
+  try {
+    appendFileSync(path, `${JSON.stringify(entry)}\n`);
+  } catch {
+    // Deliberately silent. See above.
+  }
+}
+
+/** The spec this boot belongs to. `test.info()` **throws** off a test's worker, so it is guarded. */
+function bootLabel(): string {
+  try {
+    return test.info().titlePath.join(' › ');
+  } catch {
+    return '(no test context)';
+  }
+}
 
 export async function boot(page: Page): Promise<void> {
+  const t0 = Date.now();
   await page.goto('/');
   await page.locator('canvas').waitFor({ state: 'visible', timeout: BOOT_TIMEOUT });
+  const canvasMs = Date.now() - t0;
   await page.waitForFunction(() => (window as Record<string, unknown>).__ready === true, undefined, {
     timeout: BOOT_TIMEOUT,
+  });
+  // BACKLOG-538: off the measured path, after both waits, so the clock never charges itself to the boot
+  // it is timing. Nobody knew how long a boot took; now every ordinary run leaves the distribution behind.
+  recordBootLine(BOOT_LOG, {
+    at: new Date().toISOString(),
+    source: 'suite',
+    label: bootLabel(),
+    canvasMs,
+    readyMs: Date.now() - t0,
+    error: null,
   });
   // BACKLOG-486: `__ready` is a flag create() sets on its last line — it says the hooks are attached, not
   // that the scene has drawn. Give it one frame, so a spec reads a world that has actually stepped once.

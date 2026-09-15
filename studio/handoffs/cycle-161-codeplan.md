@@ -266,3 +266,75 @@ once by the Coder to prove it works, once by QA for the record — and its real 
 ### Estimated touch count
 
 `~6 files` — 3 created, 3 modified.
+
+---
+
+# Shipped
+
+## Lore track — BACKLOG-068
+
+**Files touched (9):**
+- created `game/src/world/palate.ts`, `game/src/world/palate.test.ts`,
+  `game/src/world/cycle-161-taste.test.ts`, `tests/unit/cycle-161-palate-save.test.ts`,
+  `tests/e2e/cycle-161-acquired-taste.spec.ts`
+- modified `game/src/world/foods.ts`, `game/src/world/feeding.ts`, `game/src/world/menu.ts`,
+  `game/src/world/saveGame.ts`, `game/src/scenes/WorldScene.ts`
+
+**Deviations from the plan:**
+- The book line was extracted into a private `WorldScene.menuFor(d)` rather than being widened inline in
+  `bookRows()`. The plan wanted the season-aware favorite hoisted to a local so `warmedTo` could be
+  handed the same value `menuLine` gets; a named method says why, and `bookRows` is already long.
+- `noteWarming` takes `(name, foodId)` rather than the planned `(d, foodId, label)`. The label is only
+  needed by the two callers that build a memory, and both already hold `kind`.
+
+**Two things the e2e found that the plan did not anticipate** (both spec bugs, no production change):
+- `favoriteFood` is `giftScore` over the live traits, so `__setTrait('agreeableness', 0)` *moves the
+  favorite* — it zeroes the two foods whose appeal reads agreeableness. A spec that reads the favorite
+  before flattening the trait can pick, as its "wrong" dinner, the food that flattening just promoted
+  to favorite. The trait is now set first, with a comment.
+- The event log rolls. Three feeds is enough to push an earlier refusal line off the end of it, so the
+  "no longer refused" assertion reads the **dish** (`__food` is null because it was eaten) rather than
+  counting ticker lines. That is also the better assertion: it is the design's own sentence.
+
+**Build:** ✅ clean. **Unit:** ✅ 2806 passed / 3 skipped, 265 files (+38 tests this cycle).
+
+## Structure track — BACKLOG-538
+
+**Files touched (6):**
+- created `scripts/bootstats.mjs`, `scripts/boot-flake.mjs`, `tests/unit/bootstats.test.ts`
+- modified `tests/e2e/helpers.ts`, `package.json`, `.gitignore`
+
+**Deviations from the plan:** none. `BOOT_TIMEOUT` and `BOOT_LOG` are exported, `recordBootLine` is
+exported so the fail-open behavior is a test rather than a comment, and `bootLabel()` wraps
+`test.info()` because it throws off a worker.
+
+**Build:** ✅ clean. **Unit:** ✅ 13 new tests in `bootstats.test.ts`, including the fail-open proof.
+
+### Demonstrated, in-cycle — and the result is not the one the item expected
+
+`npm run flake:boot -- --rounds 2 --parallel 4` — 8 simultaneous cold boots over 2 cold servers:
+
+```
+min 1147ms · median 1150ms · p95 1197ms · max 1197ms · ceiling 30000ms · headroom 28803ms (96.0%)
+```
+
+`npm run flake:boot -- --report` over a full 763-spec suite run (780 boots recorded):
+
+```
+boots 780 · min 330ms · median 642ms · p95 740ms · max 878ms
+ceiling 30000ms · headroom 29122ms (97.1% of the ceiling still unused)
+```
+
+**The leading hypothesis in BACKLOG-538's own text is now measurably false at normal load.** The item
+proposed that "515 bought *headroom* rather than a floor and the suite has grown back into the seam" —
+i.e. that boots had crept up toward the 30s ceiling. They have not. The slowest boot in an entire
+763-spec run is **878ms**, and the slowest under a deliberately hostile cold-parallel load is
+**1197ms**. Both are ~3% of the budget.
+
+So a boot that times out at 30,000ms is not a boot that was slow. It is a boot that **hung** — ~34x its
+own p95 — and the next cycle should be looking for a stall, not for a budget. That is a different
+investigation from the one four previous cycles were running, and it is the first time this project has
+had a number to say so with.
+
+(Recorded honestly: this run did not catch a victim. The suite came up 763/763 green on its only full
+run tonight. A bound is not a proof of absence, and the harness says so in its own output.)
