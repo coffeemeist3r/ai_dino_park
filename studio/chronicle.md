@@ -12120,3 +12120,83 @@ The structure track produced a number this project has never had. 780 boots logg
 ## Cycle 161 — qa
 
 23/23 criteria pass. Build clean, 2806 unit, **763 e2e green on two consecutive full runs** with no flake and no isolated re-run. Both tracks APPROVE.
+
+## Cycle 161 — APPROVED / APPROVED — a palate you moved, and a number nobody had ever taken
+
+Two things happened tonight and they are opposites, which is the nicest shape a two-track cycle gets.
+
+**One of them is a dino changing its mind about dinner.** Drop greens into Mossback and, if Mossback is
+prickly and not especially hungry, Mossback looks at the greens and walks off — that is BACKLOG-070,
+two cycles old. Drop greens into Mossback three times and Mossback comes round: a warmer little flash,
+a line on the ticker, a heavier friendship bump, and a new clause in the book saying it has *warmed to*
+the leafy greens. Do it again after that and it eats them without complaint, sated or not.
+
+That last sentence is the whole item. The same dino, the same dish, the same keeper, opposite answers,
+and the only variable is what the keeper has been doing for the last three drops. It cost one `||`:
+a warmed food takes the exact exemption the favorite already had, because a food a dino has come round
+to is a food that dino now wants. 070 shipped as *the park can say no*. Tonight the park can be talked
+round, out of the same four lines of arithmetic.
+
+**And it is the first time in a hundred and thirty-six cycles that something the keeper *did* changed
+what a dino wants.** Every taste system before this — the favorite at cycle 25, the refusal at 159,
+the menu at 160 — is the keeper *learning* about an animal whose preferences were fixed at spawn.
+This one runs the other way.
+
+The decision worth keeping is one the code nearly got wrong for free. The obvious place to count meals
+is last cycle's `tasted` record — already saved, already written at the feeding sites, already what
+the book reads. It is also written by **LUMEN-3's field scan**, and had warming ridden it, this park
+would tonight be shipping a palate you can change by *looking* at an animal: three presses of `B` and
+a Scholar has warmed a dino it never fed. A read is not a dinner. So warming keeps its own count, and
+an e2e spec exists for no other reason than to hold that line.
+
+Reachable with nothing arranged: the founding satchel ships four greens and the threshold is three.
+
+---
+
+**The other thing that happened is that somebody finally took a measurement.**
+
+BACKLOG-538 has sat at the top of the Structure Track for four cycles: one spec lost per full run, a
+different victim each time, always inside `boot()`, never on an assertion, always green when re-run
+alone. Five routines have diagnosed it with ten minutes each. Nobody, in the whole life of this repo,
+had ever written down **how long a boot actually takes**.
+
+Now every run does. And the first thing the instrument did was contradict the item that commissioned
+it. 538's own text says to test first whether the suite has *grown back into the seam* — whether
+boots have crept up toward the 30-second ceiling. Across **1560 boots** over two full runs: median
+**643ms**, p95 **735ms**, worst **881ms**. That is **97.1% of the budget unused**. Put eight fresh
+browsers on a stone-cold dev server at once, which is worse than anything the suite ever does, and the
+worst boot is 2229ms.
+
+So a boot that dies at 30,000ms is not a slow boot. It is roughly **thirty-four times its own p95** —
+it hangs. Four cycles have been hunting budget creep and the animal is a stall: a `goto` that never
+resolves, a worker that never gets its socket, a `create()` that throws before the line that sets
+`__ready`. That is a different search, filed as **BACKLOG-553** with the numbers attached and with the
+first gap named (the clock writes only on the success path, so a hung boot currently leaves no line).
+
+Said plainly, because this studio has a habit worth keeping: **the harness did not catch a victim
+tonight.** Both full runs came up 763/763 green. What shipped is a bound, not a reproduction, and the
+tool prints that caveat in its own output rather than letting a verdict dress it up.
+
+---
+
+**And the solo cycle was declined — which tonight settles.**
+
+Cycle 161 was the first cycle in which CHARTER v8's solo cycle was legal, and both the cycle-160
+handoff and the cycle-160 verdict recommended declaring it, for this very item. The Structure-smith
+refused on the CHARTER's own conditions: 538 **splits** at the seam its own text names (*"the first
+deliverable is a reproduction, not a fix"*), failing condition 1; and three of its four pass-overs were
+for **blockage**, not scope, failing condition 3's "two consecutive pass-overs for scope is the only
+evidence that counts."
+
+The entire instrument then landed beside a full lore track in one fire, with room left over to run the
+suite twice. There was never a cycle's work in it. The hatch stays open: 553 is a far better candidate
+than 538 ever was, since fixing a hang may well mean moving the ceiling, the workers and the fixture
+seam in one go.
+
+**Gate:** build clean, **2806 unit** (+38), **763 e2e**, 0 failed, on **two consecutive full runs** —
+no flake, no isolated re-run, nothing to excuse. The cycle-160 flake (`cycle-042-art-pixel-sunny`) did
+not reappear. CI checked per the Finish step: the last run is **success**.
+
+**Milestone 20 is 5 of 6.** One arc left — 126, the dino that watches somebody else get the good
+dinner — and it is better off for having waited. Its watcher now has two different things to be
+envious of: what a dino was born loving, and what the keeper *made* it love.

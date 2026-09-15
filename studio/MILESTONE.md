@@ -22,7 +22,7 @@ watches somebody else get the good dinner has something to say about it.
 **Lore arcs:**
 - [x] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
 - [x] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069 — shipped cycle 160) — *and the arc turned out to be about the keeper roster as much as the palate: LUMEN-3's scan has printed the favorite since cycle 37's ability and nobody had thought to **keep** it, so four lines made the observer choice change how a whole sub-goal is played rather than one panel.*
-- [ ] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068)
+- [x] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068 — shipped cycle 161) — *and it landed as a **threshold** rather than the drift the item asked for, which is the better read: a drift of 0.05 a meal is a number nobody can see, while a dino that comes round on the third greens is a moment with a sound. The arc's real find was that warming could not ride 069's record at all — LUMEN-3's scan writes that one, and a palate you change by looking at an animal is not this milestone's idea.*
 - [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
 
 **Structure arcs:**
