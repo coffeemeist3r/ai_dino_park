@@ -8,27 +8,7 @@
 
 ## Current milestone
 
-**Milestone 20: What you feed them is a decision — the park has an opinion about it, and a memory of it**
-**Status:** ACTIVE (opened cycle 159)
-
-Milestone 19 gave a sitting an inside. This one gives the keeper's one repeated verb — the `H` that
-drops food — a *consequence*. As of cycle 158 the keeper chooses which food goes in the hatch (067),
-and for a hundred and thirty cycles before that the choice was `Math.floor(rand() * FOODS.length)`.
-A choice nothing pushes back on is not yet a decision. By the end of this milestone, a keeper who
-drops the wrong thing sees it refused and left on the ground, a keeper who drops the right thing sees
-it recorded, a keeper who drops the same thing forever changes the dino that eats it, and a dino that
-watches somebody else get the good dinner has something to say about it.
-
-**Lore arcs:**
-- [x] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
-- [x] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069 — shipped cycle 160) — *and the arc turned out to be about the keeper roster as much as the palate: LUMEN-3's scan has printed the favorite since cycle 37's ability and nobody had thought to **keep** it, so four lines made the observer choice change how a whole sub-goal is played rather than one panel.*
-- [x] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068 — shipped cycle 161) — *and it landed as a **threshold** rather than the drift the item asked for, which is the better read: a drift of 0.05 a meal is a number nobody can see, while a dino that comes round on the third greens is a moment with a sound. The arc's real find was that warming could not ride 069's record at all — LUMEN-3's scan writes that one, and a palate you change by looking at an animal is not this milestone's idea.*
-- [ ] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126)
-
-**Structure arcs:**
-- [x] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
-- [x] The phone keeper can reach the selector — the loaded feed stops being keyboard-only on the shipping Android surface (BACKLOG-547 — shipped cycle 160) — *half the arc was already shipped: the held-item selector has had a touch route since 486, and the item's text had said otherwise since the night it was written. Scoping the other half found the phone's real wall — the More sheet cannot take an eleventh row — which is now BACKLOG-552 rather than a surprise.*
-
+_(none — the cycle-163 smiths draft Milestone 21: Lore-smith the headline and feel arcs, Structure-smith the spine arcs.)_
 
 ---
 
@@ -48,6 +28,42 @@ watches somebody else get the good dinner has something to say about it.
 ```
 
 ## Shipped milestones
+
+### Milestone 20: What you feed them is a decision — the park has an opinion about it, and a memory of it — SHIPPED cycle 162 (opened cycle 159)
+
+Four cycles, six arcs, no REWORK and no ABANDON — a cycle faster than Milestone 19 and one arc bigger.
+
+Four cycles ago the keeper pressed `H`, food appeared, and a dino ate it. Now the keeper opens a satchel
+that can run out, picks a dish, and watches one of four things happen: it is **refused** and left on the
+ground (070); it is eaten and **written into the book** (069); it is eaten for the third time and the
+animal's mind is **changed** (068); or it is eaten and **somebody else is standing there watching**, and
+mentions it the next time you say hello (126). One verb, four outcomes, and the keeper caused all of them.
+
+**The lesson worth keeping is the ordering.** 126 was queued from cycle 31 and could have been taken at
+any point in this milestone. It went last, on the cycle-161 argument that envy needs a legible menu
+underneath it — and because 068 landed first, tonight's watcher can be envious of a food the keeper
+*manufactured the desire for*, at the cost of a single `||` at the feeding site. Taken the other way round
+it would have needed a second system, or shipped thinner. Sequencing was worth real code.
+
+Milestone 19 gave a sitting an inside. This one gives the keeper's one repeated verb — the `H` that
+drops food — a *consequence*. As of cycle 158 the keeper chooses which food goes in the hatch (067),
+and for a hundred and thirty cycles before that the choice was `Math.floor(rand() * FOODS.length)`.
+A choice nothing pushes back on is not yet a decision. By the end of this milestone, a keeper who
+drops the wrong thing sees it refused and left on the ground, a keeper who drops the right thing sees
+it recorded, a keeper who drops the same thing forever changes the dino that eats it, and a dino that
+watches somebody else get the good dinner has something to say about it.
+
+**Lore arcs:**
+- [x] A dino can refuse what you put in front of it — a prickly palate leaves the wrong food lying there, a warm one eats anything (BACKLOG-070)
+- [x] The book fills in the menu as you discover it — a dino's favorite is a blank line until you have fed it that food once (BACKLOG-069 — shipped cycle 160) — *and the arc turned out to be about the keeper roster as much as the palate: LUMEN-3's scan has printed the favorite since cycle 37's ability and nobody had thought to **keep** it, so four lines made the observer choice change how a whole sub-goal is played rather than one panel.*
+- [x] A palate is not fixed forever — fed the same non-favorite long enough, a dino warms to it (BACKLOG-068 — shipped cycle 161) — *and it landed as a **threshold** rather than the drift the item asked for, which is the better read: a drift of 0.05 a meal is a number nobody can see, while a dino that comes round on the third greens is a moment with a sound. The arc's real find was that warming could not ride 069's record at all — LUMEN-3's scan writes that one, and a palate you change by looking at an animal is not this milestone's idea.*
+- [x] Somebody is always watching the good dinner — a dino that witnesses another get its favorite files the slight (BACKLOG-126 — shipped cycle 162) — *and the arc's real find was that it did not need a system of its own: `favorite || cameRound` at the feeding site, because 068 had gone first. The cycle-161 argument for making it wait paid for itself in one `||`. The greet precedence had to change to let it be heard at all — deferring to the loner perk-up would have silenced it on every fresh save, since every founding dino is friendless.*
+
+**Structure arcs:**
+- [x] The hatch draws on something — a keeper supply the drop spends from, so choosing a food is choosing between foods you *have* (BACKLOG-546)
+- [x] The phone keeper can reach the selector — the loaded feed stops being keyboard-only on the shipping Android surface (BACKLOG-547 — shipped cycle 160) — *half the arc was already shipped: the held-item selector has had a touch route since 486, and the item's text had said otherwise since the night it was written. Scoping the other half found the phone's real wall — the More sheet cannot take an eleventh row — which is now BACKLOG-552 rather than a surprise.*
+
+
 
 ### Milestone 19: Something changes while you sit there — the park's clock runs inside your visit, not only between them — SHIPPED cycle 158 (opened cycle 156)
 
