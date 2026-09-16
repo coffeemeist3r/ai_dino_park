@@ -2,7 +2,7 @@
   "cycle": 162,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-126: Eavesdropping envy",
-  "structureItem": null,
+  "structureItem": "BACKLOG-551: Two marks that are not in the mark family",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-16T08:03:08.000Z",
-    "structure-smith": "2026-09-15T12:29:34.000Z",
+    "structure-smith": "2026-09-16T08:03:46.000Z",
     "designer": "2026-09-15T12:33:33.000Z",
     "code-planner": "2026-09-15T12:35:22.000Z",
     "coder": "2026-09-15T12:54:58.000Z",

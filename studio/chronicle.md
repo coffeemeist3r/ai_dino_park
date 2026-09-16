@@ -12236,3 +12236,7 @@ Milestone 20 at **5 of 6**, structure lane closed. One arc left: **126**.
 ## Cycle 162 — lore-smith
 
 Milestone 20's last arc. Four cycles of consequence built inside one mouth; **126** is the one that makes it public — the other four dinos in the bowl notice who got the good dinner. No items seeded (social 195 ≥ 12, art 5 ≥ 3). Idea Box empty. One shaping note to the Designer: the backlog text offers "homecoming/favorite", and the homecoming half is BACKLOG-120's since cycle 31 — build the favorite half, which is what the milestone headline names.
+
+## Cycle 162 — structure-smith
+
+**BACKLOG-551** — the two need marks that are not in the mark family. Queue drained (4 ≥ 4), nothing seeded. Picked over top-of-queue **533**, which its own entry condition defers to cycle 165, and over 552/553, because 551 is the only item here whose completion ends an Artist no-op: 550 (the 🍖/💧 tells) is the most-seen un-drawn thing in the park and has been blocked on a host for two fires. Solo cycle legal for the first time since 151 and **not declared** — ten lines of glue is not what CHARTER v8 is for; 553 remains the candidate.
