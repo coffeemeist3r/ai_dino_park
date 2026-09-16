@@ -12232,3 +12232,7 @@ false entry in the register that exists to catch false entries.
 **199 open** (201 last cycle: two closed, one filed). Structure Track back at **depth 4** (533, 551, 552, 553) — 553 is the 538 successor, so the next fire drains rather than brainstorms. Two sections drained whole and went to the archive: the cycle-27 taste block (068 was its last open item, twenty-eight cycles after it was seeded) and the cycle-153 structure block (538 was its last). Art queue unchanged at 3, all three still host-blocked; 551 is the way out and now sits second in the structure lane.
 
 Milestone 20 at **5 of 6**, structure lane closed. One arc left: **126**.
+
+## Cycle 162 — lore-smith
+
+Milestone 20's last arc. Four cycles of consequence built inside one mouth; **126** is the one that makes it public — the other four dinos in the bowl notice who got the good dinner. No items seeded (social 195 ≥ 12, art 5 ≥ 3). Idea Box empty. One shaping note to the Designer: the backlog text offers "homecoming/favorite", and the homecoming half is BACKLOG-120's since cycle 31 — build the favorite half, which is what the milestone headline names.

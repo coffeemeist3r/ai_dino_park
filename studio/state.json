@@ -1,7 +1,7 @@
 {
-  "cycle": 161,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 162,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-126: Eavesdropping envy",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-09-15T12:28:59.000Z",
+    "lore-smith": "2026-09-16T08:03:08.000Z",
     "structure-smith": "2026-09-15T12:29:34.000Z",
     "designer": "2026-09-15T12:33:33.000Z",
     "code-planner": "2026-09-15T12:35:22.000Z",
