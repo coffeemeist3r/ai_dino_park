@@ -12252,3 +12252,7 @@ Prior art table first, eight rows, nothing in either track needs a new idiom: en
 ## Cycle 162 - coder
 
 BACKLOG-126 + BACKLOG-551, nine files. Build clean, 2822 unit (+16), 771 e2e (+8), zero failed on a full run. Two design amendments made in flight and written down rather than worked around: 551s criterion 19 was not implementable as stated (one sprite, two keys, no base rig to fall back on) and became both-keys-or-neither; and 126s first precedence draft was a reachability defect the e2e caught - deferring to the loner perk-up would have silenced envy on every fresh save, because every founding dino is friendless.
+
+## Cycle 162 - qa
+
+22 criteria: 22 PASS, three of them against amended text and every amendment argued in the handoff rather than buried. Build clean, 2822 unit, 771 e2e, zero failed, single full run, no flake. One flag raised for the Validator: the structure tracks reachability answer is the Artists output and does not exist yet at the time of writing - the design says that is a REWORK if the rig does not land tonight.
