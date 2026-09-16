@@ -136,7 +136,7 @@ import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
 import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
-import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
+import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_ART_KEY, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
 import { awayLogLines, keepAwayLog, type AwayEntry } from '../world/awaylog';
@@ -344,6 +344,16 @@ import {
 // BACKLOG-069: the menu the keeper fills in by feeding — the record and the book's line for it.
 import { menuLine, noteTaste, type TastedRecord } from '../world/menu';
 import { isWarm, justWarmed, noteMeal, warmedLine, warmedMemory, warmedTo, type PalateRecord } from '../world/palate';
+import {
+  ENVY_GLYPH,
+  enviousWitness,
+  envyEventLine,
+  envyHasFaded,
+  envyMemory,
+  envySawMemory,
+  wistfulGreetLine,
+  type Watcher,
+} from '../world/envy';
 import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 // BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
 import {
@@ -671,6 +681,8 @@ export class WorldScene extends Phaser.Scene {
   /** BACKLOG-068: dino name -> food id -> meals eaten, to `WARM_AT`. Written only where food goes
    *  down a throat — never from LUMEN-3's scan, which is a read and not a dinner. Persisted. */
   private palate: PalateRecord = {};
+  /** BACKLOG-126: watcher → the dino it saw get the good dinner, and the step it filed the slight on. */
+  private envyPending: Record<string, { eater: string; at: number }> = {};
   /** BACKLOG-546: the last in-game day the satchel's top-up ran. Armed on boot/restore like
    *  `lastSpoilDay`, so a clock jump never fires a spurious refill. */
   private lastSatchelDay = 0;
@@ -721,7 +733,10 @@ export class WorldScene extends Phaser.Scene {
   /** Food web (BACKLOG-442): the last forceStep's resolved {prey → hunter it flees} — active stalks plus
    *  personal-fear startles. Exposed via `__fleeFrom`. */
   private lastFlee: Record<string, string> = {};
-  private needMarks: Phaser.GameObjects.Text[] = [];
+  /** BACKLOG-551: `Image` once a rig exists for the pressing need, `Text` until then — `makeHourMark`'s contract. */
+  private needMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /** The two need rigs, baked once and cached — `missedTex`/`missedAloofTex`'s arrangement (BACKLOG-551). */
+  private needTex: Partial<Record<NeedKind, string | null>> = {};
   /** Distress call (BACKLOG-194): the last cry (diegetic — recorded even muted) and the
    *  responder mid-walk toward the caller. Both transient, never persisted. */
   private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
@@ -2986,8 +3001,63 @@ export class WorldScene extends Phaser.Scene {
       this.logEvent(`🍽 ${other} and ${d.name} ate together`);
     }
     this.lastMeal = { name: d.name, at: now };
+    // BACKLOG-126: the good dinner has an audience. `r.favorite || cameRound` is the whole test — what
+    // this dino was born loving, or what the keeper *made* it love two cycles ago. 068 shipped first so
+    // that this line could be an `||` rather than a second system.
+    this.noteEnvy(d, r.favorite || cameRound, kind!.label);
     this.refreshHeartsPanel();
     void this.saveGame();
+  }
+
+  /**
+   * Somebody watched that (BACKLOG-126).
+   *
+   * Only the good dinner counts — an ordinary meal is not a slight, it is lunch. The watchers are the
+   * dinos on the eater's own ground (not the keeper's: `inView` answers a question about the camera, and
+   * this is a question about who could see the hatch), and the pure module decides which of them, if any,
+   * took it personally.
+   *
+   * Two memories rather than one, on purpose: what it saw and what it concluded. The book should be able
+   * to show the evidence beside the grudge, and a reader that only has the grudge cannot.
+   */
+  private noteEnvy(eater: Dino, goodDinner: boolean, label: string): void {
+    if (!goodDinner) return;
+    const zone = zoneOf(this.dinoZones, eater.name, BOWL_ID);
+    const watchers: Watcher[] = this.dinos
+      .filter((d) => d.name !== eater.name && zoneOf(this.dinoZones, d.name, BOWL_ID) === zone)
+      .map((d) => ({
+        name: d.name,
+        points: this.friendship[d.name] ?? 0,
+        tiles: Phaser.Math.Distance.Between(eater.x, eater.y, d.x, d.y) / TILE,
+      }));
+    const name = enviousWitness(watchers, this.friendship[eater.name] ?? 0);
+    if (!name) return;
+    this.memory = remember(this.memory, name, envySawMemory(eater.name, label));
+    this.memory = remember(this.memory, name, envyMemory(eater.name));
+    this.envyPending[name] = { eater: eater.name, at: this.worldSteps };
+    const watcher = this.dinoByName(name);
+    if (watcher) this.flashFeed(watcher, ENVY_GLYPH);
+    this.logEvent(envyEventLine(name, eater.name, label));
+  }
+
+  /**
+   * The unsaid line, said (BACKLOG-126) — read and cleared in one call.
+   *
+   * One reader for two greet doors (`recordGreet` and the tone twin), so the plain hello and the tone pick
+   * can never disagree about whether the slight has been spoken. Returns the dino it is about, or null.
+   */
+  private takeEnvy(name: string): string | null {
+    const pending = this.envyPending[name];
+    if (!pending) return null;
+    delete this.envyPending[name];
+    return pending.eater;
+  }
+
+  /** A slight nobody came back for goes unsaid (BACKLOG-126) — the `expireMissedTraces` rule, same reason. */
+  private expireEnvy(): void {
+    for (const [name, e] of Object.entries(this.envyPending)) {
+      if (envyHasFaded(this.worldSteps - e.at)) delete this.envyPending[name];
+    }
   }
 
   /**
@@ -3714,9 +3784,24 @@ export class WorldScene extends Phaser.Scene {
     this.mopeMarks.push(
       this.add.text(0, 0, MOPE_GLYPH, { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    // BACKLOG-551: through the family's own constructor at last, so a rig can finally be shown here. It
+    // degrades to the 371 `Text` while the rigs are missing, which is why this is safe to land before a
+    // pixel is drawn.
+    //
+    // **Both keys or neither.** This is one sprite wearing two rigs, and unlike `missed`/`missed_aloof`
+    // there is no base rig to fall back on: half-drawn, an `Image` asked for the undrawn need would keep
+    // wearing the *other* need's picture, which is worse than the glyph it replaced. So the mark is only
+    // an `Image` when both tells exist, and the pair is drawn together or not at all.
+    const needsDrawn = hasPropArt(NEED_ART_KEY.hunger) && hasPropArt(NEED_ART_KEY.thirst);
     this.needMarks.push(
-      this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
+      needsDrawn
+        ? this.makeHourMark(NEED_ART_KEY.hunger, NEED_GLYPH.hunger)
+        : this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
+    if (needsDrawn) {
+      this.needTex.hunger ??= bakePropArt(this, NEED_ART_KEY.hunger);
+      this.needTex.thirst ??= bakePropArt(this, NEED_ART_KEY.thirst);
+    }
     this.needs[cfg.name] ??= { hunger: 0, thirst: 0 };
     this.roleTags.push(
       this.add
@@ -3831,6 +3916,17 @@ export class WorldScene extends Phaser.Scene {
       );
       this.refreshNeedMarks();
       return JSON.parse(JSON.stringify(this.needs));
+    };
+    // any: dev-only Playwright hook — what one mark family actually *is* for one dino (BACKLOG-551).
+    // `__marks` answers whether a mark is showing; this answers whether it is a glyph or a drawn rig, which
+    // is the only question that can tell a wired host from an unwired one.
+    (window as any).__markKind = (name: string, family: 'need') => {
+      const i = this.dinos.findIndex((d) => d.name === name);
+      const mark = family === 'need' ? this.needMarks[i] : undefined;
+      if (!mark) return null;
+      return mark instanceof Phaser.GameObjects.Image
+        ? { kind: 'image', texture: mark.texture.key }
+        : { kind: 'text', text: (mark as Phaser.GameObjects.Text).text };
     };
     (window as any).__setNeed = (name: string, which: 'hunger' | 'thirst', v: number) => {
       const base = this.needs[name] ?? { hunger: 0, thirst: 0 };
@@ -4310,7 +4406,12 @@ export class WorldScene extends Phaser.Scene {
       const mark = this.needMarks[i];
       if (!mark) return;
       const need = pressingNeed(this.needs[d.name]);
-      mark.setText(need ? NEED_GLYPH[need] : '').setVisible(!!need && this.inView(d)).setPosition(d.x, d.y - TILE * 1.7);
+      // BACKLOG-551: one mark, two keys, chosen by the pressing need — `refreshMissedMarks`'s swap, and its
+      // instanceof guard with it, so a `Text` is never handed a texture and an `Image` is never handed text.
+      const tex = need ? (this.needTex[need] ?? null) : null;
+      if (tex && mark instanceof Phaser.GameObjects.Image) mark.setTexture(tex);
+      else if (mark instanceof Phaser.GameObjects.Text) mark.setText(need ? NEED_GLYPH[need] : '');
+      mark.setVisible(!!need && this.inView(d)).setPosition(d.x, d.y - TILE * 1.7);
     });
   }
 
@@ -4800,6 +4901,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__tasted = (name: string) => [...(this.tasted[name] ?? [])];
     // BACKLOG-068: the warming record — food id -> meals eaten, counted to WARM_AT.
     (window as any).__palate = (name: string) => ({ ...(this.palate[name] ?? {}) });
+    // any: dev-only Playwright hook — the slights nobody has said out loud yet (BACKLOG-126).
+    (window as any).__envy = () => Object.fromEntries(Object.entries(this.envyPending).map(([n, e]) => [n, { ...e }]));
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
     (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
@@ -5570,6 +5673,7 @@ ${e.short}`;
   private forceStep(): void {
     this.worldSteps++; // BACKLOG-424: the stamp a pacing trace ages against
     this.expireMissedTraces(); // BACKLOG-116: an unspoken thought ages out of the frame
+    this.expireEnvy(); // BACKLOG-126: and so does a slight nobody came back to hear about
     if (this.convoCooldown > 0) this.convoCooldown--;
 
     // A world-scale night event (BACKLOG-144) overrides all wandering: the whole cast gathers to
@@ -8302,9 +8406,22 @@ ${e.short}`;
       repairing ? repairMemory(name) : warming ? warmMemory() : toneById(id).memory,
     );
     this.lastTone = { ...this.lastTone, [name]: id };
-    if (lonely) {
+    // BACKLOG-126: the slight gets said unless the keeper is here mending something. Repair (125) and the
+    // thaw (184) are one-shot beats *caused by this greet*, and they win. The loner perk-up (135) does not:
+    // it fires on every hello to a friendless dino and will fire again on the next one, while this fires
+    // once ever. Deferring to it would have silenced envy on a fresh save entirely — every founding dino is
+    // friendless — which is precisely the dormancy CHARTER v7 calls a defect.
+    //
+    // The points are deliberately untouched, the loner *bonus* included. Envy colours what a dino says; it
+    // does not charge the keeper for saying hello.
+    const envied = !repairing && !warming ? this.takeEnvy(name) : null;
+    if (lonely && !envied) {
       const dino = this.dinoByName(name);
       if (dino) this.showBubble(dino, perkUpLine(name));
+    }
+    if (envied) {
+      const dino = this.dinoByName(name);
+      if (dino) this.showBubble(dino, wistfulGreetLine(name, envied));
     }
     if (repairing) {
       this.funks = clearFunk(this.funks, name);
@@ -8341,9 +8458,22 @@ ${e.short}`;
       name,
       repairing ? repairMemory(name) : warming ? warmMemory() : 'the human stopped by to say hello',
     );
-    if (lonely) {
+    // BACKLOG-126: the slight gets said unless the keeper is here mending something. Repair (125) and the
+    // thaw (184) are one-shot beats *caused by this greet*, and they win. The loner perk-up (135) does not:
+    // it fires on every hello to a friendless dino and will fire again on the next one, while this fires
+    // once ever. Deferring to it would have silenced envy on a fresh save entirely — every founding dino is
+    // friendless — which is precisely the dormancy CHARTER v7 calls a defect.
+    //
+    // The points are deliberately untouched, the loner *bonus* included. Envy colours what a dino says; it
+    // does not charge the keeper for saying hello.
+    const envied = !repairing && !warming ? this.takeEnvy(name) : null;
+    if (lonely && !envied) {
       const dino = this.dinoByName(name);
       if (dino) this.showBubble(dino, perkUpLine(name));
+    }
+    if (envied) {
+      const dino = this.dinoByName(name);
+      if (dino) this.showBubble(dino, wistfulGreetLine(name, envied));
     }
     if (repairing) {
       this.funks = clearFunk(this.funks, name);
@@ -8871,6 +9001,7 @@ ${e.short}`;
       tasted: Object.fromEntries(Object.entries(this.tasted).map(([n, ids]) => [n, [...ids]])),
       // BACKLOG-068: the palate the keeper moved (additive). Absent in every save before this cycle.
       palate: Object.fromEntries(Object.entries(this.palate).map(([n, c]) => [n, { ...c }])),
+      envy: Object.fromEntries(Object.entries(this.envyPending).map(([n, e]) => [n, { ...e }])),
       leftDays: this.leftDays, // BACKLOG-362: dino→zone→the day it last crossed out (additive)
       cameFrom: this.cameFrom, // BACKLOG-347: dino→the ground it last crossed out of (additive)
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
@@ -8950,6 +9081,7 @@ ${e.short}`;
       if (save.satchel) this.satchel = { ...save.satchel };
       this.tasted = save.tasted ?? {}; // BACKLOG-069: additive — a pre-160 save opens with a blank menu
       this.palate = save.palate ?? {}; // BACKLOG-068: additive — a pre-161 save opens with nobody warm
+      this.envyPending = save.envy ?? {}; // BACKLOG-126: additive — a pre-162 save opens with nothing unsaid
       this.refreshGiftHud();
       this.recordVisit(save.visitHours);
       if (save.scale) this.activeScale = save.scale;

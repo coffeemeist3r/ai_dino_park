@@ -48,6 +48,14 @@ export const THIRST_RATE = 0.005;
 
 export const NEED_GLYPH: Record<NeedKind, string> = { hunger: '🍖', thirst: '💧' };
 
+/**
+ * The rig key for each tell (BACKLOG-551), declared right beside the glyph it replaces so the two can
+ * never drift apart. Until cycle 162 the need marks were the only floating marks in the park built as raw
+ * `Text` rather than through `makeHourMark`, which meant no rig could ever be shown over them — the reason
+ * BACKLOG-550 was seeded blocked. The scene now looks these up the way it looks up every other mark.
+ */
+export const NEED_ART_KEY: Record<NeedKind, string> = { hunger: 'need_hunger', thirst: 'need_thirst' };
+
 /** Energy-scaled build rate (a higher-energy dino burns through it a little faster): 0.6×..1.4× the base. */
 function scaled(base: number, traits?: Personality): number {
   return base * (0.6 + 0.8 * (traits?.energy ?? 0.5));

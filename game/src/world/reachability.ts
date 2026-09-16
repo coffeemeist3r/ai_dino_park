@@ -34,6 +34,7 @@ import { VIGIL_ART_KEY } from './vigil';
 import { MEND_ART_KEY } from './mending'; // BACKLOG-530/537
 import { GLANCE_ART_KEY } from './parting'; // BACKLOG-119/540
 import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
+import { NEED_ART_KEY } from './needs'; // BACKLOG-551/550
 import {
   FOUNDING_LANDMARKS,
   FOUNDING_PILES,
@@ -156,6 +157,11 @@ export function worldPlacedProps(): Set<string> {
   // `refreshSleepMarks` / `refreshRouseMarks`, which is why they count as seen.
   out.add(DOZE_ART_KEY);
   out.add(ROUSE_ART_KEY);
+  // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
+  // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
+  // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so
+  // a rename cannot leave a stale literal in the register that exists to catch stale literals.
+  for (const k of Object.values(NEED_ART_KEY)) out.add(k);
   // BACKLOG-121/526: the vigil mark, hung over the dino standing at the glass by `refreshVigilMarks`.
   out.add(VIGIL_ART_KEY);
   // BACKLOG-116/531: the missed-you thought, hung over a dino that formed an account of the keeper's

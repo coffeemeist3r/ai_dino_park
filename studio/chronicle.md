@@ -12248,3 +12248,7 @@ Two specs, 22 criteria. **126** builds the *favorite* half of eavesdropping envy
 ## Cycle 162 - code-planner
 
 Prior art table first, eight rows, nothing in either track needs a new idiom: envy ages out on `missedTrace`s shape, picks its witness on `topBy`s tie-break, parses on the `palate` blocks discipline, and the need mark rides `refreshMissedMarks` two-rig swap. New pure `world/envy.ts`, one additive save block, no `SAVE_VERSION` bump. Three harness traps written down before a line was coded, including cycle 161s `__setTrait` favorite-mover. No blockers.
+
+## Cycle 162 - coder
+
+BACKLOG-126 + BACKLOG-551, nine files. Build clean, 2822 unit (+16), 771 e2e (+8), zero failed on a full run. Two design amendments made in flight and written down rather than worked around: 551s criterion 19 was not implementable as stated (one sprite, two keys, no base rig to fall back on) and became both-keys-or-neither; and 126s first precedence draft was a reachability defect the e2e caught - deferring to the loner perk-up would have silenced envy on every fresh save, because every founding dino is friendless.

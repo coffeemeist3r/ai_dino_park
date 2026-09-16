@@ -110,3 +110,47 @@ Lore module + tests → structure (small, low risk) → build → vitest → kil
 ## Blockers
 
 None.
+
+---
+
+## Shipped
+
+Both tracks, 9 files (4 modified, 5 new). Build clean, **2822 unit** (+16), **771 e2e** (+8), zero failed,
+no flake, no isolated re-run. `@mlc-ai/web-llm` still imported only under `game/src/ai/` (grep clean).
+Save additive (`envy?`), no `SAVE_VERSION` bump. No founding constant touched.
+
+### Two design amendments made in flight, both recorded rather than worked around
+
+**1. Criterion 19 was not implementable as written, and the honest rule replaced it.** The design asked
+that with one need rig drawn and the other absent, the drawn one draw and the undrawn one fall back to its
+glyph. It cannot: the mark is **one** sprite, and unlike `missed` / `missed_aloof` there is no base rig to
+fall back on — an `Image` asked for the undrawn need would keep wearing the *other* need's picture, which
+is worse than the glyph it replaced. The shipped rule is **both keys or neither**: the mark is an `Image`
+only when both tells exist. 550 is "the need marks", plural, so this costs the Artist nothing. Criterion 19
+now reads: *with one rig drawn and one missing, both needs still read their glyph and nothing crashes* —
+and the e2e is written to pass in **either** state, so it proves the degradation rather than the moment.
+
+**2. The greet precedence changed, and the first draft of it was a reachability defect.** The design said
+envy is "checked last", after repair (125), warm (184) and the loner perk-up (135). Under that rule the
+e2e found envy could **never be said on a fresh save**: every founding dino is friendless, so `lonely` is
+true on every hello, and the perk-up ate the line every time. The shipped rule keeps repair and warm above
+envy — both are one-shot beats *caused by this greet* — and puts envy above the loner perk-up, which fires
+on every hello to a friendless dino and will fire again on the next one, while envy fires once ever. That
+is the CHARTER v7 corollary applied to a precedence table rather than to a constant.
+
+### Criterion 8 also moved, factually
+
+The design said the envy memory is "readable in the book". It is not: the book prints quirks, dreams, plans
+and the menu, not raw memories. The memory is filed in the memory store (`__memory`), which is what the
+murmur and the dialogue read — so the spec asserts there. Nothing about the feature changed; the criterion
+named the wrong reader.
+
+### The harness traps, as met
+
+- The event log rolls — asserted on `__envy` and the memory store, with the ticker read right after the drop.
+- `__bubbleTexts` is the **live** list, so "said once" is a **count** of one after two greets, not an
+  absence. An absence check passes for the wrong reason while the first bubble is still on screen.
+- `E` on a dino opens the **tone menu**; `recordGreet` is only reachable from `__greet`. Both doors carry
+  the beat and the spec drives **both**, rather than assuming they agree.
+- `__setTrait` on `agreeableness` moves the favorite (cycle 161's trap) — avoided entirely by asking
+  `__favoriteFood` what the favorite already is.

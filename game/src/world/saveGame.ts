@@ -141,6 +141,10 @@ export interface SaveData {
    *  to `WARM_AT`. Deliberately not the `tasted` set: that one is also written by LUMEN-3's scan, and a
    *  scan is a read, not a dinner. Additive; absent → {} (nobody has come round to anything). */
   palate?: Record<string, Record<string, number>>;
+  /** The slights nobody has said out loud yet (BACKLOG-126) — watcher name → the dino it saw get the good
+   *  dinner, and the ambient step it was filed on. Consumed by the watcher's next greeting, or lapsed by
+   *  `ENVY_FADES_AFTER_STEPS`. Additive; absent → {} (nothing unsaid), which is the fresh-save read. */
+  envy?: Record<string, { eater: string; at: number }>;
   /** BACKLOG-422: lifetime affinity each dino has earned from being caught mid-ritual — the ceiling that
    *  stops a reload re-buying the same warmth. Additive-optional; absent on every pre-137 save. */
   catchWarmth?: Record<string, number>;
@@ -963,6 +967,21 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // envy (BACKLOG-126) — watcher name → { eater, at }. Same discipline as the two blocks above: an
+  // unknown dino name is *kept* (a save from a future roster is a save, and a stray entry is inert once
+  // nothing greets that name), but a missing eater or a nonsense step count is a corrupt save.
+  let envy: Record<string, { eater: string; at: number }> | undefined;
+  if (o.envy !== undefined) {
+    if (typeof o.envy !== 'object' || o.envy === null || Array.isArray(o.envy)) return null;
+    envy = {};
+    for (const [name, raw] of Object.entries(o.envy as Record<string, unknown>)) {
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+      const { eater, at } = raw as { eater?: unknown; at?: unknown };
+      if (typeof eater !== 'string' || typeof at !== 'number' || !Number.isFinite(at) || at < 0) return null;
+      envy[name] = { eater, at: Math.floor(at) };
+    }
+  }
+
   let visitHours: number[] | undefined;
   if (o.visitHours !== undefined) {
     if (!Array.isArray(o.visitHours) || !o.visitHours.every(isNum)) return null;
@@ -1009,6 +1028,7 @@ export function deserialize(json: string): SaveData | null {
     satchel,
     tasted,
     palate,
+    envy,
     streak,
     leftDays,
     catchWarmth,
