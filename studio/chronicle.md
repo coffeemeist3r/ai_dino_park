@@ -12244,3 +12244,7 @@ Milestone 20's last arc. Four cycles of consequence built inside one mouth; **12
 ## Cycle 162 - designer
 
 Two specs, 22 criteria. **126** builds the *favorite* half of eavesdropping envy and leaves the homecoming half to 120s seam - the good dinner is `favorite || cameRound`, so the watcher can envy what a dino was born loving *and* what the keeper made it love. Envy is deliberately not a funk (no mark, no slot, evicts nothing) and it expires, because a permanent negative state is a defect. **551** routes the need tells through `makeHourMark` on the `missed`/`missed_aloof` two-rig pattern. Its reachability answer is written down as what it is: the host alone changes nothing a player sees, so the Artist must land 550 in this same session or the track takes the REWORK.
+
+## Cycle 162 - code-planner
+
+Prior art table first, eight rows, nothing in either track needs a new idiom: envy ages out on `missedTrace`s shape, picks its witness on `topBy`s tie-break, parses on the `palate` blocks discipline, and the need mark rides `refreshMissedMarks` two-rig swap. New pure `world/envy.ts`, one additive save block, no `SAVE_VERSION` bump. Three harness traps written down before a line was coded, including cycle 161s `__setTrait` favorite-mover. No blockers.
