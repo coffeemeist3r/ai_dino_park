@@ -1875,6 +1875,85 @@ const GLANCE_RIG: PropRig = {
   },
 };
 
+/**
+ * The need tells (BACKLOG-550, cycle 162-art) — the last two marks in the park rendering as raw system
+ * emoji, drawn the night BACKLOG-551 finally gave them a host.
+ *
+ * These are the **most-seen** marks in the family by a distance. Every dino carries a need, needs build on
+ * every tick, and one of these two is up over somebody long before a doze, a rouse, a vigil or a mend ever
+ * fires. They have been 🍖 and 💧 straight out of the system font since cycle 80.
+ *
+ * **The first draft of the hunger mark was a haunch of meat, and it was thrown away** — which is the same
+ * mistake the seed warned about before a pixel was drawn. A haunch at 12px is a brown blob, and worse, it
+ * says *here is food*, which is the opposite of what the mark means: the mark means there is none. So the
+ * shipped read is a **hollow** — an empty pouch, wide at the mouth, tapering, with nothing inside it. It is
+ * the only rig in the park whose subject is an absence, and the negative space is doing the work.
+ *
+ * Thirst is the seed's own idea, unchanged: a **droplet with a tongue** under it. The droplet alone is
+ * weather; the tongue is what makes it an animal that wants a drink. Read together the pair is legible as
+ * a contrast rather than as two objects — one is empty and outlined, one is full and solid.
+ *
+ * Both share `rouse`'s outline verbatim, per the family rule: one axis, one rim.
+ */
+const NEED_HUNGER_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '....oooooooo....',
+  '...oLLSSSSSSo...',
+  '...oLS......So..',
+  '...oS.......So..',
+  '...oS.......So..',
+  '...oS.......So..',
+  '....oS.....So...',
+  '....oSS...SSo...',
+  '.....oSSSSSo....',
+  '......ooooo.....',
+  '................',
+  '................',
+  '................',
+];
+
+const NEED_HUNGER_RIG: PropRig = {
+  size: 16,
+  grid: NEED_HUNGER_GRID,
+  palette: {
+    o: 0x2b3344, // `rouse`'s outline, shared verbatim
+    S: 0xb0885e, // the pouch wall — `glance`'s hide, because the thing that is empty is the animal
+    L: 0xd8b78d, // one lit rim at the mouth, off-centre, so a hollow ring does not read as a letter O
+  },
+};
+
+const NEED_THIRST_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.......oo.......',
+  '......oWWo......',
+  '......oWWo......',
+  '.....oWwWWo.....',
+  '.....oWwWWo.....',
+  '....oWwWWWWo....',
+  '....oWwWWWWo....',
+  '....oWWWWWWo....',
+  '.....oWWWWo.....',
+  '......oooo......',
+  '.....oTTTTo.....',
+  '......oTTo......',
+  '.......oo.......',
+  '................',
+];
+
+const NEED_THIRST_RIG: PropRig = {
+  size: 16,
+  grid: NEED_THIRST_GRID,
+  palette: {
+    o: 0x2b3344, // the same rim again
+    W: 0x4a86c0, // water
+    w: 0xa8d4f0, // the catchlight down the left of the drop — the family's lit cell, doing its usual job
+    T: 0xc06878, // tongue
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -1955,6 +2034,11 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // `refreshGlanceMarks` — shipped the same morning as this seed, which is the condition the cycle-145
   // amendment asks for and the reason this could be drawn on the night it was queued.
   glance: GLANCE_RIG,
+  // BACKLOG-550 (cycle 162-art): the eighth and ninth marks, and the two most-seen of the lot. Held for
+  // two Artist fires with the host named in the seed; BACKLOG-551 built it earlier in this same cycle,
+  // which is the condition the cycle-145 amendment asks for.
+  need_hunger: NEED_HUNGER_RIG,
+  need_thirst: NEED_THIRST_RIG,
 };
 
 /**

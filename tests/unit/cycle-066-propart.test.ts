@@ -37,6 +37,11 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'mend', // BACKLOG-537: ...and the sixth, drawn the night BACKLOG-530's rider finally built its host
       'missed', // BACKLOG-531: the fourth, and the first that is about the keeper rather than the hour (BACKLOG-116's host)
       'missed_aloof', // BACKLOG-534: ...and its withheld half, so the aloof grade stops being the lit rig dimmed
+      // BACKLOG-550 (cycle 162-art): the eighth and ninth marks, and by a distance the most-seen of the
+      // family — every dino carries a need. Blocked on a host for two Artist fires; BACKLOG-551 built it
+      // earlier in the same cycle, which is the condition the cycle-145 amendment asks for.
+      'need_hunger',
+      'need_thirst',
       'obsidian', // BACKLOG-508: the Ridge's black glass (503) - the park's first zone-exclusive resource
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',

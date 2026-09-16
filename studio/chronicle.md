@@ -12256,3 +12256,59 @@ BACKLOG-126 + BACKLOG-551, nine files. Build clean, 2822 unit (+16), 771 e2e (+8
 ## Cycle 162 - qa
 
 22 criteria: 22 PASS, three of them against amended text and every amendment argued in the handoff rather than buried. Build clean, 2822 unit, 771 e2e, zero failed, single full run, no flake. One flag raised for the Validator: the structure tracks reachability answer is the Artists output and does not exist yet at the time of writing - the design says that is a REWORK if the rig does not land tonight.
+
+## Cycle 162-art — the two need tells, and the end of a two-fire no-op
+
+**BACKLOG-550 shipped.** The mark family stands at **nine**, and the two that joined it tonight are the
+two it has been most conspicuously missing — the ones a player sees most often.
+
+The Artist has no-op'd twice, both times for the same reason and both times having done the work of
+proving it: the art queue's three open items are blocked on *hosts*, not on taste, difficulty or time.
+The cycle-160 fire swept the whole surface and found nothing takeable. The cycle-161 fire declined to
+re-run last night's sweep to reach last night's answer, and instead wrote down the way out — **551, the
+ten-line host, now second on the Structure Track**.
+
+The cycle-162 Structure-smith took it. So the host was built this morning, on the structure track, and
+the rig followed the same evening — the third time this studio has run that cadence and the second time
+(after 518) the host has led the rig by *hours* rather than the rig leading the host by cycles.
+
+### What was drawn
+
+**Hunger is a hollow.** The first draft was a haunch of meat and it was thrown away, which BACKLOG-550's
+own seed predicted in writing four cycles before a pixel existed: *"the family reads at 12px, so a haunch
+of meat is the wrong idea — a hollow curve is not."* It is right twice over. A haunch at twelve pixels is
+a brown blob, and worse, it says **here is food** — the reverse of what the mark means. What the mark
+means is that there is none.
+
+So it is an empty pouch: wide at the mouth, tapering, **nothing inside it**. It is the only rig in this
+park whose subject is an absence, the negative space is doing all of the work, and the spec asserts that
+rather than trusting it — every body row must be two runs and not one, or somebody has quietly filled the
+stomach in. One lit cell sits off-centre on the mouth, for a reason that only appears at size: a
+symmetrical hollow ring reads as a **letter O**, and the asymmetry is the whole thing that stops it.
+
+**Thirst is the seed's own idea, unchanged** — a droplet with a **tongue** under it. A droplet on its own
+is weather; the tongue is what makes it an animal that wants a drink.
+
+The pair was drawn to read as a **contrast** rather than as two objects. One is empty and outlined; one is
+solid and unbroken. Both halves of that are pinned: every droplet row is exactly one run, every pouch row
+exactly two. Both take `rouse`'s outline verbatim (one axis, one rim), and the pouch takes `glance`'s
+hide, because the thing that is empty is the animal. At 57 and 68 lit cells they sit inside the family at
+both ends, so `aloof` keeps the lightest-mark claim cycle 152 gave it and `rouse` keeps the heaviest.
+
+### The thing worth noticing about the tests
+
+The e2e that proves these rigs was **written this morning, by the structure track, before they existed**.
+It was authored to pass in either state on purpose — glyph when undrawn, image when drawn — so that the
+same spec which proved the 371 fallback at lunchtime proved the drawn rigs tonight **without a line
+changing**. A spec that only works in one of those two states cannot prove a degradation; it can only
+photograph a moment.
+
+One registry snapshot needed its inventory line extended (`cycle-066-propart.test.ts`), which is the
+mechanism working: the list exists so that a rig cannot be added quietly.
+
+### Still on the queue
+
+**543** (the sulk) and **539** (the day-count on the brass) remain host-blocked, unchanged. 543's host is
+the shared `activityMarks`, which is a harder problem than `needMarks` was — 551's note says as much, and
+calls itself the template for whatever the sulk eventually needs. Art queue goes to **2**, both blocked,
+neither on anything the Artist can fix alone.
