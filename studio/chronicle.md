@@ -12240,3 +12240,7 @@ Milestone 20's last arc. Four cycles of consequence built inside one mouth; **12
 ## Cycle 162 — structure-smith
 
 **BACKLOG-551** — the two need marks that are not in the mark family. Queue drained (4 ≥ 4), nothing seeded. Picked over top-of-queue **533**, which its own entry condition defers to cycle 165, and over 552/553, because 551 is the only item here whose completion ends an Artist no-op: 550 (the 🍖/💧 tells) is the most-seen un-drawn thing in the park and has been blocked on a host for two fires. Solo cycle legal for the first time since 151 and **not declared** — ten lines of glue is not what CHARTER v8 is for; 553 remains the candidate.
+
+## Cycle 162 - designer
+
+Two specs, 22 criteria. **126** builds the *favorite* half of eavesdropping envy and leaves the homecoming half to 120s seam - the good dinner is `favorite || cameRound`, so the watcher can envy what a dino was born loving *and* what the keeper made it love. Envy is deliberately not a funk (no mark, no slot, evicts nothing) and it expires, because a permanent negative state is a defect. **551** routes the need tells through `makeHourMark` on the `missed`/`missed_aloof` two-rig pattern. Its reachability answer is written down as what it is: the host alone changes nothing a player sees, so the Artist must land 550 in this same session or the track takes the REWORK.
