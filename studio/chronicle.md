@@ -12442,3 +12442,14 @@ the fourth watcher's pixel rig, chosen because its host (`renderKeeperAvatar`) h
 047-art, unlike the two host-blocked items already queued. Suggested next-up **BACKLOG-160**, with the
 finding that its naming half already shipped as 276/278 and the unbuilt half must be reachable on the
 *first* hello, not the tenth heart. Idea Box empty.
+
+## Cycle 163 — structure-smith
+
+**Chose BACKLOG-212 — the roster's first watcher that is not a robot**, Milestone 21's spine arc, promoted
+into the Structure Track from the body where it has sat since cycle 48. Track was at 3 (under X=4) so
+brainstorming was open; one item invented rather than three — **BACKLOG-555**, the keeper record the save
+does not have, which is the reason 156's persona cache and 162's switch beat both have nowhere to land.
+Queue-top passed with reasons on the record: 533 is deferred by its own entry condition to cycle 165 and
+this item does not move a founding constant; 553 is the solo candidate and should be taken whole; 552's
+ten-minute answer is thin. Solo cycle legal at 12 and **not declared** — 212 has never been passed over
+for scope. Structure arcs added to Milestone 21.
