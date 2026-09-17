@@ -7069,17 +7069,30 @@ ${e.short}`;
       case 'scan': this.toggleScan(); break;
       case 'time': this.toggleScale(); break;
       case 'export': this.sheetOpen = false; this.exportSave(); break;
-      case 'pick1': this.onNumberKey(1); break;
-      case 'pick2': this.onNumberKey(2); break;
-      case 'pick3': this.onNumberKey(3); break;
       case 'back': this.dialog.prev(); break;
       case 'close': this.dismissDialog(); break; // ✕ always closes, even mid-pages
+      default: {
+        // The numbered chips, derived rather than enumerated (BACKLOG-212). This switch was the THIRD
+        // hard-coded three in the picker's path, after the key bindings and `menuChips` — and the quietest,
+        // because a [4] chip that draws and hit-tests but dispatches nothing looks like a dead tap rather
+        // than a missing case.
+        const n = this.pickChipNumber(id);
+        if (n > 0) this.onNumberKey(n);
+        break;
+      }
     }
   }
 
+  /** `pick4` → 4; anything else → 0. The one place a chip id becomes a menu index. */
+  private pickChipNumber(id: string): number {
+    const n = id.startsWith('pick') ? Number(id.slice(4)) : NaN;
+    return Number.isInteger(n) && n >= 1 ? n : 0;
+  }
+
   /**
-   * Swap the layer with dialog state: stick + buttons while playing, [1][2][3][✕]
-   * chips while a dialog is up (numbers only when a 1/2/3 menu is actually open).
+   * Swap the layer with dialog state: stick + buttons while playing, [1..N][✕]
+   * chips while a dialog is up (numbers only when a numbered menu is actually open, and only as many
+   * as that menu offers — BACKLOG-212).
    */
   private syncTouchUi(): void {
     if (!this.touchEnabled) return;
@@ -7116,8 +7129,8 @@ ${e.short}`;
 
   /** Is `pickN` one of the chips the currently-open overlay actually offers? Non-pick ids are not ours. */
   private pickChipLive(id: string, options: number): boolean {
-    const n = id.startsWith('pick') ? Number(id.slice(4)) : NaN;
-    return Number.isFinite(n) && n >= 1 && n <= options;
+    const n = this.pickChipNumber(id);
+    return n >= 1 && n <= options;
   }
 
   /** The currently-visible chip at (px,py), if any. */
@@ -9388,6 +9401,8 @@ ${e.short}`;
     // any: dev-only — how many numbered chips/keys the OPEN overlay offers (BACKLOG-212). The chip
     // objects are built once for the widest menu, so this is what decides which of them are live.
     (window as any).__numberedOptions = () => this.numberedOptions();
+    // any: dev-only — which chip a canvas-logical point resolves to, or null if none is live there.
+    (window as any).__chipAt = (x: number, y: number) => this.chipIdAt(x, y);
     (window as any).__openKeeperPicker = () => {
       this.openKeeperPicker();
       return this.keeperPickerOpen;

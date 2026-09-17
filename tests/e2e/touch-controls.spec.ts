@@ -102,3 +102,35 @@ test('the More sheet reaches a buried action (hearts panel) in two taps', async 
   await page.mouse.click(heartsAt.x, heartsAt.y);
   expect(await page.evaluate(() => (window as W).__heartsPanelVisible())).toBe(true);
 });
+
+test('the fourth observer is reachable by thumb, and the tone menu grows no dead chip (BACKLOG-212)', async ({
+  page,
+}) => {
+  const layout = await bootTouch(page);
+
+  // The chip objects are built once for the widest overlay, so a [4] exists to tap.
+  const chip4 = layout.chips.find((c: any) => c.id === 'pick4');
+  expect(chip4).toBeDefined();
+
+  await page.evaluate(() => (window as W).__openKeeperPicker());
+  expect(await page.evaluate(() => (window as W).__numberedOptions())).toBe(4);
+
+  const at = await toPage(page, chip4.x, chip4.y);
+  await page.mouse.click(at.x, at.y);
+  expect(await page.evaluate(() => (window as W).__keeper())).toBe('kestrel');
+
+  // And the same chip is dead while the tone menu is up — the count, not the objects, is what gates it.
+  // Close the pick's confirm dialog first: while any dialog is up the action cluster is hidden.
+  const close = layout.chips.find((c: any) => c.id === 'close');
+  const closeAt = await toPage(page, close.x, close.y);
+  await page.mouse.click(closeAt.x, closeAt.y);
+  await page.evaluate(() => (window as W).__warpTo('Rex'));
+  const talk = layout.buttons.find((b: any) => b.id === 'talk');
+  const talkAt = await toPage(page, talk.x, talk.y);
+  await page.mouse.click(talkAt.x, talkAt.y);
+  expect(await page.evaluate(() => (window as W).__toneMenuOpen())).toBe(true);
+  expect(await page.evaluate(() => (window as W).__numberedOptions())).toBe(3);
+  expect(
+    await page.evaluate(({ x, y }) => (window as W).__chipAt?.(x, y) ?? null, { x: chip4.x, y: chip4.y }),
+  ).toBe(null);
+});

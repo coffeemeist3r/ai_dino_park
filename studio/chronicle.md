@@ -12488,3 +12488,13 @@ to pagination once greets grew longer, and one was the new compose test catching
 greeting register is random. Two defects fixed in passing: `openToneMenu` never closed an open keeper
 picker (the reverse has held since cycle 37), and `DialogBox` gained `allText()` because a four-row picker
 pages and a spec asserting on page 1 silently tests row 1 alone.
+
+## Cycle 163 — qa
+
+**32/32 criteria pass**, two amended in flight with the argument printed. The cycle's real finding came
+from refusing a proxy: the touch criterion was green through a `__numberedOptions()` hook that reported 4
+for the picker and 3 for the tone menu — exactly as designed — and **failed the moment a spec actually
+clicked the chip**. `dispatchTouchTap` carried `case 'pick1'/'pick2'/'pick3'` and no default, the third
+hard-coded three in the picker's path and much the quietest: the other two would have made the fourth row
+obviously inert, this one drew a chip that looked alive and swallowed the tap. A hook that reports the
+right number is not a button that works.
