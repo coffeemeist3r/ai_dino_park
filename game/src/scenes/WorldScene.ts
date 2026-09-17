@@ -397,6 +397,13 @@ const COLS = 20;
 const ROWS = 15;
 
 /**
+ * The most numbered options any overlay can offer (BACKLOG-212) — derived, never typed. The touch chip
+ * objects are built once for this width and `syncTouchUi` reveals only the ones the open overlay uses, so
+ * growing the keeper roster or the tone list needs no edit here.
+ */
+const MAX_MENU_OPTIONS = Math.max(KEEPERS.length, TONES.length);
+
+/**
  * A fresh per-zone plot map, keyed off `PLOT_TILE_BY_ZONE` (BACKLOG-472) rather than three zone-id
  * literals — a fourth ground with a plot is a row in that table, not an edit in three places here.
  */
@@ -1201,14 +1208,19 @@ export class WorldScene extends Phaser.Scene {
     this.cursors.left.on('down', () => { if (this.dialogOpen) this.dialog.prev(); });
     // any: dev-only Playwright hook — current dialog page/pages/text
     (window as any).__dialogPage = () => this.dialog.pageInfo();
+    // any: dev-only — the whole message, every page (BACKLOG-212). `__dialogPage().text` is page 1 only.
+    (window as any).__dialogAllText = () => this.dialog.allText();
     // dev-only: did the Gen3 pixel dialog frame bake? (BACKLOG-036)
     (window as any).__dialogFrameBaked = () => this.textures.exists('dialog_frame');
 
     // 1/2/3 pick a greeting tone (BACKLOG-142) — or, while the keeper picker is up (BACKLOG-155),
-    // choose an observer. onNumberKey routes to whichever overlay is open.
+    // choose an observer. onNumberKey routes to whichever overlay is open. FOUR joined at BACKLOG-212,
+    // the cycle the roster grew a fourth seat: the picker had always rendered every KEEPERS row, so
+    // without this key the fourth observer was listed on screen and unselectable.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.ONE).on('down', () => this.onNumberKey(1));
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.TWO).on('down', () => this.onNumberKey(2));
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.THREE).on('down', () => this.onNumberKey(3));
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR).on('down', () => this.onNumberKey(4));
 
     // K opens the keeper picker (BACKLOG-155): choose which time-traveling observer you are.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.K).on('down', () => this.openKeeperPicker());
@@ -6875,7 +6887,7 @@ ${e.short}`;
       stick: { ...STICK },
       buttons: actionButtons(this.scale.width, this.scale.height),
       sheet: sheetRows(this.scale.width),
-      chips: menuChips(this.scale.width, this.scale.height, true),
+      chips: menuChips(this.scale.width, this.scale.height, MAX_MENU_OPTIONS),
     });
   }
 
@@ -6935,7 +6947,9 @@ ${e.short}`;
     }
 
     this.chipGroups = [];
-    for (const chip of menuChips(W, H, true)) {
+    // Objects are built for the WIDEST overlay once; syncTouchUi shows only the ones the open menu
+    // offers, so the tone menu never grows a dead [4] chip (BACKLOG-212).
+    for (const chip of menuChips(W, H, MAX_MENU_OPTIONS)) {
       const rect = this.add
         .rectangle(chip.x, chip.y, chip.w, chip.h, 0x10241c, 0.85)
         .setStrokeStyle(2, 0x8fd14f, 0.7);
@@ -7065,10 +7079,10 @@ ${e.short}`;
     const dialogUp = this.dialogOpen;
     for (const o of [...this.stickGroup, ...this.actionGroup]) vis(o).setVisible(!dialogUp);
     for (const o of this.sheetGroup) vis(o).setVisible(!dialogUp && this.sheetOpen);
-    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
+    const options = this.numberedOptions();
     const paged = dialogUp && this.dialog.pageInfo().page > 0;
     for (const { id, objs } of this.chipGroups) {
-      const show = dialogUp && (id === 'close' || (id === 'back' ? paged : numbered));
+      const show = dialogUp && (id === 'close' || (id === 'back' ? paged : this.pickChipLive(id, options)));
       for (const o of objs) vis(o).setVisible(show);
     }
     // A dialog opening mid-drag releases the stick — update() stops moving the player anyway.
@@ -7079,13 +7093,32 @@ ${e.short}`;
     }
   }
 
+  /**
+   * How many numbered options the open overlay offers, 0 when none is open (BACKLOG-212). One expression,
+   * one place: `syncTouchUi` and `chipIdAt` each carried their own copy of the old boolean and were already
+   * drifting apart by a comment. The keeper picker grows with the roster, so this must read `KEEPERS.length`
+   * rather than a literal — a fifth observer then needs no touch change at all.
+   */
+  private numberedOptions(): number {
+    if (this.keeperPickerOpen) return KEEPERS.length;
+    if (this.toneMenuOpen) return TONES.length;
+    if (this.mindsConfirm !== null) return this.mindsConfirm === 'disable' ? 2 : 1;
+    return 0;
+  }
+
+  /** Is `pickN` one of the chips the currently-open overlay actually offers? Non-pick ids are not ours. */
+  private pickChipLive(id: string, options: number): boolean {
+    const n = id.startsWith('pick') ? Number(id.slice(4)) : NaN;
+    return Number.isFinite(n) && n >= 1 && n <= options;
+  }
+
   /** The currently-visible chip at (px,py), if any. */
   private chipIdAt(px: number, py: number): string | null {
     if (!this.touchEnabled || !this.dialogOpen) return null;
-    const numbered = this.toneMenuOpen || this.keeperPickerOpen || this.mindsConfirm !== null;
+    const options = this.numberedOptions();
     const paged = this.dialog.pageInfo().page > 0;
-    const hit = menuChips(this.scale.width, this.scale.height, true).find(
-      (c) => (c.id === 'close' || (c.id === 'back' ? paged : numbered)) && inRect(c, px, py),
+    const hit = menuChips(this.scale.width, this.scale.height, MAX_MENU_OPTIONS).find(
+      (c) => (c.id === 'close' || (c.id === 'back' ? paged : this.pickChipLive(c.id, options))) && inRect(c, px, py),
     );
     return hit?.id ?? null;
   }
@@ -8034,6 +8067,10 @@ ${e.short}`;
       this.flashFeed(target, fond ? '😊' : '😳');
     }
 
+    // The two numbered overlays are mutually exclusive (BACKLOG-212). `openKeeperPicker` has closed an
+    // open tone menu since cycle 37; the reverse was never written, so both flags could be set at once and
+    // `numberedOptions()` would hand the tone menu the picker's chip count.
+    if (this.keeperPickerOpen) this.keeperPickerOpen = false;
     this.toneTarget = target;
     this.toneMenuOpen = true;
     this.dialogOpen = true;
@@ -8203,7 +8240,7 @@ ${e.short}`;
       this.closeMindsConfirm();
       return;
     }
-    // While the keeper picker is up, this dismisses it (1/2/3 choose). BACKLOG-155.
+    // While the keeper picker is up, this dismisses it (1-4 choose). BACKLOG-155 / -212.
     if (this.keeperPickerOpen) {
       this.closeKeeperPicker();
       return;
@@ -8231,7 +8268,11 @@ ${e.short}`;
       this.pickKeeperIndex(n - 1);
       return;
     }
-    void this.pickTone((['warm', 'tease', 'honest'] as const)[n - 1]);
+    // The tone menu has three options and the keyboard now has four keys (BACKLOG-212). A `4` with no
+    // picker open must be a no-op rather than an `undefined` tone handed to pickTone.
+    const tone = (['warm', 'tease', 'honest'] as const)[n - 1];
+    if (!tone) return;
+    void this.pickTone(tone);
   }
 
   /** The chosen observer's affinity bonus for a dino's temperament — added to normal player gains. */
@@ -9323,6 +9364,9 @@ ${e.short}`;
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
+    // any: dev-only — how many numbered chips/keys the OPEN overlay offers (BACKLOG-212). The chip
+    // objects are built once for the widest menu, so this is what decides which of them are live.
+    (window as any).__numberedOptions = () => this.numberedOptions();
     (window as any).__openKeeperPicker = () => {
       this.openKeeperPicker();
       return this.keeperPickerOpen;

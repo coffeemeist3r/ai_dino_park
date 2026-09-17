@@ -19,9 +19,12 @@ const vanta = keeperById('vanta');
 const lumen = keeperById('lumen');
 
 describe('keepers', () => {
-  it('has exactly three observers, unique ids, each fully described', () => {
-    expect(KEEPERS).toHaveLength(3);
-    expect(new Set(KEEPERS.map((k) => k.id)).size).toBe(3);
+  it('has unique ids and every observer fully described', () => {
+    // Was `toHaveLength(3)` until BACKLOG-212 added a fourth seat. Uniqueness is the invariant worth
+    // pinning — `keeperById` resolves by id and a duplicate would silently shadow an observer — while the
+    // roster's *size* is meant to grow, so asserting it was a test that had to be edited to add a keeper.
+    expect(KEEPERS.length).toBeGreaterThanOrEqual(3);
+    expect(new Set(KEEPERS.map((k) => k.id)).size).toBe(KEEPERS.length);
     const axes = new Set(['curiosity', 'sociability', 'energy', 'agreeableness', 'bravery']);
     for (const k of KEEPERS) {
       expect(k.name).toBeTruthy();

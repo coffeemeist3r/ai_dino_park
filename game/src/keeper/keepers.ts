@@ -26,7 +26,7 @@ export interface Keeper {
   ability: KeeperAbility;
 }
 
-// Order is the picker order (1 / 2 / 3). KEEPERS[0] is the default observer.
+// Order is the picker order (1 / 2 / 3 / 4). KEEPERS[0] is the default observer.
 export const KEEPERS: ReadonlyArray<Keeper> = [
   {
     id: 'aether',
@@ -62,6 +62,22 @@ export const KEEPERS: ReadonlyArray<Keeper> = [
       label: 'Scholar Lens',
       desc: 'Curious, inquisitive dinos open up to you faster.',
       appeal: { curiosity: 1, bravery: 0.3 },
+    },
+  },
+  // BACKLOG-212 — the roster's first watcher that is not a machine. The three above are all *positive*
+  // appeals (warm+social, bold+energetic, curious+bold), which left the solitary, cautious, keep-to-the-
+  // edge dinos with no observer in the game that liked them. Kes is the negative-weight seat: `keeperFit`
+  // is Σ weight · (trait·2 − 1), so a weight of −1 scores +1 against a trait of 0. No function changes.
+  {
+    id: 'kestrel',
+    name: 'Kestrel of the Ninth Quiet "Kes"',
+    era: 'a hundred million years downstream',
+    backstory:
+      'Not a machine and not a visitor — a descendant, come back up its own line to see what its ancestors were like before anyone was watching; it keeps to the edges, the way the quiet ones do.',
+    ability: {
+      label: 'Quiet Company',
+      desc: 'Solitary, cautious dinos let you near.',
+      appeal: { sociability: -1, curiosity: -0.4 },
     },
   },
 ];

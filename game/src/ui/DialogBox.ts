@@ -86,6 +86,15 @@ export class DialogBox {
     return true;
   }
 
+  /**
+   * Every page joined, for a reader that wants the whole message rather than the visible slice
+   * (BACKLOG-212). A spec asserting on `pageInfo().text` alone silently tests page 1 only — which is how
+   * a four-row keeper picker can list a watcher the assertion never sees.
+   */
+  allText(): string {
+    return this.pages.join(' ');
+  }
+
   pageInfo(): { page: number; pages: number; text: string } {
     return { page: this.page, pages: this.pages.length, text: this.pages[this.page] ?? '' };
   }

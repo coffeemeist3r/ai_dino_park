@@ -72,11 +72,13 @@ describe('layout', () => {
     }
   });
 
-  it('menu chips are ◀/1/2/3/✕ above the dialog strip, ◀/✕ for a plain dialog', () => {
-    const numbered = menuChips(W, H, true);
+  it('menu chips are ◀/1..N/✕ above the dialog strip, ◀/✕ for a plain dialog', () => {
+    // BACKLOG-212: the third argument is the option COUNT, not a boolean. It was a boolean that always
+    // drew 1/2/3, which is why a fourth observer would have rendered in the picker and been untappable.
+    const numbered = menuChips(W, H, 3);
     expect(numbered.map((c) => c.id)).toEqual(['back', 'pick1', 'pick2', 'pick3', 'close']);
     for (const c of numbered) expect(c.y + c.h / 2).toBeLessThanOrEqual(H - 88 - 12); // DialogBox top
-    expect(menuChips(W, H, false).map((c) => c.id)).toEqual(['back', 'close']);
+    expect(menuChips(W, H, 0).map((c) => c.id)).toEqual(['back', 'close']);
   });
 });
 

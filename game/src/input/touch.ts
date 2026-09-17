@@ -103,15 +103,21 @@ export function sheetRows(width: number): RectButton[] {
 }
 
 /**
- * Chips shown while a dialog is up: [◀] turns a paged dialog back, [1][2][3] when
- * a numbered menu (tone/keeper/minds) is open, always a [✕] to close. Centered
- * above the dialog box strip. (Forward paging is a tap on the dialog itself.)
+ * Chips shown while a dialog is up: [◀] turns a paged dialog back, one numbered chip per option when
+ * a numbered menu (tone/keeper/minds) is open, always a [✕] to close. Centered above the dialog box
+ * strip. (Forward paging is a tap on the dialog itself.)
+ *
+ * `options` is the **count** the open overlay offers, not a boolean (BACKLOG-212). It was a boolean that
+ * always drew 1/2/3, which is why a fourth observer would have rendered in the picker and been untappable.
+ * A count keeps the tone menu at three while the keeper picker grows with `KEEPERS.length`; 0 means no
+ * numbered menu is open.
  */
-export function menuChips(width: number, height: number, numbered: boolean): RectButton[] {
+export function menuChips(width: number, height: number, options: number): RectButton[] {
   const w = 48;
   const h = 36;
   const y = height - 88 - 12 - h / 2 - 6; // just above the DialogBox (HEIGHT 88, PAD 12)
-  const labels = numbered ? ['◀', '1', '2', '3', '✕'] : ['◀', '✕'];
+  const picks = Array.from({ length: Math.max(0, options) }, (_, i) => String(i + 1));
+  const labels = picks.length > 0 ? ['◀', ...picks, '✕'] : ['◀', '✕'];
   const total = labels.length * w + (labels.length - 1) * 10;
   return labels.map((label, i) => ({
     id: label === '✕' ? 'close' : label === '◀' ? 'back' : `pick${label}`,

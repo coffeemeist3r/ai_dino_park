@@ -14,9 +14,19 @@ describe('keeper rigs (BACKLOG-158)', () => {
     expect(KEEPER_RIGS.vanta).toBe(VIX_RIG);
   });
 
-  it('LUMEN-3 is drawn — the whole roster renders pixel (cycle 047-art)', () => {
+  it('LUMEN-3 is drawn — the robot roster renders pixel (cycle 047-art)', () => {
     expect(KEEPER_RIGS.lumen).toBe(LUX_RIG);
-    for (const k of KEEPERS) expect(KEEPER_RIGS[k.id]).toBeDefined();
+    // Was `for (const k of KEEPERS)` while the roster was three machines and all three were drawn.
+    // BACKLOG-212 added a fourth seat that ships deliberately undrawn on the amber square, exactly how the
+    // robots bootstrapped at cycle 37, so the claim is narrowed to the three the Artist has actually been
+    // to rather than being quietly deleted. BACKLOG-554 draws Kes; **restore the roster-wide loop then** —
+    // it is the assertion that would otherwise let a fifth watcher ship as a rectangle unnoticed.
+    for (const id of ['aether', 'vanta', 'lumen']) expect(KEEPER_RIGS[id]).toBeDefined();
+  });
+
+  it('the undrawn seat is the roster entry itself, not a phantom id (BACKLOG-212 / -554)', () => {
+    const undrawn = KEEPERS.filter((k) => KEEPER_RIGS[k.id] === undefined).map((k) => k.id);
+    expect(undrawn).toEqual(['kestrel']); // one, named — so this reddens the day a second one appears
   });
 
   it('the rectangle-fallback control stands on a genuine no-art id (the pterodactyl convention)', () => {
