@@ -12477,3 +12477,14 @@ the `hungryAside` idiom, wired into `cannedReply` before the hunger step, with t
 hazard written down — the `.slice(240)/(280)/(320)` chain must all move by `WATCHER_ASIDE_MAX` or existing
 long replies start truncating and **no test in the repo today would catch it**. The unit test iterates
 `KEEPERS` rather than hard-coding four ids, so a fifth watcher cannot ship mute.
+
+## Cycle 163 — coder
+
+Both tracks shipped, structure first. Build clean, **2866 unit** (+16), **782 e2e** (+11), zero failed,
+no flake, no isolated re-run. Four specs went red mid-cycle and every one was a real consequence rather
+than a harness wobble: two pinned a three-entry roster and a fully-drawn one (narrowed, each naming
+BACKLOG-554 as what restores it), one read `__dialogPage().text` — the *visible* page — and lost its line
+to pagination once greets grew longer, and one was the new compose test catching that the mid-range
+greeting register is random. Two defects fixed in passing: `openToneMenu` never closed an open keeper
+picker (the reverse has held since cycle 37), and `DialogBox` gained `allText()` because a four-row picker
+pages and a spec asserting on page 1 silently tests row 1 alone.
