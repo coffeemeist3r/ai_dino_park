@@ -19,6 +19,7 @@ import type { DayStanding } from '../world/chronotype';
 import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
 import { theZone } from '../world/zones'; // BACKLOG-499
+import { watcherAside } from '../keeper/voice'; // BACKLOG-160
 
 export interface NPCContext {
   name: string;
@@ -34,6 +35,11 @@ export interface NPCContext {
   gratitude?: string;
   /** The chosen observer's designation — a fond dino drops it into its hello (BACKLOG-276). */
   keeperName?: string;
+  /**
+   * The chosen observer's **id** (BACKLOG-160), set only on this dino's *first* greet under that watcher.
+   * `keeperName` above is what the dino calls you; this is what it thinks of the thing standing there.
+   */
+  watcher?: string;
   /** Pressing hunger (need-drive 371 over threshold): the dino lets it slip in its line (BACKLOG-368). */
   hungry?: boolean;
   /** If set, the name of the carnivore that just chased this dino — it greets rattled, naming it (BACKLOG-440). */
@@ -414,31 +420,43 @@ export function cannedReply(ctx: NPCContext): Reply {
     const text = cannedGreetings[idx].replace('the park', `the park, ${ctx.name} here`).slice(0, 200);
     reply = { text, mood: moodFromTraits(ctx.traits), source: 'canned' };
   }
+  // What this dino makes of *you* (BACKLOG-160): the first time it meets you wearing this chassis, it says
+  // so — and what it says depends on which watcher you are. First, because a first impression is the most
+  // immediate thing a dino has to say, where the provider aside below is explicitly the least. `watcher` is
+  // set only on that first greet, so this is a beat and not a tic.
+  //
+  // `headroom` is why every cap below reads `N + headroom`: it is 0 for every context that does NOT carry a
+  // watcher, so the whole existing chain keeps its exact numbers and a reply without a first impression is
+  // byte-identical to before. Inserting a step without this would have quietly started truncating long
+  // replies, and nothing in the suite would have gone red.
+  const firstLook = watcherAside(ctx.watcher, ctx.traits);
+  const headroom = firstLook.length;
+  if (headroom > 0) reply = { ...reply, text: reply.text + firstLook };
   // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets the want slip into whatever it
   // was going to say, regardless of register — the tell composes with gratitude/wistful/fond/generic alike.
-  if (ctx.hungry) reply = { ...reply, text: (reply.text + hungryAside(ctx.traits)).slice(0, 240) };
+  if (ctx.hungry) reply = { ...reply, text: (reply.text + hungryAside(ctx.traits)).slice(0, 240 + headroom) };
   // Rattled after the chase (BACKLOG-440): a prey fresh off a hunt names its chaser, composing onto whatever
   // the line already was (gratitude/wistful/fond/generic/hungry) — the food-web mirror of the hunger tell.
-  if (ctx.rattled) reply = { ...reply, text: (reply.text + rattledAside(ctx.rattled, ctx.traits)).slice(0, 280) };
+  if (ctx.rattled) reply = { ...reply, text: (reply.text + rattledAside(ctx.rattled, ctx.traits)).slice(0, 280 + headroom) };
   // Word of the provider (BACKLOG-453): the standing of whoever keeps this zone fed slips in last — it's
   // the least urgent thing a dino has to say, and it composes onto every register above it.
   if (ctx.provider) {
     reply = {
       ...reply,
-      text: (reply.text + providerAside(ctx.provider.name, ctx.provider.zoneName, ctx.traits)).slice(0, 320),
+      text: (reply.text + providerAside(ctx.provider.name, ctx.provider.zoneName, ctx.traits)).slice(0, 320 + headroom),
     };
   }
   // Season in the voice (BACKLOG-173): the most ambient tell of all slips in last (winter grumble / spring
   // savour; summer & fall stay quiet), composing onto every register above it.
   if (ctx.season) {
     const aside = seasonAside(ctx.season, ctx.traits);
-    if (aside) reply = { ...reply, text: (reply.text + aside).slice(0, 400) };
+    if (aside) reply = { ...reply, text: (reply.text + aside).slice(0, 400 + headroom) };
   }
   // Fed first, or left short (BACKLOG-469): a hungry dino on a policy'd ground voices how it's chosen to feed
   // it — grateful (feed) or grumbling (bank). Gated on hunger here too so the module is self-consistent
   // regardless of caller; composes last, onto every register above it, within the raised cap.
   if (ctx.hungry && ctx.groundPolicy) {
-    reply = { ...reply, text: (reply.text + policyAside(ctx.groundPolicy, ctx.traits)).slice(0, 400) };
+    reply = { ...reply, text: (reply.text + policyAside(ctx.groundPolicy, ctx.traits)).slice(0, 400 + headroom) };
   }
   // Mealtime mood in the voice (BACKLOG-404): how the last contested drop went, composed last of all — it is
   // the most recent thing that happened to this dino but the least *urgent* thing it has to say, and putting
@@ -447,14 +465,14 @@ export function cannedReply(ctx: NPCContext): Reply {
   if (ctx.mealtime) {
     reply = {
       ...reply,
-      text: (reply.text + mealtimeAside(ctx.mealtime.outcome, ctx.mealtime.other, ctx.traits)).slice(0, 460),
+      text: (reply.text + mealtimeAside(ctx.mealtime.outcome, ctx.mealtime.other, ctx.traits)).slice(0, 460 + headroom),
     };
   }
   // The hour in the voice (BACKLOG-110 / -279): the most ambient tell of the lot, so it composes last of
   // all, onto every register above it — generic, wistful, fond, grateful. `standing` absent is the mid-span
   // case and every earlier cap is untouched, so a context without it returns byte-identical text to before.
   if (ctx.standing) {
-    reply = { ...reply, text: (reply.text + hourAside(ctx.standing, ctx.traits)).slice(0, 540) };
+    reply = { ...reply, text: (reply.text + hourAside(ctx.standing, ctx.traits)).slice(0, 540 + headroom) };
   }
   // The meal in the voice (BACKLOG-066): the newest thing that happened to this dino and the one it is
   // gladdest about, so it goes last where the player is most likely to still be reading. `tasted` absent
@@ -463,7 +481,7 @@ export function cannedReply(ctx: NPCContext): Reply {
   if (ctx.tasted) {
     reply = {
       ...reply,
-      text: (reply.text + tasteAside(ctx.tasted.label, ctx.tasted.loved, ctx.traits)).slice(0, 620),
+      text: (reply.text + tasteAside(ctx.tasted.label, ctx.tasted.loved, ctx.traits)).slice(0, 620 + headroom),
     };
   }
   return reply;

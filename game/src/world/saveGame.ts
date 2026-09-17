@@ -74,6 +74,12 @@ export interface SaveData {
   gratitude: Gratitude;
   /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
   lastTone: Record<string, string>;
+  /**
+   * Which watcher each dino has met (BACKLOG-160), dino name → keeper id. Additive and **optional** —
+   * like `personas` and `visitHours`, and unlike `lastTone`, which is required and therefore in every
+   * fixture. Left absent when the map is empty so an old save round-trips to itself exactly.
+   */
+  metWatcher?: Record<string, string>;
   /** Each dino's generate-once persona (BACKLOG-103). Additive; absent → {} (regenerated deterministically).
    *  `source` kept as plain string so saveGame stays free of an ai import. */
   personas?: Record<string, { text: string; source: string }>;
@@ -302,6 +308,21 @@ export function deserialize(json: string): SaveData | null {
       if (typeof entries[k] !== 'string') return null;
       lastTone[k] = entries[k] as string;
     }
+  }
+
+  // metWatcher is additive (BACKLOG-160) — absent in older saves (default {}), which is correct rather
+  // than a migration problem: an old save simply gives every dino its first impression again. Same shape
+  // and same validation as lastTone above; keeper ids stay plain strings so saveGame needs no keeper import.
+  let metWatcher: Record<string, string> | undefined;
+  if (o.metWatcher !== undefined) {
+    if (typeof o.metWatcher !== 'object' || o.metWatcher === null) return null;
+    const met = o.metWatcher as Record<string, unknown>;
+    const out: Record<string, string> = {};
+    for (const k of Object.keys(met)) {
+      if (typeof met[k] !== 'string') return null;
+      out[k] = met[k] as string;
+    }
+    metWatcher = out;
   }
 
   // personas is additive (BACKLOG-103) — absent in older saves (left undefined; the caller
@@ -997,6 +1018,7 @@ export function deserialize(json: string): SaveData | null {
     bonds,
     gratitude,
     lastTone,
+    metWatcher,
     personas,
     keeperId,
     zoneId,

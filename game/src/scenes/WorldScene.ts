@@ -103,6 +103,7 @@ import {
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
+import { firstMeeting, recordMeeting } from '../keeper/voice'; // BACKLOG-160
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
@@ -658,6 +659,11 @@ export class WorldScene extends Phaser.Scene {
   private toneMenuText = '';
   /** Each dino's last greeting tone (BACKLOG-142); persisted, surfaced as a remembered trace. */
   private lastTone: Record<string, ToneId> = {};
+  /**
+   * Which watcher each dino has met (BACKLOG-160), dino name → keeper id. Keyed by *which* observer, not
+   * by "has met", so changing your chassis re-arms every dino's first impression.
+   */
+  private metWatcher: Record<string, string> = {};
   /** The chosen observer (BACKLOG-155); persisted. Its affinity-fit bonus colours every player gain. */
   private keeperId: string = DEFAULT_KEEPER_ID;
   /** Keeper picker overlay state (BACKLOG-155): open via K, number keys 1/2/3 choose. */
@@ -5203,6 +5209,8 @@ ${e.short}`;
     (window as any).__leanFiled = () => [...this.leanFiled];
     (window as any).__playerTile = () => this.playerTile(); // BACKLOG-370: what wall the keeper is by
     (window as any).__lastTone = () => ({ ...this.lastTone });
+    // any: dev-only Playwright hook — who has met which watcher (BACKLOG-160)
+    (window as any).__metWatcher = () => ({ ...this.metWatcher });
     (window as any).__toneMenuOpen = () => this.toneMenuOpen;
     (window as any).__toneMenuText = () => (this.toneMenuOpen ? this.toneMenuText : null);
     // dev-only: open the tone menu for a named dino, then pick a tone — drives the flow
@@ -8096,6 +8104,13 @@ ${e.short}`;
     this.toneMenuOpen = false;
     this.toneMenuText = '';
 
+    // BACKLOG-160: hoisted above `recordTone` on purpose. `recordTone` ends in the greet's `saveGame()`,
+    // so a map updated after it would not reach disk until some unrelated action saved next — the first
+    // impression would then survive in memory and vanish on reload. Reads only `metWatcher`, `target.name`
+    // and `keeperId`, none of which `recordTone` touches, so the 423/300 hoist discipline applies unchanged.
+    const firstLook = firstMeeting(this.metWatcher, target.name, this.keeperId);
+    if (firstLook) this.metWatcher = recordMeeting(this.metWatcher, target.name, this.keeperId);
+
     this.recordTone(target.name, id, target.traits);
 
     // Reply path is unchanged from the old greet flow (tone-coloured reply is BACKLOG-148).
@@ -8122,6 +8137,10 @@ ${e.short}`;
       gratitude: whoClearedMyName(this.memory, target.name) ?? undefined,
       // A fond dino names the chosen observer (BACKLOG-276); the closest of all uses the nickname (BACKLOG-278).
       keeperName: keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[target.name] ?? 0)),
+      // What it makes of you (BACKLOG-160) — set only on this dino's first greet under this watcher. The
+      // reduced `greetContextFor` deliberately does NOT carry it: that context also feeds dino-to-dino
+      // ambient chatter, where a line addressed to the keeper has nobody to address.
+      watcher: firstLook ? this.keeperId : undefined,
       // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets it slip into its line.
       hungry: pressingNeed(this.needs[target.name]) === 'hunger',
       // Rattled after the chase (BACKLOG-440): a prey with a fresh "slipped X's hunt" memory names its chaser.
@@ -8985,6 +9004,7 @@ ${e.short}`;
       bonds: this.bonds,
       gratitude: this.gratitude,
       lastTone: this.lastTone,
+      metWatcher: this.metWatcher,
       personas: this.personas, // BACKLOG-103: generate-once selves ride the save
       keeperId: this.keeperId,
       zoneId: this.zoneId,
@@ -9141,6 +9161,7 @@ ${e.short}`;
       this.bonds = away.bonds;
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
+      this.metWatcher = { ...(save.metWatcher ?? {}) };
       this.personas = (save.personas ?? {}) as Record<string, Persona>; // BACKLOG-103: selves restore
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl

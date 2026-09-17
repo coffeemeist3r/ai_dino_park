@@ -17,6 +17,7 @@ import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
 import { PARK_LORE } from './persona';
 import type { Activity } from '../world/activity';
 import { theZone } from '../world/zones'; // BACKLOG-499
+import { watcherAside } from '../keeper/voice'; // BACKLOG-160
 
 /**
  * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
@@ -130,6 +131,14 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
         // BACKLOG-276: deep friendship earns the keeper's name — a fond dino greets the observer by designation.
         (ctx.keeperName ? `Greet them by name — call them ${ctx.keeperName}. ` : '')
       : '';
+  // BACKLOG-160: the first time this dino meets the keeper wearing *this* chassis, it remarks on what it
+  // sees. The canned fallback carries the deterministic line, so behavior never depends on the model
+  // reaching this — the model is handed the line itself rather than the id, so its colour cannot contradict
+  // what a device without a model would have said.
+  const firstLook = watcherAside(ctx.watcher, ctx.traits).trim();
+  const watcher = firstLook
+    ? `This is the first time you have seen this watcher in this body. Work this thought into what you say, in your own words: "${firstLook}" `
+    : '';
   // BACKLOG-368: a dino over the need threshold is hungry — let it colour the line (the canned fallback
   // already carries the deterministic tell, so behavior never depends on the model reaching this).
   const hungry = ctx.hungry ? `You are hungry right now — let it slip into whatever you say. ` : '';
@@ -209,7 +218,7 @@ export function buildMessages(ctx: NPCContext, obs: Observation): { role: string
     `You are a real animal, never a chatbot or helper. ` +
     `Who you are: ${character}. ` +
     `${when}${standing}You feel ${mood}, and the visitor is ${rel}. ` +
-    `${lately}${grateful}${wistful}${fond}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}${tasted}` +
+    `${lately}${grateful}${wistful}${fond}${watcher}${hungry}${rattled}${provider}${seasonal}${policy}${mealtime}${interrupted}${doing}${tasted}` +
     `Answer in your own voice — one or two vivid, specific sentences about what you notice, want, or feel. ` +
     `First person, present tense, no narration and no quotation marks.`;
   // One-shot example anchors the small model to lively in-character speech (style, not content).

@@ -23,7 +23,11 @@ const remember = (p: Page, name: string, event: string) =>
   p.evaluate(([n, e]) => (window as W).__remember(n, e), [name, event]);
 const pickTone = (p: Page, name: string, id: string) =>
   p.evaluate(({ name, id }) => (window as W).__pickTone(name, id) as Promise<void>, { name, id });
-const dialogText = (p: Page) => p.evaluate(() => ((window as W).__dialogPage() as { text: string }).text);
+// Reads EVERY page, not the visible one (BACKLOG-160). The mealtime aside composes last, so once a greet
+// also carries a first impression the line it is asserting can sit on page 2 — `__dialogPage().text` would
+// then report an absence that is really a pagination. Nothing about the reply changed; the reader did.
+const dialogText = (p: Page) =>
+  p.evaluate(() => ((window as W).__dialogAllText() as string).replace(/·/g, '').replace(/\s+/g, ' '));
 
 test('a dino that just took the drop says so, naming who it took it from', async ({ page }) => {
   const errors: string[] = [];

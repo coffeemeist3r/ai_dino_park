@@ -33,9 +33,13 @@ test('the full roster sweep: every observer is sprite-backed, no survivor on the
     return out;
   });
 
-  expect(arts).toEqual({
-    aether: 'keeper_aether_walk',
-    vanta: 'keeper_vanta_walk',
-    lumen: 'keeper_lumen_walk',
-  });
+  // The three machines are sprite-backed and stay that way. The claim was "no survivor on the square" while
+  // the roster *was* those three; BACKLOG-212's fourth seat ships deliberately undrawn on the amber square,
+  // exactly how the robots bootstrapped at cycle 37, so the sweep is narrowed rather than deleted.
+  // **BACKLOG-554 draws Kes — restore the whole-roster equality then**, because this is the assertion that
+  // otherwise lets a watcher ship as a rectangle unnoticed.
+  expect(arts.aether).toBe('keeper_aether_walk');
+  expect(arts.vanta).toBe('keeper_vanta_walk');
+  expect(arts.lumen).toBe('keeper_lumen_walk');
+  expect(Object.entries(arts).filter(([, v]) => v === null).map(([k]) => k)).toEqual(['kestrel']);
 });

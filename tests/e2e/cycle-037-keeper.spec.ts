@@ -24,7 +24,14 @@ test('boot is clean and the default observer (AETHER-1) is selected', async ({ p
 
   expect(await keeper(page)).toBe('aether');
   expect(await pickerOpen(page)).toBe(false);
-  expect(await page.evaluate(() => ((window as W).__keepers as () => unknown[])())).toHaveLength(3);
+  // Was `toHaveLength(3)` until BACKLOG-212 added a fourth seat. The roster is meant to grow, so what is
+  // pinned now is its *shape* — every entry fully described, and the default observer among them.
+  const roster = await page.evaluate(
+    () => ((window as W).__keepers as () => Array<{ id: string; name: string; ability: string }>)(),
+  );
+  expect(roster.length).toBeGreaterThanOrEqual(3);
+  for (const k of roster) expect(k.id && k.name && k.ability).toBeTruthy();
+  expect(roster.map((k) => k.id)).toContain('aether');
   expect(errors).toEqual([]);
 });
 
