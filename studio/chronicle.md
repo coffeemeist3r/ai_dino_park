@@ -12466,3 +12466,14 @@ identical for all three observers. 160 ships as a composable aside in the `hungr
 dino, keyed by *which* watcher — so changing observer re-arms the whole park's first impressions, free.
 Kes (`sociability: -1, curiosity: -0.4`) is the roster's first negative-weight appeal and the first watcher
 that likes the dinos the three machines pass over.
+
+## Cycle 163 — code-planner
+
+~14 files, no split. Structure first (6 files): the roster append needs **no change to `keeperFit`** —
+the existing `sum of weight * (trait*2 - 1)` already inverts on a negative weight — so the real work is
+`menuChips(w, h, numbered: boolean)` becoming a **count**, plus a `numberedOptions()` helper that stops
+`syncTouchUi` and `chipIdAt` duplicating the same expression. Lore second (8 files): `keeper/voice.ts` in
+the `hungryAside` idiom, wired into `cannedReply` before the hunger step, with the cycle's one silent
+hazard written down — the `.slice(240)/(280)/(320)` chain must all move by `WATCHER_ASIDE_MAX` or existing
+long replies start truncating and **no test in the repo today would catch it**. The unit test iterates
+`KEEPERS` rather than hard-coding four ids, so a fifth watcher cannot ship mute.
