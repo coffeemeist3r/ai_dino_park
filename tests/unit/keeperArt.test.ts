@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AKI_RIG, VIX_RIG, LUX_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
+import { AKI_RIG, VIX_RIG, LUX_RIG, KES_RIG, KEEPER_RIGS, type KeeperRig } from '../../game/src/art/keeperArt';
 import { KEEPERS } from '../../game/src/keeper/keepers';
 import { charsUsed } from '../../game/src/art/pixelArt';
 
@@ -14,19 +14,37 @@ describe('keeper rigs (BACKLOG-158)', () => {
     expect(KEEPER_RIGS.vanta).toBe(VIX_RIG);
   });
 
-  it('LUMEN-3 is drawn — the robot roster renders pixel (cycle 047-art)', () => {
+  it('LUMEN-3 is drawn, and the whole roster renders pixel again (cycle 163-art)', () => {
     expect(KEEPER_RIGS.lumen).toBe(LUX_RIG);
-    // Was `for (const k of KEEPERS)` while the roster was three machines and all three were drawn.
-    // BACKLOG-212 added a fourth seat that ships deliberately undrawn on the amber square, exactly how the
-    // robots bootstrapped at cycle 37, so the claim is narrowed to the three the Artist has actually been
-    // to rather than being quietly deleted. BACKLOG-554 draws Kes; **restore the roster-wide loop then** —
-    // it is the assertion that would otherwise let a fifth watcher ship as a rectangle unnoticed.
-    for (const id of ['aether', 'vanta', 'lumen']) expect(KEEPER_RIGS[id]).toBeDefined();
+    // Narrowed to the three robots for the length of cycle 163's morning, when BACKLOG-212 added a fourth
+    // seat that shipped undrawn on the amber square. **Restored the same night, as its note promised.**
+    // This is the assertion that stops a watcher shipping as a rectangle unnoticed, so it is roster-wide
+    // again rather than a list of ids somebody has to remember to extend.
+    for (const k of KEEPERS) expect(KEEPER_RIGS[k.id]).toBeDefined();
   });
 
-  it('the undrawn seat is the roster entry itself, not a phantom id (BACKLOG-212 / -554)', () => {
-    const undrawn = KEEPERS.filter((k) => KEEPER_RIGS[k.id] === undefined).map((k) => k.id);
-    expect(undrawn).toEqual(['kestrel']); // one, named — so this reddens the day a second one appears
+  it('Kes reads as a creature, not a chassis (BACKLOG-554)', () => {
+    const head = KES_RIG.frames[0].slice(0, 7);
+    // The three robots all wear a horizontal optic — a band, a slit, a lens. Kes wears two round eyes.
+    expect([...head.join('')].filter((ch) => ch === 'y')).toHaveLength(2);
+    // A crest that breaks the top edge and a beak that breaks the bottom one: the silhouette, not the colour,
+    // is what has to say "not a machine" at 16px.
+    expect(head[0]).toContain('c');
+    expect([...head[0]].filter((ch) => ch === 'c')).toHaveLength(3);
+    expect(head[head.length - 1]).toContain('k');
+    // Three-toed talons rather than the robots' blunt pads — on every frame, including mid-stride.
+    for (const frame of KES_RIG.frames) expect(frame[19]).toContain('k');
+  });
+
+  it('shares no plumage tone with any chassis — the roster has no metal in this one', () => {
+    const metal = new Set([
+      ...Object.values(AKI_RIG.palette),
+      ...Object.values(VIX_RIG.palette),
+      ...Object.values(LUX_RIG.palette),
+    ]);
+    for (const tone of [KES_RIG.palette.f, KES_RIG.palette.h, KES_RIG.palette.d, KES_RIG.palette.o]) {
+      expect(metal.has(tone)).toBe(false);
+    }
   });
 
   it('the rectangle-fallback control stands on a genuine no-art id (the pterodactyl convention)', () => {

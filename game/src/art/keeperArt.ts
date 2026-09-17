@@ -225,8 +225,85 @@ export const LUX_RIG: KeeperRig = {
 };
 
 /** Observers drawn in pixel; bake.ts renders these, others fall back to the amber square. */
+// ── Kestrel of the Ninth Quiet "Kes" — the watcher that is not a machine ─────────────────────
+// BACKLOG-554 / -212. Three rigs of chassis preceded this one, and all three read the same way at
+// 16px: a rectangle of metal with an OPTIC BAND across it — Aki's wide calm visor, Vix's hostile
+// slit, Lux's great round lens. Horizontal geometry, every time. So the brief for the fourth was
+// the one thing the other three cannot be: recognisable as a creature from the head outline alone,
+// before a single colour lands.
+//
+// Two decisions carry that. The crown is a three-point FEATHER CREST that breaks the top edge
+// instead of an antenna or a fin, and the face is a BEAK that breaks the bottom edge — a notch
+// out of the silhouette where every robot has a flat chin. Between them sit two small round
+// amber eyes with dark pupils, which is the deliberate inversion of the optic band: two points,
+// not one bar. The legs end in three-toed talons rather than the robots' blunt pads.
+//
+// Palette is the roster's first with no metal in it at all — sage-teal feather over warm
+// near-black, one rust accent at the crest and throat, ochre bone for beak and talons.
+
+const KES_BODY: ReadonlyArray<string> = [
+  '.....c.c.c......',
+  '....occccccco...',
+  '...offffffffo...',
+  '...ofhhhhhhfo...',
+  '...ofyoffoyfo...',
+  '...offkkkkffo...',
+  '...oookkkooo....',
+  '......offo......',
+  '...offffffffo...',
+  '..offhhffhhffo..',
+  '..offddffddffo..',
+  '..offdccccdffo..',
+  '..offddccddffo..',
+  '...offdddddfo...',
+  '....offdddfo....',
+  '.....oddddo.....',
+];
+
+const KES_STAND: ReadonlyArray<string> = [
+  ...KES_BODY,
+  '.....dd..dd.....',
+  '.....dd..dd.....',
+  '....odd..ddo....',
+  '....okk..kko....',
+];
+
+const KES_STEP_L: ReadonlyArray<string> = [
+  ...KES_BODY,
+  '...dd......dd...',
+  '...dd......dd...',
+  '..odd......ddo..',
+  '..okk......kko..',
+];
+
+const KES_STEP_R: ReadonlyArray<string> = [
+  ...KES_BODY,
+  '......dddd......',
+  '......dddd......',
+  '.....oddddo.....',
+  '.....okkkko.....',
+];
+
+export const KES_RIG: KeeperRig = {
+  id: 'kestrel',
+  width: 16,
+  height: 20,
+  frames: [KES_STAND, KES_STEP_L, KES_STEP_R],
+  sequence: [0, 1, 0, 2],
+  palette: {
+    o: 0x241c16, // warm near-black outline (the robots' is cool — this one is not a machine)
+    f: 0x4f6f5a, // feather body, muted sage-teal
+    h: 0x7a9b80, // lit feather, upper-left
+    d: 0x33503f, // shadowed feather, underside, legs
+    c: 0xb85f33, // rust — crest and throat, the one hot accent
+    k: 0xe2ab63, // ochre bone — beak and talons
+    y: 0xffd76a, // amber eye
+  },
+};
+
 export const KEEPER_RIGS: Record<string, KeeperRig> = {
   aether: AKI_RIG,
   vanta: VIX_RIG,
   lumen: LUX_RIG,
+  kestrel: KES_RIG,
 };

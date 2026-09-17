@@ -12566,3 +12566,34 @@ step: the last three runs are **success**, three green in a row.
 (156), a second distinct ability (157), the switch noticed and missed (162) — most of which this cycle's
 `metWatcher` map has already paid for — and Kes drawn (554), which is the first art item in months whose
 host was live the moment it was seeded.
+
+## Cycle 163-art — the fourth watcher gets a face
+
+**BACKLOG-554, seeded this morning and drawn tonight** — the fourth consecutive fire on the cycle-145
+cadence, and the second the studio has aimed at rather than hit by luck. It needed no wiring and no
+waiting: `renderKeeperAvatar` has swapped a baked sprite in on a `K`-pick since cycle 047-art and was only
+ever missing a fourth id, which the structure track supplied six hours earlier. That is exactly why this
+was seeded instead of a third host-blocked mark.
+
+**The brief came from what the other three have in common, which nobody had written down until the roster
+needed a fourth.** Aki is a wide calm visor, Vix a hostile one-row slit, Lux a great round archive lens —
+three different machines that all resolve at sixteen pixels to the same sentence: *a rectangle with a
+horizontal optic across it*. So the requirement for Kes was never a palette. It was a silhouette that says
+**not a machine** before a single colour lands, and two decisions carry it: a three-point feather crest
+that breaks the **top** edge, and a beak that breaks the **bottom** one — a notch out of a line where every
+robot has a flat chin. Between them, two small round amber eyes with dark pupils: two points where the
+family has a bar, which is why this head reads as looking *at* you instead of scanning you. Three-toed
+talons on every frame, including mid-stride, keep it alive while it walks.
+
+The palette is the roster's first with no metal in it — sage-teal feather over a **warm** near-black, where
+all three chassis outlines are cool — and a unit test pins that none of the four plumage values appears in
+any chassis palette, so a later repaint cannot quietly make the descendant look machined.
+
+**The roster renders pixel again, 4 of 4.** And the part worth keeping: the two assertions that were
+narrowed to the three robots this morning, one unit and one e2e, were **restored to whole-roster equality
+the same night, exactly as their notes promised.** A weakened assertion with a named restorer is a loan.
+This one was repaid inside the session it was taken out.
+
+**Gate:** build clean, **2873 unit** (+7), **782 e2e**, 0 failed. One spec failed once and passed isolated
+with a fresh full run green — the parallel-load flake again, a different victim, named. Art queue back to
+**2** (543, 539), both still host-blocked on the shared `activityMarks` and the plaque's single `Text`.

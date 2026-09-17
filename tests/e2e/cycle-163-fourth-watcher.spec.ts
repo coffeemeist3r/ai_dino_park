@@ -61,14 +61,17 @@ test('4 with no picker open is a no-op, not an undefined tone', async ({ page })
   expect(errors).toEqual([]);
 });
 
-test('the fourth watcher rides the amber square without disturbing the fallback control', async ({ page }) => {
+test('the fourth watcher is sprite-backed, and the fallback control is undisturbed', async ({ page }) => {
   await boot(page);
 
   await page.evaluate(() => (window as W).__pickKeeper('kestrel'));
   expect(await page.evaluate(() => (window as W).__keeper())).toBe('kestrel');
-  // Undrawn until BACKLOG-554 — the amber square, exactly how the robot roster shipped at cycle 37.
-  expect(await page.evaluate(() => (window as W).__hasKeeperArt('kestrel'))).toBe(false);
-  // And the control is still a genuine no-art id, not the new roster entry standing in for one.
+  // Shipped on the amber square this morning (as the robot roster did at cycle 37) and drawn the same
+  // night by BACKLOG-554 — the host `renderKeeperAvatar` had been live since cycle 047-art and was only
+  // ever missing a fourth id, which this cycle's structure track supplied.
+  expect(await page.evaluate(() => (window as W).__hasKeeperArt('kestrel'))).toBe(true);
+  expect(await page.evaluate(() => (window as W).__keeperArt())).toBe('keeper_kestrel_walk');
+  // And the control is still a genuine no-art id, not a roster entry pressed into service as one.
   expect(await page.evaluate(() => (window as W).__hasKeeperArt('vex-0'))).toBe(false);
   expect(await page.evaluate(() => (window as W).__hasKeeperArt('aether'))).toBe(true);
 });
