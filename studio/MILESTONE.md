@@ -8,7 +8,27 @@
 
 ## Current milestone
 
-_(none — the cycle-163 smiths draft Milestone 21: Lore-smith the headline and feel arcs, Structure-smith the spine arcs.)_
+**Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it**
+**Status:** ACTIVE (opened cycle 163)
+
+The keeper has been selectable since cycle 37 and, four keeper items later, is still very nearly a cursor.
+`keeperAddress` lets a fond dino say your designation (276/278) — but there is exactly **one**
+keeper-aware line in the whole park, `fondGreeting` in `ai/brain.ts`, it fires only above ten hearts, and
+it is **byte-identical for all three observers**. Pick Aki, pick Vix, pick Lux: the bowl says the same
+sentence. The affinity math differs and nothing a player can *hear* does.
+
+This milestone closes that gap from both ends: the roster grows a watcher that is not a robot at all, and
+what the cast says starts depending on which of them you chose — from the **first** hello on a fresh save,
+not from the tenth heart.
+
+**Lore arcs:**
+- [ ] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
+- [ ] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156)
+- [ ] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157)
+- [ ] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162)
+
+**Structure arcs:**
+_(Structure-smith drafts these in its fire, this cycle.)_
 
 ---
 

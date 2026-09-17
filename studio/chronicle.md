@@ -12430,3 +12430,15 @@ the shared `activityMarks`, which 551's note already calls the harder problem an
 for.
 
 Milestone 20 closed. Milestone 21 unwritten.
+
+## Cycle 163 — lore-smith
+
+**Milestone 21 opened: "The park can tell which watcher is standing there — and says something different
+because of it."** The finding that opened it: four keeper items deep, there is exactly one keeper-aware
+line in the game (`fondGreeting`), it is gated at ten hearts, and it is byte-identical for all three
+observers — picking a watcher changes arithmetic and nothing you can hear. Four lore arcs (160/156/157/162).
+Social queue at ~195, far over cap — nothing seeded. Art queue at 2, under cap — seeded **BACKLOG-554**,
+the fourth watcher's pixel rig, chosen because its host (`renderKeeperAvatar`) has been live since cycle
+047-art, unlike the two host-blocked items already queued. Suggested next-up **BACKLOG-160**, with the
+finding that its naming half already shipped as 276/278 and the unbuilt half must be reachable on the
+*first* hello, not the tenth heart. Idea Box empty.
