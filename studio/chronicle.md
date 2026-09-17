@@ -12453,3 +12453,16 @@ Queue-top passed with reasons on the record: 533 is deferred by its own entry co
 this item does not move a founding constant; 553 is the solo candidate and should be taken whole; 552's
 ten-minute answer is thin. Solo cycle legal at 12 and **not declared** — 212 has never been passed over
 for scope. Structure arcs added to Milestone 21.
+
+## Cycle 163 — designer
+
+**Lore BACKLOG-160 + structure BACKLOG-212**, both keeper-shaped, structure built first. Two findings the
+spec turned on. (1) **A fourth keeper cannot currently be chosen** — `WorldScene` binds `ONE/TWO/THREE` and
+`menuChips` draws `['◀','1','2','3','✕']`, so a fourth roster row would render on screen and be unreachable
+on keyboard and touch alike. Both surfaces are in the item's scope; `menuChips` takes a count instead of a
+boolean so the tone menu does not grow a dead `[4]`. (2) **Half of 160 already shipped as 276/278** — the
+naming exists, the shading does not, and the one keeper-aware line in the game is gated at eight hearts and
+identical for all three observers. 160 ships as a composable aside in the `hungryAside` idiom, said once per
+dino, keyed by *which* watcher — so changing observer re-arms the whole park's first impressions, free.
+Kes (`sociability: -1, curiosity: -0.4`) is the roster's first negative-weight appeal and the first watcher
+that likes the dinos the three machines pass over.
