@@ -12597,3 +12597,23 @@ This one was repaid inside the session it was taken out.
 **Gate:** build clean, **2873 unit** (+7), **782 e2e**, 0 failed. One spec failed once and passed isolated
 with a fresh full run green — the parallel-load flake again, a different victim, named. Art queue back to
 **2** (543, 539), both still host-blocked on the shared `activityMarks` and the plaque's single `Text`.
+
+## Cycle 163 — housekeeping
+
+**195 open** (195 last cycle: three items closed — 160, 212 and 554, with 212 carrying a Structure Track
+pointer as well as a body entry — against two seeded, 554 and 555). No closed bullets left in the working
+backlog and no empty sections.
+
+**Structure Track back to 4** (555, 533, 552, 553), which is *at* X=4, so the next Structure-smith
+**drains rather than brainstorms** — and 533's own rewritten entry condition makes it due at **cycle 165**
+regardless. 553 remains the recorded solo-cycle candidate; `cycle - lastSoloCycle` will be 13 next fire.
+
+**Art queue back to 2** (543, 539), both still host-blocked, and both on the same underlying problem: a
+mark that is a `setText` on the shared `activityMarks` array, and a plaque that is a single `Text`. 551's
+note already calls the first of those the harder problem and names itself the template — that remains the
+cheapest route to unblocking 543.
+
+**Milestone 21 is ACTIVE at 2 of 6 arcs** after one cycle. The four remaining — 156 (the authored keeper
+persona), 157 (a second distinct ability), 162 (the switch noticed and missed), and 555 (the record those
+first two need) — are unusually well set up for each other, because tonight's `metWatcher` map is already
+most of 162 and 555 is the field 156 has nowhere to live without.
