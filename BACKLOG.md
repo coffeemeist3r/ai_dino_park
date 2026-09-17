@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-212 [core] Non-robot keeper archetype — the roster's first watcher that is not a time-traveling robot. **Promoted to the Structure Track cycle 163** as Milestone 21's spine arc; chosen this cycle (full text in the body below).
 - [ ] BACKLOG-555 [core] The watcher's record, not just its id — the save persists `keeperId` and nothing else about the observer, so there is nowhere for 156's persona cache to live and nothing for 162's switch beat to read (full text in the cycle-163 block below).
 - [ ] BACKLOG-533 [infra] The fixture nobody is required to name — 495 built the seam and moved the whole suite onto it; nothing yet makes a spec *declare* its founding state. **Entry condition rewritten at cycle 158, its deadline night: the evidence clause is now a tie-break on which option to take, not a gate on taking it. Taken at cycle 165, or at the first cycle whose structure item edits a founding constant, whichever comes first** (full text in the cycle-151 block below).
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
@@ -199,7 +198,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Next-up is the already-queued **BACKLOG-157** (the distinct per-observer abilities, one per
 > cycle) — the operator's arc, and the beat that makes the choice of observer a real lens on play.
 
-- [~] BACKLOG-160 [ai] Dinos address the observer — the chosen keeper's designation/persona enters the dialogue context, so a high-friendship dino may name you ("strange lights in your chest, Vix") and shade its line by *which* watcher you are; deterministic fallback line per observer, LLM colour where the device allows. The keeper's identity surfaces in what dinos *say*, not just in the affinity math. Builds on 155 / 051 / 148.
 - [ ] BACKLOG-162 [emergent] The bowl remembers its watchers — switching observers mid-save isn't free-floating: each dino files a faint "the watcher changed" memory, and a dino with high friendship under the *old* observer may glance around for it in a wistful line. Identity persistence becomes something the cast tracks, not just the save file. Builds on 155 / 011 / 116.
 - [ ] BACKLOG-163 [pokemon] Observer dossier — the collection book gains a keeper page: your designation, era, backstory, ability, and running tallies under this observer (days watched, dinos befriended); the plaque adds "observed by VANTA-9". The chosen identity becomes legible standing, like everything else in the book. Builds on 155 / 021 / 058.
 
@@ -304,7 +302,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > came) — that silence given a memory: neglect as legible as care. These extend the geography
 > of warmth, and answer the operator's drop-zone nudge for keepers who aren't all robots.
 
-- [~] BACKLOG-212 [core] Non-robot keeper archetype — the selectable roster gains its first watcher that *isn't* a time-traveling robot observer (Idea Box, 2026-06-12). One new `keepers.ts` entry with its own era/backstory + affinity-fit profile, picked at the `K` overlay and persisted like the rest; renders on the existing no-art fallback until an [art] fire draws it (exactly how the robot roster started at cycle 37). Foundation-first — one new archetype, the roster gains a *category* beyond robots; not a roster rewrite. Builds on 155 / 156.
 - [ ] BACKLOG-213 [emergent] The warm spot — a dino warmed by the keeper on a cold morning (184) remembers the *tile* it was warmed on and drifts back to it on later cold dawns, a private comfort-place; the bowl grows little remembered geographies. Builds on 184 / 011.
 - [ ] BACKLOG-214 [emergent] Imprint on the keeper — a dino warmed across several cold mornings (the 209 tally) forms an outsized keeper-bond and, for a while after each warming, trails the keeper avatar around the bowl like a duckling. Builds on 184 / 209.
 - [ ] BACKLOG-216 [pokemon] Coldest morning in the book — the collection book records the single loneliest morning each dino endured (the cold night it slept with the lowest bond present), a "darkest hour" line beside the hardy-nights tally. Builds on 179 / 186 / 021.

@@ -9,6 +9,14 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ---
 
+## Cycle 163 — 2026-09-17 (the park can tell who is standing there, and says so)
+
+- BACKLOG-212: Non-robot keeper archetype — **Kes**, the roster's fourth seat and first watcher that is not a machine, with the roster's first negative-weight appeal (it likes the solitary, cautious dinos all three robots pass over). The item was not one roster row: three independent hard-coded threes stood between a fourth keeper and the player, and the third — a `[4]` chip that drew, hit-tested and dispatched nothing — was found only when QA replaced a green hook assertion with a real click.
+- BACKLOG-160: Dinos address the observer — the **shading** half (the naming half had shipped as 276/278 and nobody had updated the entry). A first impression per watcher, said once per dino, composed onto every register so it lands on a fresh save with zero friendship earned. Keyed by *which* watcher, so changing your chassis re-arms the whole park.
+- Milestone 21 opened (2 of 6 arcs closed on its first cycle).
+
+---
+
 ## Cycle 162 — 2026-09-16 (somebody is always watching, and Milestone 20 closes)
 - BACKLOG-126: Eavesdropping envy — a low-friendship dino that watches another get the good dinner (its
   favorite, **or** a food 068 made it love) files *the keeper likes them more*, flashes 🥺, and says so the

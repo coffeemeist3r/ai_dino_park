@@ -22,13 +22,13 @@ what the cast says starts depending on which of them you chose — from the **fi
 not from the tenth heart.
 
 **Lore arcs:**
-- [ ] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
+- [x] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
 - [ ] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156)
 - [ ] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157)
 - [ ] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162)
 
 **Structure arcs:**
-- [ ] The roster is more than robots — a watcher from outside the machine category, picked at `K` and persisted like the rest, with a silhouette that reads as *not a machine* at 16x20 (BACKLOG-212, -554)
+- [x] The roster is more than robots — a watcher from outside the machine category, picked at `K` and persisted like the rest, with a silhouette that reads as *not a machine* at 16x20 (BACKLOG-212, -554)
 - [ ] The save remembers the watcher, not just which one it is — tenure, switch count, previous id, and a slot for the persona cache, so 156 and 162 have somewhere to land (BACKLOG-555)
 
 ---

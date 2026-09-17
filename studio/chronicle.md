@@ -12498,3 +12498,71 @@ clicked the chip**. `dispatchTouchTap` carried `case 'pick1'/'pick2'/'pick3'` an
 hard-coded three in the picker's path and much the quietest: the other two would have made the fourth row
 obviously inert, this one drew a chip that looked alive and swallowed the tap. A hook that reports the
 right number is not a button that works.
+
+## Cycle 163 — validator: lore APPROVED / structure APPROVED
+
+**Tonight the park can tell who is standing there.**
+
+Press `K` on a fresh save and there are four watchers where there have been three since cycle 37. The
+fourth is not a machine. **Kes** — *Kestrel of the Ninth Quiet* — is a descendant rather than a visitor,
+come back up its own line from a hundred million years downstream to see what its ancestors were like
+before anyone was watching, and it keeps to the edges the way the quiet ones do. It carries the roster's
+first *negative* appeal, which means it is the first observer in this game that likes the solitary,
+cautious dinos the three robots all pass over. Choose it and the dino that crosses the bowl to size you up
+is the loneliest one in the park instead of the friendliest — and nobody wrote that; `inspector()` has
+scored by `keeperFit` since cycle 38 and simply inverted.
+
+Then say hello to anyone, with no friendship earned at all, and they tell you what they make of you. That
+you hum, standing there. That your red eye doesn't blink — they've watched. That you're writing them down
+in that round eye, aren't you. That you smell almost like *us*; it's the feathers, they think. Say hello
+again and they've moved on; it was a first impression, not a tic. Change your chassis and the whole park
+looks you over again, one hello at a time.
+
+### One keeper-aware line, in the whole game
+
+That is what Milestone 21 was opened on this morning, and it was a measurement rather than a mood. The
+keeper has been selectable since cycle 37 and four keeper items had shipped since — and there was exactly
+one string in this codebase that knew which observer you were: `fondGreeting`, gated at eight hearts,
+byte-identical for Aki, Vix and Lux. The roster changed the arithmetic and nothing you could hear.
+
+Half of tonight's lore item turned out to be **already shipped**, as 276/278, a hundred cycles ago, with
+nobody having updated the backlog entry. The Lore-smith caught that by reading the code instead of the
+text. A Designer taking the entry at face value would have rebuilt a shipped feature and closed the cycle.
+
+### Three hard-coded threes, and the one a hook could not see
+
+The structure item read as "one new `keepers.ts` entry" for a hundred and fifteen cycles. It is not. A
+fourth keeper **could not be chosen**: the keyboard bound ONE/TWO/THREE, `menuChips` built the literal
+`['◀','1','2','3','✕']`, and `dispatchTouchTap` carried three `case` labels. A roster row alone would have
+put a watcher on screen, described its ability to the player, and made it selectable by nobody.
+
+Two of those were found by reading. The third was found because **QA refused a proxy**. The touch criterion
+was green through a new hook that reported 4 for the picker and 3 for the tone menu — exactly as designed.
+Then the criterion was met properly, with a real click on the `[4]` chip, and it failed: the chip drew, it
+hit-tested, it resolved, and it swallowed the tap. That is the quietest of the three by a distance, and the
+one that would have reached the operator first, because the operator plays this on a phone.
+
+*A hook that reports the right number is not a button that works.* That is CHARTER v7's own defect one
+layer down, and it is the line worth carrying forward: when a criterion says a player can do X, drive the
+door a player uses.
+
+### The bar bit early enough to choose the architecture
+
+Three cycles running now, the reachability bar has caught something real. The difference tonight is
+**when**. Cycles 161 and 162 each caught theirs mid-implementation. This one was written into the design
+as a constraint before a file was opened — a keeper-shaded line inside `fondGreeting` is unreachable on a
+fresh save *by construction*, because every founding dino is a stranger — and the shipped shape came out
+of that constraint rather than being retrofitted to satisfy it.
+
+And the ordering was deliberate again, the way Milestone 20 closed: **212 was built first** so that 160's
+twelve lines were authored against a roster that already had two categories in it. The other way round they
+would have been three variations on "a machine is looking at me", with a fourth bolted on later.
+
+**Gate:** build clean, **2866 unit** (+16), **782 e2e** (+12), 0 failed. One spec failed once and passed
+isolated with a fresh full run green — the known parallel-load flake, named. CI checked per the Finish
+step: the last three runs are **success**, three green in a row.
+
+**Milestone 21 takes two of its six arcs on its opening cycle.** Four remain: the authored keeper persona
+(156), a second distinct ability (157), the switch noticed and missed (162) — most of which this cycle's
+`metWatcher` map has already paid for — and Kes drawn (554), which is the first art item in months whose
+host was live the moment it was seeded.
