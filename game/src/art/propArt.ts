@@ -1954,6 +1954,53 @@ const NEED_THIRST_RIG: PropRig = {
   },
 };
 
+// ── Mope 🥀 — the loner's wilt (BACKLOG-556) ───────────────────────────────────────────────────
+//
+// The read is the **bend**, and nothing else survives 12px. A wilted flower is not a flower drawn
+// sadly: at this size petals are mush and a mouth-like frown is worse. What does survive is a line
+// that goes up, turns over, and hangs its head *below the turn* — a silhouette no other mark in the
+// family has, because every sibling is a compact blob and this one is tall, thin and asymmetric.
+//
+// First draft rejected: the head was drawn level with the bend, sitting on top of the arc like a
+// berry. It read as a *bud*, which is the opposite of the meaning — a bud is something about to
+// happen. The head had to hang strictly lower than the crown of the arc, and the arc had to be
+// longer than the head is wide, or the whole thing reads as a walking stick.
+//
+// The stem is three cells wide (outline, sage, outline) for the same reason `rouse`'s iris ring came
+// out two cycles ago: a one-pixel line at this size is a smudge, and a two-pixel line has no centre.
+const MOPE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.....oooo.......',
+  '....osssso......',
+  '....os...so.....',
+  '...oso....so....',
+  '...oso.....o....',
+  '...oso....oPo...',
+  '...oso...opPPo..',
+  '...oso...oPPPo..',
+  '...oso...oPPPo..',
+  '...oso....oPo...',
+  '...oso.....o....',
+  '...oso..........',
+  '...ooo..........',
+  '................',
+];
+
+const MOPE_RIG: PropRig = {
+  size: 16,
+  grid: MOPE_GRID,
+  palette: {
+    // The family outline, verbatim from `rouse` — the same claim the need tells made at cycle 162.
+    // A wilt is warm and organic and the temptation was `doze`'s brown, but the family rim is one
+    // rim: share it, or the mark stops belonging to the set it hangs beside.
+    o: 0x2b3344,
+    s: 0x5f7a52, // the stem — sage, deliberately desaturated. A healthy green here reads as a plant, not a mood.
+    P: 0x9b5f74, // the hanging head — dull rose, darker than anything in `rouse`
+    p: 0xc08699, // its one lift, off-centre so the head is not a symmetric bead
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -2039,6 +2086,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // which is the condition the cycle-145 amendment asks for.
   need_hunger: NEED_HUNGER_RIG,
   need_thirst: NEED_THIRST_RIG,
+  // BACKLOG-556: the loner's wilt. Its host shipped the same cycle it was seeded — `mopeMarks` went
+  // through `makeHourMark` on the main chain, which is the condition the cycle-145 amendment asks for.
+  mope: MOPE_RIG,
 };
 
 /**

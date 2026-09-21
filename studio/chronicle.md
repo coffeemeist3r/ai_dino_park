@@ -12766,3 +12766,61 @@ has a slot to cache into and the switch semantics already decided for it, and 16
 `switches`, `previousId` and `sinceDay` on top of cycle 163's `metWatcher` map. 555 was picked
 *because* two items could not start without it. Both can start now. That is the milestone layer doing
 the job CHARTER v6 seeded it for, twice in two cycles.
+
+## Cycle 164-art — the whole cast was wearing an emoji and nobody had drawn it
+
+**BACKLOG-556, seeded this morning and drawn tonight** — the fifth consecutive fire on the cycle-145
+cadence, and the first where the seed text **scheduled** the host rather than merely naming it. That
+is the part worth keeping. The last three blocked art items each named a host that did not exist and
+then waited cycles for somebody to feel like building it; 543 has waited eight. This seed named a
+four-line host, assigned it to the same cycle's Coder on the BACKLOG-530 precedent, and the rider
+landed on the main chain hours before a pixel was authored.
+
+**The subject is the most-seen un-drawn thing this park has had since the need tells, by a measure
+nobody had applied.** Loner status is derived live from the bond graph. The founding roster has no
+bonds. So a brand-new save has not opened with *a* 🥀 over *a* dino — it has opened with **five, over
+the whole cast, at once**, and had done since BACKLOG-135. The mark that most needed drawing was the
+one visible in frame one of every new game, and the way to find it was to ask which glyph the
+founding state guarantees rather than which subject sounds interesting.
+
+The host was the cheapest the queue has ever held, and cheaper than 551's. `mopeMarks` was already a
+dedicated array with a dedicated refresh, and it has a **single** key — so there was no two-key swap
+to write and `refreshMopeMarks` needed no edit at all, calling only `setVisible` and `setPosition`,
+which `Image` carries as well as `Text`.
+
+**The first draft was rejected for flattering itself.** The head was drawn level with the crown of
+the arc, sitting on top of it — a clean little picture that reads as a **bud**. A bud is something
+about to happen, which is precisely the opposite of what this mark means. The head hangs strictly
+below the crown now, and the spec asserts that rather than trusting the author's eye.
+
+Nothing else survives twelve pixels: petals are mush, a frowning face is worse. But a line that goes
+up, turns over and drops its head is a silhouette **no sibling has** — every other mark in the family
+is a compact blob, and this one is tall, thin and asymmetric, which is exactly why it is legible over
+a dino at the far wall. The stem is three cells wide (outline, sage, outline) for the reason
+`rouse`'s iris ring was cut two fires ago: a one-pixel line at this size is a smudge and a two-pixel
+line has no centre. The sage is deliberately desaturated, with the channel margin pinned by a test,
+because a healthy green here reads as a plant rather than a mood. The outline is `rouse`'s
+**verbatim** — the family rim is one rim, and a warm brown was the temptation on an organic subject.
+
+**69 lit cells**, claimed against *every* sibling per the cycle-155 correction rather than a
+convenient one: above `aloof` (32), which keeps the lightest-mark claim 534 gave it, below `rouse`
+(110), which keeps the heaviest, sitting with `doze` (67) and `mend` (72) in the middle of the set.
+**The mark family stands at ten.**
+
+**Gate:** build clean, **2931 unit** (+13), **794 e2e** (+2), 0 failed. The rig census in
+`cycle-066-propart.test.ts` went red on the tenth key and was *extended*, not loosened — a census
+that does not fail when the roster grows is not a census.
+
+**On the flake, honestly: tonight it bit three full runs in a row.** `cycle-014-npc-convo`, then
+`cycle-064-craft` + `cycle-157-funk`, then `cycle-123-wandering` — four different victims across
+four full suite runs, every one a boot timeout at the 30,000ms ceiling, every one green isolated, and
+the fourth run clean at 794/794. Prior cycles have reported "one spec failed once". This is the same
+BACKLOG-553 stall signature and not a new defect, but **the rate is the news**: 553 has been passed
+over for scope thirteen cycles running and it is now costing roughly twenty minutes of re-running per
+cycle. It remains the recorded solo-cycle candidate and `cycle - lastSoloCycle` is 13.
+
+Art queue back to **2** (543, 539), both still host-blocked, both on the same two problems 551's note
+named: a mark that is a `setText` on the shared `activityMarks` array, and a plaque that is a single
+`Text`. The second of those moved a little closer tonight without anybody aiming at it — 555 added a
+third keeper line to `plaqueLines`, so the case for giving the brass per-line objects is now three
+lines long instead of two.

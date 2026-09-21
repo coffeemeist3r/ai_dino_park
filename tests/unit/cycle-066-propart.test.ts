@@ -37,6 +37,10 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'mend', // BACKLOG-537: ...and the sixth, drawn the night BACKLOG-530's rider finally built its host
       'missed', // BACKLOG-531: the fourth, and the first that is about the keeper rather than the hour (BACKLOG-116's host)
       'missed_aloof', // BACKLOG-534: ...and its withheld half, so the aloof grade stops being the lit rig dimmed
+      // BACKLOG-556 (cycle 164-art): the tenth mark, and the only one the whole cast wears at once on a
+      // fresh save — every founding dino is friendless by construction. Its host shipped on the main
+      // chain earlier the same cycle, scheduled in the seed text rather than merely named.
+      'mope',
       // BACKLOG-550 (cycle 162-art): the eighth and ninth marks, and by a distance the most-seen of the
       // family — every dino carries a need. Blocked on a host for two Artist fires; BACKLOG-551 built it
       // earlier in the same cycle, which is the condition the cycle-145 amendment asks for.

@@ -3957,9 +3957,16 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hook — what one mark family actually *is* for one dino (BACKLOG-551).
     // `__marks` answers whether a mark is showing; this answers whether it is a glyph or a drawn rig, which
     // is the only question that can tell a wired host from an unwired one.
-    (window as any).__markKind = (name: string, family: 'need') => {
+    // BACKLOG-556: `mope` joined the family the cycle its host shipped, so the hook stopped being
+    // need-only. Kept as a lookup rather than a chain of ternaries — a third family would otherwise be
+    // a third branch, and the arrays are already named by the same keys `__marks` reports.
+    (window as any).__markKind = (name: string, family: 'need' | 'mope') => {
       const i = this.dinos.findIndex((d) => d.name === name);
-      const mark = family === 'need' ? this.needMarks[i] : undefined;
+      const arrays: Record<string, Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image>> = {
+        need: this.needMarks,
+        mope: this.mopeMarks,
+      };
+      const mark = arrays[family]?.[i];
       if (!mark) return null;
       return mark instanceof Phaser.GameObjects.Image
         ? { kind: 'image', texture: mark.texture.key }
