@@ -12637,3 +12637,18 @@ a persona in and 162 cannot derive "the watcher changed" at all. Ships the recor
 the reachability half treated as the item rather than a rider — the keeper's tenure on the brass
 beside the park's own day count. Solo cycle **not** declared despite `cycle - lastSoloCycle = 13`:
 555 has been queued one cycle and passed over zero times, and 553 remains the recorded candidate.
+
+## Cycle 164 — designer
+
+**Lore track: BACKLOG-157**, the second keeper ability, routed to **AETHER-1** — *Read the Room* on
+`R`. The diplomat's Field Scan refusal has read "I read the room, not the soul" since cycle 38; this
+cycle takes the joke at her expense and makes it the power. A same-zone adjacency read: who is
+standing near whom and whether that pair is at ease or edgy, plus whoever nobody is near. Chosen
+over the item's own suggested sky-nudge because the flare's payoff sits past CHARTER v7's
+ten-minute bar and this one is live at second zero. Carries the BACKLOG-556 mope-mark host as a
+four-line rider.
+
+**Structure track: BACKLOG-555**, the watcher's record — `keeper/record.ts` plus an additive
+`keeper` object in the save (tenure, switch count, previous id, and 156's persona slot), read by one
+new optional plaque line. Sequenced first: it touches the save parse, the picker commit and the
+plaque, and the lore track's edits are additive leaves on top.

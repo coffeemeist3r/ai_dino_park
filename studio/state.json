@@ -1,7 +1,7 @@
 {
   "cycle": 164,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-157: The second keeper ability \u2014 AETHER-1 Read the Room (R): who is standing near whom, at ease or edgy, and who nobody is near",
   "structureItem": "BACKLOG-555: The watcher record, not just its id \u2014 additive keeper record in the save (tenure, switch count, previous id, persona slot) with one line on the brass that reads it",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-21T02:10:00.000Z",
     "structure-smith": "2026-09-21T02:14:00.000Z",
-    "designer": "2026-09-17T08:11:24.000Z",
+    "designer": "2026-09-21T02:22:00.000Z",
     "code-planner": "2026-09-17T08:13:28.000Z",
     "coder": "2026-09-17T08:48:11.000Z",
     "qa": "2026-09-17T09:08:55.000Z",
