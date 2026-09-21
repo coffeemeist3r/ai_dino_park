@@ -12628,3 +12628,12 @@ BACKLOG-530-style rider, so the art queue does not acquire a third blocked item.
 **BACKLOG-157**, Milestone 21's second-ability arc — routed to **AETHER-1** rather than the
 sky-nudge the item's own note pointed at, because the flare's payoff sits twelve real minutes past
 boot and CHARTER v7's bar is ten. Idea Box empty.
+
+## Cycle 164 — structure-smith
+
+Structure Track at **4** (≥ X=4) — drained, nothing seeded. Picked **BACKLOG-555**, Milestone 21's
+only unchecked structure arc: the save's `keeperId?: string` is the reason 156 has no field to cache
+a persona in and 162 cannot derive "the watcher changed" at all. Ships the record additively, with
+the reachability half treated as the item rather than a rider — the keeper's tenure on the brass
+beside the park's own day count. Solo cycle **not** declared despite `cycle - lastSoloCycle = 13`:
+555 has been queued one cycle and passed over zero times, and 553 remains the recorded candidate.
