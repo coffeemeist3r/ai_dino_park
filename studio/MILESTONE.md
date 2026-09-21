@@ -24,12 +24,12 @@ not from the tenth heart.
 **Lore arcs:**
 - [x] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
 - [ ] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156)
-- [ ] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157)
+- [x] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157 — shipped cycle 164 as AETHER-1's **Read the Room**) — *and the arc's real find was that the ability had been specified by accident 126 cycles earlier: Aki's refusal to scan reads "I read the room, not the soul", and making that sentence true was a better read on the choice than the sky-nudge the item queued. The nudge was declined on the reachability bar, not on taste — its payoff sits twelve real minutes past boot, and an ability a new player cannot reach is the defect v7 exists to stop.*
 - [ ] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162)
 
 **Structure arcs:**
 - [x] The roster is more than robots — a watcher from outside the machine category, picked at `K` and persisted like the rest, with a silhouette that reads as *not a machine* at 16x20 (BACKLOG-212, -554)
-- [ ] The save remembers the watcher, not just which one it is — tenure, switch count, previous id, and a slot for the persona cache, so 156 and 162 have somewhere to land (BACKLOG-555)
+- [x] The save remembers the watcher, not just which one it is — tenure, switch count, previous id, and a slot for the persona cache, so 156 and 162 have somewhere to land (BACKLOG-555 — shipped cycle 164) — *and the two decisions that mattered were both about what the record refuses to carry: a persona does not survive a switch (it belongs to the observer, not the seat), and a re-pick is not a switch. Both are things 156 and 162 would otherwise each have had to decide separately, and differently.*
 
 ---
 

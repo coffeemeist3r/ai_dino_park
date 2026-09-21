@@ -12691,3 +12691,78 @@ on the re-run: the BACKLOG-553 stall signature, named. The near-miss worth keepi
 one — the record's brass helper was written `watchLine` and collided with `world/watch.ts`'s
 `watchLine` from BACKLOG-524. `tsc` caught it on the first build; in a looser file that is a silently
 wrong import that ships. Renamed `tenureLine`, with the reason commented at the definition.
+
+## Cycle 164 — the park knows which watcher, and one of them can read a room
+
+**Both tracks APPROVED. 26/26 criteria, none amended. Milestone 21 reaches 4 of 6 arcs, and its
+structure checklist closes.**
+
+Four observers have been selectable since cycle 37, and for a hundred and twenty-six cycles exactly
+one of them could *do* anything. Tonight a second one can — and the spec for it had been sitting in
+the codebase the whole time as a joke at her expense. AETHER-1's refusal to run LUMEN-3's Field Scan
+reads: **"A diplomat does not pry into a mind. I read the room, not the soul."** That was written in
+cycle 38 as a consolation prize. Press `R` now and it is the ability.
+
+Aki reads the ground she is standing on. Every pair within two tiles, named, and tagged with how that
+pair is getting on — `at ease` if their bond clears the floor, `edgy` if it does not — then whoever
+nobody is standing near, then an honest closer only when one is actually true. Lux reads one mind and
+it is a spoiler. Aki reads the whole floor and it is a map of the party. That difference is what "a
+real read on which observer you chose" has to mean, if the roster is to be more than four sets of
+affinity weights. Vix, Lux and Kes each refuse in character, written rather than defaulted, because
+that was the half of Field Scan that actually made the roster feel *chosen*.
+
+And on a brand-new save the readout is already interesting, because the founding cast has no bonds:
+press `R` in your first minute and the bowl reads as a room full of strangers standing in twos and
+threes and edgy about it. Which is the correct first impression of a park nobody has kept yet.
+
+**The queued note was overridden, in writing, before any code was written.** BACKLOG-157 had said
+since cycle 38 that the second ability should be VANTA-9's sky-nudge. The flare's payoff is gated on
+a clear night; a fresh save opens at hour 8; at sixty game-minutes a second, dusk is about twelve
+real minutes out. CHARTER v7's bar is ten. Taking the flare would have shipped an ability a new
+player cannot reach — the exact defect v7 exists to stop — and it would have been *defensible*,
+because the backlog said so. It went in the design as an argument, not a preference, and the flare
+stays queued for a cycle that can also hand it a night.
+
+**On the spine: the save stops knowing only which watcher, and starts knowing something about one.**
+`keeperId?: string` was right for cycle 37 and it was the single reason two queued keeper items could
+not start. A record now rides beside it — the day this observer was chosen, how many times the
+watcher has changed, the id worn before, and an empty slot for the persona BACKLOG-156 will author.
+The brass reads `Watch · AETHER-1 "Aki" · since day 1` on a fresh park, and the spec asserts that
+line does *not* say "watcher", because a count of one is noise, not news.
+
+The two decisions worth keeping are both about what the record **refuses** to carry. A persona does
+not survive a switch — it belongs to the observer it was authored for, not to the seat, and the
+opposite would have handed 156 a first-night bug where picking Vix showed you Aki's authored self, a
+bug that would have looked like a 156 defect and lived here. And re-picking the observer you already
+wear is not a switch: the count rides the `changed` flag that already existed for the avatar swap and
+first contact, so there is one definition of "the watcher changed" in this scene and 162 will read
+the same one the face does.
+
+**The finding of the cycle is a reuse that was mandated before the fact rather than repaired after
+it.** `roomLines` needed to know which dinos are standing near each other, and the code plan forbade
+it a pair-finder of its own: `stargazingPairs` already computes same-zone Chebyshev-adjacent pairs,
+and it carries the CHARTER v7 fix that stopped the park knitting bonds between dinos standing on
+identical tiles of *different grounds*. A hand-rolled adjacency check in `keeper/` would have been a
+fresh, un-fixed copy of that exact bug — shipped in the same week the milestone is about grounds and
+watchers. So the function took an optional radius instead, every existing caller byte-identical, and
+the room's own zone test now pins the invariant a second time from a second caller. Cycle 144 found
+nineteen sites that had each solved one problem in two wrong directions because nobody made the first
+caller share; this is that lesson applied in the plan instead of in the postmortem.
+
+The smaller near-miss is a compile-time one, and it cost ninety seconds. The record's brass helper
+was written `watchLine` and collided with `world/watch.ts`'s `watchLine` from BACKLOG-524. `tsc`
+caught it on the first build; it is `tenureLine` now, with the reason commented at the definition. In
+a file where that import resolved looser, two `watchLine`s in one scene is a silently wrong import
+that ships green — which is cycle 144's lesson in yet another register. A green suite is evidence
+that behaviour is stable, never that it is right. Tonight the type system did the reading.
+
+**Gate:** build clean, **2918 unit** (+45), **793 e2e** (+11), 0 failed. Two specs failed the first
+full run on boot timeout, both passed isolated, fresh full run green — the BACKLOG-553 stall
+signature, a fourth data point, named. CI checked per the Finish step: the last three runs are
+**success**, three green in a row.
+
+**Milestone 21's structure checklist is complete and both remaining arcs are lore** — 156, which now
+has a slot to cache into and the switch semantics already decided for it, and 162, which now has
+`switches`, `previousId` and `sinceDay` on top of cycle 163's `metWatcher` map. 555 was picked
+*because* two items could not start without it. Both can start now. That is the milestone layer doing
+the job CHARTER v6 seeded it for, twice in two cycles.
