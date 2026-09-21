@@ -12617,3 +12617,14 @@ cheapest route to unblocking 543.
 persona), 157 (a second distinct ability), 162 (the switch noticed and missed), and 555 (the record those
 first two need) — are unusually well set up for each other, because tonight's `metWatcher` map is already
 most of 162 and 555 is the field 156 has nowhere to live without.
+
+## Cycle 164 — lore-smith
+
+Social queue 193 open (cap 12) — no social seeding; themed the cycle instead. Art queue 2 (cap 3) —
+seeded **BACKLOG-556**, the loner's 🥀 in pixels, the last single-key mark still rendering as raw
+emoji and the only un-drawn mark that is on screen five times over on a fresh save. Seeded with its
+host *scheduled* rather than merely named: four lines, assigned to this cycle's Coder as a
+BACKLOG-530-style rider, so the art queue does not acquire a third blocked item. Suggested next-up
+**BACKLOG-157**, Milestone 21's second-ability arc — routed to **AETHER-1** rather than the
+sky-nudge the item's own note pointed at, because the flare's payoff sits twelve real minutes past
+boot and CHARTER v7's bar is ten. Idea Box empty.
