@@ -12824,3 +12824,32 @@ named: a mark that is a `setText` on the shared `activityMarks` array, and a pla
 `Text`. The second of those moved a little closer tonight without anybody aiming at it — 555 added a
 third keeper line to `plaqueLines`, so the case for giving the brass per-line objects is now three
 lines long instead of two.
+
+## Cycle 164 — housekeeping
+
+**193 open** (195 last cycle: three closed — 555, 556, and 157 *advanced* rather than closed since it
+is a 1-of-3 arc item now at 2/3 — against one seeded, 556). No closed bullets left in the working
+backlog and no empty sections.
+
+**Structure Track is down to 3** (533, 552, 553), which is **below X=4**, so the next Structure-smith
+**brainstorms** rather than drains — the first time in several cycles. It will not have a free hand
+either way: **533's rewritten entry condition makes it due at cycle 165**, which is next fire, and
+its own text says what happens then. No founding-constant move has been scheduled since the condition
+was rewritten, so the tie-break clause does not fire and **the lint ships** — the cheapest of its
+three options, and the one that generates the evidence the other two were waiting on.
+
+**553 is the item to watch.** It remains the recorded solo-cycle candidate, `cycle - lastSoloCycle`
+will be 14 next fire, and tonight it stopped being a footnote: four full e2e runs, three of them
+holed by a boot timeout, four different victims, ~20 minutes of re-running. The condition CHARTER v8
+asks for — passed over twice for scope, with the queue's own text saying so — has been met for a
+while; what it now also has is a cost per cycle somebody can count.
+
+**Art queue back to 2** (543, 539), both host-blocked on the same two problems. 539's moved slightly
+closer without anyone aiming at it: 555 put a third keeper line on the brass, so the argument for
+giving `plaqueLines` per-line objects is three lines long now rather than two.
+
+**Milestone 21 is ACTIVE at 4 of 6 arcs** after two cycles, and its **structure checklist is
+complete**. Both remaining arcs are lore — 156 (the authored keeper persona) and 162 (the switch
+noticed and missed) — and tonight's record is the field both were blocked on. 156 is the obvious next
+pick: it has a slot to cache into and `switchTo` has already decided, and tested, what happens to a
+cached persona when the watcher changes.
