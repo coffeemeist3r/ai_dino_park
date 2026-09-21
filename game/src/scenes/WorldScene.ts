@@ -20,7 +20,7 @@ import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
-import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS, type GameTime } from '../world/clock';
+import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS, FOUNDING_DAY, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
@@ -105,6 +105,10 @@ import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../soc
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
 import { firstMeeting, recordMeeting } from '../keeper/voice'; // BACKLOG-160
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
+// BACKLOG-157: AETHER-1's Read the Room — the roster's second distinct ability.
+import { canReadRoom, roomLines, roomRefusal } from '../keeper/room';
+// BACKLOG-555: the watcher's record — tenure, switch count, previous id, and 156's persona slot.
+import { newRecord, switchTo, recordFrom, tenureLine, type KeeperRecord } from '../keeper/record';
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
@@ -136,7 +140,7 @@ import { pickMurmurMemory, murmurLine, dreamBookLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
-import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_ART_KEY, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_ART_KEY, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
@@ -666,11 +670,20 @@ export class WorldScene extends Phaser.Scene {
   private metWatcher: Record<string, string> = {};
   /** The chosen observer (BACKLOG-155); persisted. Its affinity-fit bonus colours every player gain. */
   private keeperId: string = DEFAULT_KEEPER_ID;
+  /**
+   * The watcher's record (BACKLOG-555): everything the save knows about the observer that is not
+   * just its id. Seeded at the founding day so a brand-new park reads `since day 1`; replaced on
+   * load by `recordFrom`, which seeds an old save from its bare `keeperId`.
+   */
+  private keeperRecord: KeeperRecord = newRecord(DEFAULT_KEEPER_ID, FOUNDING_DAY);
   /** Keeper picker overlay state (BACKLOG-155): open via K, number keys 1/2/3 choose. */
   private keeperPickerOpen = false;
   /** Field Scan panel (BACKLOG-157): LUMEN-3's dossier readout. Transient, never persisted. */
   private scanPanel!: Phaser.GameObjects.Text;
   private scanOpen = false;
+  /** Read the Room panel (BACKLOG-157): AETHER-1's floor readout. Transient, never persisted. */
+  private roomPanel!: Phaser.GameObjects.Text;
+  private roomOpen = false;
   /** First-contact inspection (BACKLOG-161): armed by a real keeper change. Transient, one-shot. */
   private pendingInspect: { name: string; ttl: number } | null = null;
   private lastInspection: { name: string; keeperId: string } | null = null;
@@ -731,7 +744,7 @@ export class WorldScene extends Phaser.Scene {
   private coldMarks: Phaser.GameObjects.Text[] = [];
   /** The loner (BACKLOG-135): the 🥀 mope mark, index-aligned like sleepMarks. Loner status itself is
    *  derived live from the bond graph (no persisted state — the bonds are already saved). */
-  private mopeMarks: Phaser.GameObjects.Text[] = [];
+  private mopeMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** The loner finds a friend (BACKLOG-369): dinos that have already fired the one-shot "not so alone"
    *  beat. Transient — the memory it files is the persistent record, so a reload won't re-fire (the
    *  loner→friend transition can't recur once the bond is already saved above the floor). */
@@ -1234,6 +1247,9 @@ export class WorldScene extends Phaser.Scene {
     // B is LUMEN-3's Field Scan (BACKLOG-157): read the nearest dino's mind — Lux only.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.B).on('down', () => this.toggleScan());
 
+    // R is AETHER-1's Read the Room (BACKLOG-157): read the floor, not a mind — Aki only.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.R).on('down', () => this.toggleRoom());
+
     // M toggles the bowl's sound (BACKLOG-191); the touch sheet has the same switch.
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.M).on('down', () => setSoundMuted(!soundMuted()));
 
@@ -1257,6 +1273,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupMigration();
     this.setupPlaque();
     this.setupScan();
+    this.setupRoom();
     this.setupIdle();
     this.setupTouchControls();
 
@@ -1426,6 +1443,7 @@ export class WorldScene extends Phaser.Scene {
       zoneTally: this.zoneTally(),
       upkeep: upkeepLine(upkeepDue(this.standingIn(this.zoneId))), // BACKLOG-536
       sitting: sittingLine(Date.now() - this.sessionStartedAt), // BACKLOG-542
+      watch: tenureLine(this.keeperRecord, keeperById(this.keeperId)), // BACKLOG-555
       streak: streakLine(this.streak), // BACKLOG-122
     };
   }
@@ -3799,9 +3817,10 @@ export class WorldScene extends Phaser.Scene {
     this.coldMarks.push(
       this.add.text(0, 0, '🥶', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
-    this.mopeMarks.push(
-      this.add.text(0, 0, MOPE_GLYPH, { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
-    );
+    // BACKLOG-556/551: through the mark family's rig lookup rather than a bare Text, so the wilt can
+    // be an authored sprite the moment one exists. `makeHourMark` falls back to the glyph while
+    // `hasPropArt` is false, so this renders exactly as it did before until the Artist lands the rig.
+    this.mopeMarks.push(this.makeHourMark(MOPE_ART_KEY, MOPE_GLYPH));
     // BACKLOG-551: through the family's own constructor at last, so a rig can finally be shown here. It
     // degrades to the 371 `Text` while the rigs are missing, which is why this is safe to land before a
     // pixel is drawn.
@@ -8332,6 +8351,11 @@ ${e.short}`;
     if (!keeper) return;
     const changed = keeper.id !== this.keeperId;
     this.keeperId = keeper.id;
+    // BACKLOG-555: only a *real* change is a switch. Re-picking the observer you are already wearing
+    // leaves the record alone, which is what makes `switches` a count BACKLOG-162 can trust. The
+    // `changed` flag already existed for the avatar swap and first contact; this rides it rather than
+    // recomputing the comparison.
+    if (changed) this.keeperRecord = switchTo(this.keeperRecord, keeper.id, getWorldClock().now().day);
     if (changed) this.renderKeeperAvatar(); // swap to the new observer's face in place
     this.keeperPickerOpen = false;
     this.dialog.show(`You are ${keeper.name}, from ${keeper.era}.\n${keeper.ability.label}: ${keeper.ability.desc}`);
@@ -8421,6 +8445,62 @@ ${e.short}`;
     // now it *counts*. What LUMEN-3 reads, the book keeps, so the roster means something at the
     // collection layer: a Scholar fills the menu by looking, everyone else fills it by feeding.
     this.noteMenu(target.name, favoriteFood(target.traits, this.currentSeason()).id);
+  }
+
+  // --- Read the Room (BACKLOG-157): AETHER-1's distinct ability ----------------------------
+
+  /** The cast on the ground the keeper is standing on, as the pure module wants them. */
+  private roomMembers() {
+    return this.dinos
+      .filter((d) => zoneOf(this.dinoZones, d.name, BOWL_ID) === this.zoneId)
+      .map((d) => {
+        const t = this.tileOf(d);
+        return { name: d.name, tileX: t.tileX, tileY: t.tileY, zone: zoneOf(this.dinoZones, d.name, BOWL_ID) };
+      });
+  }
+
+  /**
+   * R toggles the floor readout. Only AETHER-1 reads a room: other observers get an in-character
+   * refusal as a fading bubble — or, when nobody is in range to float one over, as a ticker line.
+   * As with the dossier this must NEVER set `dialogOpen`, or it would eat the next E press.
+   */
+  private toggleRoom(): void {
+    if (this.roomOpen) {
+      this.roomOpen = false;
+      this.roomPanel.setVisible(false);
+      return;
+    }
+    const keeper = keeperById(this.keeperId);
+    if (!canReadRoom(keeper)) {
+      const near = this.nearestDino();
+      if (near) this.showBubble(near, roomRefusal(keeper));
+      else this.logEvent(roomRefusal(keeper));
+      return;
+    }
+    this.roomPanel.setText(roomLines(this.roomMembers(), this.bonds, zoneById(this.zoneId).name).join('\n'));
+    this.roomPanel.setVisible(true);
+    this.roomOpen = true;
+  }
+
+  private setupRoom(): void {
+    // Right-anchored so a player holding both readouts open does not get two overlapping black boxes.
+    this.roomPanel = this.add
+      .text(TILE * COLS - 6, 22, '', {
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        color: '#ffffff',
+        align: 'left',
+        backgroundColor: '#000000cc',
+        padding: { x: 6, y: 4 },
+      })
+      .setOrigin(1, 0)
+      .setDepth(11)
+      .setVisible(false);
+
+    // any: dev-only Playwright hooks — Read the Room (BACKLOG-157)
+    (window as any).__roomOpen = () => this.roomOpen;
+    (window as any).__canReadRoom = () => canReadRoom(keeperById(this.keeperId));
+    (window as any).__roomLines = () => roomLines(this.roomMembers(), this.bonds, zoneById(this.zoneId).name);
   }
 
   private setupScan(): void {
@@ -9020,6 +9100,7 @@ ${e.short}`;
       metWatcher: this.metWatcher,
       personas: this.personas, // BACKLOG-103: generate-once selves ride the save
       keeperId: this.keeperId,
+      keeper: this.keeperRecord, // BACKLOG-555: the record beside the id (additive)
       zoneId: this.zoneId,
       roles: this.roles,
       dinoZones: this.dinoZones,
@@ -9177,6 +9258,10 @@ ${e.short}`;
       this.metWatcher = { ...(save.metWatcher ?? {}) };
       this.personas = (save.personas ?? {}) as Record<string, Persona>; // BACKLOG-103: selves restore
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
+      // BACKLOG-555: a save with a record restores it; an old save with only `keeperId` is seeded
+      // from that id, so tenure starts counting from the day the player came back rather than from a
+      // day nobody recorded. Strictly additive — no migration step, no version bump.
+      this.keeperRecord = recordFrom(save.keeper, save.keeperId, getWorldClock().now().day);
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
@@ -9398,6 +9483,10 @@ ${e.short}`;
     (window as any).__keepers = () =>
       KEEPERS.map((k) => ({ id: k.id, name: k.name, ability: k.ability.label }));
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
+    // any: dev-only Playwright hook — the watcher's record (BACKLOG-555)
+    (window as any).__keeperRecord = () => this.keeperRecord;
+    // any: dev-only Playwright hook — the engraved brass, as rendered (BACKLOG-555)
+    (window as any).__plaqueLines = () => plaqueLines(this.plaqueStats());
     // any: dev-only — how many numbered chips/keys the OPEN overlay offers (BACKLOG-212). The chip
     // objects are built once for the widest menu, so this is what decides which of them are live.
     (window as any).__numberedOptions = () => this.numberedOptions();

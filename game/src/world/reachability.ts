@@ -35,6 +35,7 @@ import { MEND_ART_KEY } from './mending'; // BACKLOG-530/537
 import { GLANCE_ART_KEY } from './parting'; // BACKLOG-119/540
 import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
 import { NEED_ART_KEY } from './needs'; // BACKLOG-551/550
+import { MOPE_ART_KEY } from './loner'; // BACKLOG-556
 import {
   FOUNDING_LANDMARKS,
   FOUNDING_PILES,
@@ -157,6 +158,10 @@ export function worldPlacedProps(): Set<string> {
   // `refreshSleepMarks` / `refreshRouseMarks`, which is why they count as seen.
   out.add(DOZE_ART_KEY);
   out.add(ROUSE_ART_KEY);
+  // BACKLOG-556/135: the loner's wilt, hung over a friendless dino by `refreshMopeMarks`. Joins the
+  // family late for the same reason the need tells did — until this cycle the mark was a bare `Text`
+  // with no rig lookup, so no rig could be shown there and the art item was seeded blocked.
+  out.add(MOPE_ART_KEY);
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so

@@ -149,4 +149,27 @@ describe('plaqueLines — the optional lines (BACKLOG-536 / 122)', () => {
     );
     expect(plaqueLines({ ...base, streak: '3 days running' }).some((l) => l.startsWith('Sitting'))).toBe(false);
   });
+  // BACKLOG-555 — who is watching, and since when. First of the three keeper lines: this one is
+  // about the whole tenure, the two below it are about this visit.
+  it('engraves the watcher above the sitting and the streak', () => {
+    const lines = plaqueLines({
+      ...base,
+      watch: 'AETHER-1 "Aki" · since day 1',
+      sitting: '4m',
+      streak: '3 days running',
+    });
+    expect(lines.slice(-3)).toEqual([
+      'Watch · AETHER-1 "Aki" · since day 1',
+      'Sitting · 4m',
+      'Keeper · 3 days running',
+    ]);
+  });
+
+  it('adds exactly one line, and is byte-identical to the pre-555 plaque without it', () => {
+    const without = plaqueLines({ ...base, sitting: '4m', streak: '3 days running' });
+    const with_ = plaqueLines({ ...base, sitting: '4m', streak: '3 days running', watch: 'X' });
+    expect(with_.length).toBe(without.length + 1);
+    expect(with_.filter((l) => !l.startsWith('Watch ·'))).toEqual(without);
+    expect(without.some((l) => l.startsWith('Watch'))).toBe(false);
+  });
 });

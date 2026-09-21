@@ -142,8 +142,13 @@ export interface Gazer {
  * this arithmetic and a whole zone apart in the world. The moment the roster spread across the map, the
  * park started knitting bonds between dinos who could not see each other. Nothing was wrong with the
  * single-zone park; the assumption was simply never written down, and never had to be true until now.
+ *
+ * **`radius` is BACKLOG-157's only ask of this function.** AETHER-1's Read the Room needs the same
+ * same-zone Chebyshev adjacency at a wider reach, and a second pair-finder would be a second place
+ * for the zone bug above to come back. The default of 1 keeps every stargazing caller — and every
+ * existing test — byte-identical.
  */
-export function stargazingPairs(gazers: Gazer[]): [string, string][] {
+export function stargazingPairs(gazers: Gazer[], radius = 1): [string, string][] {
   const pairs: [string, string][] = [];
   for (let i = 0; i < gazers.length; i++) {
     for (let j = i + 1; j < gazers.length; j++) {
@@ -151,7 +156,7 @@ export function stargazingPairs(gazers: Gazer[]): [string, string][] {
       const b = gazers[j];
       if (a.name === b.name) continue;
       if (a.zone !== b.zone) continue; // side by side means on the same ground
-      if (Math.abs(a.tileX - b.tileX) <= 1 && Math.abs(a.tileY - b.tileY) <= 1) pairs.push([a.name, b.name]);
+      if (Math.abs(a.tileX - b.tileX) <= radius && Math.abs(a.tileY - b.tileY) <= radius) pairs.push([a.name, b.name]);
     }
   }
   return pairs;

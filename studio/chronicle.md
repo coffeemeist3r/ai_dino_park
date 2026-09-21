@@ -12663,3 +12663,21 @@ pair-finder — `skyEvent.ts`'s `stargazingPairs` already computes same-zone Che
 *and* already carries the CHARTER v7 zone fix, so it gains an optional `radius` (default 1, every
 existing caller byte-identical) rather than being copied. A second pair-finder would be a second
 place for that bug to come back. ~13 files, inside the arc size of 15.
+
+## Cycle 164 — coder
+
+Built in the planned order. **Structure** (`keeper/record.ts`, the additive `keeper` block in the
+save parser, `Watch ·` on the brass) landed first and green, then **lore** (`keeper/room.ts` on `R`),
+then the **556 rider** (the mope mark through `makeHourMark`). Two renames and one reuse are worth
+recording: the record's brass helper is `tenureLine`, not `watchLine`, because `world/watch.ts` has
+owned that name since BACKLOG-524 and the compiler caught the collision on the first build — two
+`watchLine`s in one scene is how a wrong import becomes a silent bug. And `roomLines` grew no
+pair-finder of its own: `stargazingPairs` took an optional `radius` (default 1, every existing
+caller byte-identical) and the room read inherits its same-zone guard, including the CHARTER v7 fix
+that stopped the park knitting bonds across grounds — which the room's own zone test now pins a
+second time.
+
+**Gate:** build clean; **2918 unit** (+45); **793 e2e** (+11); `@mlc-ai/web-llm` still only under
+`game/src/ai/`; save changes strictly additive. The first full e2e run failed two specs on boot
+timeout, both passed isolated, and a fresh full run was green — the known parallel-load flake
+(BACKLOG-553), named not swept.

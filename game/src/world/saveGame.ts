@@ -85,6 +85,20 @@ export interface SaveData {
   personas?: Record<string, { text: string; source: string }>;
   /** The chosen observer's id (BACKLOG-155). Additive; absent → caller defaults to the first keeper. */
   keeperId?: string;
+  /**
+   * The watcher's *record* (BACKLOG-555), beside the bare id above: when this observer was chosen,
+   * how many times the watcher has changed, the id worn before, and the slot BACKLOG-156's persona
+   * cache occupies. Additive and optional — absent means an older save, which the caller seeds from
+   * `keeperId`. Typed structurally rather than imported from `keeper/`, keeping this file's standing
+   * discipline that keeper data is plain here (see the `metWatcher` note above).
+   */
+  keeper?: {
+    id: string;
+    sinceDay: number;
+    switches: number;
+    previousId?: string;
+    persona?: { text: string; source: string };
+  };
   /** The keeper's current zone (BACKLOG-143). Additive; absent → defaults to the bowl on load. */
   zoneId?: string;
   /** Each dino's settled (durable) role (BACKLOG-032). Additive; absent → {}. Stored as plain strings. */
@@ -346,6 +360,29 @@ export function deserialize(json: string): SaveData | null {
   if (o.keeperId !== undefined) {
     if (typeof o.keeperId !== 'string') return null;
     keeperId = o.keeperId;
+  }
+
+  // keeper is additive (BACKLOG-555) — absent in older saves, which is not a migration problem: the
+  // caller seeds a record from `keeperId` above (or from the default observer when even that is
+  // absent). Validated in the `personas` idiom: undefined passes through, malformed rejects, and the
+  // two optional members are checked only when present.
+  let keeper: SaveData['keeper'];
+  if (o.keeper !== undefined) {
+    if (typeof o.keeper !== 'object' || o.keeper === null) return null;
+    const k = o.keeper as Record<string, unknown>;
+    if (typeof k.id !== 'string') return null;
+    if (typeof k.sinceDay !== 'number' || !Number.isFinite(k.sinceDay)) return null;
+    if (typeof k.switches !== 'number' || !Number.isFinite(k.switches)) return null;
+    if (k.previousId !== undefined && typeof k.previousId !== 'string') return null;
+    let persona: { text: string; source: string } | undefined;
+    if (k.persona !== undefined) {
+      const pv = k.persona as { text?: unknown; source?: unknown } | null;
+      if (!pv || typeof pv !== 'object' || typeof pv.text !== 'string' || typeof pv.source !== 'string') return null;
+      persona = { text: pv.text, source: pv.source };
+    }
+    keeper = { id: k.id, sinceDay: k.sinceDay, switches: k.switches };
+    if (k.previousId !== undefined) keeper.previousId = k.previousId as string;
+    if (persona) keeper.persona = persona;
   }
 
   // zoneId is additive over v1 — absent in older saves (default 'bowl' so they load into the original
@@ -1021,6 +1058,7 @@ export function deserialize(json: string): SaveData | null {
     metWatcher,
     personas,
     keeperId,
+    keeper,
     zoneId,
     roles,
     dinoZones,

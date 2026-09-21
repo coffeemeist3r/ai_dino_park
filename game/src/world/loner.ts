@@ -22,6 +22,9 @@ export const LONER_BONUS = 4;
 /** The floating mark over a moping loner. */
 export const MOPE_GLYPH = '🥀';
 
+/** The rig key for that mark (BACKLOG-556/551) — the mark family's `makeHourMark` lookup. */
+export const MOPE_ART_KEY = 'mope';
+
 /**
  * Fraction of steps a loner spends withdrawing to the edge (vs wandering normally). Deliberately < 1 so
  * a loner still mills enough to *meet* a dino and grow a bond — otherwise an all-unbonded fresh bowl would
