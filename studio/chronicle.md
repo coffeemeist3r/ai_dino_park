@@ -12681,3 +12681,13 @@ second time.
 `game/src/ai/`; save changes strictly additive. The first full e2e run failed two specs on boot
 timeout, both passed isolated, and a fresh full run was green — the known parallel-load flake
 (BACKLOG-553), named not swept.
+
+## Cycle 164 — qa
+
+**26/26 criteria pass**, none amended — the first cycle in a while where every criterion as written
+was testable as written. Build clean, 2918 unit, 793 e2e on a fresh full run. Two specs failed the
+*first* full run on boot timeout (yearning:97, mending:121), both passed isolated and both were green
+on the re-run: the BACKLOG-553 stall signature, named. The near-miss worth keeping is a compile-time
+one — the record's brass helper was written `watchLine` and collided with `world/watch.ts`'s
+`watchLine` from BACKLOG-524. `tsc` caught it on the first build; in a looser file that is a silently
+wrong import that ships. Renamed `tenureLine`, with the reason commented at the definition.
