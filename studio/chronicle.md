@@ -12652,3 +12652,14 @@ four-line rider.
 `keeper` object in the save (tenure, switch count, previous id, and 156's persona slot), read by one
 new optional plaque line. Sequenced first: it touches the save parse, the picker commit and the
 plaque, and the lore track's edits are additive leaves on top.
+
+## Cycle 164 — codeplan
+
+Two new pure modules, one parameterised helper, and a fixed build order. **Structure first**
+(`keeper/record.ts`, an additive `keeper` block in the save parser in the `personas` idiom, an
+optional `watch` line on the plaque), then **lore** (`keeper/room.ts` mirroring `keeper/scan.ts`,
+bound to `R`), then the **556 rider**. The reuse call worth naming: `roomLines` does not get its own
+pair-finder — `skyEvent.ts`'s `stargazingPairs` already computes same-zone Chebyshev-adjacent pairs
+*and* already carries the CHARTER v7 zone fix, so it gains an optional `radius` (default 1, every
+existing caller byte-identical) rather than being copied. A second pair-finder would be a second
+place for that bug to come back. ~13 files, inside the arc size of 15.
