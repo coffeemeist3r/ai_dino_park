@@ -10,7 +10,7 @@
  * fallback immediately. respond() never throws and never blocks the dialog.
  */
 
-import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
+import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type KeeperAuthorContext, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
 import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
@@ -301,6 +301,33 @@ export function buildPersonaMessages(ctx: NPCContext): { role: string; content: 
   ];
 }
 
+/**
+ * Pure: the **keeper**-persona prompt (BACKLOG-156) — the sibling of `buildPersonaMessages`, asking for a
+ * watcher's self rather than a dinosaur's. The lore rides in on `ctx` rather than being imported, so this
+ * file stays free of a `keeper/` import (see `NPCBrain.authorKeeper`). No web-llm import.
+ *
+ * The roster's hand-written `backstory` is handed over as a line to *continue*, not to replace: it is the
+ * one sentence about this observer a human wrote, and a model that overwrites it has made the four
+ * watchers more alike, which is the opposite of what this item is for.
+ */
+export function buildKeeperPersonaMessages(ctx: KeeperAuthorContext): { role: string; content: string }[] {
+  return [
+    {
+      role: 'system',
+      content:
+        `${ctx.lore} ` +
+        `Write 2 or 3 short sentences continuing the watcher's own line: a habit it has at the glass, ` +
+        `one thing about these animals it has not worked out yet, and what ends up in its records. ` +
+        `Keep the given line true. Plain prose in third person, no lists, no headings, no names of real ` +
+        `products or people.`,
+    },
+    {
+      role: 'user',
+      content: `${ctx.name}, from ${ctx.era}. Known: ${ctx.backstory} Its gift is ${ctx.ability.label} - ${ctx.ability.desc}`,
+    },
+  ];
+}
+
 /** Model download/load progress 0..1 while status is 'loading' (for the brain HUD). */
 let loadProgressValue = 0;
 export function loadProgress(): number {
@@ -457,6 +484,27 @@ export class WebLLMBrain implements NPCBrain {
       return cleanReply(res.choices[0]?.message?.content ?? '', 3) || null;
     } catch (err) {
       console.warn('[webllm] persona authoring failed; keeping procedural persona', err);
+      return null;
+    }
+  }
+
+  /**
+   * The watcher's persona (BACKLOG-156). `author`'s body, verbatim in shape and for the same reasons:
+   * ready-engine only (a persona is ambience and is never worth triggering a download), any failure
+   * returns null, and the caller keeps the deterministic floor. Fired once per observer ever.
+   */
+  async authorKeeper(ctx: KeeperAuthorContext): Promise<string | null> {
+    if (this._status !== 'ready' || !this.engine) return null;
+    try {
+      const res = await this.engine.chat.completions.create({
+        messages: buildKeeperPersonaMessages(ctx),
+        max_tokens: 120,
+        temperature: 0.9,
+        extra_body: { enable_thinking: false },
+      });
+      return cleanReply(res.choices[0]?.message?.content ?? '', 3) || null;
+    } catch (err) {
+      console.warn('[webllm] keeper persona authoring failed; keeping procedural persona', err);
       return null;
     }
   }

@@ -11,6 +11,7 @@
  */
 
 import { AXES, type Personality } from '../ai/personality';
+import { SULK_GLYPH } from './expiry';
 
 export interface Quirk {
   glyph: string;
@@ -55,7 +56,9 @@ export function fidget(p: Personality): Quirk {
  */
 export type Mood = 'sulk' | 'cold';
 
-const MOOD_GLYPH: Record<Mood, string> = { sulk: '😒', cold: '🥶' };
+// BACKLOG-543's host (cycle 165): the sulk's glyph is now owned by `world/expiry.ts`, beside the funk
+// state and the art key that replaces it. Imported, not restated.
+const MOOD_GLYPH: Record<Mood, string> = { sulk: SULK_GLYPH, cold: '🥶' };
 const MOOD_CLAUSE: Record<Mood, string> = { sulk: 'sulking', cold: 'shivering' };
 
 /**

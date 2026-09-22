@@ -101,3 +101,46 @@ the same contract `ensurePersona` has had since 103. No new save timing.
 Structure part B first (it touches `spawnDino` and the mark registries, which the lore track does not
 touch at all), then the lint, then the lore track. Build + `vitest` after each part, so a red is
 attributable to one part.
+
+---
+
+## Shipped (Coder, cycle 165)
+
+Build clean. **2950 unit** (+21) across 277 files, **804 e2e** (+9), zero failed on a full run of each.
+`@mlc-ai/web-llm` verified by grep as imported only under `game/src/ai/`.
+
+### Lore track — shipped as planned, with one type decision that was not in the plan
+
+`KeeperPersona` was `{ text: string; source: string }` — its own interface, written that way at cycle 555
+to shape-match `SaveData.personas`' value. Handing it to the shared `upgradePersona` failed the build on
+`source`, and the choice was between a second upgrade path in keeper space and one cast at the load
+boundary. It is now `export type KeeperPersona = Persona`, with the save's loose `source: string`
+narrowed by a cast at `recordFrom` — the idiom `save.personas` has used since BACKLOG-103. One persona
+type in the codebase, one `upgradePersona`, one place the looseness is acknowledged.
+
+One guard was added that the plan did not call for: `ensureKeeperPersona`'s authoring callback checks
+`this.keeperId !== keeper.id` before writing. `upgradePersona` cannot see a switch, so an authoring call
+that outlives one would otherwise write the outgoing watcher's self onto the incoming observer — the
+exact bug 555's `switchTo` was written to prevent, arriving by the one door `switchTo` does not watch.
+
+### The regression the suite caught, and why it is the interesting part of this fire
+
+`cycle-038-scan.spec.ts` went red — reproducibly, isolated, and green on a stashed tree. Not a flake.
+
+The keeper confirmation was two lines. It is now three, and the third is a 240-character paragraph, which
+is long enough for `DialogBox` to **paginate**. Every spec that pressed a single hard-coded `E` to dismiss
+that dialog was now advancing the page instead of closing the box, and the next key was eaten closing it.
+Only one spec asserted anything after that point, so only one went red — the other two sites in the same
+file were silently doing the wrong thing and getting away with it.
+
+Fixed in the spec, not in the feature: a `dismissDialog` helper asks `__dialogPage()` how many pages
+there are and presses `E` that many times. The behaviour change is real and intended — committing to an
+observer now has more to read, so it takes more than one keypress to leave — and a spec that hard-codes
+the page count of a paragraph nobody has written yet is asserting about the frame width.
+
+### Structure track — shipped as planned
+
+The ratchet's baseline is **251** files, held in `founding-declaration.baseline.json` rather than inline
+so that a shrink reads as one deleted line in a diff instead of a reflow of a 251-entry literal.
+`BASELINE_COUNT` is the literal, in the `.ts`. Both cycle-165 specs declare their founding state, so the
+cycle that wrote the rule is not the cycle that exempted itself from it.

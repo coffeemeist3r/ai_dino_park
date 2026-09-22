@@ -32,7 +32,7 @@ import {
   shoulderMendedMemory,
   shoulderMendedLine,
 } from '../world/sulk'; // BACKLOG-123 / -544
-import { enterFunk, clearFunk, funkOf, inFunk, expiredFunks, type Funks } from '../world/expiry'; // BACKLOG-544
+import { enterFunk, clearFunk, funkOf, inFunk, expiredFunks, SULK_GLYPH, SULK_ART_KEY, type Funks } from '../world/expiry'; // BACKLOG-544/-543
 import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
@@ -108,7 +108,8 @@ import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/sca
 // BACKLOG-157: AETHER-1's Read the Room — the roster's second distinct ability.
 import { canReadRoom, roomLines, roomRefusal } from '../keeper/room';
 // BACKLOG-555: the watcher's record — tenure, switch count, previous id, and 156's persona slot.
-import { newRecord, switchTo, recordFrom, tenureLine, type KeeperRecord } from '../keeper/record';
+import { newRecord, switchTo, recordFrom, tenureLine, type KeeperRecord, type KeeperPersona } from '../keeper/record';
+import { proceduralKeeperPersona, keeperIntroLines, KEEPER_LORE } from '../keeper/persona'; // BACKLOG-156
 import { INSPECT_TTL, inspector, inspectLine, inspectMemory } from '../keeper/firstContact';
 import { seasonFor, seasonTurned, SEASON_TINT, turnLine, turnMemory, seasonGrip, seasonGripLine, seasonThirst, slakeFloor, seasonThirstLine, seasonSocialBias, seasonalSocializeChance, type Season } from '../world/seasons';
 import { HUDDLE_THRESHOLD, huddleThreshold, inHuddleWindow } from '../world/huddle';
@@ -745,6 +746,15 @@ export class WorldScene extends Phaser.Scene {
   /** The loner (BACKLOG-135): the 🥀 mope mark, index-aligned like sleepMarks. Loner status itself is
    *  derived live from the bond graph (no persisted state — the bonds are already saved). */
   private mopeMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
+  /**
+   * The funk's mark (BACKLOG-543's host, cycle 165) — the 😒 hung over a dino for the length of its funk.
+   *
+   * Nine cycles blocked on one fact, corrected twice: the sulk's only visual was a `setText` on
+   * `activityMarks`, a typed `Text[]`, so `makeHourMark`'s rig swap could never run for it and a `sulk`
+   * key in `PROP_RIGS` would have landed in `unplacedRigs()`. The half that was genuinely missing — a
+   * durable state to hang a mark on — arrived with BACKLOG-544's funk record. This is the `mope` shape.
+   */
+  private sulkMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** The loner finds a friend (BACKLOG-369): dinos that have already fired the one-shot "not so alone"
    *  beat. Transient — the memory it files is the persistent record, so a reload won't re-fire (the
    *  loner→friend transition can't recur once the bond is already saved above the floor). */
@@ -1915,6 +1925,7 @@ export class WorldScene extends Phaser.Scene {
         ['missed', this.missedMarks],
         ['cold', this.coldMarks],
         ['mope', this.mopeMarks],
+        ['sulk', this.sulkMarks], // BACKLOG-543's host
         ['need', this.needMarks],
         ['activity', this.activityMarks],
       ];
@@ -3821,6 +3832,7 @@ export class WorldScene extends Phaser.Scene {
     // be an authored sprite the moment one exists. `makeHourMark` falls back to the glyph while
     // `hasPropArt` is false, so this renders exactly as it did before until the Artist lands the rig.
     this.mopeMarks.push(this.makeHourMark(MOPE_ART_KEY, MOPE_GLYPH));
+    this.sulkMarks.push(this.makeHourMark(SULK_ART_KEY, SULK_GLYPH)); // BACKLOG-543's host
     // BACKLOG-551: through the family's own constructor at last, so a rig can finally be shown here. It
     // degrades to the 371 `Text` while the rigs are missing, which is why this is safe to land before a
     // pixel is drawn.
@@ -3960,11 +3972,12 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-556: `mope` joined the family the cycle its host shipped, so the hook stopped being
     // need-only. Kept as a lookup rather than a chain of ternaries — a third family would otherwise be
     // a third branch, and the arrays are already named by the same keys `__marks` reports.
-    (window as any).__markKind = (name: string, family: 'need' | 'mope') => {
+    (window as any).__markKind = (name: string, family: 'need' | 'mope' | 'sulk') => {
       const i = this.dinos.findIndex((d) => d.name === name);
       const arrays: Record<string, Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image>> = {
         need: this.needMarks,
         mope: this.mopeMarks,
+        sulk: this.sulkMarks, // BACKLOG-543's host — the hook that proves it is *wired*, not just drawn
       };
       const mark = arrays[family]?.[i];
       if (!mark) return null;
@@ -4410,6 +4423,7 @@ export class WorldScene extends Phaser.Scene {
       mark.setVisible(this.coldPending.has(d.name) && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
     });
     this.refreshMopeMarks();
+    this.refreshSulkMarks();
     this.refreshNeedMarks();
   }
 
@@ -4425,6 +4439,28 @@ export class WorldScene extends Phaser.Scene {
       if (!mark) return;
       const lonely = isLoner(this.bonds, d.name, names, LONER_FLOOR);
       mark.setVisible(lonely && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
+    });
+  }
+
+  /**
+   * The funk's 😒 (BACKLOG-543's host, cycle 165) — worn for the length of the funk, not flashed at its start.
+   *
+   * **Both kinds.** `sulk` (the slight at homecoming) and `shoulder` (the lost scramble at the hatch) are
+   * one feeling arriving by two doors, which is why BACKLOG-544 put them on one seam wearing one glyph; a
+   * mark that told them apart would be inventing a distinction the design deliberately does not make.
+   *
+   * **Suppressed under the cold.** A shivering dino already wears 🥶 at this exact slot, and the scene
+   * already treats the two as alternates where it shades a sleeping mood. Two glyphs stacked in one place
+   * is the stacking `coldMarks` was given its own offset to avoid.
+   *
+   * The one-frame flash at the funk's start stays where it is. That is the sting; this is the state.
+   */
+  private refreshSulkMarks(): void {
+    this.dinos.forEach((d, i) => {
+      const mark = this.sulkMarks[i];
+      if (!mark) return;
+      const sore = inFunk(this.funks, d.name) && !this.coldPending.has(d.name);
+      mark.setVisible(sore && this.inView(d)).setPosition(d.x, d.y - TILE * 1.4);
     });
   }
 
@@ -7317,6 +7353,46 @@ ${e.short}`;
     return fresh;
   }
 
+  /**
+   * The watcher's persona (BACKLOG-156) - `ensurePersona`'s shape, for the observer the player is wearing.
+   *
+   * Cached in `KeeperRecord.persona`, the slot BACKLOG-555 shipped empty and shape-matched to
+   * `SaveData.personas` so that this needed no second migration. The procedural floor is written
+   * **synchronously**, so the `saveGame()` that follows a pick already carries it; the authored upgrade is
+   * fire-and-forget and rides whichever save comes next, exactly as a dino's has since BACKLOG-103.
+   *
+   * A switch does not reach this: `switchTo` clears the slot on its way past, so the next call authors the
+   * *incoming* observer. That ordering is load-bearing at the one call site - see `pickKeeperIndex`.
+   */
+  private ensureKeeperPersona(): KeeperPersona {
+    const keeper = keeperById(this.keeperId);
+    const cached = this.keeperRecord.persona;
+    if (cached) return cached;
+    const fresh = proceduralKeeperPersona(keeper);
+    this.keeperRecord = { ...this.keeperRecord, persona: fresh };
+    if (this.npcBrain.authorKeeper && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
+      void this.npcBrain
+        .authorKeeper({
+          name: keeper.name,
+          era: keeper.era,
+          backstory: keeper.backstory,
+          ability: { label: keeper.ability.label, desc: keeper.ability.desc },
+          lore: KEEPER_LORE,
+        })
+        .then((draft) => {
+          // Guard the observer, not just the cache: an authoring call that outlives a switch must not write
+          // the outgoing watcher's self onto the incoming one. `upgradePersona` alone cannot see that.
+          if (this.keeperId !== keeper.id) return;
+          this.keeperRecord = {
+            ...this.keeperRecord,
+            persona: upgradePersona(this.keeperRecord.persona ?? fresh, draft),
+          };
+        })
+        .catch(() => {});
+    }
+    return fresh;
+  }
+
   private tryCrossZone(): boolean {
     const edge = crossing(this.player.x, this.player.y, COLS, ROWS, TILE);
     const link = edge ? linkedZone(this.zoneId, edge, this.player.x, this.player.y, COLS, ROWS, TILE) : null;
@@ -8365,7 +8441,9 @@ ${e.short}`;
     if (changed) this.keeperRecord = switchTo(this.keeperRecord, keeper.id, getWorldClock().now().day);
     if (changed) this.renderKeeperAvatar(); // swap to the new observer's face in place
     this.keeperPickerOpen = false;
-    this.dialog.show(`You are ${keeper.name}, from ${keeper.era}.\n${keeper.ability.label}: ${keeper.ability.desc}`);
+    // BACKLOG-156: the third line is who this observer *is*. It must be composed **after** the `switchTo`
+    // above, which drops the cached persona — reversed, committing to Vix would introduce you as Aki.
+    this.dialog.show(keeperIntroLines(keeper, this.ensureKeeperPersona()).join('\n'));
     this.dialogOpen = true; // a normal dialog the next E/Z closes
     void this.saveGame();
     // A real change of watcher draws first contact (BACKLOG-161); a re-pick or the save-restore
@@ -9268,7 +9346,9 @@ ${e.short}`;
       // BACKLOG-555: a save with a record restores it; an old save with only `keeperId` is seeded
       // from that id, so tenure starts counting from the day the player came back rather than from a
       // day nobody recorded. Strictly additive — no migration step, no version bump.
-      this.keeperRecord = recordFrom(save.keeper, save.keeperId, getWorldClock().now().day);
+      // BACKLOG-156: the cast is `save.personas`' (BACKLOG-103) - the save's `source` is a loose `string` by
+      // design and is narrowed here, at the one boundary, rather than by a second persona type.
+      this.keeperRecord = recordFrom(save.keeper as KeeperRecord | undefined, save.keeperId, getWorldClock().now().day);
       this.zoneId = save.zoneId ?? BOWL_ID; // BACKLOG-143: old saves load into the bowl
       this.roles = (save.roles ?? {}) as Record<string, Role>; // BACKLOG-032: durable roles restore
       this.dinoZones = save.dinoZones ?? {}; // BACKLOG-274: home-zone restore (absent → all bowl via fallback)
@@ -9492,6 +9572,8 @@ ${e.short}`;
     (window as any).__keeperPickerOpen = () => this.keeperPickerOpen;
     // any: dev-only Playwright hook — the watcher's record (BACKLOG-555)
     (window as any).__keeperRecord = () => this.keeperRecord;
+    // any: dev-only Playwright hook - the watcher's cached self (BACKLOG-156), or null before one exists
+    (window as any).__keeperPersona = () => this.keeperRecord.persona ?? null;
     // any: dev-only Playwright hook — the engraved brass, as rendered (BACKLOG-555)
     (window as any).__plaqueLines = () => plaqueLines(this.plaqueStats());
     // any: dev-only — how many numbered chips/keys the OPEN overlay offers (BACKLOG-212). The chip

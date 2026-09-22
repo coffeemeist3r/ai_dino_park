@@ -15,12 +15,18 @@
  */
 
 import { DEFAULT_KEEPER_ID, type Keeper } from './keepers';
+import type { Persona } from '../ai/persona';
 
-/** BACKLOG-156's slot. Shape-matches `SaveData.personas`' value so 156 needs no second migration. */
-export interface KeeperPersona {
-  text: string;
-  source: string;
-}
+/**
+ * BACKLOG-156's slot. Shipped at cycle 164 as its own `{ text: string; source: string }` to shape-match
+ * `SaveData.personas`' value, and **narrowed to `Persona` itself at cycle 165**, the cycle that filled it.
+ *
+ * Two structurally identical persona types is how `upgradePersona` ends up with a second implementation
+ * that does not quite agree with the first. The save's loose `source: string` is handled where every other
+ * persona already handles it — by a cast at the load boundary, the idiom `save.personas` has used since
+ * BACKLOG-103 — rather than by a second type living one import away from the real one.
+ */
+export type KeeperPersona = Persona;
 
 export interface KeeperRecord {
   /** The observer worn right now. Mirrors `SaveData.keeperId`, which stays for old readers. */
@@ -31,7 +37,7 @@ export interface KeeperRecord {
   switches: number;
   /** The id worn immediately before this one. Absent until the first real switch. */
   previousId?: string;
-  /** BACKLOG-156's cache. Shipped empty this cycle; nothing here authors it. */
+  /** BACKLOG-156's cache. Shipped empty at 555; filled at cycle 165 by `keeper/persona.ts`. */
   persona?: KeeperPersona;
 }
 

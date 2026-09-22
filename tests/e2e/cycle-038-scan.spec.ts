@@ -15,6 +15,20 @@ const scanLines = (p: Page) => p.evaluate(() => ((window as W).__scanLines as ()
 const canScan = (p: Page) => p.evaluate(() => ((window as W).__canScan as () => boolean)());
 const bubbles = (p: Page) => p.evaluate(() => ((window as W).__bubbleTexts as () => string[])());
 
+/**
+ * Dismiss the keeper-pick confirmation, however many pages it runs to.
+ *
+ * It was one page and one `E` until cycle 165, when BACKLOG-156 gave the confirmation a third line - the
+ * observer's authored self - and a 240-character paragraph is long enough for `DialogBox` to paginate.
+ * A single hard-coded `E` therefore advanced the page instead of closing the box, and the next `E` was
+ * eaten closing it. Asking the box how many pages it has is what makes this spec indifferent to how long
+ * a watcher's self is, which is a thing that is now expected to change.
+ */
+async function dismissDialog(p: Page): Promise<void> {
+  const { pages } = await p.evaluate(() => ((window as W).__dialogPage as () => { pages: number })());
+  for (let i = 0; i < Math.max(1, pages); i += 1) await p.keyboard.press('KeyE');
+}
+
 test('as LUMEN-3, B beside a dino opens the dossier (boot is clean)', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
@@ -24,8 +38,8 @@ test('as LUMEN-3, B beside a dino opens the dossier (boot is clean)', async ({ p
 
   await pickKeeper(page, 'lumen');
   expect(await canScan(page)).toBe(true);
-  // The pick confirmation is a dialog; E closes it so B is the next meaningful key.
-  await page.keyboard.press('KeyE');
+  // The pick confirmation is a dialog; dismissing it makes B the next meaningful key.
+  await dismissDialog(page);
 
   expect(await warpTo(page, 'Rex')).toBe(true);
   await page.keyboard.press('KeyB');
@@ -45,7 +59,7 @@ test('the dossier reports the resting quirk, matching the live fidget (BACKLOG-3
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
-  await page.keyboard.press('KeyE');
+  await dismissDialog(page);
   await warpTo(page, 'Rex');
   await page.keyboard.press('KeyB');
   await expect.poll(() => scanOpen(page)).toBe(true);
@@ -62,7 +76,7 @@ test('B again closes the dossier', async ({ page }) => {
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
-  await page.keyboard.press('KeyE');
+  await dismissDialog(page);
   await settle(page); // BACKLOG-515: let the dialog dismissal land before the next key is dispatched
   await warpTo(page, 'Rex');
 
@@ -95,7 +109,7 @@ test('the scan never blocks the talk path — E still opens the tone menu with t
   await page.locator('canvas').focus();
 
   await pickKeeper(page, 'lumen');
-  await page.keyboard.press('KeyE');
+  await dismissDialog(page);
   await warpTo(page, 'Rex');
 
   await page.keyboard.press('KeyB');

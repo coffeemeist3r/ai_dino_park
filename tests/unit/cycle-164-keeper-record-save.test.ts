@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { serialize, deserialize, SAVE_VERSION, type SaveData } from '../../game/src/world/saveGame';
 import { recordFrom } from '../../game/src/keeper/record';
+import { proceduralKeeperPersona } from '../../game/src/keeper/persona';
+import { keeperById } from '../../game/src/keeper/keepers';
 
 /**
  * BACKLOG-555 — the watcher's record in the save. Strictly additive over every save this park has
@@ -31,6 +33,14 @@ describe('the watcher record, round-tripped', () => {
   it('carries 156\'s persona slot when one is present', () => {
     const withPersona = { ...rec, persona: { text: 'a scout from a timeline that ended', source: 'llm' } };
     expect(deserialize(serialize({ ...base, keeper: withPersona }))?.keeper).toEqual(withPersona);
+  });
+
+  // BACKLOG-156, the cycle that filled the slot: the assertion above used a hand-written literal, which
+  // proves the save block and not the thing that writes it. This one round-trips a persona the production
+  // author actually produced, so a change to `proceduralKeeperPersona` that the save cannot carry is red.
+  it("carries a persona the keeper's own author produced", () => {
+    const authored = { ...rec, persona: proceduralKeeperPersona(keeperById('vanta')) };
+    expect(deserialize(serialize({ ...base, keeper: authored }))?.keeper).toEqual(authored);
   });
 
   it('keeps previousId absent rather than writing it as undefined', () => {

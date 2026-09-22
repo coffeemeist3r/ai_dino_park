@@ -129,6 +129,29 @@ export interface NPCBrain {
    * validates it. Fired once per dino ever (generate-once) — never per message.
    */
   author?(ctx: NPCContext): Promise<string | null>;
+  /**
+   * The watcher's persona (BACKLOG-156): the keeper's mirror of `author`, 2-3 sentences of self written
+   * from the lore the caller hands it. Null when the model can't or won't; the caller keeps the
+   * deterministic procedural persona (`keeper/persona.ts`) either way. Fired once per observer ever.
+   *
+   * `ctx` is a **structural literal rather than the imported `Keeper`**, and `lore` is a parameter rather
+   * than an import, for one reason worth stating in the boundary file itself: `keeper/keepers.ts` imports
+   * from `ai/`, so an `ai/` module importing back from `keeper/` points a dependency edge the wrong way
+   * through the seam the CHARTER calls hard. The brain is handed what it needs to write with; it does not
+   * reach into keeper space to fetch it.
+   */
+  authorKeeper?(ctx: KeeperAuthorContext): Promise<string | null>;
+}
+
+/** What a brain is told about an observer in order to write its self (BACKLOG-156). See `authorKeeper`. */
+export interface KeeperAuthorContext {
+  name: string;
+  era: string;
+  /** The hand-written line from the roster — the seed the model elaborates, never replaces. */
+  backstory: string;
+  ability: { label: string; desc: string };
+  /** The park canon, from the watcher's side. Passed in (see `authorKeeper`), never imported here. */
+  lore: string;
 }
 
 const cannedGreetings = [

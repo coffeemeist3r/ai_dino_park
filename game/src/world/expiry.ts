@@ -51,6 +51,22 @@ export type Funks = Readonly<Record<string, Funk>>;
  * over at homecoming, so it is the shorter of the two; it is also longer than `STING_FADES_AFTER_STEPS`'s
  * private smart, because this one is the part the player can see and a mood you cannot catch is not a mood.
  */
+/**
+ * The funk's face (BACKLOG-543's host, cycle 165).
+ *
+ * The glyph was a private literal in `world/fidget.ts`'s `MOOD_GLYPH`, and the art key did not exist at
+ * all -- which is the whole of why BACKLOG-543 sat blocked for nine cycles and was corrected twice. A mark
+ * built as a bare `Text` can never consult `hasPropArt`, so a drawn sulk had nowhere to be blitted.
+ *
+ * Both constants live here, beside the state they describe, and `fidget.ts` now imports the glyph rather
+ * than restating it: one emoji, one definition. Two literals of the same character in two modules is
+ * exactly how a fallback and the rig that replaces it drift apart.
+ */
+export const SULK_GLYPH = '😒';
+
+/** `PROP_RIGS` key for the drawn sulk. One key for both kinds -- see `FunkKind`: it is one feeling. */
+export const SULK_ART_KEY = 'sulk';
+
 export const FUNK_WINDOW: Readonly<Record<FunkKind, number>> = {
   sulk: SULK_FADES_AFTER_STEPS,
   shoulder: 20,

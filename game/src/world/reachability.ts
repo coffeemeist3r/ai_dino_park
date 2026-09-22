@@ -36,6 +36,7 @@ import { GLANCE_ART_KEY } from './parting'; // BACKLOG-119/540
 import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/531/534
 import { NEED_ART_KEY } from './needs'; // BACKLOG-551/550
 import { MOPE_ART_KEY } from './loner'; // BACKLOG-556
+import { SULK_ART_KEY } from './expiry'; // BACKLOG-543's host (cycle 165)
 import {
   FOUNDING_LANDMARKS,
   FOUNDING_PILES,
@@ -162,6 +163,10 @@ export function worldPlacedProps(): Set<string> {
   // family late for the same reason the need tells did — until this cycle the mark was a bare `Text`
   // with no rig lookup, so no rig could be shown there and the art item was seeded blocked.
   out.add(MOPE_ART_KEY);
+  // BACKLOG-543/544: the funk's mark, hung over a sore dino by `refreshSulkMarks`. Joins the family on the
+  // cycle its host was built, for the same reason the wilt did one cycle earlier — until now the sulk was a
+  // `setText` on the shared activity mark, so no rig could be shown there and the art item sat blocked.
+  out.add(SULK_ART_KEY);
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so
