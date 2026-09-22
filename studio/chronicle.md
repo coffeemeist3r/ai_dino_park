@@ -12867,3 +12867,9 @@ so the rule is absolute for new files and the 251 are a frozen baseline that may
 reachable half is the sulk mark's host — nine cycles blocked, two corrections, and the funk record it
 was waiting for shipped at 544. No solo cycle: 553 keeps its standing but 533 came due tonight.
 Seeded 557 / 558, both hosts, because the art queue is short on hosts and not on items.
+
+## Cycle 165 — designer
+
+156 designed render-first: `Keeper.backstory` has been authored since cycle 155 and rendered **nowhere**,
+so the surface (the picker confirmation) is specified before the pipeline that fills it. 533 ships as a
+ratchet with an asserted baseline length, plus the sulk mark's host. 13 lore criteria, 12 structure.
