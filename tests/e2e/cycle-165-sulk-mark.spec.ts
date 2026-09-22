@@ -61,8 +61,10 @@ test('the mark is built through the rig lookup, so a drawn sulk has somewhere to
   expect(mark).not.toBeNull();
   // Text until the Artist lands the rig, an Image the moment it exists — `makeHourMark`'s contract, and
   // the exact thing that was *not* true of the `activityMarks` setText this item was blocked on twice.
-  expect(['text', 'image']).toContain(mark!.kind);
-  if (mark!.kind === 'text') expect(mark!.text).toBe('😒');
+  // The rig landed in this same cycle's Artist fire, so the wired answer is now the *only* right one:
+  // accepting 'text' here would let the rig quietly stop being blitted and call it a pass.
+  expect(mark!.kind).toBe('image');
+  expect(mark!.texture).toBeTruthy();
 });
 
 test('the mark clears when the funk runs out (BACKLOG-543/544)', async ({ page }) => {

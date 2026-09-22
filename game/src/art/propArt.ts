@@ -2001,6 +2001,54 @@ const MOPE_RIG: PropRig = {
   },
 };
 
+// `sulk` is the eleventh mark (BACKLOG-543), and the first that is not a feature — the ten before it are
+// an eye, a pair of eyes, a thought, a wave, a pair of hands, two need tells and a wilt. This one is a
+// **posture**: a head turned away with a shoulder raised across it.
+//
+// The seed asked for a turned-away head rather than a frown, and it was right for the reason it gave: a
+// mouth does not survive 12px and a rotated head does. But a turned-away head *alone* was not takeable —
+// `missed_aloof` (534) is already a thought turned away and unlit, and two turned-away silhouettes in one
+// family is how a player stops reading either. So the sulk carries the other half of its own name: the
+// funk seam's two kinds are `sulk` and `shoulder`, and this draws the shoulder literally, rising across
+// the head from the lower left to the upper right. The silhouette nothing else in the family has is a low
+// blob with a diagonal slab cutting over it.
+//
+// **The head has no face at all — not one lit pixel of it.** That is the whole mark. Every sibling that
+// is a head says something with an eye; this one says something by having turned the eye away from you.
+const SULK_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '...oooo.........',
+  '..oHHhho........',
+  '.oHHHhhho.......',
+  '.oHHHhhho.......',
+  '.oHHhhhho.....o.',
+  '.oHhhhhho...ooTo',
+  '..ohhhho..ooTSSo',
+  '...oooo..oTSSSSo',
+  '.........oSSSSSo',
+  '.........oSSSSSo',
+  '.........oSSSSo.',
+  '..........oooo..',
+  '................',
+  '................',
+];
+
+const SULK_RIG: PropRig = {
+  size: 16,
+  grid: SULK_GRID,
+  palette: {
+    // The family rim, verbatim from `rouse`, per the claim the need tells made at 162 and the wilt at 164.
+    o: 0x2b3344,
+    // Cool slate rather than the wilt's warm rose. A sulk is withdrawal, not damage, and the temperature
+    // is the only thing carrying that at this size — the shapes are all outline.
+    H: 0x6d7a90, // the lit side of the turned head, away from the shoulder
+    h: 0x4a5566, // ...and its shade, so a faceless blob still has a form
+    S: 0x59647a, // the raised shoulder, pitched between the head's two tones so the two masses read as one animal
+    T: 0x8492a8, // the ridge of the shoulder, the brightest pixel here - and far dimmer than `rouse`'s catchlight
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -2089,6 +2137,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-556: the loner's wilt. Its host shipped the same cycle it was seeded — `mopeMarks` went
   // through `makeHourMark` on the main chain, which is the condition the cycle-145 amendment asks for.
   mope: MOPE_RIG,
+  // BACKLOG-543 (cycle 165-art): the eleventh mark, and the one this queue held longest. Blocked nine
+  // cycles on a host that did not exist and a claim corrected twice; `refreshSulkMarks` shipped earlier
+  // in this same cycle, on the structure track, which is the condition the cycle-145 amendment asks for.
+  sulk: SULK_RIG,
 };
 
 /**

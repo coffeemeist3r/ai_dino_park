@@ -54,6 +54,10 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'stone',
+      // BACKLOG-543 (cycle 165-art): the eleventh mark, and the one this queue held longest — nine cycles
+      // blocked on a host that did not exist, through two corrections of the same false claim. The host,
+      // `refreshSulkMarks`, shipped earlier in this cycle as the reachable half of BACKLOG-533.
+      'sulk',
       'thatch',
       'thatch_derelict', // BACKLOG-494 (4 of 4, cycle 139 — the unravelled stack)
       'tic_circle', // BACKLOG-496: the ritual's trodden ring

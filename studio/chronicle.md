@@ -12957,3 +12957,47 @@ second clean at 804/804 first try. Three chronicles in a row have reported 553 b
 **Milestone 21 stands at 5 of 6.** One arc left, BACKLOG-162 — the switch noticed and missed — and it is
 the arc every piece of the last three cycles was quietly building: a record that counts switches, a
 `previousId`, a persona that belongs to an observer rather than to a seat, and now a self worth missing.
+
+## Cycle 165 — artist: BACKLOG-543, the sulk, on a host built six hours earlier
+
+**Nine cycles, two corrections, and the fix took one evening once the host existed.** The sulk has been
+the loudest un-drawn thing in the mark family since cycle 156, and the reason it stayed un-drawn was never
+taste — it was that the 😒 lived on `activityMarks`, a typed `Text[]`, where no rig can be blitted. The
+cycle-156 Artist corrected the seed's false host claim; the cycle-157 Validator then declared the item
+unblocked and the Artist corrected *that* an hour later in the same cycle. Tonight the structure track
+built `refreshSulkMarks` as BACKLOG-533's reachable half, and the rig went in on top of it.
+
+**It is the family's first mark that is a posture rather than a feature.** Ten siblings are an eye, a pair
+of eyes, a thought, a wave, a pair of hands, two need tells and a wilt. This one is a head turned away with
+a shoulder raised across it. The seed asked for a turned-away head and was right about why — a mouth does
+not survive twelve pixels and a rotated head does — but a turned-away head on its own was not takeable,
+because `missed_aloof` is already a thought turned away and unlit and two of those in one family is how a
+player stops reading either. So it takes the other half of its own name: the funk seam's kinds are `sulk`
+and `shoulder`, and the shoulder is drawn literally, rising across the head from lower left to upper right.
+A low blob with a diagonal slab over it is a silhouette nothing else here has.
+
+**The head has no face at all**, and a spec says so rather than the author's eye — every sibling that is a
+head speaks with an eye, and this one speaks by having turned the eye away from you. Cool slate rather than
+the wilt's warm rose: a sulk is withdrawal, not damage, and at this size temperature is all that carries it.
+**94 lit cells**, claimed against every sibling per the cycle-155 correction — below `rouse` (110) and
+`glance` (97), above the other eight, which is what a whole posture costs against a feature — with the
+brightest pixel far dimmer than `rouse`'s catchlight so the mark still recedes. The census in
+`cycle-066-propart` went red on the eleventh key and was **extended, not loosened**. **The family is eleven.**
+
+And the e2e assertion was tightened the moment the rig existed: `__markKind` was accepting *text or image*,
+which was right for the hour the host shipped alone and wrong afterwards, because it would let the rig
+quietly stop being blitted and still pass. It asserts `image` now.
+
+**Gate:** build clean, **2965 unit** (+15), **803 passed / 1 conditionally skipped** e2e.
+
+**A correction to tonight's QA note, made in the same session rather than left standing.** QA reported "no
+flake tonight". That held for the runs it saw; it did not hold for the Artist's. The full run after the rig
+landed lost `cycle-095-homesick` on a boot timeout, which passed isolated and passed on a fresh full run at
+803/803 — the BACKLOG-553 stall signature, one victim out of four runs. Lighter than the last three cycles,
+not absent. 553 is now top of the Structure Track and `cycle - lastSoloCycle` is 14.
+
+The skipped spec is pre-existing and not tonight's: `cycle-154-marks` calls `test.skip` on itself when no
+vigil is dispatched at the hour it stages, which is a dice roll it has always been subject to.
+
+**Art queue is down to 1** — BACKLOG-539 alone, still host-blocked on the plaque being a single `Text`,
+which is the item the Structure-smith seeded tonight as BACKLOG-558.
