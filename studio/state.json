@@ -2,7 +2,7 @@
   "cycle": 165,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-156: Per-keeper persona authored from lore",
-  "structureItem": null,
+  "structureItem": "BACKLOG-533: The founding-state declaration lint (ratchet) + the sulk mark host",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-22T08:11:46.672Z",
-    "structure-smith": "2026-09-21T02:14:00.000Z",
+    "structure-smith": "2026-09-22T08:12:57.947Z",
     "designer": "2026-09-21T02:22:00.000Z",
     "code-planner": "2026-09-21T02:30:00.000Z",
     "coder": "2026-09-21T03:40:00.000Z",

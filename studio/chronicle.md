@@ -12859,3 +12859,11 @@ cached persona when the watcher changes.
 The watcher gets an inside. `Keeper.backstory` has been authored since cycle 155 and rendered nowhere;
 BACKLOG-156 is next-up. No social seeding (190 ≫ 12) and art seeding declined on purpose — the art
 queue is short on hosts, not on items, and tonight's structure track builds one.
+
+## Cycle 165 — structure-smith
+
+BACKLOG-533 taken on its date, as a **ratchet** lint: 251 of 280 specs do not declare a founding state,
+so the rule is absolute for new files and the 251 are a frozen baseline that may only shrink. Its
+reachable half is the sulk mark's host — nine cycles blocked, two corrections, and the funk record it
+was waiting for shipped at 544. No solo cycle: 553 keeps its standing but 533 came due tonight.
+Seeded 557 / 558, both hosts, because the art queue is short on hosts and not on items.
