@@ -12853,3 +12853,9 @@ complete**. Both remaining arcs are lore — 156 (the authored keeper persona) a
 noticed and missed) — and tonight's record is the field both were blocked on. 156 is the obvious next
 pick: it has a slot to cache into and `switchTo` has already decided, and tested, what happens to a
 cached persona when the watcher changes.
+
+## Cycle 165 — lore-smith
+
+The watcher gets an inside. `Keeper.backstory` has been authored since cycle 155 and rendered nowhere;
+BACKLOG-156 is next-up. No social seeding (190 ≫ 12) and art seeding declined on purpose — the art
+queue is short on hosts, not on items, and tonight's structure track builds one.
