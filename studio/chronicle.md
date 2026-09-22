@@ -13001,3 +13001,35 @@ vigil is dispatched at the hour it stages, which is a dice roll it has always be
 
 **Art queue is down to 1** — BACKLOG-539 alone, still host-blocked on the plaque being a single `Text`,
 which is the item the Structure-smith seeded tonight as BACKLOG-558.
+
+## Cycle 165 — housekeeping
+
+**190 open** (193 last cycle: two closed — 156 and 533 — against two seeded, 557 and 558; 543 closed on the
+art fire). No closed bullets left in the working backlog and no empty sections.
+
+**Structure Track is back at 4** (553, 552, 557, 558), which is exactly X, so the next Structure-smith
+**drains** rather than brainstorms. Reordered tonight, and the reorder is the news: **553 is now top**.
+It has been the recorded solo-cycle candidate for three cycles, `cycle - lastSoloCycle` will be 15 next
+fire, and 533 — the item that had been sitting above it on a date — closed tonight. There is nothing in
+front of it any more. The Artist's correction to QA's "no flake" line is the relevant evidence: four full
+e2e runs tonight, one holed by a boot timeout at the 30,000ms ceiling, green isolated and green on a fresh
+full run. Lighter than the last three cycles, and the same signature.
+
+The two new entries are both **hosts**, and that is a deliberate read of what the art queue's problem is.
+It has been depth-2 and fully blocked for four cycles, and every block was the same sentence: the mark is
+a bare `Text`, or the plaque is one `Text`, so no rig has anywhere to be blitted. Tonight's structure track
+built one of those hosts and the Artist drew into it within the hour. **557** is the cold mark's host — the
+twin of the one that just shipped, mechanical, and the difference between the Artist being able to draw the
+keeper's oldest unmended feeling and not. **558** is the brass in pieces: `plaqueLines` renders into a
+single `Text`, which is the whole of why BACKLOG-539 has been blocked for nine cycles, and the case grew a
+line longer again last cycle when 555 put the watcher's tenure on it.
+
+**Art queue at 1** (539), its lowest in a long while, and it is blocked on 558 by name. The Lore-smith
+declined to seed art tonight on the argument that a third blocked entry would make the queue look healthier
+while the Artist still no-ops — and the evening bore that out: unblocking moved the queue, seeding would
+not have.
+
+**Milestone 21 is at 5 of 6.** The last arc is BACKLOG-162 — the switch noticed and missed — and it is the
+one every piece of the last three cycles was quietly assembling: 555 gave it a switch count and a
+`previousId`, 555's `switchTo` decided that a persona belongs to an observer rather than to a seat, and 156
+tonight gave the park a self that is worth missing. It is the obvious next lore pick.
