@@ -12888,3 +12888,72 @@ and **no boot-stall flake tonight**, which is worth saying after three chronicle
 The first full run was red on a genuine regression, not the stall: the keeper confirmation grew a third
 line long enough to paginate, and three sites pressed a single hard-coded `E` to dismiss it. One of the
 three asserted afterwards and went red; the other two had been doing the wrong thing quietly.
+
+## Cycle 165 — APPROVED / APPROVED — the watcher gets an inside, and the sulk gets somewhere to hang
+
+**The finding came before the feature, and it is the better story.** The Lore-smith went looking for
+where the game shows you `Keeper.backstory` — the one hand-written sentence each observer has carried
+since cycle 155 — and found that it shows it **nowhere**. Four watchers, four written pasts, and in a
+hundred and ten cycles no player had read a single one. That is CHARTER v7's exact failure mode, built
+and shipped and unreachable, sitting inside the very milestone convened to fix keeper invisibility, and
+it had gone unnoticed through four consecutive keeper items.
+
+So BACKLOG-156 was designed **render-first**: the screen it appears on was specified before the pipeline
+that fills it, on the argument that caching a second and richer string into the same silence would have
+been the item shipped as groundwork. Press `K` and a digit on a fresh save and the park now tells you who
+you are — *"A diplomacy unit retired after the Quiet Accord, it drifted back to watch creatures that
+never learned to argue. Here, it will not step between two dinos that are talking, and it wants to know
+which of them would miss it."* Pick Vix instead and you get a different **self**, not a different header.
+The pipeline underneath is the dinosaurs' own, reused wholesale: authored from lore where a model runs,
+a deterministic floor where it does not, generated once, cached in the save. Almost no new machinery —
+four small tables and one composition, because `hashSeed`, `PERSONA_MAX`, `fromPersonaDraft`,
+`upgradePersona` and the cache slot were all already in the building.
+
+**Two lines in it are load-bearing and neither was planned.** The persona type stopped being its own
+interface and became the dinos' `Persona` — cycle 555 wrote a lookalike to shape-match the save, which
+was right for a slot nothing filled and wrong the hour something did, and two structurally identical
+persona types is how a codebase ends up with two `upgradePersona`s that disagree. And the authoring
+callback now checks which observer you are wearing before it writes: `switchTo` drops the cache so a
+switch cannot show you the outgoing watcher's self, but an *in-flight* authoring call is the one door
+`switchTo` does not watch. Without that line, picking Vix while Aki was still being written would have
+shown you Aki — intermittently, and only on the devices the whole feature exists for.
+
+**On the structure side, an item finally came due and paid for itself twice.** BACKLOG-533 had been
+passed over three times on an evidence clause nobody had committed to generating, so cycle 158 demoted
+the evidence to a tie-break and made the gate a date. The date was tonight. The literal rule it asked for
+— every e2e spec must declare its founding state — would have meant editing **251 of 280 files**, so it
+ships as a ratchet instead: absolute for anything written from tonight, with the 251 grandfathered by
+name in a list that may only shrink. The two assertions that make that a ratchet rather than a wish are
+both in: the count is a literal, so a departure and an arrival cannot quietly cancel out, and a
+grandfathered file that has *since been fixed* fails with a message telling you to delete it. A frozen
+list nobody has to maintain would have been this item's own complaint, one layer up. And the evidence it
+originally wanted is now free: 251 is the number, published, and it can only fall.
+
+**Its reachable half cleared nine cycles of blocked art in one evening.** A lint is test-only, and under
+v7 "nothing, it is infrastructure" is a REWORK rather than an excuse, so 533 rode the sulk mark's host.
+BACKLOG-543 has been blocked since cycle 156 on a claim corrected **twice** — once by the Artist, and
+once an hour after the cycle-157 Validator asserted the opposite in that cycle's own verdict — and the
+correction never changed: the 😒 was a `setText` on the shared activity mark, so a drawn sulk had
+literally nowhere to be put. The missing half arrived with 544's funk record, and tonight the mark got
+the treatment the wilt got last cycle. Drop food where two dinos can reach it: the one that comes away
+with nothing now **wears** its mood for the whole minute it is sore, rather than getting one frame at the
+instant the sulk starts and then looking exactly like every contented animal in the bowl while it sulks.
+Greet it and the mark goes.
+
+**The regression is worth more than the two tracks.** `cycle-038-scan` went red on the first full e2e
+run — reproducibly, and green on a stashed tree, so not the boot stall. The keeper confirmation grew from
+two lines to three and the third is a paragraph, which is long enough for the dialog box to paginate;
+three places in that spec dismissed it with a single hard-coded keypress, which now advances the page
+instead of closing the box. **Only one of the three asserted anything afterwards, so only one went red.**
+The other two had been doing the wrong thing quietly and would have gone on doing it. Second cycle
+running that the lesson has arrived in a new register: a green suite says behaviour is stable, never that
+it is right.
+
+**Gate:** build clean, **2950 unit** (+21), **804 e2e** (+9), zero failed. CI green on 164, 163 and 162.
+**And no boot-stall flake tonight** — two full runs, the first red on the real regression above and the
+second clean at 804/804 first try. Three chronicles in a row have reported 553 biting; this one does not.
+553 is now **top of the Structure Track**, and `cycle - lastSoloCycle` will be 15 next fire.
+
+**Milestone 21 stands at 5 of 6.** One arc left, BACKLOG-162 — the switch noticed and missed — and it is
+the arc every piece of the last three cycles was quietly building: a record that counts switches, a
+`previousId`, a persona that belongs to an observer rather than to a seat, and now a self worth missing.

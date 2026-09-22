@@ -9,7 +9,7 @@
 ## Current milestone
 
 **Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it**
-**Status:** ACTIVE (opened cycle 163)
+**Status:** ACTIVE (opened cycle 163) — 5 of 6 arcs, one lore arc left (BACKLOG-162)
 
 The keeper has been selectable since cycle 37 and, four keeper items later, is still very nearly a cursor.
 `keeperAddress` lets a fond dino say your designation (276/278) — but there is exactly **one**
@@ -23,7 +23,7 @@ not from the tenth heart.
 
 **Lore arcs:**
 - [x] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
-- [ ] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156)
+- [x] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156 — shipped cycle 165) — *and the arc's find was the silence it shipped into: `Keeper.backstory` had been authored since cycle 155 and rendered **nowhere**, four watchers with four written pasts that no player had ever read, unnoticed through four keeper items inside the milestone convened to fix keeper invisibility. The item was designed render-first because of it — the picker's confirmation specified before the pipeline that fills it.*
 - [x] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157 — shipped cycle 164 as AETHER-1's **Read the Room**) — *and the arc's real find was that the ability had been specified by accident 126 cycles earlier: Aki's refusal to scan reads "I read the room, not the soul", and making that sentence true was a better read on the choice than the sky-nudge the item queued. The nudge was declined on the reachability bar, not on taste — its payoff sits twelve real minutes past boot, and an ability a new player cannot reach is the defect v7 exists to stop.*
 - [ ] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162)
 
