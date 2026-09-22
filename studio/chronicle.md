@@ -12873,3 +12873,10 @@ Seeded 557 / 558, both hosts, because the art queue is short on hosts and not on
 156 designed render-first: `Keeper.backstory` has been authored since cycle 155 and rendered **nowhere**,
 so the surface (the picker confirmation) is specified before the pipeline that fills it. 533 ships as a
 ratchet with an asserted baseline length, plus the sulk mark's host. 13 lore criteria, 12 structure.
+
+## Cycle 165 — code-planner
+
+Reuse table first: 156 is four authored tables and one composition function, because `hashSeed`,
+`PERSONA_MAX`, `fromPersonaDraft`, `upgradePersona`, `allowAmbient` and the cache slot all already exist.
+One direction decision recorded — `ai/` must not import from `keeper/`, so the prompt builder takes the
+lore string as a parameter rather than importing it. Structure part B lands before the lint.
