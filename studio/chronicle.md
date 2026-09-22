@@ -12880,3 +12880,11 @@ Reuse table first: 156 is four authored tables and one composition function, bec
 `PERSONA_MAX`, `fromPersonaDraft`, `upgradePersona`, `allowAmbient` and the cache slot all already exist.
 One direction decision recorded — `ai/` must not import from `keeper/`, so the prompt builder takes the
 lore string as a parameter rather than importing it. Structure part B lands before the lint.
+
+## Cycle 165 — qa
+
+25/25 criteria pass, none amended. Build clean, 2950 unit, 804 e2e, zero failed on the second full run —
+and **no boot-stall flake tonight**, which is worth saying after three chronicles in a row that had one.
+The first full run was red on a genuine regression, not the stall: the keeper confirmation grew a third
+line long enough to paginate, and three sites pressed a single hard-coded `E` to dismiss it. One of the
+three asserted afterwards and went red; the other two had been doing the wrong thing quietly.
