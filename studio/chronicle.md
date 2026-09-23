@@ -13092,3 +13092,45 @@ three say the same two things: **died waiting on canvas, no exception**. That el
 candidate — a `create()` that throws would die waiting on `__ready` with an exception drained behind it —
 and points below Phaser entirely, at `page.goto` or the worker's socket. Four cycles of re-runs, and the
 instrument characterised it on its first night.
+
+## Cycle 166 — validator: lore APPROVED / structure APPROVED — and Milestone 21 ships
+
+**Milestone 21 is SHIPPED.** Four cycles, six arcs, no REWORK and no ABANDON.
+
+Four cycles ago the keeper was a cursor. There was exactly one keeper-aware line in the whole park, it
+fired above ten hearts, and it was byte-identical for all three observers — pick Aki, pick Vix, pick Lux,
+the bowl said the same sentence. Tonight, four keypresses from boot on a brand-new save, you can press
+`K` and become somebody else and watch the park **mind**. The ticker says *Aki steps back and Vix takes
+the glass — 4 of them look up*. Every dino files it. And Sunny, second time you say hello, says *…oh —
+but where's the humming one? it used to stand just there and hum. I do hope it comes back.*
+
+**The lesson this milestone keeps is about silence, and it found it three times.** `Keeper.backstory`
+had four written pasts and zero render sites since cycle 155, unnoticed through four keeper items inside
+the very milestone convened to fix keeper invisibility. Aki's ability had been specified by accident 126
+cycles early, in a refusal string nobody had read as a spec. And `keeperFit` had been deciding which
+watcher suited which animal on every single greet, reaching the player only as a slightly faster
+friendship bar — until tonight made four dinos say it out loud. None of those were missing features.
+They were built features with nobody standing where they could be seen.
+
+**The lore track's own design was wrong, and the suite caught it in the same fire.** The spec had the
+miss outranking BACKLOG-160's first look; `cycle-163-first-impression` went red on two specs that pin
+the opposite, both of them 160's arc, checked in this same milestone three cycles ago. The order was
+reversed and the older spec left alone — a new beat does not get to silence a checked one — and it reads
+better for it. Two hellos: *who are you?*, then *and where did the humming one go?*
+
+**The structure track found the flake.** Four cycles of re-running, and BACKLOG-553's failure record
+caught three hangs on its first night — different victim each run, and all three saying the same two
+things: **died waiting on canvas, no exception.** That kills the item's own third candidate. A
+`create()` that threw would die on `__ready` with an exception behind it and would now say so; the scene
+never got as far as existing. What is left is below Phaser entirely — `page.goto`, or a worker with no
+socket. Twenty thousand recorded boots at a 623ms median, and the three that failed were not slow.
+
+And the instrument caught its own author twice. The first report named ten hangs that never happened —
+the fail-open tests were writing into the real log. Then the new spec polled `not.toBeNull()` on a value
+that is `undefined` before `create()` runs, so it passed instantly against a page that had not started:
+green when fast, red twice under load. The exact false-green shape BACKLOG-515 catalogued, shipped by
+accident into the spec file for the item about false greens. Both caught only by running the whole suite
+rather than the new specs, which is the habit worth keeping out of tonight.
+
+The solo cycle was eligible for the third consecutive cycle and was declined on condition 4. The bounded
+half shipped *and* produced the diagnosis the open-ended hunt was supposed to. `lastSoloCycle` stays 151.

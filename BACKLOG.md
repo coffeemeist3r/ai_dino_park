@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-553 [infra] The boot that hangs, not the boot that is slow — 538's instrument measured the boot and retired 538's own hypothesis: worst boot **881ms** against a 30,000ms ceiling, so the four-cycle flake is a **stall**, not budget creep (full text in the cycle-161 block below).
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-558 [infra] The brass in pieces — `plaqueLines` renders into one `Text`, so no line on it can be drawn (full text in the cycle-165 block below).
@@ -80,7 +79,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Infra
 
-- [~] BACKLOG-553 [infra] The boot that hangs, not the boot that is slow — **filed by the cycle-161 Validator with the numbers attached, as 538's successor.** 538 shipped the instrument and the instrument immediately retired 538's own leading hypothesis. Across **1560 boots** over two full suite runs the median boot is **643ms**, the p95 is **735ms**, and the very worst is **881ms** — against a `BOOT_TIMEOUT` of 30,000ms, which leaves **97.1%** of the budget unused. Under the harness's deliberately hostile cold-parallel load (a cold dev server, no warm-up, N browsers at once) 4-way peaks at 1197ms and 8-way at 2229ms, so load scales the boot roughly linearly and this box would want something near **hundred-way** cold parallelism to reach the ceiling at all. The suite runs at two workers. **A boot that dies at 30,000ms is therefore ~34x its own p95: it is not slow, it hangs.** So stop looking for budget creep and look for a stall — the honest candidates, in order: a `page.goto` that never resolves against a dev server mid-restart; a worker whose context never gets a socket; a `WorldScene.create()` that throws partway and so never reaches the line that sets `__ready` (which would present *exactly* as this flake does, since `boot()` waits on that flag and the thrown error goes to a console nobody reads). **Start by making the harness catch one**: `boot()` now logs every boot, and a failed run should leave a line with `readyMs: null` and the spec's name, so the next attempt has a victim and a timestamp rather than a re-run — note that today the suite's clock only writes on the *success* path, which is the first gap to close. Consider draining `page.on('pageerror')` on a timeout too: a hang with an exception behind it is a different bug from a hang without one, and today the two are indistinguishable. Builds on 538 / 515 / 486 / 430.
 
 
 
@@ -194,7 +192,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Next-up is the already-queued **BACKLOG-157** (the distinct per-observer abilities, one per
 > cycle) — the operator's arc, and the beat that makes the choice of observer a real lens on play.
 
-- [~] BACKLOG-162 [emergent] The bowl remembers its watchers — switching observers mid-save isn't free-floating: each dino files a faint "the watcher changed" memory, and a dino with high friendship under the *old* observer may glance around for it in a wistful line. Identity persistence becomes something the cast tracks, not just the save file. Builds on 155 / 011 / 116.
 - [ ] BACKLOG-163 [pokemon] Observer dossier — the collection book gains a keeper page: your designation, era, backstory, ability, and running tallies under this observer (days watched, dinos befriended); the plaque adds "observed by VANTA-9". The chosen identity becomes legible standing, like everything else in the book. Builds on 155 / 021 / 058.
 
 ## Cycle 39 lore additions — the glass looks back (2026-06-09)

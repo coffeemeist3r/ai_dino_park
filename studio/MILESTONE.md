@@ -8,28 +8,8 @@
 
 ## Current milestone
 
-**Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it**
-**Status:** ACTIVE (opened cycle 163) — 5 of 6 arcs, one lore arc left (BACKLOG-162)
-
-The keeper has been selectable since cycle 37 and, four keeper items later, is still very nearly a cursor.
-`keeperAddress` lets a fond dino say your designation (276/278) — but there is exactly **one**
-keeper-aware line in the whole park, `fondGreeting` in `ai/brain.ts`, it fires only above ten hearts, and
-it is **byte-identical for all three observers**. Pick Aki, pick Vix, pick Lux: the bowl says the same
-sentence. The affinity math differs and nothing a player can *hear* does.
-
-This milestone closes that gap from both ends: the roster grows a watcher that is not a robot at all, and
-what the cast says starts depending on which of them you chose — from the **first** hello on a fresh save,
-not from the tenth heart.
-
-**Lore arcs:**
-- [x] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
-- [x] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156 — shipped cycle 165) — *and the arc's find was the silence it shipped into: `Keeper.backstory` had been authored since cycle 155 and rendered **nowhere**, four watchers with four written pasts that no player had ever read, unnoticed through four keeper items inside the milestone convened to fix keeper invisibility. The item was designed render-first because of it — the picker's confirmation specified before the pipeline that fills it.*
-- [x] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157 — shipped cycle 164 as AETHER-1's **Read the Room**) — *and the arc's real find was that the ability had been specified by accident 126 cycles earlier: Aki's refusal to scan reads "I read the room, not the soul", and making that sentence true was a better read on the choice than the sky-nudge the item queued. The nudge was declined on the reachability bar, not on taste — its payoff sits twelve real minutes past boot, and an ability a new player cannot reach is the defect v7 exists to stop.*
-- [ ] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162)
-
-**Structure arcs:**
-- [x] The roster is more than robots — a watcher from outside the machine category, picked at `K` and persisted like the rest, with a silhouette that reads as *not a machine* at 16x20 (BACKLOG-212, -554)
-- [x] The save remembers the watcher, not just which one it is — tenure, switch count, previous id, and a slot for the persona cache, so 156 and 162 have somewhere to land (BACKLOG-555 — shipped cycle 164) — *and the two decisions that mattered were both about what the record refuses to carry: a persona does not survive a switch (it belongs to the observer, not the seat), and a re-pick is not a switch. Both are things 156 and 162 would otherwise each have had to decide separately, and differently.*
+**No milestone is ACTIVE.** Milestone 21 shipped at cycle 166; the smiths draft Milestone 22 at the
+next cycle open — the Lore-smith writes the headline and the feel arcs, the Structure-smith the spine arcs.
 
 ---
 
@@ -49,6 +29,60 @@ not from the tenth heart.
 ```
 
 ## Shipped milestones
+
+### Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it — SHIPPED cycle 166 (opened cycle 163)
+
+Four cycles, six arcs, no REWORK and no ABANDON.
+
+Four cycles ago the keeper was a cursor. `keeperAddress` let a fond dino say your designation, and that
+was the whole keeper-aware surface of the game: one line, gated at ten hearts, **byte-identical for all
+three observers**. Pick Aki, pick Vix, pick Lux — the bowl said the same sentence.
+
+Now the roster has a watcher that is not a machine at all; the first hello already differs by which of
+them you picked, before any friendship is earned; your watcher has a self, authored from lore and cached
+in the save the way every dinosaur's has been since cycle 103, and you read it the moment you choose;
+one of them can read a room, because a joke at the diplomat's expense had been sitting in `keeper/scan.ts`
+since cycle 38 saying she could; the save remembers your tenure and the chassis you wore before; and
+changing your mind is something the cast files — and something four of them are sorry about.
+
+**The lesson worth keeping is about silence.** Three of the six arcs found the same defect from three
+directions: a thing that existed, was correct, and was rendered nowhere. `Keeper.backstory` had four
+hand-written pasts and zero render sites since cycle 155, unnoticed through four keeper items *inside
+the milestone convened to fix keeper invisibility*. Aki's ability had been specified by accident 126
+cycles early, in a refusal string nobody had read as a spec. And `keeperFit` had been computing exactly
+which watcher suited which animal on every greet, reaching the player only as a faster friendship bar.
+None of these were missing features. They were built features with nobody standing where they could be
+seen — the failure CHARTER v7 named, and evidently still the most common one this studio makes.
+
+The sequencing lesson from Milestone 20 held again. BACKLOG-162 could have been taken at any point and
+went last, because BACKLOG-555 had to rule first that a persona belongs to an observer rather than to a
+seat, and BACKLOG-156 had to give the watcher a self worth missing. Taken first it would have had to
+invent a switch record, and would have shipped thinner.
+
+**Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it**
+
+
+The keeper has been selectable since cycle 37 and, four keeper items later, is still very nearly a cursor.
+`keeperAddress` lets a fond dino say your designation (276/278) — but there is exactly **one**
+keeper-aware line in the whole park, `fondGreeting` in `ai/brain.ts`, it fires only above ten hearts, and
+it is **byte-identical for all three observers**. Pick Aki, pick Vix, pick Lux: the bowl says the same
+sentence. The affinity math differs and nothing a player can *hear* does.
+
+This milestone closes that gap from both ends: the roster grows a watcher that is not a robot at all, and
+what the cast says starts depending on which of them you chose — from the **first** hello on a fresh save,
+not from the tenth heart.
+
+**Lore arcs:**
+- [x] The first hello already differs by which watcher you picked — a deterministic per-observer shading of what a dino says, reachable before any friendship is earned (BACKLOG-160)
+- [x] Your watcher has a real persona authored from lore, the way the dinos do — generate-once, cached, persisted, with the procedural fallback (BACKLOG-156 — shipped cycle 165) — *and the arc's find was the silence it shipped into: `Keeper.backstory` had been authored since cycle 155 and rendered **nowhere**, four watchers with four written pasts that no player had ever read, unnoticed through four keeper items inside the milestone convened to fix keeper invisibility. The item was designed render-first because of it — the picker's confirmation specified before the pipeline that fills it.*
+- [x] A second distinct keeper ability that is a genuine read on your choice, not a number (BACKLOG-157 — shipped cycle 164 as AETHER-1's **Read the Room**) — *and the arc's real find was that the ability had been specified by accident 126 cycles earlier: Aki's refusal to scan reads "I read the room, not the soul", and making that sentence true was a better read on the choice than the sky-nudge the item queued. The nudge was declined on the reachability bar, not on taste — its payoff sits twelve real minutes past boot, and an ability a new player cannot reach is the defect v7 exists to stop.*
+- [x] Changing watchers mid-save is noticed — the cast files the change, and a dino close to the old one misses it (BACKLOG-162 — shipped cycle 166) — *and the arc's find was that the item's own trigger was the unreachable one: it asks for a dino with high friendship under the old observer, and on day one nobody is fond of anybody. The **fit** door shipped beside it, and it is what makes the beat exist at all — `keeperFit` has been deciding which watcher suits which animal since cycle 155 and had only ever reached the player as a slightly faster friendship bar. The design was also wrong about precedence, and the suite refuted it inside the hour: the miss was specified to outrank BACKLOG-160's first look, which would have silenced an arc checked in this same milestone three cycles earlier.*
+
+**Structure arcs:**
+- [x] The roster is more than robots — a watcher from outside the machine category, picked at `K` and persisted like the rest, with a silhouette that reads as *not a machine* at 16x20 (BACKLOG-212, -554)
+- [x] The save remembers the watcher, not just which one it is — tenure, switch count, previous id, and a slot for the persona cache, so 156 and 162 have somewhere to land (BACKLOG-555 — shipped cycle 164) — *and the two decisions that mattered were both about what the record refuses to carry: a persona does not survive a switch (it belongs to the observer, not the seat), and a re-pick is not a switch. Both are things 156 and 162 would otherwise each have had to decide separately, and differently.*
+
+---
 
 ### Milestone 20: What you feed them is a decision — the park has an opinion about it, and a memory of it — SHIPPED cycle 162 (opened cycle 159)
 
