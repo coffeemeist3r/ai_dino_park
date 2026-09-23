@@ -13033,3 +13033,9 @@ not have.
 one every piece of the last three cycles was quietly assembling: 555 gave it a switch count and a
 `previousId`, 555's `switchTo` decided that a persona belongs to an observer rather than to a seat, and 156
 tonight gave the park a self that is worth missing. It is the obvious next lore pick.
+
+## Cycle 166 — lore-smith
+
+Milestone 21's last arc, and the only pick on the board: **BACKLOG-162**, the bowl noticing that the
+watcher changed. Nothing seeded — the social queue is ~186 deep against a cap of 12, and the art queue
+hit its cap of 3 by being *unblocked* rather than fed, which is the outcome last cycle argued for.
