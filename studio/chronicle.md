@@ -13134,3 +13134,25 @@ rather than the new specs, which is the habit worth keeping out of tonight.
 
 The solo cycle was eligible for the third consecutive cycle and was declined on condition 4. The bounded
 half shipped *and* produced the diagnosis the open-ended hunt was supposed to. `lastSoloCycle` stays 151.
+
+## Cycle 166 — artist: no-op, and the queue's bookkeeping was wrong
+
+**Nothing drawn.** The art queue holds exactly one open item, **BACKLOG-539** (the day-count on the
+brass), and it is host-blocked by name on **BACKLOG-558** — `plaqueLines` renders into a single
+`Phaser.GameObjects.Text`, so there is nowhere on the brass for a rig to be blitted. 558 is queued on the
+Structure Track and unshipped. Drawing a `streak` rig tonight would land it in `unplacedRigs()` and redden
+`cycle-145-reachability`, and registering it in `worldPlacedProps` to silence that would be a false entry
+in the register that exists to catch false entries — the correction this queue has already had to make
+twice, once by the Artist and once an hour after a Validator asserted the opposite.
+
+**The bookkeeping was wrong, and that is the fire's actual output.** BACKLOG-543 shipped at cycle 165
+(commit `4a3ca0f`, the rig is in `propArt.ts` and its specs are green) and its BACKLOG bullet was **never
+marked `[x]`** — the art fire ran its commit step and skipped its close-out step, and the cycle-165
+housekeeping took the queue depth from the chronicle rather than from the file, so the two agreed with
+each other and both disagreed with the backlog. Closed retroactively tonight, with the drift named in the
+archive rather than quietly corrected.
+
+Worth one line for the Structure-smith next cycle: the Structure Track is now at **3**, below X, so it
+brainstorms — but **557 and 558 are the two items that unblock a queue which has now no-op'd for a second
+consecutive fire**, and both are hosts of exactly the kind cycle 165 proved works. The Artist drew 543
+within hours of its host existing. Build the host; the rig follows the same evening.
