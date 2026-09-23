@@ -13048,3 +13048,13 @@ the failure-path instrument the item names first — fits beside a lore track, a
 have sat out Milestone 21's last arc for a hunt that does not need the room. Its reachability rider is
 the defect itself: a `create()` that throws is caught and **said out loud to the player**, and the
 harness drains the same record on a timeout so a hang finally leaves a victim behind.
+
+## Cycle 166 — designer
+
+Both tracks specced. The lore track's load-bearing decision is the **precedence rule**: when a dino
+would say both its first-look aside and its miss aside, the miss wins and the first look waits for the
+next greet — two watcher clauses in one sentence is a paragraph, not a beat. The reachability door is
+the **fit** one (the old chassis suited this animal better), which needs no friendship and is true on
+day 1; the item's own fondness door ships beside it, not instead of it. The structure track's two
+halves are one mechanism: a guarded `create()` that says a boot failure out loud, drained by the
+harness on a timeout so a hang finally leaves a victim.
