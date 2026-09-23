@@ -13058,3 +13058,12 @@ the **fit** one (the old chassis suited this animal better), which needs no frie
 day 1; the item's own fondness door ships beside it, not instead of it. The structure track's two
 halves are one mechanism: a guarded `create()` that says a boot failure out loud, drained by the
 harness on a timeout so a hang finally leaves a victim.
+
+## Cycle 166 — code-planner
+
+Both tracks planned, structure first because it wraps `create()`. `MISS_MARGIN` was **measured before
+it was written down**: across the founding roster's name-seeded traits and all twelve ordered watcher
+pairs, the smallest per-dino maximum fit drop is Thornback's 0.63, so 0.5 is cleared by all eight — and
+the two-keypress switch a new player actually makes (Aki to Vix) leaves four dinos missing Aki at zero
+friendship. The unit test recomputes that from `ROSTER` instead of pinning the numbers, so a roster
+change that made the constant dormant goes red rather than quiet.
