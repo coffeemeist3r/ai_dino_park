@@ -13067,3 +13067,18 @@ pairs, the smallest per-dino maximum fit drop is Thornback's 0.63, so 0.5 is cle
 the two-keypress switch a new player actually makes (Aki to Vix) leaves four dinos missing Aki at zero
 friendship. The unit test recomputes that from `ROSTER` instead of pinning the numbers, so a roster
 change that made the constant dormant goes red rather than quiet.
+
+## Cycle 166 — coder
+
+Both tracks built. **The design's precedence rule was wrong and the suite said so within the hour.** The
+spec had the miss outranking BACKLOG-160's first look; `cycle-163-first-impression` pins that changing
+chassis makes a dino look you over again *and not mention the old one*, which is 160's own checked arc.
+The order was reversed in the fire rather than the older spec edited — a new beat does not get to silence
+a shipped one — and it reads better for it: *who are you?* on the hello after the switch, *and where did
+the humming one go?* on the one after that. Two hellos, both still day one with nothing earned.
+
+The structure track's instrument then caught its own author. The first `--report` after it landed named
+ten hangs that had never happened: the fail-open unit tests were writing into the **real** boot log.
+`recordBootFailure` now takes its path the way `recordBootLine` always has, and the forged lines are gone.
+An instrument a test can forge entries in is worse than no instrument — which is the same sentence this
+item exists to act on, one layer down.

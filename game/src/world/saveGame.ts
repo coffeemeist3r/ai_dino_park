@@ -80,6 +80,13 @@ export interface SaveData {
    * fixture. Left absent when the map is empty so an old save round-trips to itself exactly.
    */
   metWatcher?: Record<string, string>;
+  /**
+   * Which dinos have already said their piece about the watcher that left (BACKLOG-162), dino name →
+   * the keeper id worn when they said it. Same shape and same additive rules as `metWatcher` above, and
+   * deliberately a *second* map rather than a reuse of it: `metWatcher` is what makes the first look
+   * fire, and overloading it would make one beat silence the other.
+   */
+  toldOfSwitch?: Record<string, string>;
   /** Each dino's generate-once persona (BACKLOG-103). Additive; absent → {} (regenerated deterministically).
    *  `source` kept as plain string so saveGame stays free of an ai import. */
   personas?: Record<string, { text: string; source: string }>;
@@ -337,6 +344,21 @@ export function deserialize(json: string): SaveData | null {
       out[k] = met[k] as string;
     }
     metWatcher = out;
+  }
+
+  // toldOfSwitch is additive (BACKLOG-162) — absent in older saves, which is correct: an old save simply
+  // has nobody who has been told yet, and nobody has switched watchers in it either. Same shape and
+  // same validation as metWatcher above.
+  let toldOfSwitch: Record<string, string> | undefined;
+  if (o.toldOfSwitch !== undefined) {
+    if (typeof o.toldOfSwitch !== 'object' || o.toldOfSwitch === null) return null;
+    const told = o.toldOfSwitch as Record<string, unknown>;
+    const out2: Record<string, string> = {};
+    for (const k of Object.keys(told)) {
+      if (typeof told[k] !== 'string') return null;
+      out2[k] = told[k] as string;
+    }
+    toldOfSwitch = out2;
   }
 
   // personas is additive (BACKLOG-103) — absent in older saves (left undefined; the caller
@@ -1056,6 +1078,7 @@ export function deserialize(json: string): SaveData | null {
     gratitude,
     lastTone,
     metWatcher,
+    toldOfSwitch,
     personas,
     keeperId,
     keeper,

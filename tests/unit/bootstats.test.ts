@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 // @ts-expect-error — plain .mjs test infra, deliberately outside the game's TS build (BACKLOG-538)
 import { DEFAULTS, formatSummary, parseArgs, parseLog, percentile, summarize } from '../../scripts/bootstats.mjs';
-import { recordBootLine } from '../e2e/helpers';
+import { recordBootLine, recordBootFailure } from '../e2e/helpers';
 
 /**
  * BACKLOG-538 — the arithmetic behind the boot-flake instrument.
@@ -93,5 +93,112 @@ describe('the boot clock fails open', () => {
     // A path *through* an existing file can never be a directory entry, on any platform.
     const impossible = `${__filename}/nope.jsonl`;
     expect(() => recordBootLine(impossible, { readyMs: 1 })).not.toThrow();
+  });
+});
+
+/**
+ * BACKLOG-553 — the failures the clock used to throw away.
+ *
+ * 538 measured only the boots that worked, which is why four cycles of this flake produced four re-runs
+ * and zero victims. A hang is still kept out of every *number* (counting it as a zero would flatter the
+ * median) but it is no longer invisible.
+ */
+describe('failed boots', () => {
+  const failed = (extra: Record<string, unknown> = {}) => ({ ms: null, label: 'a spec', ...extra });
+
+  it('counts and names a boot that never came up, without letting it into the numbers', () => {
+    const s = summarize([{ ms: 700, label: 'ok' }, failed({ label: 'the hang', failedAt: 'ready' })])!;
+    expect(s.count).toBe(1);
+    expect(s.max).toBe(700);
+    expect(s.failed).toBe(1);
+    expect(s.failures).toEqual([{ label: 'the hang', failedAt: 'ready', hadException: false }]);
+  });
+
+  it('reports the failures even when every single boot hung — the run worth studying most', () => {
+    const s = summarize([failed({ failedAt: 'canvas' })])!;
+    expect(s).not.toBeNull();
+    expect(s.count).toBe(0);
+    expect(s.failed).toBe(1);
+  });
+
+  it('still has no answer for no samples at all', () => {
+    expect(summarize([])).toBeNull();
+  });
+
+  it('tells a hang with an exception behind it from a hang without one — they are different bugs', () => {
+    const withErr = summarize([failed({ pageErrors: ['boom'] })])!;
+    const withBootErr = summarize([failed({ bootError: { message: 'boom' } })])!;
+    const bare = summarize([failed({ pageErrors: [] })])!;
+    expect(withErr.failures[0].hadException).toBe(true);
+    expect(withBootErr.failures[0].hadException).toBe(true);
+    expect(bare.failures[0].hadException).toBe(false);
+  });
+
+  it('says which wait died, or says it does not know, rather than guessing', () => {
+    expect(summarize([failed({ failedAt: 'canvas' })])!.failures[0].failedAt).toBe('canvas');
+    expect(summarize([failed()])!.failures[0].failedAt).toBe('unknown');
+  });
+});
+
+describe('formatSummary with failures', () => {
+  it('prints nothing new when there are none — every existing assertion keeps holding', () => {
+    expect(formatSummary(summarize([{ ms: 8000, label: 'x' }]), 30_000)).not.toContain('failed');
+  });
+
+  it('names each failure and whether an exception was behind it', () => {
+    const out = formatSummary(
+      summarize([{ ms: 700, label: 'ok' }, { ms: null, label: 'the hang', failedAt: 'ready', pageErrors: ['boom'] }]),
+      30_000,
+    );
+    expect(out).toContain('failed      1');
+    expect(out).toContain('the hang');
+    expect(out).toContain('ready');
+    expect(out).toContain('exception behind it');
+  });
+});
+
+/**
+ * The fail-open proof, extended to the failure path (BACKLOG-553) — where it matters more than on the
+ * success path, because this code runs while a spec is *already* failing and a second failure on top of
+ * it hides the first.
+ */
+describe('the failure record fails open too', () => {
+  // Every case writes to a path that can never be a directory entry on any platform. That is the same
+  // trick the fail-open proof above uses, and here it is doing double duty: the first run of this
+  // instrument had these tests pointed at the real log and they forged ten hangs into it, which the very
+  // next `--report` dutifully named. A test must not be able to write the log it is testing.
+  const unwritable = `${__filename}/nope.jsonl`;
+
+  it('does not throw when the log path cannot be written', async () => {
+    await expect(
+      recordBootFailure({ evaluate: async () => null } as never, {
+        canvasMs: null,
+        pageErrors: [],
+        err: new Error('timeout'),
+        path: unwritable,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('does not throw when handed something that is not a page at all', async () => {
+    await expect(
+      recordBootFailure({} as never, {
+        canvasMs: null,
+        pageErrors: [],
+        err: 'not even an Error',
+        path: unwritable,
+      }),
+    ).resolves.toBeUndefined();
+  });
+
+  it('does not throw when the page it is questioning has gone away', async () => {
+    await expect(
+      recordBootFailure({ evaluate: async () => { throw new Error('page closed'); } } as never, {
+        canvasMs: 700,
+        pageErrors: ['boom'],
+        err: new Error('timeout'),
+        path: unwritable,
+      }),
+    ).resolves.toBeUndefined();
   });
 });

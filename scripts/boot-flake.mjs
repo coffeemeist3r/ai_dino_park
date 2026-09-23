@@ -158,8 +158,17 @@ function report(opts) {
     console.log(`no boot log at ${LOG} — run the suite or the harness first`);
     return 1;
   }
-  const entries = parseLog(text).filter((e) => Number.isFinite(e.readyMs));
-  const samples = entries.map((e) => ({ ms: e.readyMs, label: e.label ?? e.spec ?? '(unnamed)' }));
+  // BACKLOG-553: the failed boots are no longer filtered out here. `summarize` keeps them out of every
+  // number and reports them as their own block — the whole point being that a hang used to leave the
+  // report entirely, which is why four cycles of this flake produced re-runs instead of a victim.
+  const entries = parseLog(text);
+  const samples = entries.map((e) => ({
+    ms: e.readyMs,
+    label: e.label ?? e.spec ?? '(unnamed)',
+    failedAt: e.failedAt,
+    pageErrors: e.pageErrors,
+    bootError: e.bootError,
+  }));
   const bySource = new Set(entries.map((e) => e.source));
   console.log(`${LOG} — sources: ${[...bySource].join(', ') || 'none'}\n`);
   console.log(formatSummary(summarize(samples), opts.ceiling));

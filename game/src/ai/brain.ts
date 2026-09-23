@@ -20,6 +20,7 @@ import { WebLLMBrain } from './webllmBrain';
 import { rand } from '../world/rng';
 import { theZone } from '../world/zones'; // BACKLOG-499
 import { watcherAside } from '../keeper/voice'; // BACKLOG-160
+import { missAside } from '../keeper/succession'; // BACKLOG-162
 
 export interface NPCContext {
   name: string;
@@ -40,6 +41,13 @@ export interface NPCContext {
    * `keeperName` above is what the dino calls you; this is what it thinks of the thing standing there.
    */
   watcher?: string;
+  /**
+   * The **departed** observer's id (BACKLOG-162), set only on this dino's first greet after a switch it
+   * minded. `watcher` above is what it makes of the thing standing there; this is what it made of the
+   * thing that left. When both are set the **first look** wins and this waits for the next hello — see
+   * the aside site for why that order, and which spec decided it.
+   */
+  missed?: string;
   /** Pressing hunger (need-drive 371 over threshold): the dino lets it slip in its line (BACKLOG-368). */
   hungry?: boolean;
   /** If set, the name of the carnivore that just chased this dino — it greets rattled, naming it (BACKLOG-440). */
@@ -452,9 +460,22 @@ export function cannedReply(ctx: NPCContext): Reply {
   // watcher, so the whole existing chain keeps its exact numbers and a reply without a first impression is
   // byte-identical to before. Inserting a step without this would have quietly started truncating long
   // replies, and nothing in the suite would have gone red.
+  //
+  // BACKLOG-162 rides the same seam with the same `headroom` bookkeeping, and **yields to the first
+  // look**. The design specified this the other way round — the miss winning, on the reasoning that the
+  // watcher who left is the more interesting of the two — and the suite refuted it within the hour:
+  // `cycle-163-first-impression` pins that changing chassis makes a dino look you over again *and not
+  // mention the old one*, which is BACKLOG-160's own shipped arc. A new beat does not get to silence a
+  // checked one.
+  //
+  // The order that survives is also the better read. `metWatcher` re-arms for every dino on a switch, so
+  // the first look always lands on the hello right after it and the miss lands on the one after that:
+  // *who are you?* first, *and where did the humming one go?* second. Two hellos, both still on day one
+  // with nothing earned, and the park stops mid-sentence in neither of them.
   const firstLook = watcherAside(ctx.watcher, ctx.traits);
-  const headroom = firstLook.length;
-  if (headroom > 0) reply = { ...reply, text: reply.text + firstLook };
+  const miss = firstLook ? '' : missAside(ctx.missed, ctx.traits);
+  const headroom = firstLook.length + miss.length;
+  if (headroom > 0) reply = { ...reply, text: reply.text + firstLook + miss };
   // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets the want slip into whatever it
   // was going to say, regardless of register — the tell composes with gratitude/wistful/fond/generic alike.
   if (ctx.hungry) reply = { ...reply, text: (reply.text + hungryAside(ctx.traits)).slice(0, 240 + headroom) };

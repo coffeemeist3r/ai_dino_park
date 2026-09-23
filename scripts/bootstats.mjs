@@ -29,7 +29,23 @@ export function percentile(sorted, p) {
  */
 export function summarize(samples) {
   const clean = samples.filter((s) => Number.isFinite(s?.ms));
-  if (!clean.length) return null;
+  // BACKLOG-553: a boot that never came up is still excluded from every *number* — counting a hang as
+  // a zero would flatter the median, which is the opposite of what this instrument is for — but it is
+  // no longer thrown away. 538 measured only the boots that worked, so the four-cycle flake left the
+  // suite four re-runs and zero victims.
+  const failures = samples
+    .filter((s) => s && !Number.isFinite(s.ms))
+    .map((s) => ({
+      label: s.label ?? '(unlabelled)',
+      failedAt: s.failedAt ?? 'unknown',
+      // A hang with an exception behind it is a different bug from a hang without one, and until now
+      // the log could not tell them apart.
+      hadException: (s.pageErrors?.length ?? 0) > 0 || (s.bootError ?? null) !== null,
+    }));
+  if (!clean.length) {
+    if (!failures.length) return null;
+    return { count: 0, min: null, median: null, p95: null, max: null, worst: null, failed: failures.length, failures };
+  }
   const sorted = [...clean].map((s) => s.ms).sort((a, b) => a - b);
   let worstSample = clean[0];
   for (const s of clean) if (s.ms > worstSample.ms) worstSample = s;
@@ -40,23 +56,36 @@ export function summarize(samples) {
     p95: percentile(sorted, 95),
     max: worstSample.ms,
     worst: worstSample.label ?? '(unlabelled)',
+    failed: failures.length,
+    failures,
   };
 }
 
 /** The printable block. `headroom` is what is left of the ceiling after the worst boot observed. */
 export function formatSummary(summary, ceilingMs) {
   if (!summary) return 'no boots recorded';
-  const headroom = ceilingMs - summary.max;
-  const pct = ((headroom / ceilingMs) * 100).toFixed(1);
-  return [
-    `boots       ${summary.count}`,
-    `min         ${summary.min}ms`,
-    `median      ${summary.median}ms`,
-    `p95         ${summary.p95}ms`,
-    `max         ${summary.max}ms  (${summary.worst})`,
-    `ceiling     ${ceilingMs}ms`,
-    `headroom    ${headroom}ms  (${pct}% of the ceiling still unused)`,
-  ].join('\n');
+  const lines = [`boots       ${summary.count}`];
+  if (summary.count > 0) {
+    const headroom = ceilingMs - summary.max;
+    const pct = ((headroom / ceilingMs) * 100).toFixed(1);
+    lines.push(
+      `min         ${summary.min}ms`,
+      `median      ${summary.median}ms`,
+      `p95         ${summary.p95}ms`,
+      `max         ${summary.max}ms  (${summary.worst})`,
+      `ceiling     ${ceilingMs}ms`,
+      `headroom    ${headroom}ms  (${pct}% of the ceiling still unused)`,
+    );
+  }
+  // BACKLOG-553: printed only when there is something to print, so every existing assertion on a
+  // clean summary keeps holding byte for byte.
+  if (summary.failed > 0) {
+    lines.push(`failed      ${summary.failed}  (never came up — these are the hangs)`);
+    for (const f of summary.failures) {
+      lines.push(`  ✗ ${f.label}  died waiting on: ${f.failedAt}  ${f.hadException ? '(exception behind it)' : '(no exception)'}`);
+    }
+  }
+  return lines.join('\n');
 }
 
 /** Defaults live here, with the flag parsing, so both are testable without spawning a browser. */

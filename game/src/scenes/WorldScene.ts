@@ -102,8 +102,9 @@ import {
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
 import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
-import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress } from '../keeper/keepers';
+import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress, nicknameOf, type Keeper } from '../keeper/keepers';
 import { firstMeeting, recordMeeting } from '../keeper/voice'; // BACKLOG-160
+import { missesWatcher, switchMemory } from '../keeper/succession'; // BACKLOG-162
 import { canScan, scanLines, scanRefusal, type ScanSubject } from '../keeper/scan';
 // BACKLOG-157: AETHER-1's Read the Room — the roster's second distinct ability.
 import { canReadRoom, roomLines, roomRefusal } from '../keeper/room';
@@ -413,6 +414,22 @@ const MAX_MENU_OPTIONS = Math.max(KEEPERS.length, TONES.length);
  * A fresh per-zone plot map, keyed off `PLOT_TILE_BY_ZONE` (BACKLOG-472) rather than three zone-id
  * literals — a fourth ground with a plot is a row in that table, not an edit in three places here.
  */
+/**
+ * BACKLOG-553 — `?bootfail=1` forces `create()` to throw, so the guard above can be proven rather than
+ * asserted. It reads the query string rather than a `window.__` hook for a reason that decides the shape
+ * of the test: **every dev hook in this scene is attached inside the body that would have failed.** A
+ * hook could not exist on a boot that never got that far.
+ *
+ * The read is itself guarded — a `location` that throws must never be the thing that breaks a boot.
+ */
+function bootFailureRequested(): boolean {
+  try {
+    return new URLSearchParams(window.location.search).get('bootfail') === '1';
+  } catch {
+    return false;
+  }
+}
+
 function emptyPlots(): Record<string, { plantedDay: number } | null> {
   return Object.fromEntries(Object.keys(PLOT_TILE_BY_ZONE).map((z) => [z, null]));
 }
@@ -669,6 +686,12 @@ export class WorldScene extends Phaser.Scene {
    * by "has met", so changing your chassis re-arms every dino's first impression.
    */
   private metWatcher: Record<string, string> = {};
+  /**
+   * Which dinos have already said their piece about the watcher that *left* (BACKLOG-162), dino name →
+   * the keeper id worn when they said it. `metWatcher`'s idiom, keyed the same way and for the same
+   * reason: a later switch re-arms the whole park rather than spending the beat once and for all.
+   */
+  private toldOfSwitch: Record<string, string> = {};
   /** The chosen observer (BACKLOG-155); persisted. Its affinity-fit bonus colours every player gain. */
   private keeperId: string = DEFAULT_KEEPER_ID;
   /**
@@ -1205,7 +1228,65 @@ export class WorldScene extends Phaser.Scene {
     super('World');
   }
 
+  /**
+   * BACKLOG-553 — the guard around the boot.
+   *
+   * `buildWorld()` below is `create()`'s old body, unmoved. It sets `__ready` on its last line, and
+   * a throw anywhere before that line never reaches it: the e2e harness then waits out its whole
+   * 30,000ms ceiling (against a 735ms p95 — 538's instrument measured it) and the exception goes to
+   * a console nobody reads. That is this flake's third and most honest candidate cause.
+   *
+   * It is also a player-facing silent failure, which the CHARTER's quality bar forbids by name. A
+   * keeper whose boot throws is looking at a blank canvas that never becomes a game and the park says
+   * nothing. One mechanism answers both: catch it, record it where the harness can drain it, and say
+   * it out loud on screen.
+   */
   create(): void {
+    (window as any).__bootError = null;
+    try {
+      if (bootFailureRequested()) throw new Error('forced boot failure (BACKLOG-553)');
+      this.buildWorld();
+    } catch (err) {
+      const e = err instanceof Error ? err : new Error(String(err));
+      (window as any).__bootError = { message: e.message, stack: e.stack ?? '', phase: 'create' };
+      console.error('[boot] WorldScene.create() failed', e);
+      this.showBootFailure(e.message);
+    }
+  }
+
+  /**
+   * The failure notice (BACKLOG-553), in the park's own chrome — `showKeeperInvite`'s register, not
+   * an `alert()` and not a stack trace at the player. It captures no input and sets no modal flag, so
+   * a failed boot does not also break `Escape`.
+   *
+   * Its whole body is guarded: a notice that throws while reporting a throw turns one silent failure
+   * into two, and this is the last thing standing between the player and a blank canvas.
+   */
+  private showBootFailure(message: string): void {
+    try {
+      const notice = this.add
+        .text(TILE * COLS * 0.5, TILE * ROWS * 0.4, `The bowl failed to open.\n${message}`, {
+          fontFamily: 'monospace',
+          fontSize: '12px',
+          color: '#ffd7d7',
+          align: 'center',
+          backgroundColor: '#000000cc',
+          padding: { x: 10, y: 8 },
+          wordWrap: { width: TILE * COLS * 0.8 },
+        })
+        .setOrigin(0.5)
+        .setDepth(9999)
+        .setName('bootFailureNotice');
+      // The one hook that has to live out here. Every other `window.__` in this scene is attached inside
+      // `buildWorld()` — the body that just failed — so a spec proving the notice exists could not reach
+      // any of them. It reads what the player is looking at, nothing more.
+      (window as any).__bootFailureText = notice.text;
+    } catch (err) {
+      console.error('[boot] could not draw the failure notice', err);
+    }
+  }
+
+  private buildWorld(): void {
     // BACKLOG-476: each ground's carrying capacity, derived once from its own terrain.
     for (const z of zoneChain()) this.zoneCaps[z] = zoneCapacity(z, COLS, ROWS);
     this.drawFloor();
@@ -5273,6 +5354,8 @@ ${e.short}`;
     (window as any).__lastTone = () => ({ ...this.lastTone });
     // any: dev-only Playwright hook — who has met which watcher (BACKLOG-160)
     (window as any).__metWatcher = () => ({ ...this.metWatcher });
+    // any: dev-only — who has already spoken about the watcher that left (BACKLOG-162)
+    (window as any).__toldOfSwitch = () => ({ ...this.toldOfSwitch });
     (window as any).__toneMenuOpen = () => this.toneMenuOpen;
     (window as any).__toneMenuText = () => (this.toneMenuOpen ? this.toneMenuText : null);
     // dev-only: open the tone menu for a named dino, then pick a tone — drives the flow
@@ -8226,6 +8309,26 @@ ${e.short}`;
     const firstLook = firstMeeting(this.metWatcher, target.name, this.keeperId);
     if (firstLook) this.metWatcher = recordMeeting(this.metWatcher, target.name, this.keeperId);
 
+    // BACKLOG-162: hoisted here for the same reason the block above is — `recordTone` ends in the greet's
+    // `saveGame()`, so a map updated after it would not reach disk until something unrelated saved next.
+    // Reads only `keeperRecord.previousId`, `toldOfSwitch`, `target` and `keeperId`, none of which
+    // `recordTone` touches.
+    // `!firstLook` is the caller's half of the precedence rule `cannedReply` documents: the miss yields
+    // to BACKLOG-160's first look, so it must not be *spent* on a greet that will not say it. Without
+    // this, the one hello the dino owes the watcher who left would be silently burned.
+    const leftBehind = this.keeperRecord.previousId;
+    const missing =
+      !firstLook &&
+      leftBehind !== undefined &&
+      this.toldOfSwitch[target.name] !== this.keeperId &&
+      missesWatcher(
+        keeperById(leftBehind),
+        keeperById(this.keeperId),
+        target.traits,
+        heartsFromPoints(this.friendship[target.name] ?? 0),
+      );
+    if (missing) this.toldOfSwitch = { ...this.toldOfSwitch, [target.name]: this.keeperId };
+
     this.recordTone(target.name, id, target.traits);
 
     // Reply path is unchanged from the old greet flow (tone-coloured reply is BACKLOG-148).
@@ -8256,6 +8359,10 @@ ${e.short}`;
       // reduced `greetContextFor` deliberately does NOT carry it: that context also feeds dino-to-dino
       // ambient chatter, where a line addressed to the keeper has nobody to address.
       watcher: firstLook ? this.keeperId : undefined,
+      // What it made of the one that *left* (BACKLOG-162) — set only on the first greet after a switch
+      // this dino minded. It takes precedence over `watcher` inside `cannedReply`; both are sent so the
+      // register, not the caller, owns that rule.
+      missed: missing ? leftBehind : undefined,
       // Hunger you can hear (BACKLOG-368): a dino over the need threshold lets it slip into its line.
       hungry: pressingNeed(this.needs[target.name]) === 'hunger',
       // Rattled after the chase (BACKLOG-440): a prey with a fresh "slipped X's hunt" memory names its chaser.
@@ -8439,6 +8546,9 @@ ${e.short}`;
     // `changed` flag already existed for the avatar swap and first contact; this rides it rather than
     // recomputing the comparison.
     if (changed) this.keeperRecord = switchTo(this.keeperRecord, keeper.id, getWorldClock().now().day);
+    // BACKLOG-162: the bowl files the change. Rides the same `changed` flag as everything else here, which
+    // is what keeps "a re-pick is not a switch" (555's ruling) true in exactly one place rather than four.
+    if (changed) this.fileWatcherSwitch(keeper);
     if (changed) this.renderKeeperAvatar(); // swap to the new observer's face in place
     this.keeperPickerOpen = false;
     // BACKLOG-156: the third line is who this observer *is*. It must be composed **after** the `switchTo`
@@ -8449,6 +8559,31 @@ ${e.short}`;
     // A real change of watcher draws first contact (BACKLOG-161); a re-pick or the save-restore
     // path (which assigns keeperId directly) never arms it.
     if (changed) this.armInspection();
+  }
+
+  /**
+   * Every dino notices the watcher changed (BACKLOG-162).
+   *
+   * Runs **after** `switchTo`, so `previousId` is already filed and names the observer that left, and
+   * **before** the greet's `saveGame()`, so the filing reaches disk with everything else. One line per
+   * dino, through the memory ring that already exists — it rolls off like every other memory, which is
+   * the freshness gate: the park notices, and then the park gets on with it.
+   *
+   * Clearing `toldOfSwitch` here is what re-arms the beat for a later switch, the same way `metWatcher`
+   * being keyed by observer re-arms the first impression.
+   */
+  private fileWatcherSwitch(next: Keeper): void {
+    const left = keeperById(this.keeperRecord.previousId);
+    for (const d of this.dinos) this.memory = remember(this.memory, d.name, switchMemory(left, next));
+    this.toldOfSwitch = {};
+    const noticed = this.dinos.filter((d) =>
+      missesWatcher(left, next, d.traits, heartsFromPoints(this.friendship[d.name] ?? 0)),
+    ).length;
+    this.logEvent(
+      noticed > 0
+        ? `👁️ ${nicknameOf(left)} steps back and ${nicknameOf(next)} takes the glass — ${noticed} of them look up`
+        : `👁️ ${nicknameOf(left)} steps back and ${nicknameOf(next)} takes the glass`,
+    );
   }
 
   /**
@@ -9183,6 +9318,7 @@ ${e.short}`;
       gratitude: this.gratitude,
       lastTone: this.lastTone,
       metWatcher: this.metWatcher,
+      toldOfSwitch: this.toldOfSwitch, // BACKLOG-162 (additive)
       personas: this.personas, // BACKLOG-103: generate-once selves ride the save
       keeperId: this.keeperId,
       keeper: this.keeperRecord, // BACKLOG-555: the record beside the id (additive)
@@ -9341,6 +9477,7 @@ ${e.short}`;
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.metWatcher = { ...(save.metWatcher ?? {}) };
+      this.toldOfSwitch = { ...(save.toldOfSwitch ?? {}) };
       this.personas = (save.personas ?? {}) as Record<string, Persona>; // BACKLOG-103: selves restore
       this.keeperId = save.keeperId ?? DEFAULT_KEEPER_ID;
       // BACKLOG-555: a save with a record restores it; an old save with only `keeperId` is seeded

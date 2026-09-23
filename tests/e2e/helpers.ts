@@ -57,14 +57,80 @@ function bootLabel(): string {
   }
 }
 
+/**
+ * How long the failure path may spend asking a hung page what went wrong (BACKLOG-553).
+ *
+ * Deliberately **not** `BOOT_TIMEOUT`: the page we are questioning has already failed to come up, and
+ * an instrument that doubles the cost of the failure it records is an instrument nobody leaves on.
+ */
+const BOOT_ERROR_PROBE_TIMEOUT = 2_000;
+
+/**
+ * Write the line a failed boot leaves behind (BACKLOG-553) — and **never** throw.
+ *
+ * 538 shipped the boot clock and it wrote only on the success path, so the one boot per run worth
+ * studying was the only one that left no record at all. Four cycles of this flake produced four
+ * re-runs and zero victims. After this, a hang leaves a spec name, a timestamp, which wait died, and
+ * whether there was an exception behind it — and a hang *with* an exception is a different bug from a
+ * hang without one, which is a distinction the log could not previously make.
+ *
+ * Exported — and taking its log `path` the way `recordBootLine` does — so the fail-open behaviour is
+ * proven by a test rather than claimed by this comment. The path is a parameter for a reason the first
+ * run of this instrument found within the minute: with `BOOT_LOG` baked in, the fail-open unit tests
+ * wrote ten invented hangs straight into the real log, and the very first `--report` named them. An
+ * instrument a test can forge entries in is worse than no instrument.
+ */
+export async function recordBootFailure(
+  page: Page,
+  opts: { canvasMs: number | null; pageErrors: string[]; err: unknown; path?: string },
+): Promise<void> {
+  try {
+    const bootError = await Promise.race([
+      page.evaluate(() => (window as Record<string, unknown>).__bootError ?? null),
+      new Promise((r) => setTimeout(() => r(null), BOOT_ERROR_PROBE_TIMEOUT)),
+    ]).catch(() => null);
+    recordBootLine(opts.path ?? BOOT_LOG, {
+      at: new Date().toISOString(),
+      source: 'suite',
+      label: bootLabel(),
+      canvasMs: opts.canvasMs,
+      readyMs: null,
+      // Derived from the clock, not from the error's text: a message is a string somebody can change,
+      // and which wait died is a fact.
+      failedAt: opts.canvasMs === null ? 'canvas' : 'ready',
+      pageErrors: opts.pageErrors,
+      bootError,
+      error: opts.err instanceof Error ? opts.err.message : String(opts.err),
+    });
+  } catch {
+    // Deliberately silent, for the reason `recordBootLine` documents — and more so here: this runs
+    // while a spec is already failing, and a second failure on top of it hides the first.
+  }
+}
+
 export async function boot(page: Page): Promise<void> {
   const t0 = Date.now();
-  await page.goto('/');
-  await page.locator('canvas').waitFor({ state: 'visible', timeout: BOOT_TIMEOUT });
-  const canvasMs = Date.now() - t0;
-  await page.waitForFunction(() => (window as Record<string, unknown>).__ready === true, undefined, {
-    timeout: BOOT_TIMEOUT,
-  });
+  // BACKLOG-553: drained for the life of the boot, so a hang with an exception behind it is
+  // distinguishable in the log from a hang without one.
+  const pageErrors: string[] = [];
+  const onPageError = (e: Error): void => {
+    pageErrors.push(e.message);
+  };
+  page.on('pageerror', onPageError);
+  let canvasMs: number | null = null;
+  try {
+    await page.goto('/');
+    await page.locator('canvas').waitFor({ state: 'visible', timeout: BOOT_TIMEOUT });
+    canvasMs = Date.now() - t0;
+    await page.waitForFunction(() => (window as Record<string, unknown>).__ready === true, undefined, {
+      timeout: BOOT_TIMEOUT,
+    });
+  } catch (err) {
+    await recordBootFailure(page, { canvasMs, pageErrors, err });
+    throw err; // the spec fails exactly as it did before; only the record is new
+  } finally {
+    page.off('pageerror', onPageError);
+  }
   // BACKLOG-538: off the measured path, after both waits, so the clock never charges itself to the boot
   // it is timing. Nobody knew how long a boot took; now every ordinary run leaves the distribution behind.
   recordBootLine(BOOT_LOG, {
