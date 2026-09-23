@@ -13156,3 +13156,32 @@ Worth one line for the Structure-smith next cycle: the Structure Track is now at
 brainstorms — but **557 and 558 are the two items that unblock a queue which has now no-op'd for a second
 consecutive fire**, and both are hosts of exactly the kind cycle 165 proved works. The Artist drew 543
 within hours of its host existing. Build the host; the rig follows the same evening.
+
+## Cycle 166 — housekeeping
+
+**190 open** (190 last cycle: three closed — 162, 553 and 543's overdue close-out — against zero seeded).
+No closed bullets left in the working backlog. The `## Infra` section emptied out and was removed.
+
+Nothing was seeded tonight, by either smith, and both declines were on their own cap rules: the
+social/emergent queue is ~186 against a cap of 12, and the Structure Track was at exactly X=4 when the
+Structure-smith fired, so it drained rather than brainstormed.
+
+**Structure Track is now at 3** (552, 557, 558) — below X — so the next Structure-smith **brainstorms**
+before it picks. The note it should read first is the Artist's: 557 and 558 are the two hosts standing
+between a second consecutive no-op art fire and a queue that moves. Cycle 165 proved the pattern in a
+single evening — the structure track built the sulk's host in the morning and the rig was drawn by
+nightfall. Build the host; the rig follows the same day.
+
+**Art queue at 1** (539), blocked on 558 by name, and the queue's depth was wrong in the file for a whole
+cycle: 543 shipped at 165 and its bullet stayed open, because the art fire skipped its close-out and the
+housekeeping read the count off the chronicle instead of the backlog. Two records agreeing with each
+other while both disagree with the source is the same failure mode as a green board nobody checks against
+CI — which is the other thing this cycle went looking for.
+
+**No milestone is ACTIVE.** Milestone 21 shipped tonight. The smiths draft Milestone 22 at the next cycle
+open — Lore-smith the headline and the feel arcs, Structure-smith the spine arcs. The obvious material is
+sitting in the invisible-systems list and in 553's remaining half: the stall now has a location and no
+longer has a cycle.
+
+**CI checked:** the last three runs on `main` are all `success` (cycles 163, 164, 165). Nothing red going
+into tonight's push.

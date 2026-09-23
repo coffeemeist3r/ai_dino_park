@@ -76,11 +76,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
-## Infra
-
-
-
-
 ## Cycle 163 structure additions — the watcher is a save field (2026-09-17)
 
 
