@@ -13039,3 +13039,12 @@ tonight gave the park a self that is worth missing. It is the obvious next lore 
 Milestone 21's last arc, and the only pick on the board: **BACKLOG-162**, the bowl noticing that the
 watcher changed. Nothing seeded — the social queue is ~186 deep against a cap of 12, and the art queue
 hit its cap of 3 by being *unblocked* rather than fed, which is the outcome last cycle argued for.
+
+## Cycle 166 — structure-smith
+
+**BACKLOG-553**, top of the track, taken at normal width. The solo cycle was eligible for the third
+cycle running (`cycle - lastSoloCycle` = 15) and was **declined on condition 4**: the bounded half —
+the failure-path instrument the item names first — fits beside a lore track, and declaring one would
+have sat out Milestone 21's last arc for a hunt that does not need the room. Its reachability rider is
+the defect itself: a `create()` that throws is caught and **said out loud to the player**, and the
+harness drains the same record on a timeout so a hang finally leaves a victim behind.
