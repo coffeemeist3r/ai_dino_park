@@ -13082,3 +13082,13 @@ ten hangs that had never happened: the fail-open unit tests were writing into th
 `recordBootFailure` now takes its path the way `recordBootLine` always has, and the forged lines are gone.
 An instrument a test can forge entries in is worse than no instrument — which is the same sentence this
 item exists to act on, one layer down.
+
+## Cycle 166 — qa
+
+35 criteria, 33 pass and 2 changed by the precedence inversion the suite forced. Build clean, 2996 unit
+green, 811 e2e green with one parallel-load flake per run — and tonight that flake finally has a shape.
+The new failure record caught three hangs across three suite runs, different victim each time, and all
+three say the same two things: **died waiting on canvas, no exception**. That eliminates 553's own third
+candidate — a `create()` that throws would die waiting on `__ready` with an exception drained behind it —
+and points below Phaser entirely, at `page.goto` or the worker's socket. Four cycles of re-runs, and the
+instrument characterised it on its first night.

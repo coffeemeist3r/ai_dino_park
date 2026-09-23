@@ -1,6 +1,6 @@
 {
   "cycle": 166,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-162: The bowl remembers its watchers",
   "structureItem": "BACKLOG-553: The boot that hangs, not the boot that is slow",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-09-23T08:14:15.956674Z",
     "code-planner": "2026-09-23T08:16:04.566786Z",
     "coder": "2026-09-23T08:44:05.495144Z",
-    "qa": "2026-09-22T08:44:46.138Z",
+    "qa": "2026-09-23T09:13:07.809200Z",
     "validator": "2026-09-22T08:46:38.560Z",
     "artist": "2026-09-22T09:21:52.282Z"
   },

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot, foundingState } from './helpers';
+import { boot, foundingState, BOOT_TIMEOUT } from './helpers';
 
 /**
  * BACKLOG-553 — the boot that hangs, said out loud.
@@ -19,12 +19,16 @@ type W = Record<string, any>;
 test('a boot that throws says so, on screen, instead of showing a blank canvas', async ({ page }) => {
   await page.goto('/?bootfail=1');
 
+  // Polled on the **message**, not on `!== null`. Before `create()` runs at all `__bootError` is
+  // `undefined`, and `undefined` is not null — so a not-null poll passes instantly on a page that has
+  // not started yet, and the read after it explodes. It did: green when the server was warm, red twice
+  // in a row under the full suite's parallel load. `BOOT_TIMEOUT` because this wait *is* a boot wait and
+  // has no business holding a budget of its own.
   await expect
-    .poll(() => page.evaluate(() => (window as W).__bootError), { timeout: 10_000 })
-    .not.toBeNull();
+    .poll(() => page.evaluate(() => (window as W).__bootError?.message ?? null), { timeout: BOOT_TIMEOUT })
+    .toContain('BACKLOG-553');
 
   const err = await page.evaluate(() => (window as W).__bootError);
-  expect(err.message).toContain('BACKLOG-553');
   expect(err.phase).toBe('create');
 
   // `__ready` keeps its exact meaning — hooks attached, scene built — because the whole suite leans on it.
