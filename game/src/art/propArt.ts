@@ -2049,6 +2049,63 @@ const SULK_RIG: PropRig = {
   },
 };
 
+// `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
+// hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
+// the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
+// its palette is the plaque's own two colours plus a cut, and it takes none of the family's outline.
+//
+// It waited nine cycles for a host and two corrections of the same false claim, and both corrections
+// said the same thing — the plaque was one `Text`, so no line on it was an object and there was nowhere
+// for a register to be. The cycle-167 structure track (BACKLOG-558) made every line its own object.
+//
+// **The subject is a tally stick**, not a number and not a calendar. A day-count you have *kept* is a
+// thing you notch, and the notch is the oldest form the idea has. It is also the only silhouette this
+// project does not already own: every sibling is a compact blob or a posture, and this is a straight
+// vertical bar with teeth struck out of one side — unmistakable at a glance and at any size.
+//
+// First draft rejected: four upright scratches with a fifth struck across them, the classic five-bar
+// gate. It is the more literal tally and it does not survive. Five strokes in sixteen cells leaves each
+// one a single cell wide with a single cell of air, and the plaque's text is 11px — at that pitch the
+// gate is a grey smear with a diagonal in it. Three struck teeth on a four-cell bar reads at the same
+// size because nothing in it is thinner than two cells, which is the lesson `rouse`'s iris ring taught
+// two cycles before `mope` repeated it.
+//
+// The light is fixed upper-left, as everywhere else in this park: the bar's left column is its lit lip
+// and every rim is the cut. The lip is the **exact colour of the keeper lines** (`#fff1c9`) and the
+// face is the **exact colour of the stat lines** (`#f4d58d`), so the register is made of the brass it
+// stands on — and the cut is darker than the panel behind it, which is what makes it read as depth
+// rather than as a sticker.
+const STREAK_GRID: ReadonlyArray<string> = [
+  '................',
+  '...ooooo........',
+  '...ohBBo........',
+  '...ohBBoooo.....',
+  '...ohBBoBBo.....',
+  '...ohBBoooo.....',
+  '...ohBBo........',
+  '...ohBBoooo.....',
+  '...ohBBoBBo.....',
+  '...ohBBoooo.....',
+  '...ohBBo........',
+  '...ohBBoooo.....',
+  '...ohBBoBBo.....',
+  '...ohBBoooo.....',
+  '...ohBBo........',
+  '...ooooo........',
+];
+
+const STREAK_RIG: PropRig = {
+  size: 16,
+  grid: STREAK_GRID,
+  palette: {
+    // The cut. Deliberately darker than the plaque panel (0x3a2a14) it is engraved into — a notch the
+    // same value as its plate is a drawing of a notch, not a notch.
+    o: 0x2a1d0e,
+    h: 0xfff1c9, // the lit lip — the keeper lines' own colour, so the glyph belongs to the line it stands beside
+    B: 0xf4d58d, // the brass face — the stat lines' own colour, so it still belongs to the plate
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -2141,6 +2198,11 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // cycles on a host that did not exist and a claim corrected twice; `refreshSulkMarks` shipped earlier
   // in this same cycle, on the structure track, which is the condition the cycle-145 amendment asks for.
   sulk: SULK_RIG,
+  // BACKLOG-539 (cycle 167-art): the twelfth rig, the first that is not a mark, and the one this queue
+  // held longest — nine cycles and two corrections, both of them saying the plaque had no per-line
+  // object for a register to be. `plaqueRows` shipped earlier in this same cycle on the structure
+  // track (BACKLOG-558), which is the condition the cycle-145 amendment asks for.
+  streak: STREAK_RIG,
 };
 
 /**

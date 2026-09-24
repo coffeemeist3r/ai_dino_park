@@ -13355,3 +13355,63 @@ both victims are on the record: `cycle-074-shelter` died waiting on canvas with 
 which is the BACKLOG-553 signature exactly as cycle 166 characterised it. Green isolated, 819/819 on the
 clean re-run. CI on `main` is `success` for cycles 164, 165 and 166 — nothing red going into tonight's
 push.
+
+## 2026-09-24 — cycle 167-art — artist — the day-count gets its register, nine cycles late
+
+**BACKLOG-539 is drawn**, on the host the same cycle's structure track built this morning. Two art fires
+in a row had no-op'd on it and both no-ops named the same cause correctly: the plaque was one `Text`, so
+no line on it was an object and an engraved register had nothing to be engraved into. BACKLOG-558 gave
+every line its own object at breakfast; the rig went in by nightfall. Sixth consecutive fire on the
+cycle-145 cadence, and the art queue is now genuinely empty rather than blocked.
+
+**The twelfth rig, and the first that is not a mark.** The eleven before it hang over a dinosaur or lie
+on the ground. This one is struck into brass. So it is drawn against the plaque rather than against the
+family: its lit lip is the keeper lines' own `#fff1c9`, its face is the stat lines' own `#f4d58d`, and
+its cut is darker than the panel behind it — a notch at the same value as its plate is a drawing of a
+notch. That is the one place a rig has deliberately refused `rouse`'s outline since cycle 162, and the
+reason is that this is not in that family.
+
+**The subject is a tally stick**, because a count of days you have *kept* is a thing you notch, and
+because a vertical bar with teeth struck out of one side is the only silhouette this registry does not
+already own — everything else is a blob or a posture.
+
+**The first draft was the five-bar gate, and it died of arithmetic rather than taste.** Four uprights
+with a fifth struck across is the more literal tally and it cannot survive: five strokes inside sixteen
+cells leaves each one a single cell wide with a single cell of air, against 11px type, which bakes to a
+grey smear with a diagonal in it. Three teeth on a four-cell bar reads at the same size because nothing
+in it is thinner than two cells — `rouse`'s iris ring taught that and `mope`'s stem had to relearn it one
+fire later, so this time the spec asserts the floor instead of the author's eye.
+
+102 lit cells, claimed against every sibling: above `sulk` (94) and below `rouse` (110). It finds its row
+by prefix rather than by index, because the line above it is optional and an index would engrave the
+wrong line the first time a ground stopped owing upkeep. The rig census in `cycle-066-propart` went red on
+the twelfth key and was **extended, not loosened**. `worldPlacedProps` gained its first **chrome** entry,
+with the reason written beside it: `unplacedRigs` exists to catch a rig nothing draws, this one is drawn
+on the first frame of every save, and a register that excluded chrome would need a second list — which is
+how the first one starts lying.
+
++9 unit, +1 e2e. Board: build clean, **3025 unit across 283 files**, **820 e2e**.
+
+## Cycle 167 — housekeeping
+
+**188 open** (190 last cycle: three closed — 193, 558 and 539 — against one seeded, 559). No closed
+bullets left in the working backlog; no section emptied.
+
+**Structure Track is at 3** (552, 557, 559) — below X — so the next Structure-smith **brainstorms**
+before it picks. The note it should read first: **557 is now the last bare `Text` mark in the park.**
+Its twin (556/`mope`) was hosted at 164 and its sibling (543/`sulk`) at 165, and tonight closed the
+third blocked art item on the same pattern. 557's own seed text says the work is "the `mope`/`sulk`
+shape and nothing more", and it is right.
+
+**Art queue at 0** — and empty this time rather than blocked, for the first time in the nine cycles
+539 sat in it. The next Lore-smith seeds against a queue whose depth means something, which is exactly
+what tonight's fire declined to do prematurely. Worth one line for whoever counts it: `grep '\[art\]'`
+returns **two** bullets, and one of them is BACKLOG-147, an `[infra]` item whose *description* mentions
+the open `[art]` chrome work. The queue is 1 fewer than a naive grep says, and it was 1 fewer last cycle
+too.
+
+**Milestone 22 is ACTIVE**, opened this cycle, with lore arc 1 closed the same day. Three lore arcs and
+two structure arcs remain; the structure arcs (559 then 206) are both queued.
+
+**CI checked:** the last three runs on `main` are all `success` (cycles 164, 165, 166). Nothing red
+going into tonight's push.

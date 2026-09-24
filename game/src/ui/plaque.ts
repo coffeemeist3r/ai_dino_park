@@ -100,7 +100,17 @@ export function plaqueLines(s: PlaqueStats): string[] {
  *
  * Declared here, beside the function that writes them, so the prefix can never drift from the line.
  */
-const KEEPER_PREFIXES = ['Watch · ', 'Sitting · ', 'Keeper · '] as const;
+/**
+ * The keeper's attendance line (BACKLOG-122), named on its own because BACKLOG-539's engraved register
+ * has to find that row and no other. Exported rather than duplicated in the scene: a prefix spelled
+ * twice is a prefix that drifts once.
+ */
+export const STREAK_PREFIX = 'Keeper · ';
+
+/** The prop-rig key for that register (BACKLOG-539) — `hasPropArt`'s lookup, kept beside the line it marks. */
+export const STREAK_ART_KEY = 'streak';
+
+const KEEPER_PREFIXES = ['Watch · ', 'Sitting · ', STREAK_PREFIX] as const;
 
 export type PlaqueLineKind = 'stat' | 'keeper';
 

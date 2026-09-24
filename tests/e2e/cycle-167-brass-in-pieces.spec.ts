@@ -93,3 +93,26 @@ test('a brass that loses a line does not keep engraving it', async ({ page }) =>
   expect(after.map((r) => r.text)).toEqual(await lines(page));
   expect(after.map((r) => r.text)).not.toEqual(before.map((r) => r.text));
 });
+
+test('the day-count is engraved, not written — BACKLOG-539, nine cycles late', async ({ page }) => {
+  // The art half. `__streakMark` is the live `Image`, so this asserts the rig is *blitted* rather than
+  // that a rig exists — the distinction cycle 165 tightened from text-or-image to image the moment a
+  // rig existed, so a register that quietly stops being drawn can no longer pass.
+  await boot(page);
+  await foundingState(page, 'as-shipped');
+  await settle(page);
+  await reengrave(page);
+
+  const mark = await page.evaluate(() =>
+    ((window as W).__streakMark as () => { visible: boolean; x: number; y: number } | null)(),
+  );
+  expect(mark).not.toBeNull();
+  expect(mark!.visible).toBe(true);
+
+  // It stands beside the streak row, not on top of it: left of the brass, at that row's height.
+  const drawn = await rows(page);
+  const idx = drawn.findIndex((r) => r.text.startsWith('Keeper · '));
+  expect(idx).toBeGreaterThanOrEqual(0);
+  expect(drawn[idx].kind).toBe('keeper');
+  expect(mark!.x).toBeLessThan(0); // left of the plaque's centre line
+});

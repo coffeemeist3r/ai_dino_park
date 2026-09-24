@@ -27,6 +27,7 @@
  * Pure TypeScript (no Phaser), so the walk runs in Node and costs a suite nothing.
  */
 
+import { STREAK_ART_KEY } from '../ui/plaque';
 import { ACTIVE_SCALE, FOUNDING_DAY, FOUNDING_HOUR, MINUTES_PER_DAY } from './clock';
 import { atRest, chronotypeOf } from './chronotype';
 import { seasonFor, type Season } from './seasons';
@@ -187,6 +188,13 @@ export function worldPlacedProps(): Set<string> {
   out.add(GLANCE_ART_KEY);
   // BACKLOG-534: and the aloof step's own rig, swapped onto the same sprite by `refreshMissedMarks`.
   out.add(MISSED_ALOOF_ART_KEY);
+  // BACKLOG-539/558: the day-count's engraved register — the first entry here that is **chrome** rather
+  // than world. It is struck into the plaque beside the `Keeper · ` row by `refreshPlaque`, not laid on a
+  // ground or hung over a dino. It belongs in this set anyway, and the reason is the set's actual job:
+  // `unplacedRigs` exists to catch a rig nothing draws, and this one is drawn on the first frame of every
+  // save. A register that excluded it would have to be told, separately, that chrome exists — and a
+  // second list is how the first one starts lying.
+  out.add(STREAK_ART_KEY);
   return out;
 }
 

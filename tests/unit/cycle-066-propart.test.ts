@@ -54,6 +54,12 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'stone',
+      // BACKLOG-539 (cycle 167-art): the twelfth rig and the first that is not a mark — the day-count's
+      // engraved register, struck into the plaque's brass beside the `Keeper · ` row. Blocked nine
+      // cycles on a plaque that was a single `Text`; BACKLOG-558 gave every line its own object earlier
+      // in this cycle. The census is EXTENDED here, never loosened — a set assertion that grew a
+      // `toContain` would stop being a census.
+      'streak',
       // BACKLOG-543 (cycle 165-art): the eleventh mark, and the one this queue held longest — nine cycles
       // blocked on a host that did not exist, through two corrections of the same false claim. The host,
       // `refreshSulkMarks`, shipped earlier in this cycle as the reachable half of BACKLOG-533.

@@ -68,7 +68,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
-- [ ] BACKLOG-539 [art] The day-count on the brass — the plaque has been an engraved *stat* board since 058: population, generations, stores, zones, and now (BACKLOG-122, this cycle) the keeper's own visit streak. Every line on it is set in the same plain text at the same weight, which is fine for a tally of specimens and wrong for the one line on the brass that is about the *player*. Draw the streak its own small engraved register — a day-count glyph in the plaque's palette, keyed `streak`, standing off the stat lines the way the founder's mark stands off the ground. **CORRECTED cycle 156-art — the host does not exist.** The plaque is a single `Phaser.GameObjects.Text` rendering `plaqueLines(...).join('
 
 ')` (`WorldScene.ts:1318`); there is no per-line sprite, so an engraved register has nothing to be blitted onto and a `streak` key would redden the reachability register the same way a `sulk` key would. What this needs first is a plaque that draws its keeper lines as their own object rather than as two rows of the same string. Until then it stays queued under the cycle-145 amendment — which is what that amendment is for, and this entry was seeded before the amendment's condition was checked against the code. Builds on 122 / 058 / 504.
 
