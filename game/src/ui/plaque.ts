@@ -96,6 +96,29 @@ export function plaqueLines(s: PlaqueStats): string[] {
 }
 
 /**
+ * The three lines on the brass that are about the **player** rather than the park (BACKLOG-558).
+ *
+ * Declared here, beside the function that writes them, so the prefix can never drift from the line.
+ */
+const KEEPER_PREFIXES = ['Watch · ', 'Sitting · ', 'Keeper · '] as const;
+
+export type PlaqueLineKind = 'stat' | 'keeper';
+
+/**
+ * Which register a plaque line belongs in (BACKLOG-558).
+ *
+ * Eight lines can appear on the brass and five of them are counts of things the park has — specimens,
+ * stores, zones, what this ground owes. Three are about whoever is standing there: who is watching and
+ * since when (555), how long this sitting has run (542), how many days running they have turned up
+ * (122). Until this cycle all eight were engraved at the same weight in the same colour, because the
+ * plaque was one `Text` and a line of it was not an object. Now it is, and this is the rule the scene
+ * colours by — pure, one place, and the same rule BACKLOG-539's engraving will read.
+ */
+export function plaqueLineKind(line: string): PlaqueLineKind {
+  return KEEPER_PREFIXES.some((p) => line.startsWith(p)) ? 'keeper' : 'stat';
+}
+
+/**
  * The per-zone tally line (BACKLOG-316): each zone's name + head count, joined by ' · ', with a '▸'
  * marker on the keeper's active zone so the split world reads at a glance. Pure.
  */

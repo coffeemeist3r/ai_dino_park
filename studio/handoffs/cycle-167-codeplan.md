@@ -118,4 +118,43 @@ No `PROP_RIGS` entry, no `worldPlacedProps` edit, no rig. 539 is the Artist's.
 
 ## Shipped
 
-_(the Coder fills this in)_
+Both tracks landed in one fire. `npm run build` clean, `npx vitest run` **3012 passed / 3 skipped
+across 282 files**, `npx playwright test` **819 passed** on a clean re-run.
+
+**Lore — BACKLOG-193**
+- `game/src/audio/answer.ts` (new, pure): `KEEPER_HAIL`, `ANSWER_SLOW_MS`, `ANSWER_FAST_MS`,
+  `EAGER_PIP_HEARTS`, `answerDelayMs`, `answerParams`.
+- `WorldScene`: `hailAndAnswer(d)` beside `chirpFor`; called at the top of `pickTone`; the old
+  `chirpFor(target)` at the reply removed (the answer *is* the greet's chirp now); `lastSound` kind
+  widened with `hail`; `lastAnswer` field; `__lastAnswer()` hook.
+- **`voice.ts` untouched**, as planned — the hail is `playChirp(KEEPER_HAIL)`.
+
+**Structure — BACKLOG-558**
+- `ui/plaque.ts`: `KEEPER_PREFIXES`, `PlaqueLineKind`, `plaqueLineKind`. `plaqueLines` unchanged.
+- `WorldScene`: `plaque` is now a `Container`; `plaqueBg` rectangle; `plaqueRows: Text[]`;
+  `refreshPlaque` iterates, reuses, hides the tail and lays out at `PLAQUE_PITCH`; `__plaqueRows()`.
+- Seven new constants beside `TILE/COLS/ROWS`, reproducing the old panel exactly.
+
+**Tests:** +16 unit (2 files), +6 e2e (2 files).
+
+### Two things found while building
+
+1. **The design and both smith handoffs say the brass carries "eight lines". It carries nine.**
+   `plaqueLines` pushes two mandatory lines and seven optional ones — Stores, Satchel, Zones,
+   Upkeep, Watch, Sitting, Keeper. The split is six park lines to three keeper lines, not five to
+   three. Caught by the unit spec on its first run, because it counts off `plaqueLines` rather than
+   off the prose. Corrected in the specs; the handoffs are left as written with this note, since a
+   handoff edited after the fact is a record of nothing.
+
+2. **`__plaqueRows()` and `__plaqueLines()` are readings of different instants, and the first spec
+   written against them was flaky because of it.** The plaque re-engraves on the world clock's tick,
+   so the rendered rows are the last tick's and `plaqueLines()` computes from the park as it stands
+   *now*; between two ticks a pile is gathered or the satchel empties and they legitimately disagree.
+   Resolved without new scaffolding by forcing a render through `__setZone` (which has called
+   `refreshPlaque` since BACKLOG-143) at the zone the keeper is already standing in. Worth keeping:
+   this is exactly the right failure to have had, because it means `__plaqueRows` really is reporting
+   what is *drawn* rather than recomputing the answer — which is the whole reason S6 asked for it.
+
+### Blocker
+
+None.

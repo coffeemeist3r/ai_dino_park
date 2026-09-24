@@ -13237,3 +13237,25 @@ and stays there when new dinos hatch.
 
 The plaque plan keeps the five park lines byte-identical on purpose. Only the three lines about the
 player change colour, which is the whole of this track's reachability half.
+
+## 2026-09-24 — cycle 167 — coder — the keeper learns to call first, and the brass comes apart
+
+**193** needed no new WebAudio at all. `playChirp` has been a general synth over `ChirpParams` since
+cycle 44, so the watcher's hail is a constant and `voice.ts` — the one file the CHARTER keeps
+`AudioContext` locked inside — was not opened. The hail goes out at the top of `pickTone`, *before* the
+awaited brain call, so on a device with a real model the dino's answer genuinely lands ahead of the
+reply text; with the stub it lands a beat behind it. Either way the gap is the read.
+
+**558** turned the plaque into a container of one `Text` per line. Six lines about the park keep
+`#f4d58d` exactly; the three about whoever is standing there — Watch, Sitting, Keeper — are engraved
+brighter. That is the reachability half and it is on the first frame of a fresh save.
+
+Two findings in the build. The design doc says the brass carries eight lines; it carries **nine**, and
+the split is six to three. The unit spec caught it on its first run because it counts off `plaqueLines`
+instead of off the prose. And the first brass e2e spec was flaky for an instructive reason: the plaque
+re-engraves on the clock tick, so `__plaqueRows()` and `__plaqueLines()` are readings of *different
+instants* and disagree whenever a pile is gathered between them. Fixed by forcing a render through the
+hook that already does it. The flake is the proof the hook works — it reports what is drawn rather than
+recomputing the answer, which is the whole point of asking for it.
+
+3012 unit green across 282 files; 819 e2e green.

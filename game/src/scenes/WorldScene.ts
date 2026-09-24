@@ -14,6 +14,7 @@ import {
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
+import { KEEPER_HAIL, answerDelayMs, answerParams } from '../audio/answer';
 import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { Dino } from '../entities/dino';
@@ -361,7 +362,7 @@ import {
   wistfulGreetLine,
   type Watcher,
 } from '../world/envy';
-import { maxGeneration, plaqueLines, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
+import { maxGeneration, plaqueLines, plaqueLineKind, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 // BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
 import {
   FOUNDING_SATCHEL,
@@ -402,6 +403,24 @@ import {
 const TILE = 32;
 const COLS = 20;
 const ROWS = 15;
+
+/**
+ * The brass, in pieces (BACKLOG-558). The panel colour and padding reproduce the single-`Text`
+ * plaque exactly (`#3a2a14` at `e6` alpha, 10x4 padding), so the five lines about the *park* are
+ * byte-identical to the night before this landed.
+ *
+ * `PLAQUE_KEEPER_COLOR` is the half that is not identical, and is the point of the item: the three
+ * lines about whoever is standing there — who is watching (555), how long this sitting has run (542),
+ * how many days running they have turned up (122) — are engraved brighter than a count of specimens.
+ * Same brass hue, lifted; the rule that picks it is `plaqueLineKind`, not this constant.
+ */
+const PLAQUE_PANEL = 0x3a2a14;
+const PLAQUE_PANEL_ALPHA = 0.9;
+const PLAQUE_STAT_COLOR = '#f4d58d';
+const PLAQUE_KEEPER_COLOR = '#fff1c9';
+const PLAQUE_PITCH = 13;
+const PLAQUE_PAD_X = 10;
+const PLAQUE_PAD_Y = 4;
 
 /**
  * The most numbered options any overlay can offer (BACKLOG-212) — derived, never typed. The touch chip
@@ -875,7 +894,10 @@ export class WorldScene extends Phaser.Scene {
   private mapGfx!: Phaser.GameObjects.Graphics;
   private mapLabels: Phaser.GameObjects.Text[] = [];
   private lensLabel!: Phaser.GameObjects.Text;
-  private plaque!: Phaser.GameObjects.Text;
+  /** The brass, in pieces (BACKLOG-558): a container of one `Text` per engraved line, not one multi-line `Text`. */
+  private plaque!: Phaser.GameObjects.Container;
+  private plaqueBg!: Phaser.GameObjects.Rectangle;
+  private plaqueRows: Phaser.GameObjects.Text[] = [];
   private eventLog: string[] = [];
   private hudElements: Array<{ setAlpha: (a: number) => unknown }> = [];
   private lastInputAt = 0;
@@ -1212,7 +1234,9 @@ export class WorldScene extends Phaser.Scene {
   private batteryLevel: number | undefined;
   private lastCacheAction: 'deleted' | 'error' | null = null;
   /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
-  private lastSound: { kind: 'chirp' | 'thunk'; name?: string; params?: ChirpParams } | null = null;
+  private lastSound: { kind: 'chirp' | 'thunk' | 'hail'; name?: string; params?: ChirpParams } | null = null;
+  /** The last call-and-answer (BACKLOG-193). Recorded whether or not the device is muted — see `hailAndAnswer`. */
+  private lastAnswer: { name: string; hearts: number; delayMs: number; params: ChirpParams } | null = null;
   /** Active intent per dino (BACKLOG-393): the current day-phase's lean. Transient — re-derived when the phase or day turns. */
   private intents: Record<string, DinoIntent> = {};
   /** The day-phase the cached active intent was derived for (BACKLOG-012) — a new phase re-derives from the plan. */
@@ -1458,17 +1482,9 @@ export class WorldScene extends Phaser.Scene {
 
   /** The Plaque (BACKLOG-058): an engraved nameplate under the bowl with live vivarium stats. */
   private setupPlaque(): void {
-    this.plaque = this.add
-      .text((TILE * COLS) / 2, TILE * ROWS - 4, '', {
-        fontFamily: 'serif',
-        fontSize: '11px',
-        color: '#f4d58d',
-        align: 'center',
-        backgroundColor: '#3a2a14e6',
-        padding: { x: 10, y: 4 },
-      })
-      .setOrigin(0.5, 1)
-      .setDepth(11);
+    this.plaque = this.add.container((TILE * COLS) / 2, TILE * ROWS - 4).setDepth(11);
+    this.plaqueBg = this.add.rectangle(0, 0, 10, 10, PLAQUE_PANEL, PLAQUE_PANEL_ALPHA).setOrigin(0.5, 1);
+    this.plaque.add(this.plaqueBg);
     this.refreshPlaque();
     getWorldClock().onTick(() => this.refreshPlaque());
 
@@ -1476,6 +1492,14 @@ export class WorldScene extends Phaser.Scene {
     // engraved from, rather than rebuilding it: cycle 154 added two lines and found this hook was a second
     // copy of the first six, which is the defect BACKLOG-495 exists over, sitting in the test seam itself.
     (window as any).__plaque = () => this.plaqueStats();
+    // any: dev-only Playwright hook — what is actually ENGRAVED, per line (BACKLOG-558). Deliberately
+    // not a second reading of `plaqueStats()`: `__plaque` answers what the brass was computed from, and
+    // this answers what is on it. Cycle 163 is why the distinction is worth a hook — a green assertion
+    // against a computed value sat beside a chip that drew, hit-tested and swallowed the tap.
+    (window as any).__plaqueRows = () =>
+      this.plaqueRows
+        .filter((r) => r.visible)
+        .map((r) => ({ text: r.text, kind: plaqueLineKind(r.text), color: r.style.color }));
     // dev-only Playwright hooks — current zone + a jump (BACKLOG-143)
     (window as any).__zone = () => this.zoneId;
     (window as any).__setZone = (id: string) => {
@@ -1539,9 +1563,40 @@ export class WorldScene extends Phaser.Scene {
     };
   }
 
+  /**
+   * Engrave the brass (BACKLOG-558) — one `Text` per line, not one `Text` with newlines in it.
+   *
+   * The scene stops joining and starts iterating. Rows are reused across refreshes and the tail is
+   * hidden rather than destroyed when the line count shrinks, so a plaque that loses its Stores line
+   * cannot leave a stale one behind. Colour comes from `plaqueLineKind` — pure, one place, and the
+   * same rule BACKLOG-539's engraving will read.
+   */
   private refreshPlaque(): void {
     if (!this.plaque) return;
-    this.plaque.setText(plaqueLines(this.plaqueStats()).join('\n'));
+    const lines = plaqueLines(this.plaqueStats());
+    let width = 0;
+    for (let i = 0; i < lines.length; i++) {
+      let row = this.plaqueRows[i];
+      if (!row) {
+        row = this.add
+          .text(0, 0, '', { fontFamily: 'serif', fontSize: '11px', align: 'center' })
+          .setOrigin(0.5, 0);
+        this.plaqueRows.push(row);
+        this.plaque.add(row);
+      }
+      row.setText(lines[i]);
+      row.setColor(plaqueLineKind(lines[i]) === 'keeper' ? PLAQUE_KEEPER_COLOR : PLAQUE_STAT_COLOR);
+      row.setVisible(true);
+      width = Math.max(width, row.width);
+    }
+    for (let i = lines.length; i < this.plaqueRows.length; i++) this.plaqueRows[i].setVisible(false);
+
+    // Bottom-anchored, exactly as the single Text was: the brass grows upward as lines are added.
+    const height = lines.length * PLAQUE_PITCH + PLAQUE_PAD_Y * 2;
+    this.plaqueBg.setSize(width + PLAQUE_PAD_X * 2, height);
+    for (let i = 0; i < lines.length; i++) {
+      this.plaqueRows[i].setY(-height + PLAQUE_PAD_Y + i * PLAQUE_PITCH);
+    }
   }
 
   /** Per-zone population readout (BACKLOG-316): each zone's resident count, '▸' on the keeper's active zone. */
@@ -6868,6 +6923,8 @@ ${e.short}`;
     // Intent is recorded here (not in voice.ts) so headless tests never depend on playback.
     // any: dev-only Playwright hooks for the audio spine
     (window as any).__lastSound = () => this.lastSound;
+    // any: dev-only Playwright hook — the last call-and-answer (BACKLOG-193). Set even when muted.
+    (window as any).__lastAnswer = () => this.lastAnswer;
     (window as any).__soundMuted = () => soundMuted();
     (window as any).__audioState = () => audioState();
 
@@ -6905,6 +6962,38 @@ ${e.short}`;
     const params = chirpParams(d.traits);
     this.lastSound = { kind: 'chirp', name: d.name, params };
     playChirp(params);
+  }
+
+  /**
+   * The keeper calls and a dino answers (BACKLOG-193).
+   *
+   * The hail goes out on this frame; the answer comes back after a pause that shrinks as the dino
+   * warms to you, in a call that shortens and brightens with the same number. So you hear how much a
+   * dino likes you before you read a word of what it says.
+   *
+   * Hearts are read *here*, at the top of the greet, before the tone's affinity bump — the answer
+   * reflects the relationship as it stood when the keeper called, not as it stands a line later.
+   *
+   * The beat is recorded whether or not the device is muted, on the `cryDistress` precedent below:
+   * the dino answers the keeper in the world, and mute gates playback intent, not the beat.
+   */
+  private hailAndAnswer(d: Dino): void {
+    const hearts = heartsFromPoints(this.friendship[d.name] ?? 0);
+    const delayMs = answerDelayMs(hearts);
+    const params = answerParams(d.traits, hearts);
+    this.lastAnswer = { name: d.name, hearts, delayMs, params };
+    if (!soundMuted()) {
+      this.lastSound = { kind: 'hail' };
+      playChirp(KEEPER_HAIL);
+    }
+    this.time.delayedCall(delayMs, () => {
+      // Re-resolved rather than captured: a dino that left the roster during the gap does not answer,
+      // which is both the safe thing and the right one.
+      if (!this.dinos.some((x) => x.name === d.name)) return;
+      if (soundMuted()) return; // muting *during* the gap is honoured; the beat above already happened
+      this.lastSound = { kind: 'chirp', name: d.name, params };
+      playChirp(params);
+    });
   }
 
   /**
@@ -8302,6 +8391,11 @@ ${e.short}`;
     this.toneMenuOpen = false;
     this.toneMenuText = '';
 
+    // BACKLOG-193: the keeper calls *here*, on the frame the tone is picked and before the awaited
+    // brain call below — so with a real model the dino's answer genuinely lands ahead of the reply
+    // text, and with the stub it lands a beat behind it. Either way the gap is the read.
+    this.hailAndAnswer(target);
+
     // BACKLOG-160: hoisted above `recordTone` on purpose. `recordTone` ends in the greet's `saveGame()`,
     // so a map updated after it would not reach disk until some unrelated action saved next — the first
     // impression would then survive in memory and vanish on reload. Reads only `metWatcher`, `target.name`
@@ -8392,7 +8486,6 @@ ${e.short}`;
       // ships to every device whether or not a model ever loads.
       doing: doingNow,
     });
-    this.chirpFor(target); // it answers in its own voice (BACKLOG-191)
     // Caught mid-tic (BACKLOG-408): a dino greeted mid-ritual sounds bashful — a deterministic frame prefixed
     // to whatever the brain/stub returned (never asks the model to be bashful; the NPCBrain boundary is intact).
     // It files the caught memory once per solitary stretch (cleared by resetTic when the stretch ends).
