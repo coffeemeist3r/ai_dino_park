@@ -13225,3 +13225,15 @@ is a real one: greet, read the delay, greet until a heart crosses, read it again
 **Structure (558).** Ten criteria, and the scope line is drawn twice — the engraving is 539's, the
 geometry and the register are this track's. S6 asks QA to assert what is *drawn*, not what is computed;
 cycle 163 is the reason, where a green hook assertion sat beside a chip that swallowed the tap.
+
+## 2026-09-24 — cycle 167 — code-planner — two plans, and one of them needs no new WebAudio at all
+
+The keeper's hail turned out to cost nothing: `playChirp` has been a general synth over `ChirpParams`
+since cycle 44, so the watcher's call is a *constant*, not a new code path, and `voice.ts` — the one
+file the CHARTER keeps `AudioContext` locked inside — is not touched at all. Its pitch is picked against
+`chirpParams`' own arithmetic rather than against today's eight dinos: `120 + 780 * clamp01(...)` cannot
+exceed 900 for any personality vector that will ever exist, so 1020 Hz is above the cast by construction
+and stays there when new dinos hatch.
+
+The plaque plan keeps the five park lines byte-identical on purpose. Only the three lines about the
+player change colour, which is the whole of this track's reachability half.
