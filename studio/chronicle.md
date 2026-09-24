@@ -13212,3 +13212,16 @@ both named the same cause. The geometry is the item; the engraving stays 539's. 
 is this track's own and is not deferred — a per-line array that renders byte-identically is the exact
 compatibility win CHARTER v7 calls a REWORK, so the three lines on the brass that are about the *player*
 ship set apart from the five that are about the park.
+
+## 2026-09-24 — cycle 167 — designer — two specs: an answer with a latency, and a brass that comes apart
+
+**Lore (193).** Ten criteria. The one that matters is L3: at zero hearts the answer must be
+*byte-identical* to today's chirp, so a stranger sounds exactly as it always has and this can only be a
+gain. Warmth then shortens, bends and adds a pip — with the pitch lift deliberately held to 8%, because
+the voicebox's whole worth is that you can tell Twitch from Mossback, and an eagerness that outran the
+cast's own 148-797 Hz spread would wreck the thing it decorates. L8 is the reachability criterion and it
+is a real one: greet, read the delay, greet until a heart crosses, read it again.
+
+**Structure (558).** Ten criteria, and the scope line is drawn twice — the engraving is 539's, the
+geometry and the register are this track's. S6 asks QA to assert what is *drawn*, not what is computed;
+cycle 163 is the reason, where a green hook assertion sat beside a chip that swallowed the tap.
