@@ -13259,3 +13259,26 @@ hook that already does it. The flake is the proof the hook works — it reports 
 recomputing the answer, which is the whole point of asking for it.
 
 3012 unit green across 282 files; 819 e2e green.
+
+## 2026-09-24 — cycle 167 — qa — 20 criteria, 20 pass, and one flake with a name
+
+Build clean, 3012 unit green across 282 files, 819 e2e green. The first full e2e pass came back 817/2
+and both victims are named rather than waved through: `cycle-074-shelter` died **waiting on canvas with
+no exception behind it**, which is the BACKLOG-553 signature exactly as cycle 166 characterised it, and
+`cycle-045-chorus`'s muted spec went with it. Both green isolated; the clean re-run is 819/819.
+
+The chorus spec got a second look on purpose rather than a shrug, because it is the one spec on the
+board that could plausibly have been broken by tonight's lore track — it asserts a *muted* dawn chorus
+leaves `__lastSound()` null, and the keeper's hail sets `lastSound`. It holds structurally: the hail is
+inside the mute guard and the delayed answer re-checks mute when it fires.
+
+**Two corrections, both made by a spec rather than by a reader.** The design doc says the brass carries
+eight lines; it carries nine, six about the park and three about the player. And the first brass spec
+was flaky because `__plaqueRows()` and `__plaqueLines()` read *different instants* — which is the proof
+the hook reports what is drawn instead of recomputing the answer, the exact property S6 was written to
+guarantee after cycle 163.
+
+**539's host is named with its limits attached.** The `Keeper · ` line is its own `Text` inside a
+`Container` at a fixed pitch, so an engraved register can be added beside it tonight. It is *not* a
+`makeHourMark`-style Text-to-Image swap. Cycles 156 and 157 were both corrections of a routine claiming
+a host without checking which kind it was; this time the check came before the claim.

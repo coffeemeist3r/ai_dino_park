@@ -1,6 +1,6 @@
 {
   "cycle": 167,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-193: Call and answer — the answering chirp scales with hearts",
   "structureItem": "BACKLOG-558: The brass in pieces — one Text per plaque line, keeper lines set apart",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-09-24T08:16:14.672254Z",
     "code-planner": "2026-09-24T08:17:48.478985Z",
     "coder": "2026-09-24T08:43:29.117875Z",
-    "qa": "2026-09-23T09:13:07.809200Z",
+    "qa": "2026-09-24T08:44:23.604853Z",
     "validator": "2026-09-23T09:15:17.976709Z",
     "artist": "2026-09-23T09:16:00.473934Z"
   },
