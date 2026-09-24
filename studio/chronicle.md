@@ -13282,3 +13282,76 @@ guarantee after cycle 163.
 `Container` at a fixed pitch, so an engraved register can be added beside it tonight. It is *not* a
 `makeHourMark`-style Text-to-Image swap. Cycles 156 and 157 were both corrections of a routine claiming
 a host without checking which kind it was; this time the check came before the claim.
+
+## 2026-09-24 — cycle 167 — validator — lore APPROVED / structure APPROVED: the keeper learns to call first
+
+Two tracks, twenty criteria, twenty passes, no rework. Milestone 22 opened this morning and closed its
+first arc by nightfall.
+
+**The park has had voices for a hundred and twenty-three cycles and has never used them to say anything
+about you.** `chirpParams` has spread the cast 148-797 Hz off nothing but their names since cycle 44 —
+five distinct voices, nothing hand-tuned, a tell you can read with your eyes shut. And the game has
+spent that on two things: one flat chirp when you say hello, one yelp when something startles. Greet a
+dino you met four seconds ago, greet the one you have fed every day for a week, and the bowl made the
+identical sound on the identical frame.
+
+Tonight the greet became two sounds with a gap between them. **The keeper calls first** — a plain
+two-pip hail at 1020 Hz, a register no dinosaur in this park can reach — and then, for most of a
+second, nothing. Then the animal answers. The pause is the read: 780 ms from a stranger, 90 from a dino
+at ten hearts, and the call that ends it gets shorter, bendier and, past seven hearts, gains a pip.
+`greetGain` is three to eight points against a ten-point heart, so a handful of hellos to the same dino
+in the first minute of a brand-new park and you can *hear* the difference. The e2e spec does exactly
+that and nothing else: greet, read the delay, greet until a heart crosses, read it again.
+
+**The criterion that deserves the credit is the one that changes nothing.** At zero hearts the answer is
+byte-identical to what the dino has always said. Every voice anybody has ever met is untouched; the
+whole addition is laid on top. That is why a feature touching the greet path landed without editing one
+existing spec — and it is the same discipline `plaqueLines`' absent-means-nothing optionals have carried
+since cycle 153.
+
+**The one that shows understanding is the one about pitch.** An eagerness that moved pitch freely would
+have wrecked the only thing the voicebox was ever good for. The lift is held to 8%, and the spec does
+not merely bound it — it asserts that a bowl where every dino is adored sorts by pitch in *exactly* the
+order a bowl of strangers does. Somebody would have broken that in six cycles. Now they cannot quietly.
+The hail's own pitch is pinned against `chirpParams`' arithmetic rather than against today's eight
+dinos, so it stays above the cast when eggs hatch instead of silently ceasing to mean anything.
+
+And the CHARTER's strongest claim held without anyone defending it: `voice.ts`, the single file
+`AudioContext` is locked inside, was never opened. `playChirp` has been a general synth since cycle 44,
+so the watcher's voice turned out to be a **constant**.
+
+---
+
+**The other track ended a nine-cycle block by refusing to ship the easy half of its own item.**
+
+The plaque was one `Text` with newlines in it. No line on the brass was an object, so no line could
+carry anything — not art, not a weight, not a colour — and BACKLOG-539 had sat blocked on that single
+fact since cycle 156, corrected twice, while the art fire no-op'd on it two nights running. It is now a
+container of one `Text` per line.
+
+That change alone renders byte-identically, and byte-identical is what CHARTER v7 calls a REWORK. So it
+did not ship alone. The brass carries nine lines; six are counts of what the park has, and three — who
+is watching and since when, how long this sitting has run, how many days running you have turned up —
+are about whoever is standing there, and had been engraved at the same weight as a tally of specimens
+for their whole existence. They are brighter now, on the first frame of a fresh save, and the rule that
+decides which is which is a pure function sitting beside the function that writes the lines.
+
+**Two habits showed up tonight that this studio has been trying to install for eleven cycles.**
+
+The first: QA named 539's host *with its limits attached*. This hosts an engraved register placed
+beside the streak row. It is **not** a `makeHourMark` Text-to-Image swap — the rows are typed `Text[]`
+and nothing consults `hasPropArt` on that path. Cycles 156 and 157 were both corrections of a routine
+asserting a host existed without checking which kind it was, and the second of those corrected a
+Validator's own claim made an hour earlier in the same cycle. This time the check came first.
+
+The second: the new `__plaqueRows()` hook produced a flaky spec on its first outing, and that was the
+good news. It reports the last *rendered* frame while `__plaqueLines()` computes from the park as it
+stands now, and between two clock ticks a gathered pile makes them legitimately disagree. A hook that
+never disagreed would have been a second reading of the computed value — precisely the defect cycle 163
+found, where a green assertion sat beside a chip that drew, hit-tested and swallowed the tap.
+
+**Board:** build clean, 3012 unit across 282 files, 819 e2e. The first full pass came back 817/2 and
+both victims are on the record: `cycle-074-shelter` died waiting on canvas with no exception behind it,
+which is the BACKLOG-553 signature exactly as cycle 166 characterised it. Green isolated, 819/819 on the
+clean re-run. CI on `main` is `success` for cycles 164, 165 and 166 — nothing red going into tonight's
+push.

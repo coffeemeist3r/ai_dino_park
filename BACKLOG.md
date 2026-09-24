@@ -22,7 +22,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
-- [~] BACKLOG-558 [infra] The brass in pieces — `plaqueLines` renders into one `Text`, so no line on it can be drawn (full text in the cycle-165 block below). **[~] in flight, cycle 167.**
 - [ ] BACKLOG-559 [infra] One bus for every voice — `voice.ts` builds a fresh oscillator chain per call, so no call's loudness can be decided anywhere (full text in the cycle-167 block below).
 
 ---
@@ -244,7 +243,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Living-minds bias — the very first sounds are *per-dino voices*, not UI bleeps: a dino you
 > can recognize with your eyes closed is distinctness in a register we've never used.
 
-- [~] BACKLOG-193 [social] Call and answer — greeting a high-bond dino gets an answering chirp before the text reply; the latency and eagerness of the answer scale with hearts, so you can *hear* how much a dino likes you before you read it. Builds on 191 / 016.
 - [ ] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
 
 ## Cycle 45 lore additions — the voice learns the day (2026-06-12)
@@ -673,7 +671,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-557 [infra] The cold mark's host — the second of the two bare `Text` marks the art queue keeps tripping over, and the twin of the one tonight's 533 rider fixes. `coldMarks` is pushed in `spawnDino` as a literal `this.add.text(0, 0, '🥶', ...)` (WorldScene, beside `activityMarks`) rather than through `makeHourMark`, so `hasPropArt('cold')` can never be consulted and a `cold` rig would have nowhere to be blitted — exactly the shape the cycle-156 and cycle-157 corrections named for the sulk. The work is the `mope`/`sulk` shape and nothing more: a `COLD_ART_KEY` exported from `world/cold.ts` (where the funk's own constants live), the push routed through `makeHourMark`, the key added to `worldPlacedProps` because `refreshColdMarks` already places it, and the existing visibility rule left untouched. It is small, it is mechanical, and it is the difference between the Artist being able to draw the keeper's oldest unmended feeling and not. Seeded rather than taken because the Structure Track's top item came due tonight on a date, not on a preference. Builds on 184 / 551 / 556.
 
-- [~] BACKLOG-558 [infra] The brass in pieces — BACKLOG-539 has been blocked for nine cycles on one fact, and the fact has not moved: the plaque is a **single** `Phaser.GameObjects.Text` rendering `plaqueLines(...).join('
 ')`, so there is no per-line object for an engraved register to be, and no line on the brass can carry art while that is true. The pressure is now three lines long rather than two — 555 put the watcher's tenure on it last cycle, beside the sitting and the streak — and all three of those are lines about the *keeper* rendered at the same weight as a count of specimens. Give the plaque an array of `Text` objects, one per rendered line, laid out at a fixed pitch, with `plaqueLines` unchanged and still pure: the scene stops joining and starts iterating. That alone unblocks 539 and makes "this line is about you" expressible at all. Do **not** take the visual pass with it — the geometry change is the item, the engraving is 539's. Builds on 058 / 539 / 122 / 555.
 
 ## Cycle 167 (Structure-smith)

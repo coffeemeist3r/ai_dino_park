@@ -20,7 +20,7 @@ sound at the same moment. This milestone closes that gap and then gives the soun
 from.
 
 **Lore arcs:**
-- [ ] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
+- [x] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
 - [ ] The book plays a voice — opening a dino's entry plays its cry, a hatchling's blended from its parents the way its traits are (BACKLOG-195)
 - [ ] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
 - [ ] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198)
