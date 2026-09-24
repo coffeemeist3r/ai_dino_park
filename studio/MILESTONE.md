@@ -26,7 +26,8 @@ from.
 - [ ] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198)
 
 **Structure arcs:**
-_(Structure-smith drafts these at cycle 167.)_
+- [ ] One bus for every voice — a single master gain every call routes through, and a pure module that decides the number, so "quieter because it is far away" becomes expressible at all (BACKLOG-559)
+- [ ] Sound has a place — chirp loudness falls off with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint (BACKLOG-206)
 
 ---
 

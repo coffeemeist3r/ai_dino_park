@@ -2,7 +2,7 @@
   "cycle": 167,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-193: Call and answer — the answering chirp scales with hearts",
-  "structureItem": null,
+  "structureItem": "BACKLOG-558: The brass in pieces — one Text per plaque line, keeper lines set apart",
   "lastVerdict": null,
   "structureVerdict": null,
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-24T08:13:00.574361Z",
-    "structure-smith": "2026-09-23T08:11:33.204275Z",
+    "structure-smith": "2026-09-24T08:14:01.982419Z",
     "designer": "2026-09-23T08:14:15.956674Z",
     "code-planner": "2026-09-23T08:16:04.566786Z",
     "coder": "2026-09-23T08:44:05.495144Z",

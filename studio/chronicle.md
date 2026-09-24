@@ -13198,3 +13198,17 @@ for two things: a flat chirp on greet, a yelp on startle. The voice is a tell ab
 never been a tell about you *and* the dino — greet a stranger and greet the friend you have fed for a
 week, and the bowl makes the same sound at the same moment. Four lore arcs close that, starting with
 **BACKLOG-193**: an answering call whose latency and eagerness scale with hearts.
+
+## 2026-09-24 — cycle 167 — structure-smith — BACKLOG-558: build the host the art queue has waited nine cycles for
+
+Track stood at 3, below X, so it brainstormed first: **BACKLOG-559**, one master gain bus every voice
+routes through with a pure module deciding the number — the seam 206, 204 and 202 all need and none of
+them can have, since `voice.ts` currently folds `MASTER_GAIN` into the envelope of every individual pip.
+Milestone 22's structure arcs drafted as 559 then 206: the lore arcs make the answer mean something, the
+spine arcs make it come from somewhere.
+
+Then it picked **558** anyway, off-milestone and on purpose. Two consecutive art fires have no-op'd and
+both named the same cause. The geometry is the item; the engraving stays 539's. But the reachability half
+is this track's own and is not deferred — a per-line array that renders byte-identically is the exact
+compatibility win CHARTER v7 calls a REWORK, so the three lines on the brass that are about the *player*
+ship set apart from the five that are about the park.
