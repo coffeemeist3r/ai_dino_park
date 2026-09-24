@@ -13185,3 +13185,16 @@ longer has a cycle.
 
 **CI checked:** the last three runs on `main` are all `success` (cycles 163, 164, 165). Nothing red going
 into tonight's push.
+
+## 2026-09-24 — cycle 167 — lore-smith — Milestone 22 opened: the park answers you out loud
+
+Both caps declined on their own rules, so nothing was seeded: the social queue is ~186 against 12, and
+the art queue sits at 1 — below its cap — but its one item has been host-blocked for nine cycles and is
+exactly what tonight's structure track unblocks. Seeding a second `[art]` item before the Artist has
+drawn on a host we have not yet shipped is how three blocked seeds accumulated in the first place.
+
+**Milestone 22 drafted.** The bowl has had per-dino synthesized voices since cycle 44 and has used them
+for two things: a flat chirp on greet, a yelp on startle. The voice is a tell about the *dino* and has
+never been a tell about you *and* the dino — greet a stranger and greet the friend you have fed for a
+week, and the bowl makes the same sound at the same moment. Four lore arcs close that, starting with
+**BACKLOG-193**: an answering call whose latency and eagerness scale with hearts.

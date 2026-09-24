@@ -8,8 +8,25 @@
 
 ## Current milestone
 
-**No milestone is ACTIVE.** Milestone 21 shipped at cycle 166; the smiths draft Milestone 22 at the
-next cycle open — the Lore-smith writes the headline and the feel arcs, the Structure-smith the spine arcs.
+**Milestone 22: The park answers you out loud — and you can hear who it is, and how it feels about you, before you read a word.**
+**Status:** ACTIVE (opened cycle 167)
+
+The bowl has had voices since cycle 44. Every dino's call is synthesized from its own traits, and the
+cast spreads 148–797 Hz off nothing but their names — five distinct voices, nothing hand-tuned. And
+the park has used that for two things: one flat chirp when you greet, one yelp when something
+startles. The voice is a *tell about the dino* and has never once been a tell about **you and the
+dino**. Greet a stranger and greet the friend you have fed for a week and the bowl makes the same
+sound at the same moment. This milestone closes that gap and then gives the sound a place to come
+from.
+
+**Lore arcs:**
+- [ ] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
+- [ ] The book plays a voice — opening a dino's entry plays its cry, a hatchling's blended from its parents the way its traits are (BACKLOG-195)
+- [ ] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
+- [ ] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198)
+
+**Structure arcs:**
+_(Structure-smith drafts these at cycle 167.)_
 
 ---
 
