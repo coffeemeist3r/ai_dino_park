@@ -1,6 +1,6 @@
 {
   "cycle": 168,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-195: Cry in the book \u2014 a cursor, a voice you can ask for, and a blend made legible",
   "structureItem": "BACKLOG-559: One bus for every voice \u2014 a master gain and a pure mix module",
   "lastVerdict": null,
@@ -14,7 +14,7 @@
     "designer": "2026-09-25T08:15:51.120227Z",
     "code-planner": "2026-09-25T08:17:27.899189Z",
     "coder": "2026-09-25T08:42:35.656098Z",
-    "qa": "2026-09-24T08:44:23.604853Z",
+    "qa": "2026-09-25T08:44:19.129273Z",
     "validator": "2026-09-24T08:46:31.190685Z",
     "artist": "2026-09-24T09:00:39.883752Z"
   },
