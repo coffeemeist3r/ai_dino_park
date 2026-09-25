@@ -12,11 +12,12 @@ import {
   mindsStatusLine,
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
-import { chirpParams, distressParams, type ChirpParams } from '../audio/chirp';
+import { chirpParams, distressParams, voiceLine, type ChirpParams, type VoiceParent } from '../audio/chirp';
 import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { KEEPER_HAIL, answerDelayMs, answerParams } from '../audio/answer';
 import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
+import type { VoiceKind } from '../audio/mix';
 import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
@@ -1238,7 +1239,10 @@ export class WorldScene extends Phaser.Scene {
   private batteryLevel: number | undefined;
   private lastCacheAction: 'deleted' | 'error' | null = null;
   /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
-  private lastSound: { kind: 'chirp' | 'thunk' | 'hail'; name?: string; params?: ChirpParams } | null = null;
+  private lastSound: { kind: VoiceKind; name?: string; params?: ChirpParams } | null = null;
+  /** The book's cursor (BACKLOG-195) — an index into `dinos`, clamped on every read in `bookRows`
+   *  rather than fixed up at every roster mutation. A view position, deliberately not persisted. */
+  private bookCursor = 0;
   /** The last call-and-answer (BACKLOG-193). Recorded whether or not the device is muted — see `hailAndAnswer`. */
   private lastAnswer: { name: string; hearts: number; delayMs: number; params: ChirpParams } | null = null;
   /** Active intent per dino (BACKLOG-393): the current day-phase's lean. Transient — re-derived when the phase or day turns. */
@@ -4990,8 +4994,15 @@ export class WorldScene extends Phaser.Scene {
   private bookRows(): BookRow[] {
     const parentsOf = new Map(this.born.map((b) => [b.name, b.parents] as const));
     const standings = this.standings(); // BACKLOG-482: derived once per open, not once per dino
-    return this.dinos.map((d) => ({
+    // BACKLOG-195: clamp the cursor here, on the read, so a dino leaving the roster can never strand
+    // it out of range — one place instead of a fix-up beside every roster mutation.
+    const cursor = this.dinos.length ? Math.min(this.bookCursor, this.dinos.length - 1) : 0;
+    this.bookCursor = cursor;
+    return this.dinos.map((d, i) => ({
       name: d.name,
+      // BACKLOG-195: the selected entry names its own voice; the others stay as they read before.
+      selected: i === cursor,
+      voice: i === cursor ? voiceLine(chirpParams(d.traits), this.voiceParentsOf(d)) : undefined,
       species: d.species,
       hearts: heartsFromPoints(this.friendship[d.name] ?? 0),
       topBond: this.maxBond(d.name),
@@ -5094,6 +5105,8 @@ export class WorldScene extends Phaser.Scene {
       .setDepth(13);
 
     this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.V).on('down', () => this.cycleLens());
+    // BACKLOG-195: next entry in the book, and its cry. No-ops outside the book lens.
+    this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.N).on('down', () => this.stepBookCursor());
     getWorldClock().onTick(() => this.refreshLens());
 
     // dev-only Playwright hooks
@@ -6982,6 +6995,41 @@ ${e.short}`;
     });
   }
 
+  /**
+   * The two parents of a dino, as voices (BACKLOG-195) — or undefined unless **both** are still in
+   * the roster. A live read: the comparison is against parents who are here, never against a pair
+   * copied into the save at hatch.
+   */
+  private voiceParentsOf(d: Dino): [VoiceParent, VoiceParent] | undefined {
+    const parents = this.born.find((b) => b.name === d.name)?.parents;
+    if (!parents) return undefined;
+    const a = this.dinoByName(parents[0]);
+    const b = this.dinoByName(parents[1]);
+    if (!a || !b) return undefined;
+    return [
+      { name: a.name, params: chirpParams(a.traits) },
+      { name: b.name, params: chirpParams(b.traits) },
+    ];
+  }
+
+  /**
+   * Step the book's cursor and play what it landed on (BACKLOG-195).
+   *
+   * The book has rendered every dino at once since cycle 21, so until now there was no *entry* for a
+   * cry to belong to. `N` gives it one: the '▸' moves, the panel re-renders with that dino's voice
+   * line, and the bowl makes that dino's own call — the first time in this park's life that two
+   * voices can be heard next to each other without walking between them.
+   *
+   * Mute is not checked here on purpose: `chirpFor` owns that gate and the `lastSound` record, so
+   * the cursor moves and the line renders on a silent device exactly as on a loud one.
+   */
+  private stepBookCursor(): void {
+    if (this.lens !== 'book' || !this.dinos.length) return;
+    this.bookCursor = (this.bookCursor + 1) % this.dinos.length;
+    this.refreshLens();
+    this.chirpFor(this.dinos[this.bookCursor]);
+  }
+
   /** A dino speaks in its own voice — chirp params derived from its traits (BACKLOG-191). */
   private chirpFor(d: Dino): void {
     if (soundMuted()) return;
@@ -7010,7 +7058,7 @@ ${e.short}`;
     this.lastAnswer = { name: d.name, hearts, delayMs, params };
     if (!soundMuted()) {
       this.lastSound = { kind: 'hail' };
-      playChirp(KEEPER_HAIL);
+      playChirp(KEEPER_HAIL, 'hail'); // BACKLOG-559: the watcher is not a creature, so it sits back
     }
     this.time.delayedCall(delayMs, () => {
       // Re-resolved rather than captured: a dino that left the roster during the gap does not answer,
@@ -7032,8 +7080,10 @@ ${e.short}`;
     const params = distressParams(d.traits);
     this.lastDistress = { name: d.name, trigger, params };
     if (!soundMuted()) {
-      this.lastSound = { kind: 'chirp', name: d.name, params };
-      playChirp(params);
+      // BACKLOG-559: a cry is its own kind, and it carries. It had been recorded as a plain chirp,
+      // which is why nothing could say it was the quietest thing in the bowl.
+      this.lastSound = { kind: 'distress', name: d.name, params };
+      playChirp(params, 'distress');
     }
     const who = comforter(d.name, this.bonds, this.dinos.map((x) => x.name), this.gratitude);
     if (!who) return; // no friend over the floor — the cry hangs unanswered

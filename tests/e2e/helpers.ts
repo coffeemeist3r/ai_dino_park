@@ -374,3 +374,14 @@ export async function settle(page: Page): Promise<void> {
     () => new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r()))),
   );
 }
+
+/**
+ * True when this collection-book line is `name`'s header line.
+ *
+ * Tolerant of the book cursor (BACKLOG-195): the selected entry's header is prefixed '▸', so a bare
+ * `startsWith(name)` finds every dino's block except the one the player is looking at. Four specs had
+ * written that check out by hand; this is the one copy they now share.
+ */
+export function isBookHeader(line: string, name: string): boolean {
+  return line.replace(/^▸/, '').startsWith(`${name}  (`);
+}

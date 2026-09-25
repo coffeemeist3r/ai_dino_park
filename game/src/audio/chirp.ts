@@ -58,3 +58,32 @@ export function distressParams(t: Personality): ChirpParams {
     notes: 2,
   };
 }
+
+/** One parent, for the blend read (BACKLOG-195): its name and the call its own traits make. */
+export interface VoiceParent {
+  name: string;
+  params: ChirpParams;
+}
+
+/**
+ * The book's voice line (BACKLOG-195) — what this dino sounds like, in words.
+ *
+ * A hatchling's cry has been a blend of its parents' since cycle 44 and nobody could tell: `hatch`
+ * blends traits per-axis (`blendTraits`), `chirpParams` derives the call from traits, so the blend
+ * was already happening where it could not be heard or read. Re-deriving it would have changed
+ * nothing. What was missing was somewhere to *see* it — so when both parents are still in the
+ * roster, the line says where this voice sits between the two it came from.
+ *
+ * The relation is derived from the numbers rather than assumed: `blendTraits` adds a small jitter,
+ * so a child genuinely can land outside its parents' pair, and a line that said "between" anyway
+ * would be a line that lies. Pure.
+ */
+export function voiceLine(p: ChirpParams, parents?: [VoiceParent, VoiceParent]): string {
+  const base = `🔊 voice · ${p.pitchHz} Hz · ${p.notes} pip${p.notes === 1 ? '' : 's'}`;
+  if (!parents) return base;
+  const [a, b] = parents;
+  const lo = Math.min(a.params.pitchHz, b.params.pitchHz);
+  const hi = Math.max(a.params.pitchHz, b.params.pitchHz);
+  const rel = p.pitchHz > hi ? 'above both' : p.pitchHz < lo ? 'below both' : 'between';
+  return `${base} — ${rel} ${a.name} ${a.params.pitchHz} and ${b.name} ${b.params.pitchHz}`;
+}

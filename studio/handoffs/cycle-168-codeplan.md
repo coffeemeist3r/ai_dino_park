@@ -245,3 +245,34 @@ one function).
 ### Estimated touch count
 
 `~7 files` (2 new, 5 modified). Combined cycle: **~12 files** — inside the CHARTER v6 arc size.
+
+
+---
+
+## Shipped
+
+Both tracks landed, in the planned order.
+
+**Structure (559):** `audio/mix.ts` new and pure; the bus created in `unlockAudio`, `MASTER_GAIN`
+gone, one `ctx.destination` left in the repo. `hailAndAnswer` plays `'hail'`, `cryDistress` plays and
+**records** `'distress'` (it had recorded `'chirp'` — the wart the plan flagged). No existing spec was
+asserting that wart, so nothing had to be corrected.
+
+**Lore (195):** `voiceLine` beside `chirpParams`; `BookRow.voice` + `BookRow.selected`; `bookCursor`
+clamped inside `bookRows`; `stepBookCursor` on `N`, reusing `chirpFor` for the mute gate.
+
+**Two deviations from the plan, both forced by a red test and both fixed at the root:**
+
+1. **The help row was one character too wide.** `helpLines` pads to the widest key (13) and the panel
+   asserts every line under 40 chars, so `next book entry + its cry` (25) landed at exactly 40.
+   Shortened to `next book entry + cry`. Two unit specs caught it, which is the check working.
+
+2. **The `▸` cursor broke every book-block parser in the e2e suite** — 13 specs across four files, all
+   of which located a dino's block with `line.startsWith(\`${name}  (\`)`. The selected entry's header
+   no longer starts with its name, so the parser found every block except the one the player is
+   looking at. The four copies were **replaced by one exported `isBookHeader` in `tests/e2e/helpers.ts`**
+   rather than patched four times: a check written out by hand in four places is why one render change
+   could redden thirteen specs at once. Each spec's own block-slicing logic is untouched.
+
+**Board at hand-off:** `npm run build` clean · **3043 unit** across 285 files · **828 e2e**, full
+suite green in one run.

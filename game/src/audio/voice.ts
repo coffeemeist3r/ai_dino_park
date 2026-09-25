@@ -7,20 +7,30 @@
  * called only from the scene's existing first-input seam (markActive — every
  * keydown and pointerdown). Phone Chrome never sees a pre-gesture context.
  *
- * Kept QUIET by design: master gain 0.12, calls ≤ 350 ms — a desk companion.
+ * Kept QUIET by design: levels live in `mix.ts` (0.08–0.20), calls ≤ 350 ms — a desk companion.
  */
 
 import { SOUND_KEY, THUNK, type ChirpParams } from './chirp';
-
-const MASTER_GAIN = 0.12;
+import { gainFor, type VoiceKind } from './mix';
 
 let ctx: AudioContext | null = null;
+/**
+ * The bus (BACKLOG-559) — the one node every voice in this park routes through, and therefore the
+ * one place a future arc can reach to say "quieter, because it is far away". Held at unity: the
+ * level a call plays at is `gainFor`'s answer, not the bus's.
+ */
+let bus: GainNode | null = null;
 let mutedCache: boolean | null = null;
 
 /** Create/resume the context. Call ONLY from a user-gesture handler. */
 export function unlockAudio(): void {
   if (typeof AudioContext === 'undefined') return;
   if (!ctx) ctx = new AudioContext();
+  if (!bus) {
+    bus = ctx.createGain();
+    bus.gain.value = 1;
+    bus.connect(ctx.destination); // the only destination connection in the park
+  }
   if (ctx.state === 'suspended') void ctx.resume();
 }
 
@@ -47,9 +57,16 @@ export function setSoundMuted(off: boolean): void {
   } catch { /* storage denied — the session cache still applies */ }
 }
 
-/** Synthesize one call: `notes` short pips, pitch bending up by `wobble`. */
-export function playChirp(p: ChirpParams): void {
-  if (soundMuted() || !ctx || ctx.state !== 'running') return;
+/**
+ * Synthesize one call: `notes` short pips, pitch bending up by `wobble`.
+ *
+ * `kind` (BACKLOG-559) is what the call *is*, not how loud it should be — the level comes from
+ * `gainFor`, which is pure and lives in `mix.ts`. Defaulted to 'chirp' so every existing caller
+ * reads unchanged and sounds unchanged.
+ */
+export function playChirp(p: ChirpParams, kind: VoiceKind = 'chirp'): void {
+  if (soundMuted() || !ctx || !bus || ctx.state !== 'running') return;
+  const peak = gainFor(kind);
   const t0 = ctx.currentTime + 0.01;
   const pip = p.lengthMs / 1000 / p.notes;
   for (let i = 0; i < p.notes; i++) {
@@ -62,9 +79,9 @@ export function playChirp(p: ChirpParams): void {
     osc.frequency.setValueAtTime(base, start);
     osc.frequency.linearRampToValueAtTime(base * (1 + p.wobble * 0.25), start + pip * 0.8);
     gain.gain.setValueAtTime(0, start);
-    gain.gain.linearRampToValueAtTime(MASTER_GAIN, start + pip * 0.15);
+    gain.gain.linearRampToValueAtTime(peak, start + pip * 0.15);
     gain.gain.linearRampToValueAtTime(0, start + pip);
-    osc.connect(gain).connect(ctx.destination);
+    osc.connect(gain).connect(bus);
     osc.start(start);
     osc.stop(start + pip + 0.02);
   }
@@ -72,7 +89,7 @@ export function playChirp(p: ChirpParams): void {
 
 /** The glass rap — a dull sine knock, lower and plainer than any dino. */
 export function playThunk(): void {
-  if (soundMuted() || !ctx || ctx.state !== 'running') return;
+  if (soundMuted() || !ctx || !bus || ctx.state !== 'running') return;
   const t0 = ctx.currentTime + 0.005;
   const dur = THUNK.lengthMs / 1000;
   const osc = ctx.createOscillator();
@@ -80,9 +97,9 @@ export function playThunk(): void {
   osc.type = 'sine';
   osc.frequency.setValueAtTime(THUNK.pitchHz, t0);
   osc.frequency.exponentialRampToValueAtTime(THUNK.pitchHz * 0.6, t0 + dur);
-  gain.gain.setValueAtTime(MASTER_GAIN * 1.4, t0); // a knock hits, then dies fast
+  gain.gain.setValueAtTime(gainFor('thunk'), t0); // a knock hits, then dies fast
   gain.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
-  osc.connect(gain).connect(ctx.destination);
+  osc.connect(gain).connect(bus);
   osc.start(t0);
   osc.stop(t0 + dur + 0.02);
 }

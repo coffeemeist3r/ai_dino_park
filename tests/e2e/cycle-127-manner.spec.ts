@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, isBookHeader } from './helpers';
 
 /**
  * The manner at the hatch (BACKLOG-402). The contested-drop trio (375/385 yield, 387 gobble, 390 stand,
@@ -18,7 +18,7 @@ const remember = (p: Page, name: string, event: string) =>
 /** The block of book lines belonging to one dino (its header line up to the next dino's header). */
 function blockFor(text: string, name: string): string {
   const lines = text.split('\n');
-  const start = lines.findIndex((l) => l.startsWith(`${name}  (`));
+  const start = lines.findIndex((l) => isBookHeader(l, name));
   expect(start).toBeGreaterThan(-1);
   const rest = lines.slice(start + 1);
   const end = rest.findIndex((l) => /^\S/.test(l) && l.includes('  ('));

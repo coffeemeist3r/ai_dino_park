@@ -244,6 +244,13 @@ export interface BookRow {
    *  named only once it has eaten that one. Always present in-game; optional so older BookRow literals
    *  stay valid. Built by `menuLine`. */
   menu?: string;
+  /** What this dino sounds like (BACKLOG-195), from `voiceLine` — and, for a hatchling whose parents
+   *  are both still in the roster, where its voice sits between theirs. Present on the **selected**
+   *  row only: the book plays one cry at a time, so it names one voice at a time. */
+  voice?: string;
+  /** The book cursor (BACKLOG-195). Exactly one row carries it; that row's name line gets a '▸' and
+   *  that row is the one whose cry `N` just played. Absent → byte-identical to the pre-195 line. */
+  selected?: boolean;
 }
 
 function heartBar(hearts: number): string {
@@ -261,8 +268,12 @@ function heartBar(hearts: number): string {
 export function bookLines(rows: BookRow[], away: string[] = []): string[] {
   const out: string[] = ['— Collection Book —', ...away];
   for (const r of rows) {
-    out.push(`${r.name}  (${r.species})  [${r.role}]`);
+    // BACKLOG-195: the cursor. An unselected row renders exactly the line it always did.
+    out.push(`${r.selected ? '▸' : ''}${r.name}  (${r.species})  [${r.role}]`);
     out.push(`  ${heartBar(r.hearts)}  bond:${r.topBond}`);
+    // BACKLOG-195: what it sounds like, at the head of the fingerprints — the voice is the oldest
+    // of them (cycle 44) and the only one you can hear.
+    if (r.voice) out.push(`  ${r.voice}`);
     // BACKLOG-069: the menu, directly under the hearts — the one line in the block that is about what the
     // *keeper* has learned rather than about what the dino is, which is why it sits above the fingerprints.
     if (r.menu) out.push(`  ${r.menu}`);

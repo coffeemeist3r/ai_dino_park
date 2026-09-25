@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot, foundingState } from './helpers';
+import { boot, foundingState, isBookHeader } from './helpers';
 import { FOODS } from '../../game/src/world/foods';
 import { WARMED_CLAUSE } from '../../game/src/world/menu';
 import { WARM_AT } from '../../game/src/world/palate';
@@ -40,9 +40,9 @@ const setNeed = (p: Page, name: string, v: number) =>
 /** The one block of the book that belongs to `name` — `cycle-160-menu.spec.ts`'s helper, same subject. */
 function blockOf(text: string, name: string, roster: string[]): string {
   const lines = text.split('\n');
-  const start = lines.findIndex((l) => l.startsWith(`${name}  (`));
+  const start = lines.findIndex((l) => isBookHeader(l, name));
   expect(start, `${name} has a block in the book`).toBeGreaterThan(-1);
-  const end = lines.findIndex((l, i) => i > start && roster.some((n) => l.startsWith(`${n}  (`)));
+  const end = lines.findIndex((l, i) => i > start && roster.some((n) => isBookHeader(l, n)));
   return lines.slice(start, end < 0 ? undefined : end).join('\n');
 }
 

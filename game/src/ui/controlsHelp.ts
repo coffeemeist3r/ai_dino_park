@@ -44,6 +44,7 @@ export const HELP_ROWS: ReadonlyArray<HelpRow> = [
   { keys: 'H', action: 'drop food' },
   { keys: 'C', action: 'friendship hearts' },
   { keys: 'V', action: 'lens (book / news)' },
+  { keys: 'N', action: 'next book entry + cry' },
   { keys: 'K', action: 'observer' },
   { keys: 'B', action: 'field scan' },
   { keys: 'M', action: 'sound on/off' },

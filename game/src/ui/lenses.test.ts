@@ -159,3 +159,34 @@ describe('the dream line (BACKLOG-307)', () => {
   });
 });
 
+
+describe('the book cursor and the voice line (BACKLOG-195)', () => {
+  const base: BookRow = { name: 'Twitch', species: 'compsognathus', hearts: 3, topBond: 10, role: 'wanderer', rumorsHeard: 0 };
+
+  it('leaves an unselected, voiceless row byte-identical to the pre-195 render', () => {
+    expect(bookLines([{ ...base }])).toEqual([
+      '— Collection Book —',
+      'Twitch  (compsognathus)  [wanderer]',
+      '  ♥♥♥·······  bond:10',
+    ]);
+  });
+
+  it('marks exactly one row with the cursor', () => {
+    const lines = bookLines([{ ...base, selected: true }, { ...base, name: 'Rex' }]);
+    expect(lines.filter((l) => l.includes('▸')).length).toBe(1);
+    expect(lines.some((l) => l.startsWith('▸Twitch'))).toBe(true);
+    expect(lines.some((l) => l.startsWith('Rex'))).toBe(true);
+  });
+
+  it('renders the voice line indented, under the hearts', () => {
+    const lines = bookLines([{ ...base, selected: true, voice: '🔊 voice · 412 Hz · 2 pips' }]);
+    const i = lines.findIndex((l) => l.includes('🔊 voice · '));
+    expect(i).toBeGreaterThan(-1);
+    expect(lines[i]).toBe('  🔊 voice · 412 Hz · 2 pips');
+    expect(lines[i - 1]).toContain('bond:10');
+  });
+
+  it('omits the voice line on a row that does not carry it', () => {
+    expect(bookLines([{ ...base }]).some((l) => l.includes('🔊 voice'))).toBe(false);
+  });
+});

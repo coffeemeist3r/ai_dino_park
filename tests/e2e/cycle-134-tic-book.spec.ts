@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, isBookHeader } from './helpers';
 
 /**
  * The ritual in the book (BACKLOG-409). The item's whole discipline is that the line is **earned**: the book
@@ -21,7 +21,7 @@ const ticOf = (p: Page, n: string) => p.evaluate((nn) => (window as W).__tic(nn)
 /** The book block for one dino — from its name line to the next dino's, so a claim can't match a neighbour. */
 function blockFor(text: string, name: string): string {
   const lines = text.split('\n');
-  const start = lines.findIndex((l) => l.startsWith(`${name}  (`));
+  const start = lines.findIndex((l) => isBookHeader(l, name));
   if (start < 0) return '';
   const rest = lines.slice(start + 1);
   const end = rest.findIndex((l) => /^\S/.test(l) && l.includes('  ('));
