@@ -247,7 +247,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Living-minds bias — the very first sounds are *per-dino voices*, not UI bleeps: a dino you
 > can recognize with your eyes closed is distinctness in a register we've never used.
 
-- [ ] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
+- [~] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
 
 ## Cycle 45 lore additions — the voice learns the day (2026-06-12)
 

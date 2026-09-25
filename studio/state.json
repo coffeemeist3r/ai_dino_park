@@ -1,7 +1,7 @@
 {
   "cycle": 168,
-  "phase": "designer-pending",
-  "currentItem": "BACKLOG-193: Call and answer \u2014 the answering chirp scales with hearts",
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-195: Cry in the book \u2014 a cursor, a voice you can ask for, and a blend made legible",
   "structureItem": "BACKLOG-559: One bus for every voice \u2014 a master gain and a pure mix module",
   "lastVerdict": null,
   "structureVerdict": null,
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-09-25T08:10:52.344718Z",
     "structure-smith": "2026-09-25T08:12:24.879487Z",
-    "designer": "2026-09-24T08:16:14.672254Z",
+    "designer": "2026-09-25T08:15:51.120227Z",
     "code-planner": "2026-09-24T08:17:48.478985Z",
     "coder": "2026-09-24T08:43:29.117875Z",
     "qa": "2026-09-24T08:44:23.604853Z",
