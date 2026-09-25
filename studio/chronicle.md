@@ -13415,3 +13415,6 @@ two structure arcs remain; the structure arcs (559 then 206) are both queued.
 
 **CI checked:** the last three runs on `main` are all `success` (cycles 164, 165, 166). Nothing red
 going into tonight's push.
+
+## 2026-09-25 — cycle 168 — lore-smith — the book is the silent room
+Milestone 22's second lore arc is up: **BACKLOG-195**, the cry in the book. Arc 1 made the greeting carry a relationship; this one gives the voice a second place to come from, and asks a hatchling to sound like its parents the way it already looks like them. Social queue above cap — no new lore items. Art queue was genuinely 0, so two registers seeded (560 watch-glass, 561 hourglass), both hostable tonight on the per-line plaque 558 built. Idea Box empty.
