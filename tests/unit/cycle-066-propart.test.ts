@@ -53,6 +53,10 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'rouse', // BACKLOG-520: ...and the open one
       'shelter',
       'shelter_derelict', // BACKLOG-494
+      // BACKLOG-561 (cycle 168-art): the fourteenth rig — this sitting's hourglass, the middle of the
+      // three keeper lines. Drawn as a pair with `watch` below, because two registers about time sitting
+      // eleven pixels apart have to differ in silhouette or the player reads either one as both.
+      'sitting',
       'stone',
       // BACKLOG-539 (cycle 167-art): the twelfth rig and the first that is not a mark — the day-count's
       // engraved register, struck into the plaque's brass beside the `Keeper · ` row. Blocked nine
@@ -70,6 +74,10 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'tic_fuss', // BACKLOG-496 closes (cycle 142-art) - the turned-over patch, the third and last kind
       'tic_pace', // BACKLOG-496: the ritual's two-tile scuff (fuss WAS undrawn — the per-kind fallback control)
       'vigil', // BACKLOG-526: the third hour-mark, and the only one aimed at the player (BACKLOG-121's host)
+      // BACKLOG-560 (cycle 168-art): the thirteenth rig — the tenure line's watch-glass, and the largest
+      // engraving in this registry. A ring for a span that keeps going, against `sitting`'s waist for a
+      // session that runs out and `streak`'s notched bar for days already kept.
+      'watch',
     ]);
   });
 

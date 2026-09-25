@@ -110,7 +110,32 @@ export const STREAK_PREFIX = 'Keeper · ';
 /** The prop-rig key for that register (BACKLOG-539) — `hasPropArt`'s lookup, kept beside the line it marks. */
 export const STREAK_ART_KEY = 'streak';
 
-const KEEPER_PREFIXES = ['Watch · ', 'Sitting · ', STREAK_PREFIX] as const;
+/** The tenure line's prefix and register key (BACKLOG-560) — who is watching, and since when. */
+export const WATCH_PREFIX = 'Watch · ';
+export const WATCH_ART_KEY = 'watch';
+
+/** This sitting's prefix and register key (BACKLOG-561) — how long the keeper has been here *now*. */
+export const SITTING_PREFIX = 'Sitting · ';
+export const SITTING_ART_KEY = 'sitting';
+
+const KEEPER_PREFIXES = [WATCH_PREFIX, SITTING_PREFIX, STREAK_PREFIX] as const;
+
+/**
+ * Every engraved register on the brass (BACKLOG-560/561), as `{ prefix, key }`.
+ *
+ * BACKLOG-539 wired its register by hand — one field, one bake, one placement block, one hook. Two more
+ * of the same shape would have made that four copies of an arithmetic the cycle-168 verdict had just
+ * finished criticising four copies of somewhere else. So the scene reads this table and loops.
+ *
+ * Each register finds its row by **prefix, never by index**: every line above any of these is optional,
+ * and an index would engrave the wrong line the first time a ground stopped owing upkeep. That is 539's
+ * own rule, and it is the reason this is a list of prefixes rather than a list of positions.
+ */
+export const PLAQUE_REGISTERS: ReadonlyArray<{ prefix: string; key: string }> = [
+  { prefix: WATCH_PREFIX, key: WATCH_ART_KEY },
+  { prefix: SITTING_PREFIX, key: SITTING_ART_KEY },
+  { prefix: STREAK_PREFIX, key: STREAK_ART_KEY },
+];
 
 export type PlaqueLineKind = 'stat' | 'keeper';
 

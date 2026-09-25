@@ -13518,3 +13518,86 @@ whoever picks next: **206 is now the cheap one** — the bus exists, the pure mo
 206 has to do is widen `gainFor` to take a distance and pass the keeper's. The two remaining lore
 arcs both want *timing* rather than volume, which is why BACKLOG-562 was seeded tonight, from exactly
 that reading of them.
+
+## 2026-09-25 — cycle 168-art — artist — the brass finishes its sentence
+
+**BACKLOG-560 and BACKLOG-561 are drawn**, the morning they were seeded, on the host BACKLOG-558 built
+the cycle before. Seventh consecutive fire on the cycle-145 cadence — and the first in nine cycles
+that began from a queue that was **empty** rather than blocked, which is why there was room to seed
+two and draw two on the same day.
+
+**They exist because one register on three sibling lines reads as an accident.** The plaque carries
+nine lines. Six are counts of what the park has. Three are about whoever is standing there — the
+tenure, this sitting, and the days kept — and last cycle 539 engraved the bottom one and left the
+other two bare. That is a stranger state than none of them being engraved: it looks like somebody
+started and stopped.
+
+**The design problem is not either shape. It is the pair.** Both of these lines measure *time*, and
+they sit eleven pixels apart on the same plate. Every previous rig in this project needed to be
+distinct from its neighbours as a nicety; here it is the entire function, because a player who cannot
+tell the two apart at a glance will read whichever one they looked at as both, and the brass will have
+gained two marks and lost one meaning.
+
+So: a **ring** for the span, a **waist** for the session. A circle has no beginning and is the oldest
+drawing of a thing that keeps going; an hourglass is the oldest drawing of a thing that runs out.
+Neither can be confused with the other, or with `streak`'s straight notched bar underneath — and the
+unit file asserts that as a silhouette comparison rather than leaving it to the author's eye, which is
+the habit the last three fires have been installing.
+
+**The watch's first draft had twelve hour ticks around the rim**, which is what a watch face actually
+has, and it died of the same arithmetic that killed the five-bar gate one cycle ago: twelve marks on a
+twelve-cell circumference is one lit cell per mark with nothing between them. That is `rouse`'s iris
+ring all over again, one ring further out, and `mope` already had to relearn it once. What survives is
+the ring and **one hand** — because the hand is the only part of a clock that says *time is passing*
+rather than *this is a clock*, and it is the part that still reads when the rim is four cells of
+brass. The hand is a two-cell bar, not a one-cell needle; the hourglass's neck is two cells, not the
+single-cell pinch the shape wants. Nothing lit in either rig is thinner than two cells and the spec
+says so as a number.
+
+Two small decisions worth keeping. The hourglass's **upper bell is empty** and its fallen sand is
+drawn in the **cut** rather than in brass: a heap the same value as the glass around it is a heap you
+cannot see, and a full top bell would be a drawing of a sitting that has not started. And both rigs
+take `streak`'s palette by **equality assertion** rather than by three copied literals — the lit lip
+is the keeper lines' own `#fff1c9`, the face is the stat lines' own `#f4d58d`, the cut is darker than
+the panel. The three registers are one plate, not three stickers.
+
+**And the wiring was generalised rather than tripled — on the same night the verdict upstairs
+criticised four copies of a rule.** 539 shipped one field, one bake, one placement block and one hook.
+Two more of that shape would have been three copies of one placement rule in one method, which is the
+`blockOf` defect being invented a second time before the ink on the first one dried.
+`PLAQUE_REGISTERS` is now a `{ prefix, key }` table in `ui/plaque.ts`; the scene loops it, the
+reachability register reads the same table so a rename cannot leave a stale literal in the list that
+exists to catch stale literals, and every register still finds its row by **prefix, never by index**,
+because every line above any of them is optional. The bespoke path is gone, not added to.
+
+The rig census in `cycle-066-propart` went red on the thirteenth and fourteenth keys and was
+**extended, not loosened** — the fourth time that assertion has done its job exactly as written.
+
++14 unit, +2 e2e. Board: build clean, **3063 unit across 286 files**, **829 e2e** (one pre-existing
+conditional skip). A permanently-skipping e2e was written and then **deleted** rather than shipped:
+the "three distinct shapes" claim needs a rig table the browser has no hook for, the unit file already
+owns it, and a spec that skips itself into green is worse than no spec at all.
+
+## Cycle 168 — housekeeping
+
+**185 open**, counted as unique ids (`grep -o '^- \[ \] BACKLOG-[0-9]*' | sort -u`) — 188 last cycle,
+four closed (195, 559, 560, 561) against two seeded (562, 563), and one arithmetic correction: the raw
+`grep -c` reads **189**, because the four Structure Track entries are *pointers* whose full text lives
+in the body, so every structural item is counted twice. Last cycle's 188 was a raw count and carried
+the same double. The unique count is the true one and is what this note will use from here.
+No closed bullets left in the working backlog; no section emptied.
+
+**Structure Track is at 4** (552, 557, 562, 563) — **at** X, so the next Structure-smith **drains
+without brainstorming**, for the first time in four cycles. The note it should read first: **206 is
+not in that list and should probably jump it.** It is Milestone 22's remaining structure arc, it was
+blocked on the bus until tonight, and it is now the cheapest item in the park — `gainFor` widens to an
+options object and the call site passes the keeper's distance. Everything queued above it keeps.
+
+**Art queue at 0**, empty rather than blocked for the second cycle running. `grep '[art]'` returns
+**one** bullet and it is still BACKLOG-147, an `[infra]` item whose *description* mentions art — the
+same off-by-one flagged in the last two housekeeping notes, now three for three.
+
+**Milestone 22 is halfway**: lore arcs 1 and 2 closed, structure arc 1 closed, three arcs left.
+
+**CI checked:** the last four runs on `main` are all `success` (cycles 164, 165, 166, 167-art).
+Nothing red going into tonight's push.

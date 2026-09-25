@@ -27,7 +27,7 @@
  * Pure TypeScript (no Phaser), so the walk runs in Node and costs a suite nothing.
  */
 
-import { STREAK_ART_KEY } from '../ui/plaque';
+import { PLAQUE_REGISTERS } from '../ui/plaque';
 import { ACTIVE_SCALE, FOUNDING_DAY, FOUNDING_HOUR, MINUTES_PER_DAY } from './clock';
 import { atRest, chronotypeOf } from './chronotype';
 import { seasonFor, type Season } from './seasons';
@@ -194,7 +194,11 @@ export function worldPlacedProps(): Set<string> {
   // `unplacedRigs` exists to catch a rig nothing draws, and this one is drawn on the first frame of every
   // save. A register that excluded it would have to be told, separately, that chrome exists — and a
   // second list is how the first one starts lying.
-  out.add(STREAK_ART_KEY);
+  // BACKLOG-560/561: and the other two keeper lines' registers, drawn the cycle after. Same chrome
+  // argument as the streak's — `refreshPlaque` strikes all three on the first frame of every save — and
+  // the keys come from `PLAQUE_REGISTERS` rather than being typed here, so a rename cannot leave a stale
+  // literal in the register that exists to catch stale literals.
+  for (const r of PLAQUE_REGISTERS) out.add(r.key);
   return out;
 }
 

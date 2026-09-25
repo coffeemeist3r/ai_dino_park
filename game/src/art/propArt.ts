@@ -2106,6 +2106,89 @@ const STREAK_RIG: PropRig = {
   },
 };
 
+
+// `watch` (BACKLOG-560) and `sitting` (BACKLOG-561) — the other two keeper lines' registers, drawn the
+// cycle after `streak` and against the same plate. Three lines on this brass are about whoever is standing
+// there and until tonight only the bottom one was engraved; a register on one of three sibling lines reads
+// as an accident rather than as a system.
+//
+// They are drawn as a **pair**, and that is the whole design problem. `Watch · ` counts a span of tenure —
+// how long this observer has held the post, across every visit — and `Sitting · ` counts *this* visit. Two
+// measures of time, stacked, eleven pixels apart. If they do not differ in **silhouette** at 16px they are
+// worse than nothing, because the player will read whichever one they glance at as both.
+//
+// So: a **ring** for the span and a **waist** for the session. A circle has no beginning and is the oldest
+// drawing of a thing that keeps going; an hourglass is the oldest drawing of a thing that runs out. Nothing
+// else in this registry owns either shape — every sibling is a compact blob or a posture — and at a glance
+// the two cannot be confused with each other or with `streak`'s straight notched bar below them.
+//
+// Both take `streak`'s palette exactly, for `streak`'s reason: the lit lip is the keeper lines' own
+// `#fff1c9`, the face is the stat lines' own `#f4d58d`, and the cut is darker than the panel behind it, so
+// a register is made of the brass it is struck into and reads as depth rather than as a sticker. Neither
+// takes `rouse`'s outline; this family is engraving, not marking.
+//
+// The floor `rouse` taught and `mope` had to relearn is asserted rather than eyeballed this time: nothing
+// lit in either rig is thinner than **two cells**, against 11px type. It is why the watch-glass's hand is a
+// two-cell bar rather than a one-cell needle (a needle is the more literal clock hand and it bakes to a
+// grey dash), and why the hourglass's neck is two cells rather than the single-cell pinch the shape wants.
+//
+// First draft of the watch rejected: **twelve hour ticks around the rim**, which is what a watch face
+// actually has. Twelve marks on a twelve-cell circumference is one lit cell per mark with nothing between
+// them — the `rouse` iris ring failure exactly, one ring further out. What survives is the ring and one
+// hand, because the hand is the only part of a clock that says *time is passing* rather than *this is a
+// clock*, and it is the part that still reads when the rim is four cells of brass.
+const WATCH_GRID: ReadonlyArray<string> = [
+  '................',
+  '.....oooooo.....',
+  '...ooohhhBooo...',
+  '..oohhhhBBBBoo..',
+  '..ohhhohhoBBBo..',
+  '.oohhoohhooBBoo.',
+  '.ohhoo.hh.ooBBo.',
+  '.ohho..hh..oBBo.',
+  '.ohBo..hh..oBBo.',
+  '.oBBoo....ooBBo.',
+  '.ooBBoo..ooBBoo.',
+  '..oBBBooooBBBo..',
+  '..ooBBBBBBBBoo..',
+  '...oooBBBBooo...',
+  '.....oooooo.....',
+  '................',
+];
+
+// The hourglass. The heap in the lower bell is cut rather than brass, so the sand reads as *fallen* — a
+// heap the same value as the glass around it is a heap you cannot see. The upper bell is left empty on
+// purpose: a sitting that has already begun is an hourglass that has already run, and a full top bell
+// would be a drawing of a session that has not started.
+const SITTING_GRID: ReadonlyArray<string> = [
+  '................',
+  '...oooooooooo...',
+  '...hhBBBBBBBB...',
+  '...ohhBBBBBBo...',
+  '...ohhBBBBBBo...',
+  '....ohhBBBBo....',
+  '.....ohhBBo.....',
+  '......ohho......',
+  '......ohho......',
+  '.....ohhBBo.....',
+  '....ohhBBBBo....',
+  '...ohhBooBBBo...',
+  '...ohhooooBBo...',
+  '...hhBBBBBBBB...',
+  '...oooooooooo...',
+  '................',
+];
+
+/** The register palette, shared by all three engravings — `streak`'s, unchanged, because they are one plate. */
+const REGISTER_PALETTE = {
+  o: 0x2a1d0e, // the cut, darker than the plaque panel (0x3a2a14) it is struck into
+  h: 0xfff1c9, // the lit lip — the keeper lines' own colour
+  B: 0xf4d58d, // the brass face — the stat lines' own colour
+};
+
+const WATCH_RIG: PropRig = { size: 16, grid: WATCH_GRID, palette: { ...REGISTER_PALETTE } };
+const SITTING_RIG: PropRig = { size: 16, grid: SITTING_GRID, palette: { ...REGISTER_PALETTE } };
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -2203,6 +2286,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // object for a register to be. `plaqueRows` shipped earlier in this same cycle on the structure
   // track (BACKLOG-558), which is the condition the cycle-145 amendment asks for.
   streak: STREAK_RIG,
+  watch: WATCH_RIG, // BACKLOG-560: the tenure line's ring
+  sitting: SITTING_RIG, // BACKLOG-561: this sitting's waist
 };
 
 /**

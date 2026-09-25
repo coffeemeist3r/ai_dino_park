@@ -363,7 +363,7 @@ import {
   wistfulGreetLine,
   type Watcher,
 } from '../world/envy';
-import { maxGeneration, plaqueLines, plaqueLineKind, STREAK_PREFIX, STREAK_ART_KEY, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
+import { maxGeneration, plaqueLines, plaqueLineKind, STREAK_PREFIX, PLAQUE_REGISTERS, zoneTallyLine, zoneStoresLine, type PlaqueStats } from '../ui/plaque';
 // BACKLOG-546: the keeper's satchel — the stock the hatch spends from.
 import {
   FOUNDING_SATCHEL,
@@ -901,8 +901,15 @@ export class WorldScene extends Phaser.Scene {
   private plaque!: Phaser.GameObjects.Container;
   private plaqueBg!: Phaser.GameObjects.Rectangle;
   private plaqueRows: Phaser.GameObjects.Text[] = [];
-  /** BACKLOG-539: the engraved day-count, struck beside the `Keeper · ` row. Null until a rig exists. */
-  private streakMark: Phaser.GameObjects.Image | null = null;
+  /**
+   * The engraved registers (BACKLOG-539/560/561), keyed by the prefix of the row each rides.
+   *
+   * A map rather than a field per register: 539 wired one by hand and two more of the same shape would
+   * have been three copies of one placement rule. A key is absent when its rig has not been drawn, which
+   * is `makeHourMark`'s contract applied to chrome — the brass reads exactly as it did on a build
+   * without one.
+   */
+  private plaqueMarks = new Map<string, Phaser.GameObjects.Image>();
   private eventLog: string[] = [];
   private hudElements: Array<{ setAlpha: (a: number) => unknown }> = [];
   private lastInputAt = 0;
@@ -1493,13 +1500,15 @@ export class WorldScene extends Phaser.Scene {
     this.plaque = this.add.container((TILE * COLS) / 2, TILE * ROWS - 4).setDepth(11);
     this.plaqueBg = this.add.rectangle(0, 0, 10, 10, PLAQUE_PANEL, PLAQUE_PANEL_ALPHA).setOrigin(0.5, 1);
     this.plaque.add(this.plaqueBg);
-    // BACKLOG-539: the day-count's own engraved register, struck into the brass beside the streak line.
-    // Drawn only if a rig exists — the plaque reads exactly as it did tonight on a build without one,
+    // BACKLOG-539/560/561: the engraved registers, struck into the brass beside the three keeper lines.
+    // Each is drawn only if its rig exists — the plaque reads exactly as it did on a build without one,
     // which is `makeHourMark`'s contract applied to chrome rather than to a mark over a dino.
-    const streakTex = hasPropArt(STREAK_ART_KEY) ? bakePropArt(this, STREAK_ART_KEY) : null;
-    if (streakTex) {
-      this.streakMark = this.add.image(0, 0, streakTex).setOrigin(1, 0.5).setVisible(false);
-      this.plaque.add(this.streakMark);
+    for (const reg of PLAQUE_REGISTERS) {
+      const tex = hasPropArt(reg.key) ? bakePropArt(this, reg.key) : null;
+      if (!tex) continue;
+      const img = this.add.image(0, 0, tex).setOrigin(1, 0.5).setVisible(false);
+      this.plaqueMarks.set(reg.prefix, img);
+      this.plaque.add(img);
     }
     this.refreshPlaque();
     getWorldClock().onTick(() => this.refreshPlaque());
@@ -1513,8 +1522,19 @@ export class WorldScene extends Phaser.Scene {
     // this answers what is on it. Cycle 163 is why the distinction is worth a hook — a green assertion
     // against a computed value sat beside a chip that drew, hit-tested and swallowed the tap.
     // any: dev-only Playwright hook — is the day-count's engraved register struck, and where (BACKLOG-539).
-    (window as any).__streakMark = () =>
-      this.streakMark ? { visible: this.streakMark.visible, x: this.streakMark.x, y: this.streakMark.y } : null;
+    // any: dev-only Playwright hook — every engraved register at once (BACKLOG-560/561), keyed by the
+    // line it rides. `__streakMark` is kept as the one-register read its own specs were written against.
+    (window as any).__plaqueMarks = () =>
+      Object.fromEntries(
+        PLAQUE_REGISTERS.filter((r) => this.plaqueMarks.has(r.prefix)).map((r) => {
+          const m = this.plaqueMarks.get(r.prefix)!;
+          return [r.key, { visible: m.visible, x: m.x, y: m.y }] as const;
+        }),
+      );
+    (window as any).__streakMark = () => {
+      const m = this.plaqueMarks.get(STREAK_PREFIX);
+      return m ? { visible: m.visible, x: m.x, y: m.y } : null;
+    };
     (window as any).__plaqueRows = () =>
       this.plaqueRows
         .filter((r) => r.visible)
@@ -1617,15 +1637,13 @@ export class WorldScene extends Phaser.Scene {
       this.plaqueRows[i].setY(-height + PLAQUE_PAD_Y + i * PLAQUE_PITCH);
     }
 
-    // BACKLOG-539: the register rides whichever row is the streak, wherever the brass puts it today —
-    // the row is found by its text rather than by an index, because the line above it is optional and an
-    // index would quietly engrave the wrong line the first time a ground stopped owing upkeep.
-    if (this.streakMark) {
-      const row = this.plaqueRows.find((r) => r.visible && r.text.startsWith(STREAK_PREFIX));
-      this.streakMark.setVisible(!!row);
-      if (row) {
-        this.streakMark.setPosition(row.x - row.width / 2 - PLAQUE_MARK_GAP, row.y + PLAQUE_PITCH / 2);
-      }
+    // BACKLOG-539/560/561: each register rides whichever row carries its prefix, wherever the brass puts
+    // it today — found by its text rather than by an index, because every line above it is optional and
+    // an index would quietly engrave the wrong line the first time a ground stopped owing upkeep.
+    for (const [prefix, mark] of this.plaqueMarks) {
+      const row = this.plaqueRows.find((r) => r.visible && r.text.startsWith(prefix));
+      mark.setVisible(!!row);
+      if (row) mark.setPosition(row.x - row.width / 2 - PLAQUE_MARK_GAP, row.y + PLAQUE_PITCH / 2);
     }
   }
 
