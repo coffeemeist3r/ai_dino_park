@@ -1,6 +1,6 @@
 {
   "cycle": 168,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-195: Cry in the book \u2014 a cursor, a voice you can ask for, and a blend made legible",
   "structureItem": "BACKLOG-559: One bus for every voice \u2014 a master gain and a pure mix module",
   "lastVerdict": null,
@@ -12,7 +12,7 @@
     "lore-smith": "2026-09-25T08:10:52.344718Z",
     "structure-smith": "2026-09-25T08:12:24.879487Z",
     "designer": "2026-09-25T08:15:51.120227Z",
-    "code-planner": "2026-09-24T08:17:48.478985Z",
+    "code-planner": "2026-09-25T08:17:27.899189Z",
     "coder": "2026-09-24T08:43:29.117875Z",
     "qa": "2026-09-24T08:44:23.604853Z",
     "validator": "2026-09-24T08:46:31.190685Z",
