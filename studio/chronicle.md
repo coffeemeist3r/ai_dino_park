@@ -13418,3 +13418,5 @@ going into tonight's push.
 
 ## 2026-09-25 — cycle 168 — lore-smith — the book is the silent room
 Milestone 22's second lore arc is up: **BACKLOG-195**, the cry in the book. Arc 1 made the greeting carry a relationship; this one gives the voice a second place to come from, and asks a hatchling to sound like its parents the way it already looks like them. Social queue above cap — no new lore items. Art queue was genuinely 0, so two registers seeded (560 watch-glass, 561 hourglass), both hostable tonight on the per-line plaque 558 built. Idea Box empty.
+
+**cycle 168 — structure-smith** — **BACKLOG-559** picked: one master gain every call routes through, and a pure `audio/mix.ts` that decides the number. Queue was at 3, below cap, so two items seeded first (562 the voice has no clock, 563 three last-sound fields). Collision with the lore track's `audio/` work taken on purpose — 195's cry has no world position, which makes it the bus's first honest test. Not a solo cycle.
