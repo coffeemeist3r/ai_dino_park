@@ -22,7 +22,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
-- [~] BACKLOG-559 [infra] One bus for every voice — `voice.ts` builds a fresh oscillator chain per call, so no call's loudness can be decided anywhere (full text in the cycle-167 block below). **In flight, cycle 168.**
 - [ ] BACKLOG-562 [infra] The voice has no clock — the park's one deferred call is a bespoke `delayedCall` with its guards written inline (full text in the cycle-168 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 
@@ -247,7 +246,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Living-minds bias — the very first sounds are *per-dino voices*, not UI bleeps: a dino you
 > can recognize with your eyes closed is distinctness in a register we've never used.
 
-- [~] BACKLOG-195 [pokemon] Cry in the book — the collection book plays a dino's chirp when you open its entry (the Pokédex cry, in the bowl's register); a hatchling's cry blends its parents' parameters the way its traits do. Builds on 191 / 021 / 042.
 
 ## Cycle 45 lore additions — the voice learns the day (2026-06-12)
 
@@ -679,7 +677,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 167 (Structure-smith)
 
-- [~] BACKLOG-559 [infra] One bus for every voice — `audio/voice.ts` builds a fresh `oscillator → gain → ctx.destination` chain for every single call (`playChirp` does it once per pip, `playThunk` once per knock), and `MASTER_GAIN` is a module constant multiplied in at the envelope. There is therefore **no object in this park that represents "how loud the bowl is"**, and no seam where a call's loudness can be decided by anything other than the call itself. Three queued arcs all need exactly that seam and none of them can have it: **206** wants a call attenuated by how far the caller is from the keeper's avatar, **204** wants a distress call to carry over the ordinary chatter, and **202** wants a reply from across the bowl to sound like it came from across the bowl. Each would, today, have to reach into the pip loop and scale the envelope — three copies of the same arithmetic inside the one file the CHARTER keeps WebAudio locked in. Ship the bus: one master `GainNode` created with the context, every voice routed through it, and the number it carries decided by a **pure** module (`audio/mix.ts`) that knows nothing about WebAudio — `gainFor({ kind, distanceTiles })` returning a 0–1 multiplier, Node-testable, with the existing behaviour as its identity case so an un-attenuated chirp is byte-identical to today's. `voice.ts` stays the only file that touches `AudioContext`. **The reachability half is not optional and not deferred to 206:** a bus nothing modulates is groundwork, and CHARTER v7 calls groundwork a REWORK — ship it with one live consumer, the simplest being that the bowl's own glass rap and a dino's call stop sharing one flat level. Builds on 191 / 206 / 204 / 202.
 
 ## Cycle 168 (Structure-smith)
 
