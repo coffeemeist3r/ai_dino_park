@@ -13608,3 +13608,11 @@ Picked Milestone 22's third arc whole: **BACKLOG-204 + BACKLOG-202** — a distr
 ticker line naming the caller, and a friend that answers in its own voice before it starts walking.
 Social queue over cap, so nothing new seeded there; art queue was at 0 for the third cycle running
 and took one, **BACKLOG-564** (the drawn sulk — its host has existed since cycle 165).
+
+## Cycle 169 — structure-smith
+
+**BACKLOG-206 — sound has a place.** Drained without brainstorming (track at cap, 4 open) and jumped
+the queue for the reason last cycle's housekeeping note wrote down: it is Milestone 22's last open
+structure arc, and the bus that blocked it shipped last night. Falloff bottoms out above zero on
+purpose — the lore track this cycle is about making a far-off cry *findable*, and a cry that fades to
+silence would fight it. Next up behind it: 562, the voice's clock.
