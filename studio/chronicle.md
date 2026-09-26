@@ -13702,3 +13702,26 @@ pair and the off-key loner — and both halves of it want 562 first.
 
 **CI checked:** the last four runs on `main` are all `success` (cycles 165, 166, 167-art, 168-art).
 Nothing red going into tonight's push.
+
+## Cycle 169-art — artist: no-op, and the queue's one item was already drawn
+
+**BACKLOG-564 ABANDONED as a duplicate.** The sulk has been in `PROP_RIGS` since cycle 165: rig
+authored, host wired (`makeHourMark(SULK_ART_KEY, SULK_GLYPH)`), registered in `worldPlacedProps()`,
+and carrying its own unit file. BACKLOG-543 shipped it, after nine cycles and two corrections, and
+the archive already records that its bullet went unclosed for a cycle because a housekeeping note
+counted the queue from the chronicle instead of from the file.
+
+Tonight's Lore-smith made the mirror of that mistake: it read `world/expiry.ts`, found `SULK_ART_KEY`
+with a comment saying cycle 165 built a host for it, and seeded a rig for a key that already has one —
+without grepping `propArt.ts`. **A host comment is not a queue.** The check is one command
+(`grep 'sulk' game/src/art/propArt.ts`), and the cap rule that says "seed art when the queue is under
+3" should read "seed art the queue does not already contain", which on a 184-item backlog means
+checking the code, not the description.
+
+So the art queue is **genuinely empty for the fourth consecutive cycle**, not at 1 as tonight's
+housekeeping note recorded an hour ago. That note stands as written and this corrects it, rather than
+being edited quietly. Nothing was drawn, and nothing should have been: authoring a second sulk rig
+would have collided with the first in the reachability register.
+
+The standing note holds — `grep '[art]'` still returns BACKLOG-147, an `[infra]` item whose
+*description* mentions art. That is now five housekeeping notes in a row flagging the same off-by-one.

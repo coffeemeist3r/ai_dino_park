@@ -1,8 +1,8 @@
 {
   "cycle": 169,
-  "phase": "artist-pending",
-  "currentItem": "BACKLOG-204+202",
-  "structureItem": "BACKLOG-206",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -16,7 +16,7 @@
     "coder": "2026-09-26T08:38:38.743740Z",
     "qa": "2026-09-26T08:39:17.634265Z",
     "validator": "2026-09-26T08:41:31.992818Z",
-    "artist": "2026-09-25T09:11:04.375031Z"
+    "artist": "2026-09-26T08:42:20.262514Z"
   },
   "lastSoloCycle": 151,
   "soloCycle": false
