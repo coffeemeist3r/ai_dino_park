@@ -1376,4 +1376,8 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 
 ### Cycle 153 structure additions (2026-09-07)
 
+## Closed in cycle 169
 
+- [x] BACKLOG-202 [cycle 169: the comforter calls back in its own voice before it walks, `callbackDelayMs(bond)` fast for a close friend and slow for a distant one] [emergent] Answered across the bowl — the friend who turns toward a distress call (194) chirps back in its own voice before it moves: reassurance at distance, the bond audible in both directions. Builds on 194 / 191 / 013.
+- [x] BACKLOG-204 [cycle 169: 📢 ticker line naming the caller and the ground, posted muted or not] [social] Keeper hears trouble — a distress call posts a faint 📢 ticker line naming the caller, so a keeper out of view can find the dino in trouble; greeting/feeding it then rides the keeper-warmth repair shape (184). Builds on 194 / 184.
+- [x] BACKLOG-206 [cycle 169: `audio/space.ts` + `gainFor(kind, {distancePx})`; floor 0.35, never silence] [emergent] Sound has a place — chirp volume attenuates with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint; the bowl gains acoustic space. Builds on 191 / 194.

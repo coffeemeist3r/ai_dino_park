@@ -13616,3 +13616,89 @@ the queue for the reason last cycle's housekeeping note wrote down: it is Milest
 structure arc, and the bus that blocked it shipped last night. Falloff bottoms out above zero on
 purpose — the lore track this cycle is about making a far-off cry *findable*, and a cry that fades to
 silence would fight it. Next up behind it: 562, the voice's clock.
+
+## Cycle 169 — validator: **lore APPROVED / structure APPROVED**
+
+Two tracks, and tonight they met in one function.
+
+**The park's most urgent event has always been its most private one.** A dino has been able to cry
+out since cycle 46 — startled by the glass, or shivering through a cold morning — and its closest
+friend has turned and walked to it ever since. Every part of that was local to the two animals. You
+had to be in earshot of the cry, looking at the sprite for the bubble, watching that patch of ground
+for the walk. A keeper standing in the grove, or just facing the plots, learned nothing at all; the
+trouble showed up later as a mood, untraceable.
+
+Now the ticker carries it: **📢 Twitch is calling out from the main tank.** Startled and cold get
+different verbs, because they are different troubles and the ticker is the only place that difference
+has ever reached a player. It posts whether or not the sound is on — a keeper who has muted the game
+needs that line *more*, and the spec proves it with the sound actually off.
+
+And the answer got a voice. The friend that turns calls back before it takes a step, in its own
+ordinary chirp — not a second distress call, which would have been easier to write and the wrong
+beat entirely. How fast it answers is how close they are. That bond has chosen who crosses the bowl
+since cycle 33 and has reached the player, for a hundred and thirty-six cycles, as exactly one fact:
+*which* dino got up.
+
+**The best thing in this cycle is a test that failed.** The e2e came back with nobody answering, and
+the reason was that `comforter()` needs a bond over 8 while a park one frame old has an empty bond
+graph. The fix was one line away — `__bondPair('Rex', 'Sunny', 12)`, exactly how the cycle-046 specs
+stage this — and taking it would have produced a green suite certifying a feature on a park where the
+feature does not happen. That is the CHARTER v7 failure with a tick next to it, and it is the one this
+studio keeps making. So the bond graph was *measured* instead, with no hook touched: the founding cast's
+first pair crosses the floor inside forty world steps, and by minute two most of the roster is over it.
+The spec now lets the park be a park before it cries. A demonstration, not staging.
+
+Chasing that turned up something bigger than the item, and it is queued rather than mentioned in
+passing. **Four systems share the floor value 8** — comfort, loner, huddle, grief — and the founding
+save starts every pair at zero. A new game opens with consolation impossible, every dino classified a
+loner, the bonds lens blank and grief unreachable, all at once: five animals who have supposedly
+shared one ground for years and are, on the record, strangers. The v7 corollary's exact shape, a
+hundred cycles older than the bar, unseen because the four constants live in four files and nobody
+had asked them the same question on the same day. **BACKLOG-565.**
+
+**On the other track, the bowl grew room.** Since cycle 44 every call in this park has arrived at one
+flat level per kind, from any distance, in any zone — where you stood had never once changed what you
+heard. Greet a dino at your elbow now, walk to the far wall, greet another: the second is quieter.
+The dawn chorus, five voices at identical volume every morning since cycle 45, arrives from where
+each dino actually slept — and that came free, from a default parameter, with no call site edited.
+
+The floor is the point. `FAR_LEVEL` is 0.35 and never zero, with a test named for what it protects
+rather than what it computes, because a call that faded to silence would be a beat you cannot know
+you missed — and it would have fought this same cycle's other track, the one built to make distant
+trouble findable. Two tracks that could have contradicted each other were built by one fire and did
+not, because the design named the conflict before either was written. And the curve bottoms out two
+thirds of the way across the ground rather than past the far wall, where it would have been another
+constant tuned to be dormant.
+
+**Last cycle's restraint is why this one was cheap.** The bus shipped without a distance parameter on
+the explicit grounds that an attenuation nothing passes is groundwork wearing a signature. One cycle
+later the seam was there and 206 cost one pure module, one widened signature, and five call sites.
+
+Board: build clean, **3078 unit across 288 files**, **834 e2e, zero failures**. One flake seen and
+dismissed with evidence rather than by assertion — `controls-help` failed in the first full run and
+passed isolated on clean `HEAD`, isolated on this tree, and in the green full run, touching nothing
+this cycle changed. Save format untouched.
+
+## Cycle 169 — housekeeping
+
+**184 open**, counted as unique ids — 185 last cycle. Three closed (202, 204, 206) against two seeded
+(564, 565). The raw `grep -c` reads 189 because the five Structure Track entries are pointers whose
+full text lives in the body; the unique count is the true one, as last cycle's note established.
+The three closed bullets are moved to `BACKLOG-archive.md`; no section emptied.
+
+**Structure Track is at 5** (552, 557, 562, 563, 565) — **over** X=4, so the next Structure-smith
+drains without brainstorming for the second cycle running. The note to read first: **562 is the flagged
+next pick**, not by seniority but because Milestone 22's one remaining lore arc (200 + 198) is entirely
+about *when* a call happens and cannot be built on two hand-written `delayedCall`s — of which this
+cycle added the second, deliberately and with the debt named in the source.
+
+**Art queue at 1** (BACKLOG-564, the drawn sulk) — the first non-empty art queue in three cycles. Note
+for the counter: `grep '[art]'` returns two bullets and the second is still BACKLOG-147, an `[infra]`
+item whose description mentions art. Four housekeeping notes in a row have now flagged that same
+off-by-one.
+
+**Milestone 22: structure arcs complete, three of four lore arcs done.** One arc left — the harmonized
+pair and the off-key loner — and both halves of it want 562 first.
+
+**CI checked:** the last four runs on `main` are all `success` (cycles 165, 166, 167-art, 168-art).
+Nothing red going into tonight's push.

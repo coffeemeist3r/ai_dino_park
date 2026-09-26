@@ -22,12 +22,12 @@ from.
 **Lore arcs:**
 - [x] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
 - [x] The book plays a voice — opening a dino's entry plays its cry, a hatchling's blended from its parents the way its traits are (BACKLOG-195)
-- [ ] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
+- [x] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
 - [ ] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198)
 
 **Structure arcs:**
 - [x] One bus for every voice — a single master gain every call routes through, and a pure module that decides the number, so "quieter because it is far away" becomes expressible at all (BACKLOG-559)
-- [ ] Sound has a place — chirp loudness falls off with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint (BACKLOG-206)
+- [x] Sound has a place — chirp loudness falls off with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint (BACKLOG-206)
 
 ---
 
