@@ -16,6 +16,8 @@
  * and they are both audible on a fresh save.
  */
 
+import { distanceGain } from './space';
+
 export type VoiceKind = 'chirp' | 'hail' | 'distress' | 'thunk';
 
 /**
@@ -46,7 +48,19 @@ const LEVEL: Record<VoiceKind, number> = {
   distress: 0.2,
 };
 
-/** The 0–1 multiplier a call of this kind plays at. */
-export function gainFor(kind: VoiceKind): number {
-  return LEVEL[kind];
+/**
+ * What else a call knows about itself besides its kind (BACKLOG-206).
+ *
+ * `distancePx` is how far the thing making the sound is from the keeper's avatar. **Omitting it is
+ * the identity case** — every caller written before this cycle returns its existing number, so no
+ * voice anybody knows moves unless the player walks away from it.
+ */
+export interface VoiceOpts {
+  distancePx?: number;
+}
+
+/** The 0–1 multiplier a call of this kind plays at, after the walk to the keeper. */
+export function gainFor(kind: VoiceKind, opts?: VoiceOpts): number {
+  const level = LEVEL[kind];
+  return opts?.distancePx === undefined ? level : level * distanceGain(opts.distancePx);
 }

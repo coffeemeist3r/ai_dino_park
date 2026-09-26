@@ -36,3 +36,43 @@ export function hearLine(caller: string): string {
 export function heardMemory(caller: string): string {
   return `heard ${caller} cry out and went to it`;
 }
+
+/**
+ * The keeper hears trouble (BACKLOG-204).
+ *
+ * Every output of a distress call has been local to the two dinos involved — the cry, the bubble,
+ * the walk. A keeper standing in another zone, or simply looking at another corner of this one,
+ * learned nothing until the mood showed up later. This is the line that reaches them: the ticker
+ * they are already reading names who called and the ground to find them on.
+ *
+ * The trigger picks the verb on purpose. "Startled" and "cold through the night" are different kinds
+ * of trouble and want different things from the keeper, and the ticker is the only place in the park
+ * where that difference reaches a player at all.
+ */
+export function distressEventLine(caller: string, trigger: 'startle' | 'cold', where: string): string {
+  const what = trigger === 'cold' ? 'is calling, shivering, from' : 'is calling out from';
+  return `📢 ${caller} ${what} ${where}`;
+}
+
+/** How long a barely-bonded friend takes to call back, ms. */
+export const CALLBACK_SLOW_MS = 520;
+
+/** How fast an inseparable one does, ms. Short, but never zero — an answer needs a gap to be one. */
+export const CALLBACK_FAST_MS = 120;
+
+/** The top of `bondPoints`' range; `strengthen` clamps there. */
+const BOND_MAX = 100;
+
+/**
+ * Answered across the bowl (BACKLOG-202) — the pause between a cry and the friend calling back.
+ *
+ * `comforter()` has picked who turns toward a cry since cycle 33, and the strength of that bond has
+ * only ever reached the player as *which* dino got up. This is the same number, made audible: a
+ * close friend answers almost on top of the cry, a barely-bonded one takes a beat to decide. Same
+ * shape as `answerDelayMs(hearts)` on the keeper's axis — monotone non-increasing, positive at the
+ * top.
+ */
+export function callbackDelayMs(bondPts: number): number {
+  const w = Math.min(BOND_MAX, Math.max(0, bondPts)) / BOND_MAX;
+  return Math.round(CALLBACK_SLOW_MS - (CALLBACK_SLOW_MS - CALLBACK_FAST_MS) * w);
+}

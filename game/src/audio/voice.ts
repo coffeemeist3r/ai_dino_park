@@ -11,7 +11,7 @@
  */
 
 import { SOUND_KEY, THUNK, type ChirpParams } from './chirp';
-import { gainFor, type VoiceKind } from './mix';
+import { gainFor, type VoiceKind, type VoiceOpts } from './mix';
 
 let ctx: AudioContext | null = null;
 /**
@@ -63,10 +63,14 @@ export function setSoundMuted(off: boolean): void {
  * `kind` (BACKLOG-559) is what the call *is*, not how loud it should be — the level comes from
  * `gainFor`, which is pure and lives in `mix.ts`. Defaulted to 'chirp' so every existing caller
  * reads unchanged and sounds unchanged.
+ *
+ * `opts` (BACKLOG-206) carries where the sound is coming from. Omitted, the call plays at its kind's
+ * level exactly as it always has — the scene passes a distance only for things that are standing
+ * somewhere in the world.
  */
-export function playChirp(p: ChirpParams, kind: VoiceKind = 'chirp'): void {
+export function playChirp(p: ChirpParams, kind: VoiceKind = 'chirp', opts?: VoiceOpts): void {
   if (soundMuted() || !ctx || !bus || ctx.state !== 'running') return;
-  const peak = gainFor(kind);
+  const peak = gainFor(kind, opts);
   const t0 = ctx.currentTime + 0.01;
   const pip = p.lengthMs / 1000 / p.notes;
   for (let i = 0; i < p.notes; i++) {

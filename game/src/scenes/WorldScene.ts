@@ -17,6 +17,7 @@ import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
 import { KEEPER_HAIL, answerDelayMs, answerParams } from '../audio/answer';
 import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
+import { gainFor } from '../audio/mix';
 import type { VoiceKind } from '../audio/mix';
 import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
@@ -134,7 +135,7 @@ import {
   type Chronotype,
 } from '../world/chronotype';
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
-import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory } from '../world/distress';
+import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
@@ -1246,12 +1247,15 @@ export class WorldScene extends Phaser.Scene {
   private batteryLevel: number | undefined;
   private lastCacheAction: 'deleted' | 'error' | null = null;
   /** Audio spine (BACKLOG-191): last sound INTENT — recorded even when the context can't play. */
-  private lastSound: { kind: VoiceKind; name?: string; params?: ChirpParams } | null = null;
+  private lastSound: { kind: VoiceKind; name?: string; params?: ChirpParams; gain: number } | null = null;
   /** The book's cursor (BACKLOG-195) — an index into `dinos`, clamped on every read in `bookRows`
    *  rather than fixed up at every roster mutation. A view position, deliberately not persisted. */
   private bookCursor = 0;
   /** The last call-and-answer (BACKLOG-193). Recorded whether or not the device is muted — see `hailAndAnswer`. */
   private lastAnswer: { name: string; hearts: number; delayMs: number; params: ChirpParams } | null = null;
+  /** The last answered cry (BACKLOG-202): who called back, to whom, and how fast their bond made it.
+   *  Recorded whether or not the device is muted — the cry is diegetic, on `cryDistress`' own rule. */
+  private lastCallback: { name: string; caller: string; bond: number; delayMs: number; params: ChirpParams } | null = null;
   /** Active intent per dino (BACKLOG-393): the current day-phase's lean. Transient — re-derived when the phase or day turns. */
   private intents: Record<string, DinoIntent> = {};
   /** The day-phase the cached active intent was derived for (BACKLOG-012) — a new phase re-derives from the plan. */
@@ -1687,7 +1691,7 @@ export class WorldScene extends Phaser.Scene {
   /** Rap the glass at a pixel; ripple, then every dino flees/approaches/ignores by bravery. */
   private tapGlass(px: number, py: number): Array<{ name: string; reaction: StartleReaction }> {
     if (!soundMuted()) {
-      this.lastSound = { kind: 'thunk' };
+      this.lastSound = { kind: 'thunk', gain: gainFor('thunk') };
       playThunk(); // the knock you'd hear from outside the bowl (BACKLOG-191)
     }
     this.spawnRipple(px, py);
@@ -6982,6 +6986,8 @@ ${e.short}`;
     (window as any).__lastSound = () => this.lastSound;
     // any: dev-only Playwright hook — the last call-and-answer (BACKLOG-193). Set even when muted.
     (window as any).__lastAnswer = () => this.lastAnswer;
+    // any: dev-only Playwright hook — the last answered cry (BACKLOG-202). Set even when muted.
+    (window as any).__lastCallback = () => (this.lastCallback ? { ...this.lastCallback } : null);
     (window as any).__soundMuted = () => soundMuted();
     (window as any).__audioState = () => audioState();
 
@@ -7045,15 +7051,30 @@ ${e.short}`;
     if (this.lens !== 'book' || !this.dinos.length) return;
     this.bookCursor = (this.bookCursor + 1) % this.dinos.length;
     this.refreshLens();
-    this.chirpFor(this.dinos[this.bookCursor]);
+    // Distance 0 on purpose (BACKLOG-206): the book is a readout, not a sound standing on the ground.
+    // Attenuating it would make the book quieter for exactly the dinos you have not walked to yet.
+    this.chirpFor(this.dinos[this.bookCursor], 0);
   }
 
-  /** A dino speaks in its own voice — chirp params derived from its traits (BACKLOG-191). */
-  private chirpFor(d: Dino): void {
+  /**
+   * A dino speaks in its own voice — chirp params derived from its traits (BACKLOG-191), arriving
+   * at whatever is left of itself after the walk to the keeper (BACKLOG-206).
+   *
+   * The distance defaults to where the dino is actually standing, so the two callers that *are* the
+   * world — the npc-meet speaker and the dawn chorus — became spatial without an edit at either
+   * site. A caller that is not a sound in the world (the book) passes 0.
+   */
+  private chirpFor(d: Dino, distancePx = this.distanceToKeeper(d.x, d.y)): void {
     if (soundMuted()) return;
     const params = chirpParams(d.traits);
-    this.lastSound = { kind: 'chirp', name: d.name, params };
-    playChirp(params);
+    this.lastSound = { kind: 'chirp', name: d.name, params, gain: gainFor('chirp', { distancePx }) };
+    playChirp(params, 'chirp', { distancePx });
+  }
+
+  /** How far a thing standing at (x, y) is from the keeper's avatar, in pixels (BACKLOG-206). */
+  private distanceToKeeper(x: number, y: number): number {
+    if (!this.player) return 0;
+    return Phaser.Math.Distance.Between(this.player.x, this.player.y, x, y);
   }
 
   /**
@@ -7075,16 +7096,21 @@ ${e.short}`;
     const params = answerParams(d.traits, hearts);
     this.lastAnswer = { name: d.name, hearts, delayMs, params };
     if (!soundMuted()) {
-      this.lastSound = { kind: 'hail' };
+      // No distance: the hail is the keeper's own call and it happens at the keeper (BACKLOG-206).
+      this.lastSound = { kind: 'hail', gain: gainFor('hail') };
       playChirp(KEEPER_HAIL, 'hail'); // BACKLOG-559: the watcher is not a creature, so it sits back
     }
     this.time.delayedCall(delayMs, () => {
       // Re-resolved rather than captured: a dino that left the roster during the gap does not answer,
       // which is both the safe thing and the right one.
-      if (!this.dinos.some((x) => x.name === d.name)) return;
+      const now = this.dinoByName(d.name);
+      if (!now) return;
       if (soundMuted()) return; // muting *during* the gap is honoured; the beat above already happened
-      this.lastSound = { kind: 'chirp', name: d.name, params };
-      playChirp(params);
+      // Distance read here, not at the hail: a dino that walked during the gap answers from where it
+      // has got to, not from where it was standing when you called (BACKLOG-206).
+      const distancePx = this.distanceToKeeper(now.x, now.y);
+      this.lastSound = { kind: 'chirp', name: d.name, params, gain: gainFor('chirp', { distancePx }) };
+      playChirp(params, 'chirp', { distancePx });
     });
   }
 
@@ -7097,11 +7123,17 @@ ${e.short}`;
   private cryDistress(d: Dino, trigger: 'startle' | 'cold'): void {
     const params = distressParams(d.traits);
     this.lastDistress = { name: d.name, trigger, params };
+    // BACKLOG-204: the ticker carries it, muted or not. Every output of this beat was local to the
+    // two dinos until now — a keeper looking at another corner learned nothing until the mood showed
+    // up hours later. Logged outside the mute gate on the diegetic rule this header already states:
+    // a keeper who has turned the sound off needs the line *more*, not less.
+    this.logEvent(distressEventLine(d.name, trigger, zoneById(this.zoneId).name));
+    const distancePx = this.distanceToKeeper(d.x, d.y);
     if (!soundMuted()) {
       // BACKLOG-559: a cry is its own kind, and it carries. It had been recorded as a plain chirp,
       // which is why nothing could say it was the quietest thing in the bowl.
-      this.lastSound = { kind: 'distress', name: d.name, params };
-      playChirp(params, 'distress');
+      this.lastSound = { kind: 'distress', name: d.name, params, gain: gainFor('distress', { distancePx }) };
+      playChirp(params, 'distress', { distancePx });
     }
     const who = comforter(d.name, this.bonds, this.dinos.map((x) => x.name), this.gratitude);
     if (!who) return; // no friend over the floor — the cry hangs unanswered
@@ -7110,6 +7142,36 @@ ${e.short}`;
     this.pendingRespond = { name: who, caller: d.name, steps: DISTRESS_STEPS };
     this.showBubble(friend, hearLine(d.name));
     this.memory = remember(this.memory, who, heardMemory(d.name));
+    this.answerCry(friend, d);
+  }
+
+  /**
+   * Answered across the bowl (BACKLOG-202) — the friend calls back before it takes a step.
+   *
+   * `comforter()` has decided who turns toward a cry since cycle 33, and the strength of that bond
+   * reached the player only as *which* dino got up. Here it is audible in both directions: the close
+   * friend answers almost on top of the cry, the barely-bonded one takes a beat. The call is the
+   * friend's ordinary voice, not a distress register — this is reassurance, and it must sound like
+   * the friend rather than like more trouble.
+   *
+   * The two guards are 193's, written the same way. (They are a second copy; BACKLOG-562 is the
+   * queued fix that gives every deferred call one clock, and is the Structure-smith's flagged next
+   * pick. Solving it here would pre-empt that item and half of it.)
+   */
+  private answerCry(friend: Dino, caller: Dino): void {
+    const bond = bondPoints(this.bonds, friend.name, caller.name);
+    const delayMs = callbackDelayMs(bond);
+    const params = chirpParams(friend.traits);
+    // Recorded whether or not the device is muted, on the same rule as the cry that prompted it.
+    this.lastCallback = { name: friend.name, caller: caller.name, bond, delayMs, params };
+    this.time.delayedCall(delayMs, () => {
+      const now = this.dinoByName(friend.name);
+      if (!now) return; // left the roster during the gap
+      if (soundMuted()) return; // muted during the gap; the beat above already happened
+      const distancePx = this.distanceToKeeper(now.x, now.y);
+      this.lastSound = { kind: 'chirp', name: now.name, params, gain: gainFor('chirp', { distancePx }) };
+      playChirp(params, 'chirp', { distancePx });
+    });
   }
 
   /** Swap the shared brain in place; every dino picks it up on its next line. */

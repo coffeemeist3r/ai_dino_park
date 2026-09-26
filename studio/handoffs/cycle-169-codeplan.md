@@ -155,3 +155,40 @@ audio spec since 191 has used.
 ## Blockers
 
 None.
+
+---
+
+## Shipped
+
+All nine files as planned, plus one thing the plan did not anticipate and should have.
+
+**The reachability check nearly failed, and the finding is worth more than the fix.** The first run
+of the lore e2e came back with `__lastCallback` null on a fresh save: `comforter()` has wanted a bond
+over `COMFORT_BOND_FLOOR = 8` since cycle 33, and **a park one frame old has an empty bond graph** —
+`private bonds: Bonds = {}` with nothing seeding it on a new game. So nobody answers a cry at boot.
+
+The easy move was `__bondPair(a, b, 12)`, which is exactly how the cycle-046 specs stage this. That
+would have been staging dressed as proof. Measured the real thing instead: stepping the world with no
+hooks touched, the founding cast's first pair crosses the floor **well inside 40 world steps**, under
+a minute of ordinary play, and by minute two most of the roster is over it. So 202 *is* reachable —
+just not on frame one — and the spec now demonstrates that rather than asserting it, by letting the
+park run before the cry.
+
+**Named for the Structure-smith, not fixed here:** every floor in this park is 8 —
+`COMFORT_BOND_FLOOR`, `LONER_FLOOR`, `HUDDLE_THRESHOLD`, `GRIEF_BOND_FLOOR` — and the founding save
+starts every pair at zero, so *all four* of those systems are dormant on frame one. That is the
+CHARTER v7 corollary's exact shape ("where a system has a floor, the shipping park starts above it"),
+it predates the bar by a hundred cycles, and it wants a founding bond graph — which is a
+structure-track item with a blast radius across the loner/huddle/grief specs, not a line to slip into
+a lore fire. Handed to the Validator to queue.
+
+## Board
+
+- `npm run build` clean.
+- `npx vitest run`: **3078 passed**, 3 skipped, 288 files (+15 this cycle).
+- `npx playwright test`: **834 passed**, 0 failed (+4 this cycle).
+- One flake seen and confirmed as one: `controls-help.spec.ts` failed twice in the first full run and
+  passed isolated on both clean `HEAD` and this tree, and passed in the green full run. The known
+  parallel-load flake, noted rather than treated as a regression.
+- `@mlc-ai/web-llm` grep outside `game/src/ai/`: clean.
+- Save format untouched — nothing added to the save this cycle.
