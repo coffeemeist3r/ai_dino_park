@@ -65,6 +65,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
+- [ ] BACKLOG-564 [art] The drawn sulk — a pixel rig for `SULK_ART_KEY` (`world/expiry.ts`), the funk mark whose host cycle 165 built and nothing has yet drawn. The mark renders today as the bare `SULK_GLYPH` 😒; the rig replaces it through `hasPropArt`/`bakePropArt` the way every other drawn mark does, and it renders standalone, so it clears the cycle-145 amendment on the day it is drawn. Builds on 543 / 501.
+
 
 
 

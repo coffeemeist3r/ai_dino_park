@@ -13601,3 +13601,10 @@ same off-by-one flagged in the last two housekeeping notes, now three for three.
 
 **CI checked:** the last four runs on `main` are all `success` (cycles 164, 165, 166, 167-art).
 Nothing red going into tonight's push.
+
+## Cycle 169 — lore-smith
+
+Picked Milestone 22's third arc whole: **BACKLOG-204 + BACKLOG-202** — a distress call that posts a
+ticker line naming the caller, and a friend that answers in its own voice before it starts walking.
+Social queue over cap, so nothing new seeded there; art queue was at 0 for the third cycle running
+and took one, **BACKLOG-564** (the drawn sulk — its host has existed since cycle 165).
