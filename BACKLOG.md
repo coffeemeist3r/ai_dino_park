@@ -66,6 +66,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
+- [ ] BACKLOG-566 [art] The call note — a pixel rig for `CALL_ART_KEY` ('call'), the ♪ that pops over a dino at the moment its chorus cue plays. The host is shipped by cycle 170's lore track (BACKLOG-200/198: the ground calls the keeper in) through `makeHourMark`, so it renders on the `♪` glyph until drawn; once drawn, register it in `worldPlacedProps()` like the sulk. Small (≤10×10), one note-head and flag, warm cream against every ground tint — it has to read as *sound* at a glance, and it appears in clusters, so the pair's two notes landing together and the loner's arriving alone is the whole read.
+
 
 
 
@@ -256,9 +258,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-196 [emergent] Night hush — the inverse bookend of the dawn chorus: at the night boundary the cast falls quiet, the last night-owl's chirp trailing off into the dark, so the day has a closing sound as well as an opening one. Builds on 192 / 109.
 - [ ] BACKLOG-197 [social] Chorus you can join — tapping the glass (057) during the dawn chorus makes the nearest waking dino chirp back at the keeper, folding you into the morning call-and-answer. Builds on 192 / 057 / 193.
-- [ ] BACKLOG-198 [emergent] Off-key loner — a dino with no bond above the loner floor (135) chirps a beat *after* the rest of the chorus, a lone voice hanging in the quiet; social isolation made audible. Builds on 192 / 013 / 135.
+- [~] BACKLOG-198 [emergent] Off-key loner — a dino with no bond above the loner floor (135) chirps a beat *after* the rest of the chorus, a lone voice hanging in the quiet; social isolation made audible. Builds on 192 / 013 / 135.
 - [ ] BACKLOG-199 [pokemon] Chorus lead in the book — the collection book names which dino "leads the dawn chorus" (the earliest riser by energy) as a small standing. Builds on 192 / 021.
-- [ ] BACKLOG-200 [emergent] Harmonized pair — two high-bond dinos that wake near each other chirp in near-unison (pips interleaved), so a strong friendship literally *sounds* different from two strangers. Builds on 192 / 013.
+- [~] BACKLOG-200 [emergent] Harmonized pair — two high-bond dinos that wake near each other chirp in near-unison (pips interleaved), so a strong friendship literally *sounds* different from two strangers. Builds on 192 / 013.
 
 ## Cycle 46 lore additions — sound becomes signal (2026-06-12)
 
