@@ -13826,3 +13826,15 @@ cause is the spec's clock: the answer is a `delayedCall` on Phaser's scene clock
 a loaded 2-core runner, 780 ms of game time is more than 4 s of wall time. Three polls with the same
 wall-clock bound (two in `cycle-168-voice-bus`) now wait 20 s, with the reason in the source. The spec
 still asserts the order (hail, then the dino); it never meant to assert the speed.
+
+## Cycle 170 — the brass flake, fixed at its cause
+
+The fixed CI run came back green, with one flaky spec: `cycle-167-brass-in-pieces` › "a brass that
+loses a line does not keep engraving it". It compared what the plaque *drew* (`__plaqueRows`) to what
+it *computes* (`__plaqueLines`) in two separate `page.evaluate` round-trips. The plaque has carried a
+live `Sitting · Ns` line since cycle 156, and it ticks every wall second, so a second rolling over
+between the two reads was enough: `Sitting · 1s` drawn, `0s` computed. The two specs that make that
+comparison now use one `snapshot()` that re-engraves and reads both in the same synchronous turn, with
+a small retry for a rollover inside that turn. Verified 174 runs of the two plaque files locally. One
+failure showed up in the very first cold-start batch and did not reproduce, and it was not captured.
+It is named here rather than claimed away.

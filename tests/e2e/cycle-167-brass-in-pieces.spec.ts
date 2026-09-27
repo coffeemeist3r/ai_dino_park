@@ -15,20 +15,39 @@ interface Row {
 }
 
 const rows = (p: Page) => p.evaluate(() => ((window as W).__plaqueRows as () => Row[])());
-const lines = (p: Page) => p.evaluate(() => ((window as W).__plaqueLines as () => string[])());
 const setZone = (p: Page, id: string) =>
   p.evaluate((z) => ((window as W).__setZone as (x: string) => void)(z), id);
 /**
- * Re-engrave the brass on demand, through the hook that already does it.
+ * The drawn rows and the computed lines, read at one instant.
  *
- * The plaque refreshes on the world clock's tick, so `__plaqueRows()` reports the last *rendered*
- * frame while `__plaqueLines()` computes from the park as it stands right now — and between two ticks
- * those legitimately differ (a pile is gathered, the satchel empties). `__setZone` has called
- * `refreshPlaque()` since BACKLOG-143; setting the zone to the one we are already in forces the render
- * without moving anybody, so the two readings are of the same instant.
+ * The plaque refreshes on the world clock's tick, so `__plaqueRows()` reports the last *rendered* frame
+ * while `__plaqueLines()` computes from the park as it stands right now. Between two ticks they
+ * legitimately differ (a pile is gathered, the satchel empties), and `Sitting · Ns` changes every wall
+ * second — CI went flaky on exactly that (`Sitting · 1s` drawn vs `0s` computed, cycle 170). Reading
+ * them in two `page.evaluate` round-trips leaves a gap for the second to roll over in.
+ *
+ * So this re-engraves (`__setZone` on the zone we are already in has called `refreshPlaque()` since
+ * BACKLOG-143) and reads both in the same synchronous turn. A second rollover can still land between
+ * the two `Date.now()` reads inside that turn, so it retries a few times; three misses in a row would be
+ * a real disagreement, and the assertion then reports it.
  */
-const reengrave = async (p: Page) =>
-  setZone(p, await p.evaluate(() => ((window as W).__zone as () => string)()));
+const snapshot = (p: Page) =>
+  p.evaluate(() => {
+    const w = window as W;
+    let out = { rows: [] as { text: string; kind: string; color: string }[], lines: [] as string[] };
+    for (let i = 0; i < 3; i++) {
+      (w.__setZone as (z: string) => void)((w.__zone as () => string)());
+      out = {
+        rows: (w.__plaqueRows as () => { text: string; kind: string; color: string }[])(),
+        lines: (w.__plaqueLines as () => string[])(),
+      };
+      if (JSON.stringify(out.rows.map((r) => r.text)) === JSON.stringify(out.lines)) break;
+    }
+    return out;
+  });
+const reengrave = async (p: Page) => {
+  await snapshot(p);
+};
 
 test('the brass is one object per line, and it says exactly what plaqueLines says', async ({ page }) => {
   const errors: string[] = [];
@@ -37,15 +56,14 @@ test('the brass is one object per line, and it says exactly what plaqueLines say
   await foundingState(page, 'as-shipped');
   await settle(page);
 
-  await reengrave(page);
-  const drawn = await rows(page);
+  const { rows: drawn, lines: computed } = await snapshot(page);
 
   // S3 — more than one row exists at all, which is the whole geometry change.
   expect(drawn.length).toBeGreaterThan(1);
 
   // S4 — and the rows read top-to-bottom exactly as the pure function writes them: none lost, none
   // reordered, none invented.
-  expect(drawn.map((r) => r.text)).toEqual(await lines(page));
+  expect(drawn.map((r) => r.text)).toEqual(computed);
 
   expect(errors).toEqual([]);
 });
@@ -89,8 +107,8 @@ test('a brass that loses a line does not keep engraving it', async ({ page }) =>
   await setZone(page, 'grove');
   await settle(page);
 
-  const after = await rows(page);
-  expect(after.map((r) => r.text)).toEqual(await lines(page));
+  const { rows: after, lines: computed } = await snapshot(page);
+  expect(after.map((r) => r.text)).toEqual(computed);
   expect(after.map((r) => r.text)).not.toEqual(before.map((r) => r.text));
 });
 
