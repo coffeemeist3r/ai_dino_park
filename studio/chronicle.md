@@ -13729,3 +13729,7 @@ The standing note holds — `grep '[art]'` still returns BACKLOG-147, an `[infra
 ## Cycle 170 — lore-smith
 
 Friendship you can hear in a crowd: BACKLOG-200 + 198, the last lore arc of Milestone 22 — with the finding that the only chorus in the park is 23 real minutes from a fresh save, so the arc needs the keeper's arrival on a ground as its occasion. Seeded BACKLOG-566 (the call note, art; host ships tonight).
+
+## Cycle 170 — structure-smith
+
+BACKLOG-562, the voice has no clock: one pure cue module and one scene-side player that owns both deferral guards, so tonight's chorus can interleave pips instead of adding a third hand-written `delayedCall`. Queue at 5, drained not invented.
