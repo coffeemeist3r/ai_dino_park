@@ -9,6 +9,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'branch',
       'cairn',
       'cairn_derelict', // BACKLOG-494
+      'call', // BACKLOG-566 (cycle 170-art): the twelfth mark and the first that is a sound — the ♪ over a singer as a ground calls the keeper in
       'crop_ripe',
       'crop_ripe_greens', // BACKLOG-418: the grove's greens crop, stashed ahead of the drawPlotSprite wiring
       'crop_ripe_mushrooms', // BACKLOG-548: the Hollow's mushroom crop — 5 of 5, the per-crop set closes

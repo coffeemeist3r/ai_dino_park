@@ -66,7 +66,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
-- [ ] BACKLOG-566 [art] The call note — a pixel rig for `CALL_ART_KEY` ('call'), the ♪ that pops over a dino at the moment its chorus cue plays. The host is shipped by cycle 170's lore track (BACKLOG-200/198: the ground calls the keeper in) through `makeHourMark`, so it renders on the `♪` glyph until drawn; once drawn, register it in `worldPlacedProps()` like the sulk. Small (≤10×10), one note-head and flag, warm cream against every ground tint — it has to read as *sound* at a glance, and it appears in clusters, so the pair's two notes landing together and the loner's arriving alone is the whole read.
 
 
 

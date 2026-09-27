@@ -38,6 +38,7 @@ import { MISSED_ALOOF_ART_KEY, MISSED_ART_KEY } from './missed'; // BACKLOG-116/
 import { NEED_ART_KEY } from './needs'; // BACKLOG-551/550
 import { MOPE_ART_KEY } from './loner'; // BACKLOG-556
 import { SULK_ART_KEY } from './expiry'; // BACKLOG-543's host (cycle 165)
+import { CALL_ART_KEY } from '../audio/chorus'; // BACKLOG-566's host (cycle 170)
 import {
   FOUNDING_LANDMARKS,
   FOUNDING_PILES,
@@ -168,6 +169,9 @@ export function worldPlacedProps(): Set<string> {
   // cycle its host was built, for the same reason the wilt did one cycle earlier — until now the sulk was a
   // `setText` on the shared activity mark, so no rig could be shown there and the art item sat blocked.
   out.add(SULK_ART_KEY);
+  // BACKLOG-200/566: the call note, popped over each singer by `popCallNote` when a ground sings the keeper
+  // in. Momentary rather than held, and still seen — every arrival on a peopled ground shows it.
+  out.add(CALL_ART_KEY);
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so

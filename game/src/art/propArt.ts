@@ -2049,6 +2049,49 @@ const SULK_RIG: PropRig = {
   },
 };
 
+// `call` (BACKLOG-566) is the twelfth mark and the first that is a **sound**. Every sibling says what a
+// dino is — asleep, rising, hungry, sore, alone — and holds while it is true; this one says what a dino
+// is *doing for one instant*, and it appears in clusters. When a ground sings the keeper in, one pops over
+// each singer at the moment its cue plays (BACKLOG-200/198), so the read is not the note, it is the
+// timing between notes: two landing together are the pair, one landing late after the rest are gone is
+// the loner. The rig's only job is to be unmistakably *a note* at a glance and to stay out of the way.
+//
+// First draft rejected: a pair of beamed eighths. It is the more musical glyph and the wrong one — a
+// beamed pair is *already two voices*, so a chorus of them would read as ten singers where there are five,
+// and the harmonized pair would stop being legible as the thing the arc is about. One head, one stem, one
+// flag. The stem is two cells, lit and shade, because a one-cell stem is the `rouse` iris failure again.
+//
+// Cream rather than the family's slate or rose: a call is the one mark here that is not a mood, and warm
+// cream reads as light/sound against every ground tint. The outline is the family rim, verbatim.
+const CALL_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.......oooo.....',
+  '.......oCcCoo...',
+  '.......oCcCCco..',
+  '.......oCcoCCco.',
+  '.......oCco.oco.',
+  '.......oCco..oo.',
+  '.......oCco.....',
+  '.......oCco.....',
+  '...ooooCCco.....',
+  '..oCCCCCCco.....',
+  '.oCCCCCCcco.....',
+  '.oCCCCCccco.....',
+  '..occcccoo......',
+  '...ooooo........',
+];
+
+const CALL_RIG: PropRig = {
+  size: 16,
+  grid: CALL_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    C: 0xfff1c9, // the lit side of head, stem and flag — the keeper lines' own cream
+    c: 0xd9b56a, // its shade, lower right, so the head reads round and the stem reads as a rod
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2288,6 +2331,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   streak: STREAK_RIG,
   watch: WATCH_RIG, // BACKLOG-560: the tenure line's ring
   sitting: SITTING_RIG, // BACKLOG-561: this sitting's waist
+  // BACKLOG-566 (cycle 170-art): the call note, drawn the night its host shipped — `popCallNote` hangs it
+  // over each singer as the ground calls the keeper in (BACKLOG-200/198).
+  call: CALL_RIG,
 };
 
 /**

@@ -13804,3 +13804,14 @@ Closed 198, 200, 562 to the archive; retired two drained sections. **Structure T
 milestone:** the smiths draft Milestone 23 at the next open. Art queue at **1** — BACKLOG-566, the call
 note, whose host shipped tonight, checked against `propArt.ts` (no `call` rig). CI: last three runs on
 `main` all `success`.
+
+## Cycle 170-art — artist: BACKLOG-566, the call note
+
+The ♪ that pops over each singer when a ground calls you in is drawn — the twelfth mark, and the first
+that is a sound rather than a state. It was seeded this morning and its host shipped this afternoon,
+so it went in the same night, on the cycle-145 cadence: registered in `worldPlacedProps`, census
+extended by one key rather than loosened. The first draft was a pair of beamed eighths and it was the
+wrong glyph for a subtle reason: a beamed pair is already two voices, so a five-dino chorus would have
+read as ten, and the harmonized pair — the thing the whole arc exists to make audible — would have
+stopped being the only pair on screen. One head, a two-cell stem, one flag, cream on the family rim.
+The art queue is empty again, genuinely: the host existed before the rig did.
