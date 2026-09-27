@@ -42,7 +42,11 @@ test('the keeper hails and the dino answers, with a gap between them', async ({ 
   expect(a?.params.notes).toBeGreaterThan(0);
 
   // L7 — and after the gap, the sound the bowl last made is the dino's own call.
-  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 4_000 }).toBe('chirp');
+  // The answer is scheduled on Phaser's scene clock, and that clock is not wall time: `TimeStep.smoothDelta`
+  // clamps every frame to ~16.6 ms while the page is unfocused or cooling down, so on a loaded 2-core CI
+  // runner a 780 ms gap can take well over 4 s of wall time (it did, twice, on cycle 170's run). The bound
+  // is generous on purpose; what the spec asserts is the order, not the speed.
+  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 20_000 }).toBe('chirp');
   expect((await lastSound(page))?.name).toBe('Rex');
 });
 

@@ -13815,3 +13815,14 @@ wrong glyph for a subtle reason: a beamed pair is already two voices, so a five-
 read as ten, and the harmonized pair — the thing the whole arc exists to make audible — would have
 stopped being the only pair on screen. One head, a two-cell stem, one flag, cream on the family rim.
 The art queue is empty again, genuinely: the host existed before the rig did.
+
+## Cycle 170 — CI red, named and fixed
+
+The cycle-170-art push went **red on CI**: `cycle-167-call-and-answer` › "the keeper hails and the dino
+answers" failed on both attempts, `lastSound` stuck on `hail` past a 4 s poll. It was not tonight's
+code. The same spec went **flaky on cycle 169's run** too (passed on retry), and nobody named it. The
+cause is the spec's clock: the answer is a `delayedCall` on Phaser's scene clock, and
+`TimeStep.smoothDelta` clamps every frame to ~16.6 ms while a page is unfocused or cooling down. On
+a loaded 2-core runner, 780 ms of game time is more than 4 s of wall time. Three polls with the same
+wall-clock bound (two in `cycle-168-voice-bus`) now wait 20 s, with the reason in the source. The spec
+still asserts the order (hail, then the dino); it never meant to assert the speed.

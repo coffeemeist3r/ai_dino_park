@@ -33,7 +33,8 @@ test('the hail and the answer are different kinds through one bus', async ({ pag
   expect((await lastSound(page))?.kind).toBe('hail');
 
   // Then the dino answers, at the bowl's level, in its own voice.
-  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 4_000 }).toBe('chirp');
+  // 20 s, not 4: the answer runs on Phaser's clamped scene clock, not wall time (see cycle-167-call-and-answer).
+  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 20_000 }).toBe('chirp');
   expect((await lastSound(page))?.name).toBe('Rex');
 
   // The bus is created inside unlockAudio; a headless context with no real audio must not throw.
@@ -48,5 +49,5 @@ test('a cry is its own kind, and no longer records as a plain chirp', async ({ p
   // Rapping the glass startles whoever is near it, and a startled dino cries out (BACKLOG-194).
   await page.evaluate(() => ((window as W).__tapGlass as (x: number, y: number) => unknown)(200, 200));
 
-  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 4_000 }).toBe('distress');
+  await expect.poll(async () => (await lastSound(page))?.kind, { timeout: 20_000 }).toBe('distress');
 });
