@@ -39,6 +39,15 @@ export function chirpParams(t: Personality): ChirpParams {
   return { pitchHz, lengthMs, wobble, notes };
 }
 
+/**
+ * How far apart a call's pips start, ms — a pip plus a hair of air. `playChirp` spaces its pips by
+ * this, and it is exported so the timing of *two* calls can be reasoned about against it (BACKLOG-562):
+ * the harmonized pair lands half a stride behind its partner, between its pips.
+ */
+export function pipStrideMs(p: ChirpParams): number {
+  return (p.lengthMs / p.notes) * 1.15;
+}
+
 /** The glass rap: one low, short, plain knock — the bowl itself, not a dino. */
 export const THUNK: ChirpParams = { pitchHz: 90, lengthMs: 120, wobble: 0, notes: 1 };
 

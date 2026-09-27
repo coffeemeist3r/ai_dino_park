@@ -13741,3 +13741,7 @@ Structure first: `cue.ts` + `pipStrideMs` + one `playCues`, three call sites mig
 ## Cycle 170 — code-planner
 
 cue.ts and pipStrideMs, one playCues with an optional visual hook, three call sites migrated; then chorusCues, chorusLine and the arrival occasion on the real edge crossing.
+
+## Cycle 170 — coder
+
+BACKLOG-562: `audio/cue.ts`, `pipStrideMs`, one `playCues` owning both guards; 193, 202 and the dawn chorus migrated. BACKLOG-200+198: `chorusCues` (the pair half a stride behind, the loner after the rest), `chorusLine`, and the ground that calls you in on a real edge crossing, with a ♪ over each singer. Finding on the way: the bond graph saturates at 100 within about four real minutes, after which a bond-only best friend is chosen by the alphabet — pairs now tie-break on meetings.

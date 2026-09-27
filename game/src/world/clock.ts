@@ -100,7 +100,7 @@ export const FOUNDING_DAY = 1;
 const MAX_CATCHUP_TICKS = MINUTES_PER_DAY;
 
 /** GameTime → absolute minutes since Day 1 00:00. */
-function timeToAbs(t: GameTime): number {
+export function timeToAbs(t: GameTime): number {
   return (t.day - 1) * MINUTES_PER_DAY + t.hour * 60 + t.minute;
 }
 

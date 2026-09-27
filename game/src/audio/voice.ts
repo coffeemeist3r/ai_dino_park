@@ -10,7 +10,7 @@
  * Kept QUIET by design: levels live in `mix.ts` (0.08–0.20), calls ≤ 350 ms — a desk companion.
  */
 
-import { SOUND_KEY, THUNK, type ChirpParams } from './chirp';
+import { SOUND_KEY, THUNK, pipStrideMs, type ChirpParams } from './chirp';
 import { gainFor, type VoiceKind, type VoiceOpts } from './mix';
 
 let ctx: AudioContext | null = null;
@@ -74,7 +74,7 @@ export function playChirp(p: ChirpParams, kind: VoiceKind = 'chirp', opts?: Voic
   const t0 = ctx.currentTime + 0.01;
   const pip = p.lengthMs / 1000 / p.notes;
   for (let i = 0; i < p.notes; i++) {
-    const start = t0 + i * pip * 1.15; // a hair of air between pips
+    const start = t0 + (i * pipStrideMs(p)) / 1000;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'triangle';

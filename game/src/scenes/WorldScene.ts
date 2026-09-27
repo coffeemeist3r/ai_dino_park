@@ -13,8 +13,9 @@ import {
 } from '../ai/governor';
 import { loadProgress, hasCachedModel, deleteCachedModel } from '../ai/webllmBrain';
 import { chirpParams, distressParams, voiceLine, type ChirpParams, type VoiceParent } from '../audio/chirp';
-import { chorusOrder, DAWN_HOUR, type ChorusEntry } from '../audio/chorus';
-import { KEEPER_HAIL, answerDelayMs, answerParams } from '../audio/answer';
+import { chorusOrder, chorusCues, chorusLine, arrivalDue, CALL_ART_KEY, CALL_GLYPH, DAWN_HOUR, type ChorusEntry, type ShapedChorus } from '../audio/chorus';
+import { answerCues, callbackCues, dueCue, type Cue } from '../audio/cue';
+import { answerDelayMs, answerParams } from '../audio/answer';
 import { wokeHungry, wakeHungryLine, wakeHungryMemory } from '../world/wake';
 import { unlockAudio, audioState, playChirp, playThunk, soundMuted, setSoundMuted } from '../audio/voice';
 import { gainFor } from '../audio/mix';
@@ -23,7 +24,7 @@ import { Dino } from '../entities/dino';
 import { hasArt, hasKeeperArt, makeKeeperArt, bakeTileMap, bakeTerrainMap, bakePropArt, bakeRuinArt, hasPropArt, hasTileArt } from '../art/bake';
 import { ROSTER } from '../entities/roster';
 import { DialogBox } from '../ui/DialogBox';
-import { getWorldClock, cooldownReady, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS, FOUNDING_DAY, type GameTime } from '../world/clock';
+import { getWorldClock, cooldownReady, timeToAbs, ACTIVE_SCALE, AWAY_SCALE, WANDER_STEP_MS, FOUNDING_DAY, type GameTime } from '../world/clock';
 import { fastForward } from '../world/away';
 import { homecoming, type Homecoming } from '../world/homecoming';
 import { repairGain, repairLine, repairMemory } from '../world/repair';
@@ -768,6 +769,11 @@ export class WorldScene extends Phaser.Scene {
   /** Woke hungry (BACKLOG-376): transient — who woke over the hunger bar at the last dawn. Never persisted. */
   private lastWokeHungry: string[] = [];
   private lastChorus: ChorusEntry[] | null = null;
+  /** The ground that calls you in (BACKLOG-200/198): transient — when each ground last sang, abs in-game minutes. */
+  private arrivalAt: Record<string, number> = {};
+  /** How many ♪ have popped — a counter the e2e can read without racing a 600 ms mark. */
+  private callNotes = 0;
+  private lastArrival: { zone: string; pairs: [string, string][]; late: string[]; cues: ChorusEntry[] } | null = null;
   private eggs: Egg[] = [];
   private born: BornDino[] = [];
   private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
@@ -7095,23 +7101,37 @@ ${e.short}`;
     const delayMs = answerDelayMs(hearts);
     const params = answerParams(d.traits, hearts);
     this.lastAnswer = { name: d.name, hearts, delayMs, params };
-    if (!soundMuted()) {
-      // No distance: the hail is the keeper's own call and it happens at the keeper (BACKLOG-206).
-      this.lastSound = { kind: 'hail', gain: gainFor('hail') };
-      playChirp(KEEPER_HAIL, 'hail'); // BACKLOG-559: the watcher is not a creature, so it sits back
+    this.playCues(answerCues(d.name, d.traits, hearts));
+  }
+
+  /**
+   * The voice's one clock (BACKLOG-562). Every beat that spans more than a frame is a cue list, and
+   * this is the only thing that plays one — so the two guards every deferred call needs are written
+   * once. A named cue is re-resolved when it fires (a dino that left the roster during the gap is
+   * silent) and reads its distance *then*, from wherever it has walked to (206); muting during the gap
+   * is honoured. `onFire` is the beat's visible half, and runs muted or not: mute gates playback, not
+   * the event.
+   */
+  private playCues(cues: Cue[], onFire?: (cue: Cue, d: Dino) => void): void {
+    for (const cue of cues) {
+      const fire = () => {
+        const due = dueCue(cue, (n) => this.dinoByName(n));
+        if (!due) return;
+        if (due.dino) onFire?.(cue, due.dino);
+        if (soundMuted()) return;
+        if (!due.dino) {
+          // The keeper's own call happens at the keeper: no distance (BACKLOG-206).
+          this.lastSound = { kind: cue.kind, gain: gainFor(cue.kind) };
+          playChirp(cue.params, cue.kind);
+          return;
+        }
+        const distancePx = this.distanceToKeeper(due.dino.x, due.dino.y);
+        this.lastSound = { kind: cue.kind, name: due.dino.name, params: cue.params, gain: gainFor(cue.kind, { distancePx }) };
+        playChirp(cue.params, cue.kind, { distancePx });
+      };
+      if (cue.atMs <= 0) fire();
+      else this.time.delayedCall(cue.atMs, fire);
     }
-    this.time.delayedCall(delayMs, () => {
-      // Re-resolved rather than captured: a dino that left the roster during the gap does not answer,
-      // which is both the safe thing and the right one.
-      const now = this.dinoByName(d.name);
-      if (!now) return;
-      if (soundMuted()) return; // muting *during* the gap is honoured; the beat above already happened
-      // Distance read here, not at the hail: a dino that walked during the gap answers from where it
-      // has got to, not from where it was standing when you called (BACKLOG-206).
-      const distancePx = this.distanceToKeeper(now.x, now.y);
-      this.lastSound = { kind: 'chirp', name: d.name, params, gain: gainFor('chirp', { distancePx }) };
-      playChirp(params, 'chirp', { distancePx });
-    });
   }
 
   /**
@@ -7154,9 +7174,7 @@ ${e.short}`;
    * friend's ordinary voice, not a distress register — this is reassurance, and it must sound like
    * the friend rather than like more trouble.
    *
-   * The two guards are 193's, written the same way. (They are a second copy; BACKLOG-562 is the
-   * queued fix that gives every deferred call one clock, and is the Structure-smith's flagged next
-   * pick. Solving it here would pre-empt that item and half of it.)
+   * The two guards are `playCues`' (BACKLOG-562) — this was their second hand-written copy.
    */
   private answerCry(friend: Dino, caller: Dino): void {
     const bond = bondPoints(this.bonds, friend.name, caller.name);
@@ -7164,14 +7182,7 @@ ${e.short}`;
     const params = chirpParams(friend.traits);
     // Recorded whether or not the device is muted, on the same rule as the cry that prompted it.
     this.lastCallback = { name: friend.name, caller: caller.name, bond, delayMs, params };
-    this.time.delayedCall(delayMs, () => {
-      const now = this.dinoByName(friend.name);
-      if (!now) return; // left the roster during the gap
-      if (soundMuted()) return; // muted during the gap; the beat above already happened
-      const distancePx = this.distanceToKeeper(now.x, now.y);
-      this.lastSound = { kind: 'chirp', name: now.name, params, gain: gainFor('chirp', { distancePx }) };
-      playChirp(params, 'chirp', { distancePx });
-    });
+    this.playCues(callbackCues(friend.name, friend.traits, bond));
   }
 
   /** Swap the shared brain in place; every dino picks it up on its next line. */
@@ -7731,7 +7742,45 @@ ${e.short}`;
     this.applyZoneVisibility();
     this.applyObjectVisibility();
     this.drawFloor();
+    this.callKeeperIn(link.zoneId);
     return true;
+  }
+
+  /**
+   * The ground calls you in (BACKLOG-200 + BACKLOG-198) — the chorus's reachable occasion.
+   *
+   * The only chorus the park had fired at 07:00, twenty-three real minutes past a fresh save. Walking
+   * onto a ground is the moment a keeper actually lives through, over and over: its residents sing
+   * as you arrive, and the bond graph is in the song — mutual best friends as one, the loner a beat
+   * into the quiet after the rest. Only a real edge crossing sings (`__setZone` is a jump, not an
+   * arrival), and a ground rests `ARRIVAL_REST_MIN` afterwards. The ♪ and the ticker line are the
+   * beat's silent half and show with the sound off.
+   */
+  private callKeeperIn(zone: string): void {
+    const residents = this.dinos.filter((d) => zoneOf(this.dinoZones, d.name, BOWL_ID) === zone);
+    if (residents.length === 0) return;
+    const now = timeToAbs(getWorldClock().now());
+    if (!arrivalDue(this.arrivalAt[zone], now)) return;
+    this.arrivalAt[zone] = now;
+    const shaped = chorusCues(residents, this.bonds, this.dinoNames(), this.meetings);
+    this.lastArrival = { zone, pairs: shaped.pairs, late: shaped.late, cues: this.chorusEntries(shaped) };
+    this.logEvent(chorusLine(zoneById(zone).name, shaped.pairs, shaped.late));
+    this.playCues(shaped.cues, (_cue, d) => this.popCallNote(d));
+  }
+
+  /** A shaped chorus as `{ name, delayMs }` in energy order — the shape the 192 hooks have always read. */
+  private chorusEntries(shaped: ShapedChorus): ChorusEntry[] {
+    const at = new Map(shaped.cues.map((c) => [c.who!, c.atMs]));
+    const singers = this.dinos.filter((d) => at.has(d.name));
+    return chorusOrder(singers).map((e) => ({ name: e.name, delayMs: at.get(e.name)! }));
+  }
+
+  /** The ♪ over a dino at the instant its cue plays (BACKLOG-566 draws it; the glyph until then). */
+  private popCallNote(d: Dino): void {
+    if (!this.inView(d)) return;
+    const mark = this.makeHourMark(CALL_ART_KEY, CALL_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
+    this.callNotes++;
+    this.time.delayedCall(600, () => mark.destroy());
   }
 
   /** True when a dino lives in the keeper's current zone (and so should be drawn). */
@@ -9183,6 +9232,9 @@ ${e.short}`;
     (window as any).__seasonTurns = () => this.seasonTurns;
     // any: dev-only Playwright hooks — dawn chorus (BACKLOG-192)
     (window as any).__lastChorus = () => this.lastChorus;
+    // dev-only hooks — the ground that calls you in (BACKLOG-200/198)
+    (window as any).__lastArrival = () => this.lastArrival;
+    (window as any).__callNotes = () => this.callNotes;
     (window as any).__dawnCount = () => this.dawnCount;
     (window as any).__dawnHour = () => DAWN_HOUR;
     // any: dev-only Playwright hook — woke hungry (BACKLOG-376): who woke over the bar at the last dawn.
@@ -9430,16 +9482,12 @@ ${e.short}`;
     if (t.hour !== DAWN_HOUR) return;
     if (t.day === this.lastDawnDay) return; // once per day; a fresh day re-arms
     this.lastDawnDay = t.day;
-    const order = chorusOrder(this.dinos);
-    this.lastChorus = order;
+    // BACKLOG-200/198: the morning carries the bond graph too — the pair as one, the loner late.
+    const shaped = chorusCues(this.dinos, this.bonds, this.dinoNames(), this.meetings);
+    this.lastChorus = this.chorusEntries(shaped);
     this.dawnCount++;
     this.logEvent('🌅 dawn');
-    for (const { name, delayMs } of order) {
-      this.time.delayedCall(delayMs, () => {
-        const d = this.dinoByName(name);
-        if (d) this.chirpFor(d);
-      });
-    }
+    this.playCues(shaped.cues);
     this.checkWakeHungry();
   }
 
@@ -9448,7 +9496,7 @@ ${e.short}`;
    * visible 🍖 stir, a temperament-shaded line, and a memory that can colour their next greeting. Called
    * from the tail of the dawn chorus so it inherits both of that beat's guards (once per in-game day; live
    * crossings only — a restore/away `clock.set` fires no onHour). Synchronous on purpose: the chorus chirps
-   * are staggered through delayedCall, but this beat must be readable the instant dawn breaks.
+   * are staggered through `playCues`, but this beat must be readable the instant dawn breaks.
    */
   private checkWakeHungry(): void {
     this.lastWokeHungry = [];

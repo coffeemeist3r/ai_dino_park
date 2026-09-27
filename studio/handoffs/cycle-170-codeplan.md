@@ -49,3 +49,24 @@ Order: structure (1–4) before lore (5–7). One Coder fire.
 ## Reuse
 `chorusOrder`, `closestFriend`, `isLoner`/`LONER_FLOOR`, `answerDelayMs`/`answerParams`,
 `callbackDelayMs`, `makeHourMark`, `theZone`, `timeToAbs`, `__stepWorld`/`__tryCross`/`__setPlayer`.
+
+---
+
+## Shipped (Coder)
+
+As planned, with one deviation that matters:
+
+- **Pairs are read among the singers, closeness = bond then meetings** — not "mutual `closestFriend`
+  over the whole cast" as designed. Measured with `__stepWorld` on a founding save: the bond graph
+  **saturates** — most pairs reach the cap of 100 inside 80 steps (four real minutes), and a
+  bond-only closest friend is then decided by `closestFriend`'s alphabetical tie-break. With the
+  whole-cast read the Bowl never produced a mutual pair at all (every Bowl dino's "best friend" was
+  Bramble or Ember, by name), so the arc would have been unreachable for a reason nobody would hear.
+  Among the singers, the top-scoring pair is always mutual, and the meetings tie-break makes it the
+  two who have actually spent the most time together. The loner read stays whole-cast (same dino as
+  the 🥀). The saturation itself is out of scope and flagged for the Validator.
+- `__lastChorus` keeps its `{ name, delayMs }[]` energy-ordered shape (192's spec compares names to
+  `chorusOrder`); the arrival is `__lastArrival`, the ♪ count `__callNotes`.
+- `timeToAbs` exported from `clock.ts` for the rest gate.
+
+Build clean; unit 3099 pass / 3 skipped (290 files).
