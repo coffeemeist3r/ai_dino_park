@@ -13745,3 +13745,7 @@ cue.ts and pipStrideMs, one playCues with an optional visual hook, three call si
 ## Cycle 170 — coder
 
 BACKLOG-562: `audio/cue.ts`, `pipStrideMs`, one `playCues` owning both guards; 193, 202 and the dawn chorus migrated. BACKLOG-200+198: `chorusCues` (the pair half a stride behind, the loner after the rest), `chorusLine`, and the ground that calls you in on a real edge crossing, with a ♪ over each singer. Finding on the way: the bond graph saturates at 100 within about four real minutes, after which a bond-only best friend is chosen by the alphabet — pairs now tie-break on meetings.
+
+## Cycle 170 — qa
+
+15 criteria, 15 pass. Build clean, 3099 unit, 838/838 e2e on the second full run; the first lost two mobile-minds specs to a destroyed execution context at the tail of the run, which passed isolated and in the fresh run.
