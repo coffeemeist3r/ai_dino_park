@@ -22,9 +22,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
-- [~] BACKLOG-562 [infra] The voice has no clock — the park's one deferred call is a bespoke `delayedCall` with its guards written inline (full text in the cycle-168 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-565 [infra] The founding park has no friends — four systems share the floor 8 and every pair starts at 0 (full text in the cycle-169 block below).
+- [ ] BACKLOG-567 [infra] The bond graph fills up — every pair reaches the cap of 100 within minutes (full text in the cycle-170 block below).
 
 ---
 
@@ -241,14 +241,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-186 [pokemon] Hardy in the book — the collection book counts cold nights each dino has toughed out ("weathered 3 cold nights alone"), the flip side of the night ledger (182): not who slept warm, but who slept hard. Builds on 179 / 021.
 - [ ] BACKLOG-187 [emergent] Toughened hide — a dino that endures many cold nights slowly hardens (a tiny capped nudge toward higher resilience / lower sociability), so being repeatedly left out leaves a mark on temperament, not just memory. Very slow, capped. Builds on 179 / 043.
 
-## Cycle 44 lore additions — the bowl finds its voice (2026-06-11)
-
-> The operator spent a day giving the bowl a phone home, then dropped one nudge in the box:
-> **sound**. The bowl has been silent for 44 cycles. Seeded foundation-first, and — per the
-> Living-minds bias — the very first sounds are *per-dino voices*, not UI bleeps: a dino you
-> can recognize with your eyes closed is distinctness in a register we've never used.
-
-
 ## Cycle 45 lore additions — the voice learns the day (2026-06-12)
 
 > Cycle 44 gave each dino a voice; cycle 45 gives the bowl a *time* it uses them. Next-up is
@@ -258,9 +250,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-196 [emergent] Night hush — the inverse bookend of the dawn chorus: at the night boundary the cast falls quiet, the last night-owl's chirp trailing off into the dark, so the day has a closing sound as well as an opening one. Builds on 192 / 109.
 - [ ] BACKLOG-197 [social] Chorus you can join — tapping the glass (057) during the dawn chorus makes the nearest waking dino chirp back at the keeper, folding you into the morning call-and-answer. Builds on 192 / 057 / 193.
-- [~] BACKLOG-198 [emergent] Off-key loner — a dino with no bond above the loner floor (135) chirps a beat *after* the rest of the chorus, a lone voice hanging in the quiet; social isolation made audible. Builds on 192 / 013 / 135.
 - [ ] BACKLOG-199 [pokemon] Chorus lead in the book — the collection book names which dino "leads the dawn chorus" (the earliest riser by energy) as a small standing. Builds on 192 / 021.
-- [~] BACKLOG-200 [emergent] Harmonized pair — two high-bond dinos that wake near each other chirp in near-unison (pips interleaved), so a strong friendship literally *sounds* different from two strangers. Builds on 192 / 013.
 
 ## Cycle 46 lore additions — sound becomes signal (2026-06-12)
 
@@ -674,15 +664,16 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ')`, so there is no per-line object for an engraved register to be, and no line on the brass can carry art while that is true. The pressure is now three lines long rather than two — 555 put the watcher's tenure on it last cycle, beside the sitting and the streak — and all three of those are lines about the *keeper* rendered at the same weight as a count of specimens. Give the plaque an array of `Text` objects, one per rendered line, laid out at a fixed pitch, with `plaqueLines` unchanged and still pure: the scene stops joining and starts iterating. That alone unblocks 539 and makes "this line is about you" expressible at all. Do **not** take the visual pass with it — the geometry change is the item, the engraving is 539's. Builds on 058 / 539 / 122 / 555.
 
-## Cycle 167 (Structure-smith)
-
-
 ## Cycle 168 (Structure-smith)
 
-- [~] BACKLOG-562 [infra] The voice has no clock — every call in this park plays on the frame of whoever asked for it, and the *one* call that does not is `hailAndAnswer`'s answer (193), deferred by a bespoke `this.time.delayedCall` sitting in `WorldScene` with its two guards — "the dino left the roster during the gap" and "mute flipped during the gap" — written inline as comments and code. That is correct, and it is also the only copy. Two of Milestone 22's remaining lore arcs are *entirely* about when a call happens rather than what it sounds like: **200** wants two bonded dinos to wake in near-unison (pips interleaved across two calls), **198** wants the friendless one to chirp a beat *after* the chorus. Taken as written, each adds a second and a third copy of the same deferral and the same two guards, in the same file, and the interleave in 200 cannot be expressed by `delayedCall` at all — it needs sub-call scheduling, and `playChirp` already computes per-pip start times internally where nothing can reach them. The spine: a pure `audio/cue.ts` that turns a beat into an ordered list of `{ atMs, params }` cues (`answerCues(hearts, params)`, `chorusCues(voices, bonds)`), Node-testable and knowing nothing about Phaser or WebAudio, plus **one** scene-side player that walks a cue list and owns the two guards once. 193's existing behaviour is the identity case: a two-entry cue list at 0 ms and `answerDelayMs(hearts)`. Reachability: ship it with the chorus already in the park moving from "all at once" to cues, so the dawn beat audibly gains an order. Builds on 193 / 200 / 198 / 559 / 192.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — the scene carries `lastSound`, `lastAnswer` and `lastDistress` as three parallel observation fields, each written at a different subset of the four `playChirp` call sites, and **the mute rule already differs between them**: `lastSound` is set only inside `if (!soundMuted())`, while `lastAnswer` and `lastDistress` are set unconditionally and document *why* (the beat is diegetic; mute gates playback, not the event). Both rules are right; the problem is that which one applies is decided per call site by whoever wrote it, so "did the park make this sound" and "did this beat happen" are the same question asked of three fields with three answers. A spec can therefore pass on a park that is silent, which is the exact class of defect CHARTER v7 exists to catch, one layer down. The work: one `voiceLog` — an append-only ring of `{ kind, name?, params, atMs, played: boolean }`, written at a single seam that every call goes through (natural once 559's bus exists, since every call already routes through one place), with `played` carrying the mute answer instead of presence-versus-absence carrying it. The three fields become reads over the log, so no spec has to change in the same cycle. Builds on 559 / 194 / 193 / 501.
 
 ## Cycle 169 (Structure-smith / Validator)
 
 - [ ] BACKLOG-565 [infra] The founding park has no friends — `private bonds: Bonds = {}` and nothing seeds it on a new game, while **four separate systems share the floor value 8**: `COMFORT_BOND_FLOOR` (comfort.ts), `LONER_FLOOR` (loner.ts), `HUDDLE_THRESHOLD` (huddle.ts) and `GRIEF_BOND_FLOOR` (tic.ts). So a fresh save opens with consolation impossible, **every dino classified a loner**, the bonds lens empty and grief unreachable, all at once — a cast of five who have supposedly shared one ground for years and are, on the record, strangers. Ordinary play lifts the graph over the line quickly (measured cycle 169: the first pair crosses inside 40 world steps, most of the roster by two minutes), so this is not a twenty-four-hour gate and it did not fail 202's reachability bar — but it is the CHARTER v7 corollary in its stated shape, *where a system has a floor, the shipping park starts above it*, and it predates the bar by a hundred cycles because the four constants live in four files and nobody had asked them the same question on the same day. The work: a pure `FOUNDING_BONDS` table beside `ROSTER` (Node-testable, no Phaser), applied only when no save loads, with a **deliberately friendless dino left in it** — BACKLOG-198's off-key loner needs one to exist, and a park where everybody is bonded is as false as one where nobody is. Blast radius is the point and is why this is not a lore-fire line: the loner, huddle, bonds-lens and grief specs all assert against a zero graph today, and each needs reading rather than bulk-editing. Reachability: the bonds lens has something in it on frame one, and a cry gets an answer the first time you hear one. Builds on 013 / 130 / 202 / 501.
+
+## Cycle 170 (Validator)
+
+- [ ] BACKLOG-567 [infra] The bond graph fills up — measured cycle 170 with `__stepWorld` on a founding save and no hook touched: most pairs are at 84–100 by step 40 and at the **cap of 100 by step 80** (four real minutes), including pairs that live on different grounds. Past that point the bond graph carries almost no information, and every system that asks "who is closest" — `closestFriend` (grief tic, 013), `comforter` (comfort, 202's callback), homecoming, gossip reach — is answered by its **alphabetical tie-break**: on the measured save every Bowl dino's closest friend was Bramble or Ember, by name. The loner (🥀) and the chorus's late voice exist only in the first several minutes of a fresh park (the last founding loner, Twitch, bonded between step 120 and 160) and then never again. Cycle 170's chorus worked around it (closeness = bond, then meetings, among the singers) and said so in the source; the fix belongs to the graph. The work: bonds that decay toward a resting level, or growth that slows near the top, or a cap high enough that a week of company differs from an afternoon — decided with the four floors of BACKLOG-565 in view, since the two items are the same question asked at both ends of the range. Reachability: two dinos who have spent the sitting together read as closer than two who met once, on the bonds lens and in who answers a cry. Builds on 013 / 135 / 202 / 565.
+

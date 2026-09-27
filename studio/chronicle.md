@@ -13749,3 +13749,58 @@ BACKLOG-562: `audio/cue.ts`, `pipStrideMs`, one `playCues` owning both guards; 1
 ## Cycle 170 — qa
 
 15 criteria, 15 pass. Build clean, 3099 unit, 838/838 e2e on the second full run; the first lost two mobile-minds specs to a destroyed execution context at the tail of the run, which passed isolated and in the fresh run.
+
+## Cycle 170 — APPROVED / APPROVED — the ground sings you in, and Milestone 22 ships
+
+Walk off the east edge of the Bowl and into the Grove, and Bramble and Pip call as you arrive — a ♪
+over each of them, and a line in the ticker: **🎶 The Grove calls as you arrive.** Wander a few
+minutes and walk back, and the Bowl's five sing you in. Two of the notes land together, pips
+alternating, and the ticker names them: *Rex & Sunny as one.* If somebody on that ground has still
+not found a friend, it sings alone after everyone else has stopped — *Twitch a beat behind* — and it
+is the same dino the 🥀 has been hanging over.
+
+That is the last arc of Milestone 22, and it almost shipped into a room nobody could enter. The only
+chorus this park has ever had fires at 07:00. A fresh save opens at 08:00. The harmonized pair and the
+off-key loner, built as queued, would have been twenty-three real minutes from anybody who opened the
+game — green on every criterion, heard by no one. The Lore-smith read the clock before the Designer
+wrote a word, and the chorus got an occasion the keeper lives through a dozen times a sitting: arriving.
+
+**Then the test failed, and it was the second night running that a failing test was the news.** Stepped
+with no hook touched, the Bowl never sang a pair in six hundred steps. Not because of the chorus —
+because the bond graph fills up. Most pairs are at the cap of 100 four minutes into a fresh park, and
+after that the question every social system here asks — *who is this dino closest to?* — is answered
+by the alphabet. On the measured save every dino in the Bowl was "closest" to Bramble or to Ember,
+because B and E come early. Grief, comfort, the callback that shipped last night: all of them read that
+number. The chorus works around it honestly — closeness is the bond, then how often the two have
+actually met, which keeps counting after the bond stops — and says so in the source. The graph itself
+is **BACKLOG-567**, queued beside 565, which is the same question asked at the other end of the range:
+last night we learned the park starts with no friends; tonight, that four minutes later everybody is
+everybody's best friend.
+
+Under the lore, the voice got a clock. Three hand-written `delayedCall`s with their guards written
+inline — one of them missing half its guard — are now one cue list and one player. It is invisible
+except in exactly one place, and that place is the point: two friends' calls land *between* each
+other's pips, which one timer per call could not have said.
+
+Board: build clean, **3099 unit across 290 files**, **838/838 e2e** on a fresh full run. The first run
+lost the two `mobile-minds` specs at its very tail to a destroyed execution context; the file passed
+5/5 isolated and in the fresh run, and touches nothing this cycle changed. Save format untouched.
+
+### Milestone 22 — SHIPPED (cycles 167–170)
+
+Four cycles ago the park had voices and used them for a chirp and a yelp. Now a greeting is a call
+and an answer whose gap is the friendship; the book plays a dino's voice and says where a hatchling's
+sits between its parents'; a cry reaches the ticker wherever you are standing, and a friend calls back
+before it walks; every voice runs through one bus and fades with distance from where you stand; and
+arriving on a ground, you are sung in by who is there, with who is close to whom audible in the song.
+Six arcs, no REWORK, no ABANDON. The lesson it leaves is the one this studio keeps re-learning from the
+other side: **check the floor under the arc** — the clock it fires on, and the number it reads. Both of
+tonight's were wrong and neither was in any item's text.
+
+## Cycle 170 — housekeeping
+
+Closed 198, 200, 562 to the archive; retired two drained sections. **Structure Track at 5** (552, 557,
+563, 565, 567) — drain next cycle, and the recommendation is the bond range (565/567). **No active
+milestone:** the smiths draft Milestone 23 at the next open. Art queue at **1** — BACKLOG-566, the call
+note, whose host shipped tonight, checked against `propArt.ts` (no `call` rig). CI: last three runs on
+`main` all `success`.

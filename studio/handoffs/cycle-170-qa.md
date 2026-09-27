@@ -44,7 +44,7 @@ on this tree, and the fresh full run was 838/838.
 - [x] Dawn chorus spec green.
 
 **Design deviation, verified rather than waved through:** pairs are read *among the singers* with a
-meetings tie-break, not mutual `closestFriend` over the whole cast. the measurement behind it (a throwaway `__bonds` dump spec, run this session and deleted):
+meetings tie-break, not mutual `closestFriend` over the whole cast. The measurement behind it (a throwaway `__bonds` dump spec, run this session and deleted):
 by 80 `__stepWorld` steps most bonds are at the 100 cap, and a whole-cast bond-only read gave every Bowl
 dino a "best friend" of Bramble or Ember by alphabet, so the Bowl never sang a pair in 600 steps. The
 deviation is what makes criterion 6 pass at all; the unit suite pins the tie-break

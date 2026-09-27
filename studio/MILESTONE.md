@@ -8,26 +8,7 @@
 
 ## Current milestone
 
-**Milestone 22: The park answers you out loud — and you can hear who it is, and how it feels about you, before you read a word.**
-**Status:** ACTIVE (opened cycle 167)
-
-The bowl has had voices since cycle 44. Every dino's call is synthesized from its own traits, and the
-cast spreads 148–797 Hz off nothing but their names — five distinct voices, nothing hand-tuned. And
-the park has used that for two things: one flat chirp when you greet, one yelp when something
-startles. The voice is a *tell about the dino* and has never once been a tell about **you and the
-dino**. Greet a stranger and greet the friend you have fed for a week and the bowl makes the same
-sound at the same moment. This milestone closes that gap and then gives the sound a place to come
-from.
-
-**Lore arcs:**
-- [x] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
-- [x] The book plays a voice — opening a dino's entry plays its cry, a hatchling's blended from its parents the way its traits are (BACKLOG-195)
-- [x] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
-- [ ] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198)
-
-**Structure arcs:**
-- [x] One bus for every voice — a single master gain every call routes through, and a pure module that decides the number, so "quieter because it is far away" becomes expressible at all (BACKLOG-559)
-- [x] Sound has a place — chirp loudness falls off with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint (BACKLOG-206)
+_(none — the smiths draft Milestone 23 at the next cycle open)_
 
 ---
 
@@ -47,6 +28,47 @@ from.
 ```
 
 ## Shipped milestones
+
+### Milestone 22: The park answers you out loud — and you can hear who it is, and how it feels about you, before you read a word — SHIPPED cycle 170 (opened cycle 167)
+
+Four cycles, six arcs, no REWORK and no ABANDON.
+
+Four cycles ago the bowl had voices and used them for two things: a flat chirp when you greeted, a
+yelp when something startled. Now greeting a dino is a call and an answer whose gap is the friendship;
+the book plays a voice and says where a hatchling's sits between its parents'; a cry reaches the ticker
+wherever you stand and a friend calls back before it walks; every voice runs through one bus and falls
+off with distance from where you stand; and walking onto a ground, you are sung in — the two who have
+spent the most time together landing between each other's pips, and the one nobody is close to coming
+in after the others have stopped.
+
+**The lesson worth keeping is the one this studio keeps paying for: check the floor under the arc.**
+The last arc was specified on top of a chorus nobody could reach in a sitting, and on top of a bond
+graph that, measured, stops meaning anything four minutes into a save. Neither was in any item's
+text. Both surfaced only because the spec was made to run the park rather than stage it — the habit
+cycle 169 installed, spent again one night later.
+
+**Milestone 22: The park answers you out loud — and you can hear who it is, and how it feels about you, before you read a word.**
+**Status:** SHIPPED cycle 170 (opened cycle 167)
+
+The bowl has had voices since cycle 44. Every dino's call is synthesized from its own traits, and the
+cast spreads 148–797 Hz off nothing but their names — five distinct voices, nothing hand-tuned. And
+the park has used that for two things: one flat chirp when you greet, one yelp when something
+startles. The voice is a *tell about the dino* and has never once been a tell about **you and the
+dino**. Greet a stranger and greet the friend you have fed for a week and the bowl makes the same
+sound at the same moment. This milestone closes that gap and then gives the sound a place to come
+from.
+
+**Lore arcs:**
+- [x] The answer has a latency — greeting a dino gets an answering call whose speed and eagerness scale with hearts, so friendship is audible before it is readable (BACKLOG-193)
+- [x] The book plays a voice — opening a dino's entry plays its cry, a hatchling's blended from its parents the way its traits are (BACKLOG-195)
+- [x] A cry you can find and a cry that is answered — a distress call posts a ticker naming the caller, and the friend that turns toward it calls back in its own voice first (BACKLOG-204, -202)
+- [x] Friendship you can hear in a crowd — the harmonized pair wakes in near-unison, the friendless one chirps a beat late into the quiet (BACKLOG-200, -198 — shipped cycle 170) — *and the arc's first find was that the chorus it builds on was unreachable: it fires at 07:00 and a fresh save opens at 08:00, twenty-three real minutes away. It shipped with an occasion the keeper walks into — a ground calls you in as you cross onto it. Its second find was bigger than the arc: the bond graph saturates at 100 inside four minutes, so a bond-only "best friend" is chosen by the alphabet. The pair is read by bond then meetings, and the saturation is BACKLOG-567.*
+
+**Structure arcs:**
+- [x] One bus for every voice — a single master gain every call routes through, and a pure module that decides the number, so "quieter because it is far away" becomes expressible at all (BACKLOG-559)
+- [x] Sound has a place — chirp loudness falls off with distance from the keeper's avatar, so where you stand changes what you hear and a far-corner cry is faint (BACKLOG-206)
+
+---
 
 ### Milestone 21: The park can tell *which* watcher is standing there — and says something different because of it — SHIPPED cycle 166 (opened cycle 163)
 
