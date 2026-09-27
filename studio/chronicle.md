@@ -13733,3 +13733,7 @@ Friendship you can hear in a crowd: BACKLOG-200 + 198, the last lore arc of Mile
 ## Cycle 170 — structure-smith
 
 BACKLOG-562, the voice has no clock: one pure cue module and one scene-side player that owns both deferral guards, so tonight's chorus can interleave pips instead of adding a third hand-written `delayedCall`. Queue at 5, drained not invented.
+
+## Cycle 170 — designer
+
+Structure first: `cue.ts` + `pipStrideMs` + one `playCues`, three call sites migrated. Then the lore: mutual best friends interleave their pips, the loner comes in after the rest have stopped, and the keeper walking onto a ground is the chorus's reachable occasion (three real minutes' rest per ground).
