@@ -13862,3 +13862,49 @@ BACKLOG-565+567: `FOUNDING_BONDS` (Twitch left out on purpose), `meetGain`, a `s
 ## Cycle 171 — qa
 
 14 criteria, 14 pass. Found the bond graph knitting pairs across grounds — Murk in the Hollow was Bramble's new best friend by step 5 — fixed at the meeting loop. Build clean, 3119 unit, 843/843 e2e on a fresh full run.
+
+## Cycle 171 — APPROVED / APPROVED — friendship has a shape
+
+Open the book on a fresh save and every page now says who that dino is closest to. *Rex — 🤝 close to
+Sunny.* *Mossback — 🤝 friendly with Glade.* Old Thornback, alone out on the Fernreach, is friendly with
+Mossback across two grounds, because they are the two who remember the fern flats. And Twitch's page
+says **🤝 no friend yet** — the only one that does, and deliberately so. Press `V` once more and the bonds
+lens draws pink lines between them on frame one. Every fresh save in this park's history opened that
+lens on an empty screen.
+
+Then leave it running. Ten minutes in, the ticker has said, six times, something like
+**💞 Glade has grown closer to Sunny than to Mossback** — the park telling you, in its own words, that
+two dinos who kept ending up next to each other are now each other's person. Twitch finds somebody
+inside a few minutes, and its best friend changes twice more before the ten are up. A jittery little
+thing trying out the whole Bowl.
+
+**The night's real find was in the first measurement, and it was the kind that only turns up when you
+put a number on screen.** Left to run with no hooks, the 💞 line fired nine times in forty seconds, and
+the very first was *Murk has grown closer to Bramble than to Glade*. Murk lives in the Hollow. Bramble
+lives in the Grove. They have never been on the same ground. The meeting loop has always compared tile
+coordinates, and every ground in the park shares one tile grid — so two dinos on two different grounds
+"met" whenever they happened to stand on the same square of their own maps, and the bond graph was
+knitting friendships between animals who had never seen each other. That is most of why the graph
+filled up in four minutes last night, and it is why "closest friend" was the alphabet. One line fixed
+it. The book would have been printing it as fact otherwise.
+
+Under that, the graph got both ends of its range. The founding cast opens with eight friendships, so
+consolation, loneliness, the den and grief — four systems that all waited on a bond of 8 that no fresh
+save ever had — are live from the first frame. And the meeting bump now shrinks as a pair nears the
+cap, so an afternoon of company reads differently from a handful of meetings. Two smaller truths fell
+out along the way. Rex is an owl with a friend now, so at eight in the morning he walks to the den to
+sleep instead of dozing where he stands. And every warm hello to Rex on a fresh save had been quietly
+paid for by the loner bonus: his own reaction to warmth is negative, and nobody could tell, because
+until tonight he had been a loner. Greet him honestly.
+
+Board: build clean, **3119 unit across 292 files**, **843/843 e2e** on a fresh full run (1 skipped).
+Earlier runs each lost one different spec (`cycle-128-pecking`, `cycle-085-stand-up`) that passed
+isolated; the parallel-load flake class. Sixteen specs that build their own bonds now say so with a
+`strangers` fixture, and the founding-declaration ratchet fell from 251 to 236. Save format untouched.
+
+**Named, not fixed:** a pair that is *always* together still climbs to ~99.6 over a long sitting.
+The cap is an asymptote now, not a wall, but it is not far enough away. Decay toward a resting level is
+the next lever.
+
+Milestone 23: both structure arcs ✅, lore arc 1 ✅. Open: 127 (the keeper's inner circle), 136
+(comfort is for friends).
