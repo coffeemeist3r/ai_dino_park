@@ -13842,3 +13842,7 @@ It is named here rather than claimed away.
 ## Cycle 171 — lore-smith
 
 Milestone 23 drafted — *friendship has a shape*. Lore pick: BACKLOG-134, the closest friend on every book page and a ticker beat when one friend overtakes another. Seeded 568 (art, the friend-found mark, queued behind its host).
+
+## Cycle 171 — structure-smith
+
+BACKLOG-565+567, the bond range: founding friends with one friendless dino left in on purpose, and a meeting bump that shrinks toward the cap so the graph stops filling up. Queue at 5, drained not invented.

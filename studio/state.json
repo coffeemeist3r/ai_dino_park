@@ -2,7 +2,7 @@
   "cycle": 171,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-134: closest-friend line in the book + the ticker when it changes",
-  "structureItem": null,
+  "structureItem": "BACKLOG-565+567: the bond range \u2014 founding friends (and one friendless dino) + a graph that stops filling up",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-28T08:11:45.180518Z",
-    "structure-smith": "2026-09-27T08:11:20.377430Z",
+    "structure-smith": "2026-09-28T08:11:59.585767Z",
     "designer": "2026-09-27T08:12:59.104585Z",
     "code-planner": "2026-09-27T08:14:02.619524Z",
     "coder": "2026-09-27T08:32:21.112895Z",
