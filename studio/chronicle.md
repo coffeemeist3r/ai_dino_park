@@ -13846,3 +13846,7 @@ Milestone 23 drafted — *friendship has a shape*. Lore pick: BACKLOG-134, the c
 ## Cycle 171 — structure-smith
 
 BACKLOG-565+567, the bond range: founding friends with one friendless dino left in on purpose, and a meeting bump that shrinks toward the cap so the graph stops filling up. Queue at 5, drained not invented.
+
+## Cycle 171 — designer
+
+Structure first: `FOUNDING_BONDS` (Twitch left friendless on purpose) and `meetGain`, which shrinks the meeting bump toward the cap. Then the lore: the closest friend on every book page, tiered by how close, and a ticker beat when one friend overtakes another — with hysteresis so near-equals don't flicker.
