@@ -13908,3 +13908,16 @@ the next lever.
 
 Milestone 23: both structure arcs ✅, lore arc 1 ✅. Open: 127 (the keeper's inner circle), 136
 (comfort is for friends).
+
+## Cycle 171-art — artist: no-op, the queue's one item has no host
+
+The art queue holds one item, BACKLOG-568 (the friend-found sprig), and its host does not exist yet:
+the moment a loner finds its first friend shows a bubble, not a placed mark. Under the cycle-145
+amendment a drawn rig with no host reddens the reachability register, so nothing was drawn. The host is
+one `makeHourMark` slot; whichever cycle builds it can take the rig with it.
+
+## Cycle 171 — housekeeping
+
+Closed 134, 565, 567 to the archive; retired two drained sections (`Cycle 169`, `Cycle 170`). Structure
+Track at **3** (552, 557, 563) — under X=4, so the Structure-smith invents next cycle; bond decay is the
+obvious seed. CI: latest two runs on `main` `success`.
