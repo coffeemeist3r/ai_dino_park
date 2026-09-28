@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * The loner finds a friend (BACKLOG-369). On the fresh bowl every dino is a loner (all bonds below the
@@ -20,6 +20,7 @@ test('a loner that grows its first bond files one "not so alone" beat and stops 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // Fresh bowl: Rex is a loner, no friend-beat yet.
   expect(await isLoner(page, 'Rex')).toBe(true);
@@ -39,6 +40,7 @@ test('a loner that grows its first bond files one "not so alone" beat and stops 
 
 test('a dino that was never a loner gets no loner-friend beat', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // Lift Glade out of loner status first (so it is not a loner), clearing any beat.
   await bondPair(page, 'Glade', 'Twitch', 10);

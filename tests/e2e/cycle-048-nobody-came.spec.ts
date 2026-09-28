@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Nobody came (BACKLOG-208). Cycle 47 thawed an unmended cold funk silently at dusk; this
@@ -35,6 +35,7 @@ async function crossDusk(page: import('@playwright/test').Page, day = 22) {
 
 test('nobody came: an unmended funk leaves the colder memory, silently', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageColdMorning(page);
 
   const name = (await page.evaluate(() => (window as W).__coldPending() as string[]))[0];
@@ -61,6 +62,7 @@ test('nobody came: an unmended funk leaves the colder memory, silently', async (
 
 test('the warmed dino is spared the neglect note; only the un-warmed carry it', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageColdMorning(page);
 
   // Need at least two cold sleepers to warm one and neglect the other.

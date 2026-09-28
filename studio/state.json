@@ -1,6 +1,6 @@
 {
   "cycle": 171,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-134: closest-friend line in the book + the ticker when it changes",
   "structureItem": "BACKLOG-565+567: the bond range \u2014 founding friends (and one friendless dino) + a graph that stops filling up",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-09-28T08:11:59.585767Z",
     "designer": "2026-09-28T08:12:32.744746Z",
     "code-planner": "2026-09-28T08:13:05.362301Z",
-    "coder": "2026-09-27T08:32:21.112895Z",
+    "coder": "2026-09-28T08:45:29.131316Z",
     "qa": "2026-09-27T08:43:24.990881Z",
     "validator": "2026-09-27T08:45:12.995857Z",
     "artist": "2026-09-27T08:47:16.435684Z"

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Solitary tic (BACKLOG-405). A dino left truly alone — no company in its zone, no pressing need, nothing to
@@ -23,6 +23,7 @@ test('a dino alone with nothing pressing invents its tic; one with company never
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const roster = await names(page);
   const alone = roster[0];

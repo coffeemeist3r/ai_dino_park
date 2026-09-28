@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 /**
  * Zone-scoped world objects (BACKLOG-308). Resources, cairns, and the plot belong to a home zone and
@@ -19,6 +19,9 @@ test('a resource dropped in the bowl belongs to the bowl and hides in the grove 
   page,
 }) => {
   await boot(page);
+  // BACKLOG-565: Rex, carried away from founding friends, is homesick and walks off the resource — true, and
+  // not this spec's subject (zone gating). The pre-565 graph keeps him on the tile.
+  await foundingState(page, 'strangers');
 
   await spawn(page);
   expect((await resource(page)).zone).toBe('bowl');
@@ -58,6 +61,9 @@ test("each zone's plot draws only in its own zone (BACKLOG-308/349)", async ({ p
 test('a resource is gatherable only in its own zone (BACKLOG-308)', async ({ page }) => {
   const TILE = 32;
   await boot(page);
+  // BACKLOG-565: Rex, carried away from founding friends, is homesick and walks off the resource — true, and
+  // not this spec's subject (zone gating). The pre-565 graph keeps him on the tile.
+  await foundingState(page, 'strangers');
 
   // Migrate a dino into the grove and make it curious enough to lock onto a resource (the `gathering`
   // branch), so it stays glued within reach every step. Without this the dino wanders and the 3s

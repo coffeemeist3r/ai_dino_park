@@ -13854,3 +13854,7 @@ Structure first: `FOUNDING_BONDS` (Twitch left friendless on purpose) and `meetG
 ## Cycle 171 — code-planner
 
 `meetGain` and `FOUNDING_BONDS` beside the rest of the founding state, a `strangers` fixture for specs that assumed the zero graph; then `closest.ts` on top of `closestFriend`, one book field and a friend map refreshed at the head of every world step.
+
+## Cycle 171 — coder
+
+BACKLOG-565+567: `FOUNDING_BONDS` (Twitch left out on purpose), `meetGain`, a `strangers` fixture taken by sixteen specs that build their own bonds. BACKLOG-134: `closest.ts`, the 🤝 line on every book page, the 💞 ticker beat. Finding on the way: the loner bonus had been paying for every warm hello to Rex on a fresh save — his reaction to warmth is negative, and nobody could tell.

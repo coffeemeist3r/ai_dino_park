@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * A ritual that spreads (BACKLOG-407) — the first behaviour in this park's life to travel sideways between
@@ -56,6 +56,7 @@ test('a fresh park has picked nothing up — every dino performs the ritual it w
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   for (const n of await roster(page)) expect(await echo(page, n)).toBeNull();
   expect(errors).toEqual([]);
@@ -65,6 +66,7 @@ test('a close friend watching from the band picks the ritual up on the third str
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { performer, watcher } = await stage(page, 5, 50);
   const theirs = (await tic(page, performer)).tic as { glyph: string; label: string };
@@ -101,6 +103,7 @@ test('too close is not watching — a dino inside company range learns nothing (
   page,
 }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const { performer, watcher } = await stage(page, 2, 50);
   await threeRituals(page, performer);
   expect(await watches(page, watcher, performer)).toBe(0);
@@ -109,6 +112,7 @@ test('too close is not watching — a dino inside company range learns nothing (
 
 test('too far is not watching either — the band has an outer edge', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const { performer, watcher } = await stage(page, 12, 50);
   await threeRituals(page, performer);
   expect(await watches(page, watcher, performer)).toBe(0);
@@ -117,6 +121,7 @@ test('too far is not watching either — the band has an outer edge', async ({ p
 
 test('a near-stranger does not pick it up, however often it watches', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const { performer, watcher } = await stage(page, 5, 2); // below the close-friend floor
   await threeRituals(page, performer);
   expect(await echo(page, watcher)).toBeNull();
@@ -124,6 +129,7 @@ test('a near-stranger does not pick it up, however often it watches', async ({ p
 
 test('one echo per dino — a ritual already picked up is not overwritten by a second friend', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const names = await roster(page);
   const [first, watcher, second] = names;
 
@@ -150,6 +156,7 @@ test('one echo per dino — a ritual already picked up is not overwritten by a s
 
 test('the ritual survives a reload — a learned habit is a fact about who you are', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const { performer, watcher } = await stage(page, 5, 50);
   await threeRituals(page, performer);
   const picked = await echo(page, watcher);

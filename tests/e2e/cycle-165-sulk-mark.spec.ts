@@ -88,6 +88,9 @@ test("the keeper's attention clears it early (BACKLOG-543/544)", async ({ page }
 test('a shivering dino does not also wear the sulk — one glyph per slot (BACKLOG-543/184)', async ({ page }) => {
   await boot(page);
   await foundingState(page, 'all-bowl');
+  // BACKLOG-565: the founding friendships keep the whole Bowl warm in the den, so nobody wakes cold. The
+  // subject is one glyph per slot, not who slept beside whom — stage the cold night on the pre-565 graph.
+  await foundingState(page, 'strangers');
 
   // Cycle-047's `stageColdMorning`, verbatim: day 22 is the winter night it picked, a bonded pair keeps
   // the den honest, and the 08:00 step is the window's closing edge. Nothing here fabricates the funk.

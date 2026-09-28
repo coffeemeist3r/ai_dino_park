@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot, gatherToBowl } from './helpers';
+import { boot, gatherToBowl , foundingState } from './helpers';
 
 /**
  * Warmed by the catch (BACKLOG-422). 420's three registers climbed and then changed nothing — close the
@@ -34,6 +34,7 @@ test('the climb is the price — 2, then 3, then 4, then nothing', async ({ page
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await gatherToBowl(page);
 
   const [fond] = await names(page);
@@ -64,6 +65,7 @@ test('the climb is the price — 2, then 3, then 4, then nothing', async ({ page
 
 test('a stranger is found for free — the flatness is the tell, in points too', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await gatherToBowl(page);
 
   const stranger = (await names(page))[1];
@@ -82,6 +84,7 @@ test('a stranger is found for free — the flatness is the tell, in points too',
 
 test('a new stretch refills the budget; the lifetime ceiling does not', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await gatherToBowl(page);
 
   const [fond] = await names(page);
@@ -100,6 +103,7 @@ test('a new stretch refills the budget; the lifetime ceiling does not', async ({
 
 test('the warming lands one beat per stretch', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await gatherToBowl(page);
 
   const [fond] = await names(page);

@@ -216,7 +216,7 @@ function settleAfterInput(page: Page): void {
  * Adding a fifth name (with a `why` line) is the seam working. Re-flattening a founding constant to make a
  * spec green, or writing a twelfth ad-hoc helper, is the seam being worked around.
  */
-export type FoundingFixtureName = 'as-shipped' | 'all-bowl' | 'empty-grounds' | 'bare';
+export type FoundingFixtureName = 'as-shipped' | 'all-bowl' | 'empty-grounds' | 'bare' | 'strangers';
 
 /** A verify returns the reason it did not hold, or `null`. One throw site, one message shape. */
 type Verify = (page: Page) => Promise<string | null>;
@@ -301,6 +301,17 @@ export const FOUNDING_FIXTURES: Record<FoundingFixtureName, FoundingFixture> = {
       await page.evaluate(() => (window as Record<string, () => number>).__clearFounding?.());
     },
     verify: verifyEmptyGrounds,
+  },
+  strangers: {
+    why: 'every pair at 0 — the pre-565 graph. The spec is about bonds it builds itself (who is a loner, who comforts, who huddles), not about the friendships the park ships with',
+    apply: async (page) => {
+      await page.evaluate(() => (window as Record<string, () => void>).__clearBonds?.());
+    },
+    verify: async (page) =>
+      page.evaluate(() => {
+        const n = Object.keys((window as Record<string, () => object>).__bonds()).length;
+        return n ? `${n} bonded pair(s) left` : null;
+      }),
   },
   bare: {
     why: 'the pre-v7 park: cast co-located and every ground empty. Both of the above, in one call.',

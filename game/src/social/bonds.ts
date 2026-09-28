@@ -9,6 +9,20 @@ export type Bonds = Record<string, number>;
 
 const MAX_BOND = 100;
 
+/** The bump one ambient meeting gives a pair that has never met. */
+export const BOND_PER_MEET = 4;
+
+/**
+ * The bump one ambient meeting gives a pair already at `bond` (BACKLOG-567). It shrinks as the pair nears
+ * the cap, so the graph approaches 100 without arriving: with a flat 4 per meeting most pairs hit 100 about
+ * four real minutes into a fresh park, and past that every "who is closest?" was answered by name order.
+ * Now forty meetings still reads closer than ten. Only the repeated ambient meeting uses it; one-off beats
+ * (comfort, gratitude, wonder) stay flat.
+ */
+export function meetGain(bond: number): number {
+  return BOND_PER_MEET * (1 - Math.min(MAX_BOND, Math.max(0, bond)) / MAX_BOND);
+}
+
 /** Strengthen the bond between two dinos by `delta`, clamped to [0, 100]. Returns a new map. */
 export function strengthen(bonds: Bonds, a: string, b: string, delta: number, max = MAX_BOND): Bonds {
   if (a === b) return bonds;

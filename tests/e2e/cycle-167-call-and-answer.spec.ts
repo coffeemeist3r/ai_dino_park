@@ -20,8 +20,8 @@ const lastSound = (p: Page) =>
 const muted = (p: Page) => p.evaluate(() => ((window as W).__soundMuted as () => boolean)());
 const hearts = async (p: Page, name: string) =>
   (await p.evaluate(() => ((window as W).__hearts as () => Record<string, number>)()))[name];
-const greet = (p: Page, name: string) =>
-  p.evaluate((n) => ((window as W).__pickTone as (x: string, t: string) => Promise<void>)(n, 'warm'), name);
+const greet = (p: Page, name: string, tone = 'warm') =>
+  p.evaluate(([n, t]) => ((window as W).__pickTone as (x: string, t: string) => Promise<void>)(n, t), [name, tone]);
 
 test('the keeper hails and the dino answers, with a gap between them', async ({ page }) => {
   await boot(page);
@@ -62,8 +62,11 @@ test('a dino you have greeted a few times answers faster — no save edit, no cl
   expect(cold?.hearts).toBe(0);
 
   // `greetGain` is 3-8 points a greet and a heart is 10, so a handful of hellos crosses the first one.
-  for (let i = 0; i < 6 && (await hearts(page, 'Rex')) < 1; i++) {
-    await greet(page, 'Rex');
+  // BACKLOG-565: Rex opens with a friend now, so he is no longer a loner and the +4 LONER_BONUS no longer
+  // rides on each hello. Without it a *warm* hello nets Rex nothing (his tone reaction to warm is negative;
+  // the loner bonus had been paying for it), so the keeper warms him the way he likes: honestly.
+  for (let i = 0; i < 8 && (await hearts(page, 'Rex')) < 1; i++) {
+    await greet(page, 'Rex', 'honest');
     }
   expect(await hearts(page, 'Rex')).toBeGreaterThanOrEqual(1);
 

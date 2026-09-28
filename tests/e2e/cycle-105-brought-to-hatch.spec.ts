@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Brought to the hatch (BACKLOG-381) — Milestone 5 lore arc 3. The park learned to feed a starving dino
@@ -45,6 +45,7 @@ test('a withdrawn loner gets fetched on a food drop (BACKLOG-381)', async ({ pag
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   await stageFetch(page);
 
@@ -58,6 +59,7 @@ test('a withdrawn loner gets fetched on a food drop (BACKLOG-381)', async ({ pag
 
 test('nobody comes for a dino with nobody (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // no bond at all — the loner stands at the edge while the park eats. The silence is the feature.
   await place(page, 'Mossback', 0, 14);
@@ -70,6 +72,7 @@ test('nobody comes for a dino with nobody (BACKLOG-381)', async ({ page }) => {
 
 test('the friend walks away from the food to get it (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   // Rex is standing ON the food's landing column — every ordinary rule says stay. The escort outranks it.
@@ -84,6 +87,7 @@ test('the friend walks away from the food to get it (BACKLOG-381)', async ({ pag
 
 test('the nudge fires exactly once, then the pair heads in (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   const bondBefore = await bond(page, 'Rex', 'Mossback');
@@ -110,6 +114,7 @@ test('the nudge fires exactly once, then the pair heads in (BACKLOG-381)', async
 
 test('the fetched loner walks toward the food instead of withdrawing (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   for (let i = 0; i < 40 && (await escort(page))?.phase === 'to-loner'; i++) await step(page);
@@ -128,6 +133,7 @@ test('the fetched loner walks toward the food instead of withdrawing (BACKLOG-38
 
 test('the errand outlives the meal — it still brings the loner in (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   expect(await escort(page)).not.toBeNull();
@@ -143,6 +149,7 @@ test('the errand outlives the meal — it still brings the loner in (BACKLOG-381
 
 test('the errand ends when the loner makes it in (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   for (let i = 0; i < 40 && (await escort(page))?.phase === 'to-loner'; i++) await step(page);
@@ -154,6 +161,7 @@ test('the errand ends when the loner makes it in (BACKLOG-381)', async ({ page }
 
 test('one escort at a time (BACKLOG-381)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await stageFetch(page);
 
   const first = await escort(page);

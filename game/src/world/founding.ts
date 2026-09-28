@@ -22,6 +22,8 @@ import { bankStep } from './bank';
 import type { Stockpile } from './resource';
 import type { FoundingKind, Pioneers } from './pioneer';
 import { ROSTER } from '../entities/roster';
+import { pairKey } from '../social/meetings';
+import type { Bonds } from '../social/bonds';
 import { COUNCIL_MIN_BANKS, COUNCIL_PER_HEADS, deriveRole, zoneCouncil, type ProviderCandidate } from '../ai/roles';
 
 /**
@@ -255,5 +257,32 @@ export function foundingCouncils(): Record<string, string[]> {
   const candidates = foundingCandidates();
   const out: Record<string, string[]> = {};
   for (const id of zoneChain()) out[id] = zoneCouncil(candidates, id);
+  return out;
+}
+
+/**
+ * The founding friendships (BACKLOG-565). A cast that has shared these grounds for years does not open the
+ * park as strangers — but with every pair at 0, the four systems that share the floor 8 (comfort, loner,
+ * huddle, grief) were all unreachable at once, and every dino was on record as a loner.
+ *
+ * Every dino but one clears the floor with somebody. **Twitch is left with nobody, on purpose:** a park in
+ * which everybody is bonded is as false as one in which nobody is, and the loner, the chorus's late voice
+ * and the friend-found beat all need one to exist. Pairs can cross grounds (Mossback and old Thornback).
+ */
+export const FOUNDING_BONDS: ReadonlyArray<readonly [string, string, number]> = [
+  ['Rex', 'Sunny', 30],
+  ['Bramble', 'Pip', 26],
+  ['Mossback', 'Glade', 24],
+  ['Sunny', 'Ember', 18],
+  ['Mossback', 'Thornback', 16],
+  ['Sunny', 'Glade', 14],
+  ['Rex', 'Mossback', 12],
+  ['Glade', 'Murk', 12],
+];
+
+/** `FOUNDING_BONDS` as a bond map. The scene seeds it on the `!save` branch only. */
+export function foundingBonds(): Bonds {
+  const out: Bonds = {};
+  for (const [a, b, v] of FOUNDING_BONDS) out[pairKey(a, b)] = v;
   return out;
 }

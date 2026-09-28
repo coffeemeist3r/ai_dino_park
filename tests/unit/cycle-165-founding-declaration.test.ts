@@ -66,7 +66,7 @@ export function specFiles(): string[] {
 export const BASELINE: readonly string[] = BASELINE_JSON;
 
 /** Asserted as a literal **here**, so the list cannot be edited without the edit being noticed. */
-export const BASELINE_COUNT = 251;
+export const BASELINE_COUNT = 236;
 
 const sourceOf = (f: string): string => readFileSync(join(E2E_DIR, f), 'utf8');
 

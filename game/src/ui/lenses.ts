@@ -188,6 +188,9 @@ export interface BookRow {
   species: string;
   hearts: number; // 0–10
   topBond: number; // 0–100
+  /** Who this dino is closest to (BACKLOG-134) — `friendLine`'s text. Optional so older BookRow literals
+   *  stay valid; always present in-game. */
+  friend?: string;
   role: Role;
   parents?: [string, string];
   rumorsHeard: number;
@@ -274,6 +277,8 @@ export function bookLines(rows: BookRow[], away: string[] = []): string[] {
     // BACKLOG-195: what it sounds like, at the head of the fingerprints — the voice is the oldest
     // of them (cycle 44) and the only one you can hear.
     if (r.voice) out.push(`  ${r.voice}`);
+    // BACKLOG-134: the bond number above, given a name — under the voice, which keeps its slot at the head
+    if (r.friend) out.push(`  ${r.friend}`);
     // BACKLOG-069: the menu, directly under the hearts — the one line in the block that is about what the
     // *keeper* has learned rather than about what the dino is, which is why it sits above the fingerprints.
     if (r.menu) out.push(`  ${r.menu}`);

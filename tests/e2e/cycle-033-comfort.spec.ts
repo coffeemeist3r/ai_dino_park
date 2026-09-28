@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot, gatherToBowl } from './helpers';
+import { boot, gatherToBowl , foundingState } from './helpers';
 import { driftFor } from '../../game/src/world/away';
 
 type W = Record<string, unknown>;
@@ -18,6 +18,7 @@ const bondKey = (a: string, b: string) => [a, b].sort().join('|');
 
 test('a sulking runner-up is consoled by its closest friend with a 🫂 and a bond bump (BACKLOG-130)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await gatherToBowl(page); // CHARTER v7: this case needs the cast co-located in the bowl
 
   // Near-tie between Sunny and Glade (one greet each), and make Twitch the strong
@@ -61,6 +62,7 @@ test('a sulking runner-up is consoled by its closest friend with a 🫂 and a bo
 
 test('with no close friend, the sulk stands alone and the repair path is untouched (BACKLOG-130)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // Stage the same jealousy, but leave every bond at zero — nobody clears the floor.
   await page.evaluate(() => {

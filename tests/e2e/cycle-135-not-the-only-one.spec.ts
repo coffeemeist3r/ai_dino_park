@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Not the only one (BACKLOG-416) — two solitary dinos ticcing in sight of each other.
@@ -60,6 +60,7 @@ test('two loners in sight of each other are each less alone for it', async ({ pa
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 5); // inside the band (3 < 5 <= 8)
   await bothTiccing(page, a, b);
@@ -83,6 +84,7 @@ test('no bond is required, and none is moved', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 5);
   const before = await bondOf(page, a, b);
@@ -101,6 +103,7 @@ test('company is not kinship — inside company range there is no ritual to shar
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 2); // inside TIC_COMPANY_RANGE
   await bothTiccing(page, a, b); // forced, so the band gate is what has to hold
@@ -116,6 +119,7 @@ test('out of sight is out of mind', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 10); // past ECHO_WATCH_RANGE
   await bothTiccing(page, a, b);
@@ -131,6 +135,7 @@ test('filed once per solitary stretch, however long the two stand there', async 
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 5);
   await bothTiccing(page, a, b);
@@ -148,6 +153,7 @@ test('neither ritual is interrupted, and 407’s tallies are untouched', async (
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const { a, b } = await stage(page, 5);
   await bothTiccing(page, a, b);

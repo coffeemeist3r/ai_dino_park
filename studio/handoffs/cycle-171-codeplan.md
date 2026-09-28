@@ -32,3 +32,22 @@ BACKLOG-495 fixture table.
 
 **Test plan.** Unit for the pure modules; e2e for the scene wiring on a fresh (as-shipped) park;
 full suite to find the specs that assumed the zero graph, each read and opted into `strangers`.
+
+## Shipped (coder)
+
+Both tracks as planned. Findings on the way, each resolved in the spec it surfaced in, not by bulk edit:
+
+- **16 specs opted into `strangers`** — every one a spec whose subject is a bond it builds itself
+  (loner, comfort, gratitude, huddle, lean, fetch, tic, warmth, the cold morning). The founding
+  declaration ratchet dropped 251 → 236 as a side effect.
+- **A bonded owl sleeps at the den.** `cycle-146-hours`' resting-holds-its-tile case: Rex now has a
+  friend, so resting-and-bonded is huddling and he walks to the den at 08:00. Correct behaviour; the
+  spec's subject is the unbonded sleeper, so it opts out.
+- **Rex, carried to the Grove, is homesick** and walks off the resource `cycle-069` put under him.
+- **The loner bonus had been paying for warm hellos.** Rex's tone reaction to *warm* is negative; the
+  +4 `LONER_BONUS` masked it for every fresh save. `cycle-167` now greets him honestly.
+- `cycle-042` asserted huddle on exactly step 45; Rex reaches the den by step 15 and wanders its edge
+  tile. It now asserts both at the den on the same step within 45.
+- The friend line sits under the voice line, which keeps its slot at the head of the block (168).
+
+Build clean; 3119 unit green.

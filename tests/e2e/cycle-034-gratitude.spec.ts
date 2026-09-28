@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 type W = Record<string, unknown>;
 type Jealousy = { name: string; line: string; memory: string } | null;
@@ -42,6 +42,7 @@ const gratitude = (page: import('@playwright/test').Page) =>
 
 test('a consoled dino files who consoled it (BACKLOG-132)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   // Saturate Glade + Rex → exact tie → Glade homecomes (alpha), Rex sulks. Mossback is Rex's
   // closest friend, so it crosses over to console him.
   await greet(page, 'Glade', SATURATE);
@@ -59,6 +60,7 @@ test('a consoled dino files who consoled it (BACKLOG-132)', async ({ page }) => 
 
 test('the consoled dino echoes the favor when its comforter later sulks, beating a stronger-bond peer (BACKLOG-132)', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // --- Round 1: Mossback consoles Rex → Rex owes Mossback. ---
   await greet(page, 'Glade', SATURATE);

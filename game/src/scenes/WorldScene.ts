@@ -222,7 +222,7 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds } from '../world/founding';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -388,7 +388,8 @@ import {
   type Vec2,
   LONG_PRESS_MS,
 } from '../input/touch';
-import { strengthen, bondPoints, closestFriend, type Bonds } from '../social/bonds';
+import { strengthen, bondPoints, closestFriend, meetGain, type Bonds } from '../social/bonds';
+import { bestFriend, friendLine, shiftLine } from '../social/closest';
 import type { Personality } from '../ai/personality';
 import { rand, seedRandom, isSeeded } from '../world/rng';
 import {
@@ -490,7 +491,6 @@ const LIFT_WINDOW_MS = 8_000;
 // Night sleeping huddle (BACKLOG-041): bonded dinos gather at the den after dark.
 // The bond bar + window are season-conditional since BACKLOG-171 (see world/huddle.ts).
 const HUDDLE_TILE = { tileX: 10, tileY: 11 };
-const BOND_PER_MEET = 4;
 /** Bond a generous feeder gains with the friend it yields a meal to (BACKLOG-375) — kindness deepens the tie. */
 const GENEROUS_BOND_BUMP = 5;
 
@@ -895,10 +895,16 @@ export class WorldScene extends Phaser.Scene {
   /** Set by the `__clearFounding` spec hook. `loadFromDb()` resolves a beat *after* `__ready`, so a spec can
    *  clear the founding ruin before it has been seeded; this makes the clear win either way. */
   private foundingCleared = false;
+  /** Set by `__clearBonds` (the `strangers` fixture) — the `foundingCleared` shape, for the founding bonds. */
+  private bondsCleared = false;
+  /** Who each dino is closest to, as the book and ticker say it (BACKLOG-134). Derived from the saved bonds,
+   *  never persisted; `refreshBestFriends` keeps it, with hysteresis so near-equals do not flicker. */
+  private bestFriendOf: Record<string, string | null> = {};
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
   private bondGfx!: Phaser.GameObjects.Graphics;
+  private bondLinesDrawn = 0; // BACKLOG-565: what the bonds lens actually drew last refresh (spec read)
   private tickerPanel!: Phaser.GameObjects.Text;
   /** Zone map lens (BACKLOG-425): boxes/connectors/keeper dot + one label per zone. */
   private mapGfx!: Phaser.GameObjects.Graphics;
@@ -2454,6 +2460,10 @@ export class WorldScene extends Phaser.Scene {
    * with no version bump. Called from the `!save` branch of `setupSave`, after the sprite arrays exist.
    */
   private seedFounding(): void {
+    // BACKLOG-565: the cast opens as friends, all but one — ahead of the ruin guards, because the friendships
+    // are not part of the grounds `__clearFounding` empties. A pair a spec already wrote wins.
+    if (!this.bondsCleared) this.bonds = { ...foundingBonds(), ...this.bonds };
+    this.refreshBestFriends(false);
     if (this.foundingCleared) return; // a spec restored the pre-v7 empty grounds before the DB read resolved
     if (this.cairns.length) return; // one-shot: never seed a second founding ruin over an existing skyline
     const ruin: Landmark = { ...FOUNDING_RUIN, derelict: true };
@@ -4069,6 +4079,13 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks
     (window as any).__bonds = () => ({ ...this.bonds });
+    // BACKLOG-565: the `strangers` fixture — the pre-565 zero graph, winning over the late founding seed.
+    (window as any).__clearBonds = () => {
+      this.bondsCleared = true;
+      this.bonds = {};
+      this.refreshBestFriends(false);
+    };
+    (window as any).__bestFriends = () => ({ ...this.bestFriendOf });
     (window as any).__bondPair = (a: string, b: string, amount?: number) => {
       const before = this.bonds;
       this.bonds = strengthen(this.bonds, a, b, amount ?? HUDDLE_THRESHOLD);
@@ -4779,6 +4796,22 @@ export class WorldScene extends Phaser.Scene {
 
   // ── Observer lenses (BACKLOG-021 + 020): cycle V through ways of seeing the sim ──
 
+  /**
+   * Re-read who each dino is closest to (BACKLOG-134). With `log`, a dino whose closest friend changed from
+   * one peer to another says so in the ticker; a first friend is the loner-lift's beat (369), not this one.
+   */
+  private refreshBestFriends(log: boolean): void {
+    const names = this.dinoNames();
+    const next: Record<string, string | null> = {};
+    for (const name of names) {
+      const was = this.bestFriendOf[name] ?? null;
+      const now = bestFriend(name, was, this.bonds, names);
+      next[name] = now;
+      if (log && was && now && was !== now) this.logEvent(shiftLine(name, was, now));
+    }
+    this.bestFriendOf = next;
+  }
+
   private logEvent(line: string): void {
     this.eventLog = [...this.eventLog, line].slice(-12);
   }
@@ -5033,7 +5066,12 @@ export class WorldScene extends Phaser.Scene {
       voice: i === cursor ? voiceLine(chirpParams(d.traits), this.voiceParentsOf(d)) : undefined,
       species: d.species,
       hearts: heartsFromPoints(this.friendship[d.name] ?? 0),
-      topBond: this.maxBond(d.name),
+      topBond: Math.round(this.maxBond(d.name)), // BACKLOG-567: bonds are fractional now; the page shows whole points
+      // BACKLOG-134: who it is closest to — the map the ticker announces changes from, so the two agree
+      friend: friendLine(
+        this.bestFriendOf[d.name] ?? null,
+        bondPoints(this.bonds, d.name, this.bestFriendOf[d.name] ?? ''),
+      ),
       role: this.roleOf(d.name),
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
@@ -5139,6 +5177,7 @@ export class WorldScene extends Phaser.Scene {
 
     // dev-only Playwright hooks
     (window as any).__lens = () => this.lens;
+    (window as any).__bondLines = () => this.bondLinesDrawn;
     (window as any).__cycleLens = () => {
       this.cycleLens();
       return this.lens;
@@ -5276,10 +5315,12 @@ export class WorldScene extends Phaser.Scene {
       this.tickerPanel.setText(['— Park News —', ...(news.length ? news : ['(quiet so far…)'])].join('\n'));
     } else if (L === 'bonds') {
       this.bondGfx.clear();
+      this.bondLinesDrawn = 0;
       for (const p of bondedPairs(this.bonds, HUDDLE_THRESHOLD)) {
         const a = this.dinoByName(p.a);
         const b = this.dinoByName(p.b);
         if (!a || !b || !this.inView(a) || !this.inView(b)) continue;
+        this.bondLinesDrawn++;
         this.bondGfx.lineStyle(Math.max(1, Math.round(p.points / 18)), 0xff6fae, 0.6);
         this.bondGfx.lineBetween(a.x, a.y, b.x, b.y);
       }
@@ -5959,6 +6000,7 @@ ${e.short}`;
   /** One wander + meeting step for every dino (used by the throttled tick and the dev hook). */
   private forceStep(): void {
     this.worldSteps++; // BACKLOG-424: the stamp a pacing trace ages against
+    this.refreshBestFriends(true); // BACKLOG-134: last step's company, read before this one moves anybody
     this.expireMissedTraces(); // BACKLOG-116: an unspoken thought ages out of the frame
     this.expireEnvy(); // BACKLOG-126: and so does a slight nobody came back to hear about
     if (this.convoCooldown > 0) this.convoCooldown--;
@@ -6304,7 +6346,8 @@ ${e.short}`;
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
           const beforeMeet = this.bonds;
-          this.bonds = strengthen(this.bonds, a.name, b.name, BOND_PER_MEET); // meeting (and huddling) deepens the bond
+          // meeting (and huddling) deepens the bond — by less the closer they already are (BACKLOG-567)
+          this.bonds = strengthen(this.bonds, a.name, b.name, meetGain(bondPoints(this.bonds, a.name, b.name)));
           // The loner finds a friend (BACKLOG-369): if this meeting lifted either dino out of loner status
           // (its first bond over the floor), mark the moment once.
           this.checkLonerLift(a.name, beforeMeet);
@@ -9771,6 +9814,7 @@ ${e.short}`;
       this.friendship = save.friendship;
       this.memory = away.memory;
       this.bonds = away.bonds;
+      this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;
       this.metWatcher = { ...(save.metWatcher ?? {}) };

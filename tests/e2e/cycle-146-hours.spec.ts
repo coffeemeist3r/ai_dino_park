@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 type W = Record<string, any>;
 
@@ -30,6 +30,9 @@ test.describe('BACKLOG-109 — the hours a dino keeps', () => {
 
   test('a resting dino holds its tile — it does not mill about like the ones that are awake', async ({ page }) => {
     await boot(page);
+    // BACKLOG-565: in the shipped park Rex has a friend, so a resting Rex is bonded enough to walk to the den
+    // (huddling outranks resting). This spec is about the *unbonded* sleeper holding its tile.
+    await foundingState(page, 'strangers');
 
     const before = await page.evaluate(() => (window as W).__stepWorld());
     const after = await page.evaluate(() => (window as W).__stepWorld());

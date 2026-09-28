@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Lonely lean on the keeper (BACKLOG-370). `edgeTarget` has sent a moping loner to its own nearest wall
@@ -19,6 +19,7 @@ const memory = (p: Page) => p.evaluate(() => (window as W).__memory() as Record<
 
 test('a fresh park leans on nobody — every dino is 0 hearts', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   // Every dino is a loner at spawn (no bonds) and every dino is at 0 hearts, so the branch is inert.
   const names = await page.evaluate(() => (window as W).__visibleDinos() as string[]);
   for (const n of names) expect(await leanTarget(page, n)).toBeNull();
@@ -28,6 +29,7 @@ test('a fresh park leans on nobody — every dino is 0 hearts', async ({ page })
 
 test('a well-befriended loner aims at the wall the keeper is by; a barely-known one does not', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await page.evaluate(() => (window as W).__holdAmbient()); // BACKLOG-456: no meeting lifts Rex out of loner status
 
   // Below the floor (3 hearts = 39 points): still the cycle-80 behaviour, nearest wall, hook returns null.
@@ -52,6 +54,7 @@ test('a well-befriended loner aims at the wall the keeper is by; a barely-known 
 
 test('a dino in another zone takes its own nearest wall whatever its hearts', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await page.evaluate(() => (window as W).__holdAmbient());
   await setFriendship(page, 'Rex', 90); // 9 hearts — far past the floor
   expect(await leanTarget(page, 'Rex')).not.toBeNull();
@@ -62,6 +65,7 @@ test('a dino in another zone takes its own nearest wall whatever its hearts', as
 
 test('a dino that is not a loner never leans, however many hearts it has', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   await page.evaluate(() => (window as W).__holdAmbient());
   await setFriendship(page, 'Rex', 100);
   // Put Rex and Mossback on one tile and let a meeting build a real bond — Rex stops being a loner.
@@ -80,6 +84,7 @@ test('a dino that is not a loner never leans, however many hearts it has', async
 
 test('the waiting is remembered, once per bout of loneliness', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   // BACKLOG-109: name the hour this spec needs. The cast splits into day-dinos and night-owls now, so
   // "a dino walks over there" is only true while that dino is awake — and a fresh save opens at 08:00,
   // inside the owls' rest window, with Rex an owl. 16:00 is the one stretch every chronotype is up in

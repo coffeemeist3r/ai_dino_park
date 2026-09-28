@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * Comfort food (BACKLOG-374). A moping loner soothed by its *favorite* food gets a quiet 😌 solace beat a
@@ -25,6 +25,7 @@ test('a loner eating its favorite gets a 😌 comfort beat + a distinct memory',
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const target = (await page.evaluate(() => (window as W).__dinoPositions()))[0].name as string;
   expect(await isLoner(page, target)).toBe(true); // fresh bowl: unbonded
@@ -40,6 +41,7 @@ test('a loner eating its favorite gets a 😌 comfort beat + a distinct memory',
 
 test('a loner eating a non-favorite food gets no comfort beat', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const target = (await page.evaluate(() => (window as W).__dinoPositions()))[0].name as string;
   const favId = await fav(page, target);
   const nonFav = FOOD_IDS.find((f) => f !== favId)!;
@@ -54,6 +56,7 @@ test('a loner eating a non-favorite food gets no comfort beat', async ({ page })
 
 test('a well-bonded (non-loner) dino eating its favorite gets no comfort — just the normal favorite beat', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
   const target = (await page.evaluate(() => (window as W).__dinoPositions()))[0].name as string;
   await page.evaluate((nm) => (window as W).__bondPair(nm, nm === 'Rex' ? 'Sunny' : 'Rex', 30), target);
   expect(await isLoner(page, target)).toBe(false);

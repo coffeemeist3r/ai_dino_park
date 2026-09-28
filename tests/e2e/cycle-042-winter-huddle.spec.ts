@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 type W = Record<string, unknown>;
 
@@ -36,19 +36,31 @@ async function stepAndHuddlers(page: import('@playwright/test').Page, steps: num
 
 test('winter dusk pulls bonded dinos to the den at 19:30 — an hour no other season huddles', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const info = await stage(page, ['Rex', 'Mossback'], undefined, [22, 19, 30]);
   expect(info.season).toBe('winter');
   expect(info.threshold).toBe(4);
   expect(info.inWindow).toBe(true);
 
-  const huddlers = await stepAndHuddlers(page, 45);
-  expect(huddlers).toContain('Rex');
-  expect(huddlers).toContain('Mossback');
+  // Both at the den on the same step, some step within 45 — not on step 45 exactly. The den's edge tile is
+  // walkable, so a huddler can wander one tile off and back; which step it is off on moved with the RNG
+  // stream when BACKLOG-567 made meeting gains fractional (cycle 171).
+  const together = await page.evaluate(() => {
+    const w = window as W;
+    for (let i = 0; i < 45; i++) {
+      (w.__stepWorld as () => unknown)();
+      const h = (w.__huddlers as () => string[])();
+      if (h.includes('Rex') && h.includes('Mossback')) return true;
+    }
+    return false;
+  });
+  expect(together).toBe(true);
 });
 
 test('winter admits a loosely-bonded pair the old threshold would leave out', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // Bond of exactly 4: below the legacy bar (8), at winter's lowered bar.
   const info = await stage(page, ['Sunny', 'Glade'], 4, [22, 22, 0]);
@@ -61,6 +73,7 @@ test('winter admits a loosely-bonded pair the old threshold would leave out', as
 
 test('a summer night at 21:30 stays scattered — the window has not opened', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const info = await stage(page, ['Rex', 'Mossback'], undefined, [10, 21, 30]);
   expect(info.season).toBe('summer');
@@ -74,6 +87,7 @@ test('a summer night at 21:30 stays scattered — the window has not opened', as
 
 test('spring nights behave exactly as before the seasons reached the den', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   const info = await stage(page, ['Rex', 'Mossback'], undefined, [3, 22, 0]);
   expect(info).toEqual({ season: 'spring', threshold: 8, inWindow: true });

@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { boot } from './helpers';
+import { boot , foundingState } from './helpers';
 
 /**
  * The loner (BACKLOG-135). A dino whose every dino↔dino bond sits below the floor is a loner — it
@@ -16,6 +16,7 @@ const points = (p: Page, n: string) =>
 
 test('a bond at/above the floor lifts a pair out of loner status; the rest stay loners', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // A fresh bowl is unbonded — everyone is a loner until ties form.
   expect((await loners(page)).length).toBeGreaterThan(0);
@@ -33,6 +34,7 @@ test('a bond at/above the floor lifts a pair out of loner status; the rest stay 
 
 test('a greet lands extra-hard on a loner — the bonus is exactly LONER_BONUS over a non-loner greet', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'strangers'); // BACKLOG-565: the bonds under test are the ones this spec builds
 
   // Mossback is a loner (unbonded). Greet it once and measure the bump.
   expect(await isLoner(page, 'Mossback')).toBe(true);
