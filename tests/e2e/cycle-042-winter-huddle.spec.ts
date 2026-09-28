@@ -24,6 +24,23 @@ async function stage(
   );
 }
 
+/** True if both dinos are at the den on the same step, some step within `steps`. The den's edge tile is
+ *  walkable, so a huddler can wander one tile off and back; asserting one exact step asserted the RNG. */
+async function huddledTogether(page: import('@playwright/test').Page, a: string, b: string, steps: number): Promise<boolean> {
+  return page.evaluate(
+    ([a, b, n]) => {
+      const w = window as W;
+      for (let i = 0; i < (n as number); i++) {
+        (w.__stepWorld as () => unknown)();
+        const h = (w.__huddlers as () => string[])();
+        if (h.includes(a as string) && h.includes(b as string)) return true;
+      }
+      return false;
+    },
+    [a, b, steps] as const,
+  );
+}
+
 async function stepAndHuddlers(page: import('@playwright/test').Page, steps: number): Promise<string[]> {
   return page.evaluate((n) => {
     const w = window as W;
@@ -46,16 +63,7 @@ test('winter dusk pulls bonded dinos to the den at 19:30 — an hour no other se
   // Both at the den on the same step, some step within 45 — not on step 45 exactly. The den's edge tile is
   // walkable, so a huddler can wander one tile off and back; which step it is off on moved with the RNG
   // stream when BACKLOG-567 made meeting gains fractional (cycle 171).
-  const together = await page.evaluate(() => {
-    const w = window as W;
-    for (let i = 0; i < 45; i++) {
-      (w.__stepWorld as () => unknown)();
-      const h = (w.__huddlers as () => string[])();
-      if (h.includes('Rex') && h.includes('Mossback')) return true;
-    }
-    return false;
-  });
-  expect(together).toBe(true);
+  expect(await huddledTogether(page, 'Rex', 'Mossback', 45)).toBe(true);
 });
 
 test('winter admits a loosely-bonded pair the old threshold would leave out', async ({ page }) => {
@@ -92,7 +100,6 @@ test('spring nights behave exactly as before the seasons reached the den', async
   const info = await stage(page, ['Rex', 'Mossback'], undefined, [3, 22, 0]);
   expect(info).toEqual({ season: 'spring', threshold: 8, inWindow: true });
 
-  const huddlers = await stepAndHuddlers(page, 45);
-  expect(huddlers).toContain('Rex');
-  expect(huddlers).toContain('Mossback');
+  // Same-step-within-45, as in the winter case above (cycle 171).
+  expect(await huddledTogether(page, 'Rex', 'Mossback', 45)).toBe(true);
 });

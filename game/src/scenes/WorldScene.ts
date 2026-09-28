@@ -6343,6 +6343,10 @@ ${e.short}`;
       for (let j = i + 1; j < this.dinos.length; j++) {
         const a = this.dinos[i];
         const b = this.dinos[j];
+        // BACKLOG-567: same ground only. Every ground shares one tile grid, so without this Murk in the Hollow
+        // and Bramble in the Grove "met" whenever their coordinates coincided — the graph knitted pairs who
+        // have never seen each other, and the book named them best friends.
+        if (zoneOf(this.dinoZones, a.name, BOWL_ID) !== zoneOf(this.dinoZones, b.name, BOWL_ID)) continue;
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
           this.meetings = recordMeet(this.meetings, a.name, b.name);
           const beforeMeet = this.bonds;
