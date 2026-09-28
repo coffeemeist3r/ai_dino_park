@@ -131,7 +131,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > these items extend it once it lands.
 
 - [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
-- [ ] BACKLOG-134 [pokemon] Closest-friend line in the book — the collection book shows each dino's highest-bond peer ("thick as thieves with Mossback"), making the dino↔dino graph legible at last. Builds on 013 / 021.
+- [~] BACKLOG-134 [pokemon] Closest-friend line in the book — the collection book shows each dino's highest-bond peer ("thick as thieves with Mossback"), making the dino↔dino graph legible at last. Builds on 013 / 021.
 - [ ] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
 
 ## Cycle 34 lore additions — the bond graph wakes up (2026-06-07)
@@ -675,4 +675,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 170 (Validator)
 
 - [ ] BACKLOG-567 [infra] The bond graph fills up — measured cycle 170 with `__stepWorld` on a founding save and no hook touched: most pairs are at 84–100 by step 40 and at the **cap of 100 by step 80** (four real minutes), including pairs that live on different grounds. Past that point the bond graph carries almost no information, and every system that asks "who is closest" — `closestFriend` (grief tic, 013), `comforter` (comfort, 202's callback), homecoming, gossip reach — is answered by its **alphabetical tie-break**: on the measured save every Bowl dino's closest friend was Bramble or Ember, by name. The loner (🥀) and the chorus's late voice exist only in the first several minutes of a fresh park (the last founding loner, Twitch, bonded between step 120 and 160) and then never again. Cycle 170's chorus worked around it (closeness = bond, then meetings, among the singers) and said so in the source; the fix belongs to the graph. The work: bonds that decay toward a resting level, or growth that slows near the top, or a cap high enough that a week of company differs from an afternoon — decided with the four floors of BACKLOG-565 in view, since the two items are the same question asked at both ends of the range. Reachability: two dinos who have spent the sitting together read as closer than two who met once, on the bonds lens and in who answers a cry. Builds on 013 / 135 / 202 / 565.
+
+## Cycle 171 (Lore-smith)
+
+- [ ] BACKLOG-568 [art] The friend-found mark — a small two-leaf sprig that pops over a dino at the moment it finds its first friend (BACKLOG-369's `checkLonerLift`, which today shows only a bubble). **Host needed first:** the moment has no placed mark, so under the cycle-145 amendment this stays queued until a `makeHourMark` host exists for it. Seeded because the art queue is at zero and the founding park now ships a dino with no friends (565), which makes this moment reachable in the first minutes of every fresh save.
 

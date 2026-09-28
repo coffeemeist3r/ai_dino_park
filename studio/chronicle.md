@@ -13838,3 +13838,7 @@ comparison now use one `snapshot()` that re-engraves and reads both in the same 
 a small retry for a rollover inside that turn. Verified 174 runs of the two plaque files locally. One
 failure showed up in the very first cold-start batch and did not reproduce, and it was not captured.
 It is named here rather than claimed away.
+
+## Cycle 171 — lore-smith
+
+Milestone 23 drafted — *friendship has a shape*. Lore pick: BACKLOG-134, the closest friend on every book page and a ticker beat when one friend overtakes another. Seeded 568 (art, the friend-found mark, queued behind its host).

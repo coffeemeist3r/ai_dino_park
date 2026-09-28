@@ -8,7 +8,17 @@
 
 ## Current milestone
 
-_(none — the smiths draft Milestone 23 at the next cycle open)_
+**Milestone 23: Friendship has a shape — who is close to whom is on the page from frame one, and it moves while you watch**
+**Status:** ACTIVE (opened cycle 171)
+
+**Lore arcs:**
+- [ ] The book names each dino's closest friend, and the ticker says when that changes (BACKLOG-134)
+- [ ] The keeper's own inner circle is legible — your top three, ranked (BACKLOG-127)
+- [ ] Who crosses the bowl to comfort a sulker reads the graph — a near-stranger does not come (BACKLOG-136)
+
+**Structure arcs:**
+- [ ] The founding park starts with friends, and with one dino who has none (BACKLOG-565)
+- [ ] The bond graph stops filling up — a sitting of company outranks one meeting (BACKLOG-567)
 
 ---
 
