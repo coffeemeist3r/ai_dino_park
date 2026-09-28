@@ -13850,3 +13850,7 @@ BACKLOG-565+567, the bond range: founding friends with one friendless dino left 
 ## Cycle 171 — designer
 
 Structure first: `FOUNDING_BONDS` (Twitch left friendless on purpose) and `meetGain`, which shrinks the meeting bump toward the cap. Then the lore: the closest friend on every book page, tiered by how close, and a ticker beat when one friend overtakes another — with hysteresis so near-equals don't flicker.
+
+## Cycle 171 — code-planner
+
+`meetGain` and `FOUNDING_BONDS` beside the rest of the founding state, a `strangers` fixture for specs that assumed the zero graph; then `closest.ts` on top of `closestFriend`, one book field and a friend map refreshed at the head of every world step.
