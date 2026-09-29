@@ -13941,3 +13941,7 @@ One new pure module (circle.ts), one new function (driftBonds); rest passed in t
 ## Cycle 172 — coder
 
 Shipped the circle (book head, crown pop, ticker line) and bond drift. Build clean, unit 3128 green, e2e 846/847 (one isolated-pass flake).
+
+## Cycle 172 — qa
+
+14/14 criteria. Unit 3128 green; e2e 846/847 twice, a different lone timeout each run, each green isolated. Ten-minute graph now spans 10–86.
