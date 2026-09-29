@@ -1,5 +1,13 @@
 # Backlog Archive — closed items
 
+## Cycle 172 — closed
+
+- [x] BACKLOG-127 [pokemon] Inner-circle ladder — the collection book ranks your top-3 closest dinos ("inner circle"), making the homecoming selection legible to the player and turning friendship into a visible standing. Builds on 112 / 016 / 021.
+
+- [x] BACKLOG-570 [core] Bonds drift — every ambient step, each bond above a resting level cools a small fraction of the way toward it, so a friendship has to be *kept*: a pair split across grounds fades over the sitting, and a pair that is always together settles short of the cap instead of creeping to ~99.6 (the cycle-171 verdict's named-not-fixed). The resting level is the shared friendship floor (`LONER_FLOOR` = 8), so drift cools a friendship but never unmakes one — no loner, comfort, huddle or grief floor can flip on drift alone. Pure `driftBonds` in `social/bonds.ts`, one call in the ambient step beside the meetings; no save change (bonds are already saved as numbers). Milestone 23's "it moves while you watch".
+
+- Lore track: **BACKLOG-127 APPROVED**, 7/7. Structure track: **BACKLOG-570 APPROVED**, 6/6 (+1 criterion shared). No save change.
+
 ## Cycle 171 — closed
 
 - [x] BACKLOG-134 [pokemon] Closest-friend line in the book — the collection book shows each dino's highest-bond peer ("thick as thieves with Mossback"), making the dino↔dino graph legible at last. Builds on 013 / 021.

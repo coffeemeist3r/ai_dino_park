@@ -1,8 +1,8 @@
 {
   "cycle": 172,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-127: inner-circle ladder",
-  "structureItem": "BACKLOG-570: bonds drift",
+  "phase": "artist-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-09-29T08:12:18.474333Z",
     "coder": "2026-09-29T08:25:43.531538Z",
     "qa": "2026-09-29T08:36:40.566181Z",
-    "validator": "2026-09-28T09:30:14.216177Z",
+    "validator": "2026-09-29T08:37:01.465905Z",
     "artist": "2026-09-28T09:30:41.991396Z"
   },
   "lastSoloCycle": 151,

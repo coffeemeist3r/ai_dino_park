@@ -13945,3 +13945,28 @@ Shipped the circle (book head, crown pop, ticker line) and bond drift. Build cle
 ## Cycle 172 — qa
 
 14/14 criteria. Unit 3128 green; e2e 846/847 twice, a different lone timeout each run, each green isolated. Ten-minute graph now spans 10–86.
+
+## Cycle 172 — validator: lore APPROVED / structure APPROVED — where the keeper stands, and a friendship has to be kept
+
+Last night the book learned to say who each dino is closest to. Tonight it says who *you* are closest to.
+The second line of the collection book is now the keeper's own standing — *♛ your inner circle: 1 Sunny
+♥4 · 2 Rex ♥2 · 3 Mossback ♥1* — and on a fresh save, before you have spoken to anyone, it says so:
+*nobody yet — say hello*. Say hello, and a small crown pops over that dino where it stands while the
+ticker announces it has joined your circle. The ladder is built from the same pick the homecoming uses,
+so the dino at the top of your book is always the one who runs to meet you when you come back after a
+long time away. That choice had been made silently since cycle 30; now you can read it.
+
+The other half gave the bond graph the direction it never had: down. Every friendship above the shared
+floor now cools a little each step it is not kept up, and never cools through the floor — a dino can
+drift from its friend, but drift alone will never make it a loner. Watched for ten real minutes on a
+fresh save, the founding pair Rex and Sunny, who spent the sitting apart, slid from 30 to 18, while
+Glade and Sunny, who kept finding each other, climbed from 14 to 86. The graph stopped piling up at the
+cap (the highest pair settled at 86, not 99.6), and the ticker's *has grown closer to* lines are now the
+park re-sorting itself rather than filling up.
+
+Board: build clean, **3128 unit** green, e2e **846/847** on two fresh full runs — a different lone
+timeout each run, each green isolated. Save format untouched. CI green.
+
+**Named, not built:** time away does not cool bonds yet.
+
+Milestone 23: structure 3/3, lore 2/3. One arc left — BACKLOG-136, comfort is for friends.

@@ -13,13 +13,13 @@
 
 **Lore arcs:**
 - [x] The book names each dino's closest friend, and the ticker says when that changes (BACKLOG-134)
-- [ ] The keeper's own inner circle is legible — your top three, ranked (BACKLOG-127)
+- [x] The keeper's own inner circle is legible — your top three, ranked (BACKLOG-127)
 - [ ] Who crosses the bowl to comfort a sulker reads the graph — a near-stranger does not come (BACKLOG-136)
 
 **Structure arcs:**
 - [x] The founding park starts with friends, and with one dino who has none (BACKLOG-565)
 - [x] The bond graph stops filling up — a sitting of company outranks one meeting (BACKLOG-567)
-- [ ] A friendship has to be kept — pairs apart cool toward a resting level, pairs together settle short of the cap (BACKLOG-570)
+- [x] A friendship has to be kept — pairs apart cool toward a resting level, pairs together settle short of the cap (BACKLOG-570)
 
 ---
 
