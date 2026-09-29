@@ -23,6 +23,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
+- [~] BACKLOG-570 [core] Bonds drift — a friendship not kept up cools toward a resting level (full text in the cycle-172 block below).
+- [ ] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
 
 ---
 
@@ -115,7 +117,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 31 lore additions — the keeper's little court (2026-06-04)
 
 - [ ] BACKLOG-124 [emergent] Homecoming chorus — when several dinos are near-tied at the top of player-friendship, the homecoming beat becomes a small staggered chorus (top 2–3 each throw a 👋), scaling the welcome with how many dinos you've truly befriended. Builds on 112.
-- [ ] BACKLOG-127 [pokemon] Inner-circle ladder — the collection book ranks your top-3 closest dinos ("inner circle"), making the homecoming selection legible to the player and turning friendship into a visible standing. Builds on 112 / 016 / 021.
+- [~] BACKLOG-127 [pokemon] Inner-circle ladder — the collection book ranks your top-3 closest dinos ("inner circle"), making the homecoming selection legible to the player and turning friendship into a visible standing. Builds on 112 / 016 / 021.
 
 ## Cycle 32 lore additions — the attention economy (2026-06-05)
 
@@ -669,3 +671,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-568 [art] The friend-found mark — a small two-leaf sprig that pops over a dino at the moment it finds its first friend (BACKLOG-369's `checkLonerLift`, which today shows only a bubble). **Host needed first:** the moment has no placed mark, so under the cycle-145 amendment this stays queued until a `makeHourMark` host exists for it. Seeded because the art queue is at zero and the founding park now ships a dino with no friends (565), which makes this moment reachable in the first minutes of every fresh save.
 - [ ] BACKLOG-569 [art] The inner-circle mark — a small gold crown pip (GBA-pixel, ~7×6) that pops over a dino for a moment when it joins the keeper's inner circle (BACKLOG-127). Host ships with 127 through `makeHourMark` under the key `circle`, so it is drawable the same cycle.
+
+## Cycle 172 (Structure-smith)
+
+- [~] BACKLOG-570 [core] Bonds drift — every ambient step, each bond above a resting level cools a small fraction of the way toward it, so a friendship has to be *kept*: a pair split across grounds fades over the sitting, and a pair that is always together settles short of the cap instead of creeping to ~99.6 (the cycle-171 verdict's named-not-fixed). The resting level is the shared friendship floor (`LONER_FLOOR` = 8), so drift cools a friendship but never unmakes one — no loner, comfort, huddle or grief floor can flip on drift alone. Pure `driftBonds` in `social/bonds.ts`, one call in the ambient step beside the meetings; no save change (bonds are already saved as numbers). Milestone 23's "it moves while you watch".
+- [ ] BACKLOG-571 [infra] The friend-found moment's host — `checkLonerLift` (369) shows a bubble and nothing placed, which is why 568's sprig sits blocked. Route a one-shot pop through `makeHourMark` under a `FRIEND_FOUND_ART_KEY`, the `popCallNote` shape, and add the key to `worldPlacedProps`. Small and mechanical; unblocks the art queue's oldest item.

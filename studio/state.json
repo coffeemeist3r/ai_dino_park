@@ -2,7 +2,7 @@
   "cycle": 172,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-127: inner-circle ladder",
-  "structureItem": null,
+  "structureItem": "BACKLOG-570: bonds drift",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-29T08:11:08.199037Z",
-    "structure-smith": "2026-09-28T08:11:59.585767Z",
+    "structure-smith": "2026-09-29T08:11:29.489958Z",
     "designer": "2026-09-28T08:12:32.744746Z",
     "code-planner": "2026-09-28T08:13:05.362301Z",
     "coder": "2026-09-28T08:45:29.131316Z",

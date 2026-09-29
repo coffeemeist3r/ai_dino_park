@@ -13925,3 +13925,7 @@ obvious seed. CI: latest two runs on `main` `success`.
 ## Cycle 172 — lore-smith
 
 The keeper's own place in the graph: BACKLOG-127 (the inner circle) next; seeded BACKLOG-569, the crown mark, with its host in the same cycle.
+
+## Cycle 172 — structure-smith
+
+Seeded 570 (bonds drift) and 571 (the friend-found host); chose 570 — the graph gets its missing direction.
