@@ -2092,6 +2092,45 @@ const CALL_RIG: PropRig = {
   },
 };
 
+// `circle` (BACKLOG-569) is the crown popped over a dino the instant it joins the keeper's inner circle
+// (BACKLOG-127). Like `call` it is momentary, but it says something no sibling does: not what the dino is,
+// but where it now stands *with you*. Three points, a band, one rose gem in the middle point — the gem is
+// the only cool-warm contrast in the rig so the crown still reads at 16px against the Grove's greens.
+//
+// First draft rejected: a five-point crown. At this size five points merge into a saw edge and read as
+// grass; three reads as a crown at a glance, and three is also the size of the circle it announces.
+// Gold lit/shade over the family rim, verbatim.
+const CIRCLE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '..oo...oo...oo..',
+  '.oGo..oRRo..oGo.',
+  '.oGgo.oRro.oGgo.',
+  '.oGgGooGgoGGggo.',
+  '.oGGgGGGggGGggo.',
+  '.oGGGGGGGggggo..',
+  '.oGGGGGGgggggo..',
+  '.oooooooooooooo.',
+  '.oGGGGGGGggggo..',
+  '..ooooooooooo...',
+  '................',
+  '................',
+  '................',
+];
+
+const CIRCLE_RIG: PropRig = {
+  size: 16,
+  grid: CIRCLE_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    G: 0xf2c94c, // gold, lit side
+    g: 0xc08a2a, // its shade, right, so the crown reads as a band around something
+    R: 0xe0607a, // the gem — rose, the keeper-friendship hearts' own colour family
+    r: 0xa83a55, // the gem's shade
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2334,6 +2373,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-566 (cycle 170-art): the call note, drawn the night its host shipped — `popCallNote` hangs it
   // over each singer as the ground calls the keeper in (BACKLOG-200/198).
   call: CALL_RIG,
+  // BACKLOG-569 (cycle 172-art): the crown, drawn the night its host shipped — `popCircleMark` pops it over a
+  // dino as it joins the keeper's inner circle (BACKLOG-127).
+  circle: CIRCLE_RIG,
 };
 
 /**

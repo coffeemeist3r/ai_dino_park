@@ -2,6 +2,8 @@
 
 ## Cycle 172 — closed
 
+- [x] BACKLOG-569 [art] The inner-circle mark — a small gold crown pip (GBA-pixel, ~7×6) that pops over a dino for a moment when it joins the keeper's inner circle (BACKLOG-127). Host ships with 127 through `makeHourMark` under the key `circle`, so it is drawable the same cycle. *(drawn cycle 172-art: three points, gold over the family rim, one rose gem.)*
+
 - [x] BACKLOG-127 [pokemon] Inner-circle ladder — the collection book ranks your top-3 closest dinos ("inner circle"), making the homecoming selection legible to the player and turning friendship into a visible standing. Builds on 112 / 016 / 021.
 
 - [x] BACKLOG-570 [core] Bonds drift — every ambient step, each bond above a resting level cools a small fraction of the way toward it, so a friendship has to be *kept*: a pair split across grounds fades over the sitting, and a pair that is always together settles short of the cap instead of creeping to ~99.6 (the cycle-171 verdict's named-not-fixed). The resting level is the shared friendship floor (`LONER_FLOOR` = 8), so drift cools a friendship but never unmakes one — no loner, comfort, huddle or grief floor can flip on drift alone. Pure `driftBonds` in `social/bonds.ts`, one call in the ambient step beside the meetings; no save change (bonds are already saved as numbers). Milestone 23's "it moves while you watch".

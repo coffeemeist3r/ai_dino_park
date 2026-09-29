@@ -13970,3 +13970,15 @@ timeout each run, each green isolated. Save format untouched. CI green.
 **Named, not built:** time away does not cool bonds yet.
 
 Milestone 23: structure 3/3, lore 2/3. One arc left — BACKLOG-136, comfort is for friends.
+
+## Cycle 172-art — artist: BACKLOG-569, the inner-circle crown
+
+Drawn the night its host shipped. Three points, not five — at 16px five merge into a saw edge and read as
+grass, and three is the size of the circle it announces. Gold over the family rim, one rose gem in the
+middle point, the hearts' own colour. It pops over a dino for a second as it steps into your circle.
+Art queue now holds only 568, still waiting on BACKLOG-571 for its host.
+
+## Cycle 172 — housekeeping
+
+Closed 127, 570, 569 to the archive. Structure Track at **4** (552, 557, 563, 571). CI: last three runs
+on `main` `success`.
