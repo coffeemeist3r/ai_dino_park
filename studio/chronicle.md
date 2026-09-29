@@ -13929,3 +13929,7 @@ The keeper's own place in the graph: BACKLOG-127 (the inner circle) next; seeded
 ## Cycle 172 — structure-smith
 
 Seeded 570 (bonds drift) and 571 (the friend-found host); chose 570 — the graph gets its missing direction.
+
+## Cycle 172 — designer
+
+127: a ranked circle at the head of the book, a crown and a ticker line when somebody steps in. 570: drift toward the floor, never through it.
