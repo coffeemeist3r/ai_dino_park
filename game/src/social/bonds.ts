@@ -23,6 +23,25 @@ export function meetGain(bond: number): number {
   return BOND_PER_MEET * (1 - Math.min(MAX_BOND, Math.max(0, bond)) / MAX_BOND);
 }
 
+/** The share of its distance to rest a bond gives up each ambient step (BACKLOG-570). */
+export const BOND_DRIFT = 0.004;
+
+/**
+ * A friendship not kept up cools (BACKLOG-570): each bond above `rest` moves `rate` of the way toward it.
+ * Nothing at or under rest moves, so drift alone never crosses a floor. `rest` is a parameter because the
+ * floor lives in `world/loner.ts`, which imports this file. Against `meetGain` a pair meeting every step
+ * settles near 92 instead of creeping to the cap; a pair apart halves its distance to rest in ~170 steps.
+ */
+export function driftBonds(bonds: Bonds, rest: number, rate = BOND_DRIFT): Bonds {
+  let out: Bonds | null = null;
+  for (const [key, v] of Object.entries(bonds)) {
+    if (v <= rest) continue;
+    out ??= { ...bonds };
+    out[key] = rest + (v - rest) * (1 - rate);
+  }
+  return out ?? bonds;
+}
+
 /** Strengthen the bond between two dinos by `delta`, clamped to [0, 100]. Returns a new map. */
 export function strengthen(bonds: Bonds, a: string, b: string, delta: number, max = MAX_BOND): Bonds {
   if (a === b) return bonds;

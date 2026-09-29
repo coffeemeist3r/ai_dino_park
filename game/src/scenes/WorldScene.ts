@@ -388,7 +388,8 @@ import {
   type Vec2,
   LONG_PRESS_MS,
 } from '../input/touch';
-import { strengthen, bondPoints, closestFriend, meetGain, type Bonds } from '../social/bonds';
+import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
+import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine } from '../social/closest';
 import type { Personality } from '../ai/personality';
 import { rand, seedRandom, isSeeded } from '../world/rng';
@@ -900,6 +901,9 @@ export class WorldScene extends Phaser.Scene {
   /** Who each dino is closest to, as the book and ticker say it (BACKLOG-134). Derived from the saved bonds,
    *  never persisted; `refreshBestFriends` keeps it, with hysteresis so near-equals do not flicker. */
   private bestFriendOf: Record<string, string | null> = {};
+  /** The keeper's circle as last read (BACKLOG-127); null until the first read, which seeds it silently. */
+  private circleNames: string[] | null = null;
+  private circleJoins = 0;
   private roleTags: Phaser.GameObjects.Text[] = [];
   private lens: Lens = 'off';
   private bookPanel!: Phaser.GameObjects.Text;
@@ -5226,7 +5230,7 @@ export class WorldScene extends Phaser.Scene {
     // any: dev-only Playwright hook — the slights nobody has said out loud yet (BACKLOG-126).
     (window as any).__envy = () => Object.fromEntries(Object.entries(this.envyPending).map(([n, e]) => [n, { ...e }]));
     // dev-only hook — the rendered collection-book text (BACKLOG-303: the quirk line shows here)
-    (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n');
+    (window as any).__bookText = () => bookLines(this.bookRows(), awayLogLines(this.awayLog), circleLine(this.innerCircle())).join('\n');
     // dev-only Playwright hook — the persisted settled-role store (BACKLOG-032)
     (window as any).__roleStore = () => ({ ...this.roles });
     // BACKLOG-448: the per-dino banked-food tally the provider role reads.
@@ -5309,7 +5313,7 @@ export class WorldScene extends Phaser.Scene {
     });
 
     if (L === 'book') {
-      this.bookPanel.setText(bookLines(this.bookRows(), awayLogLines(this.awayLog)).join('\n'));
+      this.bookPanel.setText(bookLines(this.bookRows(), awayLogLines(this.awayLog), circleLine(this.innerCircle())).join('\n'));
     } else if (L === 'ticker') {
       const news = tickerLines(this.eventLog);
       this.tickerPanel.setText(['— Park News —', ...(news.length ? news : ['(quiet so far…)'])].join('\n'));
@@ -5480,6 +5484,9 @@ ${e.short}`;
     // this for the rectangle-fallback control now that every cast member is drawn (BACKLOG-034).
     (window as any).__hasArt = (species: string) => hasArt(species);
     (window as any).__meetings = () => ({ ...this.meetings });
+    (window as any).__innerCircle = () => this.innerCircle(); // BACKLOG-127
+    (window as any).__circleJoins = () => this.circleJoins;
+    (window as any).__bondDrift = () => BOND_DRIFT; // BACKLOG-570
     (window as any).__stepWorld = () => {
       this.forceStep();
       return this.dinos.map((d) => ({ name: d.name, x: d.x, y: d.y }));
@@ -6338,6 +6345,9 @@ ${e.short}`;
       });
     }
 
+    // BACKLOG-570: a friendship not kept up cools toward the floor — before this step's meetings, so a pair
+    // that meets now lands its gain on the cooled value. Held ambient pins bonds, so it does not drift either.
+    if (!this.ambientHeld) this.bonds = driftBonds(this.bonds, LONER_FLOOR);
     // BACKLOG-456: held, no meeting fires — bonds/meetings stay exactly as the spec pinned them.
     if (!this.ambientHeld) for (let i = 0; i < this.dinos.length; i++) {
       for (let j = i + 1; j < this.dinos.length; j++) {
@@ -7633,6 +7643,7 @@ ${e.short}`;
   update(): void {
     // Runs before the dialog early-return: the chips/stick swap tracks dialog state.
     this.syncTouchUi();
+    this.checkCircle(); // BACKLOG-127: above the dialog return — a greet bumps friendship with the dialog open
     if (this.dialogOpen) return;
 
     const speed = 2;
@@ -7828,6 +7839,33 @@ ${e.short}`;
     const mark = this.makeHourMark(CALL_ART_KEY, CALL_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
     this.callNotes++;
     this.time.delayedCall(600, () => mark.destroy());
+  }
+
+  /** The keeper's inner circle right now (BACKLOG-127). */
+  private innerCircle() {
+    return innerCircle(this.friendship, this.dinoNames());
+  }
+
+  /** Announce each dino that has stepped into the circle since the last read; the first read is silent. */
+  private checkCircle(): void {
+    const circle = this.innerCircle();
+    const names = circle.map((c) => c.name);
+    const prev = this.circleNames;
+    this.circleNames = names;
+    if (!prev) return;
+    for (const name of newcomers(prev, names)) {
+      this.logEvent(joinedLine(name, names.indexOf(name) + 1));
+      const d = this.dinos.find((x) => x.name === name);
+      if (d) this.popCircleMark(d);
+    }
+  }
+
+  /** The crown over a dino as it joins the circle (BACKLOG-569 draws it; the glyph until then). */
+  private popCircleMark(d: Dino): void {
+    if (!this.inView(d)) return;
+    const mark = this.makeHourMark(CIRCLE_ART_KEY, CIRCLE_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
+    this.circleJoins++;
+    this.time.delayedCall(1200, () => mark.destroy());
   }
 
   /** True when a dino lives in the keeper's current zone (and so should be drawn). */
@@ -9816,6 +9854,7 @@ ${e.short}`;
       clock.set(away.time);
       this.player.setPosition(save.player.x, save.player.y);
       this.friendship = save.friendship;
+      this.circleNames = null; // BACKLOG-127: a restored circle is re-read silently, not announced
       this.memory = away.memory;
       this.bonds = away.bonds;
       this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently

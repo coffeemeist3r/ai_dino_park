@@ -68,6 +68,7 @@ import { refusesFood } from './feeding'; // BACKLOG-070
 import { FOUNDING_SATCHEL } from './satchel'; // BACKLOG-546
 import { seededPersonality } from '../ai/personality';
 import { ROSTER } from '../entities/roster';
+import { CIRCLE_ART_KEY } from '../social/circle'; // BACKLOG-127
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -172,6 +173,8 @@ export function worldPlacedProps(): Set<string> {
   // BACKLOG-200/566: the call note, popped over each singer by `popCallNote` when a ground sings the keeper
   // in. Momentary rather than held, and still seen — every arrival on a peopled ground shows it.
   out.add(CALL_ART_KEY);
+  // BACKLOG-127/569: the crown, popped over a dino by `popCircleMark` the moment it joins the keeper's circle.
+  out.add(CIRCLE_ART_KEY);
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so

@@ -13937,3 +13937,7 @@ Seeded 570 (bonds drift) and 571 (the friend-found host); chose 570 — the grap
 ## Cycle 172 — code-planner
 
 One new pure module (circle.ts), one new function (driftBonds); rest passed in to dodge a loner↔bonds import cycle.
+
+## Cycle 172 — coder
+
+Shipped the circle (book head, crown pop, ticker line) and bond drift. Build clean, unit 3128 green, e2e 846/847 (one isolated-pass flake).

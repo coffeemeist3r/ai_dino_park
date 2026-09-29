@@ -22,3 +22,10 @@
 ## Reuse
 `topBy`, `heartsFromPoints`, `makeHourMark`, `logEvent`, `inView`, `strengthen`/`bondPoints`,
 `pairKey`, e2e `boot` helper.
+
+## Shipped (coder)
+Both tracks as planned. `circle.ts` builds the ladder out of `topBy`, so book #1 = homecoming pick.
+`driftBonds` runs once per ambient step under `!ambientHeld`, before the meetings. Build clean; unit
+3128 pass (294 files); e2e 846/847 on the first full run — the one red, `cycle-155-departure` (blur then
+visibility change), passes 5/5 isolated; it touches nothing either track changed. New specs green warm
+(their first cold run hit the boot ceiling, the known cold-Vite class).

@@ -268,8 +268,9 @@ function heartBar(hearts: number): string {
  * the cast. Defaulted to empty, so every call site and every test literal that predates the log keeps
  * producing exactly the lines it always did.
  */
-export function bookLines(rows: BookRow[], away: string[] = []): string[] {
-  const out: string[] = ['— Collection Book —', ...away];
+export function bookLines(rows: BookRow[], away: string[] = [], circle?: string): string[] {
+  // BACKLOG-127: where the keeper stands, straight under the title — the one standing that is yours.
+  const out: string[] = ['— Collection Book —', ...(circle ? [circle] : []), ...away];
   for (const r of rows) {
     // BACKLOG-195: the cursor. An unselected row renders exactly the line it always did.
     out.push(`${r.selected ? '▸' : ''}${r.name}  (${r.species})  [${r.role}]`);
