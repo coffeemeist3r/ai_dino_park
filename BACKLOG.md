@@ -668,3 +668,4 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 171 (Lore-smith)
 
 - [ ] BACKLOG-568 [art] The friend-found mark — a small two-leaf sprig that pops over a dino at the moment it finds its first friend (BACKLOG-369's `checkLonerLift`, which today shows only a bubble). **Host needed first:** the moment has no placed mark, so under the cycle-145 amendment this stays queued until a `makeHourMark` host exists for it. Seeded because the art queue is at zero and the founding park now ships a dino with no friends (565), which makes this moment reachable in the first minutes of every fresh save.
+- [ ] BACKLOG-569 [art] The inner-circle mark — a small gold crown pip (GBA-pixel, ~7×6) that pops over a dino for a moment when it joins the keeper's inner circle (BACKLOG-127). Host ships with 127 through `makeHourMark` under the key `circle`, so it is drawable the same cycle.

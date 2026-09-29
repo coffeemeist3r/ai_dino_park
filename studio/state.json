@@ -1,7 +1,7 @@
 {
-  "cycle": 171,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 172,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-127: inner-circle ladder",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-09-28T08:11:45.180518Z",
+    "lore-smith": "2026-09-29T08:11:08.199037Z",
     "structure-smith": "2026-09-28T08:11:59.585767Z",
     "designer": "2026-09-28T08:12:32.744746Z",
     "code-planner": "2026-09-28T08:13:05.362301Z",

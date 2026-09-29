@@ -13921,3 +13921,7 @@ one `makeHourMark` slot; whichever cycle builds it can take the rig with it.
 Closed 134, 565, 567 to the archive; retired two drained sections (`Cycle 169`, `Cycle 170`). Structure
 Track at **3** (552, 557, 563) — under X=4, so the Structure-smith invents next cycle; bond decay is the
 obvious seed. CI: latest two runs on `main` `success`.
+
+## Cycle 172 — lore-smith
+
+The keeper's own place in the graph: BACKLOG-127 (the inner circle) next; seeded BACKLOG-569, the crown mark, with its host in the same cycle.
