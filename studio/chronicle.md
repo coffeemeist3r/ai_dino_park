@@ -13933,3 +13933,7 @@ Seeded 570 (bonds drift) and 571 (the friend-found host); chose 570 — the grap
 ## Cycle 172 — designer
 
 127: a ranked circle at the head of the book, a crown and a ticker line when somebody steps in. 570: drift toward the floor, never through it.
+
+## Cycle 172 — code-planner
+
+One new pure module (circle.ts), one new function (driftBonds); rest passed in to dodge a loner↔bonds import cycle.
