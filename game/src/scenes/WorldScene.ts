@@ -6153,9 +6153,7 @@ ${e.short}`;
         }
       }
 
-      // Comfort is for friends (BACKLOG-136): the sore dino stays where it is while somebody is coming —
-      // a chase between two dinos at the same speed is not a consolation — and the friend walks to it.
-      if (this.pendingConsole?.loser === d.name) continue;
+      // Comfort is for friends (BACKLOG-136): the close friend walks to the sore dino's live tile.
       if (this.pendingConsole?.friend === d.name) {
         const loser = this.dinoByName(this.pendingConsole.loser);
         if (loser) {
@@ -6397,6 +6395,10 @@ ${e.short}`;
         // BACKLOG-109: down, and without a bond strong enough to seek the den — so it holds its tile rather
         // than falling through to wander. This is the half that makes the night legible: without it an
         // unbonded day-dino mills about after dark and there is nothing to tell it from a night-owl.
+        next = cur;
+      } else if (this.pendingConsole?.loser === d.name) {
+        // BACKLOG-136: a sore dino somebody is coming for stops milling about — a chase between two dinos at
+        // the same speed is not a consolation. Only the idle wander is held; everything above still moves it.
         next = cur;
       } else {
         // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.

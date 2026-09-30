@@ -95,3 +95,9 @@ The first full e2e run failed the close-friend spec once in 17 under load: the s
 a chase between two dinos at the same speed can outlast any budget. A sulker now **stays put while somebody
 is coming**, and `CONSOLE_STEPS` rose 8 → 16 (enough to cross the widest ground, still inside the funk's
 twenty-step window). 64/64 on eight repeats of the comfort + funk specs at six workers.
+
+Second fix-up: the first version held the sore dino with a `continue` at the top of the movement loop, which
+also skipped everything below it for that dino — and the next full run caught it: `cycle-132-soothing-tic`
+(a stung dino takes up its ritual sooner) went red because the solitary-tic count never ran. The hold now
+replaces only the idle **wander** pick (`next = cur`, beside the resting branch); every other branch and every
+per-dino read below still runs. 132/138 green; comfort + funk 64/64 again.
