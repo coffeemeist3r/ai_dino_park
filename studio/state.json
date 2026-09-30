@@ -2,7 +2,7 @@
   "cycle": 173,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-552: The More sheet is full \u2014 a second column",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-09-30T08:10:40.143508Z",
-    "structure-smith": "2026-09-29T08:11:29.489958Z",
+    "structure-smith": "2026-09-30T08:10:51.972127Z",
     "designer": "2026-09-29T08:11:54.019213Z",
     "code-planner": "2026-09-29T08:12:18.474333Z",
     "coder": "2026-09-29T08:25:43.531538Z",

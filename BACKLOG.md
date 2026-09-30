@@ -20,7 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
+- [~] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
@@ -651,7 +651,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 160 (Structure-smith)
 
 
-- [ ] BACKLOG-552 [infra] The More sheet is full — `sheetRows` (`input/touch.ts`) lays out ten rows at `y = 64 + i * 36`, and its own comment records why ten is the number: "Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+)." The tenth row sits at 388; an eleventh lands at 424, inside the action cluster. So the phone's overflow menu is **at its geometric ceiling**, and it holds ten of a keyboard surface that has considerably more than ten verbs — the loaded-feed selector (067) is only the first one to arrive and find no seat. This is not a polish item, it is a capacity wall on the shipping Android surface, and every future keeper verb hits it. Options, in the order they should be weighed: (a) paginate the sheet — a `▾ more` eleventh row that pages, cheapest and ugliest; (b) two columns on the wider half of the screen, which the geometry allows and which needs `inRect` on a grid rather than a list; (c) shrink the row pitch and let the sheet scroll under the cluster. Whichever is taken, `sheetRows` stays pure geometry and the scene keeps drawing what it describes. Builds on 189 / 486 / 547.
+- [~] BACKLOG-552 [infra] The More sheet is full — `sheetRows` (`input/touch.ts`) lays out ten rows at `y = 64 + i * 36`, and its own comment records why ten is the number: "Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+)." The tenth row sits at 388; an eleventh lands at 424, inside the action cluster. So the phone's overflow menu is **at its geometric ceiling**, and it holds ten of a keyboard surface that has considerably more than ten verbs — the loaded-feed selector (067) is only the first one to arrive and find no seat. This is not a polish item, it is a capacity wall on the shipping Android surface, and every future keeper verb hits it. Options, in the order they should be weighed: (a) paginate the sheet — a `▾ more` eleventh row that pages, cheapest and ugliest; (b) two columns on the wider half of the screen, which the geometry allows and which needs `inRect` on a grid rather than a list; (c) shrink the row pitch and let the sheet scroll under the cluster. Whichever is taken, `sheetRows` stays pure geometry and the scene keeps drawing what it describes. Builds on 189 / 486 / 547.
 
 
 ## Cycle 165 (Structure-smith)

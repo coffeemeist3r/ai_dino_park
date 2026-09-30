@@ -13986,3 +13986,7 @@ on `main` `success`.
 ## Cycle 173 — lore-smith
 
 Who comes, and who does not. Suggested next-up BACKLOG-136 (last arc of Milestone 23); seeded 572 [art] the comfort mark. Idea Box empty.
+
+## Cycle 173 — structure-smith
+
+BACKLOG-552 — the More sheet grows a second column; R/P/N/? get touch rows. Off-milestone (M23 structure 3/3), top of queue.
