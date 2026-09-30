@@ -1,5 +1,13 @@
 # Backlog Archive — closed items
 
+## Cycle 173 — closed
+
+- [x] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
+
+- [x] BACKLOG-552 [infra] The More sheet is full — `sheetRows` (`input/touch.ts`) lays out ten rows at `y = 64 + i * 36`, and its own comment records why ten is the number: "Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+)." The tenth row sits at 388; an eleventh lands at 424, inside the action cluster. So the phone's overflow menu is **at its geometric ceiling**, and it holds ten of a keyboard surface that has considerably more than ten verbs — the loaded-feed selector (067) is only the first one to arrive and find no seat. This is not a polish item, it is a capacity wall on the shipping Android surface, and every future keeper verb hits it. Options, in the order they should be weighed: (a) paginate the sheet — a `▾ more` eleventh row that pages, cheapest and ugliest; (b) two columns on the wider half of the screen, which the geometry allows and which needs `inRect` on a grid rather than a list; (c) shrink the row pitch and let the sheet scroll under the cluster. Whichever is taken, `sheetRows` stays pure geometry and the scene keeps drawing what it describes. Builds on 189 / 486 / 547.
+
+- Lore track: **BACKLOG-136 APPROVED**, 8/8. Structure track: **BACKLOG-552 APPROVED**, 6/6. No save change. **Milestone 23 SHIPPED.**
+
 ## Cycle 172 — closed
 
 - [x] BACKLOG-569 [art] The inner-circle mark — a small gold crown pip (GBA-pixel, ~7×6) that pops over a dino for a moment when it joins the keeper's inner circle (BACKLOG-127). Host ships with 127 through `makeHourMark` under the key `circle`, so it is drawable the same cycle. *(drawn cycle 172-art: three points, gold over the family rim, one rose gem.)*

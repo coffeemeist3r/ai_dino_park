@@ -20,10 +20,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-552 [infra] The More sheet is full — ten rows is the ceiling the geometry allows, and the touch surface has more verbs than that (full text in the cycle-160 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
+- [ ] BACKLOG-573 [infra] The export row sits under Talk (full text in the cycle-173 block below).
 
 ---
 
@@ -129,7 +129,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > these items extend it once it lands.
 
 - [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
-- [~] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
 
 ## Cycle 34 lore additions — the bond graph wakes up (2026-06-07)
 
@@ -651,7 +650,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 160 (Structure-smith)
 
 
-- [~] BACKLOG-552 [infra] The More sheet is full — `sheetRows` (`input/touch.ts`) lays out ten rows at `y = 64 + i * 36`, and its own comment records why ten is the number: "Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+)." The tenth row sits at 388; an eleventh lands at 424, inside the action cluster. So the phone's overflow menu is **at its geometric ceiling**, and it holds ten of a keyboard surface that has considerably more than ten verbs — the loaded-feed selector (067) is only the first one to arrive and find no seat. This is not a polish item, it is a capacity wall on the shipping Android surface, and every future keeper verb hits it. Options, in the order they should be weighed: (a) paginate the sheet — a `▾ more` eleventh row that pages, cheapest and ugliest; (b) two columns on the wider half of the screen, which the geometry allows and which needs `inRect` on a grid rather than a list; (c) shrink the row pitch and let the sheet scroll under the cluster. Whichever is taken, `sheetRows` stays pure geometry and the scene keeps drawing what it describes. Builds on 189 / 486 / 547.
 
 
 ## Cycle 165 (Structure-smith)
@@ -676,3 +674,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 173 (Lore-smith)
 
 - [ ] BACKLOG-572 [art] The comfort mark — a small pixel hug (two arms closing round a heart, 🫂 read) that pops over a friend as it arrives to console a sore dino. Host ships with BACKLOG-136 in cycle 173 (`COMFORT_ART_KEY` via `makeHourMark`, in `worldPlacedProps`), so it is drawable the night it is seeded. Reachable in the first minute of a fresh save: drop food into a crowd, and the loser's friend comes over.
+
+## Cycle 173 (Validator)
+
+- [ ] BACKLOG-573 [infra] The export row sits under Talk — found by cycle 173's QA while 552 gave the More sheet a second column: the first column's tenth row (`export`, y 373–403, x 460–628) has always overlapped the top of the Talk button (centre y 396, r 30, so from y 366). Buttons dispatch before sheet rows, so a thumb on the lower-right of that row greets whoever is nearest instead of exporting. The fix is geometry and belongs in `sheetRows`: the rarest verb moves to the second column (it has six free seats) or the first column stops at nine, and `tests/unit/touch.test.ts`'s clearance check widens from the new column to every row — which is the assertion that would have caught this in cycle 189. Small; the Talk button is the most-pressed control on the phone.

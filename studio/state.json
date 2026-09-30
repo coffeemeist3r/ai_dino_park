@@ -1,8 +1,8 @@
 {
   "cycle": 173,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-136: Comfort is for friends",
-  "structureItem": "BACKLOG-552: The More sheet is full \u2014 a second column",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-09-30T08:12:59.698159Z",
     "coder": "2026-09-30T08:17:32.629135Z",
     "qa": "2026-09-30T09:06:48.273827Z",
-    "validator": "2026-09-29T08:37:01.465905Z",
+    "validator": "2026-09-30T09:07:47.693325Z",
     "artist": "2026-09-29T08:38:57.414177Z"
   },
   "lastSoloCycle": 151,

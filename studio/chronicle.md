@@ -14006,3 +14006,36 @@ Lore 136 reshaped onto the reachable sulk (the lost scramble) with the book's ow
 ## Cycle 173 — qa
 
 14/14 criteria. Unit 3144; e2e 852/853 → final 852 + 1 skipped, 0 failed. Two real finds on the way, both ours and both fixed before sign-off: a sulker that wandered away from its comforter, and the hold that then silenced its ritual.
+
+## Cycle 173 — validator: lore APPROVED / structure APPROVED — who comes, and who does not · **MILESTONE 23 SHIPPED**
+
+Drop a fish into a crowd and somebody loses. Since cycle 157 the loser has stood there sore for a minute,
+a 😒 over its head, and nobody in the park has ever done anything about it except the keeper. Tonight the
+park does. If the loser has a friend on that ground whom the book would call *close*, the ticker says
+*🫂 Rex is heading over to Glade*, Rex crosses the grass, a little hug pops over him, and Glade gets over it
+twenty seconds early with a line in its book about who came. And if it doesn't — if the best it has is a dino
+it is merely *friendly* with — the ticker says that too, by name: *🫥 nobody came for Glade — Mossback isn't
+close enough.* On a fresh save that is exactly Glade's situation. The book's word and the park's behaviour
+are now the same number.
+
+Getting there cost two honest mistakes. The first full run failed our own spec once in seventeen: the sore dino
+kept wandering, and two dinos at the same speed can chase each other past any budget. The first repair froze
+the sulker with a `continue` — and the next run turned `cycle-132` red, because freezing the whole step also
+froze the count that lets a stung dino fall into its self-soothing ritual. The version that shipped holds only
+the idle wander. Both are in the QA file.
+
+The other half is for the phone. The More sheet has been at its geometric ceiling of ten rows since cycle 189,
+and every keeper verb since has shipped keyboard-only. It has a second column now: *read room*, *plot*,
+*next entry*, *help* — AETHER-1's ability is reachable by thumb for the first time. Laying out the second
+column found an older fault in the first: the export row has always sat under the Talk button (BACKLOG-573).
+
+Board: build clean, **3144 unit** green, e2e **852 + 1 skipped, 0 failed** on the final run. Save untouched. CI green.
+
+### Milestone 23 — Friendship has a shape — SHIPPED (cycles 171–173)
+
+Three cycles ago the bond graph was invisible, only went up, filled in four minutes, and bonded dinos on
+different grounds whenever their tiles coincided. Now the park opens with eight friendships and one loner; the
+book names everyone's closest friend and yours; friendships cool when they are not kept; and who walks over to
+comfort a sore dino is a read on all of it. Six arcs, no REWORK, no ABANDON. The lesson: check an item's own
+trigger first — 136 was a threshold on a path nobody reaches in a sitting, and it became real by moving to the
+sulk a player causes in the first minute.

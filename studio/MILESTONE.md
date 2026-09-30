@@ -8,18 +8,7 @@
 
 ## Current milestone
 
-**Milestone 23: Friendship has a shape — who is close to whom is on the page from frame one, and it moves while you watch**
-**Status:** ACTIVE (opened cycle 171)
-
-**Lore arcs:**
-- [x] The book names each dino's closest friend, and the ticker says when that changes (BACKLOG-134)
-- [x] The keeper's own inner circle is legible — your top three, ranked (BACKLOG-127)
-- [ ] Who crosses the bowl to comfort a sulker reads the graph — a near-stranger does not come (BACKLOG-136)
-
-**Structure arcs:**
-- [x] The founding park starts with friends, and with one dino who has none (BACKLOG-565)
-- [x] The bond graph stops filling up — a sitting of company outranks one meeting (BACKLOG-567)
-- [x] A friendship has to be kept — pairs apart cool toward a resting level, pairs together settle short of the cap (BACKLOG-570)
+_None active — the smiths draft Milestone 24 at the next cycle open._
 
 ---
 
@@ -39,6 +28,38 @@
 ```
 
 ## Shipped milestones
+
+### Milestone 23: Friendship has a shape — who is close to whom is on the page from frame one, and it moves while you watch — SHIPPED cycle 173 (opened cycle 171)
+
+Three cycles, six arcs, no REWORK and no ABANDON.
+
+Three cycles ago the bond graph was a number nobody could see that only went up. It filled to 100 inside four
+minutes, it knitted together dinos on different grounds whenever their tiles happened to coincide, and a fresh
+park started with every pair at zero. Now the park opens with eight friendships and one dino who has none; the
+book names each dino's closest friend and the ticker says when that changes; your own inner circle sits at the
+head of the book; a friendship not kept up cools, so the graph re-sorts while you watch; and when a dino loses
+the scramble at the hatch, the friend the book calls *close* walks over and talks it round — while the one who
+is only *friendly* stays where it is, named in the ticker for not coming.
+
+**The lesson worth keeping is the one the last arc found: an item's own trigger is the first thing to check.**
+BACKLOG-136 was a threshold on a path nobody reaches in a sitting. The arc became real by moving the question
+to the sulk a player causes in the first minute, and by borrowing the book's word for the bar — so what the page
+promises and what the park does are one number.
+
+**Milestone 23: Friendship has a shape — who is close to whom is on the page from frame one, and it moves while you watch**
+**Status:** SHIPPED cycle 173 (opened cycle 171)
+
+**Lore arcs:**
+- [x] The book names each dino's closest friend, and the ticker says when that changes (BACKLOG-134)
+- [x] The keeper's own inner circle is legible — your top three, ranked (BACKLOG-127)
+- [x] Who crosses the bowl to comfort a sulker reads the graph — a near-stranger does not come (BACKLOG-136 — shipped cycle 173) — *and the arc's find was that the item's own path was unreachable: the only sulks anybody ever came for were the homecoming's (which needs an absence) and a cry, and the one a player causes in the first minute — the loser at the hatch — had never had a visitor at all. It shipped there, with the book's own word as the bar: a dino the book calls **close** walks over; one it calls merely **friendly** does not, and the ticker says so by name.*
+
+**Structure arcs:**
+- [x] The founding park starts with friends, and with one dino who has none (BACKLOG-565)
+- [x] The bond graph stops filling up — a sitting of company outranks one meeting (BACKLOG-567)
+- [x] A friendship has to be kept — pairs apart cool toward a resting level, pairs together settle short of the cap (BACKLOG-570)
+
+---
 
 ### Milestone 22: The park answers you out loud — and you can hear who it is, and how it feels about you, before you read a word — SHIPPED cycle 170 (opened cycle 167)
 
