@@ -1,6 +1,6 @@
 {
   "cycle": 173,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-136: Comfort is for friends",
   "structureItem": "BACKLOG-552: The More sheet is full \u2014 a second column",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-09-30T08:10:40.143508Z",
     "structure-smith": "2026-09-30T08:10:51.972127Z",
     "designer": "2026-09-30T08:12:22.135677Z",
-    "code-planner": "2026-09-29T08:12:18.474333Z",
+    "code-planner": "2026-09-30T08:12:59.698159Z",
     "coder": "2026-09-29T08:25:43.531538Z",
     "qa": "2026-09-29T08:36:40.566181Z",
     "validator": "2026-09-29T08:37:01.465905Z",
