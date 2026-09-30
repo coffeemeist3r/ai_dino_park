@@ -88,3 +88,10 @@ byte-identical).
 
 Build clean; unit 3144 green (3 skipped, pre-existing); targeted e2e green (cycle-173 ×6, touch-controls,
 cycle-157-funk).
+
+### Fix-up (before QA sign-off)
+
+The first full e2e run failed the close-friend spec once in 17 under load: the sore dino kept wandering, and
+a chase between two dinos at the same speed can outlast any budget. A sulker now **stays put while somebody
+is coming**, and `CONSOLE_STEPS` rose 8 → 16 (enough to cross the widest ground, still inside the funk's
+twenty-step window). 64/64 on eight repeats of the comfort + funk specs at six workers.

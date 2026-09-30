@@ -29,7 +29,7 @@ is what the park does.
      (`makeHourMark(COMFORT_ART_KEY, '🫂')`, 1.2 s — the crown's shape), the pair's bond grows by
      `COMFORT_BOND`, the loser remembers `comfortMemory(friend)`, gratitude is recorded, `lastComfort` is
      set, and the ticker says `🫂 <friend> talked <loser> round after the hatch`. The errand gives up after
-     `CONSOLE_STEPS` = 8 steps (24 s) or the moment the funk has already ended (keeper greet/feed, or it
+     `CONSOLE_STEPS` steps or the moment the funk has already ended (keeper greet/feed, or it
      shook it off).
    - **Nobody clears it:** the ticker says who *didn't* come — `🫥 nobody came for <loser> — <closest>
      isn't close enough` naming the loser's highest-bond dino on its ground, or `🫥 nobody came for <loser>

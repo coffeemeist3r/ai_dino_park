@@ -97,8 +97,11 @@ export function comfortMemory(friend: string): string {
 // nobody come for it at all. Now a *close* friend on the same ground walks over and talks it round,
 // and a dino whose best bond is only friendly stands there alone while the ticker names who did not come.
 
-/** How many world steps the friend has to reach the sore dino before it gives up. */
-export const CONSOLE_STEPS = 8;
+/**
+ * How many world steps the friend has to reach the sore dino before it gives up — enough to cross the
+ * widest ground, and still inside the funk's own twenty-step window so the friend can beat the shrug.
+ */
+export const CONSOLE_STEPS = 16;
 
 /** The one-shot mark popped over the friend as it arrives (BACKLOG-572 draws it). */
 export const COMFORT_ART_KEY = 'comfort';

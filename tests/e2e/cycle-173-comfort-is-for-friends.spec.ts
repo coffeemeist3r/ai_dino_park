@@ -44,7 +44,7 @@ test('a close friend walks over and talks the sore dino round (BACKLOG-136)', as
   expect(await ticker(page)).toContain('🫂 Rex is heading over to Glade');
   const before = (await ev<Record<string, number>>(page, '__bonds'))['Glade|Rex'];
 
-  for (let i = 0; i < 8 && (await consoler(page)); i++) await ev(page, '__stepWorld');
+  for (let i = 0; i < 16 && (await consoler(page)); i++) await ev(page, '__stepWorld');
 
   expect(await consoler(page)).toBeNull();
   expect(await ev(page, '__lastComfort')).toEqual({ comforter: 'Rex', sulker: 'Glade' });

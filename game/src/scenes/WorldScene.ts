@@ -6153,7 +6153,9 @@ ${e.short}`;
         }
       }
 
-      // Comfort is for friends (BACKLOG-136): the close friend walks to the sore dino's live tile.
+      // Comfort is for friends (BACKLOG-136): the sore dino stays where it is while somebody is coming —
+      // a chase between two dinos at the same speed is not a consolation — and the friend walks to it.
+      if (this.pendingConsole?.loser === d.name) continue;
       if (this.pendingConsole?.friend === d.name) {
         const loser = this.dinoByName(this.pendingConsole.loser);
         if (loser) {
