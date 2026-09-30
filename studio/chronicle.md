@@ -13990,3 +13990,7 @@ Who comes, and who does not. Suggested next-up BACKLOG-136 (last arc of Mileston
 ## Cycle 173 — structure-smith
 
 BACKLOG-552 — the More sheet grows a second column; R/P/N/? get touch rows. Off-milestone (M23 structure 3/3), top of queue.
+
+## Cycle 173 — designer
+
+Lore 136 reshaped onto the reachable sulk (the lost scramble) with the book's own bar — close (25) comes, friendly does not, and the ticker names who did not. Structure 552: a second sheet column, four keyboard-only verbs get rows.
