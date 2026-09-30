@@ -14039,3 +14039,17 @@ book names everyone's closest friend and yours; friendships cool when they are n
 comfort a sore dino is a read on all of it. Six arcs, no REWORK, no ABANDON. The lesson: check an item's own
 trigger first — 136 was a threshold on a path nobody reaches in a sitting, and it became real by moving to the
 sulk a player causes in the first minute.
+
+## Cycle 173-art — artist: BACKLOG-572, the comfort mark
+
+Drawn the night its host shipped. A rose heart held up by two warm-tan arms that meet underneath it. The first
+draft closed the arms in a ring round the heart, and at 16px a closed ring is a wreath or a life-preserver —
+so the arms now rise from the heart's widest row and clasp below it. The heart is the crown gem's rose,
+asserted by equality. It pops over the friend for a second as it arrives. Art queue now holds only 568, still
+waiting on BACKLOG-571 for its host.
+
+## Cycle 173 — housekeeping
+
+Closed 136, 552, 572 to the archive; filed 573 (the export row under Talk). Structure Track at **4** (557, 563,
+571, 573). Milestone 23 shipped — no milestone active; the smiths draft 24 next cycle. CI: last three runs on
+`main` `success`.

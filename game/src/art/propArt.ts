@@ -2131,6 +2131,47 @@ const CIRCLE_RIG: PropRig = {
   },
 };
 
+// `comfort` (BACKLOG-572) is the hug popped over a friend the moment it reaches a dino sore from the hatch and
+// talks it round (BACKLOG-136). Like `call` and `circle` it is momentary; unlike them it is about two
+// animals, not one, so it is a heart held rather than a thing worn. The heart is the keeper-hearts' rose —
+// the same colour the crown's gem borrows — and the arms are a warm hide tan, so the only cool-warm step in
+// the rig is heart against arm, which is the whole idea.
+//
+// First draft rejected: two ring-arms fully closed around the heart. At 16px a closed ring is a donut — it
+// read as a wreath, or a life-preserver. The arms now rise from the shoulders at the heart's widest row and
+// meet *under* it, clasped, so the silhouette is a heart being held up rather than a heart in a hoop.
+// Family rim, verbatim.
+const COMFORT_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '...oooo..oooo...',
+  '..oRRRRooRRRRo..',
+  '.oRRRRRRRRRRrro.',
+  'ooRRRRRRRRRRrroo',
+  'oAoRRRRRRRrrroAo',
+  'oAAoRRRRRrrroAAo',
+  '.oAAAoRRrroAAAo.',
+  '.oAAAAorroAAAao.',
+  '..oaAAAAAAAAao..',
+  '...ooaaaaaaoo...',
+  '.....oooooo.....',
+  '................',
+  '................',
+  '................',
+];
+
+const COMFORT_RIG: PropRig = {
+  size: 16,
+  grid: COMFORT_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    R: 0xe0607a, // the heart — rose, the keeper-hearts' own colour family (the crown's gem)
+    r: 0xa83a55, // its shade, lower right
+    A: 0xf0b878, // the arms — warm hide tan, lit
+    a: 0xc0804a, // the arms' shade, where they clasp underneath
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2376,6 +2417,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-569 (cycle 172-art): the crown, drawn the night its host shipped — `popCircleMark` pops it over a
   // dino as it joins the keeper's inner circle (BACKLOG-127).
   circle: CIRCLE_RIG,
+  // BACKLOG-572 (cycle 173-art): the hug, drawn the night its host shipped — `popComfortMark` pops it over a
+  // friend as it arrives to talk a sore dino round (BACKLOG-136).
+  comfort: COMFORT_RIG,
 };
 
 /**
