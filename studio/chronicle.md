@@ -14002,3 +14002,7 @@ Lore 136 reshaped onto the reachable sulk (the lost scramble) with the book's ow
 ## Cycle 173 — coder
 
 136: a close friend walks over to the hatch's loser; the ticker names who did not. 552: two sheet columns, four new rows. Unit 3144 green.
+
+## Cycle 173 — qa
+
+14/14 criteria. Unit 3144; e2e 852/853 → final 852 + 1 skipped, 0 failed. Two real finds on the way, both ours and both fixed before sign-off: a sulker that wandered away from its comforter, and the hold that then silenced its ritual.
