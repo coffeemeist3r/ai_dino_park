@@ -81,7 +81,14 @@ export function actionButtons(width: number, height: number): CircleButton[] {
   ];
 }
 
-/** The More sheet: one row per remaining action, right-aligned above the cluster. */
+/** Rows per sheet column. Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+). */
+export const SHEET_COLUMN_ROWS = 10;
+
+/**
+ * The More sheet: one row per remaining action, right-aligned above the cluster, in columns of ten
+ * (BACKLOG-552). An eleventh row in one column would land inside the action cluster, so the sheet grows
+ * leftward instead — the first column is exactly where it has always been.
+ */
 export function sheetRows(width: number): RectButton[] {
   const w = 168;
   const h = 30;
@@ -97,9 +104,15 @@ export function sheetRows(width: number): RectButton[] {
     ['scan', '📡 scan'],
     ['time', '⏱ time ×'],
     ['export', '💾 export save'],
+    ['room', '🏠 read room'],
+    ['plot', '🌱 plot'],
+    ['book', '📖 next entry'],
+    ['help', '❔ help'],
   ];
-  // Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+).
-  return ids.map(([id, label], i) => ({ id, label, x, y: 64 + i * (h + 6), w, h }));
+  return ids.map(([id, label], i) => {
+    const col = Math.floor(i / SHEET_COLUMN_ROWS);
+    return { id, label, x: x - col * (w + 8), y: 64 + (i % SHEET_COLUMN_ROWS) * (h + 6), w, h };
+  });
 }
 
 /**

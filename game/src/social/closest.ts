@@ -24,11 +24,17 @@ export function bestFriend(name: string, current: string | null, bonds: Bonds, o
   return bondPoints(bonds, name, top) >= held + SHIFT_MARGIN ? top : current;
 }
 
+/**
+ * The bond at which the book calls a pair **close** — and, since BACKLOG-136, the bar a friend must clear to
+ * walk over to a dino sore from the hatch. What the book promises is what the park does.
+ */
+export const CLOSE_BOND = 25;
+
 /** The book's line: how close, and to whom. */
 export function friendLine(friend: string | null, bond: number): string {
   if (!friend) return '🤝 no friend yet';
   if (bond >= 60) return `🤝 thick as thieves with ${friend}`;
-  if (bond >= 25) return `🤝 close to ${friend}`;
+  if (bond >= CLOSE_BOND) return `🤝 close to ${friend}`;
   return `🤝 friendly with ${friend}`;
 }
 

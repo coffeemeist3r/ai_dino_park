@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { LONG_PRESS_MS, isLongPress, sheetRows, actionButtons, inCircle } from './touch';
+import { LONG_PRESS_MS, isLongPress, sheetRows, actionButtons, inCircle, SHEET_COLUMN_ROWS } from './touch';
 
 describe('BACKLOG-547 — the hold threshold', () => {
   it('is a tap below the threshold and a hold at or above it', () => {
@@ -24,11 +24,13 @@ describe('BACKLOG-547 — the hold threshold', () => {
     expect(inCircle(feed!.x, feed!.y, feed!.r, feed!.x, feed!.y)).toBe(true);
   });
 
-  it('the More sheet is at the ceiling that forced the gesture (BACKLOG-552)', () => {
+  it('a sheet column is at the ceiling that forced the gesture — so 552 grew sideways, not down', () => {
     const rows = sheetRows(640);
-    expect(rows).toHaveLength(10);
-    const eleventh = rows[rows.length - 1].y + (rows[1].y - rows[0].y);
+    const first = rows.filter((r) => r.x === rows[0].x);
+    expect(first).toHaveLength(SHEET_COLUMN_ROWS);
+    const eleventh = first[first.length - 1].y + (first[1].y - first[0].y);
     const cluster = Math.min(...actionButtons(640, 480).map((b) => b.y - b.r));
-    expect(eleventh).toBeGreaterThan(cluster); // an eleventh row would land under the thumb
+    expect(eleventh).toBeGreaterThan(cluster); // an eleventh row in one column would land under the thumb
+    expect(rows.length).toBeGreaterThan(SHEET_COLUMN_ROWS); // BACKLOG-552: the rest went to a second column
   });
 });

@@ -63,12 +63,44 @@ describe('layout', () => {
     const rows = sheetRows(W);
     expect(rows.map((r) => r.id)).toEqual([
       'minds', 'sound', 'gift', 'item', 'lens', 'hearts', 'keeper', 'scan', 'time', 'export',
+      'room', 'plot', 'book', 'help',
     ]);
+    const overlap = (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+      Math.abs(a.x - b.x) < (a.w + b.w) / 2 && Math.abs(a.y - b.y) < (a.h + b.h) / 2;
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       expect(r.x - r.w / 2).toBeGreaterThanOrEqual(0);
       expect(r.x + r.w / 2).toBeLessThanOrEqual(W);
-      if (i > 0) expect(r.y - r.h / 2).toBeGreaterThanOrEqual(rows[i - 1].y + rows[i - 1].h / 2);
+      expect(r.y - r.h / 2).toBeGreaterThanOrEqual(0);
+      for (let j = i + 1; j < rows.length; j++) expect(overlap(r, rows[j])).toBe(false);
+    }
+  });
+
+  it('BACKLOG-552: the first column is byte-identical to the ten-row sheet, the rest sits to its left', () => {
+    const rows = sheetRows(W);
+    rows.slice(0, 10).forEach((r, i) => {
+      expect(r).toMatchObject({ x: W - 12 - 84, y: 64 + i * 36, w: 168, h: 30 });
+    });
+    const second = rows.slice(10);
+    expect(second.length).toBeGreaterThan(0);
+    for (const r of second) {
+      expect(r.x).toBe(second[0].x);
+      expect(r.x + r.w / 2).toBeLessThan(rows[0].x - rows[0].w / 2);
+    }
+  });
+
+  // The first column's tenth row (`export`, y=388) has always overlapped the top of the Talk circle
+  // (y=396, r=30); buttons dispatch first, so that sliver is Talk. Pinned as found rather than moved,
+  // because the first column is held byte-identical — the claim here is that the new column adds none.
+  it('BACKLOG-552: no second-column row lands on the action cluster or the stick', () => {
+    const hitsCircle = (r: ReturnType<typeof sheetRows>[number], cx: number, cy: number, rad: number) => {
+      const nx = Math.max(r.x - r.w / 2, Math.min(cx, r.x + r.w / 2));
+      const ny = Math.max(r.y - r.h / 2, Math.min(cy, r.y + r.h / 2));
+      return Math.hypot(nx - cx, ny - cy) < rad;
+    };
+    for (const r of sheetRows(W).slice(10)) {
+      for (const b of actionButtons(W, H)) expect(hitsCircle(r, b.x, b.y, b.r)).toBe(false);
+      expect(hitsCircle(r, STICK.x, STICK.y, STICK.grab)).toBe(false);
     }
   });
 

@@ -67,3 +67,24 @@ the walk happens next step. `forceContest` is production code, so e2e exercises 
 **Risks:** `toggleHelp` may be modal; closing the sheet first keeps taps from landing on it.
 
 **Estimated touch count:** ~4 files. Cross-track: WorldScene only, disjoint methods; do the structure edit first.
+
+## Shipped
+
+**Lore (136):** `social/closest.ts` (`CLOSE_BOND`), `world/comfort.ts` (floor param, `CONSOLE_STEPS`,
+`COMFORT_ART_KEY`/`COMFORT_GLYPH`, three ticker lines), `world/reachability.ts`, `WorldScene.ts`
+(`pendingConsole`, `sendConsoler`, `stepConsole`, `popComfortMark`, movement branch, `onErrand`,
+`cheerShoulder` clears the errand, `__consoler`), `world/cycle-173-comfort.test.ts` (6),
+`tests/e2e/cycle-173-comfort-is-for-friends.spec.ts` (3).
+Deviation: the consoled dino also gets `liftMood` on the resolution — the flourish every other recovery shows.
+`closestFriend(..., Number.MIN_VALUE)` for "anyone with a bond above zero" rather than a new helper.
+
+**Structure (552):** `input/touch.ts` (`SHEET_COLUMN_ROWS`, columns, four rows), `WorldScene.onTouchButton`
+(four cases), `tests/unit/touch.test.ts` (sheet test → pairwise-disjoint + first-column identity + clearance),
+`game/src/input/touch.test.ts` (scope creep: the 547 test pinned "exactly ten rows"; it now pins one column at
+ten and the sheet past it), `tests/e2e/cycle-173-sheet-columns.spec.ts` (3).
+**Found:** the first column's tenth row (`export`, y 373–403) has always overlapped the top of the Talk circle
+(y ≥ 366). Buttons dispatch first, so that sliver is Talk. Pinned in a comment, not moved (first column held
+byte-identical).
+
+Build clean; unit 3144 green (3 skipped, pre-existing); targeted e2e green (cycle-173 ×6, touch-controls,
+cycle-157-funk).

@@ -48,13 +48,15 @@ export function recordGratitude(g: Gratitude, consoled: string, byWhom: string):
  * Otherwise (BACKLOG-130): the sulker's closest friend among `names` — highest
  * pairwise bond, provided it clears `COMFORT_BOND_FLOOR`. Ties break to the
  * lexicographically-smallest name (matching `homecoming.ts` `topBy`). Returns
- * null when no peer is close enough to come over.
+ * null when no peer is close enough to come over. `floor` defaults to the old
+ * loner-floor bar; the hatch sulk passes the book's `CLOSE_BOND` (BACKLOG-136).
  */
 export function comforter(
   sulker: string,
   bonds: Bonds,
   names: string[],
   gratitude?: Gratitude,
+  floor: number = COMFORT_BOND_FLOOR,
 ): string | null {
   // Reciprocity override: a present debtor of the sulker comes first, floor or no floor.
   let debtor: { name: string; bond: number } | null = null;
@@ -76,7 +78,7 @@ export function comforter(
       best = { name, bond };
     }
   }
-  return best && best.bond >= COMFORT_BOND_FLOOR ? best.name : null;
+  return best && best.bond >= floor ? best.name : null;
 }
 
 /** The floating consolation line over the comforter (contains both names + 🫂). */
@@ -87,4 +89,32 @@ export function comfortLine(friend: string, sulker: string): string {
 /** The memory the comforted dino keeps; WorldScene folds this into the store. */
 export function comfortMemory(friend: string): string {
   return `${friend} came over to comfort me`;
+}
+
+// ── Comfort is for friends (BACKLOG-136) ──────────────────────────────────────────────────────────
+//
+// The sulk a player causes in the first minute — the dino that lost the scramble at the hatch — had
+// nobody come for it at all. Now a *close* friend on the same ground walks over and talks it round,
+// and a dino whose best bond is only friendly stands there alone while the ticker names who did not come.
+
+/** How many world steps the friend has to reach the sore dino before it gives up. */
+export const CONSOLE_STEPS = 8;
+
+/** The one-shot mark popped over the friend as it arrives (BACKLOG-572 draws it). */
+export const COMFORT_ART_KEY = 'comfort';
+export const COMFORT_GLYPH = '🫂';
+
+export function headingOverLine(friend: string, loser: string): string {
+  return `🫂 ${friend} is heading over to ${loser}`;
+}
+
+export function talkedRoundLine(friend: string, loser: string): string {
+  return `🫂 ${friend} talked ${loser} round after the hatch`;
+}
+
+/** Who did not come: the sore dino's closest on its ground, or nobody at all. */
+export function unconsoledLine(loser: string, closest: string | null): string {
+  return closest
+    ? `🫥 nobody came for ${loser} — ${closest} isn't close enough`
+    : `🫥 nobody came for ${loser} — nobody here knows it`;
 }

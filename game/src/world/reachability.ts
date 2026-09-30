@@ -69,6 +69,7 @@ import { FOUNDING_SATCHEL } from './satchel'; // BACKLOG-546
 import { seededPersonality } from '../ai/personality';
 import { ROSTER } from '../entities/roster';
 import { CIRCLE_ART_KEY } from '../social/circle'; // BACKLOG-127
+import { COMFORT_ART_KEY } from './comfort'; // BACKLOG-136
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -175,6 +176,8 @@ export function worldPlacedProps(): Set<string> {
   out.add(CALL_ART_KEY);
   // BACKLOG-127/569: the crown, popped over a dino by `popCircleMark` the moment it joins the keeper's circle.
   out.add(CIRCLE_ART_KEY);
+  // BACKLOG-136/572: the hug, popped over a friend by `popComfortMark` as it arrives to console a sore dino.
+  out.add(COMFORT_ART_KEY);
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so

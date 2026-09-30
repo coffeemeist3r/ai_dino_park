@@ -37,7 +37,7 @@ import {
   shoulderMendedLine,
 } from '../world/sulk'; // BACKLOG-123 / -544
 import { enterFunk, clearFunk, funkOf, inFunk, expiredFunks, SULK_GLYPH, SULK_ART_KEY, type Funks } from '../world/expiry'; // BACKLOG-544/-543
-import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, type Gratitude } from '../world/comfort';
+import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, CONSOLE_STEPS, COMFORT_ART_KEY, COMFORT_GLYPH, headingOverLine, talkedRoundLine, unconsoledLine, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
   rollSkyEvent,
@@ -390,7 +390,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
-import { bestFriend, friendLine, shiftLine } from '../social/closest';
+import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
 import type { Personality } from '../ai/personality';
 import { rand, seedRandom, isSeeded } from '../world/rng';
 import {
@@ -830,6 +830,8 @@ export class WorldScene extends Phaser.Scene {
    *  responder mid-walk toward the caller. Both transient, never persisted. */
   private lastDistress: { name: string; trigger: 'startle' | 'cold'; params: ChirpParams } | null = null;
   private pendingRespond: { name: string; caller: string; steps: number } | null = null;
+  /** BACKLOG-136: a close friend walking over to a dino sore from the hatch. Transient, never persisted. */
+  private pendingConsole: { friend: string; loser: string; steps: number } | null = null;
   /** Brought to the hatch (BACKLOG-381): the live escort — a friend walking out to a withdrawn loner and
    *  then walking it back to the food. One at a time, transient, never persisted (the `pendingRespond` shape). */
   private escort: Escort | null = null;
@@ -2601,6 +2603,7 @@ export class WorldScene extends Phaser.Scene {
       name === this.escort?.friend ||
       name === this.escort?.loner ||
       name === this.pendingRespond?.name ||
+      name === this.pendingConsole?.friend ||
       name === this.pendingInspect?.name
     );
   }
@@ -3092,6 +3095,58 @@ export class WorldScene extends Phaser.Scene {
   private shoulderFunk(name: string): void {
     this.funks = enterFunk(this.funks, name, 'shoulder', this.worldSteps);
     this.logEvent(`😒 ${name} is sore about the hatch`);
+    this.sendConsoler(name);
+  }
+
+  /**
+   * Comfort is for friends (BACKLOG-136). A dino on the loser's ground whom the book would call *close*
+   * walks over; if nobody there is, the ticker names the one who did not come. Same pick as every other
+   * comfort (`comforter`, gratitude first), with the book's bar instead of the loner floor.
+   */
+  private sendConsoler(loser: string): void {
+    const d = this.dinoByName(loser);
+    if (!d) return;
+    const mates = this.zoneMates(d);
+    const who = comforter(loser, this.bonds, [loser, ...mates], this.gratitude, CLOSE_BOND);
+    if (who) {
+      this.pendingConsole = { friend: who, loser, steps: CONSOLE_STEPS };
+      this.logEvent(headingOverLine(who, loser));
+      return;
+    }
+    this.logEvent(unconsoledLine(loser, closestFriend(loser, this.bonds, mates, Number.MIN_VALUE)));
+  }
+
+  /** Resolve the consoler's walk once per world step (the `stepResponder` shape). */
+  private stepConsole(): void {
+    const c = this.pendingConsole;
+    if (!c) return;
+    const friend = this.dinoByName(c.friend);
+    const loser = this.dinoByName(c.loser);
+    if (!friend || !loser || funkOf(this.funks, c.loser)?.kind !== 'shoulder') {
+      this.pendingConsole = null; // it got over it, or the keeper got there first
+      return;
+    }
+    if (Math.abs(friend.x - loser.x) <= TILE * 1.01 && Math.abs(friend.y - loser.y) <= TILE * 1.01) {
+      this.pendingConsole = null;
+      this.funks = clearFunk(this.funks, c.loser);
+      this.showBubble(friend, comfortLine(c.friend, c.loser));
+      this.popComfortMark(friend);
+      this.bonds = strengthen(this.bonds, c.friend, c.loser, COMFORT_BOND);
+      this.memory = remember(this.memory, c.loser, comfortMemory(c.friend));
+      this.gratitude = recordGratitude(this.gratitude, c.loser, c.friend);
+      this.lastComfort = { comforter: c.friend, sulker: c.loser };
+      this.liftMood(loser);
+      this.logEvent(talkedRoundLine(c.friend, c.loser));
+      return;
+    }
+    this.pendingConsole = c.steps <= 1 ? null : { ...c, steps: c.steps - 1 };
+  }
+
+  /** The hug over the friend as it arrives (BACKLOG-572 draws it; the glyph until then). */
+  private popComfortMark(d: Dino): void {
+    if (!this.inView(d)) return;
+    const mark = this.makeHourMark(COMFORT_ART_KEY, COMFORT_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
+    this.time.delayedCall(1200, () => mark.destroy());
   }
 
   /**
@@ -3105,6 +3160,7 @@ export class WorldScene extends Phaser.Scene {
   private cheerShoulder(name: string): boolean {
     if (funkOf(this.funks, name)?.kind !== 'shoulder') return false;
     this.funks = clearFunk(this.funks, name);
+    if (this.pendingConsole?.loser === name) this.pendingConsole = null; // BACKLOG-136: the keeper got there first
     this.memory = remember(this.memory, name, shoulderMendedMemory(name));
     const dino = this.dinoByName(name);
     if (dino) {
@@ -4236,6 +4292,7 @@ export class WorldScene extends Phaser.Scene {
     // staging trigger so e2e can fire the beat deterministically (the __triggerSky convention).
     (window as any).__lastDistress = () => (this.lastDistress ? { ...this.lastDistress } : null);
     (window as any).__distressResponder = () => (this.pendingRespond ? { ...this.pendingRespond } : null);
+    (window as any).__consoler = () => (this.pendingConsole ? { ...this.pendingConsole } : null); // BACKLOG-136
     // BACKLOG-381: the live escort — who is fetching whom, and which leg of the walk.
     (window as any).__escort = () => (this.escort ? { ...this.escort } : null);
     (window as any).__cryDistress = (name: string) => {
@@ -6096,6 +6153,17 @@ ${e.short}`;
         }
       }
 
+      // Comfort is for friends (BACKLOG-136): the close friend walks to the sore dino's live tile.
+      if (this.pendingConsole?.friend === d.name) {
+        const loser = this.dinoByName(this.pendingConsole.loser);
+        if (loser) {
+          const step = stepToward(cur, this.tileOf(loser), COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'responding';
+          continue;
+        }
+      }
+
       // Visible zone crossing (BACKLOG-334): a migrating dino is on a committed journey — it walks to its
       // zone's linked edge and crosses, rather than teleporting (the old `relocate`). Above food/huddle (a
       // crossing dino ignores snacks), below inspection/response (a startle can still pre-empt). The home
@@ -6380,6 +6448,7 @@ ${e.short}`;
 
     this.stepInspection();
     this.stepResponder();
+    this.stepConsole(); // BACKLOG-136: beside the distress walk it mirrors
     this.stepEscort(); // BACKLOG-381: the fetch's two legs resolve beside the distress walk
     this.checkMend(); // BACKLOG-488: a ground the player is watching sends somebody to its ruin...
     this.stepMend(); // ...and the patch-up resolves where that somebody is standing
@@ -7527,6 +7596,11 @@ ${e.short}`;
       case 'scan': this.toggleScan(); break;
       case 'time': this.toggleScale(); break;
       case 'export': this.sheetOpen = false; this.exportSave(); break;
+      // BACKLOG-552: the four keyboard-only verbs, seated in the sheet's second column.
+      case 'room': this.toggleRoom(); break;
+      case 'plot': this.handlePlot(); break;
+      case 'book': this.stepBookCursor(); break;
+      case 'help': this.sheetOpen = false; this.toggleHelp(); break;
       case 'back': this.dialog.prev(); break;
       case 'close': this.dismissDialog(); break; // ✕ always closes, even mid-pages
       default: {
