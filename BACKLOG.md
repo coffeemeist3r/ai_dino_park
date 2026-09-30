@@ -129,7 +129,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > these items extend it once it lands.
 
 - [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
-- [ ] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
+- [~] BACKLOG-136 [emergent] Comfort is for friends — a would-be comforter only crosses the bowl if its bond with the sulker clears a bar; a near-stranger ignores the sulk. Makes *who* comes (and who doesn't) a sharp read on the graph. Builds on 130.
 
 ## Cycle 34 lore additions — the bond graph wakes up (2026-06-07)
 
@@ -672,3 +672,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 172 (Structure-smith)
 
 - [ ] BACKLOG-571 [infra] The friend-found moment's host — `checkLonerLift` (369) shows a bubble and nothing placed, which is why 568's sprig sits blocked. Route a one-shot pop through `makeHourMark` under a `FRIEND_FOUND_ART_KEY`, the `popCallNote` shape, and add the key to `worldPlacedProps`. Small and mechanical; unblocks the art queue's oldest item.
+
+## Cycle 173 (Lore-smith)
+
+- [ ] BACKLOG-572 [art] The comfort mark — a small pixel hug (two arms closing round a heart, 🫂 read) that pops over a friend as it arrives to console a sore dino. Host ships with BACKLOG-136 in cycle 173 (`COMFORT_ART_KEY` via `makeHourMark`, in `worldPlacedProps`), so it is drawable the night it is seeded. Reachable in the first minute of a fresh save: drop food into a crowd, and the loser's friend comes over.

@@ -13982,3 +13982,7 @@ Art queue now holds only 568, still waiting on BACKLOG-571 for its host.
 
 Closed 127, 570, 569 to the archive. Structure Track at **4** (552, 557, 563, 571). CI: last three runs
 on `main` `success`.
+
+## Cycle 173 — lore-smith
+
+Who comes, and who does not. Suggested next-up BACKLOG-136 (last arc of Milestone 23); seeded 572 [art] the comfort mark. Idea Box empty.
