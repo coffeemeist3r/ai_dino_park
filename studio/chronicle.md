@@ -14073,3 +14073,7 @@ Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 
 ## Cycle 174 — coder
 
 574: a cold graph in the bonds' shape, a founding feud, a book line. 024: rivals bump, bristle, and one backs away. Unit 3166 green.
+
+## Cycle 174 — qa
+
+15/15 criteria. Unit 3166; e2e 859/860 twice — one real find (cycle-159 put the feud side by side on the food; spec made the pair civil), one known flake (cycle-148, 12/12 isolated).

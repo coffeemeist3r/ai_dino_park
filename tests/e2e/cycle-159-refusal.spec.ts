@@ -29,6 +29,9 @@ const setNeed = (p: Page, name: string, v: number) =>
     [name, v] as const,
   );
 
+const setGrudge = (p: Page, a: string, b: string, v: number) =>
+  p.evaluate(([x, y, n]) => ((window as W).__setGrudge as (a: string, b: string, c: number) => number)(x as string, y as string, n as number), [a, b, v] as const);
+
 async function driveSteps(p: Page, n: number): Promise<void> {
   await p.evaluate((count) => {
     const step = (window as W).__stepWorld as () => void;
@@ -102,6 +105,9 @@ test('somebody less fussy comes along and eats the very same piece', async ({ pa
   expect(await foodInPlay(page)).not.toBeNull();
 
   // Twitch is the warm end of the founding bowl; it eats what it is given.
+  // BACKLOG-574/024: the founding feud is Mossback|Twitch, and rivals side by side square off — this spec is about
+  // the refused piece, not the feud, so the pair is made civil first.
+  await setGrudge(page, 'Mossback', 'Twitch', 0);
   await setTrait(page, 'Twitch', 'agreeableness', 1);
   await setNeed(page, 'Twitch', 0);
   await place(page, 'Twitch', food!.tileX, food!.tileY);
