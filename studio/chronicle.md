@@ -14065,3 +14065,7 @@ Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 
 ## Cycle 174 — designer
 
 574: a grudge graph in the bonds' shape, one founding feud (Mossback|Twitch), named on the book. 024: rivals who bump on one ground square off; the less bold one backs down.
+
+## Cycle 174 — codeplan
+
+574: grudges ride the bond functions, not copies of them. 024: a standoff takes the place of a rival pair's meeting.
