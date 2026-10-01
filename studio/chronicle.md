@@ -14053,3 +14053,7 @@ waiting on BACKLOG-571 for its host.
 Closed 136, 552, 572 to the archive; filed 573 (the export row under Talk). Structure Track at **4** (557, 563,
 571, 573). Milestone 23 shipped — no milestone active; the smiths draft 24 next cycle. CI: last three runs on
 `main` `success`.
+
+## Cycle 174 — lore-smith
+
+Milestone 24 opened: friendship has an opposite. Lore arcs 024 (rivals square off) and 397 (the bully learns); art 575 seeded with its host.

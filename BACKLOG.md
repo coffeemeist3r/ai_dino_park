@@ -674,3 +674,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 173 (Validator)
 
 - [ ] BACKLOG-573 [infra] The export row sits under Talk — found by cycle 173's QA while 552 gave the More sheet a second column: the first column's tenth row (`export`, y 373–403, x 460–628) has always overlapped the top of the Talk button (centre y 396, r 30, so from y 366). Buttons dispatch before sheet rows, so a thumb on the lower-right of that row greets whoever is nearest instead of exporting. The fix is geometry and belongs in `sheetRows`: the rarest verb moves to the second column (it has six free seats) or the first column stops at nine, and `tests/unit/touch.test.ts`'s clearance check widens from the new column to every row — which is the assertion that would have caught this when the sheet first shipped (BACKLOG-189). Small; the Talk button is the most-pressed control on the phone.
+
+## Cycle 174 (Lore-smith)
+
+- [ ] BACKLOG-575 [art] The standoff mark — a small bristling spark (two short crossed strokes, hot orange) that pops over both dinos for a second when rivals square off (BACKLOG-024). **Host:** 024 ships its pop through `makeHourMark` under a `STANDOFF_ART_KEY` this cycle, so this is drawable the night its host lands; if 024 does not ship, it stays queued under the cycle-145 amendment.

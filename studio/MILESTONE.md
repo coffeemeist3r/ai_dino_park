@@ -8,7 +8,15 @@
 
 ## Current milestone
 
-_None active — the smiths draft Milestone 24 at the next cycle open._
+**Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off**
+**Status:** ACTIVE (opened cycle 174)
+
+**Lore arcs:**
+- [ ] Two dinos who do not get on square off when they meet on one ground — they bristle, and the less bold one backs away; both books remember it (BACKLOG-024)
+- [ ] A bully learns who not to push — a gobbler stood up to by the same dino before waits its turn instead (BACKLOG-397)
+
+**Structure arcs:**
+_(the Structure-smith drafts these)_
 
 ---
 
