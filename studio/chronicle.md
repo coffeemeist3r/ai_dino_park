@@ -14102,3 +14102,16 @@ parallel-load flake). Save change additive. CI green going in.
 
 **Milestone 24 — friendship has an opposite:** two of three arcs done (024, 574). Left: 397, a bully learns who not
 to push.
+
+## Cycle 174-art — artist: BACKLOG-575, the standoff mark
+
+Drawn the night its host shipped. The 💢 — four corner brackets with their corners turned in toward an empty
+middle, hot red-orange on the family rim. The first draft set the brackets one cell apart, and at 16px their rims
+met across the gap and filled the centre: a plus on a dark slab, nothing like a temper. They sit four cells apart
+now, and the empty middle is the whole read. It flares over both rivals for a second when they square off. Art queue
+now holds only 568, still waiting on BACKLOG-571 for its host.
+
+## Cycle 174 — housekeeping
+
+Closed 024, 574, 575 to the archive. Structure Track at **4** (557, 563, 571, 573). Milestone 24 active, one arc left
+(397). CI: last three runs on `main` `success`.

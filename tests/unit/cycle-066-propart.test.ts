@@ -60,6 +60,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       // three keeper lines. Drawn as a pair with `watch` below, because two registers about time sitting
       // eleven pixels apart have to differ in silhouette or the player reads either one as both.
       'sitting',
+      'standoff', // BACKLOG-575 (cycle 174-art): the bristle over two rivals as they square off
       'stone',
       // BACKLOG-539 (cycle 167-art): the twelfth rig and the first that is not a mark — the day-count's
       // engraved register, struck into the plaque's brass beside the `Keeper · ` row. Blocked nine

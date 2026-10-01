@@ -2172,6 +2172,44 @@ const COMFORT_RIG: PropRig = {
   },
 };
 
+// `standoff` (BACKLOG-575, cycle 174-art): the bristle that pops over both rivals when they square off (024).
+// It is the 💢 — four corner brackets with their corners turned in toward an empty centre, the manga anger
+// vein — because that is the one glyph a player already reads as "these two are cross", at any size.
+//
+// First draft rejected: the brackets sat one cell of air apart, and at 16px each one's rim met its
+// neighbour's across the gap, so the centre filled solid dark and the mark read as a plus on a slab. The
+// pieces now sit four cells apart — rim, two cells of air, rim — and the empty middle is what makes it a vein.
+// Nothing is thinner than two cells (the `rouse`/`mope` lesson). Hot red-orange, lit upper-left; family rim.
+const STANDOFF_GRID: ReadonlyArray<string> = [
+  '...oooo..oooo...',
+  '...ohvo..ohvo...',
+  '...oVvo..oVvo...',
+  'ooooVvo..oVvoooo',
+  'ohVVVvo..oVVVVvo',
+  'ovvvvvo..ovvvvvo',
+  'ooooooo..ooooooo',
+  '................',
+  '................',
+  'ooooooo..ooooooo',
+  'ohVVVvo..ohVVVvo',
+  'ovvvVvo..oVVvvvo',
+  'ooooVvo..oVvoooo',
+  '...oVvo..oVvo...',
+  '...ovvo..ovvo...',
+  '...oooo..oooo...',
+];
+
+const STANDOFF_RIG: PropRig = {
+  size: 16,
+  grid: STANDOFF_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    V: 0xe8502a, // the vein — hot red-orange
+    v: 0xa8321a, // its shade, lower right
+    h: 0xffa060, // the lit lip, upper left
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2420,6 +2458,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-572 (cycle 173-art): the hug, drawn the night its host shipped — `popComfortMark` pops it over a
   // friend as it arrives to talk a sore dino round (BACKLOG-136).
   comfort: COMFORT_RIG,
+  // BACKLOG-575 (cycle 174-art): the bristle, drawn the night its host shipped — `squareOffPair` pops it over
+  // both rivals as they square off (BACKLOG-024).
+  standoff: STANDOFF_RIG,
 };
 
 /**
