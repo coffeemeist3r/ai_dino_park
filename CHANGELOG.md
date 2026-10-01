@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 174 — 2026-10-01 (friendship has an opposite)
+- BACKLOG-024: Rivals square off — two dinos the grudge graph calls rivals who bump on one ground do not meet: a 💢 pops over both, the less bold one backs two tiles away, the ticker says *💢 Mossback and Twitch squared off — Twitch backed down*, and both books file it. Once a minute per pair at most; no hearts or bond cost; ambient held means none. The 💢 pops through `makeHourMark` under `STANDOFF_ART_KEY`, so BACKLOG-575 can be drawn tonight. +7 unit, +3 e2e. **Milestone 24 lore arc 1 ✅.** (lore track)
+- BACKLOG-574: The park keeps grudges — a second pair-keyed graph beside the bonds, moved and cooled by the bonds' own functions. A fresh park opens with one feud on the bowl, Mossback and Twitch at 40; every contested drop at the hatch adds 6 to the pair who fought over it; grudges cool toward 0 at a quarter of the bonds' rate (the founding feud lasts ~35 minutes of watching unfed). The book names a dino's worst rival under its closest friend: *😒 doesn't get on with Twitch*. Additive `grudges` save field; old saves open with no feud. `strangers` clears it. +7 unit, +3 e2e. **Milestone 24 structure arc 1 ✅.** (structure track)
+
+---
+
 ## Cycle 173 — 2026-09-30 (who comes, and who does not)
 - BACKLOG-136: Comfort is for friends — the dino that loses the scramble at the hatch no longer stands sore alone by default. A dino on its ground whom the book calls *close* (bond ≥ 25, the book's own `CLOSE_BOND`) walks over — *🫂 Rex is heading over to Glade* — and talks it round: the sulk ends early, a 🫂 pops over the friend, the pair's bond grows, the loser files who came and owes it back. If nobody there is close, the ticker names who did not come: *🫥 nobody came for Glade — Mossback isn't close enough*. The sulker holds still while somebody is on the way. Gratitude still comes first. Homecoming and distress keep the old floor (named). +6 unit, +3 e2e. No save change. **Milestone 23 lore arc 3 ✅ — Milestone 23 SHIPPED.** (lore track)
 - BACKLOG-552: The More sheet grows a second column — ten rows was the phone's geometric ceiling, so `sheetRows` now lays out columns of ten, the first exactly where it always was. Four keyboard-only verbs got seats: read the room, plot, next book entry, help. Found: the first column's export row has always overlapped the Talk button (BACKLOG-573). +2 unit, +3 e2e. No save change. (structure track)

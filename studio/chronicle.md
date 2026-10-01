@@ -14077,3 +14077,28 @@ Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 
 ## Cycle 174 — qa
 
 15/15 criteria. Unit 3166; e2e 859/860 twice — one real find (cycle-159 put the feud side by side on the food; spec made the pair civil), one known flake (cycle-148, 12/12 isolated).
+
+## Cycle 174 — validator: lore APPROVED / structure APPROVED — friendship has an opposite
+
+For twenty-three milestones every number between two dinos in this park has measured warmth. Tonight there is a
+second one. Open the book on a fresh save and Mossback's page, under *close to Glade*, now says *😒 doesn't get on
+with Twitch* — and Twitch's page says it back. Mossback is slow to trust; Twitch bolts at everything; it was never
+going to go well.
+
+And you do not have to read it. The two of them live on the bowl, beside you, and when they bump into each other
+in the grass they no longer "meet": a 💢 flares over both, the less bold one gives up two tiles, and the ticker
+says *💢 Mossback and Twitch squared off — Twitch backed down*. Both remember it. It happens at most once a minute
+and costs nobody a heart. The feud cools if nothing feeds it — about half an hour of watching before the book stops
+calling them rivals — but every scramble at the hatch adds to the grudge between whoever fought over the fish, so a
+player who keeps dropping food into a crowd will, eventually, make a new one.
+
+The suite found one thing on the way, and it was the feature working: an old spec put Twitch on a piece of food
+right next to Mossback to watch it get eaten, and the two of them squared off over it instead. That spec is about a
+dino refusing its dinner, not about a feud, so it now asks the pair to be civil first.
+
+Board: build clean, **3166 unit** green, e2e **859/860** on both full runs — run 1's miss was the spec above (fixed,
+21/21 on repeat), run 2's was `cycle-148-hour-in-voice`, which passed in run 1 and 12/12 isolated (the known
+parallel-load flake). Save change additive. CI green going in.
+
+**Milestone 24 — friendship has an opposite:** two of three arcs done (024, 574). Left: 397, a bully learns who not
+to push.

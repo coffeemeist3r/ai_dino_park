@@ -12,11 +12,11 @@
 **Status:** ACTIVE (opened cycle 174)
 
 **Lore arcs:**
-- [ ] Two dinos who do not get on square off when they meet on one ground — they bristle, and the less bold one backs away; both books remember it (BACKLOG-024)
+- [x] Two dinos who do not get on square off when they meet on one ground — they bristle, and the less bold one backs away; both books remember it (BACKLOG-024)
 - [ ] A bully learns who not to push — a gobbler stood up to by the same dino before waits its turn instead (BACKLOG-397)
 
 **Structure arcs:**
-- [ ] The park keeps grudges — a second pairwise graph, founded with one feud on the bowl, fed by the hatch, cooling with time, and named on the book page (BACKLOG-574)
+- [x] The park keeps grudges — a second pairwise graph, founded with one feud on the bowl, fed by the hatch, cooling with time, and named on the book page (BACKLOG-574)
 
 ---
 
