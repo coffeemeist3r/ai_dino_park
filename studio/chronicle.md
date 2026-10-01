@@ -14061,3 +14061,7 @@ Milestone 24 opened: friendship has an opposite. Lore arcs 024 (rivals square of
 ## Cycle 174 — structure-smith
 
 Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 next.
+
+## Cycle 174 — designer
+
+574: a grudge graph in the bonds' shape, one founding feud (Mossback|Twitch), named on the book. 024: rivals who bump on one ground square off; the less bold one backs down.
