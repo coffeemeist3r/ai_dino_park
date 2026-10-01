@@ -222,7 +222,7 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges } from '../world/founding';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -389,6 +389,8 @@ import {
   LONG_PRESS_MS,
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
+import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
+import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
 import type { Personality } from '../ai/personality';
@@ -658,6 +660,9 @@ export class WorldScene extends Phaser.Scene {
   private meetings: Meetings = {};
   private memory: MemoryStore = {};
   private bonds: Bonds = {};
+  private grudges: Bonds = {}; // BACKLOG-574: who does not get on with whom — the bond map's cold twin
+  private standoffAt: Record<string, number> = {}; // BACKLOG-024: world step of each pair's last standoff
+  private lastStandoff: { holder: string; yielder: string } | null = null;
   private lastAwayDigest: string[] = [];
   /** The last few homecoming digests, newest first (BACKLOG-114). Persisted: the point of the log is that
    *  it is still there tomorrow, not only until the next keypress clears the modal. */
@@ -2469,6 +2474,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-565: the cast opens as friends, all but one — ahead of the ruin guards, because the friendships
     // are not part of the grounds `__clearFounding` empties. A pair a spec already wrote wins.
     if (!this.bondsCleared) this.bonds = { ...foundingBonds(), ...this.bonds };
+    if (!this.bondsCleared) this.grudges = { ...foundingGrudges(), ...this.grudges }; // BACKLOG-574: and one feud
     this.refreshBestFriends(false);
     if (this.foundingCleared) return; // a spec restored the pre-v7 empty grounds before the DB read resolved
     if (this.cairns.length) return; // one-shot: never seed a second founding ruin over an existing skyline
@@ -3028,6 +3034,7 @@ export class WorldScene extends Phaser.Scene {
    * fresh park behaves as it did before this existed.
    */
   private resolveContest(eater: Dino, gobblerName: string): void {
+    this.grudges = strengthen(this.grudges, eater.name, gobblerName, GRUDGE_PER_CONTEST); // BACKLOG-574: either way it goes
     const disposition = dispositionToward(recall(this.memory, eater.name), gobblerName);
     const because = disposition ? becauseOf(disposition, gobblerName) : ''; // no silent change
     if (holdsAgainst(eater.traits.bravery, disposition)) {
@@ -3147,6 +3154,31 @@ export class WorldScene extends Phaser.Scene {
     if (!this.inView(d)) return;
     const mark = this.makeHourMark(COMFORT_ART_KEY, COMFORT_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
     this.time.delayedCall(1200, () => mark.destroy());
+  }
+
+  /**
+   * Rivals square off (BACKLOG-024): the bolder holds, the other backs two tiles away, a 💢 pops over both,
+   * and both books and the ticker keep it. No hearts, no bond — a read on the grudge graph, not a move of it.
+   */
+  private squareOffPair(a: Dino, b: Dino): void {
+    const { holder, yielder } = squareOff(
+      { name: a.name, bravery: a.traits.bravery },
+      { name: b.name, bravery: b.traits.bravery },
+    );
+    const h = holder === a.name ? a : b;
+    const y = holder === a.name ? b : a;
+    const to = backOffTile(this.tileOf(y), this.tileOf(h), COLS, ROWS);
+    y.setPosition(to.tileX * TILE + TILE / 2, to.tileY * TILE + TILE / 2);
+    this.standoffAt[pairKey(holder, yielder)] = this.worldSteps;
+    this.lastStandoff = { holder, yielder };
+    this.memory = remember(this.memory, holder, heldMemory(yielder));
+    this.memory = remember(this.memory, yielder, backedMemory(holder));
+    this.logEvent(standoffLine(holder, yielder));
+    for (const d of [h, y]) {
+      if (!this.inView(d)) continue;
+      const mark = this.makeHourMark(STANDOFF_ART_KEY, STANDOFF_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
+      this.time.delayedCall(1200, () => mark.destroy());
+    }
   }
 
   /**
@@ -4139,10 +4171,28 @@ export class WorldScene extends Phaser.Scene {
 
     // any: dev-only Playwright hooks
     (window as any).__bonds = () => ({ ...this.bonds });
+    (window as any).__grudges = () => ({ ...this.grudges }); // BACKLOG-574
+    (window as any).__setGrudge = (a: string, b: string, v: number) => {
+      this.grudges = strengthen(this.grudges, a, b, v - bondPoints(this.grudges, a, b));
+      return bondPoints(this.grudges, a, b);
+    };
+    (window as any).__lastStandoff = () => (this.lastStandoff ? { ...this.lastStandoff } : null); // BACKLOG-024
+    // BACKLOG-024: the production standoff for a named pair, placed side by side first.
+    (window as any).__forceStandoff = (a: string, b: string) => {
+      const da = this.dinoByName(a);
+      const db = this.dinoByName(b);
+      if (!da || !db) return null;
+      const t = this.tileOf(da);
+      const bx = t.tileX + 1 < COLS ? t.tileX + 1 : t.tileX - 1;
+      db.setPosition(bx * TILE + TILE / 2, t.tileY * TILE + TILE / 2);
+      this.squareOffPair(da, db);
+      return this.lastStandoff ? { ...this.lastStandoff } : null;
+    };
     // BACKLOG-565: the `strangers` fixture — the pre-565 zero graph, winning over the late founding seed.
     (window as any).__clearBonds = () => {
       this.bondsCleared = true;
       this.bonds = {};
+      this.grudges = {}; // BACKLOG-574: strangers have no feuds either
       this.refreshBestFriends(false);
     };
     (window as any).__bestFriends = () => ({ ...this.bestFriendOf });
@@ -5133,6 +5183,7 @@ export class WorldScene extends Phaser.Scene {
         this.bestFriendOf[d.name] ?? null,
         bondPoints(this.bonds, d.name, this.bestFriendOf[d.name] ?? ''),
       ),
+      rival: ((r) => (r ? rivalLine(r) : undefined))(worstRival(d.name, this.grudges, this.dinoNames())), // BACKLOG-574
       role: this.roleOf(d.name),
       parents: parentsOf.get(d.name),
       rumorsHeard: this.rumorsOf(d.name),
@@ -6420,6 +6471,7 @@ ${e.short}`;
     // BACKLOG-570: a friendship not kept up cools toward the floor — before this step's meetings, so a pair
     // that meets now lands its gain on the cooled value. Held ambient pins bonds, so it does not drift either.
     if (!this.ambientHeld) this.bonds = driftBonds(this.bonds, LONER_FLOOR);
+    if (!this.ambientHeld) this.grudges = driftBonds(this.grudges, 0, GRUDGE_DRIFT); // BACKLOG-574: slower
     // BACKLOG-456: held, no meeting fires — bonds/meetings stay exactly as the spec pinned them.
     if (!this.ambientHeld) for (let i = 0; i < this.dinos.length; i++) {
       for (let j = i + 1; j < this.dinos.length; j++) {
@@ -6430,6 +6482,14 @@ ${e.short}`;
         // have never seen each other, and the book named them best friends.
         if (zoneOf(this.dinoZones, a.name, BOWL_ID) !== zoneOf(this.dinoZones, b.name, BOWL_ID)) continue;
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
+          // BACKLOG-024: rivals who bump do not meet — they square off, once a minute at most.
+          if (
+            bondPoints(this.grudges, a.name, b.name) >= RIVAL_BAR &&
+            standoffDue(this.standoffAt[pairKey(a.name, b.name)], this.worldSteps)
+          ) {
+            this.squareOffPair(a, b);
+            continue;
+          }
           this.meetings = recordMeet(this.meetings, a.name, b.name);
           const beforeMeet = this.bonds;
           // meeting (and huddling) deepens the bond — by less the closer they already are (BACKLOG-567)
@@ -9775,6 +9835,7 @@ ${e.short}`;
       friendship: this.friendship,
       memory: this.memory,
       bonds: this.bonds,
+      grudges: this.grudges, // BACKLOG-574 (additive)
       gratitude: this.gratitude,
       lastTone: this.lastTone,
       metWatcher: this.metWatcher,
@@ -9935,6 +9996,7 @@ ${e.short}`;
       this.circleNames = null; // BACKLOG-127: a restored circle is re-read silently, not announced
       this.memory = away.memory;
       this.bonds = away.bonds;
+      this.grudges = save.grudges ?? {}; // BACKLOG-574: a pre-574 park has no feud — none is invented for it
       this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;

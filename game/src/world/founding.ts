@@ -280,6 +280,20 @@ export const FOUNDING_BONDS: ReadonlyArray<readonly [string, string, number]> = 
   ['Glade', 'Murk', 12],
 ];
 
+/**
+ * The founding feud (BACKLOG-574): one pair on the bowl who do not get on, so the cold half of the graph is on
+ * the page — and in the grass — from frame one. Mossback is slow to trust and Twitch bolts at everything; every
+ * bolt is one more thing Mossback takes personally. Both spawn on the bowl, beside the player.
+ */
+export const FOUNDING_GRUDGES: ReadonlyArray<readonly [string, string, number]> = [['Mossback', 'Twitch', 40]];
+
+/** `FOUNDING_GRUDGES` as a grudge map, seeded beside the bonds on the `!save` branch only. */
+export function foundingGrudges(): Bonds {
+  const out: Bonds = {};
+  for (const [a, b, v] of FOUNDING_GRUDGES) out[pairKey(a, b)] = v;
+  return out;
+}
+
 /** `FOUNDING_BONDS` as a bond map. The scene seeds it on the `!save` branch only. */
 export function foundingBonds(): Bonds {
   const out: Bonds = {};

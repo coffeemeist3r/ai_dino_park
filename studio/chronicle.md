@@ -14069,3 +14069,7 @@ Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 
 ## Cycle 174 — codeplan
 
 574: grudges ride the bond functions, not copies of them. 024: a standoff takes the place of a rival pair's meeting.
+
+## Cycle 174 — coder
+
+574: a cold graph in the bonds' shape, a founding feud, a book line. 024: rivals bump, bristle, and one backs away. Unit 3166 green.

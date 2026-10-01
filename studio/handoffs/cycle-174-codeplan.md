@@ -60,3 +60,21 @@
 world with Mossback and Twitch adjacent now see a standoff in place of one meeting; the full suite decides.
 
 **Estimated touch count:** ~5 files (WorldScene shared).
+
+## Shipped
+
+**Files touched:** `game/src/social/grudges.ts` (new), `game/src/social/standoff.ts` (new),
+`game/src/social/cycle-174-grudges.test.ts` (new), `game/src/social/cycle-174-standoff.test.ts` (new),
+`game/src/world/founding.ts`, `game/src/world/saveGame.ts`, `game/src/world/reachability.ts`, `game/src/ui/lenses.ts`,
+`game/src/scenes/WorldScene.ts`, `tests/e2e/cycle-174-grudges.spec.ts` (new), `tests/e2e/cycle-174-standoff.spec.ts` (new).
+11 files.
+
+**Deviations:**
+- The `grudges` save field stays **absent** when a save has none (the `envy` discipline), not defaulted to `{}` in the
+  parser — the twenty-odd exact round-trip tests in `saveGame.test.ts` compare the parsed object to its input, and a
+  defaulted key broke every one of them. The scene reads `save.grudges ?? {}`. The design's "absent → `{}`" holds
+  at the scene, where it matters.
+- `__setGrudge` added beside `__grudges` (planned) — used by nothing yet but QA's hand checks.
+- Dev-server curl step replaced by the e2e boots (six specs load the page from a fresh dev server).
+
+**Status:** `npm run build` clean; unit **3166 passed / 3 skipped**; the six new e2e specs green. Boundary grep clean.

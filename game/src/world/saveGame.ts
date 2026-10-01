@@ -70,6 +70,8 @@ export interface SaveData {
   friendship: Friendship;
   memory: MemoryStore;
   bonds: Bonds;
+  /** Who does not get on with whom (BACKLOG-574) — the bond map's shape. Additive; absent in older saves. */
+  grudges?: Bonds;
   /** Who each dino owes a consolation back to (BACKLOG-132). Additive; absent → {}. */
   gratitude: Gratitude;
   /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
@@ -302,6 +304,18 @@ export function deserialize(json: string): SaveData | null {
     for (const k of Object.keys(entries)) {
       if (!isNum(entries[k])) return null;
       bonds[k] = entries[k] as number;
+    }
+  }
+
+  // grudges (BACKLOG-574) — the bonds block above, for the cold graph. Absent stays absent; malformed → reject.
+  let grudges: Bonds | undefined;
+  if (o.grudges !== undefined) {
+    if (typeof o.grudges !== 'object' || o.grudges === null) return null;
+    grudges = {};
+    const entries = o.grudges as Record<string, unknown>;
+    for (const k of Object.keys(entries)) {
+      if (!isNum(entries[k])) return null;
+      grudges[k] = entries[k] as number;
     }
   }
 
@@ -1075,6 +1089,7 @@ export function deserialize(json: string): SaveData | null {
     friendship,
     memory,
     bonds,
+    grudges,
     gratitude,
     lastTone,
     metWatcher,
