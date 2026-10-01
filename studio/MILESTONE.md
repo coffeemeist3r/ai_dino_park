@@ -16,7 +16,7 @@
 - [ ] A bully learns who not to push — a gobbler stood up to by the same dino before waits its turn instead (BACKLOG-397)
 
 **Structure arcs:**
-_(the Structure-smith drafts these)_
+- [ ] The park keeps grudges — a second pairwise graph, founded with one feud on the bowl, fed by the hatch, cooling with time, and named on the book page (BACKLOG-574)
 
 ---
 

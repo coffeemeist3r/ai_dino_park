@@ -14057,3 +14057,7 @@ Closed 136, 552, 572 to the archive; filed 573 (the export row under Talk). Stru
 ## Cycle 174 — lore-smith
 
 Milestone 24 opened: friendship has an opposite. Lore arcs 024 (rivals square off) and 397 (the bully learns); art 575 seeded with its host.
+
+## Cycle 174 — structure-smith
+
+Seeded and took 574, the grudge graph — Milestone 24's spine. Track at 5; 571 next.

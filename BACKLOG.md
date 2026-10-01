@@ -20,6 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
+- [~] BACKLOG-574 [core] The park keeps grudges — a second pairwise graph beside the bonds (full text in the cycle-174 block below).
 - [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
@@ -678,3 +679,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 174 (Lore-smith)
 
 - [ ] BACKLOG-575 [art] The standoff mark — a small bristling spark (two short crossed strokes, hot orange) that pops over both dinos for a second when rivals square off (BACKLOG-024). **Host:** 024 ships its pop through `makeHourMark` under a `STANDOFF_ART_KEY` this cycle, so this is drawable the night its host lands; if 024 does not ship, it stays queued under the cycle-145 amendment.
+
+## Cycle 174 (Structure-smith)
+
+- [~] BACKLOG-574 [core] The park keeps grudges — every pairwise number in the park measures warmth, so "does not get on" has nowhere to live. Add a second pair-keyed graph, `grudges` (0–100), in the bond graph's exact shape and through its own functions (`strengthen`, `bondPoints`, `driftBonds` — no copies): a `FOUNDING_GRUDGES` table seeded on the `!save` branch with **one feud on the bowl** (so the player stands beside it from frame one); a contested drop at the hatch (`resolveContest`, 387/390) adds to the pair's grudge; grudges cool toward 0 slower than bonds cool toward the floor, so a feud outlasts a sitting unless nothing feeds it; an additive `grudges` save field; and the book names a dino's worst rival under its closest friend (`😒 doesn't get on with X`) once the grudge clears a `RIVAL_BAR`. Hooks `__grudges` / `__setGrudge` for specs. The spine Milestone 24's lore arcs (024, 397) read.
