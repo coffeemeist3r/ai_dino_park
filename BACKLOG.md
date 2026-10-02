@@ -625,7 +625,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-395 [emergent] Witnessed backbone — a dino that watches a friend hold its ground against a gobbler (390) admires it: a small bond nudge toward the bold one and a "saw <bold> stand up to <gobbler>" that can travel as gossip. Courage is socially rewarded. Builds on 390 / 019 / 013.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
-- [ ] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
+- [~] BACKLOG-397 [emergent] Reputation cows the bully — a gobbler that's been stood up to by the same bold dino before hesitates to shoulder it again (it skips that winner and waits its turn), so a bully learns who not to push. The grudge's mirror — the bully's caution. Builds on 390 / 389 / 394.
 
 ## Cycle 88 — the ritual, seen
 
@@ -674,4 +674,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-573 [infra] The export row sits under Talk — found by cycle 173's QA while 552 gave the More sheet a second column: the first column's tenth row (`export`, y 373–403, x 460–628) has always overlapped the top of the Talk button (centre y 396, r 30, so from y 366). Buttons dispatch before sheet rows, so a thumb on the lower-right of that row greets whoever is nearest instead of exporting. The fix is geometry and belongs in `sheetRows`: the rarest verb moves to the second column (it has six free seats) or the first column stops at nine, and `tests/unit/touch.test.ts`'s clearance check widens from the new column to every row — which is the assertion that would have caught this when the sheet first shipped (BACKLOG-189). Small; the Talk button is the most-pressed control on the phone.
 
+## Cycle 175 (Lore-smith)
 
+- [ ] BACKLOG-576 [art] The wait mark — a small hourglass that pops over a gobbler at the moment it waits its turn behind a dino that has faced it down before (BACKLOG-397's cowed bully). Host ships with 397 in cycle 175: `makeHourMark(WAIT_ART_KEY, '⏳')`, popped for ~1.2 s like the standoff mark. Family rim, readable at 16px; it should read as *holding back*, not as a clock.

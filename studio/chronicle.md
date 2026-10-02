@@ -14115,3 +14115,7 @@ now holds only 568, still waiting on BACKLOG-571 for its host.
 
 Closed 024, 574, 575 to the archive. Structure Track at **4** (557, 563, 571, 573). Milestone 24 active, one arc left
 (397). CI: last three runs on `main` `success`.
+
+## Cycle 175 — lore-smith
+
+The bully learns: 397 (a gobbler stood up to waits its turn) — the last open arc of Milestone 24. Art 576 (the wait mark) seeded with its host.
