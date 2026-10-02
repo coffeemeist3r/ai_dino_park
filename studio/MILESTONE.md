@@ -8,15 +8,7 @@
 
 ## Current milestone
 
-**Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off**
-**Status:** ACTIVE (opened cycle 174)
-
-**Lore arcs:**
-- [x] Two dinos who do not get on square off when they meet on one ground — they bristle, and the less bold one backs away; both books remember it (BACKLOG-024)
-- [ ] A bully learns who not to push — a gobbler stood up to by the same dino before waits its turn instead (BACKLOG-397)
-
-**Structure arcs:**
-- [x] The park keeps grudges — a second pairwise graph, founded with one feud on the bowl, fed by the hatch, cooling with time, and named on the book page (BACKLOG-574)
+_None active — the smiths draft Milestone 25 at the next cycle open._
 
 ---
 
@@ -36,6 +28,31 @@
 ```
 
 ## Shipped milestones
+
+### Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off — SHIPPED cycle 175 (opened cycle 174)
+
+Two cycles, three arcs, no REWORK and no ABANDON.
+
+For twenty-three milestones every number between two dinos measured warmth. Now there is a cold one: a grudge
+graph in the bonds' exact shape, founded with one feud on the bowl (Mossback and Twitch), fed by every scramble at
+the hatch, cooling when nothing feeds it, and named on both pages of the book. Rivals who bump in the grass square
+off — a 💢, one backs away. And the bully, the one mind at the hatch that never learned from losing, now does: a
+gobbler that has been faced down by a dino waits its turn behind that dino the next time (⏳).
+
+**The lesson worth keeping:** the park had already built three of the four sides of the pecking order (401, 389,
+403) on one six-slot memory ring. The fourth side was one function over the same ring, not a new system — read
+what the park already remembers before giving it something new to remember.
+
+**Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off**
+**Status:** SHIPPED cycle 175 (opened cycle 174)
+
+**Lore arcs:**
+- [x] Two dinos who do not get on square off when they meet on one ground — they bristle, and the less bold one backs away; both books remember it (BACKLOG-024)
+- [x] A bully learns who not to push — a gobbler stood up to by the same dino before waits its turn instead (BACKLOG-397 — cycle 175; **milestone SHIPPED**)
+
+**Structure arcs:**
+- [x] The park keeps grudges — a second pairwise graph, founded with one feud on the bowl, fed by the hatch, cooling with time, and named on the book page (BACKLOG-574)
+
 
 ### Milestone 23: Friendship has a shape — who is close to whom is on the page from frame one, and it moves while you watch — SHIPPED cycle 173 (opened cycle 171)
 

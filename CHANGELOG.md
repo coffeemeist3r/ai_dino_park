@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 175 — 2026-10-02 (the bully learns)
+- BACKLOG-397: Reputation cows the bully — a gobbler whose own recent hatch history has it beaten by the winner (one slink-off is enough) no longer shoulders that dino: it waits its turn, a ⏳ pops over it, and the ticker says *⏳ Rex waited its turn behind Mossback — Mossback has beaten it here before*. Another, uncowed bully in the swarm can still push in. No memory filed for the wait. `cowedGobble` in `world/pecking.ts` wraps `gobblerAmong` and is exactly it when no one is cowed. +7 unit, +2 e2e. No save change. **Milestone 24 lore arc 2 ✅ — Milestone 24 SHIPPED.** (lore track)
+- BACKLOG-571 + BACKLOG-557: The last two bare marks get hosts — the friend-found moment now pops a 🌱 over the dino as it grows its first friend (not only a bubble), and the cold funk's 🥶 is built through the mark family, so a rig can replace either. Both keys in `worldPlacedProps`. Comfort, wait and friend-found pops share one `popMark`. +2 unit, +1 e2e. No save change. (structure track)
+
+---
+
 ## Cycle 174 — 2026-10-01 (friendship has an opposite)
 - BACKLOG-024: Rivals square off — two dinos the grudge graph calls rivals who bump on one ground do not meet: a 💢 pops over both, the less bold one backs two tiles away, the ticker says *💢 Mossback and Twitch squared off — Twitch backed down*, and both books file it. Once a minute per pair at most; no hearts or bond cost; ambient held means none. The 💢 pops through `makeHourMark` under `STANDOFF_ART_KEY`, so BACKLOG-575 can be drawn tonight. +7 unit, +3 e2e. **Milestone 24 lore arc 1 ✅.** (lore track)
 - BACKLOG-574: The park keeps grudges — a second pair-keyed graph beside the bonds, moved and cooled by the bonds' own functions. A fresh park opens with one feud on the bowl, Mossback and Twitch at 40; every contested drop at the hatch adds 6 to the pair who fought over it; grudges cool toward 0 at a quarter of the bonds' rate (the founding feud lasts ~35 minutes of watching unfed). The book names a dino's worst rival under its closest friend: *😒 doesn't get on with Twitch*. Additive `grudges` save field; old saves open with no feud. `strangers` clears it. +7 unit, +3 e2e. **Milestone 24 structure arc 1 ✅.** (structure track)

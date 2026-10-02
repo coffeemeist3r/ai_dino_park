@@ -14139,3 +14139,32 @@ Took 571 (the friend-found host) with 557 (the cold mark host) as rider — the 
 ## Cycle 175 — qa
 
 11/11 criteria. Unit 3182; e2e 864/864 on the first full run, no flake.
+
+## Cycle 175 — validator: lore APPROVED / structure APPROVED — the bully learns
+
+There has always been one dino at the hatch that could not learn. The winner of a scramble reads its history with
+whoever is shoving it (401); a dino beaten there before keeps clear on the way in (389); a victor that has won
+before can let the loser eat (403). But the bully — the hungry, prickly one that shoulders past — walked into the
+same bold dino drop after drop, was faced down, slunk off, sulked, and came straight back for more.
+
+Not any more. On the bowl the bullies are Rex, Glade and Mossback, the three prickliest dinos in the park, and
+Mossback and Glade are bold enough to hold their ground. Drop food into a hungry bowl and the first time Rex shoves
+at Mossback, Mossback stands and Rex slinks off. Drop the next piece, and Rex stays where it is: a ⏳ over its head,
+and the ticker says *⏳ Rex waited its turn behind Mossback — Mossback has beaten it here before.* Mossback eats in
+peace. If Glade is hungry too and has no such history, Glade will still push in — a bully learns about one dino at a
+time. It files no memory for waiting, so the lesson lasts exactly as long as the defeat stays in its head.
+
+The other half is for tonight's Artist. When Twitch, the founding park's one friendless dino, finally makes a
+friend, a 🌱 now pops over it in the grass instead of only in a speech bubble — which means the sprig the art queue
+has held since cycle 171 finally has somewhere to be drawn. The cold-night 🥶 got the same treatment on the way past.
+
+Board: build clean, **3182 unit** green, e2e **864/864** on the first full run — no flake tonight. Save untouched.
+CI green going in.
+
+### Milestone 24 — Friendship has an opposite — SHIPPED (cycles 174–175)
+
+Two cycles ago every number between two dinos measured warmth. Now the park keeps grudges: Mossback and Twitch do
+not get on from frame one, the book says so on both their pages, they bristle and one backs off when they bump in
+the grass, every fight over a fish adds to a grudge, and grudges cool if nothing feeds them. And the hatch's pecking
+order has all four of its sides. Three arcs, no REWORK, no ABANDON. The lesson: the bully's half was one function
+over a memory the park already kept, not a new system. Next open, the smiths draft Milestone 25.
