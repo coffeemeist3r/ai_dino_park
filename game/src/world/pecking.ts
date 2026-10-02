@@ -16,7 +16,7 @@
  * dino; this reads the same beats *split by opponent*. Same source, orthogonal questions.
  */
 
-import { GOBBLE_HUNGER, standsGround, WELL_FED } from './feeding';
+import { GOBBLE_HUNGER, gobblerAmong, standsGround, WELL_FED } from './feeding';
 
 export type Disposition = 'confident' | 'wary';
 
@@ -216,4 +216,44 @@ export function mercyLine(victor: string, rival: string): string {
  *  No silent change (CHARTER §Quality bar): if the disposition flipped the outcome, the ticker says so. */
 export function becauseOf(disposition: Disposition, other: string): string {
   return disposition === 'confident' ? ` — it has faced ${other} down before` : ` — ${other} has beaten it here before`;
+}
+
+/**
+ * Reputation cows the bully (BACKLOG-397) — the gobbler's half of the pecking order.
+ *
+ * Every other side of the contest already learns: the winner reads its history (401), a beaten dino keeps clear
+ * on the approach (389), a victor can be gracious (403). The bully alone shouldered into the same dino drop after
+ * drop. Now a gobbler whose own ring reads it as beaten by this winner waits its turn behind it.
+ *
+ * The score alone, without `PECKING_MIN_BEATS`, on purpose: one slink-off (394) weighs the bar by itself, and a
+ * bully that has been stood up to by this dino once *has* been stood up to. A single yield (-1) is not enough.
+ */
+export function cowedBy(memories: readonly string[], winner: string): boolean {
+  return peckingScore(memories, winner) <= -PECKING_BAR;
+}
+
+/**
+ * Who shoulders the winner aside, and who held back from it. With no cowed gobbler this is exactly
+ * `gobblerAmong` and `waited` is null, so a park with no hatch history is unchanged. When the one that would have
+ * pushed is cowed, it waits, and the swarm without any cowed dino gets the next pick — another bully may still
+ * push in.
+ */
+export function cowedGobble(
+  winner: string,
+  winnerHunger: number,
+  candidates: ReadonlyArray<{ name: string; hunger: number; agreeableness: number }>,
+  memoriesOf: (name: string) => readonly string[],
+): { gobbler: string | null; waited: string | null } {
+  const first = gobblerAmong(winner, winnerHunger, candidates);
+  if (!first || !cowedBy(memoriesOf(first), winner)) return { gobbler: first, waited: null };
+  const uncowed = candidates.filter((c) => !cowedBy(memoriesOf(c.name), winner));
+  return { gobbler: gobblerAmong(winner, winnerHunger, uncowed), waited: first };
+}
+
+export const WAIT_ART_KEY = 'wait';
+export const WAIT_GLYPH = '⏳';
+
+/** The ticker line for a bully that waited its turn. No memory is filed for it (the 389 berth rule). */
+export function waitedLine(bully: string, winner: string): string {
+  return `${WAIT_GLYPH} ${bully} waited its turn behind ${winner}${becauseOf('wary', winner)}`;
 }

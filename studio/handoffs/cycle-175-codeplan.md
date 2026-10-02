@@ -62,3 +62,10 @@ stages the *victor's* ring only). QA watches 084/085/086/131 in the full run.
 `.visible` only.
 
 **Estimated touch count:** ~6 files (overlapping WorldScene / reachability with the lore track).
+
+## Shipped (coder)
+
+- 397: `cowedBy` / `cowedGobble` / `waitedLine` / `WAIT_ART_KEY` in pecking.ts; `checkFeeding` routes the gobbler pick through `cowedGobble`; `waitTurn` pops ⏳ + ticker, no memory; `__lastWait`.
+- 571: `FRIEND_FOUND_ART_KEY`; `checkLonerLift` pops the mark via a new shared `popMark` (comfort pop now uses it too); `__friendFoundPops`.
+- 557: `COLD_ART_KEY` / `COLD_GLYPH`; `coldMarks` built by `makeHourMark`.
+- All three keys in `worldPlacedProps`. Build clean; unit 3182 green (+9). New e2e specs 3/3; neighbours (084/085/086/043/081) green.

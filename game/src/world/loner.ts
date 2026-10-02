@@ -94,6 +94,9 @@ export function perkUpLine(name: string): string {
 /** The mark floated when a loner grows its first real friend (BACKLOG-369). */
 export const FOUND_FRIEND_GLYPH = '🌱';
 
+/** The rig key for that mark (BACKLOG-571), popped over the dino by the scene's `popFriendFoundMark`. */
+export const FRIEND_FOUND_ART_KEY = 'friend_found';
+
 /**
  * Did `name` just stop being a loner (BACKLOG-369) — a loner under `before`, no longer one under `after`?
  * Pure read over two bond snapshots: the first time a friendless dino's bond clears the floor, this is the

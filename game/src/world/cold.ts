@@ -17,6 +17,10 @@ import { COMFORT_BOND } from './comfort';
 /** The only season cold enough to leave a dino shivering. */
 export const COLD_SEASON: Season = 'winter';
 
+/** The cold funk's mark (BACKLOG-184) and its rig key (BACKLOG-557), hung over a dino by `refreshColdMarks`. */
+export const COLD_GLYPH = '🥶';
+export const COLD_ART_KEY = 'cold';
+
 /** Did a dino sleep out in the cold? True only on a winter night it never once huddled. */
 export function sleptCold(huddledTonight: boolean, season: Season): boolean {
   return season === COLD_SEASON && !huddledTonight;

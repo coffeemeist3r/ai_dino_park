@@ -71,6 +71,9 @@ import { ROSTER } from '../entities/roster';
 import { CIRCLE_ART_KEY } from '../social/circle'; // BACKLOG-127
 import { COMFORT_ART_KEY } from './comfort'; // BACKLOG-136
 import { STANDOFF_ART_KEY } from '../social/standoff'; // BACKLOG-024
+import { WAIT_ART_KEY } from './pecking'; // BACKLOG-397
+import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
+import { COLD_ART_KEY } from './cold'; // BACKLOG-557
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -180,6 +183,9 @@ export function worldPlacedProps(): Set<string> {
   // BACKLOG-136/572: the hug, popped over a friend by `popComfortMark` as it arrives to console a sore dino.
   out.add(COMFORT_ART_KEY);
   out.add(STANDOFF_ART_KEY); // BACKLOG-024: popped over both rivals by `squareOffPair`
+  out.add(WAIT_ART_KEY); // BACKLOG-397: popped over a cowed bully by `waitTurn`
+  out.add(FRIEND_FOUND_ART_KEY); // BACKLOG-571: popped over a loner by `popFriendFoundMark` as it finds a friend
+  out.add(COLD_ART_KEY); // BACKLOG-557: hung over a cold-slept dino by `refreshColdMarks`
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
   // shown there and 550 was seeded blocked. Keys come from `NEED_ART_KEY` rather than being typed here, so

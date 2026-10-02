@@ -1,6 +1,6 @@
 {
   "cycle": 175,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-397: reputation cows the bully",
   "structureItem": "BACKLOG-571: the friend-found moment's host (+557 rider: the cold mark's host)",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-02T08:12:37.000Z",
     "designer": "2026-10-02T08:13:36.000Z",
     "code-planner": "2026-10-02T08:14:06.000Z",
-    "coder": "2026-10-01T08:40:00.000Z",
+    "coder": "2026-10-02T08:17:34.000Z",
     "qa": "2026-10-01T09:15:00.000Z",
     "validator": "2026-10-01T09:20:00.000Z",
     "artist": "2026-10-01T09:45:00.000Z"

@@ -135,18 +135,18 @@ import {
   ROUSE_ART_KEY,
   type Chronotype,
 } from '../world/chronotype';
-import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName } from '../world/cold';
+import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName, COLD_ART_KEY, COLD_GLYPH } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
-import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine, cowedGobble, waitedLine, WAIT_ART_KEY, WAIT_GLYPH } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
 import { pickMurmurMemory, murmurLine, dreamBookLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
 import { firstGroveArrival, groveArrivalMemory, groveArrivalLine, firstPondSight, pondSightMemory, pondSightLine } from '../world/arrival';
-import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_ART_KEY, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
+import { isLoner, LONER_FLOOR, LONER_BONUS, MOPE_GLYPH, MOPE_ART_KEY, MOPE_CHANCE, edgeTarget, perkUpLine, liftsLoner, foundFriendMemory, foundFriendLine, FRIEND_FOUND_ART_KEY, FOUND_FRIEND_GLYPH, comfortsLoner, comfortFoodMemory, comfortFoodLine, leansOnKeeper, keeperEdgeTarget, leanMemory } from '../world/loner';
 import { advanceNeeds, pressingNeed, satisfy, needSeeks, isStarving, NEED_ART_KEY, NEED_GLYPH, type Needs, type NeedKind } from '../world/needs';
 import { spreadGossip, RUMOR_MARK } from '../social/gossip';
 import { recordCall, COUNCIL_CAUSE, BILL_CAUSE, type CauseLog } from '../world/gates';
@@ -186,7 +186,7 @@ import {
 } from '../world/missed'; // BACKLOG-116
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey, stakeUpkeepStep } from '../world/stake';
 import { foundingKind } from '../world/founding';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, gobblerAmong, slunkOffMemory, sharedMeal, refusesFood, refusedMemory, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, slunkOffMemory, sharedMeal, refusesFood, refusedMemory, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, foodPileLine, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
@@ -696,6 +696,10 @@ export class WorldScene extends Phaser.Scene {
   private lastGobble: { winner: string; gobbler: string } | null = null;
   /** The last stand-up beat (BACKLOG-390): a bold winner that held its food against a gobbler, or null. Transient. */
   private lastStand: { winner: string; gobbler: string } | null = null;
+  /** BACKLOG-397: the last bully that waited its turn behind a dino that had faced it down, or null. */
+  private lastWait: { bully: string; winner: string } | null = null;
+  /** BACKLOG-571: how many friend-found marks have popped, for the e2e. */
+  private friendFoundPops = 0;
   /** The last mercy beat (BACKLOG-403): a well-fed victor that gave a rival it had faced down the scrap. Transient. */
   private lastMercy: { victor: string; rival: string } | null = null;
   /** The last grateful-nuzzle beat (BACKLOG-386): who threw a 💛 at whom on a yield, or null. Transient. */
@@ -800,7 +804,7 @@ export class WorldScene extends Phaser.Scene {
   /** Keeper's warmth (BACKLOG-184): who still carries the cold funk (transient day-state,
    *  never persisted — like pendingRepair) and its 🥶 marks, index-aligned like sleepMarks. */
   private coldPending = new Set<string>();
-  private coldMarks: Phaser.GameObjects.Text[] = [];
+  private coldMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
   /** The loner (BACKLOG-135): the 🥀 mope mark, index-aligned like sleepMarks. Loner status itself is
    *  derived live from the bond graph (no persisted state — the bonds are already saved). */
   private mopeMarks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = [];
@@ -1807,6 +1811,10 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__gobbleFood = () => (this.lastGobble ? { ...this.lastGobble } : null);
     // BACKLOG-390: the last stand-up beat (a bold winner that held its ground against a gobbler) or null.
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
+    // BACKLOG-397: the last bully that waited its turn (cowed by a winner that had faced it down) or null.
+    (window as any).__lastWait = () => (this.lastWait ? { ...this.lastWait } : null);
+    // BACKLOG-571: how many friend-found marks have popped.
+    (window as any).__friendFoundPops = () => this.friendFoundPops;
     // BACKLOG-389: the last berth beat (who hung back from whom at this drop) or null.
     (window as any).__berth = () => (this.lastBerth ? { ...this.lastBerth } : null);
     // BACKLOG-403: the last mercy beat (a victor that let a rival it had faced down have the scrap) or null.
@@ -3014,7 +3022,12 @@ export class WorldScene extends Phaser.Scene {
     if (this.refuseFood(eater)) return;
     // BACKLOG-387: the winner is keeping its food — but a hungry, prickly dino beside it in the swarm
     // won't wait its turn and shoulders past to eat first (the selfish inverse of the 375 yield).
-    const gobblerName = gobblerAmong(eater.name, eaterHunger, candidates);
+    // BACKLOG-397: a gobbler that has been faced down by this winner before waits its turn instead.
+    const { gobbler: gobblerName, waited } = cowedGobble(eater.name, eaterHunger, candidates, (n) =>
+      recall(this.memory, n),
+    );
+    if (waited) this.waitTurn(waited, eater.name);
+    else this.lastWait = null;
     if (gobblerName) {
       this.resolveContest(eater, gobblerName);
     } else {
@@ -3034,6 +3047,7 @@ export class WorldScene extends Phaser.Scene {
    * fresh park behaves as it did before this existed.
    */
   private resolveContest(eater: Dino, gobblerName: string): void {
+    this.lastWait = null;
     this.grudges = strengthen(this.grudges, eater.name, gobblerName, GRUDGE_PER_CONTEST); // BACKLOG-574: either way it goes
     const disposition = dispositionToward(recall(this.memory, eater.name), gobblerName);
     const because = disposition ? becauseOf(disposition, gobblerName) : ''; // no silent change
@@ -3149,11 +3163,32 @@ export class WorldScene extends Phaser.Scene {
     this.pendingConsole = c.steps <= 1 ? null : { ...c, steps: c.steps - 1 };
   }
 
+  /**
+   * The bully waits its turn (BACKLOG-397): a ⏳ over it and a ticker line. No memory — the ring the caution is
+   * read from must not be rolled by the caution itself (the 389 berth rule).
+   */
+  private waitTurn(bully: string, winner: string): void {
+    this.lastWait = { bully, winner };
+    this.logEvent(waitedLine(bully, winner));
+    this.popMark(this.dinoByName(bully), WAIT_ART_KEY, WAIT_GLYPH);
+  }
+
+  /** The sprig over a loner as it finds its first friend (BACKLOG-571 hosts it; 568 draws it). */
+  private popFriendFoundMark(d: Dino): void {
+    if (this.popMark(d, FRIEND_FOUND_ART_KEY, FOUND_FRIEND_GLYPH)) this.friendFoundPops++;
+  }
+
+  /** A one-shot mark over a dino for ~1.2 s, in view only (the comfort/standoff pop). */
+  private popMark(d: Dino | undefined, key: string, glyph: string): boolean {
+    if (!d || !this.inView(d)) return false;
+    const mark = this.makeHourMark(key, glyph).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
+    this.time.delayedCall(1200, () => mark.destroy());
+    return true;
+  }
+
   /** The hug over the friend as it arrives (BACKLOG-572 draws it; the glyph until then). */
   private popComfortMark(d: Dino): void {
-    if (!this.inView(d)) return;
-    const mark = this.makeHourMark(COMFORT_ART_KEY, COMFORT_GLYPH).setPosition(d.x, d.y - TILE * 0.9).setVisible(true);
-    this.time.delayedCall(1200, () => mark.destroy());
+    this.popMark(d, COMFORT_ART_KEY, COMFORT_GLYPH);
   }
 
   /**
@@ -4121,9 +4156,7 @@ export class WorldScene extends Phaser.Scene {
     this.activityMarks.push(
       this.add.text(0, 0, '', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
     );
-    this.coldMarks.push(
-      this.add.text(0, 0, '🥶', { fontSize: '12px' }).setOrigin(0.5, 1).setDepth(12).setVisible(false),
-    );
+    this.coldMarks.push(this.makeHourMark(COLD_ART_KEY, COLD_GLYPH)); // BACKLOG-557's host
     // BACKLOG-556/551: through the mark family's rig lookup rather than a bare Text, so the wilt can
     // be an authored sprite the moment one exists. `makeHourMark` falls back to the glyph while
     // `hasPropArt` is false, so this renders exactly as it did before until the Artist lands the rig.
@@ -4799,7 +4832,10 @@ export class WorldScene extends Phaser.Scene {
     this.leanFiled.delete(name); // BACKLOG-370: the waiting is over — a later bout can be remembered afresh
     this.memory = remember(this.memory, name, foundFriendMemory());
     const d = this.dinoByName(name);
-    if (d) this.showBubble(d, foundFriendLine(name));
+    if (d) {
+      this.showBubble(d, foundFriendLine(name));
+      this.popFriendFoundMark(d);
+    }
   }
 
   /** The need-drive 🍖/💧 (BACKLOG-371): the more pressing need, above the cold/mope slot. */
