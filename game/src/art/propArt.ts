@@ -2210,6 +2210,84 @@ const STANDOFF_RIG: PropRig = {
   },
 };
 
+// `friend_found` (BACKLOG-568, cycle 175-art): the sprig that pops over a loner the moment it grows its first
+// friend (369; host 571). The 🌱 — two leaves opening off one short stem — because the moment is something
+// starting, not something won.
+//
+// First draft rejected: the stem stood in a little clump of soil. At 16px the clump turned it into a potted
+// plant, or a tree on a hill — a *place*, not a moment. The soil is gone; the stem just ends in the rim. Spring
+// green, lit upper-left, family rim; the stem is a cell darker than the leaves so the fork reads.
+const FRIEND_FOUND_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '.oooo......oooo.',
+  'ohLLLo....ohLLLo',
+  'oLLLLLo..oLLLLlo',
+  'oLLLLLlooLLLLllo',
+  '.oLLLllooLLlllo.',
+  '..ollllSSllllo..',
+  '...ooooSsoooo...',
+  '......oSso......',
+  '......oSso......',
+  '......oSso......',
+  '......oooo......',
+  '................',
+  '................',
+  '................',
+];
+
+const FRIEND_FOUND_RIG: PropRig = {
+  size: 16,
+  grid: FRIEND_FOUND_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    L: 0x6cc04a, // the leaves — spring green
+    l: 0x3f8a2e, // their shade, lower right
+    h: 0xb8e878, // the lit tip, upper left
+    S: 0x5a9a3a, // the stem
+    s: 0x3a6a26, // its shade
+  },
+};
+
+// `wait` (BACKLOG-576, cycle 175-art): the ⏳ over a bully that waits its turn behind a dino that faced it down
+// (397). An hourglass with its sand still mostly on top — the wait has only just begun — so it reads as
+// *holding back*, not as a clock telling the time.
+//
+// First draft rejected (on paper, before a cell was inked): a raised palm, 🫷. At 16px a hand is a mitten, and an
+// open palm over a dino reads as a wave hello — the opposite of a dino keeping its distance. Wood caps, pale
+// glass, warm sand; family rim. The plaque's `sitting` is also an hourglass, deliberately left distinct: that one
+// is engraved brass on the plate, this one is coloured and hangs over a dino, so the two never share a frame.
+const WAIT_GRID: ReadonlyArray<string> = [
+  '................',
+  '...oooooooooo...',
+  '...oWWWWWWWWo...',
+  '...oooooooooo...',
+  '....oGyyyyGo....',
+  '....oGyyyyGo....',
+  '.....oGyyGo.....',
+  '......oyyo......',
+  '......oGGo......',
+  '.....oGGGGo.....',
+  '....oGGGGGGo....',
+  '....oGGyyGGo....',
+  '...oooooooooo...',
+  '...oWWWWWWWWo...',
+  '...oooooooooo...',
+  '................',
+];
+
+const WAIT_RIG: PropRig = {
+  size: 16,
+  grid: WAIT_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    W: 0xc08a4a, // the caps — warm wood
+    G: 0xd8ecf0, // the glass — pale
+    y: 0xf0c040, // the sand
+  },
+};
+
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2461,6 +2539,10 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-575 (cycle 174-art): the bristle, drawn the night its host shipped — `squareOffPair` pops it over
   // both rivals as they square off (BACKLOG-024).
   standoff: STANDOFF_RIG,
+  // BACKLOG-568 / 576 (cycle 175-art): both drawn the night their hosts shipped — `popFriendFoundMark` (571) and
+  // `waitTurn` (397).
+  friend_found: FRIEND_FOUND_RIG,
+  wait: WAIT_RIG,
 };
 
 /**

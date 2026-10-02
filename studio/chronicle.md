@@ -14168,3 +14168,24 @@ not get on from frame one, the book says so on both their pages, they bristle an
 the grass, every fight over a fish adds to a grudge, and grudges cool if nothing feeds them. And the hatch's pecking
 order has all four of its sides. Three arcs, no REWORK, no ABANDON. The lesson: the bully's half was one function
 over a memory the park already kept, not a new system. Next open, the smiths draft Milestone 25.
+
+## Cycle 175-art — artist: BACKLOG-568 the friend-found sprig + BACKLOG-576 the wait mark
+
+Both drawn the night their hosts shipped. The **sprig** that pops over a loner as it finds its first friend: two
+spring-green leaves opening off one short stem. The first draft planted the stem in a little clump of soil, and at
+16px that made it a potted plant, or a tree on a hill — a place rather than a moment — so the soil went and the stem
+just ends. The **wait mark** over a cowed bully is an hourglass with its sand still mostly on top, because the wait
+has only just started. A raised palm was the first idea and was rejected before a cell was inked: an open hand over a
+dino reads as a wave hello. The plaque's `sitting` register is also an hourglass, but engraved brass on the plate —
+the two never share a frame. The art queue that held 568 since cycle 171 is empty for the first time; the next
+Lore-smith seeds it.
+
+Board: unit 3196 green; e2e 864/865 — the one miss was `cycle-037-keeper` failing at `page.goto` with
+`net::ERR_NO_BUFFER_SPACE` (Windows socket exhaustion under parallel load, not the game), 20/20 isolated; the
+cycle's own full run an hour earlier was 864/864.
+
+## Cycle 175 — housekeeping
+
+Closed 397, 571, 557, 568, 576 to the archive; dropped two emptied backlog headers. Structure Track at **2** (563, 573)
+— under X, so the next Structure-smith brainstorms. Milestone 24 SHIPPED; none active. CI: last three runs on `main`
+`success`.
