@@ -14123,3 +14123,7 @@ The bully learns: 397 (a gobbler stood up to waits its turn) — the last open a
 ## Cycle 175 — structure-smith
 
 Took 571 (the friend-found host) with 557 (the cold mark host) as rider — the last two bare marks. Track drained to 2 if both ship.
+
+## Cycle 175 — designer
+
+397: a gobbler that has slunk off from a winner waits its turn behind it (⏳), and another bully may push in instead. 571: the friend-found 🌱 gets a placed mark; 557 rider: the 🥶 goes through makeHourMark.
