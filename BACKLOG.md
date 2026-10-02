@@ -20,9 +20,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
+- [~] BACKLOG-557 [infra] The cold mark's host — the other bare `Text` (full text in the cycle-165 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [ ] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
+- [~] BACKLOG-571 [infra] The friend-found moment's host (full text in the cycle-172 block below).
 - [ ] BACKLOG-573 [infra] The export row sits under Talk (full text in the cycle-173 block below).
 
 ---
@@ -653,7 +653,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 165 (Structure-smith)
 
-- [ ] BACKLOG-557 [infra] The cold mark's host — the second of the two bare `Text` marks the art queue keeps tripping over, and the twin of the one tonight's 533 rider fixes. `coldMarks` is pushed in `spawnDino` as a literal `this.add.text(0, 0, '🥶', ...)` (WorldScene, beside `activityMarks`) rather than through `makeHourMark`, so `hasPropArt('cold')` can never be consulted and a `cold` rig would have nowhere to be blitted — exactly the shape the cycle-156 and cycle-157 corrections named for the sulk. The work is the `mope`/`sulk` shape and nothing more: a `COLD_ART_KEY` exported from `world/cold.ts` (where the funk's own constants live), the push routed through `makeHourMark`, the key added to `worldPlacedProps` because `refreshColdMarks` already places it, and the existing visibility rule left untouched. It is small, it is mechanical, and it is the difference between the Artist being able to draw the keeper's oldest unmended feeling and not. Seeded rather than taken because the Structure Track's top item came due tonight on a date, not on a preference. Builds on 184 / 551 / 556.
+- [~] BACKLOG-557 [infra] The cold mark's host — the second of the two bare `Text` marks the art queue keeps tripping over, and the twin of the one tonight's 533 rider fixes. `coldMarks` is pushed in `spawnDino` as a literal `this.add.text(0, 0, '🥶', ...)` (WorldScene, beside `activityMarks`) rather than through `makeHourMark`, so `hasPropArt('cold')` can never be consulted and a `cold` rig would have nowhere to be blitted — exactly the shape the cycle-156 and cycle-157 corrections named for the sulk. The work is the `mope`/`sulk` shape and nothing more: a `COLD_ART_KEY` exported from `world/cold.ts` (where the funk's own constants live), the push routed through `makeHourMark`, the key added to `worldPlacedProps` because `refreshColdMarks` already places it, and the existing visibility rule left untouched. It is small, it is mechanical, and it is the difference between the Artist being able to draw the keeper's oldest unmended feeling and not. Seeded rather than taken because the Structure Track's top item came due tonight on a date, not on a preference. Builds on 184 / 551 / 556.
 
 ')`, so there is no per-line object for an engraved register to be, and no line on the brass can carry art while that is true. The pressure is now three lines long rather than two — 555 put the watcher's tenure on it last cycle, beside the sitting and the streak — and all three of those are lines about the *keeper* rendered at the same weight as a count of specimens. Give the plaque an array of `Text` objects, one per rendered line, laid out at a fixed pitch, with `plaqueLines` unchanged and still pure: the scene stops joining and starts iterating. That alone unblocks 539 and makes "this line is about you" expressible at all. Do **not** take the visual pass with it — the geometry change is the item, the engraving is 539's. Builds on 058 / 539 / 122 / 555.
 
@@ -668,7 +668,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 172 (Structure-smith)
 
-- [ ] BACKLOG-571 [infra] The friend-found moment's host — `checkLonerLift` (369) shows a bubble and nothing placed, which is why 568's sprig sits blocked. Route a one-shot pop through `makeHourMark` under a `FRIEND_FOUND_ART_KEY`, the `popCallNote` shape, and add the key to `worldPlacedProps`. Small and mechanical; unblocks the art queue's oldest item.
+- [~] BACKLOG-571 [infra] The friend-found moment's host — `checkLonerLift` (369) shows a bubble and nothing placed, which is why 568's sprig sits blocked. Route a one-shot pop through `makeHourMark` under a `FRIEND_FOUND_ART_KEY`, the `popCallNote` shape, and add the key to `worldPlacedProps`. Small and mechanical; unblocks the art queue's oldest item.
 
 ## Cycle 173 (Validator)
 
