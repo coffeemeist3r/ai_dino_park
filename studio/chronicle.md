@@ -14127,3 +14127,7 @@ Took 571 (the friend-found host) with 557 (the cold mark host) as rider — the 
 ## Cycle 175 — designer
 
 397: a gobbler that has slunk off from a winner waits its turn behind it (⏳), and another bully may push in instead. 571: the friend-found 🌱 gets a placed mark; 557 rider: the 🥶 goes through makeHourMark.
+
+## Cycle 175 — codeplan
+
+397: `cowedGobble` wraps `gobblerAmong` in pecking.ts; one call site. 571/557: two keys, two `makeHourMark` routings.
