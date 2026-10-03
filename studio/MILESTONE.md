@@ -8,7 +8,20 @@
 
 ## Current milestone
 
-_None active — the smiths draft Milestone 25 at the next cycle open._
+**Milestone 25: The hatch has an audience — the park watches who stands up and who shoves, and it remembers**
+**Status:** ACTIVE (opened cycle 176)
+
+For four milestones the hatch has been a contest between two dinos. Everyone else on the ground was furniture.
+This milestone gives the scramble witnesses: the friend who sees a dino hold its ground thinks better of it and
+says so to the next dino it meets, and the warm dino that shoved past a friend when it was starving feels it.
+
+**Lore arcs:**
+- [ ] A friend who watches a dino stand up to a gobbler admires it — a 👏 over the witness, a warmer bond, and a "saw X stand up to Y" that travels as gossip (BACKLOG-395)
+- [ ] A normally-warm dino that shoved past a friend files a regret, and its next words to that friend are softer for it (BACKLOG-391)
+
+**Structure arcs:**
+- [ ] The hatch's memory strings are builders in one place, so every reader matches the string the writer wrote (BACKLOG-483)
+- [ ] A standoff in the grass counts at the hatch — the founding feud alone makes 389's berth and 401's history reachable (BACKLOG-577)
 
 ---
 

@@ -76,6 +76,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
+- [ ] BACKLOG-579 [art] The admire mark — the 👏 popped over a dino that has just watched a friend hold its ground at the hatch (BACKLOG-395 hosts it through `popMark`, cycle 176). Gen3 pixel rig in the mark family, 16px read: approval, not applause-for-a-show and not a wave. Builds on 395 / 576.
+
 ## Cycle 163 structure additions — the watcher is a save field (2026-09-17)
 
 
