@@ -4,6 +4,7 @@ import { PROP_RIGS, propCharsUsed } from '../../game/src/art/propArt';
 describe('resource + cairn pixel props (BACKLOG-296)', () => {
   it('draws branch, stone, frond, and cairn (+ the crop stages, BACKLOG-317/419/418; + the stashed thatch, 427)', () => {
     expect(Object.keys(PROP_RIGS).sort()).toEqual([
+      'admire', // BACKLOG-579 (cycle 176-art): the gold star over a friend who saw a dino stand up at the hatch (host 395)
       'beacon', // BACKLOG-508: the Ridge's landmark, set from the black glass
       'beacon_derelict', // BACKLOG-532 (cycle 151-art): the fifth and last landmark to draw its own ruin
       'branch',

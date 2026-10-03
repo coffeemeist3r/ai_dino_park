@@ -2288,6 +2288,44 @@ const WAIT_RIG: PropRig = {
 };
 
 
+// `admire` (BACKLOG-579, cycle 176-art): the 👏 over a friend who has just watched a dino hold its ground at the
+// hatch (395). A gold star — the star a teacher sticks on good work — because the beat is *approval*: the witness
+// thinks better of the one it saw, it is not cheering a show.
+//
+// First draft rejected: the clapping hands themselves. At 16px two hands are two mittens pressed together, a pale
+// blob with a seam down it, and the motion that makes a clap a clap is exactly what a one-frame pop cannot carry.
+// The star is the one silhouette in the family with points; lit upper left, shaded lower right, family rim.
+const ADMIRE_GRID: ReadonlyArray<string> = [
+  '................',
+  '.......oo.......',
+  '......oYYo......',
+  '......oYYo......',
+  '.....oYhYYo.....',
+  'ooooooYhYYoooooo',
+  'oYYYYYhYYYYYYYYo',
+  '.oYhYYYYYYYYYYo.',
+  '..oYYYYYYYYYyo..',
+  '...oYYYYYYYyo...',
+  '...oYYYYYYyyo...',
+  '..oYYYYooYYyyo..',
+  '..oYYYo..oYyyo..',
+  '.oYYo......oyyo.',
+  '.ooo........ooo.',
+  '................',
+];
+
+const ADMIRE_RIG: PropRig = {
+  size: 16,
+  grid: ADMIRE_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    Y: 0xf0c848, // the star — gold
+    h: 0xfff0a8, // the lit edge, upper left
+    y: 0xc08a28, // its shade, lower right
+  },
+};
+
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2543,6 +2581,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // `waitTurn` (397).
   friend_found: FRIEND_FOUND_RIG,
   wait: WAIT_RIG,
+  // BACKLOG-579 (cycle 176-art): drawn the night its host shipped — `admireStand` (395).
+  admire: ADMIRE_RIG,
 };
 
 /**
