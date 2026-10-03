@@ -2,7 +2,7 @@
   "cycle": 176,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-395: Witnessed backbone",
-  "structureItem": null,
+  "structureItem": "BACKLOG-573: The export row sits under Talk (+483 rider)",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-03T08:11:39.000Z",
-    "structure-smith": "2026-10-02T08:12:37.000Z",
+    "structure-smith": "2026-10-03T08:12:24.000Z",
     "designer": "2026-10-02T08:13:36.000Z",
     "code-planner": "2026-10-02T08:14:06.000Z",
     "coder": "2026-10-02T08:17:34.000Z",

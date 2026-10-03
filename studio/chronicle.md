@@ -14193,3 +14193,7 @@ Closed 397, 571, 557, 568, 576 to the archive; dropped two emptied backlog heade
 ## Cycle 176 — lore-smith
 
 Milestone 25 opened: the hatch has an audience. Lore arcs 395 (witnessed backbone) and 391 (guilty gobbler); art 579 seeded with its host.
+
+## Cycle 176 — structure-smith
+
+Took 573 (the export row off Talk) with 483 riding (hatch memory builders, Milestone 25 spine). Seeded 577 and 578; track at 4 after tonight.
