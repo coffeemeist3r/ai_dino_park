@@ -84,6 +84,25 @@ shipped (big chronicle entry), then the smiths draft the next. Cycles serve the
 milestone — the smiths pick items that advance its checklist first; off-milestone
 picks are allowed but need a one-line justification in the handoff.
 
+### Tentpole milestones (v9)
+
+**Every other milestone is a tentpole.** A tentpole is a new *system* from the North Star — not a
+fifth variant of one the park already has — taken from the **Tentpole queue** in `studio/MILESTONE.md`
+in order. The milestone after a tentpole is a normal one, which is where the tentpole gets polished,
+voiced and woven into what exists. Then the next tentpole.
+
+- **Both tracks serve it.** For a tentpole's whole run the Lore-smith and the Structure-smith pick its
+  arcs and nothing else; an off-tentpole pick is not allowed, not merely justified.
+- **It may run long.** A tentpole is done when its headline is true in a fresh save, not after a cycle
+  count. Items stay arc-sized (≤ ~15 files per cycle); the *milestone* is what grows.
+- **The caps do not bind it.** The Lore-smith may seed a tentpole's arcs whatever the social queue's depth.
+- **The solo cycle is open to it.** The Structure-smith may declare a solo cycle for a tentpole's spine
+  without the "passed over twice" condition (the one-in-ten limit still holds).
+- **The reachability bar is unchanged.** Every cycle of a tentpole must answer the ten-minute question;
+  "groundwork for the tentpole" is still a REWORK. Ship the visible slice first, deepen it after.
+- **Models stay optional.** A tentpole that leans on the LLM ships its deterministic floor in the same
+  cycle (Living minds: never at the cost of the thing running).
+
 ## Routine contract (the chain)
 
 One full cycle = **two** BACKLOG items advanced in parallel: one **lore-track**
@@ -171,6 +190,8 @@ The human will NOT:
 ## Amendment log
 
 - 2026-09-04: v8 — **The solo cycle (operator ruling).** The Structure-smith may declare a cycle in which the structure track runs alone, capped at one in ten, for a top-of-queue item too large to run beside a lore track and unsplittable at a playable seam. *Why: BACKLOG-495 (the declared founding fixture) sat top of the Structure Track from cycle 136 to cycle 150 and was passed over five consecutive times, every time for the same honest reason — its scope is a fixture seam across ~550 specs, which is not one Coder fire alongside a lore track. It was paid for instead in roughly twelve scattered instalments (`gatherToBowl`, `emptyGrounds`, `__seedGranaryReady`, and nine more by cycle 146's count), two of which were about time rather than founding state, a use the item never anticipated. The routines could not fix this themselves: the two-track shape is the CHARTER's, and a routine granting itself a single-track cycle is a routine amending the constitution. The cycle-150 Validator routed the choice to the operator with two options; the operator took this one. The reachability bar is explicitly **not** relaxed — a solo cycle buys a whole Coder fire, not an exemption from being visible.* Operator-approved.
+
+- 2026-10-03: v9 — **Tentpole milestones (operator ruling).** Every other milestone is a tentpole: a new North Star system drawn in order from a Tentpole queue in `studio/MILESTONE.md`, served by both tracks for its whole run, allowed to span as many cycles as its headline needs, exempt from the seeding caps, and eligible for a solo cycle without the passed-over condition. The reachability bar is unchanged. *Why: after cycle 176 the operator observed "plenty of small changes but nothing earth shattering", and it was structural — one item per track per Coder fire, a social cap that has been saturated for over a hundred cycles, and milestones that each grew from the last (friendship → grudges → the hatch's audience) meant the big North Star items (104 minds that act, 014 reflection, 026 festivals, 023 molting, 030 religion) had sat untouched since the first cycles. First queue, operator-chosen: minds that act and reflect (104 + 014), festivals (026), growing up (023).* Operator-approved.
 
 - 2026-05-25: Charter v0 — bootstrap.
 - 2026-06-01: v1 — added "Living minds" core goal (distinct per-dino personas, LLM-authored-from-lore with deterministic procedural fallback, generate-once/cache/persist, device-graded degradation, minds that act). Human-approved. Seeds BACKLOG-102/103/104.

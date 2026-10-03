@@ -40,6 +40,22 @@ says so to the next dino it meets, and the warm dino that shoved past a friend w
 - [ ] <arc> (BACKLOG-NNN)
 ```
 
+## Tentpole queue (CHARTER v9)
+
+> Every other milestone is a tentpole, taken from the top of this list. Milestone 25 is a normal milestone,
+> so **Milestone 26 is the first tentpole**. The operator owns this list's contents; the smiths own the arcs.
+> When a tentpole ships, strike it here and note the milestone number.
+
+1. **Minds that act and reflect** (BACKLOG-104 + BACKLOG-014) — a dino's persona chooses what it *does* (where it
+   goes, whom it seeks, how it answers an event), and at dusk it sums its day into a memory that shapes tomorrow's
+   choices. The player should be able to watch two dinos with the same circumstances make different days. Builds on
+   012 (daily plan) and 393 (brain-biased intent); deterministic persona-driven floor when no model is loaded.
+2. **Festivals** (BACKLOG-026) — once a season the whole park gathers at a landmark for a festival with its own
+   ritual, dialogue and memories, and who comes, who leads and who sulks at the edge reads off the bond and grudge
+   graphs. At the default clock a season must arrive within a sitting, or the first festival must be reachable early.
+3. **Growing up** (BACKLOG-023) — dinos molt into an adult form: a new sprite, a shifted temperament, a book entry
+   for the change. Hatchlings from the egg arc should be the first to do it.
+
 ## Shipped milestones
 
 ### Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off — SHIPPED cycle 175 (opened cycle 174)
