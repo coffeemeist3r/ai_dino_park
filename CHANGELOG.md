@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 176 — 2026-10-03 (the hatch has an audience)
+- BACKLOG-395: Witnessed backbone — when a dino holds its ground against a gobbler at the hatch, every dino on that ground within seven tiles of the drop that counts the holder as a friend (bond ≥ 10) sees it: a 👏 pops over the witness, its bond to the holder rises by 2, it remembers *you saw Mossback stand up to Rex*, and the ticker says *👏 Glade saw Mossback stand up to Rex*. The memory is first-hand, so the gossip spine retells it at the witness's next meeting. Host for art BACKLOG-579.
+- BACKLOG-573 + BACKLOG-483: The More sheet's columns are nine rows at a 35px pitch, so no row sits on the Talk button any more (`export` heads the second column), and the clearance test covers every row. The four contested-drop memories are exported builders beside `slunkOffMemory`, and `manner.ts` / `pecking.ts` read them through `hatchPattern`, so a reword moves every reader with it.
+
+---
+
 ## Cycle 175 — 2026-10-02 (the bully learns)
 - BACKLOG-397: Reputation cows the bully — a gobbler whose own recent hatch history has it beaten by the winner (one slink-off is enough) no longer shoulders that dino: it waits its turn, a ⏳ pops over it, and the ticker says *⏳ Rex waited its turn behind Mossback — Mossback has beaten it here before*. Another, uncowed bully in the swarm can still push in. No memory filed for the wait. `cowedGobble` in `world/pecking.ts` wraps `gobblerAmong` and is exactly it when no one is cowed. +7 unit, +2 e2e. No save change. **Milestone 24 lore arc 2 ✅ — Milestone 24 SHIPPED.** (lore track)
 - BACKLOG-571 + BACKLOG-557: The last two bare marks get hosts — the friend-found moment now pops a 🌱 over the dino as it grows its first friend (not only a bubble), and the cold funk's 🥶 is built through the mark family, so a rig can replace either. Both keys in `worldPlacedProps`. Comfort, wait and friend-found pops share one `popMark`. +2 unit, +1 e2e. No save change. (structure track)

@@ -30,4 +30,4 @@ and admired the stand too. The spec now asserts Glade is among the witnesses and
 `cycle-173-sheet-columns` failed twice on the very first targeted run (cold Vite, run beside a fresh spec) and
 passed 3/3 immediately after and in the full run — the known cold-boot flake, not the geometry.
 
-**11/11 criteria pass.**
+**9/9 criteria pass.** (The stage commit says 11/11 — a miscount; five lore + four structure.)

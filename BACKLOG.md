@@ -21,8 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [~] BACKLOG-573 [infra] The export row sits under Talk (full text in the cycle-173 block below). *(cycle 176, with 483 rider)*
-- [~] BACKLOG-483 [infra] The hatch's memory strings, as builders (full text in the cycle-163 block below). *(cycle 176 rider — Milestone 25 spine)*
 - [ ] BACKLOG-577 [core] Standoffs count at the hatch (full text in the cycle-176 block below). *(Milestone 25 spine)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 
@@ -87,7 +85,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-037 [infra] GitHub Actions CI — npm run build, vitest, playwright on every push
 - [ ] BACKLOG-038 [infra] Vitest scaffold — at least one passing unit test
 - [ ] BACKLOG-039 [infra] Playwright scaffold — at least one passing e2e test (game loads)
-- [~] BACKLOG-483 [infra] The hatch's memory strings, as builders — the four contested-drop memories (375 yield, 387 gobble, 390 stand, 394 slink-off) are template literals inside `checkFeeding`, and **two** pure modules now parse them back out: `manner.ts` (402) folds them into a table manner, `pecking.ts` (401) reads them per opponent. Only 394 has an exported builder (`slunkOffMemory`), so a reword of the other three empties both reads *silently* — no test fails, the book line just stops appearing. Export a builder per beat beside `slunkOffMemory` and have both modules and both specs match against them, so the string is one thing in one place. The cycle-127 finding, applied to the three strings it didn't cover. Builds on 402 / 401 / 394.
 
 ## Cycle 1 lore additions (2026-05-25)
 
@@ -626,7 +623,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > bully's retreat, a witness's admiration, a legible spine, and a reputation that eventually cows the bully —
 > the defiance half of the 389-392 scramble thread. Also seeds the operator's brain-decisions nudge (393).
 
-- [ ] BACKLOG-395 [emergent] Witnessed backbone — a dino that watches a friend hold its ground against a gobbler (390) admires it: a small bond nudge toward the bold one and a "saw <bold> stand up to <gobbler>" that can travel as gossip. Courage is socially rewarded. Builds on 390 / 019 / 013.
 - [ ] BACKLOG-396 [pokemon] Backbone in the book — the collection book tracks how often each dino has held its ground at the hatch ("held the line 3×"), the counter-standing to 392's "grabbed first", so defiance is legible too. Builds on 390 / 392 / 021.
 
 ## Cycle 88 — the ritual, seen
@@ -663,12 +659,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — the scene carries `lastSound`, `lastAnswer` and `lastDistress` as three parallel observation fields, each written at a different subset of the four `playChirp` call sites, and **the mute rule already differs between them**: `lastSound` is set only inside `if (!soundMuted())`, while `lastAnswer` and `lastDistress` are set unconditionally and document *why* (the beat is diegetic; mute gates playback, not the event). Both rules are right; the problem is that which one applies is decided per call site by whoever wrote it, so "did the park make this sound" and "did this beat happen" are the same question asked of three fields with three answers. A spec can therefore pass on a park that is silent, which is the exact class of defect CHARTER v7 exists to catch, one layer down. The work: one `voiceLog` — an append-only ring of `{ kind, name?, params, atMs, played: boolean }`, written at a single seam that every call goes through (natural once 559's bus exists, since every call already routes through one place), with `played` carrying the mute answer instead of presence-versus-absence carrying it. The three fields become reads over the log, so no spec has to change in the same cycle. Builds on 559 / 194 / 193 / 501.
 
-## Cycle 173 (Validator)
-
-- [~] BACKLOG-573 [infra] The export row sits under Talk — found by cycle 173's QA while 552 gave the More sheet a second column: the first column's tenth row (`export`, y 373–403, x 460–628) has always overlapped the top of the Talk button (centre y 396, r 30, so from y 366). Buttons dispatch before sheet rows, so a thumb on the lower-right of that row greets whoever is nearest instead of exporting. The fix is geometry and belongs in `sheetRows`: the rarest verb moves to the second column (it has six free seats) or the first column stops at nine, and `tests/unit/touch.test.ts`'s clearance check widens from the new column to every row — which is the assertion that would have caught this when the sheet first shipped (BACKLOG-189). Small; the Talk button is the most-pressed control on the phone.
 
 ## Cycle 176 (Structure-smith)
 
 - [ ] BACKLOG-577 [core] Standoffs count at the hatch — the rivals' standoff in the grass (024) files `you stared down X` / `X stared you down`, and the pecking reads (401 disposition, 389 berth, 397 cowed) never look at them, because they only know the four hatch strings. So the one pair the founding park guarantees will clash — Mossback and Twitch, on the bowl from frame one — clash over and over and none of it carries to the next drop. Weigh a stare-down into `pecking.ts`'s table (lighter than a stand: it was a bristle, not a meal), through the builders 483 exports, so a fresh save's feud reaches the hatch in the first minutes. Behaviour moves in every spec that stages the pair side by side; the `__setGrudge(...,0)` calm already exists for them. Builds on 024 / 401 / 389 / 483. *(Seeded from the cycle-175 Lore-smith's note.)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
-

@@ -14212,4 +14212,32 @@ Took 573 (the export row off Talk) with 483 riding (hatch memory builders, Miles
 
 ## Cycle 176 — qa
 
-11/11 criteria. Unit 3202; e2e 867/867 on the first full run. The admire spec found Thornback watching too.
+9/9 criteria. Unit 3202; e2e 867/867 on the first full run. The admire spec found Thornback watching too.
+
+## Cycle 176 — validator: lore APPROVED / structure APPROVED — the hatch has an audience
+
+For four milestones the scramble at the hatch has been a private matter. Two dinos want one fish; one gives way,
+one shoves, one holds, one slinks off; each of them remembers it. Everybody else on the ground was scenery. Mossback
+could stand up to Rex three tiles from Glade — its closest friend in the park — and Glade would go on grazing as if
+nothing had happened.
+
+Tonight Glade looks up. When a dino holds its ground against a gobbler, any friend of it standing near the drop sees
+it happen: a 👏 pops over the friend, the ticker says *👏 Glade saw Mossback stand up to Rex*, and Glade thinks a
+little better of Mossback for it. It also remembers it, first-hand — and because the park's gossip has always passed
+on a dino's most recent first-hand memory at its next meeting, Glade will tell whoever it bumps into next. Nobody
+wrote that part tonight. It was already there, waiting for something worth telling.
+
+The suite found the feature before the feature's own spec did: the first draft pinned the witness list to Glade
+alone, and failed seven runs in twenty, because on a crowded bowl Thornback — a friend of Mossback's since the
+founding — was often standing close enough to see it too. Courage, it turns out, has more than one fan.
+
+The other half is for the phone. The More sheet's tenth row, `export`, has sat on the top edge of the Talk button
+since the touch layer first shipped; a thumb on Talk's upper rim exported your save instead of greeting a dino. The
+columns are nine rows now, and the test that guards them checks every row — it only ever checked the new column,
+which is how this hid. Riding along, the hatch's four memory strings became builders in one place, so the readers
+that parse them can no longer drift from the writers.
+
+Board: build clean, **3202 unit** green, e2e **867/867** on the first full run. Save untouched. CI green going in.
+
+**Milestone 25 — the hatch has an audience:** two of four arcs done (395, 483). Left: 391, the guilty gobbler; 577,
+standoffs count at the hatch.
