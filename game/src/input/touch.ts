@@ -51,7 +51,7 @@ export function stickVector(
  * How long a press must be held before it reads as a **hold** rather than a tap (BACKLOG-547).
  *
  * The touch layer's action buttons are one-verb buttons, and the loaded-feed selector (067) had nowhere
- * to live: the More sheet is at its geometric ceiling at ten rows (see `sheetRows`, and BACKLOG-552), so
+ * to live: the More sheet's columns are at their geometric ceiling (see `sheetRows`, and BACKLOG-552), so
  * the second verb goes on the button it belongs to instead of on a row that does not fit.
  *
  * 400ms is the band where a hold is deliberate but not a wait — long enough that a hurried drop is never
@@ -81,13 +81,16 @@ export function actionButtons(width: number, height: number): CircleButton[] {
   ];
 }
 
-/** Rows per sheet column. Base y=64 keeps the 10th row clear of the ⋯ button's circle (bottom cluster ~404+). */
-export const SHEET_COLUMN_ROWS = 10;
+/**
+ * Rows per sheet column. Nine at a 35px pitch from y=64 ends the first column at y=359, clear of the top of the
+ * Talk circle (y=366). Ten never fit: the tenth row sat on Talk from BACKLOG-189 until BACKLOG-573.
+ */
+export const SHEET_COLUMN_ROWS = 9;
+const SHEET_PITCH = 35;
 
 /**
- * The More sheet: one row per remaining action, right-aligned above the cluster, in columns of ten
- * (BACKLOG-552). An eleventh row in one column would land inside the action cluster, so the sheet grows
- * leftward instead — the first column is exactly where it has always been.
+ * The More sheet: one row per remaining action, right-aligned above the cluster, in columns of nine
+ * (BACKLOG-552, 573). A tenth row in one column would land on the Talk button, so the sheet grows leftward instead.
  */
 export function sheetRows(width: number): RectButton[] {
   const w = 168;
@@ -111,7 +114,7 @@ export function sheetRows(width: number): RectButton[] {
   ];
   return ids.map(([id, label], i) => {
     const col = Math.floor(i / SHEET_COLUMN_ROWS);
-    return { id, label, x: x - col * (w + 8), y: 64 + (i % SHEET_COLUMN_ROWS) * (h + 6), w, h };
+    return { id, label, x: x - col * (w + 8), y: 64 + (i % SHEET_COLUMN_ROWS) * SHEET_PITCH, w, h };
   });
 }
 

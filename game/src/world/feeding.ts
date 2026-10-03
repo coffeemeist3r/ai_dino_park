@@ -201,6 +201,21 @@ export function slunkOffMemory(boldName: string): string {
   return `${boldName} wouldn't budge — you slunk off`;
 }
 
+/** The other three contested-drop memories (375, 385, 387, 390), as builders beside 394's (BACKLOG-483). */
+export const yieldedMemory = (friend: string) => `you stepped back and let ${friend} eat first`;
+export const repaidMemory = (friend: string) => `you repaid ${friend}'s kindness at the hatch`;
+export const snatchedMemory = (winner: string) => `you shouldered past ${winner} and snatched the food first`;
+export const stoodMemory = (gobbler: string) => `you stood your ground and kept your food from ${gobbler}`;
+
+/**
+ * The reader for a memory builder (BACKLOG-483): the builder's own words, anchored, with the name as group 1.
+ * Every module that reads the hatch ring matches through this, so a reword of a builder moves its readers too.
+ */
+export function hatchPattern(build: (name: string) => string): RegExp {
+  const [before, after] = build('\u0000').split('\u0000').map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return new RegExp(`^${before}(.+)${after}$`);
+}
+
 /**
  * Shared meal (BACKLOG-373) — communal feeding made a bonding moment. A hatch drop is a single piece
  * eaten by a single dino, so "eat from the same hatch drop" is realized as two *different* dinos eating

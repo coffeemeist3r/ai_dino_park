@@ -34,3 +34,14 @@ specs that read "the most recent first-hand memory" of a bystander could see it.
 **Check first:** `tests/e2e/cycle-173-sheet-columns.spec.ts` and any spec tapping sheet rows by coordinate.
 
 **New dependencies:** none. **Estimated touch count:** ~10 files.
+
+## Shipped (coder)
+
+- **395:** `admirers` / `admiredMemory` / `admireLine` / `ADMIRE_*` in `world/pecking.ts`; `admireStand` in
+  `resolveContest`'s stand branch (read before `eatFood` clears the piece); `lastAdmire` + `__lastAdmire`;
+  `ADMIRE_ART_KEY` in `worldPlacedProps`. Unit `cycle-176-admire.test.ts`, e2e `cycle-176-admire.spec.ts`.
+  The e2e's first draft pinned `witnesses: ['Glade']` and failed 7/20: on an all-bowl park Thornback (founding
+  bond 16 with Mossback) was often watching too — the feature working. The spec now asserts Glade is among them.
+- **573:** `SHEET_COLUMN_ROWS = 9`, pitch 35; clearance check over every row.
+- **483:** four builders + `hatchPattern` in `feeding.ts`; manner/pecking/WorldScene route through them.
+- Build clean; unit **3202** green (3 skipped); web-llm boundary clean.

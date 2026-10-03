@@ -9,6 +9,8 @@
  * they belong to WorldScene and feeding.ts, and this module adapts to them, never the other way round.
  */
 
+import { hatchPattern, yieldedMemory, repaidMemory, snatchedMemory, stoodMemory, slunkOffMemory } from './feeding';
+
 export type TableManner = 'generous' | 'greedy' | 'unbowed' | 'timid';
 
 export interface MannerTallies {
@@ -22,11 +24,12 @@ export interface MannerTallies {
 // happened, but `lastHatchOutcome` (404) has to name who it happened with, and one pattern per beat is the
 // whole point of this module. The captures are byte-identical to `pecking.ts`'s `WEIGHTS` copies (401), so
 // the two modules can never disagree about who a dino gobbled from.
-const YIELDED = /^you stepped back and let (.+) eat first$/; // BACKLOG-375
-const REPAID = /^you repaid (.+)'s kindness at the hatch$/; // BACKLOG-385 — repaying a meal is generosity too
-const SNATCHED = /^you shouldered past (.+) and snatched the food first$/; // BACKLOG-387
-const STOOD = /^you stood your ground and kept your food from (.+)$/; // BACKLOG-390
-const SLUNK = /^(.+) wouldn't budge — you slunk off$/; // BACKLOG-394 — slunkOffMemory prefixes a name
+// BACKLOG-483: built from the writers' own builders, so a reword can never silently empty a read.
+const YIELDED = hatchPattern(yieldedMemory); // BACKLOG-375
+const REPAID = hatchPattern(repaidMemory); // BACKLOG-385 — repaying a meal is generosity too
+const SNATCHED = hatchPattern(snatchedMemory); // BACKLOG-387
+const STOOD = hatchPattern(stoodMemory); // BACKLOG-390
+const SLUNK = hatchPattern(slunkOffMemory); // BACKLOG-394
 
 /** How many of each contested-drop beat this dino currently carries. */
 export function mannerTallies(memories: readonly string[]): MannerTallies {

@@ -16,7 +16,7 @@
  * dino; this reads the same beats *split by opponent*. Same source, orthogonal questions.
  */
 
-import { GOBBLE_HUNGER, gobblerAmong, standsGround, WELL_FED } from './feeding';
+import { GOBBLE_HUNGER, gobblerAmong, standsGround, WELL_FED, hatchPattern, stoodMemory, snatchedMemory, yieldedMemory, slunkOffMemory } from './feeding';
 
 export type Disposition = 'confident' | 'wary';
 
@@ -26,10 +26,10 @@ export type Disposition = 'confident' | 'wary';
  * generosity, not fear, and must not read as being cowed — it only tilts, and only in numbers.
  */
 const WEIGHTS: readonly { re: RegExp; weight: number }[] = [
-  { re: /^you stood your ground and kept your food from (.+)$/, weight: 2 }, // 390
-  { re: /^you shouldered past (.+) and snatched the food first$/, weight: 1 }, // 387
-  { re: /^you stepped back and let (.+) eat first$/, weight: -1 }, // 375
-  { re: /^(.+) wouldn't budge — you slunk off$/, weight: -2 }, // 394 (slunkOffMemory)
+  { re: hatchPattern(stoodMemory), weight: 2 }, // 390
+  { re: hatchPattern(snatchedMemory), weight: 1 }, // 387
+  { re: hatchPattern(yieldedMemory), weight: -1 }, // 375
+  { re: hatchPattern(slunkOffMemory), weight: -2 }, // 394
 ];
 
 /**
@@ -256,4 +256,31 @@ export const WAIT_GLYPH = '⏳';
 /** The ticker line for a bully that waited its turn. No memory is filed for it (the 389 berth rule). */
 export function waitedLine(bully: string, winner: string): string {
   return `${WAIT_GLYPH} ${bully} waited its turn behind ${winner}${becauseOf('wary', winner)}`;
+}
+
+/**
+ * Witnessed backbone (BACKLOG-395) — the hatch has an audience. A dino near the drop that counts the one holding its
+ * ground as a friend sees it happen and thinks better of it. The memory is first-hand, so the gossip spine (019)
+ * carries it on to whoever the witness meets next with no code of its own.
+ */
+export const ADMIRE_BAR = 10; // bond with the holder at/above which an onlooker is a friend (one heart)
+export const ADMIRE_BOND = 2; // the nudge toward the holder — a comfort's size, less than a meet
+export const ADMIRE_ART_KEY = 'admire';
+export const ADMIRE_GLYPH = '👏';
+
+/** The onlookers who admire the stand, in the order given: friends of the holder, never the pair themselves. */
+export function admirers(
+  holder: string,
+  gobbler: string,
+  onlookers: ReadonlyArray<{ name: string; bond: number }>,
+): string[] {
+  return onlookers.filter((o) => o.name !== holder && o.name !== gobbler && o.bond >= ADMIRE_BAR).map((o) => o.name);
+}
+
+export function admiredMemory(holder: string, gobbler: string): string {
+  return `you saw ${holder} stand up to ${gobbler}`;
+}
+
+export function admireLine(witness: string, holder: string, gobbler: string): string {
+  return `${ADMIRE_GLYPH} ${witness} saw ${holder} stand up to ${gobbler}`;
 }

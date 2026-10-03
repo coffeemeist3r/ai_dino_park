@@ -76,12 +76,13 @@ describe('layout', () => {
     }
   });
 
-  it('BACKLOG-552: the first column is byte-identical to the ten-row sheet, the rest sits to its left', () => {
+  it('BACKLOG-573: the first column is nine rows at a 35px pitch, export heads the second, which sits to its left', () => {
     const rows = sheetRows(W);
-    rows.slice(0, 10).forEach((r, i) => {
-      expect(r).toMatchObject({ x: W - 12 - 84, y: 64 + i * 36, w: 168, h: 30 });
+    rows.slice(0, 9).forEach((r, i) => {
+      expect(r).toMatchObject({ x: W - 12 - 84, y: 64 + i * 35, w: 168, h: 30 });
     });
-    const second = rows.slice(10);
+    const second = rows.slice(9);
+    expect(second[0]).toMatchObject({ id: 'export', y: 64 });
     expect(second.length).toBeGreaterThan(0);
     for (const r of second) {
       expect(r.x).toBe(second[0].x);
@@ -89,16 +90,15 @@ describe('layout', () => {
     }
   });
 
-  // The first column's tenth row (`export`, y=388) has always overlapped the top of the Talk circle
-  // (y=396, r=30); buttons dispatch first, so that sliver is Talk. Pinned as found rather than moved,
-  // because the first column is held byte-identical — the claim here is that the new column adds none.
-  it('BACKLOG-552: no second-column row lands on the action cluster or the stick', () => {
+  // BACKLOG-573: every row, not just the second column. The first column's tenth row (`export`) sat on the top of
+  // the Talk circle from BACKLOG-189 on, and a check scoped to the new column is why nobody saw it.
+  it('BACKLOG-573: no sheet row lands on the action cluster or the stick', () => {
     const hitsCircle = (r: ReturnType<typeof sheetRows>[number], cx: number, cy: number, rad: number) => {
       const nx = Math.max(r.x - r.w / 2, Math.min(cx, r.x + r.w / 2));
       const ny = Math.max(r.y - r.h / 2, Math.min(cy, r.y + r.h / 2));
       return Math.hypot(nx - cx, ny - cy) < rad;
     };
-    for (const r of sheetRows(W).slice(10)) {
+    for (const r of sheetRows(W)) {
       for (const b of actionButtons(W, H)) expect(hitsCircle(r, b.x, b.y, b.r)).toBe(false);
       expect(hitsCircle(r, STICK.x, STICK.y, STICK.grab)).toBe(false);
     }

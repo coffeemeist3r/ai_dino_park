@@ -141,7 +141,7 @@ import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movemen
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
-import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine, cowedGobble, waitedLine, WAIT_ART_KEY, WAIT_GLYPH } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine, cowedGobble, waitedLine, WAIT_ART_KEY, WAIT_GLYPH, admirers, admiredMemory, admireLine, ADMIRE_BOND, ADMIRE_ART_KEY, ADMIRE_GLYPH } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
 import { pickMurmurMemory, murmurLine, dreamBookLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -186,7 +186,7 @@ import {
 } from '../world/missed'; // BACKLOG-116
 import { STAKE_TILE, STAKE_GLYPH, stakeArtKey, stakeUpkeepStep } from '../world/stake';
 import { foundingKind } from '../world/founding';
-import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, slunkOffMemory, sharedMeal, refusesFood, refusedMemory, SHARED_MEAL_BOND, SWARM_RADIUS } from '../world/feeding';
+import { reactionToFood, feedStep, reachedFood, foodLanding, yieldFoodTo, slunkOffMemory, yieldedMemory, repaidMemory, snatchedMemory, stoodMemory, sharedMeal, refusesFood, refusedMemory, SHARED_MEAL_BOND, SWARM_RADIUS, FEED_RANGE } from '../world/feeding';
 import { bankFood, takeFood, pickFoodToSpend, pickFoodCarry, courierMemory, courierLine, haulLine, haulMemory, storesFedLine, storesFedMemory, foodAtCap, foodPileTotal, foodPileLine, type FoodPile } from '../world/foodstore';
 import { zoneAppeal, richestNeighbor, poorestResidents } from '../world/scarcity';
 import { type ZonePeaks, ZONE_FLOOR, DECLINING_MIGRATE_DAMP, bumpPeak, isDeclining, declineGlyph } from '../world/decline';
@@ -698,6 +698,7 @@ export class WorldScene extends Phaser.Scene {
   private lastStand: { winner: string; gobbler: string } | null = null;
   /** BACKLOG-397: the last bully that waited its turn behind a dino that had faced it down, or null. */
   private lastWait: { bully: string; winner: string } | null = null;
+  private lastAdmire: { witnesses: string[]; holder: string; gobbler: string } | null = null; // BACKLOG-395
   /** BACKLOG-571: how many friend-found marks have popped, for the e2e. */
   private friendFoundPops = 0;
   /** The last mercy beat (BACKLOG-403): a well-fed victor that gave a rival it had faced down the scrap. Transient. */
@@ -1813,6 +1814,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__standFood = () => (this.lastStand ? { ...this.lastStand } : null);
     // BACKLOG-397: the last bully that waited its turn (cowed by a winner that had faced it down) or null.
     (window as any).__lastWait = () => (this.lastWait ? { ...this.lastWait } : null);
+    (window as any).__lastAdmire = () => (this.lastAdmire ? { ...this.lastAdmire } : null); // BACKLOG-395
     // BACKLOG-571: how many friend-found marks have popped.
     (window as any).__friendFoundPops = () => this.friendFoundPops;
     // BACKLOG-389: the last berth beat (who hung back from whom at this drop) or null.
@@ -2964,16 +2966,17 @@ export class WorldScene extends Phaser.Scene {
       this.lastYield = { giver: eater.name, eater: friendName };
       this.lastGobble = null;
       this.lastStand = null;
+      this.lastAdmire = null;
       this.lastMercy = null;
       this.bonds = strengthen(this.bonds, eater.name, friendName, GENEROUS_BOND_BUMP); // kindness deepens the tie
-      this.memory = remember(this.memory, eater.name, `you stepped back and let ${friendName} eat first`);
+      this.memory = remember(this.memory, eater.name, yieldedMemory(friendName));
       this.flashFeed(eater, '🤝');
       this.logEvent(`🤝 ${eater.name} let ${friendName} eat first`);
       // BACKLOG-385: if this very yield repays a debt (the friend once fed the winner), the ledger closes —
       // a one-shot, so kindness keeps cycling rather than locking one pair forever.
       if ((this.owesFood[eater.name] ?? []).includes(friendName)) {
         this.owesFood[eater.name] = this.owesFood[eater.name].filter((n) => n !== friendName);
-        this.memory = remember(this.memory, eater.name, `you repaid ${friendName}'s kindness at the hatch`);
+        this.memory = remember(this.memory, eater.name, repaidMemory(friendName));
       }
       // ...and the fed friend now remembers the winner as a benefactor to repay later.
       this.owesFood[friendName] = [...new Set([...(this.owesFood[friendName] ?? []), eater.name])];
@@ -3001,6 +3004,7 @@ export class WorldScene extends Phaser.Scene {
       const rival = this.dinos.find((d) => d.name === rivalName)!;
       this.lastMercy = { victor: eater.name, rival: rivalName };
       this.lastStand = null;
+      this.lastAdmire = null;
       this.lastGobble = null;
       this.memory = remember(this.memory, eater.name, mercyMemory(rivalName));
       this.memory = remember(this.memory, rivalName, sparedMemory(eater.name));
@@ -3032,6 +3036,7 @@ export class WorldScene extends Phaser.Scene {
       this.resolveContest(eater, gobblerName);
     } else {
       this.lastStand = null;
+      this.lastAdmire = null;
       this.lastGobble = null;
       this.eatFood(eater);
     }
@@ -3056,7 +3061,7 @@ export class WorldScene extends Phaser.Scene {
       // at the hatch is a bravery read (the timid cede, the bold don't) — now shaded by who it is facing.
       this.lastStand = { winner: eater.name, gobbler: gobblerName };
       this.lastGobble = null;
-      this.memory = remember(this.memory, eater.name, `you stood your ground and kept your food from ${gobblerName}`);
+      this.memory = remember(this.memory, eater.name, stoodMemory(gobblerName));
       this.flashFeed(eater, '😠');
       this.logEvent(`😠 ${eater.name} held its ground against ${gobblerName}${because}`);
       // BACKLOG-394: the denied gobbler slinks off (😖) and remembers who wouldn't budge — the failed grab
@@ -3067,17 +3072,39 @@ export class WorldScene extends Phaser.Scene {
       this.logEvent(`😖 ${gobblerName} slunk off — ${eater.name} wouldn't budge`);
       this.sting(gobblerName); // BACKLOG-412: it came away with nothing, and takes to its ritual sooner for it
       this.shoulderFunk(gobblerName); // BACKLOG-544: and it is visibly sore about it for the next minute
+      this.admireStand(eater.name, gobblerName);
       this.eatFood(eater);
     } else {
       const gobbler = this.dinos.find((d) => d.name === gobblerName)!;
       this.lastStand = null;
+      this.lastAdmire = null;
       this.lastGobble = { winner: eater.name, gobbler: gobblerName };
-      this.memory = remember(this.memory, gobblerName, `you shouldered past ${eater.name} and snatched the food first`);
+      this.memory = remember(this.memory, gobblerName, snatchedMemory(eater.name));
       this.flashFeed(gobbler, '😤');
       this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food${because}`);
       this.sting(eater.name); // BACKLOG-412: the ceding winner is the one left with nothing here
       this.shoulderFunk(eater.name); // BACKLOG-544: and it is visibly sore about it for the next minute
       this.eatFood(gobbler);
+    }
+  }
+
+  /**
+   * Witnessed backbone (BACKLOG-395): friends of the holder near the drop saw it stand, and think better of it.
+   * Read before `eatFood` clears the piece, since "near" is near the food.
+   */
+  private admireStand(holder: string, gobbler: string): void {
+    const food = this.food;
+    if (!food) return;
+    const onlookers = this.dinos
+      .filter((d) => this.inView(d) && this.chebyTiles(this.tileOf(d), food) <= FEED_RANGE)
+      .map((d) => ({ name: d.name, bond: bondPoints(this.bonds, holder, d.name) }));
+    const witnesses = admirers(holder, gobbler, onlookers);
+    this.lastAdmire = witnesses.length > 0 ? { witnesses, holder, gobbler } : null;
+    for (const w of witnesses) {
+      this.bonds = strengthen(this.bonds, w, holder, ADMIRE_BOND);
+      this.memory = remember(this.memory, w, admiredMemory(holder, gobbler));
+      this.logEvent(admireLine(w, holder, gobbler));
+      this.popMark(this.dinoByName(w), ADMIRE_ART_KEY, ADMIRE_GLYPH);
     }
   }
 
