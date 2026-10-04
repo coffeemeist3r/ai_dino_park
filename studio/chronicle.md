@@ -14258,3 +14258,7 @@ Board: unit 3209 green; e2e **868/868** on the full run with the rig in.
 Closed 395, 573, 483, 579 to the archive; dropped the emptied cycle-173 backlog header. Structure Track at **3** (563,
 577, 578) — under X, so the next Structure-smith brainstorms; 577 is Milestone 25's last spine arc. Milestone 25 active,
 two of four arcs done. CI: last three runs on `main` `success`.
+
+## Cycle 177 — lore-smith
+
+The bully has a conscience, for some people: Rex is the most disagreeable dino in the park and Sunny's best friend. Tonight shoving past a friend at the hatch costs something (391). Seeded the regret mark (580).

@@ -63,6 +63,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
+- [ ] BACKLOG-580 [art] The regret mark — the 😓 that pops over a gobbler that just shoved past a friend (391). A sheepish bead of sweat, not a tear: the beat is *I shouldn't have*, not grief. Host ships with 391 (cycle 177).
+
 
 
 
@@ -610,7 +612,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > friend to a contested drop (😤), so giving way reads as a *trait*, not a universal. These extend the
 > scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
 
-- [ ] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
+- [~] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
 - [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
 
 ## Cycle 85 lore additions — the worm turns (2026-06-29)
