@@ -17,6 +17,7 @@
  */
 
 import { GOBBLE_HUNGER, gobblerAmong, standsGround, WELL_FED, hatchPattern, stoodMemory, snatchedMemory, yieldedMemory, slunkOffMemory } from './feeding';
+import { heldMemory, backedMemory } from '../social/standoff';
 
 export type Disposition = 'confident' | 'wary';
 
@@ -30,6 +31,10 @@ const WEIGHTS: readonly { re: RegExp; weight: number }[] = [
   { re: hatchPattern(snatchedMemory), weight: 1 }, // 387
   { re: hatchPattern(yieldedMemory), weight: -1 }, // 375
   { re: hatchPattern(slunkOffMemory), weight: -2 }, // 394
+  // BACKLOG-577: a stare-down in the grass (024) is half a stand — a bristle, not a meal — so one is never a
+  // history and two are. The founding feud reaches the hatch without either rival ever fighting over food.
+  { re: hatchPattern(heldMemory), weight: 1 },
+  { re: hatchPattern(backedMemory), weight: -1 },
 ];
 
 /**
@@ -283,4 +288,49 @@ export function admiredMemory(holder: string, gobbler: string): string {
 
 export function admireLine(witness: string, holder: string, gobbler: string): string {
   return `${ADMIRE_GLYPH} ${witness} saw ${holder} stand up to ${gobbler}`;
+}
+
+/**
+ * Guilty gobbler (BACKLOG-391). A gobbler is prickly by construction (387), so "normally warm" means warm toward
+ * the one it shoved: a friend by the book's own one-heart bar. Shoving past a stranger costs nothing; shoving past a
+ * friend files a regret, and the gobbler's next words to that friend are an apology.
+ *
+ * The regret is owed, not counted: it sits on the ring until the apology replaces it. It matches no `WEIGHTS`
+ * pattern, so the shove still reads as a won grab — the conscience does not rewrite the pecking order.
+ */
+export const REGRET_ART_KEY = 'regret';
+export const REGRET_GLYPH = '😓';
+
+export function regretsShove(bondWithWinner: number): boolean {
+  return bondWithWinner >= ADMIRE_BAR;
+}
+
+export function regretMemory(friend: string): string {
+  return `you shoved past ${friend} and wished you hadn't`;
+}
+
+export function sorryMemory(friend: string): string {
+  return `you said sorry to ${friend} for the hatch`;
+}
+
+export function heardSorryMemory(gobbler: string): string {
+  return `${gobbler} said sorry for the hatch`;
+}
+
+/** Does this dino still owe `friend` an apology for the hatch? */
+export function owedApology(memories: readonly string[], friend: string): boolean {
+  return memories.includes(regretMemory(friend));
+}
+
+export function regretLine(gobbler: string, friend: string): string {
+  return `${REGRET_GLYPH} ${gobbler} felt bad about shoving past ${friend}`;
+}
+
+export function sorryLine(gobbler: string, friend: string): string {
+  return `🙇 ${gobbler} said sorry to ${friend}`;
+}
+
+/** The softer words that replace small talk at the next meeting. */
+export function apologyText(friend: string): string {
+  return `Sorry about the hatch, ${friend}. I was starving.`;
 }

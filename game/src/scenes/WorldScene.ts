@@ -141,7 +141,7 @@ import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movemen
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
-import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine, cowedGobble, waitedLine, WAIT_ART_KEY, WAIT_GLYPH, admirers, admiredMemory, admireLine, ADMIRE_BOND, ADMIRE_ART_KEY, ADMIRE_GLYPH } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
+import { dispositionToward, holdsAgainst, becauseOf, peckingLine, givesBerthTo, showsMercyTo, mercyMemory, sparedMemory, mercyLine, cowedGobble, waitedLine, WAIT_ART_KEY, WAIT_GLYPH, admirers, admiredMemory, admireLine, ADMIRE_BOND, ADMIRE_ART_KEY, ADMIRE_GLYPH, regretsShove, regretMemory, sorryMemory, heardSorryMemory, owedApology, regretLine, sorryLine, apologyText, REGRET_ART_KEY, REGRET_GLYPH } from '../world/pecking'; // BACKLOG-401: who it has faced down, who it cedes to; BACKLOG-389: who it keeps clear of; BACKLOG-403: who it lets eat
 import { pickMurmurMemory, murmurLine, dreamBookLine } from '../world/murmur';
 import { recordMeet, pairKey, type Meetings } from '../social/meetings';
 import { remember, recall, reflect, forget, type MemoryStore } from '../ai/memory';
@@ -699,6 +699,7 @@ export class WorldScene extends Phaser.Scene {
   /** BACKLOG-397: the last bully that waited its turn behind a dino that had faced it down, or null. */
   private lastWait: { bully: string; winner: string } | null = null;
   private lastAdmire: { witnesses: string[]; holder: string; gobbler: string } | null = null; // BACKLOG-395
+  private lastRegret: { gobbler: string; friend: string } | null = null; // BACKLOG-391
   /** BACKLOG-571: how many friend-found marks have popped, for the e2e. */
   private friendFoundPops = 0;
   /** The last mercy beat (BACKLOG-403): a well-fed victor that gave a rival it had faced down the scrap. Transient. */
@@ -1815,6 +1816,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-397: the last bully that waited its turn (cowed by a winner that had faced it down) or null.
     (window as any).__lastWait = () => (this.lastWait ? { ...this.lastWait } : null);
     (window as any).__lastAdmire = () => (this.lastAdmire ? { ...this.lastAdmire } : null); // BACKLOG-395
+    (window as any).__lastRegret = () => (this.lastRegret ? { ...this.lastRegret } : null); // BACKLOG-391
     // BACKLOG-571: how many friend-found marks have popped.
     (window as any).__friendFoundPops = () => this.friendFoundPops;
     // BACKLOG-389: the last berth beat (who hung back from whom at this drop) or null.
@@ -3056,6 +3058,7 @@ export class WorldScene extends Phaser.Scene {
     this.grudges = strengthen(this.grudges, eater.name, gobblerName, GRUDGE_PER_CONTEST); // BACKLOG-574: either way it goes
     const disposition = dispositionToward(recall(this.memory, eater.name), gobblerName);
     const because = disposition ? becauseOf(disposition, gobblerName) : ''; // no silent change
+    this.lastRegret = null;
     if (holdsAgainst(eater.traits.bravery, disposition)) {
       // BACKLOG-390: the winner holds its tile and the gobbler backs down (😠), so who gets pushed around
       // at the hatch is a bravery read (the timid cede, the bold don't) — now shaded by who it is facing.
@@ -3082,10 +3085,40 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, gobblerName, snatchedMemory(eater.name));
       this.flashFeed(gobbler, '😤');
       this.logEvent(`😤 ${gobblerName} shouldered past ${eater.name} to the food${because}`);
+      this.regretShove(gobbler, eater.name);
       this.sting(eater.name); // BACKLOG-412: the ceding winner is the one left with nothing here
       this.shoulderFunk(eater.name); // BACKLOG-544: and it is visibly sore about it for the next minute
       this.eatFood(gobbler);
     }
+  }
+
+  /**
+   * Guilty gobbler (BACKLOG-391): shoving past a friend files a regret, which the next meeting turns into an apology.
+   * The mark waits out the 😤 flash so the two beats read in order.
+   */
+  private regretShove(gobbler: Dino, friend: string): void {
+    if (!regretsShove(bondPoints(this.bonds, gobbler.name, friend))) return;
+    this.lastRegret = { gobbler: gobbler.name, friend };
+    this.memory = remember(this.memory, gobbler.name, regretMemory(friend));
+    this.logEvent(regretLine(gobbler.name, friend));
+    this.time.delayedCall(700, () => this.popMark(gobbler, REGRET_ART_KEY, REGRET_GLYPH));
+  }
+
+  /** The owed apology (BACKLOG-391), said by whichever of the pair owes it; its words replace the small talk. */
+  private apologise(a: Dino, b: Dino): void {
+    const [sayer, friend] = owedApology(recall(this.memory, a.name), b.name)
+      ? [a, b]
+      : owedApology(recall(this.memory, b.name), a.name)
+        ? [b, a]
+        : [null, null];
+    if (!sayer || !friend) return;
+    this.memory = forget(this.memory, sayer.name, regretMemory(friend.name));
+    this.memory = remember(this.memory, sayer.name, sorryMemory(friend.name));
+    this.memory = remember(this.memory, friend.name, heardSorryMemory(sayer.name));
+    const text = apologyText(friend.name);
+    this.lastConversation = { speaker: sayer.name, text, source: this.lastConversation?.source };
+    this.showBubble(sayer, text);
+    this.logEvent(sorryLine(sayer.name, friend.name));
   }
 
   /**
@@ -5822,11 +5855,13 @@ ${e.short}`;
       this.memory = remember(this.memory, name, reliefMemory(sufferer));
     };
     (window as any).__lastConversation = () => this.lastConversation;
-    (window as any).__forceConverse = async () => {
-      if (this.dinos.length >= 2) {
+    (window as any).__forceConverse = async (a?: string, b?: string) => {
+      const x = a ? this.dinoByName(a) : this.dinos[0];
+      const y = b ? this.dinoByName(b) : this.dinos[1];
+      if (x && y && x !== y) {
         this.convoCooldown = 0;
         this.convoInFlight = false;
-        await this.converse(this.dinos[0], this.dinos[1]);
+        await this.converse(x, y);
       }
       return this.lastConversation;
     };
@@ -6890,6 +6925,7 @@ ${e.short}`;
       else if (gossip.rumor) this.logEvent(`🗣️ ${b.name} heard news about ${a.name}`);
       this.chirpFor(a); // the speaker calls in its own voice (BACKLOG-191)
       this.showBubble(a, `${replyPrefix(reply.source)}${reply.text}`);
+      this.apologise(a, b); // BACKLOG-391: an owed apology outranks the small talk
       // The bowl self-corrects (BACKLOG-234): if a carrier meets the dino it heard slept cold and
       // finds it recovered, it drops the now-false worry with relief — and the stale pity visit is
       // suppressed. Higher precedence than the sympathy visit, same pre-meeting snapshot.

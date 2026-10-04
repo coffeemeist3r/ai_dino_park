@@ -71,7 +71,7 @@ import { ROSTER } from '../entities/roster';
 import { CIRCLE_ART_KEY } from '../social/circle'; // BACKLOG-127
 import { COMFORT_ART_KEY } from './comfort'; // BACKLOG-136
 import { STANDOFF_ART_KEY } from '../social/standoff'; // BACKLOG-024
-import { WAIT_ART_KEY, ADMIRE_ART_KEY } from './pecking'; // BACKLOG-397, 395
+import { WAIT_ART_KEY, ADMIRE_ART_KEY, REGRET_ART_KEY } from './pecking'; // BACKLOG-397, 395, 391
 import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
 import { COLD_ART_KEY } from './cold'; // BACKLOG-557
 
@@ -186,6 +186,7 @@ export function worldPlacedProps(): Set<string> {
   out.add(WAIT_ART_KEY); // BACKLOG-397: popped over a cowed bully by `waitTurn`
   out.add(FRIEND_FOUND_ART_KEY); // BACKLOG-571: popped over a loner by `popFriendFoundMark` as it finds a friend
   out.add(ADMIRE_ART_KEY); // BACKLOG-395: popped over a friend who saw a dino stand at the hatch, by `admireStand`
+  out.add(REGRET_ART_KEY); // BACKLOG-391: popped over a gobbler that shoved past a friend, by `regretShove`
   out.add(COLD_ART_KEY); // BACKLOG-557: hung over a cold-slept dino by `refreshColdMarks`
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
