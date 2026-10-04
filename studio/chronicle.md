@@ -14266,3 +14266,4 @@ The bully has a conscience, for some people: Rex is the most disagreeable dino i
 - designer: 391 (a shove past a friend files a regret and an apology) + 577 (stare-downs weigh at half a stand).
 - codeplan: 6 files; both tracks land in pecking.ts.
 - coder: 391 + 577 shipped in pecking.ts / resolveContest / converse. Unit 3218, e2e 871/871.
+- qa: 10/10 criteria pass; e2e 871/871.
