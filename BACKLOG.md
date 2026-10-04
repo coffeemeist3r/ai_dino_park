@@ -63,7 +63,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
-- [ ] BACKLOG-580 [art] The regret mark — the 😓 that pops over a gobbler that just shoved past a friend (391). A sheepish bead of sweat, not a tear: the beat is *I shouldn't have*, not grief. Host ships with 391 (cycle 177).
 
 
 

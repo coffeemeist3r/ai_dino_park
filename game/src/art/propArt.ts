@@ -2325,6 +2325,43 @@ const ADMIRE_RIG: PropRig = {
   },
 };
 
+// `regret` (BACKLOG-580, cycle 177-art): the 😓 over a gobbler that has just shoved past a friend (391). A single
+// bead of sweat, not a tear: the beat is *I shouldn't have*, a sheepish flush, not grief. Cool blue against the
+// family of warm marks, pointed at the top where it beads and heavy at the bottom where it is about to fall; lit
+// upper left, shaded lower right, family rim.
+//
+// First draft rejected: the full 😓 face. At 16px the face is the dino's own job — a second face hovering over it
+// reads as a ghost, and the drop is the part of the emoji that carries the feeling.
+const REGRET_GRID: ReadonlyArray<string> = [
+  '................',
+  '........o.......',
+  '.......oBo......',
+  '.......oBo......',
+  '......oBBBo.....',
+  '......ohBBo.....',
+  '.....ohBBBBo....',
+  '.....ohBBBBo....',
+  '....ohhBBBBBo...',
+  '....ohBBBBBbo...',
+  '....oBBBBBBbo...',
+  '....oBBBBBbbo...',
+  '.....oBBBbbo....',
+  '......obbbo.....',
+  '.......ooo......',
+  '................',
+];
+
+const REGRET_RIG: PropRig = {
+  size: 16,
+  grid: REGRET_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    B: 0x68b8f0, // the bead — cool sky blue
+    h: 0xd8f0ff, // the lit edge, upper left
+    b: 0x3878c0, // its shade, lower right
+  },
+};
+
 
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
@@ -2583,6 +2620,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   wait: WAIT_RIG,
   // BACKLOG-579 (cycle 176-art): drawn the night its host shipped — `admireStand` (395).
   admire: ADMIRE_RIG,
+  // BACKLOG-580 (cycle 177-art): drawn the night its host shipped — `regretShove` (391).
+  regret: REGRET_RIG,
 };
 
 /**

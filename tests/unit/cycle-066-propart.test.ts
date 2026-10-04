@@ -55,6 +55,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',
       'pile_3',
+      'regret', // BACKLOG-580 (cycle 177-art): the bead of sweat over a gobbler that shoved past a friend (host 391)
       'rouse', // BACKLOG-520: ...and the open one
       'shelter',
       'shelter_derelict', // BACKLOG-494
