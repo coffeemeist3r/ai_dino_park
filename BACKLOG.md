@@ -21,8 +21,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [ ] BACKLOG-577 [core] Standoffs count at the hatch (full text in the cycle-176 block below). *(Milestone 25 spine)*
+- [~] BACKLOG-577 [core] Standoffs count at the hatch (full text in the cycle-176 block below). *(Milestone 25 spine)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
+- [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
 
@@ -662,5 +663,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 176 (Structure-smith)
 
-- [ ] BACKLOG-577 [core] Standoffs count at the hatch — the rivals' standoff in the grass (024) files `you stared down X` / `X stared you down`, and the pecking reads (401 disposition, 389 berth, 397 cowed) never look at them, because they only know the four hatch strings. So the one pair the founding park guarantees will clash — Mossback and Twitch, on the bowl from frame one — clash over and over and none of it carries to the next drop. Weigh a stare-down into `pecking.ts`'s table (lighter than a stand: it was a bristle, not a meal), through the builders 483 exports, so a fresh save's feud reaches the hatch in the first minutes. Behaviour moves in every spec that stages the pair side by side; the `__setGrudge(...,0)` calm already exists for them. Builds on 024 / 401 / 389 / 483. *(Seeded from the cycle-175 Lore-smith's note.)*
+- [~] BACKLOG-577 [core] Standoffs count at the hatch — the rivals' standoff in the grass (024) files `you stared down X` / `X stared you down`, and the pecking reads (401 disposition, 389 berth, 397 cowed) never look at them, because they only know the four hatch strings. So the one pair the founding park guarantees will clash — Mossback and Twitch, on the bowl from frame one — clash over and over and none of it carries to the next drop. Weigh a stare-down into `pecking.ts`'s table (lighter than a stand: it was a bristle, not a meal), through the builders 483 exports, so a fresh save's feud reaches the hatch in the first minutes. Behaviour moves in every spec that stages the pair side by side; the `__setGrudge(...,0)` calm already exists for them. Builds on 024 / 401 / 389 / 483. *(Seeded from the cycle-175 Lore-smith's note.)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
+
+## Cycle 177 (Structure-smith)
+
+- [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.

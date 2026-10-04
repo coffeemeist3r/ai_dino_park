@@ -14262,3 +14262,4 @@ two of four arcs done. CI: last three runs on `main` `success`.
 ## Cycle 177 — lore-smith
 
 The bully has a conscience, for some people: Rex is the most disagreeable dino in the park and Sunny's best friend. Tonight shoving past a friend at the hatch costs something (391). Seeded the regret mark (580).
+- structure-smith: 577 — the founding feud reaches the hatch; seeded 581 (the pecking order outlives small talk).
