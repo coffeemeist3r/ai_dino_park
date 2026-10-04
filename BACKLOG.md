@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [~] BACKLOG-577 [core] Standoffs count at the hatch (full text in the cycle-176 block below). *(Milestone 25 spine)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
@@ -613,7 +612,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > friend to a contested drop (😤), so giving way reads as a *trait*, not a universal. These extend the
 > scramble into memory, defiance, regret, and a legible standing — the foil to the 385–388 kindness thread.
 
-- [~] BACKLOG-391 [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
 - [ ] BACKLOG-392 [pokemon] Greediest in the book — the collection book tracks how often each dino has shouldered past for food ("grabbed first 4×"), the foil to 388's "kindest", so the bowl's manners are legible at a glance. Builds on 387 / 388 / 021.
 
 ## Cycle 85 lore additions — the worm turns (2026-06-29)
@@ -663,7 +661,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 176 (Structure-smith)
 
-- [~] BACKLOG-577 [core] Standoffs count at the hatch — the rivals' standoff in the grass (024) files `you stared down X` / `X stared you down`, and the pecking reads (401 disposition, 389 berth, 397 cowed) never look at them, because they only know the four hatch strings. So the one pair the founding park guarantees will clash — Mossback and Twitch, on the bowl from frame one — clash over and over and none of it carries to the next drop. Weigh a stare-down into `pecking.ts`'s table (lighter than a stand: it was a bristle, not a meal), through the builders 483 exports, so a fresh save's feud reaches the hatch in the first minutes. Behaviour moves in every spec that stages the pair side by side; the `__setGrudge(...,0)` calm already exists for them. Builds on 024 / 401 / 389 / 483. *(Seeded from the cycle-175 Lore-smith's note.)*
 - [ ] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
 
 ## Cycle 177 (Structure-smith)

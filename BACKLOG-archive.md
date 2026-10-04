@@ -1466,3 +1466,8 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 ## Closed in cycle 176-art
 
 - [x] BACKLOG-579 [cycle 176-art: `ADMIRE_RIG`, registered in `worldPlacedProps`] [art] The admire mark — the 👏 popped over a dino that has just watched a friend hold its ground at the hatch (BACKLOG-395 hosts it through `popMark`, cycle 176). Gen3 pixel rig in the mark family, 16px read: approval, not applause-for-a-show and not a wave. Builds on 395 / 576.
+
+## Closed in cycle 177
+
+- [x] BACKLOG-391 [cycle 177: `regretShove` / `apologise`; builders in world/pecking.ts] [emergent] Guilty gobbler — a normally-warm dino that gobbled while very hungry (387) files a faint "I shoved past <friend>" regret that can soften its very next line to that friend; greed against a friend's nature leaves a trace. Builds on 387 / 374.
+- [x] BACKLOG-577 [cycle 177: `heldMemory` ±1 / `backedMemory` in pecking `WEIGHTS`] [core] Standoffs count at the hatch — the rivals' standoff in the grass (024) files `you stared down X` / `X stared you down`, and the pecking reads (401 disposition, 389 berth, 397 cowed) never look at them, because they only know the four hatch strings. So the one pair the founding park guarantees will clash — Mossback and Twitch, on the bowl from frame one — clash over and over and none of it carries to the next drop. Weigh a stare-down into `pecking.ts`'s table (lighter than a stand: it was a bristle, not a meal), through the builders 483 exports, so a fresh save's feud reaches the hatch in the first minutes. Behaviour moves in every spec that stages the pair side by side; the `__setGrudge(...,0)` calm already exists for them. Builds on 024 / 401 / 389 / 483. *(Seeded from the cycle-175 Lore-smith's note.)*

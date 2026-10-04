@@ -14267,3 +14267,24 @@ The bully has a conscience, for some people: Rex is the most disagreeable dino i
 - codeplan: 6 files; both tracks land in pecking.ts.
 - coder: 391 + 577 shipped in pecking.ts / resolveContest / converse. Unit 3218, e2e 871/871.
 - qa: 10/10 criteria pass; e2e 871/871.
+
+## Cycle 177 — APPROVED / APPROVED: the bully has a conscience — **Milestone 25 SHIPPED**
+
+Rex is the most disagreeable dino in the park. He is also Sunny's best friend, and Sunny is one of the timidest
+dinos on the bowl — so when Rex is starving and Sunny gets to the food first, Rex shoulders past her. He always has.
+Tonight, a beat after the 😤, a 😓 pops over him and the ticker says *Rex felt bad about shoving past Sunny*. The next
+time they bump into each other in the grass, Rex doesn't make small talk. *"Sorry about the hatch, Sunny. I was
+starving."* Shove past a stranger and you feel nothing; the conscience only switches on for friends. "Normally warm"
+turned out not to be a temperament. It was a relationship, and the founding graph had already drawn it.
+
+The other half closes a loop that has been open since the feud was founded. Mossback and Twitch bristle at each other
+in the grass from the first minute of a fresh save, and every stare-down was filed and forgotten — the pecking order
+only read the hatch. Now a stare-down counts as half a stand. Two of them and the book says it: Mossback *faced down
+Twitch*, Twitch is *wary of Mossback*, and at the next drop Twitch keeps out of Mossback's way before the two have
+ever fought over food.
+
+**Milestone 25 — the hatch has an audience — SHIPPED** in two cycles, four arcs, no REWORK. The hatch was a contest
+between two dinos for four milestones; now the park watches it, admires it, regrets it, and carries the feud from the
+grass to the dinner line. **Next: Milestone 26, the first tentpole — minds that act and reflect.**
+
+Board: build clean, **3218 unit** green, e2e **871/871** on the first full run. Save untouched. CI green going in.

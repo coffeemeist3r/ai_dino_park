@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 177 — 2026-10-04 (the bully has a conscience)
+- BACKLOG-391: Guilty gobbler — a gobbler that shoulders past a dino it counts as a friend (bond ≥ 10) feels it: a 😓 pops over it a beat after the 😤, the ticker says *😓 Rex felt bad about shoving past Sunny*, and it files a regret. At their next meeting its words are not small talk but *"Sorry about the hatch, Sunny. I was starving."* (🙇 in the ticker); the regret becomes a memory of the apology on both sides. Shoving past a stranger costs nothing. The regret is not a pecking beat — the shove still counts as a won grab.
+- BACKLOG-577: Standoffs count at the hatch — a stare-down in the grass (024) now weighs in the pecking order at half a stand (±1), so two squares-off between the founding rivals put *faced down Twitch* on Mossback's page and *wary of Mossback* on Twitch's, and Twitch gives Mossback a berth at the next drop, before either has fought over food. **Milestone 25 SHIPPED.**
+
+---
+
 ## Cycle 176 — 2026-10-03 (the hatch has an audience)
 - BACKLOG-395: Witnessed backbone — when a dino holds its ground against a gobbler at the hatch, every dino on that ground within seven tiles of the drop that counts the holder as a friend (bond ≥ 10) sees it: a 👏 pops over the witness, its bond to the holder rises by 2, it remembers *you saw Mossback stand up to Rex*, and the ticker says *👏 Glade saw Mossback stand up to Rex*. The memory is first-hand, so the gossip spine retells it at the witness's next meeting. Host for art BACKLOG-579.
 - BACKLOG-573 + BACKLOG-483: The More sheet's columns are nine rows at a 35px pitch, so no row sits on the Talk button any more (`export` heads the second column), and the clearance test covers every row. The four contested-drop memories are exported builders beside `slunkOffMemory`, and `manner.ts` / `pecking.ts` read them through `hatchPattern`, so a reword moves every reader with it.

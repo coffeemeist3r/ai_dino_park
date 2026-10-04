@@ -8,20 +8,8 @@
 
 ## Current milestone
 
-**Milestone 25: The hatch has an audience — the park watches who stands up and who shoves, and it remembers**
-**Status:** ACTIVE (opened cycle 176)
-
-For four milestones the hatch has been a contest between two dinos. Everyone else on the ground was furniture.
-This milestone gives the scramble witnesses: the friend who sees a dino hold its ground thinks better of it and
-says so to the next dino it meets, and the warm dino that shoved past a friend when it was starving feels it.
-
-**Lore arcs:**
-- [x] A friend who watches a dino stand up to a gobbler admires it — a 👏 over the witness, a warmer bond, and a "saw X stand up to Y" that travels as gossip (BACKLOG-395)
-- [ ] A normally-warm dino that shoved past a friend files a regret, and its next words to that friend are softer for it (BACKLOG-391)
-
-**Structure arcs:**
-- [x] The hatch's memory strings are builders in one place, so every reader matches the string the writer wrote (BACKLOG-483)
-- [ ] A standoff in the grass counts at the hatch — the founding feud alone makes 389's berth and 401's history reachable (BACKLOG-577)
+_(none active — Milestone 26 is the first tentpole: **Minds that act and reflect**, top of the queue below. The
+next Lore-smith drafts its headline and lore arcs; the Structure-smith adds the spine.)_
 
 ---
 
@@ -57,6 +45,33 @@ says so to the next dino it meets, and the warm dino that shoved past a friend w
    for the change. Hatchlings from the egg arc should be the first to do it.
 
 ## Shipped milestones
+
+### Milestone 25: The hatch has an audience — the park watches who stands up and who shoves, and it remembers — SHIPPED cycle 177 (opened cycle 176)
+
+Two cycles, four arcs, no REWORK and no ABANDON.
+
+For four milestones the hatch was a contest between two dinos. Now it has a conscience on both sides: a friend who
+sees a dino stand up to a bully thinks better of it and says so to the next dino it meets, and a bully who shoves past
+its own friend feels it and says sorry. And the one feud the park guarantees — Mossback and Twitch, bristling in the
+grass from frame one — finally reaches the hatch: two stare-downs are a history, and the book says who backed down.
+
+**The lesson worth keeping:** the bully's conscience was in the founding graph all along. Rex is the most disagreeable
+dino in the park and Sunny's best friend. "Normally warm" turned out not to be a temperament but a relationship.
+
+**Milestone 25: The hatch has an audience — the park watches who stands up and who shoves, and it remembers**
+**Status:** SHIPPED cycle 177 (opened cycle 176)
+
+For four milestones the hatch has been a contest between two dinos. Everyone else on the ground was furniture.
+This milestone gives the scramble witnesses: the friend who sees a dino hold its ground thinks better of it and
+says so to the next dino it meets, and the warm dino that shoved past a friend when it was starving feels it.
+
+**Lore arcs:**
+- [x] A friend who watches a dino stand up to a gobbler admires it — a 👏 over the witness, a warmer bond, and a "saw X stand up to Y" that travels as gossip (BACKLOG-395)
+- [x] A normally-warm dino that shoved past a friend files a regret, and its next words to that friend are softer for it (BACKLOG-391 — cycle 177)
+
+**Structure arcs:**
+- [x] The hatch's memory strings are builders in one place, so every reader matches the string the writer wrote (BACKLOG-483)
+- [x] A standoff in the grass counts at the hatch — the founding feud alone makes 389's berth and 401's history reachable (BACKLOG-577 — cycle 177; **milestone SHIPPED**)
 
 ### Milestone 24: Friendship has an opposite — some dinos do not get on, the book says who, and you can watch them square off — SHIPPED cycle 175 (opened cycle 174)
 
