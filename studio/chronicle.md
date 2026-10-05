@@ -14304,3 +14304,4 @@ Board: unit 3226 green; e2e **872/872** on a fresh full run. The first full run 
 
 Milestone 26 opens — the first tentpole, minds that act and reflect. Tonight the mind picks *whom* it goes looking for (582). Seeded the seek mark (584).
 - structure-smith: 583 — the dusk reflection, the tentpole spine; 563/578/581 wait out the tentpole.
+- designer: 582 (the mind picks whom it seeks: rival, stranger, yesterday, friend) + 583 (the dusk reflection, persisted, read by tomorrow).
