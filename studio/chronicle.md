@@ -14299,3 +14299,7 @@ ghost, and the drop is the part of the emoji that carries the feeling. Lit upper
 The art queue is empty again.
 
 Board: unit 3226 green; e2e **872/872** on a fresh full run. The first full run with the rig in failed two unrelated specs (090 edge labels, 153 awaylog reload) that passed 6/6 isolated — parallel-load flake, not a regression. CI: last three runs on `main` `success`.
+
+## Cycle 178 — lore-smith
+
+Milestone 26 opens — the first tentpole, minds that act and reflect. Tonight the mind picks *whom* it goes looking for (582). Seeded the seek mark (584).

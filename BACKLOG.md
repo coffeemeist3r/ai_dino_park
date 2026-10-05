@@ -20,6 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
+- [~] BACKLOG-583 [core] The dusk reflection (Milestone 26 structure arc 1; first slice of 014) — full text in the cycle-178 block below.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
@@ -30,6 +31,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
 - [ ] BACKLOG-104 [emergent] Action-prompt layer — dinos *act* from their persona, not only reply (CHARTER "Living minds": minds act). A per-dino prompt path that turns persona + memory + world state into a chosen **action/intent** (where to go, what to do, how to react to an event), consumed by the world tick — not just dialogue. Spine for BACKLOG-012 (daily plan), -014 (reflection), -032 (roles persist). With Qwen3/3.5 thinking (BACKLOG-102), big choices can run in thinking mode, chitchat without. Start small: one persona-driven intent per dino per tick window, observable in-world. Deterministic fallback intent for no-model devices. Behind `NPCBrain`.
+
+- [~] BACKLOG-582 [emergent] Whom a mind goes looking for (Milestone 26 lore arc 1; first slice of 104) — until now a dino that drifts to company walks to whoever is *nearest*. Give the choice to the persona: each day-phase a dino picks one zone-mate to seek, and the reason reads off who it is — a prickly dino with a rival on its ground goes looking for trouble; a curious one seeks the zone-mate it has met least; one with a yesterday (583) seeks the dino it spent it with; everyone else seeks its warmest bond. The socialize roll is unchanged (how *often* is the old lean); *whom* is the mind's. Visible: a 👀 and a ticker line as it sets off ("Rex goes looking for Mossback — spoiling for it"), a "seeking:" line in the book, and on arrival a line in its voice. Deterministic floor; the model's hand on the choice is a later arc.
 
 ## Pokemon flavor
 
@@ -62,6 +65,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > on the two founder's-stake rigs drawn the night before. Authoring ahead of the host is still allowed;
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
+
+- [ ] BACKLOG-584 [art] The seek mark — a small pixel mark over a dino the moment its mind picks someone to go looking for (BACKLOG-582's 👀 glyph until drawn). Host: `popMark(d, SEEK_ART_KEY, SEEK_GLYPH)` shipping cycle 178. Reads as *looking for*, not *looking at* — eyes with a direction, not a stare.
 
 
 
@@ -665,3 +670,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 177 (Structure-smith)
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
+
+## Cycle 178 (Structure-smith)
+
+- [~] BACKLOG-583 [core] The dusk reflection (first slice of 014) — the only "reflection" the park has is a dawn string, `reflect()`, that counts the ring ("A full day — 4 things happened") and is read by nothing. Make it a record: at the dusk turn (hour 17) each dino folds its day into `{ day, best, met }` — the zone-mate it met most since dawn (diffed from the meetings ledger against a dawn snapshot) and how many meetings it had — persisted as an additive save field `reflections`. Tomorrow reads it: a sociable dino that spent its day alone wakes with its daytime phase leaning social ("missed company"), and 582's companion chooser seeks yesterday's `best` first. The founding park starts with a yesterday (best = its founding best friend, nobody for a loner) so the record is exercised from frame one, not after the first dusk. Visible: a "yesterday:" line in the book, a dusk ticker beat, and a memory line in its own ring the brain prompt already reads.
+
