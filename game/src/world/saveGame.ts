@@ -12,6 +12,7 @@
  * rather than crashing.
  */
 
+import { parseReflection, type Reflections } from '../ai/reflection';
 import type { GameTime } from './clock';
 import type { Friendship } from '../social/friendship';
 import type { MemoryStore } from '../ai/memory';
@@ -72,6 +73,8 @@ export interface SaveData {
   bonds: Bonds;
   /** Who does not get on with whom (BACKLOG-574) — the bond map's shape. Additive; absent in older saves. */
   grudges?: Bonds;
+  /** Each dino's last dusk reflection (BACKLOG-583). Additive; absent in older saves. */
+  reflections?: Reflections;
   /** Who each dino owes a consolation back to (BACKLOG-132). Additive; absent → {}. */
   gratitude: Gratitude;
   /** Each dino's last greeting tone id (BACKLOG-142). Additive; absent → {}. */
@@ -316,6 +319,18 @@ export function deserialize(json: string): SaveData | null {
     for (const k of Object.keys(entries)) {
       if (!isNum(entries[k])) return null;
       grudges[k] = entries[k] as number;
+    }
+  }
+
+  // reflections (BACKLOG-583) — name → { day, best, met }. Absent stays absent; malformed → reject.
+  let reflections: Reflections | undefined;
+  if (o.reflections !== undefined) {
+    if (typeof o.reflections !== 'object' || o.reflections === null || Array.isArray(o.reflections)) return null;
+    reflections = {};
+    for (const [name, raw] of Object.entries(o.reflections as Record<string, unknown>)) {
+      const r = parseReflection(raw);
+      if (!r) return null;
+      reflections[name] = r;
     }
   }
 
@@ -1090,6 +1105,7 @@ export function deserialize(json: string): SaveData | null {
     memory,
     bonds,
     grudges,
+    reflections,
     gratitude,
     lastTone,
     metWatcher,

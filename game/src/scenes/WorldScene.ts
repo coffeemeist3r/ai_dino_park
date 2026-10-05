@@ -91,6 +91,8 @@ import {
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
+import { reflectDay, foundingReflection, planAfter, reflectionLine, duskLine, REFLECT_HOUR, REFLECT_GLYPH, type Reflections } from '../ai/reflection'; // BACKLOG-583
+import { chooseCompanion, seekLine, seekingLine, arrivalText, SEEK_ART_KEY, SEEK_GLYPH, type Companion } from '../ai/companion'; // BACKLOG-582
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { travelsTogether, togetherMemory, togetherLine, togetherEvent, TOGETHER_BOND } from '../world/together';
@@ -1291,6 +1293,12 @@ export class WorldScene extends Phaser.Scene {
   private intentPhase: Record<string, DayPhase> = {};
   /** Persona-shaped daily plan (BACKLOG-012): the day's shape per dino. Transient — recomputed each in-game day, never persisted. */
   private plans: Record<string, { day: number; plan: DayPlan }> = {};
+  /** Each dino's last dusk reflection (BACKLOG-583). Persisted (additive). */
+  private reflections: Reflections = {};
+  /** The meetings ledger as it stood at the last dawn (or boot) — the reflection diffs against it. Transient. */
+  private dawnMeetings: Record<string, number> = {};
+  /** Whom each dino's mind chose to seek this phase (BACKLOG-582), and whether it has got there. Transient. */
+  private seeking: Record<string, (Companion & { arrived: boolean }) | null> = {};
   /** Generate-once personas (BACKLOG-103): cached selves, persisted in the save. */
   private personas: Record<string, Persona> = {};
   /** Edge indicators (BACKLOG-398): the current zone's neighbour labels, rebuilt per zone change. */
@@ -1593,8 +1601,17 @@ export class WorldScene extends Phaser.Scene {
       const now = getWorldClock().now();
       this.intents[name] = { kind, note: INTENT_NOTES[kind], until: now.day };
       this.intentPhase[name] = dayPhase(now.hour); // pin the phase so ensureIntent honours the forced lean
+      const forced = this.dinoByName(name);
+      if (forced) this.chooseSeek(forced); // BACKLOG-582: a forced phase picks its companion like a real one
       return this.intents[name];
     };
+    (window as any).__reflections = () => ({ ...this.reflections }); // BACKLOG-583
+    (window as any).__seeking = (name: string) => {
+      const d = this.dinoByName(name);
+      if (d) this.ensureIntent(d);
+      if (d && !(name in this.seeking)) this.chooseSeek(d);
+      return this.seeking[name] ?? null;
+    }; // BACKLOG-582
     // dev-only hook — daily plan (BACKLOG-012): read a dino's day shape (one lean per day-phase),
     // computing it on first read the same deterministic path the step loop takes.
     (window as any).__plan = (name: string) => {
@@ -2487,6 +2504,7 @@ export class WorldScene extends Phaser.Scene {
     // are not part of the grounds `__clearFounding` empties. A pair a spec already wrote wins.
     if (!this.bondsCleared) this.bonds = { ...foundingBonds(), ...this.bonds };
     if (!this.bondsCleared) this.grudges = { ...foundingGrudges(), ...this.grudges }; // BACKLOG-574: and one feud
+    if (!this.bondsCleared) this.seedFoundingReflections(); // BACKLOG-583: and a yesterday
     this.refreshBestFriends(false);
     if (this.foundingCleared) return; // a spec restored the pre-v7 empty grounds before the DB read resolved
     if (this.cairns.length) return; // one-shot: never seed a second founding ruin over an existing skyline
@@ -4286,6 +4304,9 @@ export class WorldScene extends Phaser.Scene {
       this.bondsCleared = true;
       this.bonds = {};
       this.grudges = {}; // BACKLOG-574: strangers have no feuds either
+      this.reflections = {}; // BACKLOG-583: ...and no yesterday spent with anyone
+      this.seeking = {};
+      this.plans = {};
       this.refreshBestFriends(false);
     };
     (window as any).__bestFriends = () => ({ ...this.bestFriendOf });
@@ -5292,6 +5313,8 @@ export class WorldScene extends Phaser.Scene {
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
+      seeking: ((c) => (c ? seekingLine(c) : undefined))(this.seeking[d.name]), // BACKLOG-582
+      yesterday: ((r) => (r ? reflectionLine(r) : undefined))(this.reflections[d.name]), // BACKLOG-583
       home: isSettled(tenureOf(this.tenure, d.name)) // BACKLOG-341: where it's settled, once it belongs
         ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
         : undefined,
@@ -6537,7 +6560,7 @@ ${e.short}`;
         next = atAnchor ? ticStep(tic.kind, anchor, this.ticPhase[d.name], COLS, ROWS) : stepToward(cur, anchor, COLS, ROWS);
         this.performTic(d, tic);
       } else if (socializing) {
-        next = stepToward(cur, this.tileOf(other!), COLS, ROWS); // drift to cluster + converse
+        next = stepToward(cur, this.tileOf(this.soughtOnGround(d) ?? other!), COLS, ROWS); // BACKLOG-582: whom the mind chose
       } else if (seeking) {
         next = stepToward(cur, seekTarget!, COLS, ROWS); // BACKLOG-436: lean toward the hatch (hunger) / pond (thirst)
       } else if (resting) {
@@ -6580,6 +6603,8 @@ ${e.short}`;
         // have never seen each other, and the book named them best friends.
         if (zoneOf(this.dinoZones, a.name, BOWL_ID) !== zoneOf(this.dinoZones, b.name, BOWL_ID)) continue;
         if (Math.abs(a.x - b.x) <= TILE * 1.01 && Math.abs(a.y - b.y) <= TILE * 1.01) {
+          this.arriveIfSought(a, b); // BACKLOG-582
+          this.arriveIfSought(b, a);
           // BACKLOG-024: rivals who bump do not meet — they square off, once a minute at most.
           if (
             bondPoints(this.grudges, a.name, b.name) >= RIVAL_BAR &&
@@ -7921,6 +7946,66 @@ ${e.short}`;
    * If the keeper has stepped off a linked edge, cross into the neighbour zone (repositioned to the
    * far side) and return true; otherwise false so the caller clamps normally. (BACKLOG-143)
    */
+  /** The founding park's yesterday (BACKLOG-583): each dino with a founding friend spent it with that friend. */
+  private seedFoundingReflections(): void {
+    const day = getWorldClock().now().day - 1;
+    const names = this.dinoNames();
+    for (const n of names) {
+      if (this.reflections[n]) continue;
+      const r = foundingReflection(n, day, this.bonds, names);
+      if (r) this.reflections[n] = r;
+    }
+    this.plans = {};
+  }
+
+  /**
+   * The dusk reflection (BACKLOG-583). Dawn snapshots the meetings ledger; the dusk turn diffs against it and every dino
+   * files `{ day, best, met }`. One ticker line, a 💭 over each dino in view. Live `onHour` only.
+   */
+  private checkReflection(t: GameTime): void {
+    if (t.hour === DAWN_HOUR) this.dawnMeetings = { ...this.meetings };
+    if (t.hour !== REFLECT_HOUR) return;
+    const names = this.dinoNames();
+    const today: Reflections = {};
+    for (const n of names) today[n] = reflectDay(n, t.day, this.meetings, this.dawnMeetings, names, this.bonds);
+    this.reflections = { ...this.reflections, ...today };
+    this.logEvent(duskLine(today, names));
+    for (const d of this.dinos) this.popMark(d, 'reflect', REFLECT_GLYPH);
+  }
+
+  /** The companion a dino's mind picks for this phase (BACKLOG-582); a new pick is announced. */
+  private chooseSeek(d: Dino): void {
+    const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const mates = this.dinos.filter((o) => zoneOf(this.dinoZones, o.name, BOWL_ID) === zone).map((o) => o.name);
+    const pick = chooseCompanion(d.name, d.traits, mates, {
+      bonds: this.bonds,
+      grudges: this.grudges,
+      meetings: this.meetings,
+      yesterday: this.reflections[d.name]?.best,
+    });
+    const was = this.seeking[d.name];
+    this.seeking[d.name] = pick ? { ...pick, arrived: false } : null;
+    if (!pick || (was && was.name === pick.name && was.why === pick.why)) return;
+    this.logEvent(seekLine(d.name, pick));
+    this.popMark(d, SEEK_ART_KEY, SEEK_GLYPH);
+  }
+
+  /** The companion if it is still on the seeker's ground (BACKLOG-582); otherwise null and the old nearest-drift. */
+  private soughtOnGround(d: Dino): Dino | null {
+    const c = this.seeking[d.name];
+    const o = c ? this.dinoByName(c.name) : undefined;
+    if (!o || zoneOf(this.dinoZones, o.name, BOWL_ID) !== zoneOf(this.dinoZones, d.name, BOWL_ID)) return null;
+    return o;
+  }
+
+  /** The seeker reaches whom it went looking for (BACKLOG-582): one line in its voice, once per phase. */
+  private arriveIfSought(seeker: Dino, other: Dino): void {
+    const c = this.seeking[seeker.name];
+    if (!c || c.arrived || c.name !== other.name) return;
+    c.arrived = true;
+    this.showBubble(seeker, arrivalText(c));
+  }
+
   /**
    * A dino's daily plan (BACKLOG-012) — the day's shape, one lean per day-phase. Recomputed once
    * per in-game day from name+day+traits (deterministic floor, never persisted); cached so the hot
@@ -7929,7 +8014,7 @@ ${e.short}`;
   private ensurePlan(d: Dino, day: number): DayPlan {
     const cached = this.plans[d.name];
     if (cached && cached.day === day) return cached.plan;
-    const plan = proceduralPlan(d.name, day, d.traits);
+    const plan = planAfter(proceduralPlan(d.name, day, d.traits), this.reflections[d.name], d.traits, day); // BACKLOG-583
     this.plans[d.name] = { day, plan };
     return plan;
   }
@@ -7951,6 +8036,7 @@ ${e.short}`;
     const fresh = activeIntent(this.ensurePlan(d, day), phase, day);
     this.intents[d.name] = fresh;
     this.intentPhase[d.name] = phase;
+    this.chooseSeek(d);
     if (this.npcBrain.intend && allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) {
       void this.npcBrain
         .intend({ name: d.name, species: d.species, personality: this.ensurePersona(d).text, traits: d.traits })
@@ -9541,6 +9627,7 @@ ${e.short}`;
     // Dawn chorus (BACKLOG-192) — its own live-only onHour listener, separate from the season
     // turn and the hour-6 reflection so neither is disturbed. onHour never fires on clock.set().
     clock.onHour((t) => this.checkDawnChorus(t));
+    clock.onHour((t) => this.checkReflection(t)); // BACKLOG-583: dawn snapshot, dusk reflection — live-only
 
     // any: dev-only Playwright hooks — seasons (BACKLOG-159)
     (window as any).__season = () => seasonFor(getWorldClock().now().day);
@@ -9935,6 +10022,7 @@ ${e.short}`;
       memory: this.memory,
       bonds: this.bonds,
       grudges: this.grudges, // BACKLOG-574 (additive)
+      reflections: this.reflections, // BACKLOG-583 (additive)
       gratitude: this.gratitude,
       lastTone: this.lastTone,
       metWatcher: this.metWatcher,
@@ -10096,6 +10184,8 @@ ${e.short}`;
       this.memory = away.memory;
       this.bonds = away.bonds;
       this.grudges = save.grudges ?? {}; // BACKLOG-574: a pre-574 park has no feud — none is invented for it
+      this.reflections = save.reflections ?? {}; // BACKLOG-583: a pre-583 park simply has no yesterday yet
+      this.plans = {};
       this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently
       this.gratitude = save.gratitude ?? {};
       this.lastTone = (save.lastTone ?? {}) as Record<string, ToneId>;

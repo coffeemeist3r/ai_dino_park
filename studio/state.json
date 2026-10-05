@@ -1,6 +1,6 @@
 {
   "cycle": 178,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-582: whom a mind goes looking for",
   "structureItem": "BACKLOG-583: the dusk reflection",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-05T08:12:36.000Z",
     "designer": "2026-10-05T08:14:30.000Z",
     "code-planner": "2026-10-05T08:15:22.000Z",
-    "coder": "2026-10-04T08:26:12.000Z",
+    "coder": "2026-10-05T08:32:08.000Z",
     "qa": "2026-10-04T08:26:46.000Z",
     "validator": "2026-10-04T08:27:29.000Z",
     "artist": "2026-10-04T08:51:41.000Z"

@@ -47,3 +47,9 @@ Build order: 583 first (582's chooser reads `best`).
 **Risks** — socializing now walks to a chosen dino, which can change which pairs meet in specs that relied on nearest-drift; run the full suite.
 
 **Estimated touch count:** ~4 files (2 shared with 583).
+
+## Shipped
+
+- 583: `ai/reflection.ts` (reflectDay, foundingReflection, planAfter, duskLine, parseReflection); `reflections` save field; WorldScene dawn snapshot + dusk `checkReflection`, founding yesterday in `seedFounding`, `planAfter` in `ensurePlan`, book `yesterday:`.
+- 582: `ai/companion.ts` (chooseCompanion, seekLine, arrivalText); WorldScene `chooseSeek` on each fresh phase (and on a forced `__setIntent`), socializing steps toward `soughtOnGround`, `arriveIfSought` bubble, book `seeking:`.
+- Tests: `game/src/ai/cycle-178-minds.test.ts` (13), `tests/e2e/cycle-178-minds.spec.ts` (3). Build clean; unit 3239 green.

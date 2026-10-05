@@ -14306,3 +14306,4 @@ Milestone 26 opens — the first tentpole, minds that act and reflect. Tonight t
 - structure-smith: 583 — the dusk reflection, the tentpole spine; 563/578/581 wait out the tentpole.
 - designer: 582 (the mind picks whom it seeks: rival, stranger, yesterday, friend) + 583 (the dusk reflection, persisted, read by tomorrow).
 - codeplan: ~8 files; two pure modules (reflection.ts, companion.ts), glue in WorldScene. The reflection stays out of the memory ring.
+- coder: 582 + 583 shipped — two pure modules, glue in WorldScene, additive `reflections` save field. Unit 3239.
