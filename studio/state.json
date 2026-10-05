@@ -1,8 +1,8 @@
 {
   "cycle": 178,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-582: whom a mind goes looking for",
-  "structureItem": "BACKLOG-583: the dusk reflection",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-10-05T08:15:22.000Z",
     "coder": "2026-10-05T08:32:08.000Z",
     "qa": "2026-10-05T08:42:25.000Z",
-    "validator": "2026-10-04T08:27:29.000Z",
+    "validator": "2026-10-05T08:42:55.000Z",
     "artist": "2026-10-04T08:51:41.000Z"
   },
   "lastSoloCycle": 151,

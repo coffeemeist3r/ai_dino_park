@@ -1,5 +1,13 @@
 # Backlog Archive — closed items
 
+## Cycle 178 — closed
+
+- [x] BACKLOG-582 [emergent] Whom a mind goes looking for (Milestone 26 lore arc 1; first slice of 104) — until now a dino that drifts to company walks to whoever is *nearest*. Give the choice to the persona: each day-phase a dino picks one zone-mate to seek, and the reason reads off who it is — a prickly dino with a rival on its ground goes looking for trouble; a curious one seeks the zone-mate it has met least; one with a yesterday (583) seeks the dino it spent it with; everyone else seeks its warmest bond. The socialize roll is unchanged (how *often* is the old lean); *whom* is the mind's. Visible: a 👀 and a ticker line as it sets off ("Rex goes looking for Mossback — spoiling for it"), a "seeking:" line in the book, and on arrival a line in its voice. Deterministic floor; the model's hand on the choice is a later arc.
+
+- [x] BACKLOG-583 [core] The dusk reflection (first slice of 014) — the only "reflection" the park has is a dawn string, `reflect()`, that counts the ring ("A full day — 4 things happened") and is read by nothing. Make it a record: at the dusk turn (hour 17) each dino folds its day into `{ day, best, met }` — the zone-mate it met most since dawn (diffed from the meetings ledger against a dawn snapshot) and how many meetings it had — persisted as an additive save field `reflections`. Tomorrow reads it: a sociable dino that spent its day alone wakes with its daytime phase leaning social ("missed company"), and 582's companion chooser seeks yesterday's `best` first. The founding park starts with a yesterday (best = its founding best friend, nobody for a loner) so the record is exercised from frame one, not after the first dusk. Visible: a "yesterday:" line in the book, a dusk ticker beat, and a memory line in its own ring the brain prompt already reads.
+
+- Lore track: **BACKLOG-582 APPROVED**, 6/6. Structure track: **BACKLOG-583 APPROVED**, 5/5. Additive save field `reflections`. Milestone 26 (tentpole) opened; two of six arcs done.
+
 ## Cycle 173 — closed
 
 - [x] BACKLOG-572 [art] The comfort mark — a small pixel hug (two arms closing round a heart, 🫂 read) that pops over a friend as it arrives to console a sore dino. Host ships with BACKLOG-136 in cycle 173 (`COMFORT_ART_KEY` via `makeHourMark`, in `worldPlacedProps`), so it is drawable the night it is seeded. Reachable in the first minute of a fresh save: drop food into a crowd, and the loser's friend comes over. *(drawn cycle 173-art: a rose heart held up by two tan arms clasped beneath it.)*

@@ -17,12 +17,12 @@ A dino decides whom it goes looking for, and why — a friend it misses, a stran
 wants to stare down — and at dusk it sums its day into a memory that changes what it does tomorrow.
 
 **Lore arcs:**
-- [ ] A dino's persona picks whom it goes looking for — a friend, a stranger, or a rival — and the player watches it walk across the ground to them (BACKLOG-582, the first slice of 104)
+- [x] A dino's persona picks whom it goes looking for — a friend, a stranger, or a rival — and the player watches it walk across the ground to them (BACKLOG-582, the first slice of 104 — cycle 178)
 - [ ] At dusk a dino says how its day went in its own voice; where a model runs it authors the line, the persona-seeded floor everywhere else (to seed)
 - [ ] A park event (a drop, a sky event, an arrival) is answered differently by different minds, and yesterday's reflection is part of the answer (to seed)
 
 **Structure arcs:**
-- [ ] The dusk reflection: each dino folds its day into a persisted record (who it spent it with, or nobody) that tomorrow's plan and companion choice read; the founding park starts with a yesterday (BACKLOG-583, the first slice of 014)
+- [x] The dusk reflection: each dino folds its day into a persisted record (who it spent it with, or nobody) that tomorrow's plan and companion choice read; the founding park starts with a yesterday (BACKLOG-583, the first slice of 014 — cycle 178)
 - [ ] Places in the plan: a forage or restless phase names a destination, and a dino crosses to another ground on purpose rather than by migration roll (to seed)
 - [ ] The model's hand: `NPCBrain` may author a dino's choice of companion and destination behind the governor, folded onto the deterministic floor exactly as 393's intent is (to seed)
 

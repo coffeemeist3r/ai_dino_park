@@ -14308,3 +14308,30 @@ Milestone 26 opens — the first tentpole, minds that act and reflect. Tonight t
 - codeplan: ~8 files; two pure modules (reflection.ts, companion.ts), glue in WorldScene. The reflection stays out of the memory ring.
 - coder: 582 + 583 shipped — two pure modules, glue in WorldScene, additive `reflections` save field. Unit 3239.
 - qa: 11/11 criteria pass; e2e 875/875 first full run.
+
+## Cycle 178 — APPROVED / APPROVED: the mind takes the wheel — **Milestone 26 (the first tentpole) opens**
+
+Open a fresh park and the first line in the ticker is *👀 Mossback goes looking for Twitch — spoiling for it.*
+
+Until tonight, a dino that felt like company walked to whoever was standing nearest. That was geometry, and on a
+crowded bowl it made eight minds look like one. Now the dino decides whom to go to, and the reason comes from who it
+is. Mossback is prickly and has a feud, so it walks straight past Glade, who is right beside it, crosses the bowl, and
+says *You again, Twitch.* Rex is curious, so it goes to get to know the dino it has met least. Sunny is warm and has a
+yesterday, so it goes back to Rex: *Rex! Same again today?* Same ground, same hour, three different walks. That is the
+tentpole's headline in its smallest true form.
+
+The other half is a memory that does something. At five in the evening, about nine minutes into a fresh sitting, the
+park thinks back on its day. *💭 Dusk — the park thinks back on its day: Rex & Sunny; Twitch alone.* Each dino's book
+page gets a `yesterday:` line, and tomorrow reads it. A dino that spent the day with someone seeks them again. A
+sociable dino that spent it alone wakes up wanting company. The park doesn't start blank, either: it ships with a
+yesterday drawn from its founding friendships, so the record is being read from the first frame, not only after the
+first dusk.
+
+One call worth recording: the reflection stays out of the six-slot memory ring. The hatch reads that ring, and a
+nightly line would push its beats off the end (581's complaint, one layer up). The record is the memory.
+
+**Milestone 26 — minds that act and reflect — opened, 2 of 6 arcs done.** Next: a dusk line in each dino's own voice,
+places in the plan, and the model's hand on the choice.
+
+Board: build clean, **3239 unit** green, e2e **875/875** on the first full run. Save change additive (`reflections`).
+CI green going in.

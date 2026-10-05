@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 178 — 2026-10-05 (the mind takes the wheel)
+- BACKLOG-582: Whom a mind goes looking for — when a dino drifts toward company it no longer walks to whoever is nearest. Each day-phase its persona picks one dino on its ground, for a reason: a prickly dino with a rival there goes looking for trouble, a curious one seeks the dino it has met least, one with a yesterday seeks whom it spent it with, anyone else its warmest bond. A 👀 and a ticker line as it sets off (*Mossback goes looking for Twitch — spoiling for it.*), a `seeking:` line in the book, and a line in its voice when it gets there (*You again, Twitch.*). How often it socializes is unchanged. Host for art BACKLOG-584.
+- BACKLOG-583: The dusk reflection — at 17:00 every dino folds its day into a record (who it met most since dawn, how many meetings), saved as the additive `reflections` field. One dusk ticker line (*💭 Dusk — the park thinks back on its day: Rex & Sunny; Twitch alone.*), a `yesterday:` line in the book, and tomorrow reads it: a sociable dino that spent the day alone spends tomorrow's daytime looking for company, and the companion chooser seeks yesterday's company first. The founding park ships with a yesterday drawn from its founding friendships.
+
+---
+
 ## Cycle 177 — 2026-10-04 (the bully has a conscience)
 - BACKLOG-391: Guilty gobbler — a gobbler that shoulders past a dino it counts as a friend (bond ≥ 10) feels it: a 😓 pops over it a beat after the 😤, the ticker says *😓 Rex felt bad about shoving past Sunny*, and it files a regret. At their next meeting its words are not small talk but *"Sorry about the hatch, Sunny. I was starving."* (🙇 in the ticker); the regret becomes a memory of the apology on both sides. Shoving past a stranger costs nothing. The regret is not a pecking beat — the shove still counts as a won grab.
 - BACKLOG-577: Standoffs count at the hatch — a stare-down in the grass (024) now weighs in the pecking order at half a stand (±1), so two squares-off between the founding rivals put *faced down Twitch* on Mossback's page and *wary of Mossback* on Twitch's, and Twitch gives Mossback a berth at the next drop, before either has fought over food. **Milestone 25 SHIPPED.**
