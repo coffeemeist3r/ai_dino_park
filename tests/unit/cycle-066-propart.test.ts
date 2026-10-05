@@ -57,6 +57,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'pile_3',
       'regret', // BACKLOG-580 (cycle 177-art): the bead of sweat over a gobbler that shoved past a friend (host 391)
       'rouse', // BACKLOG-520: ...and the open one
+      'seek', // BACKLOG-584 (cycle 178-art): eyes with somewhere to be, over a dino setting off to find someone (host 582)
       'shelter',
       'shelter_derelict', // BACKLOG-494
       // BACKLOG-561 (cycle 168-art): the fourteenth rig — this sitting's hourglass, the middle of the

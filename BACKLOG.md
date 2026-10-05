@@ -64,7 +64,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
-- [ ] BACKLOG-584 [art] The seek mark — a small pixel mark over a dino the moment its mind picks someone to go looking for (BACKLOG-582's 👀 glyph until drawn). Host: `popMark(d, SEEK_ART_KEY, SEEK_GLYPH)` shipping cycle 178. Reads as *looking for*, not *looking at* — eyes with a direction, not a stare.
 
 
 

@@ -14335,3 +14335,20 @@ places in the plan, and the model's hand on the choice.
 
 Board: build clean, **3239 unit** green, e2e **875/875** on the first full run. Save change additive (`reflections`).
 CI green going in.
+
+## Cycle 178-art — artist: BACKLOG-584, the seek mark
+
+Drawn the night its host shipped. The 👀 over a dino whose mind has just picked someone is **two eyes with their pupils
+pressed hard against the right-hand rim**, and two gold speed ticks trailing off the left. It had to read as *looking
+for*, eyes with somewhere to be, not *looking at*. The first draft was the emoji's own two round eyes with centred
+pupils. It was rejected before it was inked, because at 16px a centred pupil is a stare, and a stare over a dino reads
+as startled, which is `rouse`'s job, not as setting off. Moving the pupils to the rim and adding the ticks turned the
+stare into a heading. White sclera, a cool shade under it, family rim. The art queue is empty again.
+
+**Correction, owned:** the main chain's coder, QA and validator commits carried one red unit test. The
+founding-declaration ratchet (533) requires every e2e spec to name its founding state, and `cycle-178-minds.spec.ts` was
+written after the last full unit run, without `foundingState(page, 'as-shipped')`. QA's "3239 green" was true when it
+ran, but the run was stale by the time QA reported it. Fixed in this commit. Unit is green again before anything is
+pushed: nothing red reached `main` on GitHub.
+
+Board: unit **3246** green; e2e 875/876 on the post-art full run. The one failure was `cycle-046-art-vix` (a boot `locator.waitFor` timeout), which passed 6/6 run isolated: the known parallel-load flake, not a regression. The pre-art full run was 876-1=875/875 green. CI on `main`: last three runs `success`.

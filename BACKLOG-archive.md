@@ -1,5 +1,9 @@
 # Backlog Archive — closed items
 
+## Cycle 178-art — closed
+
+- [x] BACKLOG-584 [art] The seek mark — a small pixel mark over a dino the moment its mind picks someone to go looking for (BACKLOG-582's 👀 glyph until drawn). Host: `popMark(d, SEEK_ART_KEY, SEEK_GLYPH)` shipping cycle 178. Reads as *looking for*, not *looking at* — eyes with a direction, not a stare.
+
 ## Cycle 178 — closed
 
 - [x] BACKLOG-582 [emergent] Whom a mind goes looking for (Milestone 26 lore arc 1; first slice of 104) — until now a dino that drifts to company walks to whoever is *nearest*. Give the choice to the persona: each day-phase a dino picks one zone-mate to seek, and the reason reads off who it is — a prickly dino with a rival on its ground goes looking for trouble; a curious one seeks the zone-mate it has met least; one with a yesterday (583) seeks the dino it spent it with; everyone else seeks its warmest bond. The socialize roll is unchanged (how *often* is the old lean); *whom* is the mind's. Visible: a 👀 and a ticker line as it sets off ("Rex goes looking for Mossback — spoiling for it"), a "seeking:" line in the book, and on arrival a line in its voice. Deterministic floor; the model's hand on the choice is a later arc.

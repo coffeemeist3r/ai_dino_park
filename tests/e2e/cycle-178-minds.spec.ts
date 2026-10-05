@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { boot } from './helpers';
+import { boot, foundingState } from './helpers';
 
 /**
  * Milestone 26 (tentpole), cycle 178. BACKLOG-582: the mind picks whom it goes looking for. BACKLOG-583: the dusk
@@ -10,6 +10,7 @@ type W = Record<string, any>;
 
 test('a fresh park: Mossback goes looking for its rival, and Sunny remembers yesterday with Rex', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'as-shipped');
   expect(await page.evaluate(() => (window as W).__seeking('Mossback'))).toMatchObject({ name: 'Twitch', why: 'rival' });
   expect(await page.evaluate(() => (window as W).__seeking('Sunny'))).toMatchObject({ name: 'Rex', why: 'yesterday' });
   expect(await page.evaluate(() => (window as W).__reflections().Sunny)).toMatchObject({ best: 'Rex', met: 1 });
@@ -22,6 +23,7 @@ test('a fresh park: Mossback goes looking for its rival, and Sunny remembers yes
 
 test('a socializing dino walks to the one it chose, not the one beside it', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'as-shipped');
   const x = await page.evaluate(() => {
     const w = window as W;
     w.__seedRandom(7);
@@ -46,6 +48,7 @@ test('a socializing dino walks to the one it chose, not the one beside it', asyn
 
 test('at dusk every dino thinks back on its day, and the park says so', async ({ page }) => {
   await boot(page);
+  await foundingState(page, 'as-shipped');
   const day = await page.evaluate(() => (window as W).__setClock(1, 16, 58).day as number);
   await page.evaluate(() => (window as W).__advanceMinutes(3));
   const r = await page.evaluate(() => (window as W).__reflections());

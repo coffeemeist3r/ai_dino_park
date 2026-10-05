@@ -2362,6 +2362,44 @@ const REGRET_RIG: PropRig = {
   },
 };
 
+// `seek` (BACKLOG-584, cycle 178-art): the 👀 over a dino whose mind has just picked someone to go looking for (582).
+// Two eyes with their pupils pressed hard against the right-hand rim, and two gold speed ticks trailing off the left:
+// it has to read as *looking for*, eyes with somewhere to be, not *looking at*. White sclera with a cool shade under
+// the lid line, family rim.
+//
+// First draft rejected: the emoji's two round eyes with centred pupils. At 16px a centred pupil is a stare — the
+// mark read as the dino being startled (`rouse`'s job), not setting off. The pupils moved to the rim and the ticks
+// went in, and the stare became a heading.
+const SEEK_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '....oooo...oooo.',
+  '...owwwwo.owwwwo',
+  'yy.owwooo.owwooo',
+  '...owwooo.owwooo',
+  '.y.osssso.osssso',
+  '....oooo...oooo.',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+];
+
+const SEEK_RIG: PropRig = {
+  size: 16,
+  grid: SEEK_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse` — and the pupils, pressed into it
+    w: 0xf8f8f0, // sclera
+    s: 0xb8c0d8, // the cool shade under it
+    y: 0xf0c040, // the speed ticks — it is going somewhere
+  },
+};
+
 
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
@@ -2622,6 +2660,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   admire: ADMIRE_RIG,
   // BACKLOG-580 (cycle 177-art): drawn the night its host shipped — `regretShove` (391).
   regret: REGRET_RIG,
+  // BACKLOG-584 (cycle 178-art): drawn the night its host shipped — `chooseSeek` (582).
+  seek: SEEK_RIG,
 };
 
 /**
