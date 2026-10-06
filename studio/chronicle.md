@@ -14360,3 +14360,4 @@ The mind finds its voice at dusk: every dino says how its day went, in its own w
 - designer: 585 (the day in its own voice: persona floor, model on top) + 586 (forage/restless phases name a ground; errands on the cadence).
 - codeplan: ~7 files; new pure place.ts, the voice in reflection.ts, optional NPCBrain.reflect, glue in WorldScene.
 - coder: 585 + 586 shipped — place.ts, the voice in reflection.ts, optional NPCBrain.reflect; fixed CI's red cycle-028 clock spec. Unit 3255, e2e 880/880.
+- qa: 12/12 criteria pass; e2e 880/880 first full run.

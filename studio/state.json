@@ -1,6 +1,6 @@
 {
   "cycle": 179,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-585: the day in its own voice",
   "structureItem": "BACKLOG-586: places in the plan",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-06T08:13:53.455Z",
     "code-planner": "2026-10-06T08:13:53.710Z",
     "coder": "2026-10-06T08:29:51.981Z",
-    "qa": "2026-10-05T08:42:25.000Z",
+    "qa": "2026-10-06T08:30:05.901Z",
     "validator": "2026-10-05T08:42:55.000Z",
     "artist": "2026-10-05T08:46:09.000Z"
   },
