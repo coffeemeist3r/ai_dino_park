@@ -14361,3 +14361,32 @@ The mind finds its voice at dusk: every dino says how its day went, in its own w
 - codeplan: ~7 files; new pure place.ts, the voice in reflection.ts, optional NPCBrain.reflect, glue in WorldScene.
 - coder: 585 + 586 shipped — place.ts, the voice in reflection.ts, optional NPCBrain.reflect; fixed CI's red cycle-028 clock spec. Unit 3255, e2e 880/880.
 - qa: 12/12 criteria pass; e2e 880/880 first full run.
+
+## Cycle 179 — APPROVED / APPROVED: the mind finds its voice, and somewhere to go
+
+Twenty seconds into a fresh park, the ticker says *🧭 Bramble sets off for …— itchy feet.* Bramble walks to the edge of
+the Grove and crosses. A minute later another one goes, and then another. Until tonight a dino only left its ground when
+the migration roll happened to pick it. The plan had always had two leans that are about going somewhere, *food on the
+brain* and *itchy feet*, and neither ever named a place. Now they do. A restless dino picks a neighbouring ground, a
+hungry one picks the neighbour with more to eat, and it goes on purpose. Ember stays put: it is the only dino on the
+Ridge, and a ground keeps its last resident.
+
+At five in the evening, about nine minutes in, the park thinks back on its day the way it learned to last night. This
+time everyone says something. Mossback, prickly and with a feud, is sour about another day of Twitch. A warm dino is
+glad of its friend. A sociable dino that spent the day alone says *"Nobody today. I'll find someone tomorrow,"* and
+tomorrow's plan makes it go looking. A loner says it liked the quiet. A dino that walked across the park on an errand
+starts with *"Went all the way to the Grove."* Two dinos with the same day still use different words. Where a model is
+loaded, it writes the line instead, marked 🧠. The book quotes every line, including the founding park's yesterday, so
+the voice is there from the first frame.
+
+Same dusk, a dozen different sentences. That is the tentpole's headline getting louder.
+
+**Also fixed: CI was red.** The last push of cycle 178 failed on GitHub: `cycle-028-realtime` measured 61 and then 62
+in-game minutes for a 60-second advance on the slow Linux runner. Wall time since the last clock tick was counted in the
+delta. The spec now pumps the clock before it reads its baseline. It was a test bug, not a clock bug. Named here because
+cycles 156–159 are why this check exists.
+
+**Milestone 26 — minds that act and reflect: 4 of 6 arcs done.** Left: a park event answered differently by different
+minds, and the model's hand on whom and where.
+
+Board: build clean, **3255 unit** green, e2e **880/880** on the first full run. Save change additive (`said`, `went`).

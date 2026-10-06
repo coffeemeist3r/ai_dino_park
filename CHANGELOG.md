@@ -7,6 +7,13 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 179 — 2026-10-06 (the mind finds its voice)
+- BACKLOG-585: The day in its own voice — at 17:00 every dino on screen says how its day went, in a line shaped by who it is: sour about a rival, glad of a friend, put out by company, lonely and promising itself someone tomorrow, or content alone; two wordings per mood, seeded by name; a dino that went somewhere on purpose leads with where. Kept on the reflection (additive `said`), quoted in the book's `yesterday:` line, founding yesterday included. Where a model runs, `NPCBrain.reflect` authors the line (🧠) behind the governor.
+- BACKLOG-586: Places in the plan — a forage or restless day-phase now names a ground (restless: a seeded neighbour; forage: the neighbour richer than home), and on the migration cadence the dino sets off for it on purpose: *🧭 Bramble sets off for … — itchy feet.* One errand per tick, no chance gate, the last resident stays. Book `heading:`; the day's destination feeds 585's voice.
+- Fix: `cycle-028-realtime` pumps the clock before its baseline (CI red on main after cycle 178: 61/62 vs 60).
+
+---
+
 ## Cycle 178 — 2026-10-05 (the mind takes the wheel)
 - BACKLOG-582: Whom a mind goes looking for — when a dino drifts toward company it no longer walks to whoever is nearest. Each day-phase its persona picks one dino on its ground, for a reason: a prickly dino with a rival there goes looking for trouble, a curious one seeks the dino it has met least, one with a yesterday seeks whom it spent it with, anyone else its warmest bond. A 👀 and a ticker line as it sets off (*Mossback goes looking for Twitch — spoiling for it.*), a `seeking:` line in the book, and a line in its voice when it gets there (*You again, Twitch.*). How often it socializes is unchanged. Host for art BACKLOG-584.
 - BACKLOG-583: The dusk reflection — at 17:00 every dino folds its day into a record (who it met most since dawn, how many meetings), saved as the additive `reflections` field. One dusk ticker line (*💭 Dusk — the park thinks back on its day: Rex & Sunny; Twitch alone.*), a `yesterday:` line in the book, and tomorrow reads it: a sociable dino that spent the day alone spends tomorrow's daytime looking for company, and the companion chooser seeks yesterday's company first. The founding park ships with a yesterday drawn from its founding friendships.
