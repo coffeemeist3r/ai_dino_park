@@ -55,6 +55,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',
       'pile_3',
+      'reflect', // BACKLOG-587 (cycle 179-art): a thought rising off a dino at the dusk turn (host 583)
       'regret', // BACKLOG-580 (cycle 177-art): the bead of sweat over a gobbler that shoved past a friend (host 391)
       'rouse', // BACKLOG-520: ...and the open one
       'seek', // BACKLOG-584 (cycle 178-art): eyes with somewhere to be, over a dino setting off to find someone (host 582)

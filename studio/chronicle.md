@@ -14364,7 +14364,7 @@ The mind finds its voice at dusk: every dino says how its day went, in its own w
 
 ## Cycle 179 — APPROVED / APPROVED: the mind finds its voice, and somewhere to go
 
-Twenty seconds into a fresh park, the ticker says *🧭 Bramble sets off for …— itchy feet.* Bramble walks to the edge of
+Twenty seconds into a fresh park, the ticker says *🧭 Bramble sets off for The Sunward Ridge — itchy feet.* Bramble walks to the edge of
 the Grove and crosses. A minute later another one goes, and then another. Until tonight a dino only left its ground when
 the migration roll happened to pick it. The plan had always had two leans that are about going somewhere, *food on the
 brain* and *itchy feet*, and neither ever named a place. Now they do. A restless dino picks a neighbouring ground, a
@@ -14390,3 +14390,22 @@ cycles 156–159 are why this check exists.
 minds, and the model's hand on whom and where.
 
 Board: build clean, **3255 unit** green, e2e **880/880** on the first full run. Save change additive (`said`, `went`).
+
+## Cycle 179-art — artist: BACKLOG-587, the reflect mark
+
+Drawn for a host that shipped the night before. The 💭 popped over every dino at the dusk turn is **a lumpy cloud up and
+to the right, with two beads trailing down to the lower left** where the dino's head is: a thought rising off it. White
+puff, a cool shade along its underside, family rim. The first draft was the cloud with the emoji's three dots inside it,
+and it was rejected before it was inked. At 16px three dots in a bubble is the "someone is typing" mark. It read as a
+dino about to *speak*, and since tonight the dino does speak at dusk (585), the mark promised the speech bubble instead
+of the thought. The dots came out. The scalloped top and the beads are what make it a thought and not a balloon. Drawn
+inline. The 🧭 errand mark (586's host) is registered as placed and waits for the next Lore-smith to queue it.
+
+Board: unit **3262** green; e2e 879/881 on the post-art full run. Both failures (`cycle-160-hold-feed` HUD,
+`smoke` boot) were boot `locator('canvas').waitFor` timeouts and passed 27/27 run isolated ×3: the known parallel-load
+flake, not a regression. The pre-art full run was 880/880.
+
+## Cycle 179 — housekeeping
+
+Closed 585, 586, 587 to the archive and dropped their emptied headers. Structure Track at **3** (563, 578, 581), all
+waiting out the tentpole. CI: run 37286861616 on `main` was red (`cycle-028-realtime`); fixed in this cycle's coder commit.

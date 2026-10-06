@@ -9,7 +9,7 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 
 ## Cycle 179 — 2026-10-06 (the mind finds its voice)
 - BACKLOG-585: The day in its own voice — at 17:00 every dino on screen says how its day went, in a line shaped by who it is: sour about a rival, glad of a friend, put out by company, lonely and promising itself someone tomorrow, or content alone; two wordings per mood, seeded by name; a dino that went somewhere on purpose leads with where. Kept on the reflection (additive `said`), quoted in the book's `yesterday:` line, founding yesterday included. Where a model runs, `NPCBrain.reflect` authors the line (🧠) behind the governor.
-- BACKLOG-586: Places in the plan — a forage or restless day-phase now names a ground (restless: a seeded neighbour; forage: the neighbour richer than home), and on the migration cadence the dino sets off for it on purpose: *🧭 Bramble sets off for … — itchy feet.* One errand per tick, no chance gate, the last resident stays. Book `heading:`; the day's destination feeds 585's voice.
+- BACKLOG-586: Places in the plan — a forage or restless day-phase now names a ground (restless: a seeded neighbour; forage: the neighbour richer than home), and on the migration cadence the dino sets off for it on purpose: *🧭 Bramble sets off for The Sunward Ridge — itchy feet.* One errand per tick, no chance gate, the last resident stays. Book `heading:`; the day's destination feeds 585's voice.
 - Fix: `cycle-028-realtime` pumps the clock before its baseline (CI red on main after cycle 178: 61/62 vs 60).
 
 ---

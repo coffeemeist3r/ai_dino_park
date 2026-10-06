@@ -2401,6 +2401,43 @@ const SEEK_RIG: PropRig = {
 };
 
 
+// `reflect` (BACKLOG-587, cycle 179-art): the 💭 popped over every dino in view at the dusk turn (583), the moment it
+// thinks back on its day. A lumpy cloud up and to the right, two beads trailing down to the lower left where the dino's
+// head is: a thought rising off it. White puff with a cool shade along its underside, family rim.
+//
+// First draft rejected: the cloud with the emoji's three-dot ellipsis inside it. At 16px three dots in a bubble is the
+// "someone is typing" mark — it read as a dino about to *speak*, and at dusk the dino does speak (585), so the mark
+// promised the bubble instead of the thought. The dots came out; the scalloped top and the trailing beads are what make
+// it a thought and not a speech balloon.
+const REFLECT_GRID: ReadonlyArray<string> = [
+  '................',
+  '......ooo.ooo...',
+  '.....owwwowwwo..',
+  '...oowwwwwwwwwoo',
+  '..owwwwwwwwwwwwo',
+  '..owwwwwwwwwwwwo',
+  '..owwwwwwwwwwwso',
+  '...owwwwwwwwsso.',
+  '....oosssssoo...',
+  '......ooooo.....',
+  '...oo...........',
+  '..owso..........',
+  '...oo...........',
+  '................',
+  '.oo.............',
+  '.oo.............',
+];
+
+const REFLECT_RIG: PropRig = {
+  size: 16,
+  grid: REFLECT_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    w: 0xf8f8f0, // the puff
+    s: 0xb8c0d8, // the cool shade under it
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2662,6 +2699,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   regret: REGRET_RIG,
   // BACKLOG-584 (cycle 178-art): drawn the night its host shipped — `chooseSeek` (582).
   seek: SEEK_RIG,
+  // BACKLOG-587 (cycle 179-art): drawn for a host that shipped the night before — `checkReflection` (583).
+  reflect: REFLECT_RIG,
 };
 
 /**

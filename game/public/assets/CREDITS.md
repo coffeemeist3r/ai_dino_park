@@ -76,3 +76,4 @@ STYLE-GUIDE.
 - **Admire mark** (the gold star over a friend who saw a dino stand up at the hatch, BACKLOG-579) — `game/src/art/propArt.ts` `ADMIRE_RIG`, cycle 176-art, 2026-10-03. Claude-authored procedural pixel art.
 - **Regret mark** (the bead of sweat over a gobbler that shoved past a friend, BACKLOG-580) — `game/src/art/propArt.ts` `REGRET_RIG`, cycle 177-art, 2026-10-04. Claude-authored procedural pixel art.
 - **Seek mark** (eyes with somewhere to be, over a dino setting off to find someone, BACKLOG-584) — `game/src/art/propArt.ts` `SEEK_RIG`, cycle 178-art, 2026-10-05. Claude-authored procedural pixel art.
+- **Reflect mark** (a thought rising off a dino at the dusk turn, BACKLOG-587) — `game/src/art/propArt.ts` `REFLECT_RIG`, cycle 179-art, 2026-10-06. Claude-authored procedural pixel art.

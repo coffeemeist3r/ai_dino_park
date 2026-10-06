@@ -33,7 +33,7 @@ No save change. Errands ride the ambient cadence, which every spec pauses, so th
 
 **Reachability (v7):** A fresh save opens on the `day` phase, and five founding dinos (Bramble, Glade, Pip, Sunny,
 Ember) have a forage or restless lean in it. At the first migration tick, 20 seconds in, the ticker says *🧭 Bramble
-sets off for …* and Bramble walks to the edge and crosses. The others follow one per tick, except Ember, who is the
+sets off for The Sunward Ridge — itchy feet.* and Bramble walks to the edge and crosses. The others follow one per tick, except Ember, who is the
 Ridge's only resident and stays. Each phase turn sends a new set. The book says where each one is `heading:` and why.
 
 ## Also this cycle
