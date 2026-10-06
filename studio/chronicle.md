@@ -14357,3 +14357,4 @@ Board: unit **3246** green; e2e 875/876 on the post-art full run. The one failur
 
 The mind finds its voice at dusk: every dino says how its day went, in its own words (585). Seeded the reflect mark (587).
 - structure-smith: 586 — places in the plan; a forage/restless phase names a ground and the dino goes.
+- designer: 585 (the day in its own voice: persona floor, model on top) + 586 (forage/restless phases name a ground; errands on the cadence).
