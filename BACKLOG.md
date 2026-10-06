@@ -20,6 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
+- [~] BACKLOG-586 [core] Places in the plan (full text in the cycle-179 block below). Tentpole spine — Milestone 26 structure arc.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
@@ -674,3 +675,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-585 [ai] The day in its own voice — at the dusk turn (583) every dino says how its day went, out loud, in a line shaped by who it is: a warm dino that spent the day with a friend is glad of it, a prickly one that spent it with its rival is sour about it, a sociable dino alone says it will find someone tomorrow (and 583's `planAfter` makes it true), a loner alone is content, and a dino that went somewhere on purpose (586) says where. Two variants per mood, seeded by name, so two dinos with the same day still sound different. The line is kept on the reflection (additive `said`) and read back on the book's `yesterday:` line; the founding yesterday carries one from frame one. Where a model runs (`NPCBrain.reflect`, behind the governor) it authors the line from a plain summary of the day, marked 🧠, folded over the floor exactly as 393's intent is. Tentpole lore arc 2 (Milestone 26). Builds on 583 / 582 / 393 / 103.
 - [ ] BACKLOG-587 [art] The reflect mark — the 💭 popped over every dino in view at the dusk turn (583's `checkReflection`, `popMark(d, 'reflect', …)`) still renders as a raw glyph. Host exists today.
+
+## Cycle 179 (Structure-smith)
+
+- [~] BACKLOG-586 [core] Places in the plan — 012's plan gives each day-phase a lean, and two of the four leans are about *going*: `forage` ("food on the brain") and `restless` ("itchy feet"). Neither has ever named a place; a dino only crossed grounds when the migration roll picked it. Now a forage or restless phase names a destination — a restless dino picks a linked neighbouring ground (seeded by name+day+phase), a foraging dino picks the neighbour richer than home by `zoneAppeal` (or stays to forage at home) — and on the migration cadence the dino sets off for it on purpose: `🧭 Glade sets off for The Grove — itchy feet.` Not a roll: no chance gate and no settle-resist, one errand per tick, and the ground still holds its last resident (`ZONE_FLOOR`). The book shows `heading:`; where the dino went is filed on its day so 585's voice can say it. Founding: five of the thirteen founding dinos open on a forage/restless day phase, so the first errand leaves inside the first minute. Builds on 012 / 334 / 450 / 583.

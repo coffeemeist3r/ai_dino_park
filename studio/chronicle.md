@@ -14356,3 +14356,4 @@ Board: unit **3246** green; e2e 875/876 on the post-art full run. The one failur
 ## Cycle 179 — lore-smith
 
 The mind finds its voice at dusk: every dino says how its day went, in its own words (585). Seeded the reflect mark (587).
+- structure-smith: 586 — places in the plan; a forage/restless phase names a ground and the dino goes.
