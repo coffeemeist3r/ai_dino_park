@@ -1,6 +1,6 @@
 {
   "cycle": 179,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-585: the day in its own voice",
   "structureItem": "BACKLOG-586: places in the plan",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-10-06T08:12:11.577Z",
     "structure-smith": "2026-10-06T08:12:26.888Z",
     "designer": "2026-10-06T08:13:53.455Z",
-    "code-planner": "2026-10-05T08:15:22.000Z",
+    "code-planner": "2026-10-06T08:13:53.710Z",
     "coder": "2026-10-05T08:32:08.000Z",
     "qa": "2026-10-05T08:42:25.000Z",
     "validator": "2026-10-05T08:42:55.000Z",
