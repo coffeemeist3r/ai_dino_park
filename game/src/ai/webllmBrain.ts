@@ -489,6 +489,32 @@ export class WebLLMBrain implements NPCBrain {
   }
 
   /**
+   * The day in its own voice (BACKLOG-585): one line about the day `summary` describes. Ready-engine only (a dusk line
+   * is ambience, never worth a download); any failure returns null and the caller keeps the `dayVoice` floor.
+   */
+  async reflect(ctx: NPCContext, summary: string): Promise<string | null> {
+    if (this._status !== 'ready' || !this.engine) return null;
+    try {
+      const res = await this.engine.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: `You are ${ctx.name} the ${ctx.species}. ${ctx.personality} It is dusk. Say in one short sentence, in your own voice, how your day went.`,
+          },
+          { role: 'user', content: summary },
+        ],
+        max_tokens: 40,
+        temperature: 0.9,
+        extra_body: { enable_thinking: false },
+      });
+      return cleanReply(res.choices[0]?.message?.content ?? '', 1) || null;
+    } catch (err) {
+      console.warn('[webllm] dusk line failed; keeping the floor', err);
+      return null;
+    }
+  }
+
+  /**
    * The watcher's persona (BACKLOG-156). `author`'s body, verbatim in shape and for the same reasons:
    * ready-engine only (a persona is ambience and is never worth triggering a download), any failure
    * returns null, and the caller keeps the deterministic floor. Fired once per observer ever.

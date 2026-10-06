@@ -219,6 +219,8 @@ export interface BookRow {
   seeking?: string;
   /** How yesterday went (BACKLOG-583) — `spent it with <name>` / `kept to itself`. */
   yesterday?: string;
+  /** Where this phase of its plan is taking it (BACKLOG-586). */
+  heading?: string;
   /** Where the dino has settled (BACKLOG-341) — `at home in <zone>`, set only once it belongs. */
   home?: string;
   /** The per-zone standings this dino holds (BACKLOG-482) — a council seat (479, `👥 one of the Grove's 2
@@ -298,6 +300,7 @@ export function bookLines(rows: BookRow[], away: string[] = [], circle?: string)
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.seeking) out.push(`  seeking: ${r.seeking}`); // BACKLOG-582: whom the mind chose to go looking for
     if (r.yesterday) out.push(`  yesterday: ${r.yesterday}`); // BACKLOG-583: the dusk reflection
+    if (r.heading) out.push(`  heading: ${r.heading}`); // BACKLOG-586: where the plan is taking it
     if (r.home) out.push(`  ${r.home}`); // BACKLOG-341: where it's settled, once it belongs to a zone
     // BACKLOG-482: the per-zone standings, all three derived in one place. Same slot and same order the
     // council (479) and pioneer (343) lines occupied when they were two fields — the fold moves no line.

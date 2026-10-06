@@ -91,7 +91,8 @@ import {
 import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
-import { reflectDay, foundingReflection, planAfter, reflectionLine, duskLine, REFLECT_HOUR, REFLECT_GLYPH, type Reflections } from '../ai/reflection'; // BACKLOG-583
+import { reflectDay, foundingReflection, planAfter, reflectionLine, duskLine, dayVoice, daySummary, REFLECT_HOUR, REFLECT_GLYPH, REFLECT_ART_KEY, type Reflection, type Reflections } from '../ai/reflection'; // BACKLOG-583/585
+import { planPlace, errandLine, headingLine, ERRAND_ART_KEY, ERRAND_GLYPH } from '../ai/place'; // BACKLOG-586
 import { chooseCompanion, seekLine, seekingLine, arrivalText, SEEK_ART_KEY, SEEK_GLYPH, type Companion } from '../ai/companion'; // BACKLOG-582
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
@@ -1299,6 +1300,10 @@ export class WorldScene extends Phaser.Scene {
   private dawnMeetings: Record<string, number> = {};
   /** Whom each dino's mind chose to seek this phase (BACKLOG-582), and whether it has got there. Transient. */
   private seeking: Record<string, (Companion & { arrived: boolean }) | null> = {};
+  /** Where the current day+phase of each dino's plan sends it (BACKLOG-586); `ran` once its errand was considered. */
+  private places: Record<string, { key: string; dest: string | null; kind: IntentKind; ran: boolean }> = {};
+  /** The ground each dino went to on purpose today (BACKLOG-586), read by the dusk voice (585). */
+  private went: Record<string, { day: number; zone: string }> = {};
   /** Generate-once personas (BACKLOG-103): cached selves, persisted in the save. */
   private personas: Record<string, Persona> = {};
   /** Edge indicators (BACKLOG-398): the current zone's neighbour labels, rebuilt per zone change. */
@@ -5315,6 +5320,7 @@ export class WorldScene extends Phaser.Scene {
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
       seeking: ((c) => (c ? seekingLine(c) : undefined))(this.seeking[d.name]), // BACKLOG-582
       yesterday: ((r) => (r ? reflectionLine(r) : undefined))(this.reflections[d.name]), // BACKLOG-583
+      heading: ((p) => (p.dest && p.dest !== zoneOf(this.dinoZones, d.name, BOWL_ID) ? headingLine(zoneById(p.dest).name, p.kind) : undefined))(this.placeOf(d)), // BACKLOG-586
       home: isSettled(tenureOf(this.tenure, d.name)) // BACKLOG-341: where it's settled, once it belongs
         ? settledLine(zoneById(zoneOf(this.dinoZones, d.name, BOWL_ID)).name)
         : undefined,
@@ -7953,6 +7959,8 @@ ${e.short}`;
     for (const n of names) {
       if (this.reflections[n]) continue;
       const r = foundingReflection(n, day, this.bonds, names);
+      const d = this.dinoByName(n);
+      if (r && d) r.said = this.voiceOf(d, r); // BACKLOG-585: the founding yesterday has a voice too
       if (r) this.reflections[n] = r;
     }
     this.plans = {};
@@ -7967,10 +7975,85 @@ ${e.short}`;
     if (t.hour !== REFLECT_HOUR) return;
     const names = this.dinoNames();
     const today: Reflections = {};
-    for (const n of names) today[n] = reflectDay(n, t.day, this.meetings, this.dawnMeetings, names, this.bonds);
+    for (const n of names) {
+      const r = reflectDay(n, t.day, this.meetings, this.dawnMeetings, names, this.bonds);
+      if (this.went[n]?.day === t.day) r.went = this.went[n].zone; // BACKLOG-586
+      today[n] = r;
+    }
     this.reflections = { ...this.reflections, ...today };
     this.logEvent(duskLine(today, names));
-    for (const d of this.dinos) this.popMark(d, 'reflect', REFLECT_GLYPH);
+    for (const d of this.dinos) {
+      this.popMark(d, REFLECT_ART_KEY, REFLECT_GLYPH);
+      this.sayDay(d, today[d.name]); // BACKLOG-585
+    }
+  }
+
+  private isRival(name: string, other: string | null): boolean {
+    return !!other && bondPoints(this.grudges, name, other) >= RIVAL_BAR;
+  }
+
+  /** The persona-seeded floor for how a dino's day went (BACKLOG-585). */
+  private voiceOf(d: Dino, r: Reflection): string {
+    return dayVoice(d.name, d.traits, r, this.isRival(d.name, r.best));
+  }
+
+  /**
+   * The day in its own voice (BACKLOG-585): the floor line is filed and said at once; where a model runs, it is asked
+   * for the line too, and its answer replaces the floor if the reflection is still today's — the 393 shape.
+   */
+  private sayDay(d: Dino, r: Reflection | undefined): void {
+    if (!r) return;
+    r.said = this.voiceOf(d, r);
+    this.showBubble(d, r.said);
+    if (!this.npcBrain.reflect || !allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) return;
+    void this.npcBrain
+      .reflect({ name: d.name, species: d.species, personality: this.ensurePersona(d).text, traits: d.traits }, daySummary(r, this.isRival(d.name, r.best)))
+      .then((line) => {
+        if (!line || this.reflections[d.name] !== r) return;
+        r.said = line;
+        this.showBubble(d, replyPrefix('llm') + line);
+      })
+      .catch(() => {});
+  }
+
+  /** Where this phase of a dino's plan sends it (BACKLOG-586), computed once per day+phase and cached. */
+  private placeOf(d: Dino): { key: string; dest: string | null; kind: IntentKind; ran: boolean } {
+    const now = getWorldClock().now();
+    const phase = dayPhase(now.hour);
+    const key = `${now.day}#${phase}`;
+    const cached = this.places[d.name];
+    if (cached?.key === key) return cached;
+    // The live lean if this phase's is cached (a model's or a forced one), else the plan's — a read, so the book
+    // opening never triggers a fresh-phase pick.
+    const live = this.intents[d.name];
+    const kind = live && live.until === now.day && this.intentPhase[d.name] === phase ? live.kind : this.ensurePlan(d, now.day)[phase];
+    const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    const dest = planPlace(d.name, now.day, phase, kind, home, zoneNeighbors(home).map((l) => l.to), (z) => this.zoneAppeal(z));
+    return (this.places[d.name] = { key, dest, kind, ran: false });
+  }
+
+  /**
+   * One errand per migration tick (BACKLOG-586): the first dino (by name) whose phase names a ground elsewhere sets off
+   * for it on purpose — no chance gate, no settle-resist. Each dino's phase is considered once. A ground still holds
+   * its last resident (`ZONE_FLOOR`), and a sleeper waits for morning. Returns who set off.
+   */
+  private runErrand(): string | null {
+    const heads = this.zoneHeads();
+    for (const d of [...this.dinos].sort((a, b) => a.name.localeCompare(b.name))) {
+      if (this.migrating.has(d.name) || this.asleep(d)) continue;
+      const p = this.placeOf(d);
+      if (p.ran) continue;
+      p.ran = true;
+      const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      if (!p.dest || p.dest === home || (heads[home] ?? 0) <= ZONE_FLOOR) continue;
+      const zone = zoneById(p.dest).name;
+      this.startMigration(d, p.dest);
+      this.went[d.name] = { day: getWorldClock().now().day, zone };
+      this.logEvent(errandLine(d.name, zone, p.kind));
+      this.popMark(d, ERRAND_ART_KEY, ERRAND_GLYPH);
+      return d.name;
+    }
+    return null;
   }
 
   /** The companion a dino's mind picks for this phase (BACKLOG-582); a new pick is announced. */
@@ -8282,6 +8365,12 @@ ${e.short}`;
       return d?.name ?? null;
     };
     (window as any).__migrating = () => [...this.migrating];
+    // BACKLOG-586: run one errand tick (no cooldown/chance — errands never had either); returns who set off.
+    (window as any).__errand = () => this.runErrand();
+    (window as any).__place = (name: string) => {
+      const d = this.dinoByName(name);
+      return d ? this.placeOf(d).dest : null;
+    };
     // BACKLOG-360: drive the companion pull for a dino already mid-crossing; returns the companion or null.
     (window as any).__together = (name: string) => {
       const d = this.dinoByName(name);
@@ -8428,6 +8517,10 @@ ${e.short}`;
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
     this.checkWatch(); // BACKLOG-524: whoever is up while their ground sleeps keeps the watch
     this.checkHollowed(); // BACKLOG-512: ...and a zone that loses that last resident says whose ground it was
+    if (this.runErrand()) { // BACKLOG-586: an errand is the plan, not a roll — it takes the tick
+      this.lastMigrationMs = Date.now();
+      return;
+    }
     // BACKLOG-333: pace by a real-time cooldown, not the in-game day (which is 24 real hours at 1×).
     if (!cooldownReady(Date.now(), this.lastMigrationMs, MIGRATE_COOLDOWN_MS)) return;
     if (rand() >= MIGRATE_CHANCE) return;

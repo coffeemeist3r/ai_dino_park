@@ -14,7 +14,8 @@ test('wall-clock time advances at the default 60× watching rate (BACKLOG-493)',
   // At 60×, 60s of real time = +60 in-game minutes.
   const delta = await page.evaluate(() => {
     const w = window as W;
-    const before = (w.__clockNow as () => T)();
+    // Pump first: on a slow runner the wall time since the last tick is otherwise counted into the delta (CI saw 61/62).
+    const before = (w.__advanceWall as (ms: number) => T)(0);
     const after = (w.__advanceWall as (ms: number) => T)(60_000);
     const a = (t: T) => (t.day - 1) * 1440 + t.hour * 60 + t.minute;
     return a(after) - a(before);

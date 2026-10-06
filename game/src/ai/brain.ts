@@ -138,6 +138,12 @@ export interface NPCBrain {
    */
   author?(ctx: NPCContext): Promise<string | null>;
   /**
+   * The day in its own voice (BACKLOG-585): one short line, in the dino's voice, about the day `summary` describes —
+   * or null when the model can't/won't. Optional: the stub omits it, and the caller keeps the persona-seeded floor
+   * (`dayVoice`, ai/reflection.ts) either way. Fired once per dino per dusk, behind the governor.
+   */
+  reflect?(ctx: NPCContext, summary: string): Promise<string | null>;
+  /**
    * The watcher's persona (BACKLOG-156): the keeper's mirror of `author`, 2-3 sentences of self written
    * from the lore the caller hands it. Null when the model can't or won't; the caller keeps the
    * deterministic procedural persona (`keeper/persona.ts`) either way. Fired once per observer ever.

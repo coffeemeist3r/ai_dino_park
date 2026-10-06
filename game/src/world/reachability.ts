@@ -73,6 +73,8 @@ import { COMFORT_ART_KEY } from './comfort'; // BACKLOG-136
 import { STANDOFF_ART_KEY } from '../social/standoff'; // BACKLOG-024
 import { WAIT_ART_KEY, ADMIRE_ART_KEY, REGRET_ART_KEY } from './pecking'; // BACKLOG-397, 395, 391
 import { SEEK_ART_KEY } from '../ai/companion'; // BACKLOG-582
+import { REFLECT_ART_KEY } from '../ai/reflection'; // BACKLOG-583
+import { ERRAND_ART_KEY } from '../ai/place'; // BACKLOG-586
 import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
 import { COLD_ART_KEY } from './cold'; // BACKLOG-557
 
@@ -189,6 +191,8 @@ export function worldPlacedProps(): Set<string> {
   out.add(ADMIRE_ART_KEY); // BACKLOG-395: popped over a friend who saw a dino stand at the hatch, by `admireStand`
   out.add(REGRET_ART_KEY); // BACKLOG-391: popped over a gobbler that shoved past a friend, by `regretShove`
   out.add(SEEK_ART_KEY); // BACKLOG-582: popped over a dino whose mind just picked whom to go looking for, by `chooseSeek`
+  out.add(REFLECT_ART_KEY); // BACKLOG-583: popped over every dino in view at the dusk turn, by `checkReflection`
+  out.add(ERRAND_ART_KEY); // BACKLOG-586: popped over a dino setting off on its plan's errand, by `runErrand`
   out.add(COLD_ART_KEY); // BACKLOG-557: hung over a cold-slept dino by `refreshColdMarks`
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be
