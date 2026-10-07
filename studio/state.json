@@ -2,7 +2,7 @@
   "cycle": 180,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-588: the model's hand on whom and where",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-07T08:13:35.652Z",
-    "structure-smith": "2026-10-06T08:12:26.888Z",
+    "structure-smith": "2026-10-07T08:13:59.743Z",
     "designer": "2026-10-06T08:13:53.455Z",
     "code-planner": "2026-10-06T08:13:53.710Z",
     "coder": "2026-10-06T08:29:51.981Z",
