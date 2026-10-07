@@ -14409,3 +14409,7 @@ flake, not a regression. The pre-art full run was 880/880.
 
 Closed 585, 586, 587 to the archive and dropped their emptied headers. Structure Track at **3** (563, 578, 581), all
 waiting out the tentpole. CI: run 37286861616 on `main` was red (`cycle-028-realtime`); fixed in this cycle's coder commit.
+
+## Cycle 180 — lore-smith
+
+The tentpole's last lore arc: one arrival, answered many ways — and yesterday decides half of it (589). Seeded the errand mark (590).
