@@ -14414,3 +14414,4 @@ waiting out the tentpole. CI: run 37286861616 on `main` was red (`cycle-028-real
 
 The tentpole's last lore arc: one arrival, answered many ways — and yesterday decides half of it (589). Seeded the errand mark (590).
 - structure-smith: 588 — the model's hand on whom and where; the floor follows a companion across grounds.
+- designer: 589 (residents answer an arrival by mind and yesterday) + 588 (follow a companion across grounds; the model's hand folds onto it).
