@@ -14423,7 +14423,7 @@ The tentpole's last lore arc: one arrival, answered many ways — and yesterday 
 
 Sunny comes back across the bowl's east edge, and four dinos see her do it.
 
-Rex spent yesterday with her, and says *"There you are, Sunny! I was hoping."* Twitch, who has nobody, turns its back.
+Rex spent yesterday with her, and says *"Back! Good. I missed you."* Twitch, who has nobody, turns its back.
 Mossback and Glade carry on grazing. A minute later Mossback comes back the same way, and the same Twitch that turned
 away from Sunny bristles: *"Oh. You."* Glade, who spent yesterday with Mossback, is glad. The ticker spells it out:
 *🌿 Pocket Cretaceous answers Mossback: Glade glad it came, Rex curious, Twitch bristles.* It was one event. Every mind on
