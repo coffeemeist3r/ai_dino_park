@@ -10,7 +10,7 @@
  * fallback immediately. respond() never throws and never blocks the dialog.
  */
 
-import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type KeeperAuthorContext, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
+import { cannedReply, moodFromTraits, PRICKLY_MAX, EFFUSIVE_MIN, type ChoiceDraft, type ChoiceOptions, type KeeperAuthorContext, type NPCBrain, type NPCContext, type Observation, type Reply } from './brain';
 import { describePersonality } from './personality';
 import { currentModel } from './deviceProbe';
 import { INTENT_KINDS, type IntentDraft, type IntentKind } from './intent';
@@ -18,6 +18,26 @@ import { PARK_LORE } from './persona';
 import type { Activity } from '../world/activity';
 import { theZone } from '../world/zones'; // BACKLOG-499
 import { watcherAside } from '../keeper/voice'; // BACKLOG-160
+
+/**
+ * Parse a raw model reply into a choice (BACKLOG-588): the earliest name from each closed list found in the text
+ * (case-insensitive) wins that half. Nothing from either list → null. Pure, unit-pinned.
+ */
+export function parseChoice(raw: string, options: ChoiceOptions): ChoiceDraft | null {
+  const lower = raw.toLowerCase();
+  const first = (names: readonly string[]): string | null => {
+    let best: string | null = null;
+    let at = Infinity;
+    for (const n of names) {
+      const i = lower.indexOf(n.toLowerCase());
+      if (i !== -1 && i < at) [best, at] = [n, i];
+    }
+    return best;
+  };
+  const seek = first(options.companions);
+  const go = first(options.grounds);
+  return seek || go ? { seek, go } : null;
+}
 
 /**
  * Parse a raw model reply into an intent draft (BACKLOG-393): the first closed-set kind word found
@@ -510,6 +530,34 @@ export class WebLLMBrain implements NPCBrain {
       return cleanReply(res.choices[0]?.message?.content ?? '', 1) || null;
     } catch (err) {
       console.warn('[webllm] dusk line failed; keeping the floor', err);
+      return null;
+    }
+  }
+
+  /**
+   * The model's hand on whom and where (BACKLOG-588). Ready-engine only (a choice is ambience, never worth a download);
+   * any failure returns null and the caller keeps the deterministic picks.
+   */
+  async choose(ctx: NPCContext, options: ChoiceOptions): Promise<ChoiceDraft | null> {
+    if (this._status !== 'ready' || !this.engine) return null;
+    try {
+      const res = await this.engine.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content:
+              `You are ${ctx.name} the ${ctx.species}. ${ctx.personality} Choose whom you go looking for today and where you go. ` +
+              `Reply with one name, a dash, and one place (or "here").`,
+          },
+          { role: 'user', content: `Dinos: ${options.companions.join(', ')}. Places: ${options.grounds.join(', ')}.` },
+        ],
+        max_tokens: 24,
+        temperature: 0.9,
+        extra_body: { enable_thinking: false },
+      });
+      return parseChoice(res.choices[0]?.message?.content ?? '', options);
+    } catch (err) {
+      console.warn('[webllm] choice failed; keeping the floor', err);
       return null;
     }
   }

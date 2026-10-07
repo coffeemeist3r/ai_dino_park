@@ -49,3 +49,13 @@ export function errandLine(name: string, zoneName: string, kind: IntentKind): st
 export function headingLine(zoneName: string, kind: IntentKind): string {
   return `${zoneName} (${WHY[kind] ?? 'an errand'})`;
 }
+
+/** The model's hand on where (BACKLOG-588): a named neighbouring ground replaces the floor's destination; anything else keeps it. */
+export function foldPlace(go: string | null | undefined, floorDest: string | null, grounds: readonly string[]): string | null {
+  return go && grounds.includes(go) ? go : floorDest;
+}
+
+/** The ticker line as a dino goes after the one it is looking for (BACKLOG-588). */
+export function followLine(name: string, zoneName: string, companion: string): string {
+  return `${ERRAND_GLYPH} ${name} sets off for ${zoneName} — after ${companion}.`;
+}

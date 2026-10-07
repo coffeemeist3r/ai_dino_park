@@ -14,7 +14,7 @@ import { RIVAL_BAR } from '../social/grudges';
 import { pairKey } from '../social/meetings';
 import { type Personality } from './personality';
 
-export type SeekWhy = 'rival' | 'stranger' | 'yesterday' | 'friend';
+export type SeekWhy = 'rival' | 'stranger' | 'yesterday' | 'friend' | 'chosen';
 
 export interface Companion {
   name: string;
@@ -63,6 +63,7 @@ const REASON: Record<SeekWhy, string> = {
   stranger: 'to get to know them',
   yesterday: 'for more of yesterday',
   friend: 'missing them',
+  chosen: 'its mind made up', // BACKLOG-588: the model named them
 };
 
 /** The ticker line as it sets off. */
@@ -80,5 +81,34 @@ export function arrivalText(c: Companion): string {
   if (c.why === 'rival') return `You again, ${c.name}.`;
   if (c.why === 'stranger') return `Don't think we've met properly, ${c.name}.`;
   if (c.why === 'yesterday') return `${c.name}! Same again today?`;
+  if (c.why === 'chosen') return `${c.name}. I came to find you.`;
   return `There you are, ${c.name}.`;
+}
+
+/**
+ * The model's hand on whom (BACKLOG-588), folded onto the floor exactly as 393's intent is: a name from the closed
+ * `companions` list (never itself) replaces the floor's pick; anything else keeps it.
+ */
+export function foldChoice(seek: string | null | undefined, floor: Companion | null, companions: readonly string[]): Companion | null {
+  if (!seek || !companions.includes(seek) || seek === floor?.name) return floor;
+  return { name: seek, why: 'chosen' };
+}
+
+/**
+ * Whether a seeker goes after a companion standing on another ground (BACKLOG-588). Not when they share a ground, when
+ * the companion is mid-crossing, or when the seeker is its ground's last resident. Of a pair seeking each other, only the
+ * first-named goes, so the two never cross past each other.
+ */
+export function shouldFollow(
+  seeker: string,
+  companion: string,
+  home: string,
+  theirs: string,
+  headsHome: number,
+  theyMigrate: boolean,
+  theySeek: string | null | undefined,
+  floor: number,
+): boolean {
+  if (home === theirs || theyMigrate || headsHome <= floor) return false;
+  return !(theySeek === seeker && companion < seeker);
 }

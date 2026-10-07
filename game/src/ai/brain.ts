@@ -144,6 +144,13 @@ export interface NPCBrain {
    */
   reflect?(ctx: NPCContext, summary: string): Promise<string | null>;
   /**
+   * The model's hand on whom and where (BACKLOG-588): which dino to go looking for and which neighbouring ground to head
+   * for, each picked from the closed lists in `options`, or null. Optional: the stub omits it and the caller keeps the
+   * deterministic picks (`chooseCompanion`, `planPlace`). The draft is untrusted; `foldChoice`/`foldPlace` validate it.
+   * Fired once per dino per day-phase, behind the governor.
+   */
+  choose?(ctx: NPCContext, options: ChoiceOptions): Promise<ChoiceDraft | null>;
+  /**
    * The watcher's persona (BACKLOG-156): the keeper's mirror of `author`, 2-3 sentences of self written
    * from the lore the caller hands it. Null when the model can't or won't; the caller keeps the
    * deterministic procedural persona (`keeper/persona.ts`) either way. Fired once per observer ever.
@@ -155,6 +162,18 @@ export interface NPCBrain {
    * reach into keeper space to fetch it.
    */
   authorKeeper?(ctx: KeeperAuthorContext): Promise<string | null>;
+}
+
+/** The closed lists a brain may choose from (BACKLOG-588). `grounds` are display names. */
+export interface ChoiceOptions {
+  companions: string[];
+  grounds: string[];
+}
+
+/** What a brain hands back for `choose` — untrusted; each half may be null. */
+export interface ChoiceDraft {
+  seek: string | null;
+  go: string | null;
 }
 
 /** What a brain is told about an observer in order to write its self (BACKLOG-156). See `authorKeeper`. */

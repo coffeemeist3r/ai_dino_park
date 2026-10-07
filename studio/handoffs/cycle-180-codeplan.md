@@ -59,3 +59,18 @@
 **Touch count:** ~6 files (shared: WorldScene, the test files).
 
 Cross-track: both tracks touch `WorldScene.ts` in disjoint methods. Order: 588, then 589.
+
+## Shipped
+
+**Files touched:**
+- New: `game/src/ai/welcome.ts`, `game/src/ai/cycle-180-minds.test.ts`, `tests/e2e/cycle-180-minds.spec.ts`.
+- Modified: `game/src/ai/companion.ts`, `game/src/ai/place.ts`, `game/src/ai/brain.ts`, `game/src/ai/webllmBrain.ts`, `game/src/scenes/WorldScene.ts`.
+
+**Deviations:**
+- `parseChoice` takes the `ChoiceOptions` object rather than two separate lists.
+- The model's ground answer arrives as a display name. The scene maps it back to a zone id before calling `foldPlace`.
+
+**Status:**
+- Build clean.
+- Unit 3269 green (3 skipped, pre-existing).
+- The new e2e spec passed 4/4. On its first cold-start run, two boots hit the known `__ready` timeout; the rerun was 4/4.

@@ -1,6 +1,6 @@
 {
   "cycle": 180,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-589: the ground answers a newcomer",
   "structureItem": "BACKLOG-588: the model's hand on whom and where",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-07T08:13:59.743Z",
     "designer": "2026-10-07T08:16:16.020Z",
     "code-planner": "2026-10-07T08:16:53.039Z",
-    "coder": "2026-10-06T08:29:51.981Z",
+    "coder": "2026-10-07T08:33:36.325Z",
     "qa": "2026-10-06T08:30:05.901Z",
     "validator": "2026-10-06T08:30:49.552Z",
     "artist": "2026-10-06T08:43:29.650Z"

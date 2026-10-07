@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { makeBrain, replyPrefix, cannedReply, type BrainKind, type NPCBrain, type NPCContext } from '../ai/brain';
+import { makeBrain, replyPrefix, cannedReply, type BrainKind, type ChoiceDraft, type NPCBrain, type NPCContext } from '../ai/brain';
 import { currentModel, isCoarsePointer, MODELS } from '../ai/deviceProbe';
 import {
   MINDS_CONSENT_KEY,
@@ -92,8 +92,9 @@ import { homesickDest, homesickMemory } from '../world/homesick';
 import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFor, ticAfterFor, type DinoIntent, type IntentKind } from '../ai/intent';
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { reflectDay, foundingReflection, planAfter, reflectionLine, duskLine, dayVoice, daySummary, REFLECT_HOUR, REFLECT_GLYPH, REFLECT_ART_KEY, type Reflection, type Reflections } from '../ai/reflection'; // BACKLOG-583/585
-import { planPlace, errandLine, headingLine, ERRAND_ART_KEY, ERRAND_GLYPH } from '../ai/place'; // BACKLOG-586
-import { chooseCompanion, seekLine, seekingLine, arrivalText, SEEK_ART_KEY, SEEK_GLYPH, type Companion } from '../ai/companion'; // BACKLOG-582
+import { planPlace, errandLine, headingLine, foldPlace, followLine, ERRAND_ART_KEY, ERRAND_GLYPH } from '../ai/place'; // BACKLOG-586/588
+import { answerArrival, welcomeText, welcomeLine, type WelcomeKind } from '../ai/welcome'; // BACKLOG-589
+import { chooseCompanion, foldChoice, shouldFollow, seekLine, seekingLine, arrivalText, SEEK_ART_KEY, SEEK_GLYPH, type Companion } from '../ai/companion'; // BACKLOG-582/588
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
 import { travelsTogether, togetherMemory, togetherLine, togetherEvent, TOGETHER_BOND } from '../world/together';
@@ -1611,6 +1612,10 @@ export class WorldScene extends Phaser.Scene {
       return this.intents[name];
     };
     (window as any).__reflections = () => ({ ...this.reflections }); // BACKLOG-583
+    // BACKLOG-588: stand in for a model's choice — the live brain answers `choose` with this draft from now on.
+    (window as any).__setChoose = (seek: string | null, go: string | null) => {
+      this.npcBrain.choose = async () => ({ seek, go });
+    };
     (window as any).__seeking = (name: string) => {
       const d = this.dinoByName(name);
       if (d) this.ensureIntent(d);
@@ -8039,6 +8044,8 @@ ${e.short}`;
    */
   private runErrand(): string | null {
     const heads = this.zoneHeads();
+    const follower = this.runFollow(heads); // BACKLOG-588: whom outranks where
+    if (follower) return follower;
     for (const d of [...this.dinos].sort((a, b) => a.name.localeCompare(b.name))) {
       if (this.migrating.has(d.name) || this.asleep(d)) continue;
       const p = this.placeOf(d);
@@ -8050,6 +8057,29 @@ ${e.short}`;
       this.startMigration(d, p.dest);
       this.went[d.name] = { day: getWorldClock().now().day, zone };
       this.logEvent(errandLine(d.name, zone, p.kind));
+      this.popMark(d, ERRAND_ART_KEY, ERRAND_GLYPH);
+      return d.name;
+    }
+    return null;
+  }
+
+  /**
+   * The follow (BACKLOG-588): the first dino (by name) whose sought companion stands on another ground, unreached, sets
+   * off one hop toward it. `shouldFollow` holds the floor, the mid-crossing companion and the mutual pair.
+   */
+  private runFollow(heads: Record<string, number>): string | null {
+    for (const d of [...this.dinos].sort((a, b) => a.name.localeCompare(b.name))) {
+      const c = this.seeking[d.name];
+      if (!c || c.arrived || this.migrating.has(d.name) || this.asleep(d) || !this.dinoByName(c.name)) continue;
+      const home = zoneOf(this.dinoZones, d.name, BOWL_ID);
+      const theirs = zoneOf(this.dinoZones, c.name, BOWL_ID);
+      if (!shouldFollow(d.name, c.name, home, theirs, heads[home] ?? 0, this.migrating.has(c.name), this.seeking[c.name]?.name, ZONE_FLOOR)) continue;
+      const hop = hopToward(home, theirs);
+      if (!hop) continue;
+      const zone = zoneById(hop).name;
+      this.startMigration(d, hop);
+      this.went[d.name] = { day: getWorldClock().now().day, zone };
+      this.logEvent(followLine(d.name, zone, c.name));
       this.popMark(d, ERRAND_ART_KEY, ERRAND_GLYPH);
       return d.name;
     }
@@ -8068,9 +8098,39 @@ ${e.short}`;
     });
     const was = this.seeking[d.name];
     this.seeking[d.name] = pick ? { ...pick, arrived: false } : null;
+    this.askChoice(d);
     if (!pick || (was && was.name === pick.name && was.why === pick.why)) return;
     this.logEvent(seekLine(d.name, pick));
     this.popMark(d, SEEK_ART_KEY, SEEK_GLYPH);
+  }
+
+  /**
+   * The model's hand on whom and where (BACKLOG-588), the 393 shape: where a brain can choose and the governor allows,
+   * ask once per phase; fold its answer onto the floor only if the phase it was asked about is still current.
+   */
+  private askChoice(d: Dino): void {
+    if (!this.npcBrain.choose || !allowAmbient({ hidden: this.tabHidden, battery: this.batteryLevel })) return;
+    const now = getWorldClock().now();
+    const phase = dayPhase(now.hour);
+    const companions = this.dinoNames().filter((n) => n !== d.name);
+    const links = zoneNeighbors(zoneOf(this.dinoZones, d.name, BOWL_ID)).map((l) => l.to);
+    const grounds = links.map((z) => zoneById(z).name);
+    void this.npcBrain
+      .choose({ name: d.name, species: d.species, personality: this.ensurePersona(d).text, traits: d.traits }, { companions, grounds })
+      .then((draft: ChoiceDraft | null) => {
+        const t = getWorldClock().now();
+        if (!draft || t.day !== now.day || dayPhase(t.hour) !== phase) return;
+        const floor = this.seeking[d.name] ?? null;
+        const pick = foldChoice(draft.seek, floor, companions);
+        if (pick && pick !== floor) {
+          this.seeking[d.name] = { ...pick, arrived: false };
+          this.logEvent(replyPrefix('llm') + seekLine(d.name, pick));
+          this.popMark(d, SEEK_ART_KEY, SEEK_GLYPH);
+        }
+        const p = this.placeOf(d);
+        if (!p.ran) p.dest = foldPlace(draft.go ? links[grounds.indexOf(draft.go)] : null, p.dest, links);
+      })
+      .catch(() => {});
   }
 
   /** The companion if it is still on the seeker's ground (BACKLOG-582); otherwise null and the old nearest-drift. */
@@ -8944,6 +9004,7 @@ ${e.short}`;
     // never stopped belonging here (341's settle-resist then keeps it put) — wears a 🏡, keeps the trace,
     // and the nearest resident still living there looks up and welcomes it home.
     const homecoming = isHomecoming(this.roots, d.name, home, dest);
+    const greeted = new Set<string>(); // BACKLOG-589: a resident that already welcomed it does not answer twice
     if (homecoming) {
       const zoneName = zoneById(dest).name;
       this.tenure = { ...this.tenure, [d.name]: SETTLE_ROLLS };
@@ -8956,6 +9017,7 @@ ${e.short}`;
       const greeter = pickNearest(residents);
       // Nobody home is a legitimate read: the homecoming still fires, it just goes unwitnessed.
       if (greeter) {
+        greeted.add(greeter);
         this.bonds = strengthen(this.bonds, greeter, d.name, WELCOME_BOND);
         this.memory = remember(this.memory, greeter, welcomeMemory(d.name, zoneName));
         this.flashFeed(this.dinoByName(greeter)!, '👋');
@@ -8981,6 +9043,7 @@ ${e.short}`;
         .map((r) => ({ name: r.name, dist: this.chebyTiles(this.tileOf(r), this.tileOf(d)) }));
       const greeter = pickNearest(nearby);
       if (greeter) {
+        greeted.add(greeter);
         this.bonds = strengthen(this.bonds, greeter, d.name, PLENTY_WELCOME_BOND);
         this.memory = remember(this.memory, greeter, plentyWelcomeMemory(d.name, destName));
         this.memory = remember(this.memory, d.name, plentyWelcomedMemory(destName));
@@ -9002,8 +9065,29 @@ ${e.short}`;
     if (dest === BOWL_ID) {
       this.memory = remember(this.memory, d.name, groveNewsMemory());
     }
+    this.answerNewcomer(d, dest, greeted); // BACKLOG-589
     this.refreshPlaque(); // BACKLOG-316: the per-zone tally is live the moment a dino changes zones
     void this.saveGame();
+  }
+
+  /**
+   * The ground answers a newcomer (BACKLOG-589): every resident of `dest` answers the same arrival from who it is and
+   * how its yesterday went. A bubble over each one that answers, one ticker line naming them; nobody answering is silent.
+   */
+  private answerNewcomer(d: Dino, dest: string, skip: ReadonlySet<string>): void {
+    const answers: Array<{ name: string; kind: WelcomeKind }> = [];
+    for (const r of [...this.dinos].sort((a, b) => a.name.localeCompare(b.name))) {
+      if (r === d || skip.has(r.name) || zoneOf(this.dinoZones, r.name, BOWL_ID) !== dest) continue;
+      const kind = answerArrival(r.name, r.traits, d.name, {
+        yesterday: this.reflections[r.name],
+        rival: this.isRival(r.name, d.name),
+        met: this.meetings[pairKey(r.name, d.name)] ?? 0,
+      });
+      if (!kind) continue;
+      answers.push({ name: r.name, kind });
+      this.showBubble(r, welcomeText(kind, r.name, d.name));
+    }
+    if (answers.length) this.logEvent(welcomeLine(d.name, zoneById(dest).name, answers));
   }
 
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
