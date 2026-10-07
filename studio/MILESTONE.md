@@ -8,23 +8,9 @@
 
 ## Current milestone
 
-**Milestone 26 (TENTPOLE): Minds that act and reflect — two dinos in the same place make different days, and each one remembers how its day went**
-**Status:** ACTIVE (opened cycle 178)
-
-For twenty-five milestones a dino's mind has only ever *leaned*: an intent scaled a roll, a plan shaded a phase,
-and the dino it walked toward was whoever happened to be nearest. This tentpole gives the mind a hand on the wheel.
-A dino decides whom it goes looking for, and why — a friend it misses, a stranger it is curious about, a rival it
-wants to stare down — and at dusk it sums its day into a memory that changes what it does tomorrow.
-
-**Lore arcs:**
-- [x] A dino's persona picks whom it goes looking for — a friend, a stranger, or a rival — and the player watches it walk across the ground to them (BACKLOG-582, the first slice of 104 — cycle 178)
-- [x] At dusk a dino says how its day went in its own voice; where a model runs it authors the line, the persona-seeded floor everywhere else (BACKLOG-585 — cycle 179)
-- [ ] A park event (a drop, a sky event, an arrival) is answered differently by different minds, and yesterday's reflection is part of the answer (to seed)
-
-**Structure arcs:**
-- [x] The dusk reflection: each dino folds its day into a persisted record (who it spent it with, or nobody) that tomorrow's plan and companion choice read; the founding park starts with a yesterday (BACKLOG-583, the first slice of 014 — cycle 178)
-- [x] Places in the plan: a forage or restless phase names a destination, and a dino crosses to another ground on purpose rather than by migration roll (BACKLOG-586 — cycle 179)
-- [ ] The model's hand: `NPCBrain` may author a dino's choice of companion and destination behind the governor, folded onto the deterministic floor exactly as 393's intent is (to seed)
+**No milestone is ACTIVE.** Milestone 26 shipped cycle 180. Next is **Milestone 27, a normal milestone** (CHARTER v9:
+the one after a tentpole is where it is polished, voiced and woven into what exists). The smiths draft it at the next cycle open.
+Tentpole 2 (Festivals) is Milestone 28.
 
 ---
 
@@ -49,7 +35,7 @@ wants to stare down — and at dusk it sums its day into a memory that changes w
 > so **Milestone 26 is the first tentpole**. The operator owns this list's contents; the smiths own the arcs.
 > When a tentpole ships, strike it here and note the milestone number.
 
-1. **Minds that act and reflect** (BACKLOG-104 + BACKLOG-014) — a dino's persona chooses what it *does* (where it
+1. ~~**Minds that act and reflect**~~ — SHIPPED as Milestone 26, cycle 180. (BACKLOG-104 + BACKLOG-014) — a dino's persona chooses what it *does* (where it
    goes, whom it seeks, how it answers an event), and at dusk it sums its day into a memory that shapes tomorrow's
    choices. The player should be able to watch two dinos with the same circumstances make different days. Builds on
    012 (daily plan) and 393 (brain-biased intent); deterministic persona-driven floor when no model is loaded.
@@ -60,6 +46,35 @@ wants to stare down — and at dusk it sums its day into a memory that changes w
    for the change. Hatchlings from the egg arc should be the first to do it.
 
 ## Shipped milestones
+
+### Milestone 26 (TENTPOLE): Minds that act and reflect — SHIPPED cycle 180 (opened cycle 178)
+
+Three cycles, six arcs, no REWORK and no ABANDON. The first tentpole.
+
+A dino now decides whom it goes looking for and why, and goes to another ground to find them. At dusk it says how
+its day went, in its own voice, and tomorrow reads it. When someone crosses onto its ground, it answers from who it is and
+how its yesterday went. Where a model runs, the model has a hand on all three, folded onto a floor that ships whole without it.
+
+**The lesson worth keeping:** the floor carried the tentpole. Every arc was visible with no model at all, and that
+is the only reason each one could pass the reachability bar.
+
+**Milestone 26 (TENTPOLE): Minds that act and reflect — two dinos in the same place make different days, and each one remembers how its day went**
+**Status:** SHIPPED cycle 180 (opened cycle 178)
+
+For twenty-five milestones a dino's mind has only ever *leaned*: an intent scaled a roll, a plan shaded a phase,
+and the dino it walked toward was whoever happened to be nearest. This tentpole gives the mind a hand on the wheel.
+A dino decides whom it goes looking for, and why — a friend it misses, a stranger it is curious about, a rival it
+wants to stare down — and at dusk it sums its day into a memory that changes what it does tomorrow.
+
+**Lore arcs:**
+- [x] A dino's persona picks whom it goes looking for — a friend, a stranger, or a rival — and the player watches it walk across the ground to them (BACKLOG-582, the first slice of 104 — cycle 178)
+- [x] At dusk a dino says how its day went in its own voice; where a model runs it authors the line, the persona-seeded floor everywhere else (BACKLOG-585 — cycle 179)
+- [x] A park event (a drop, a sky event, an arrival) is answered differently by different minds, and yesterday's reflection is part of the answer (BACKLOG-589, an arrival — cycle 180)
+
+**Structure arcs:**
+- [x] The dusk reflection: each dino folds its day into a persisted record (who it spent it with, or nobody) that tomorrow's plan and companion choice read; the founding park starts with a yesterday (BACKLOG-583, the first slice of 014 — cycle 178)
+- [x] Places in the plan: a forage or restless phase names a destination, and a dino crosses to another ground on purpose rather than by migration roll (BACKLOG-586 — cycle 179)
+- [x] The model's hand: `NPCBrain` may author a dino's choice of companion and destination behind the governor, folded onto the deterministic floor exactly as 393's intent is (BACKLOG-588, with the floor's follow across grounds — cycle 180)
 
 ### Milestone 25: The hatch has an audience — the park watches who stands up and who shoves, and it remembers — SHIPPED cycle 177 (opened cycle 176)
 

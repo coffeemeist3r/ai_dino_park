@@ -14418,3 +14418,32 @@ The tentpole's last lore arc: one arrival, answered many ways — and yesterday 
 - codeplan: ~8 files; new pure welcome.ts, folds in companion.ts/place.ts, optional NPCBrain.choose, glue in WorldScene.
 - coder: 589 + 588 shipped — welcome.ts, the follow + folds, optional NPCBrain.choose. Unit 3269, e2e 885/885.
 - qa: 12/12 criteria pass; e2e 885/885 first full run.
+
+## Cycle 180 — APPROVED / APPROVED: the ground answers — **Milestone 26, the first tentpole, SHIPPED**
+
+Sunny comes back across the bowl's east edge, and four dinos see her do it.
+
+Rex spent yesterday with her, and says *"There you are, Sunny! I was hoping."* Twitch, who has nobody, turns its back.
+Mossback and Glade carry on grazing. A minute later Mossback comes back the same way, and the same Twitch that turned
+away from Sunny bristles: *"Oh. You."* Glade, who spent yesterday with Mossback, is glad. The ticker spells it out:
+*🌿 Pocket Cretaceous answers Mossback: Glade glad it came, Rex curious, Twitch bristles.* It was one event. Every mind on
+the ground saw it, every answer came from who that dino is, and two of the five kinds of answer come straight out of
+last night's reflection.
+
+Sunny was coming back for a reason. Since tonight, a dino that is looking for someone does not give up when that
+someone is on another ground. Twenty seconds into a fresh park, errands start splitting pairs. Glade goes off to the
+Grove, finds that Mossback is not there, and on the next tick the ticker says *🧭 Glade sets off for Pocket Cretaceous
+— after Mossback.* The search crosses the map. A ground's last resident still stays home. Two friends looking for each
+other never pass on the road, because only one of them goes.
+
+Where a model runs, it gets a hand on that choice. `NPCBrain.choose` may name any dino in the park to go looking for
+and any neighbouring ground to head for. Its answer is checked against closed lists and folded onto the floor exactly
+as the day's intent is: 🧠 in the ticker, the walk the floor would have taken. Without a model, the floor ships whole.
+
+**Milestone 26: minds that act and reflect, SHIPPED.** It ran three cycles and closed six arcs, with no rework. A dino
+now decides whom it wants, goes to another ground to find them, says at dusk how its day went, and answers the next
+arrival out of how that day went. Two dinos in the same place make different days. That was the headline, and in a
+fresh save it is true inside two minutes. The first tentpole is done; next is a normal milestone to polish it, then
+festivals.
+
+Board: build clean, **3269 unit** green, e2e **885/885** on the first full run. No save change. CI green going in.

@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 180 — 2026-10-07 (the ground answers; the first tentpole ships)
+- BACKLOG-589: The ground answers a newcomer — when a dino crosses onto a ground, every resident answers the same arrival in its own way. A rival bristles. The dino that spent yesterday with the newcomer is glad it came. A sociable dino whose yesterday was empty brightens. A curious one wants a look at a dino it barely knows. A loner turns its back. Each answerer gets a bubble, and one ticker line names them all (*🌿 Pocket Cretaceous answers Sunny: Rex glad it came, Twitch turns away.*). Pure `ai/welcome.ts`; no model needed.
+- BACKLOG-588: The model's hand on whom and where — a dino whose sought companion stands on another ground now goes after it, one hop at a time, on the migration cadence (*🧭 Glade sets off for Pocket Cretaceous — after Mossback.*). It stays put if it is its ground's last resident, if the companion is mid-crossing, or if it is the second of a pair seeking each other. Where a model runs, optional `NPCBrain.choose` picks the companion (from the whole park) and the neighbouring ground. Its answer is folded onto the deterministic floor against closed lists, behind the governor (🧠 in the ticker). **Milestone 26 (the first tentpole) SHIPPED.**
+
+---
+
 ## Cycle 179 — 2026-10-06 (the mind finds its voice)
 - BACKLOG-585: The day in its own voice — at 17:00 every dino on screen says how its day went, in a line shaped by who it is: sour about a rival, glad of a friend, put out by company, lonely and promising itself someone tomorrow, or content alone; two wordings per mood, seeded by name; a dino that went somewhere on purpose leads with where. Kept on the reflection (additive `said`), quoted in the book's `yesterday:` line, founding yesterday included. Where a model runs, `NPCBrain.reflect` authors the line (🧠) behind the governor.
 - BACKLOG-586: Places in the plan — a forage or restless day-phase now names a ground (restless: a seeded neighbour; forage: the neighbour richer than home), and on the migration cadence the dino sets off for it on purpose: *🧭 Bramble sets off for The Sunward Ridge — itchy feet.* One errand per tick, no chance gate, the last resident stays. Book `heading:`; the day's destination feeds 585's voice.

@@ -20,18 +20,11 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-588 [ai] The model's hand on whom and where (full text in the cycle-180 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
-
-## NPC depth
-
-- [ ] BACKLOG-014 [ai] Reflection pass — at dusk, NPC summarizes day → memory
-- [ ] BACKLOG-104 [emergent] Action-prompt layer — dinos *act* from their persona, not only reply (CHARTER "Living minds": minds act). A per-dino prompt path that turns persona + memory + world state into a chosen **action/intent** (where to go, what to do, how to react to an event), consumed by the world tick — not just dialogue. Spine for BACKLOG-012 (daily plan), -014 (reflection), -032 (roles persist). With Qwen3/3.5 thinking (BACKLOG-102), big choices can run in thinking mode, chitchat without. Start small: one persona-driven intent per dino per tick window, observable in-world. Deterministic fallback intent for no-model devices. Behind `NPCBrain`.
-
 
 ## Pokemon flavor
 
@@ -671,9 +664,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 180 lore additions — the ground answers (2026-10-07)
 
-- [~] BACKLOG-589 [emergent] The ground answers a newcomer — when a dino crosses onto a ground, each mind already standing there answers the same arrival its own way, and yesterday is part of the answer: the dino that spent yesterday with the newcomer is glad it came ("missed"), a rival bristles, a sociable dino whose yesterday was empty brightens at the company, a curious one wants a look at a dino it barely knows, a loner turns its back. One ticker line naming who answered how, a bubble over each answerer. Pure `ai/welcome.ts`; deterministic; no model needed. Milestone 26 lore arc 3. Builds on 582 / 583 / 585 / 586.
 - [ ] BACKLOG-590 [art] The errand mark — the 🧭 popped over a dino as it sets off for another ground (586's `ERRAND_ART_KEY = 'errand'`, host shipped cycle 179, and from cycle 180 also the follow-across-grounds beat). A pixel rig in the reflect/seek family; it should read as *setting off somewhere on purpose*, not as a compass object. Builds on 586 / 584 / 587.
 
-## Cycle 180 (Structure-smith)
-
-- [~] BACKLOG-588 [ai] The model's hand on whom and where — the choice becomes one decision with two halves. **Floor:** a dino whose sought companion (582) is on another ground and has not been reached goes after it — at the migration tick, ahead of the roll, through `startMigration`, one hop at a time along `hopToward` (*🧭 Sunny sets off for The Grove — after Rex.*); the ground keeps its last resident, a sleeper waits, a mutual pair does not cross past each other. **Model:** an optional `NPCBrain.choose(ctx, { companions, grounds })` — ready engine only, behind `allowAmbient`, once per dino per phase — whose draft is folded onto the floor exactly as 393's intent is: a named companion from the closed list replaces the floor's pick (why `chosen`, 🧠 in the ticker), a named neighbouring ground replaces the phase's errand destination if it has not run, anything else keeps the floor. Milestone 26 structure arc 3. Builds on 582 / 586 / 393 / 107.
