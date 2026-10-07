@@ -55,6 +55,7 @@ test('a fresh park: an errand splits a pair, and the one left wanting goes after
   expect(followed).toBe(true);
   const ticker = (await page.evaluate(() => (window as W).__ticker() as string[])).join(' | ');
   expect(ticker).toContain('🧭 Glade sets off for Pocket Cretaceous — after Mossback.');
+  expect(ticker).not.toContain('answers Glade:'); // BACKLOG-589: nobody on the Grove had an answer for it
   expect(await page.evaluate(() => (window as W).__migrating())).toContain('Glade');
 });
 
