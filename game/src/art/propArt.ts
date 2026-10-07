@@ -2438,6 +2438,47 @@ const REFLECT_RIG: PropRig = {
   },
 };
 
+// `errand` (BACKLOG-590, cycle 180-art): the 🧭 popped over a dino as it sets off for another ground on purpose — the
+// plan's errand (586) or going after a companion who is somewhere else (588). **A bindle**: a stick over the shoulder,
+// running from the lower left up to the upper right, with a red polka-dot bundle tied to its tip. It is the oldest
+// picture of *leaving for somewhere*, and it is the only mark in the family that is a long diagonal, so it cannot be
+// mistaken for its blob-shaped siblings.
+//
+// First draft rejected: the emoji's own compass rose. At 16px a compass is a ring with a cross in it, which reads as a
+// crosshair or a clock face. Over a dino a crosshair means *being hunted*, which is the opposite of setting off. It also
+// says *which way* when the beat is *going*. The bindle says the dino is leaving, and the stick points where it is
+// headed.
+const ERRAND_GRID: ReadonlyArray<string> = [
+  '...........oo...',
+  '..........obo...',
+  '.........oboo...',
+  '........obo.oo..',
+  '.......obo.orro.',
+  '......obooorwrro',
+  '.....obo.orwrrro',
+  '....obo.orrrrrdo',
+  '...obo..orrwrddo',
+  '..obo....orrddo.',
+  '.obo......oooo..',
+  'obo.............',
+  'bo..............',
+  'o...............',
+  '................',
+  '................',
+];
+
+const ERRAND_RIG: PropRig = {
+  size: 16,
+  grid: ERRAND_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    b: 0x9a6a3a, // the stick
+    r: 0xd84a3a, // the bundle cloth
+    w: 0xf8f8f0, // its polka dots
+    d: 0x983028, // the cloth's shade, lower right (light upper-left, as everywhere)
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2701,6 +2742,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   seek: SEEK_RIG,
   // BACKLOG-587 (cycle 179-art): drawn for a host that shipped the night before — `checkReflection` (583).
   reflect: REFLECT_RIG,
+  // BACKLOG-590 (cycle 180-art): drawn for a host that shipped cycle 179 — `runErrand` (586), `runFollow` (588).
+  errand: ERRAND_RIG,
 };
 
 /**

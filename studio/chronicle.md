@@ -14447,3 +14447,15 @@ fresh save it is true inside two minutes. The first tentpole is done; next is a 
 festivals.
 
 Board: build clean, **3269 unit** green, e2e **885/885** on the first full run. No save change. CI green going in.
+
+## Cycle 180-art — artist: BACKLOG-590, the errand mark
+
+The 🧭 that pops over a dino setting off for another ground is now **a bindle**. A stick runs over the shoulder, from the lower
+left up to the upper right, and a red polka-dot bundle is tied to its tip. It is the oldest picture there is of leaving
+for somewhere. It is also the only long diagonal in the mark family, so it cannot be confused with its blob-shaped
+siblings. The first draft was the emoji's compass rose, and it was rejected before it was inked. At 16px a compass is a
+ring with a cross in it, which reads as a crosshair, and a crosshair over a dino means *being hunted*. A compass also
+says *which way* when the beat is *going*. The mark has two hosts as of tonight: the plan's errand (586) and the
+follow (588). The art queue is empty again.
+
+Board: build clean, unit **3276** green, e2e **886/886** on the post-art full run. CI on `main`: last run `success`.

@@ -77,3 +77,4 @@ STYLE-GUIDE.
 - **Regret mark** (the bead of sweat over a gobbler that shoved past a friend, BACKLOG-580) — `game/src/art/propArt.ts` `REGRET_RIG`, cycle 177-art, 2026-10-04. Claude-authored procedural pixel art.
 - **Seek mark** (eyes with somewhere to be, over a dino setting off to find someone, BACKLOG-584) — `game/src/art/propArt.ts` `SEEK_RIG`, cycle 178-art, 2026-10-05. Claude-authored procedural pixel art.
 - **Reflect mark** (a thought rising off a dino at the dusk turn, BACKLOG-587) — `game/src/art/propArt.ts` `REFLECT_RIG`, cycle 179-art, 2026-10-06. Claude-authored procedural pixel art.
+- **Errand mark** (a bindle over a dino setting off for another ground, BACKLOG-590) — `game/src/art/propArt.ts` `ERRAND_RIG`, cycle 180-art, 2026-10-07. Claude-authored procedural pixel art.
