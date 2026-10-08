@@ -93,7 +93,7 @@ import { INTENT_NOTES, forageCuriosity, fromDraft, rerollStay, socializeChanceFo
 import { activeIntent, planShape, proceduralPlan, type DayPlan } from '../ai/plan';
 import { reflectDay, foundingReflection, planAfter, reflectionLine, duskLine, dayVoice, daySummary, REFLECT_HOUR, REFLECT_GLYPH, REFLECT_ART_KEY, type Reflection, type Reflections } from '../ai/reflection'; // BACKLOG-583/585
 import { planPlace, errandLine, headingLine, foldPlace, followLine, ERRAND_ART_KEY, ERRAND_GLYPH } from '../ai/place'; // BACKLOG-586/588
-import { answerArrival, welcomeText, welcomeLine, type WelcomeKind } from '../ai/welcome'; // BACKLOG-589
+import { answerArrival, welcomeText, welcomeLine, answerSeek, answerEffect, WELCOME_ART_KEY, WELCOME_GLYPH, type WelcomeKind } from '../ai/welcome'; // BACKLOG-589/592
 import { chooseCompanion, foldChoice, shouldFollow, seekLine, seekingLine, arrivalText, SEEK_ART_KEY, SEEK_GLYPH, type Companion } from '../ai/companion'; // BACKLOG-582/588
 import { proceduralPersona, upgradePersona, type Persona } from '../ai/persona';
 import { spreadGroveWord, groveNewsMemory, groveWordLine, pondSwap, pondSwapMemory, POND_BOND } from '../world/groveword';
@@ -109,7 +109,7 @@ import {
   type Friendship,
 } from '../social/friendship';
 import { GIFTS, giftReaction, verdictPhrase, type GiftVerdict } from '../social/gifts';
-import { TONES, toneById, toneReaction, lastToneLine, type ToneId } from '../social/tones';
+import { TONES, toneById, toneReaction, lastToneLine, toneEcho, type ToneId } from '../social/tones';
 import { KEEPERS, DEFAULT_KEEPER_ID, keeperById, keeperBonus, keeperFit, keeperAddress, nicknameOf, type Keeper } from '../keeper/keepers';
 import { firstMeeting, recordMeeting } from '../keeper/voice'; // BACKLOG-160
 import { missesWatcher, switchMemory } from '../keeper/succession'; // BACKLOG-162
@@ -9086,8 +9086,27 @@ ${e.short}`;
       if (!kind) continue;
       answers.push({ name: r.name, kind });
       this.showBubble(r, welcomeText(kind, r.name, d.name));
+      this.popMark(r, WELCOME_ART_KEY, WELCOME_GLYPH); // BACKLOG-593's host
+      this.actOnAnswer(r, d, kind);
     }
     if (answers.length) this.logEvent(welcomeLine(d.name, zoneById(dest).name, answers));
+  }
+
+  /** An answer moves the mind (BACKLOG-592): it is written into the graphs, and the answerer turns its seek on the newcomer. */
+  private actOnAnswer(r: Dino, d: Dino, kind: WelcomeKind): void {
+    const fx = answerEffect(kind);
+    if (fx.bond) this.bonds = strengthen(this.bonds, r.name, d.name, fx.bond);
+    if (fx.grudge) this.grudges = strengthen(this.grudges, r.name, d.name, fx.grudge);
+    if (fx.meet) this.meetings = recordMeet(this.meetings, r.name, d.name);
+    const why = answerSeek(kind);
+    const was = this.seeking[r.name];
+    if (!why) {
+      if (was?.name === d.name) this.seeking[r.name] = null;
+      return;
+    }
+    if (was && was.name === d.name && was.why === why) return;
+    this.seeking[r.name] = { name: d.name, why, arrived: false };
+    this.logEvent(seekLine(r.name, { name: d.name, why }));
   }
 
   /** Move a dino to a zone: flip its home zone, drop it on an interior tile there, refresh + persist. */
@@ -9213,9 +9232,9 @@ ${e.short}`;
       );
     if (missing) this.toldOfSwitch = { ...this.toldOfSwitch, [target.name]: this.keeperId };
 
+    const prevTone = this.lastTone[target.name]; // BACKLOG-148: read before recordTone overwrites it
     this.recordTone(target.name, id, target.traits);
 
-    // Reply path is unchanged from the old greet flow (tone-coloured reply is BACKLOG-148).
     this.dialog.show(`${target.name}: ...`);
     // BACKLOG-423: hoisted above the context literal so the prompt can carry the interrupted ritual. Reads
     // only `this.caughtTic` and `target.name`, and nothing between here and its old site touches either —
@@ -9308,7 +9327,7 @@ ${e.short}`;
         ? gladOpener(glad.friend)
         : missedTrace
           ? missedOpener(missedTrace.grade)
-          : null;
+          : toneEcho(prevTone, id, target.traits); // BACKLOG-148: the last tone, at the bottom of the chain
     // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
     // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
     // BACKLOG-300: and a dino that was *not* mid-ritual names what it was doing instead. One aside or the

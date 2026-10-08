@@ -89,3 +89,27 @@ export function lastToneLine(id: ToneId | undefined): string {
   if (!id) return '';
   return `Last time you were ${PAST_TONE[id]} with them.`;
 }
+
+const FOND_AGAIN: Record<ToneId, string> = {
+  warm: 'Warm again — I like that.',
+  tease: 'Ribbing me again? Good.',
+  honest: 'Straight talk again. Good.',
+};
+
+const SOUR_AGAIN: Record<ToneId, string> = {
+  warm: 'All this warmth again…',
+  tease: 'Teasing again. Wonderful.',
+  honest: 'Blunt again, are we.',
+};
+
+/**
+ * What a dino made of the last tone, said before its reply (BACKLOG-148). The read is its own: the same last tone is
+ * fond on one dino and sour on the next. A neutral verdict, or no last tone, says nothing.
+ */
+export function toneEcho(prev: ToneId | undefined, now: ToneId, traits?: Personality): string | null {
+  if (!prev) return null;
+  const verdict = toneReaction(toneById(prev), traits).verdict;
+  if (verdict === 'neutral') return null;
+  if (verdict === 'clashed') return prev === now ? SOUR_AGAIN[prev] : "That's better than last time.";
+  return prev === now ? FOND_AGAIN[prev] : `Not ${PAST_TONE[prev]} today, then?`;
+}

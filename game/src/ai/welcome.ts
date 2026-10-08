@@ -9,7 +9,7 @@
  */
 
 import { hashSeed, mulberry32, type Personality } from './personality';
-import { CURIOUS } from './companion';
+import { CURIOUS, type SeekWhy } from './companion';
 import { MISSES_COMPANY, type Reflection } from './reflection';
 
 export type WelcomeKind = 'bristle' | 'missed' | 'company' | 'curious' | 'cold';
@@ -63,4 +63,40 @@ const GIST: Record<WelcomeKind, string> = {
 /** The one ticker line: who on the ground answered how. */
 export function welcomeLine(newcomer: string, zoneName: string, answers: ReadonlyArray<{ name: string; kind: WelcomeKind }>): string {
   return `🌿 ${zoneName} answers ${newcomer}: ${answers.map((a) => `${a.name} ${GIST[a.kind]}`).join(', ')}.`;
+}
+
+/** The mark over each resident that answers (BACKLOG-593 draws it; the glyph until then). */
+export const WELCOME_ART_KEY = 'welcome';
+export const WELCOME_GLYPH = '🌿';
+
+const SEEK_FOR: Record<WelcomeKind, SeekWhy | null> = {
+  bristle: 'rival',
+  missed: 'yesterday',
+  company: 'friend',
+  curious: 'stranger',
+  cold: null,
+};
+
+/** An answer moves the mind (BACKLOG-592): the reason the answerer now goes looking for the newcomer, or null (it turns away). */
+export function answerSeek(kind: WelcomeKind): SeekWhy | null {
+  return SEEK_FOR[kind];
+}
+
+export interface AnswerEffect {
+  bond: number;
+  grudge: number;
+  meet: boolean;
+}
+
+const EFFECT: Record<WelcomeKind, AnswerEffect> = {
+  bristle: { bond: 0, grudge: 3, meet: false },
+  missed: { bond: 4, grudge: 0, meet: false },
+  company: { bond: 4, grudge: 0, meet: false },
+  curious: { bond: 2, grudge: 0, meet: true },
+  cold: { bond: 0, grudge: 0, meet: false },
+};
+
+/** What an answer writes into the graphs (BACKLOG-592): a curious look is a meeting, so a stranger stops being one. */
+export function answerEffect(kind: WelcomeKind): AnswerEffect {
+  return EFFECT[kind];
 }

@@ -24,3 +24,11 @@ arrival line come from the existing `soughtOnGround` / `arriveIfSought`.
 
 **Risks.** Specs that assert exact second-greet text or exact bond values after a crossing may need their expectation
 updated. Run the full suite.
+
+## Shipped
+
+- **148:** `toneEcho` in `social/tones.ts`; `pickTone` reads `prevTone` before `recordTone` and puts the echo at the bottom of the opener chain.
+- **592:** `answerSeek`, `answerEffect`, `WELCOME_ART_KEY`/`WELCOME_GLYPH` in `ai/welcome.ts`; `actOnAnswer` called from `answerNewcomer`, which also pops the welcome mark.
+- Unit tests for both live in one file, `game/src/ai/cycle-181-minds.test.ts` (the plan named a separate tones test; one file was enough). E2E: `tests/e2e/cycle-181-minds.spec.ts`.
+- The bond assertion is `> before`, not `>= before + 4`: ambient drift over the walk takes ~1.5 off the +4.
+- Board: build clean, unit 3281 green, e2e 889/889 on the first full run. No other spec needed changing.
