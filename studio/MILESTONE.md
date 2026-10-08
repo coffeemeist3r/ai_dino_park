@@ -16,11 +16,11 @@ those minds into what already exists. A dino that has been greeted before answer
 landed. A dino that answers an arrival does something about it.
 
 **Lore arcs:**
-- [ ] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148)
+- [x] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148 — cycle 181)
 - [ ] (drafted next cycle, from the queue)
 
 **Structure arcs:**
-- [ ] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592)
+- [x] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592 — cycle 181)
 - [ ] (drafted next cycle)
 
 ---

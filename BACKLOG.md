@@ -23,7 +23,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
-- [~] BACKLOG-592 [core] An answer moves the mind (full text in the cycle-181 block below).
 
 ---
 
@@ -144,7 +143,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > native follow-ups extending the dialogue-tones foundation. Next-up is BACKLOG-142.
 
 - [ ] BACKLOG-147 [infra] HUD polish pass — the chrome-polish nudge: lift the HUD/plaque/hint typography and framing a notch (consistent type scale, softer panel framing, clearer world-vs-chrome hierarchy) without changing behavior. Pairs with the open [art] dialog-frame item (036). Lowest-priority of the six (CHARTER emergence bias). Idea Box (UI). Builds on 058 / 036. *(Scope note 2026-06-12: the bottom-bar layout collision is gone — BACKLOG-201 shipped the [?] help panel + short gift line; what remains here is the typography/framing pass.)*
-- [~] BACKLOG-148 [ai] Tone-aware reply — feed the remembered tone (142) into the dino's greeting/reply context so a teased dino ribs back, a warmly-treated one is fonder, an honestly-treated one is franker; the consequence surfaces in *what the dino says*, not just affinity. Behind the NPCBrain boundary, deterministic fallback line per tone. Builds on 142 / 051 / 055.
 - [ ] BACKLOG-149 [emergent] Tone reputation — a dino's accumulated tone-history settles into a read on the keeper (trusts / wary / playful), surfaced in the collection book; how you've *mostly* treated a dino becomes a visible standing. Builds on 142 / 021.
 
 ## Cycle 69 structure additions — the split world grows a queue (2026-06-22)
@@ -662,10 +660,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 177 (Structure-smith)
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
-
-## Cycle 181 (Structure-smith)
-
-- [~] BACKLOG-592 [core] An answer moves the mind — 589's welcome answers are said and then forgotten: the resident that was glad Sunny came back carries on with whatever it was seeking, and the bond and grudge graphs never hear about it. Make the answer an input. A resident that answers a newcomer turns its seek toward it, with the reason its answer gives (bristle → spoiling for it, missed → more of yesterday, company → missing them, curious → to get to know them; a cold answer drops a seek on the newcomer). The answer is written into the graphs too: a glad or brightened answer adds a small bond, a curious one counts as a meeting (so a stranger stops being one after `STRANGER_MET` arrivals), and a bristle adds a small grudge, so a feud stays warm while its pair keeps crossing. Each answerer gets the welcome mark (593). Builds on 589 / 582 / 574.
 
 ## Cycle 181 (Lore-smith, art)
 

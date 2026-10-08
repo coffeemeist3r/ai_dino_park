@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 181 — 2026-10-08 (the minds are woven in)
+- BACKLOG-148: Tone-aware reply — the second time you greet a dino, it opens with what it made of the first. A dino that loved being teased ribs back (*"Ribbing me again? Good."*), one that hated it says so (*"Teasing again. Wonderful."*), and a change of tone is noticed (*"Not teasing today, then?"* / *"That's better than last time."*). The read is the dino's own, so the same tone lands differently across the cast. It sits at the bottom of the existing opener chain and is deterministic.
+- BACKLOG-592: An answer moves the mind — a resident that answers a newcomer now acts on it. It goes looking for the newcomer, for the reason its answer gives (*👀 Rex goes looking for Sunny — for more of yesterday.*), and the answer is written into the graphs: +4 bond when glad or brightened, +2 bond and a meeting when curious, +3 grudge when bristling. A cold answer drops any seek on the newcomer. Each answerer pops the welcome mark (🌿 until BACKLOG-593 draws it).
+
+---
+
 ## Cycle 180 — 2026-10-07 (the ground answers; the first tentpole ships)
 - BACKLOG-589: The ground answers a newcomer — when a dino crosses onto a ground, every resident answers the same arrival in its own way. A rival bristles. The dino that spent yesterday with the newcomer is glad it came. A sociable dino whose yesterday was empty brightens. A curious one wants a look at a dino it barely knows. A loner turns its back. Each answerer gets a bubble, and one ticker line names them all (*🌿 Pocket Cretaceous answers Sunny: Rex glad it came, Twitch turns away.*). Pure `ai/welcome.ts`; no model needed.
 - BACKLOG-588: The model's hand on whom and where — a dino whose sought companion stands on another ground now goes after it, one hop at a time, on the migration cadence (*🧭 Glade sets off for Pocket Cretaceous — after Mossback.*). It stays put if it is its ground's last resident, if the companion is mid-crossing, or if it is the second of a pair seeking each other. Where a model runs, optional `NPCBrain.choose` picks the companion (from the whole park) and the neighbouring ground. Its answer is folded onto the deterministic floor against closed lists, behind the governor (🧠 in the ticker). **Milestone 26 (the first tentpole) SHIPPED.**

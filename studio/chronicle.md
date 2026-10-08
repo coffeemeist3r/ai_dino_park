@@ -14471,3 +14471,24 @@ Board: build clean, unit **3276** green, e2e **886/886** on the post-art full ru
 ## Cycle 181 — coder: BACKLOG-148 + BACKLOG-592 shipped; build clean, unit 3281, e2e 889/889
 
 ## Cycle 181 — qa: 10/10 criteria pass (two by inspection, named)
+
+## Cycle 181 — APPROVED / APPROVED: the minds are woven in (Milestone 27 opens)
+
+Say hello to Rex with a tease, then do it again. For a hundred and forty-six cycles the park has written down how you
+greeted each dino and shown it to you in the menu header, *"Last time you were teasing with them."*, and then the dino
+answered as if it had never happened. Tonight it remembers out loud. A bold dino that loved the ribbing opens with
+*"Ribbing me again? Good."* A gentle one that hated it says *"Teasing again. Wonderful."* Switch to warm, and the bold
+one notices: *"Not teasing today, then?"* The gentle one is relieved: *"That's better than last time."* It is the same
+tone and the same keeper, and the cast does not agree about it.
+
+The other half is about what an answer does. Last cycle the bowl learned to answer a dino crossing onto it; tonight
+the answer is not the end of it. When Sunny comes home, Rex is glad, and then the ticker reads *👀 Rex goes looking
+for Sunny — for more of yesterday.* He walks over and says *"Sunny! Same again today?"* When Mossback comes home,
+Twitch bristles and goes looking for him, *spoiling for it*, and the feud between them warms a notch instead of only
+cooling. A curious answer counts as a meeting, so a stranger stops being one. A little 🌿 pops over everyone who
+answers, waiting for the Artist.
+
+Milestone 27 opened tonight: *the new minds are woven in.* Two of its four arcs are closed already.
+
+Board: build clean, **3281 unit** green, e2e **889/889** on the first full run. No save change. CI green going in
+(cycle 180-art: `success`).
