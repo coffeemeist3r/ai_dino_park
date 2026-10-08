@@ -661,6 +661,3 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
 
-## Cycle 181 (Lore-smith, art)
-
-- [ ] BACKLOG-593 [art] The welcome mark — the 🌿 that pops over each resident answering a newcomer (592 hosts it, glyph fallback until drawn). One 16px mark in the family; must not read as the seek 👀 or errand bindle.

@@ -2479,6 +2479,42 @@ const ERRAND_RIG: PropRig = {
   },
 };
 
+// `welcome` (BACKLOG-593, cycle 181-art): the 🌿 popped over each resident that answers a dino crossing onto its ground
+// (589's answer, which 592 turned into something the answerer acts on). **A sprig**: a green stem with three leaves,
+// one at the top and one to each side. The ground answering is the ground itself looking up, so the mark is a bit of
+// it. It is the only green mark in the family and grows upward from a stem, so it cannot be read as the seek's eyes
+// (a pair of blobs) or the errand's bindle (a long diagonal).
+const WELCOME_GRID: ReadonlyArray<string> = [
+  '.......oo.......',
+  '......ohlo......',
+  '......ohllo.....',
+  '......olldo.....',
+  '.......oldo.....',
+  '.......ogo..oo..',
+  '.......ogo.ohlo.',
+  '.......ogoohlldo',
+  '..oo...oggllddo.',
+  '.ohlo..ogooooo..',
+  'ohlllooggo......',
+  '.olllddgo.......',
+  '..oodddgo.......',
+  '....oo.ogo......',
+  '.......ogo......',
+  '.......ooo......',
+];
+
+const WELCOME_RIG: PropRig = {
+  size: 16,
+  grid: WELCOME_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    g: 0x3a6a2a, // the stem
+    l: 0x58b048, // the leaves
+    h: 0x98d878, // their light edge, upper left (as everywhere)
+    d: 0x2f7a3a, // their shade, lower right
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2744,6 +2780,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   reflect: REFLECT_RIG,
   // BACKLOG-590 (cycle 180-art): drawn for a host that shipped cycle 179 — `runErrand` (586), `runFollow` (588).
   errand: ERRAND_RIG,
+  // BACKLOG-593 (cycle 181-art): drawn for a host that shipped the same cycle — `answerNewcomer` (589/592).
+  welcome: WELCOME_RIG,
 };
 
 /**

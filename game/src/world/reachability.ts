@@ -75,6 +75,7 @@ import { WAIT_ART_KEY, ADMIRE_ART_KEY, REGRET_ART_KEY } from './pecking'; // BAC
 import { SEEK_ART_KEY } from '../ai/companion'; // BACKLOG-582
 import { REFLECT_ART_KEY } from '../ai/reflection'; // BACKLOG-583
 import { ERRAND_ART_KEY } from '../ai/place'; // BACKLOG-586
+import { WELCOME_ART_KEY } from '../ai/welcome'; // BACKLOG-592
 import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
 import { COLD_ART_KEY } from './cold'; // BACKLOG-557
 
@@ -193,6 +194,7 @@ export function worldPlacedProps(): Set<string> {
   out.add(SEEK_ART_KEY); // BACKLOG-582: popped over a dino whose mind just picked whom to go looking for, by `chooseSeek`
   out.add(REFLECT_ART_KEY); // BACKLOG-583: popped over every dino in view at the dusk turn, by `checkReflection`
   out.add(ERRAND_ART_KEY); // BACKLOG-586: popped over a dino setting off on its plan's errand, by `runErrand`
+  out.add(WELCOME_ART_KEY); // BACKLOG-592: popped over each resident answering a newcomer, by `answerNewcomer`
   out.add(COLD_ART_KEY); // BACKLOG-557: hung over a cold-slept dino by `refreshColdMarks`
   // BACKLOG-551/550: the two need tells, hung over a dino in want by `refreshNeedMarks`. They join the
   // family late — until cycle 162 that mark was raw `Text` with no rig lookup at all, so no rig could be

@@ -89,6 +89,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       // session that runs out and `streak`'s notched bar for days already kept.
       'wait', // BACKLOG-576 (cycle 175-art): the hourglass over a cowed bully (host 397)
       'watch',
+      'welcome', // BACKLOG-593 (cycle 181-art): a sprig over each resident answering a newcomer (host 589/592)
     ]);
   });
 

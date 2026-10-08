@@ -14492,3 +14492,18 @@ Milestone 27 opened tonight: *the new minds are woven in.* Two of its four arcs 
 
 Board: build clean, **3281 unit** green, e2e **889/889** on the first full run. No save change. CI green going in
 (cycle 180-art: `success`).
+
+## Cycle 181-art — artist: BACKLOG-593, the welcome mark
+
+The 🌿 that pops over each dino answering a newcomer is now **a sprig**: a green stem with one leaf at the top and one
+to each side, lit upper-left and shaded lower-right like the rest of the family. When a ground answers a dino that
+has crossed onto it, the ground itself is looking up, so the mark is a bit of the ground. It is also the only green
+mark in the family, and the only one that grows upward from a stem. Over a dino it cannot be read as the seek's pair
+of eyes or the errand's long diagonal bindle, and those are the two marks it most often appears beside now that an
+answer sets off a seek. Its host shipped on the main chain earlier tonight, so the rig was never drawn ahead of one.
+The art queue is empty again.
+
+Board: build clean, unit **3288** green. On the post-art e2e full run, **888/890** passed. Two older specs failed on
+the parallel run: `cycle-085-third-zone`, an assert, and `cycle-135-spend-vote`, a 30 s boot timeout. Both pass when
+re-run in isolation (8/8). Game logic was unchanged since the first full run went 889/889, so both are recorded as the
+known parallel-load flake. CI on `main`: last run `success`.
