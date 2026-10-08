@@ -14461,3 +14461,5 @@ follow (588). The art queue is empty again.
 Board: build clean, unit **3276** green, e2e **886/886** on the post-art full run. CI on `main`: last run `success`.
 
 ## Cycle 181 — lore-smith: the minds are woven in — Milestone 27 drafted; next-up BACKLOG-148 (tone-aware reply); art seeded 593
+
+## Cycle 181 — structure-smith: BACKLOG-592 an answer moves the mind (Milestone 27 structure arc 1)
