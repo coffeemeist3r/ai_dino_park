@@ -8,9 +8,20 @@
 
 ## Current milestone
 
-**No milestone is ACTIVE.** Milestone 26 shipped cycle 180. Next is **Milestone 27, a normal milestone** (CHARTER v9:
-the one after a tentpole is where it is polished, voiced and woven into what exists). The smiths draft it at the next cycle open.
-Tentpole 2 (Festivals) is Milestone 28.
+**Milestone 27: The new minds are woven in — what a dino remembers of you, and of each arrival, changes what it says and where it walks next**
+**Status:** ACTIVE (opened cycle 181)
+
+The tentpole gave every dino a hand on whom it seeks and a voice for how its day went. This normal milestone weaves
+those minds into what already exists. A dino that has been greeted before answers the keeper out of how that greeting
+landed. A dino that answers an arrival does something about it.
+
+**Lore arcs:**
+- [ ] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148)
+- [ ] (drafted next cycle, from the queue)
+
+**Structure arcs:**
+- [ ] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592)
+- [ ] (drafted next cycle)
 
 ---
 

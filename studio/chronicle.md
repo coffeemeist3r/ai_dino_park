@@ -14459,3 +14459,5 @@ says *which way* when the beat is *going*. The mark has two hosts as of tonight:
 follow (588). The art queue is empty again.
 
 Board: build clean, unit **3276** green, e2e **886/886** on the post-art full run. CI on `main`: last run `success`.
+
+## Cycle 181 — lore-smith: the minds are woven in — Milestone 27 drafted; next-up BACKLOG-148 (tone-aware reply); art seeded 593
