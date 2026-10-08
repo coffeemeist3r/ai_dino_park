@@ -1,6 +1,6 @@
 {
   "cycle": 181,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-148: tone-aware reply",
   "structureItem": "BACKLOG-592: an answer moves the mind",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-08T08:13:03.584Z",
     "structure-smith": "2026-10-08T08:13:03.838Z",
-    "designer": "2026-10-07T08:16:16.020Z",
+    "designer": "2026-10-08T08:13:41.606Z",
     "code-planner": "2026-10-07T08:16:53.039Z",
     "coder": "2026-10-07T08:33:36.325Z",
     "qa": "2026-10-07T08:34:20.165Z",
