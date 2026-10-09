@@ -17,7 +17,7 @@ landed. A dino that answers an arrival does something about it.
 
 **Lore arcs:**
 - [x] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148 — cycle 181)
-- [ ] (drafted next cycle, from the queue)
+- [ ] A dino that was talked round tells the keeper who came for it, in its own register (BACKLOG-139)
 
 **Structure arcs:**
 - [x] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592 — cycle 181)
