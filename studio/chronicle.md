@@ -14511,3 +14511,5 @@ known parallel-load flake. CI on `main`: last run `success`.
 ## Cycle 182 — lore-smith: who was there for you — Milestone 27 lore arc 2; next-up BACKLOG-139 (thankful line)
 
 ## Cycle 182 — structure-smith: BACKLOG-578 grudges cool while you are away (Milestone 27 structure arc 2)
+
+## Cycle 182 — designer: BACKLOG-139 (the thankful line) + BACKLOG-578 (grudges cool while you are away)
