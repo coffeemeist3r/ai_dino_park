@@ -21,7 +21,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [ ] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
+- [~] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
@@ -655,7 +655,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 176 (Structure-smith)
 
-- [ ] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
+- [~] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
 
 ## Cycle 177 (Structure-smith)
 

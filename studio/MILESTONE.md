@@ -21,7 +21,7 @@ landed. A dino that answers an arrival does something about it.
 
 **Structure arcs:**
 - [x] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592 — cycle 181)
-- [ ] (drafted next cycle)
+- [ ] A feud cools while the keeper is away, and the homecoming says so: the grudge graph rides the offline catch-up (BACKLOG-578)
 
 ---
 
