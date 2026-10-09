@@ -16,6 +16,7 @@
  */
 
 import { bondPoints, type Bonds } from '../social/bonds';
+import type { Personality } from '../ai/personality';
 
 /** A friend must be at least this close (pairwise bond) to bother crossing — one huddle's worth. */
 export const COMFORT_BOND_FLOOR = 8;
@@ -120,4 +121,16 @@ export function unconsoledLine(loser: string, closest: string | null): string {
   return closest
     ? `🫥 nobody came for ${loser} — ${closest} isn't close enough`
     : `🫥 nobody came for ${loser} — nobody here knows it`;
+}
+
+// ── Thankful line (BACKLOG-139) ───────────────────────────────────────────────────────────────────────
+
+/**
+ * The opener a consoled dino leads its next keeper greet with: who came for it, in its own register. A prickly
+ * dino will not quite say thanks; a solitary one says the quiet was the help; everyone else says it plainly.
+ */
+export function thankfulOpener(friend: string, traits?: Personality): string {
+  if (traits && traits.agreeableness < 0.35) return `${friend} came over. Didn't need it. ...Don't tell them I said thanks.`;
+  if (traits && traits.sociability < 0.35) return `${friend} came and sat with me. Didn't say much. Neither did I. It helped.`;
+  return `${friend} sat with me, earlier. I won't forget it.`;
 }

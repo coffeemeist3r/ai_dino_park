@@ -37,7 +37,7 @@ import {
   shoulderMendedLine,
 } from '../world/sulk'; // BACKLOG-123 / -544
 import { enterFunk, clearFunk, funkOf, inFunk, expiredFunks, SULK_GLYPH, SULK_ART_KEY, type Funks } from '../world/expiry'; // BACKLOG-544/-543
-import { comforter, comfortLine, comfortMemory, recordGratitude, COMFORT_BOND, CONSOLE_STEPS, COMFORT_ART_KEY, COMFORT_GLYPH, headingOverLine, talkedRoundLine, unconsoledLine, type Gratitude } from '../world/comfort';
+import { comforter, comfortLine, comfortMemory, recordGratitude, thankfulOpener, COMFORT_BOND, CONSOLE_STEPS, COMFORT_ART_KEY, COMFORT_GLYPH, headingOverLine, talkedRoundLine, unconsoledLine, type Gratitude } from '../world/comfort';
 import { tintFor, dayPhase, type DayPhase } from '../world/dayNight';
 import {
   rollSkyEvent,
@@ -715,6 +715,8 @@ export class WorldScene extends Phaser.Scene {
   private owesFood: Record<string, string[]> = {};
   /** Who each dino owes a consolation back to (BACKLOG-132); persisted, drives the gratitude echo. */
   private gratitude: Gratitude = {};
+  /** BACKLOG-139: consoled dino → who talked it round, until it tells the keeper. Transient, spoken once. */
+  private thanks: Record<string, string> = {};
   /** Tone menu state (BACKLOG-142): open flag, the dino being greeted, and the live menu text. */
   private toneMenuOpen = false;
   private toneTarget: Dino | null = null;
@@ -3243,6 +3245,7 @@ export class WorldScene extends Phaser.Scene {
       this.bonds = strengthen(this.bonds, c.friend, c.loser, COMFORT_BOND);
       this.memory = remember(this.memory, c.loser, comfortMemory(c.friend));
       this.gratitude = recordGratitude(this.gratitude, c.loser, c.friend);
+      this.thanks[c.loser] = c.friend; // BACKLOG-139
       this.lastComfort = { comforter: c.friend, sulker: c.loser };
       this.liftMood(loser);
       this.logEvent(talkedRoundLine(c.friend, c.loser));
@@ -7085,6 +7088,7 @@ ${e.short}`;
         this.memory = remember(this.memory, hc.jealous.name, comfortMemory(who));
         // The consoled dino files who came for it, so it can echo the favor later (BACKLOG-132).
         this.gratitude = recordGratitude(this.gratitude, hc.jealous.name, who);
+        this.thanks[hc.jealous.name] = who; // BACKLOG-139
         this.lastComfort = { comforter: who, sulker: hc.jealous.name };
       }
     }
@@ -9321,13 +9325,18 @@ ${e.short}`;
       delete this.missedTrace[target.name];
       this.refreshMissedMarks(); // said out loud, so it stops being a thought over its head
     }
+    // BACKLOG-139: who talked it round, below the three openers about *here* and above the last tone.
+    const thank = caught || glad || missedTrace ? undefined : this.thanks[target.name];
+    if (thank) delete this.thanks[target.name];
     const opener = caught
       ? caughtOpener(register, this.ticAxisFor(target))
       : glad
         ? gladOpener(glad.friend)
         : missedTrace
           ? missedOpener(missedTrace.grade)
-          : toneEcho(prevTone, id, target.traits); // BACKLOG-148: the last tone, at the bottom of the chain
+          : thank
+            ? thankfulOpener(thank, target.traits)
+            : toneEcho(prevTone, id, target.traits); // BACKLOG-148: the last tone, at the bottom of the chain
     // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
     // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
     // BACKLOG-300: and a dino that was *not* mid-ritual names what it was doing instead. One aside or the
@@ -10370,7 +10379,7 @@ ${e.short}`;
         // BACKLOG-493: `AWAY_SCALE`, not `save.scale`. The saved scale is the rate the player was *watching*
         // at; an unattended world runs at real time. Passing 60 here would turn a week away into 420 in-game
         // days — every store at its spoilage floor, every landmark derelict, the digest meaningless.
-        { time: save.time, savedAt: save.savedAt, scale: AWAY_SCALE, bonds: save.bonds, memory: save.memory },
+        { time: save.time, savedAt: save.savedAt, scale: AWAY_SCALE, bonds: save.bonds, memory: save.memory, grudges: save.grudges ?? {} },
         Date.now(),
       );
       clock.set(away.time);
@@ -10379,7 +10388,7 @@ ${e.short}`;
       this.circleNames = null; // BACKLOG-127: a restored circle is re-read silently, not announced
       this.memory = away.memory;
       this.bonds = away.bonds;
-      this.grudges = save.grudges ?? {}; // BACKLOG-574: a pre-574 park has no feud — none is invented for it
+      this.grudges = away.grudges; // BACKLOG-574/578: a pre-574 park has no feud; a feud cools while you're away
       this.reflections = save.reflections ?? {}; // BACKLOG-583: a pre-583 park simply has no yesterday yet
       this.plans = {};
       this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently
@@ -10530,11 +10539,12 @@ ${e.short}`;
     // current scale (savedAt 0 so elapsed === realMs, deterministic), apply + return the result.
     (window as any).__catchUp = (realMs: number) => {
       const away = fastForward(
-        { time: clock.now(), savedAt: 0, scale: AWAY_SCALE, bonds: this.bonds, memory: this.memory },
+        { time: clock.now(), savedAt: 0, scale: AWAY_SCALE, bonds: this.bonds, memory: this.memory, grudges: this.grudges },
         realMs,
       );
       clock.set(away.time);
       this.bonds = away.bonds;
+      this.grudges = away.grudges; // BACKLOG-578
       this.memory = away.memory;
       this.lastAwayDigest = away.digest;
       // BACKLOG-462: mirror the restore path — spoil the away days into the live piles + digest (clock already set).
@@ -10594,6 +10604,8 @@ ${e.short}`;
     (window as any).__lastComfort = () => this.lastComfort;
     // any: dev-only Playwright hook — gratitude ledger (consoled → comforters it owes), BACKLOG-132
     (window as any).__gratitude = () => ({ ...this.gratitude });
+    // any: dev-only Playwright hook — unspoken thanks, consoled → comforter (BACKLOG-139)
+    (window as any).__thanks = () => ({ ...this.thanks });
     // any: dev-only Playwright hook — raw friendship points per dino (finer than hearts)
     (window as any).__friendshipPoints = () => ({ ...this.friendship });
     // any: dev-only Playwright hooks — keeper select (BACKLOG-155)

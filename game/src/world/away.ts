@@ -21,10 +21,11 @@
  */
 
 import { advanceTime, type GameTime } from './clock';
-import { strengthen, type Bonds } from '../social/bonds';
+import { strengthen, bondPoints, type Bonds } from '../social/bonds';
 import { bondedPairs } from '../ui/lenses';
 import { remember, type MemoryStore } from '../ai/memory';
 import { MISSED_MIN_MINUTES } from './missed';
+import { RIVAL_BAR } from '../social/grudges';
 
 const MINUTES_PER_DAY = 24 * 60;
 /** Cap on simulated away span. A longer gap still advances the clock but its effects stop here. */
@@ -76,6 +77,29 @@ function perMinute(rate: number, cap: number, minutes: number): number {
   return Math.min(cap, Math.ceil((rate * minutes) / MINUTES_PER_DAY));
 }
 
+/**
+ * How far a grudge cools across an absence, per in-game day, and the most it can cool (BACKLOG-578). Faster than
+ * drift-apart: a feud is the thing time is kindest to. A week brings the founding feud (40) down to 8, under the
+ * bar; five minutes takes one point off it, which is enough for the homecoming to say so.
+ */
+const COOL_PER_DAY = 8;
+const MAX_COOL = 32;
+
+/** How much a grudge cools, for an absence of `minutes`. */
+export function coolFor(minutes: number): number {
+  return perMinute(COOL_PER_DAY, MAX_COOL, minutes);
+}
+
+/** The digest's line for a feud that cooled but is still a feud. */
+export function cooledLine(a: string, b: string): string {
+  return `${a} and ${b} cooled off a little.`;
+}
+
+/** The digest's line for a feud that cooled below `RIVAL_BAR`. */
+export function letGoLine(a: string, b: string): string {
+  return `${a} and ${b} seem to have let it go.`;
+}
+
 /** How much closer a companion pair comes back, for an absence of `minutes`. */
 export function driftFor(minutes: number): number {
   return perMinute(DRIFT_PER_DAY, MAX_DRIFT, minutes);
@@ -116,6 +140,8 @@ export interface AwayInput {
   scale?: number;
   bonds: Bonds;
   memory: MemoryStore;
+  /** The grudge graph (BACKLOG-574); optional so a caller without one keeps working. */
+  grudges?: Bonds;
 }
 
 export interface AwayResult {
@@ -128,6 +154,8 @@ export interface AwayResult {
   time: GameTime;
   bonds: Bonds;
   memory: MemoryStore;
+  /** The grudge graph, cooled across the absence (BACKLOG-578). */
+  grudges: Bonds;
   /** homecoming lines; empty when no in-game time elapsed. */
   digest: string[];
 }
@@ -158,7 +186,7 @@ export function fastForward(input: AwayInput, nowMs: number): AwayResult {
   const time = advanceTime(input.time, minutes);
 
   if (minutes <= 0) {
-    return { minutes: 0, days: 0, capped: false, time, bonds: input.bonds, memory: input.memory, digest: [] };
+    return { minutes: 0, days: 0, capped: false, time, bonds: input.bonds, memory: input.memory, grudges: input.grudges ?? {}, digest: [] };
   }
 
   const days = Math.floor(minutes / MINUTES_PER_DAY);
@@ -203,5 +231,16 @@ export function fastForward(input: AwayInput, nowMs: number): AwayResult {
     digest.push('Barely long enough to notice.');
   }
 
-  return { minutes, days, capped, time, bonds, memory, digest };
+  // BACKLOG-578: the grudges cool too. Only a feud (at or over the bar before the absence) is worth a line.
+  let grudges = input.grudges ?? {};
+  const cool = coolFor(minutes);
+  if (cool > 0) {
+    const feuds = bondedPairs(grudges, RIVAL_BAR);
+    for (const p of bondedPairs(grudges, Number.MIN_VALUE)) grudges = strengthen(grudges, p.a, p.b, -cool);
+    for (const p of feuds.slice(0, 2)) {
+      digest.push(bondPoints(grudges, p.a, p.b) < RIVAL_BAR ? letGoLine(p.a, p.b) : cooledLine(p.a, p.b));
+    }
+  }
+
+  return { minutes, days, capped, time, bonds, memory, grudges, digest };
 }

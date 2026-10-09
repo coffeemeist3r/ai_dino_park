@@ -1,6 +1,6 @@
 {
   "cycle": 182,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-139: thankful line",
   "structureItem": "BACKLOG-578: grudges cool while you're away",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-09T08:11:53.620Z",
     "designer": "2026-10-09T08:12:54.327Z",
     "code-planner": "2026-10-09T08:12:54.583Z",
-    "coder": "2026-10-08T08:36:14.841Z",
+    "coder": "2026-10-09T08:27:14.442Z",
     "qa": "2026-10-08T08:36:31.066Z",
     "validator": "2026-10-08T08:37:07.522Z",
     "artist": "2026-10-08T08:39:06.693Z"

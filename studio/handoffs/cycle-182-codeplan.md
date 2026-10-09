@@ -37,3 +37,11 @@
 **Risks:** `away.ts` importing `social/grudges.ts` — grudges imports only `bonds`/`closest`, no cycle.
 
 **Estimated touch count:** ~7 files across both tracks.
+
+## Shipped (coder)
+
+Both tracks as planned. `thankfulOpener` in `world/comfort.ts`; transient `thanks` set at both comfort resolutions
+(`stepConsole`, homecoming) and consumed in `pickTone` between the missed opener and the tone echo; `__thanks` hook.
+`coolFor` / `cooledLine` / `letGoLine` in `world/away.ts`; `fastForward` takes and returns `grudges`; the restore
+path and `__catchUp` apply it. Unit tests `thanks.test.ts`, `grudgeCool.test.ts`; e2e `cycle-182-minds.spec.ts`.
+Build clean, unit 3294 green, e2e 894/894 on the first full run. No save change.
