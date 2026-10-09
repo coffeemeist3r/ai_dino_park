@@ -8,20 +8,8 @@
 
 ## Current milestone
 
-**Milestone 27: The new minds are woven in — what a dino remembers of you, and of each arrival, changes what it says and where it walks next**
-**Status:** ACTIVE (opened cycle 181)
-
-The tentpole gave every dino a hand on whom it seeks and a voice for how its day went. This normal milestone weaves
-those minds into what already exists. A dino that has been greeted before answers the keeper out of how that greeting
-landed. A dino that answers an arrival does something about it.
-
-**Lore arcs:**
-- [x] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148 — cycle 181)
-- [ ] A dino that was talked round tells the keeper who came for it, in its own register (BACKLOG-139)
-
-**Structure arcs:**
-- [x] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592 — cycle 181)
-- [ ] A feud cools while the keeper is away, and the homecoming says so: the grudge graph rides the offline catch-up (BACKLOG-578)
+_No milestone is active. Milestone 28 is a **tentpole** (CHARTER v9): the smiths draft it next cycle from the top of the
+Tentpole queue, which is **Festivals** (BACKLOG-026)._
 
 ---
 
@@ -57,6 +45,31 @@ landed. A dino that answers an arrival does something about it.
    for the change. Hatchlings from the egg arc should be the first to do it.
 
 ## Shipped milestones
+
+### Milestone 27: The new minds are woven in — SHIPPED cycle 182 (opened cycle 181)
+
+Two cycles, four arcs, no REWORK. The minds the tentpole built now reach back into what the park already had: the
+greeting, the welcome, the comfort ledger, the absence. A dino answers the keeper out of the last greeting and names
+who came for it when it was sore; an answer to a newcomer sends the answerer walking; a feud cools while you are gone.
+
+**The lesson worth keeping:** every arc of this milestone was a store the park had been keeping and never reading —
+`lastTone` since cycle 35, the gratitude ledger since 34, the grudge graph across every absence since 574. Weaving was
+cheaper than building, and it was the part the player could see.
+
+**Milestone 27: The new minds are woven in — what a dino remembers of you, and of each arrival, changes what it says and where it walks next**
+**Status:** SHIPPED cycle 182 (opened cycle 181)
+
+The tentpole gave every dino a hand on whom it seeks and a voice for how its day went. This normal milestone weaves
+those minds into what already exists. A dino that has been greeted before answers the keeper out of how that greeting
+landed. A dino that answers an arrival does something about it.
+
+**Lore arcs:**
+- [x] The keeper's last tone is in the dino's next reply: a dino that loved being teased ribs back, and one that bristled at it says so (BACKLOG-148 — cycle 181)
+- [x] A dino that was talked round tells the keeper who came for it, in its own register (BACKLOG-139 — cycle 182)
+
+**Structure arcs:**
+- [x] An answer moves the mind: a resident that answers a newcomer turns its seek toward it and walks over, and the answer is written into the bond and grudge graphs (BACKLOG-592 — cycle 181)
+- [x] A feud cools while the keeper is away, and the homecoming says so: the grudge graph rides the offline catch-up (BACKLOG-578 — cycle 182)
 
 ### Milestone 26 (TENTPOLE): Minds that act and reflect — SHIPPED cycle 180 (opened cycle 178)
 

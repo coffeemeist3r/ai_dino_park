@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 182 — 2026-10-09 (who was there for you; Milestone 27 ships)
+- BACKLOG-139: Thankful line — a dino a friend talked round tells the keeper who came, the next time it is greeted, in its own register: *"Rex sat with me, earlier. I won't forget it."*, or from a prickly one *"Rex came over. Didn't need it. ...Don't tell them I said thanks."*, or from a solitary one *"Rex came and sat with me. Didn't say much. Neither did I. It helped."* Said once. Sits in the opener chain above the tone echo.
+- BACKLOG-578: Grudges cool while you're away — the offline catch-up now cools the grudge graph (8 points a day, capped at 32, from a five-minute absence), and the homecoming digest names each feud: *"Mossback and Twitch cooled off a little."*, or once below the rival bar, *"Mossback and Twitch seem to have let it go."* **Milestone 27 SHIPPED.**
+
+---
+
 ## Cycle 181 — 2026-10-08 (the minds are woven in)
 - BACKLOG-148: Tone-aware reply — the second time you greet a dino, it opens with what it made of the first. A dino that loved being teased ribs back (*"Ribbing me again? Good."*), one that hated it says so (*"Teasing again. Wonderful."*), and a change of tone is noticed (*"Not teasing today, then?"* / *"That's better than last time."*). The read is the dino's own, so the same tone lands differently across the cast. It sits at the bottom of the existing opener chain and is deterministic.
 - BACKLOG-592: An answer moves the mind — a resident that answers a newcomer now acts on it. It goes looking for the newcomer, for the reason its answer gives (*👀 Rex goes looking for Sunny — for more of yesterday.*), and the answer is written into the graphs: +4 bond when glad or brightened, +2 bond and a meeting when curious, +3 grudge when bristling. A cold answer drops any seek on the newcomer. Each answerer pops the welcome mark (🌿 until BACKLOG-593 draws it).

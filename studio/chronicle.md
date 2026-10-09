@@ -14519,3 +14519,26 @@ known parallel-load flake. CI on `main`: last run `success`.
 ## Cycle 182 — coder: BACKLOG-139 + BACKLOG-578 shipped; build clean, unit 3294, e2e 894/894
 
 ## Cycle 182 — qa: 10/10 criteria pass (two by inspection, named)
+
+## Cycle 182 — APPROVED / APPROVED: who was there for you (Milestone 27 ships)
+
+Feed the bowl and watch the scramble. When Sunny loses it, Rex walks over and talks her round, as he has every time
+since cycle 136, and the park writes down that he came. It has kept that ledger since cycle 34 and never said a word
+about it. Tonight Sunny says it. Greet her next and she opens with *"Rex sat with me, earlier. I won't forget it."*
+A prickly dino in the same spot can't quite manage it: *"Rex came over. Didn't need it. ...Don't tell them I said
+thanks."* A solitary one says what actually helped: *"Rex came and sat with me. Didn't say much. Neither did I. It
+helped."* She says it once. If you got there before Rex did, she says nothing about him, because he never came.
+
+The other half is about what happens while you're gone. For eight cycles Mossback and Twitch's feud has been the one
+thing in the park the clock couldn't touch. Every friendship drifted closer or further apart while the keeper was
+away, and the grudge came back exactly as hot. Now it cools too. Step away for five minutes and the homecoming says
+*"Mossback and Twitch cooled off a little."* Leave for a long weekend and it says *"Mossback and Twitch seem to have
+let it go."* It won't stay that way for long: the first time Mossback crosses onto Twitch's ground, Twitch bristles,
+and the feud warms up again.
+
+**Milestone 27, the new minds are woven in, SHIPPED.** It took two cycles and four arcs, with no rework. Each arc read
+something the park had been storing and never using: the last tone since cycle 35, the gratitude ledger since 34, and
+the grudges across every absence. Next is Milestone 28, a tentpole: festivals.
+
+Board: build clean, **3294 unit** green, e2e **894/894** on the first full run. No save change. CI green going in
+(cycle 181-art: `success`).

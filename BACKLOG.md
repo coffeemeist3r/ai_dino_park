@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [~] BACKLOG-578 [core] Grudges cool while you're away (full text in the cycle-176 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
@@ -132,7 +131,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-137 [emergent] Comfort circle — if a sulker has *several* grateful debtors present (132), a small group (top 2) drifts over instead of one; consolation scales with how many friends you've helped. Builds on 130 / 132 / 124.
 - [ ] BACKLOG-138 [emergent] Debt cleared — once a debtor returns the favor (echoes a comfort, 132), the gratitude entry is consumed; kindness is a one-shot ledger, not a permanent claim, so reciprocity keeps cycling rather than locking one pair forever. Builds on 132.
-- [~] BACKLOG-139 [social] Thankful line — a comforted dino, next time the keeper greets it, may name who was there for it ("Twitch sat with me"); gratitude surfaces in dialogue, not just selection. Builds on 132 / 011 / 051.
 - [ ] BACKLOG-140 [pokemon] Owes-one in the book — the collection book shows each dino's outstanding gratitude debts ("owes Twitch one"), making the reciprocity graph legible alongside the closest-friend line. Builds on 132 / 134 / 021.
 - [ ] BACKLOG-141 [emergent] Pay-it-forward — a dino comforted very recently, if it then witnesses *another* dino sulk, is primed to be that one's comforter even without the usual bond floor; warmth received spreads outward. Builds on 130 / 132 / 136.
 
@@ -652,10 +650,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — the scene carries `lastSound`, `lastAnswer` and `lastDistress` as three parallel observation fields, each written at a different subset of the four `playChirp` call sites, and **the mute rule already differs between them**: `lastSound` is set only inside `if (!soundMuted())`, while `lastAnswer` and `lastDistress` are set unconditionally and document *why* (the beat is diegetic; mute gates playback, not the event). Both rules are right; the problem is that which one applies is decided per call site by whoever wrote it, so "did the park make this sound" and "did this beat happen" are the same question asked of three fields with three answers. A spec can therefore pass on a park that is silent, which is the exact class of defect CHARTER v7 exists to catch, one layer down. The work: one `voiceLog` — an append-only ring of `{ kind, name?, params, atMs, played: boolean }`, written at a single seam that every call goes through (natural once 559's bus exists, since every call already routes through one place), with `played` carrying the mute answer instead of presence-versus-absence carrying it. The three fields become reads over the log, so no spec has to change in the same cycle. Builds on 559 / 194 / 193 / 501.
 
-
-## Cycle 176 (Structure-smith)
-
-- [~] BACKLOG-578 [core] Grudges cool while you're away — `away.ts` fast-forwards bond drift and drift-apart across an absence (106/113), but never touches the grudge graph (574): `driftBonds(grudges, 0, GRUDGE_DRIFT)` runs only in the ambient step, so a feud left for a week comes back exactly as hot as it was left while every friendship around it has moved. Apply the same per-minute cooling over the away span (capped like the rest), and let the homecoming digest name a feud that cooled below `RIVAL_BAR` ("Mossback and Twitch seem to have let it go"). Builds on 574 / 106 / 113.
 
 ## Cycle 177 (Structure-smith)
 
