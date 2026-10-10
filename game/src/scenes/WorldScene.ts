@@ -394,6 +394,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
+import { FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, SULK_RING, festivalBanner, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
 import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
@@ -1248,6 +1249,19 @@ export class WorldScene extends Phaser.Scene {
   private plotStageShownByZone: Record<string, CropStage | 'empty'> = emptyPlotStages();
   /** The active world-scale night event (BACKLOG-144), or null. Transient — only its memory persists. */
   private activeSky: SkyEvent | null = null;
+  /** The festival in progress (BACKLOG-596/594), or null. `open` gathers the park; `leaving` walks the guests home. */
+  private festival: {
+    season: Season;
+    index: number;
+    startAbsMin: number;
+    phase: 'open' | 'leaving';
+    attendees: string[];
+    guests: Record<string, Guest>;
+    leader: string | null;
+    sulkers: Record<string, string>;
+  } | null = null;
+  /** The last season index whose festival was held (BACKLOG-596). Persisted; -1 on a park that has held none. */
+  private festivalSeason = -1;
   private skyStartAbsMin = 0;
   /** In-game day of the last sky event — caps the spectacle at one per day. */
   private skyFiredDay = -1;
@@ -1449,6 +1463,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupFeeding();
     this.setupPlot();
     this.setupSkyEvent();
+    this.setupFestival();
     this.setupMigration();
     this.setupPlaque();
     this.setupScan();
@@ -4174,6 +4189,136 @@ export class WorldScene extends Phaser.Scene {
     return true;
   }
 
+  /**
+   * Festivals (BACKLOG-596/594). The calendar is checked on a real-time cadence, never from the clock tick, so a
+   * restore, a clock jump or an away catch-up cannot open one retroactively.
+   */
+  private setupFestival(): void {
+    this.time.addEvent({ delay: FESTIVAL_CHECK_MS, loop: true, callback: () => { if (!this.ambientPaused) this.checkFestival(); } });
+    // dev-only Playwright hooks
+    (window as any).__checkFestival = () => { this.checkFestival(); return this.festivalState(); };
+    (window as any).__openFestival = () => { this.openFestival(seasonIndex(getWorldClock().now().day)); return this.festivalState(); };
+    (window as any).__closeFestival = () => { this.closeFestival(); return this.festivalState(); };
+    (window as any).__festival = () => this.festivalState();
+    (window as any).__festivalSeason = () => this.festivalSeason;
+    (window as any).__saveZones = () => this.currentSaveData().dinoZones;
+  }
+
+  private festivalState() {
+    const f = this.festival;
+    return f
+      ? { season: f.season, phase: f.phase, attendees: [...f.attendees], guests: Object.keys(f.guests), leader: f.leader, sulkers: { ...f.sulkers } }
+      : null;
+  }
+
+  private checkFestival(): void {
+    if (this.festival) return;
+    const idx = festivalDue(getWorldClock().now(), this.festivalSeason);
+    if (idx !== null) this.openFestival(idx);
+  }
+
+  private openFestival(index: number): void {
+    if (this.festival) return;
+    const season = this.currentSeason();
+    const attendees = this.dinos.filter((d) => !this.migrating.has(d.name)).map((d) => d.name);
+    const guests: Record<string, Guest> = {};
+    for (const name of attendees) {
+      const home = zoneOf(this.dinoZones, name, BOWL_ID);
+      if (home === BOWL_ID) continue;
+      const d = this.dinoByName(name)!;
+      const from = this.tileOf(d);
+      guests[name] = { home, ...from };
+      setZone(this.dinoZones, name, BOWL_ID); // a guest, not a migrant: none of `crossDino`'s settling
+      d.setPosition((COLS - 1) * TILE + TILE / 2, from.tileY * TILE + TILE / 2); // in from the east edge
+    }
+    const sulkers = festivalSulkers(attendees, this.grudges);
+    const leader = festivalLeader(attendees, this.bonds, sulkers);
+    this.festival = { season, index, startAbsMin: this.absMinNow(), phase: 'open', attendees, guests, leader, sulkers };
+    this.festivalSeason = Math.max(this.festivalSeason, index);
+    for (const name of attendees) this.memory = remember(this.memory, name, festivalMemory(name, season, leader, sulkers));
+    this.applyZoneVisibility();
+    this.showFestivalBanner(festivalBanner(season));
+    this.logEvent(festivalBanner(season));
+    const lead = leader ? this.dinoByName(leader) : null;
+    if (lead) {
+      const line = openingLine(season, lead.traits);
+      this.showBubble(lead, `🎏 ${line}`);
+      this.logEvent(`🎏 ${lead.name}: ${line}`);
+    }
+    for (const [name, foe] of Object.entries(sulkers)) {
+      const d = this.dinoByName(name);
+      if (d) this.showBubble(d, sulkLine(foe));
+    }
+    void this.saveGame();
+  }
+
+  private closeFestival(): void {
+    const f = this.festival;
+    if (!f || f.phase !== 'open') return;
+    f.phase = 'leaving';
+    this.logEvent(festivalClosedLine(f.season));
+    if (!Object.keys(f.guests).length) this.festival = null;
+  }
+
+  /** One world-step of the festival. True while it is open (it owns every dino's step); the walk home is false. */
+  private stepFestival(): boolean {
+    const f = this.festival;
+    if (!f) return false;
+    if (f.phase === 'open' && this.absMinNow() - f.startAbsMin >= FESTIVAL_DURATION_MIN) this.closeFestival();
+    if (!this.festival) return false;
+    if (f.phase === 'open') {
+      for (const name of f.attendees) {
+        const d = this.dinoByName(name);
+        if (!d) continue;
+        const ring = festivalRing(name, f.leader, f.sulkers);
+        const cur = this.tileOf(d);
+        // a sulker stands at the edge: inside the outer ring but never pressed into the circle
+        const tooClose = ring === SULK_RING && atGather(cur, FESTIVAL_TILE, ring - 1);
+        const next = tooClose ? this.stepAway(cur, FESTIVAL_TILE) : atGather(cur, FESTIVAL_TILE, ring) ? cur : stepToward(cur, FESTIVAL_TILE, COLS, ROWS);
+        d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+        this.activityById[name] = 'socializing';
+      }
+      return true;
+    }
+    for (const [name, g] of Object.entries(f.guests)) {
+      const d = this.dinoByName(name);
+      if (!d) { delete f.guests[name]; continue; }
+      const cur = this.tileOf(d);
+      if (cur.tileX >= COLS - 1) {
+        setZone(this.dinoZones, name, g.home);
+        d.setPosition(g.tileX * TILE + TILE / 2, g.tileY * TILE + TILE / 2);
+        delete f.guests[name];
+        continue;
+      }
+      const next = stepToward(cur, { tileX: COLS - 1, tileY: cur.tileY }, COLS, ROWS);
+      d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+      this.activityById[name] = 'wandering';
+    }
+    if (!Object.keys(f.guests).length) {
+      this.festival = null;
+      void this.saveGame();
+    }
+    this.applyZoneVisibility();
+    return false;
+  }
+
+  /** One tile directly away from `from`, clamped to the grid. */
+  private stepAway(cur: { tileX: number; tileY: number }, from: { tileX: number; tileY: number }): { tileX: number; tileY: number } {
+    const clamp = (v: number, max: number) => Math.max(0, Math.min(max - 1, v));
+    return {
+      tileX: clamp(cur.tileX + (Math.sign(cur.tileX - from.tileX) || 1), COLS),
+      tileY: clamp(cur.tileY + Math.sign(cur.tileY - from.tileY), ROWS),
+    };
+  }
+
+  private showFestivalBanner(text: string): void {
+    const banner = this.add
+      .text(TILE * COLS * 0.5, 24, text, { fontFamily: 'monospace', fontSize: '11px', color: '#ffffff', align: 'center', backgroundColor: '#000000aa', padding: { x: 6, y: 3 } })
+      .setOrigin(0.5, 0)
+      .setDepth(12);
+    this.tweens.add({ targets: banner, alpha: 0, delay: 5000, duration: 2500, onComplete: () => banner.destroy() });
+  }
+
   /** The Glass (BACKLOG-056): draw the vivarium bowl — edge shadow, glass rim, reflections. */
   private setupGlass(): void {
     const W = TILE * COLS;
@@ -6263,6 +6408,12 @@ ${e.short}`;
       this.refreshActivityMarks();
       return;
     }
+    // BACKLOG-596: the festival is the daytime twin — while it is open the whole park stands at the pond.
+    if (this.stepFestival()) {
+      this.refreshSleepMarks();
+      this.refreshActivityMarks();
+      return;
+    }
 
     // BACKLOG-297/314: age every zone's resource so each zone's fetch grace can elapse (a grove resource
     // is past its grace and ready when the keeper crosses in).
@@ -6316,6 +6467,7 @@ ${e.short}`;
     this.lastFlee = fleeFrom;
 
     for (const d of this.dinos) {
+      if (this.festival?.guests[d.name]) continue; // BACKLOG-596: a guest walking home is `stepFestival`'s
       const cur = this.tileOf(d);
 
       // First contact (BACKLOG-161): the armed inspector beelines for the new watcher,
@@ -8581,6 +8733,7 @@ ${e.short}`;
     this.checkLastOne(); // BACKLOG-464: a zone hollowed to its last resident sounds the wistful "gone quiet" beat
     this.checkWatch(); // BACKLOG-524: whoever is up while their ground sleeps keeps the watch
     this.checkHollowed(); // BACKLOG-512: ...and a zone that loses that last resident says whose ground it was
+    if (this.festival) return; // BACKLOG-596: nobody sets off for another ground while the park is gathered
     if (this.runErrand()) { // BACKLOG-586: an errand is the plan, not a roll — it takes the tick
       this.lastMigrationMs = Date.now();
       return;
@@ -10237,7 +10390,8 @@ ${e.short}`;
       keeper: this.keeperRecord, // BACKLOG-555: the record beside the id (additive)
       zoneId: this.zoneId,
       roles: this.roles,
-      dinoZones: this.dinoZones,
+      dinoZones: this.festival ? zonesWithGuestsHome(this.dinoZones, this.festival.guests) : this.dinoZones, // BACKLOG-596
+      festivalSeason: this.festivalSeason >= 0 ? this.festivalSeason : undefined, // BACKLOG-596 (additive; absent until one is held)
       tenure: this.tenure, // BACKLOG-341: per-dino home-zone tenure (settling persists across a reload)
       gathered: this.gathered,
       foodBanked: this.foodBanked, // BACKLOG-448: who's been filling the pantries (additive)
@@ -10389,6 +10543,7 @@ ${e.short}`;
       this.memory = away.memory;
       this.bonds = away.bonds;
       this.grudges = away.grudges; // BACKLOG-574/578: a pre-574 park has no feud; a feud cools while you're away
+      this.festivalSeason = save.festivalSeason ?? -1; // BACKLOG-596
       this.reflections = save.reflections ?? {}; // BACKLOG-583: a pre-583 park simply has no yesterday yet
       this.plans = {};
       this.refreshBestFriends(false); // BACKLOG-134: a restored park knows who is close to whom, silently

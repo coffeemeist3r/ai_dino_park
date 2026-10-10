@@ -32,3 +32,7 @@ One new pure module shared by both tracks; thin scene glue modelled on the sky e
   at the edge; memories; close → guests home, no second festival this season.
 
 **Save:** additive optional field only.
+
+## Shipped (coder)
+Both tracks shipped as planned. Build clean; unit 3302 green (+8); e2e 898/898 on the first full run (+4: the
+calendar hook, the gathering, leader/sulkers + memories, the walk home, and the live 3 s timer opening it at 10:00).

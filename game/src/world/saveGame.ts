@@ -198,6 +198,8 @@ export interface SaveData {
   /** The in-game day the current council term began (BACKLOG-484). Additive; absent → 0, re-armed to the
    *  current day on restore so a reload never holds a term against a day it did not watch. */
   councilTermDay?: number;
+  /** The last season index whose festival was held (BACKLOG-596). Additive; absent → none held. */
+  festivalSeason?: number;
   /** dino → the grounds it has set foot on (BACKLOG-364). Additive; absent → {} (re-seeded from live home
    *  zones on load, which is all an older save can honestly tell us). */
   seenZones?: Record<string, string[]>;
@@ -826,6 +828,13 @@ export function deserialize(json: string): SaveData | null {
     councilTermDay = o.councilTermDay;
   }
 
+  // festivalSeason (BACKLOG-596) — the last season index whose festival was held; an integer ≥ -1.
+  let festivalSeason: number | undefined;
+  if (o.festivalSeason !== undefined) {
+    if (typeof o.festivalSeason !== 'number' || !Number.isInteger(o.festivalSeason) || o.festivalSeason < -1) return null;
+    festivalSeason = o.festivalSeason;
+  }
+
   // crossings (BACKLOG-361) — dino→lifetime arrival count. Same guard shape as harvestedByZone below:
   // an object of non-negative finite numbers.
   let crossings: Record<string, number> | undefined;
@@ -1130,6 +1139,7 @@ export function deserialize(json: string): SaveData | null {
     seenZones,
     councilSeats,
     councilTermDay,
+    festivalSeason,
     crossings,
     workPriorityByZone,
     ticEchoes,
