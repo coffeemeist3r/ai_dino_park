@@ -2,7 +2,7 @@
   "cycle": 183,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-594: who leads and who sulks (festival)",
-  "structureItem": null,
+  "structureItem": "BACKLOG-596: the festival gathering",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-10T08:11:22.918Z",
-    "structure-smith": "2026-10-09T08:11:53.620Z",
+    "structure-smith": "2026-10-10T08:11:39.155Z",
     "designer": "2026-10-09T08:12:54.327Z",
     "code-planner": "2026-10-09T08:12:54.583Z",
     "coder": "2026-10-09T08:27:14.442Z",

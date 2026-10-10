@@ -14546,3 +14546,5 @@ Board: build clean, **3294 unit** green, e2e **894/894** on the first full run. 
 ## Cycle 182-art — artist: no-op. The art queue is empty and neither of tonight's items ships a mark (a spoken opener, a digest line), so there is nothing with a host to draw. CI on `main`: last run `success`.
 
 ## Cycle 183 — lore-smith: the first festival — Milestone 28 (tentpole, festivals) drafted; next-up BACKLOG-594 (who leads, who sulks)
+
+## Cycle 183 — structure-smith: BACKLOG-596 the festival gathering (Milestone 28 spine)
