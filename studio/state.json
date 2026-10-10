@@ -1,6 +1,6 @@
 {
   "cycle": 183,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-594: who leads and who sulks (festival)",
   "structureItem": "BACKLOG-596: the festival gathering",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-10T08:13:14.506Z",
     "code-planner": "2026-10-10T08:18:01.536Z",
     "coder": "2026-10-10T08:29:29.420Z",
-    "qa": "2026-10-09T08:27:14.782Z",
+    "qa": "2026-10-10T08:29:52.389Z",
     "validator": "2026-10-09T08:28:18.131Z",
     "artist": "2026-10-09T08:28:25.657Z"
   },
