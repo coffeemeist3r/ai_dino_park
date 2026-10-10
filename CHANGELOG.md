@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 183 — 2026-10-10 (the first festival; Milestone 28 tentpole opens)
+- BACKLOG-596: The festival gathering — on the first day of each season at 10:00 the whole park gathers at the bowl pond. Residents of the other grounds walk in from the east edge as guests, ring the pond with the bowl's own, and walk home at 12:00. It happens once a season and the save records it (`festivalSeason`, additive). A save taken mid-festival writes every guest home. On a fresh save the first one opens two real minutes in.
+- BACKLOG-594: Who leads and who sulks — the attendee with the most bond to the circle opens the festival in its own register (on the founding park, Sunny: *"Everyone's here! Spring's come round again — come stand by the water!"*). Any attendee whose rival is present keeps to the edge (*"😤 not standing anywhere near Twitch"*). Every attendee files its own memory of the day.
+
+---
+
 ## Cycle 182 — 2026-10-09 (who was there for you; Milestone 27 ships)
 - BACKLOG-139: Thankful line — a dino a friend talked round tells the keeper who came, the next time it is greeted, in its own register: *"Rex sat with me, earlier. I won't forget it."*, or from a prickly one *"Rex came over. Didn't need it. ...Don't tell them I said thanks."*, or from a solitary one *"Rex came and sat with me. Didn't say much. Neither did I. It helped."* Said once. Sits in the opener chain above the tone echo.
 - BACKLOG-578: Grudges cool while you're away — the offline catch-up now cools the grudge graph (8 points a day, capped at 32, from a five-minute absence), and the homecoming digest names each feud: *"Mossback and Twitch cooled off a little."*, or once below the rival bar, *"Mossback and Twitch seem to have let it go."* **Milestone 27 SHIPPED.**

@@ -14556,3 +14556,27 @@ Board: build clean, **3294 unit** green, e2e **894/894** on the first full run. 
 ## Cycle 183 — coder: BACKLOG-596 + BACKLOG-594 shipped; build clean, unit 3302, e2e 898/898
 
 ## Cycle 183 — qa: 15/15 criteria pass; e2e 898/898 first run
+
+## Cycle 183 — APPROVED / APPROVED: the first festival (Milestone 28, the festivals tentpole, opens)
+
+Start a new park and wait two minutes. At ten in the morning on the first day of spring, a banner crosses the top of
+the bowl: *the whole park gathers at the bowl pond.* Then the bowl's east edge starts letting dinos in. Bramble and
+Pip come down from the grove, old Thornback from the fern flats, Murk from the Hollow, Ember from the Ridge. Before
+tonight none of them had ever been seen in the bowl unless they had packed up and moved there. Now they come as
+guests, ten of them stand around the water, and at noon the five visitors turn round and walk home.
+
+Nobody chose who opens it. The park counted. Sunny, gregarious and always humming, holds more friendship with the
+rest of the circle than anyone else: Rex, Ember and Glade, sixty-two points between them. So Sunny walks onto the
+festival tile and calls out *"Everyone's here! Spring's come round again — come stand by the water!"* Two dinos stay
+back. Mossback and Twitch have had their feud since the day the park was founded, and each floats the same sulk,
+*"😤 not standing anywhere near…"*, with the other's name on the end. They stand at the edge of the circle, close
+enough to have come and far enough to make the point. All ten file their own memory of the day. Sunny remembers
+opening it. Mossback remembers that Twitch was there.
+
+This is the second tentpole. Until now the park's only collective moment was the sky event, which is chance,
+night-time and one ground at a time. The festival is the opposite: it is scheduled, it happens in daylight, and it
+is the one hour every resident of every ground stands in the same place. Next comes what they say about it afterwards
+(595) and making each season's festival look like its own (597).
+
+Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. One additive, optional save field
+(`festivalSeason`). CI green going in (cycle 182-art: `success`).

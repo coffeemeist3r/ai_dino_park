@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-596 [core] The festival gathering (Milestone 28 spine — full text in the cycle-183 structure block below).
 - [ ] BACKLOG-597 [core] Each season's rite + a drawn festival mark (Milestone 28 — full text in the cycle-183 structure block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
@@ -662,10 +661,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Milestone 28 is the festivals tentpole. These are its lore arcs: the festival is a stage the bond and grudge graphs
 > already populate, so what is new is that the park *reads* them in public.
 
-- [ ] BACKLOG-594 [social] Who leads and who sulks — at a festival the attendee with the strongest bonds to the others opens it with a line in its own register; any attendee holding a grudge against someone else in the circle keeps to the far ring and says so; every attendee files a festival memory (the leader's name in it, the sulker's foe in its). Reads the founding bonds and the founding feud (Mossback|Twitch), so the first festival on a fresh save already has a leader and a sulker. Builds on 026 / 574 / 139.
 - [ ] BACKLOG-595 [social] The festival, remembered — greeted after a festival, a dino opens with how it went for it, in its register: the leader proud, the sulker sore, a warm dino glad, a solitary one glad it is over. Said once, then consumed, like 139's thankful line. Builds on 594.
 
 ## Cycle 183 (Structure-smith)
 
-- [~] BACKLOG-596 [core] The festival gathering — on the first day of each season (`seasonFor` day 1, 8, 15, …) at `FESTIVAL_HOUR` (10:00) the festival opens at the bowl pond: bowl residents walk to ring it, and every resident of the other grounds walks in from the bowl's east edge as a guest, rings the pond, and when the festival closes (two in-game hours) walks back out the east edge and is home again. A banner and ticker line open and close it. Held once per season, persisted as an additive save field so a reload does not re-run it; a save taken mid-festival writes every guest back to its home ground. Migration does not roll while it runs. Pure decisions in `world/festival.ts`; the scene glue mirrors the sky event's (`stepSky`). Reachable on a fresh save two real minutes in (day 1 is spring's first day; the clock boots at 08:00 at 60x). Builds on 026 / 144 / 159 / 493.
 - [ ] BACKLOG-597 [core] Each season's rite + a drawn mark — the four festivals differ: spring's is a blossom ring, summer's a sun dance, fall's a harvest heap, winter's a lantern vigil. Each has its own banner, bubble and memory, and a festival prop at the pond the Artist can draw (the host this item creates). Builds on 596.

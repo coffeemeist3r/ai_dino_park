@@ -17,11 +17,11 @@ and the only moment the whole cast stands on one ground. Reachable by constructi
 first day of spring, at 08:00, and the festival opens at 10:00, two real minutes in at the default clock.
 
 **Lore arcs:**
-- [ ] Who leads and who sulks: the best-loved attendee opens the festival in its own voice; a dino whose foe is in the circle keeps to the edge; every attendee files the day (BACKLOG-594)
+- [x] Who leads and who sulks: the best-loved attendee opens the festival in its own voice; a dino whose foe is in the circle keeps to the edge; every attendee files the day (BACKLOG-594 — cycle 183)
 - [ ] The festival is remembered: greeted after it, a dino talks about the festival in its own register, and who led it (BACKLOG-595)
 
 **Structure arcs:**
-- [ ] The gathering: on the first day of each season at mid-morning every ground's residents walk to the bowl pond, ring it, and walk home when it ends (BACKLOG-596)
+- [x] The gathering: on the first day of each season at mid-morning every ground's residents walk to the bowl pond, ring it, and walk home when it ends (BACKLOG-596 — cycle 183)
 - [ ] Each season's festival has its own rite and a drawn mark at the pond, so spring's does not look like winter's (BACKLOG-597)
 
 ---
