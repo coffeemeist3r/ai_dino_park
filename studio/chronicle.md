@@ -14550,3 +14550,5 @@ Board: build clean, **3294 unit** green, e2e **894/894** on the first full run. 
 ## Cycle 183 — structure-smith: BACKLOG-596 the festival gathering (Milestone 28 spine)
 
 ## Cycle 183 — designer: BACKLOG-596 (the festival gathering) + BACKLOG-594 (who leads, who sulks) — one module, two tracks
+
+## Cycle 183 — codeplan: BACKLOG-596 + BACKLOG-594 — one new pure module (world/festival.ts), sky-event-shaped glue, one additive save field

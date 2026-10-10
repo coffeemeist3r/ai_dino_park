@@ -1,6 +1,6 @@
 {
   "cycle": 183,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-594: who leads and who sulks (festival)",
   "structureItem": "BACKLOG-596: the festival gathering",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-10-10T08:11:22.918Z",
     "structure-smith": "2026-10-10T08:11:39.155Z",
     "designer": "2026-10-10T08:13:14.506Z",
-    "code-planner": "2026-10-09T08:12:54.583Z",
+    "code-planner": "2026-10-10T08:18:01.536Z",
     "coder": "2026-10-09T08:27:14.442Z",
     "qa": "2026-10-09T08:27:14.782Z",
     "validator": "2026-10-09T08:28:18.131Z",
