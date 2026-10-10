@@ -655,3 +655,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
 
+## Cycle 183 lore additions — the first festival (2026-10-10)
+
+> Milestone 28 is the festivals tentpole. These are its lore arcs: the festival is a stage the bond and grudge graphs
+> already populate, so what is new is that the park *reads* them in public.
+
+- [ ] BACKLOG-594 [social] Who leads and who sulks — at a festival the attendee with the strongest bonds to the others opens it with a line in its own register; any attendee holding a grudge against someone else in the circle keeps to the far ring and says so; every attendee files a festival memory (the leader's name in it, the sulker's foe in its). Reads the founding bonds and the founding feud (Mossback|Twitch), so the first festival on a fresh save already has a leader and a sulker. Builds on 026 / 574 / 139.
+- [ ] BACKLOG-595 [social] The festival, remembered — greeted after a festival, a dino opens with how it went for it, in its register: the leader proud, the sulker sore, a warm dino glad, a solitary one glad it is over. Said once, then consumed, like 139's thankful line. Builds on 594.
