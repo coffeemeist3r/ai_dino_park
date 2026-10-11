@@ -1,6 +1,6 @@
 {
   "cycle": 184,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-595: the festival, remembered",
   "structureItem": "BACKLOG-597: each season's rite + a drawn festival mark",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-11T08:10:38.114Z",
     "code-planner": "2026-10-11T08:11:00.409Z",
     "coder": "2026-10-11T08:24:38.766Z",
-    "qa": "2026-10-10T08:29:52.389Z",
+    "qa": "2026-10-11T08:24:54.586Z",
     "validator": "2026-10-10T08:30:17.063Z",
     "artist": "2026-10-10T08:30:32.521Z"
   },
