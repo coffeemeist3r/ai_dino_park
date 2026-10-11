@@ -83,12 +83,37 @@ export function sulkLine(foe: string): string {
   return `😤 not standing anywhere near ${foe}`;
 }
 
+/** Each season's rite (BACKLOG-597): what the festival is, its glyph, the mark at the pond, the circle's bubble. */
+export interface Rite {
+  name: string;
+  glyph: string;
+  artKey: string;
+  bubble: string;
+}
+
+export const FESTIVAL_RITES: Record<Season, Rite> = {
+  spring: { name: 'blossom ring', glyph: '🌸', artKey: 'festival-spring', bubble: '🌸 round the ring!' },
+  summer: { name: 'sun dance', glyph: '☀️', artKey: 'festival-summer', bubble: '☀️ dance for the sun!' },
+  fall: { name: 'harvest heap', glyph: '🍂', artKey: 'festival-fall', bubble: '🍂 one more on the heap!' },
+  winter: { name: 'lantern vigil', glyph: '🏮', artKey: 'festival-winter', bubble: '🏮 hush… watch the light' },
+};
+
+export const FESTIVAL_ART_KEYS = Object.values(FESTIVAL_RITES).map((r) => r.artKey);
+
+/** The pond's east bank, beside the festival tile: where the rite's mark stands while the festival is open. */
+export const RITE_TILE = { tileX: 5, tileY: 3 };
+
+export function festivalRite(season: Season): Rite {
+  return FESTIVAL_RITES[season];
+}
+
 export function festivalBanner(season: Season): string {
-  return `🎏 The ${season} festival — the whole park gathers at the bowl pond`;
+  const r = festivalRite(season);
+  return `${r.glyph} The ${season} festival — a ${r.name} at the bowl pond`;
 }
 
 export function festivalClosedLine(season: Season): string {
-  return `🎏 The ${season} festival is over — the guests head home`;
+  return `${festivalRite(season).glyph} The ${season} festival is over — the guests head home`;
 }
 
 /** The memory an attendee files at the opening. */
@@ -98,10 +123,34 @@ export function festivalMemory(
   leader: string | null,
   sulkers: Record<string, string>,
 ): string {
-  if (name === leader) return `opened the ${season} festival at the bowl pond`;
+  const rite = festivalRite(season).name;
+  if (name === leader) return `opened the ${season} festival — led the ${rite}`;
   const foe = sulkers[name];
   if (foe) return `the ${season} festival — kept to the edge; ${foe} was there`;
-  return leader ? `the ${season} festival at the bowl pond — ${leader} opened it` : `the ${season} festival at the bowl pond`;
+  return leader ? `the ${season} festival — the ${rite}; ${leader} opened it` : `the ${season} festival — the ${rite}`;
+}
+
+/** What a dino carries out of a festival until it tells the keeper (BACKLOG-595). Transient, spoken once. */
+export interface FestivalTale {
+  season: Season;
+  leader: string | null;
+  foe?: string;
+}
+
+/** The opener a dino leads its next greet with after a festival, in its register (the 139 split). */
+export function festivalOpener(name: string, tale: FestivalTale, traits?: Personality): string {
+  const { season, leader, foe } = tale;
+  const rite = festivalRite(season).name;
+  const prickly = !!traits && traits.agreeableness < 0.35;
+  if (name === leader) {
+    return prickly
+      ? `Somebody had to open the ${season} festival. It went fine.`
+      : `I opened the ${season} festival. Everyone came to the ${rite}.`;
+  }
+  if (foe) return `The ${season} festival. ${foe} was there, so I kept to the edge.`;
+  if (prickly) return leader ? `The ${season} festival. ${leader} opened it. It was fine, I suppose.` : `The ${season} festival. It was fine, I suppose.`;
+  if (traits && traits.sociability < 0.35) return `The ${season} festival's over. Good. That was a lot of dinos.`;
+  return leader ? `The ${season} festival was lovely — ${leader} opened the ${rite}.` : `The ${season} festival was lovely.`;
 }
 
 /** A guest: where it lives and the tile it left from, so the walk home lands it where it was. */

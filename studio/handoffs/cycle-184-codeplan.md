@@ -27,3 +27,7 @@ Both tracks extend `game/src/world/festival.ts` + its glue in `WorldScene`.
   Twitch. Update the cycle-183 spec's memory strings.
 
 **Save:** none (tales are transient, like 139's thanks).
+
+## Shipped (coder)
+Both tracks shipped as planned. Build clean; unit 3309 green (+7, 319 files); e2e 901/901 on the first full run (+3).
+The rite mark also hides off the bowl (`applyObjectVisibility`), like every other ground-placed prop.

@@ -60,9 +60,9 @@ test('Sunny opens it; Mossback and Twitch keep to the edge (BACKLOG-594)', async
     expect(r[s], s).toBeLessThanOrEqual(3);
   }
   const mem = await ev<Record<string, string[]>>(page, '__memory');
-  expect(mem.Sunny).toContain('opened the spring festival at the bowl pond');
+  expect(mem.Sunny).toContain('opened the spring festival — led the blossom ring');
   expect(mem.Mossback).toContain('the spring festival — kept to the edge; Twitch was there');
-  expect(mem.Rex).toContain('the spring festival at the bowl pond — Sunny opened it');
+  expect(mem.Rex).toContain('the spring festival — the blossom ring; Sunny opened it');
 });
 
 test('when it closes the guests walk home, and the season does not hold a second (BACKLOG-596)', async ({ page }) => {

@@ -394,7 +394,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
-import { FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, SULK_RING, festivalBanner, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
+import { FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
 import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
@@ -1262,6 +1262,10 @@ export class WorldScene extends Phaser.Scene {
   } | null = null;
   /** The last season index whose festival was held (BACKLOG-596). Persisted; -1 on a park that has held none. */
   private festivalSeason = -1;
+  /** The rite's mark at the pond while a festival is open (BACKLOG-597), with the key it was made from. */
+  private festivalMark: { key: string; obj: Phaser.GameObjects.Text | Phaser.GameObjects.Image } | null = null;
+  /** BACKLOG-595: attendee → how the last festival went for it, until it tells the keeper. Transient, spoken once. */
+  private festivalTales: Record<string, FestivalTale> = {};
   private skyStartAbsMin = 0;
   /** In-game day of the last sky event — caps the spectacle at one per day. */
   private skyFiredDay = -1;
@@ -4201,6 +4205,8 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__closeFestival = () => { this.closeFestival(); return this.festivalState(); };
     (window as any).__festival = () => this.festivalState();
     (window as any).__festivalSeason = () => this.festivalSeason;
+    (window as any).__festivalMark = () => (this.festivalMark ? { key: this.festivalMark.key, tileX: Math.floor(this.festivalMark.obj.x / TILE), tileY: Math.floor((this.festivalMark.obj.y - 1) / TILE) } : null);
+    (window as any).__festivalTales = () => ({ ...this.festivalTales });
     (window as any).__saveZones = () => this.currentSaveData().dinoZones;
   }
 
@@ -4237,17 +4243,25 @@ export class WorldScene extends Phaser.Scene {
     this.festivalSeason = Math.max(this.festivalSeason, index);
     for (const name of attendees) this.memory = remember(this.memory, name, festivalMemory(name, season, leader, sulkers));
     this.applyZoneVisibility();
+    const rite = festivalRite(season);
+    this.festivalMark?.obj.destroy();
+    const mark = this.makeHourMark(rite.artKey, rite.glyph)
+      .setPosition(RITE_TILE.tileX * TILE + TILE / 2, (RITE_TILE.tileY + 1) * TILE)
+      .setDepth(3)
+      .setVisible(this.zoneId === BOWL_ID);
+    this.festivalMark = { key: rite.artKey, obj: mark };
     this.showFestivalBanner(festivalBanner(season));
     this.logEvent(festivalBanner(season));
     const lead = leader ? this.dinoByName(leader) : null;
     if (lead) {
       const line = openingLine(season, lead.traits);
-      this.showBubble(lead, `🎏 ${line}`);
-      this.logEvent(`🎏 ${lead.name}: ${line}`);
+      this.showBubble(lead, `${rite.glyph} ${line}`);
+      this.logEvent(`${rite.glyph} ${lead.name}: ${line}`);
     }
-    for (const [name, foe] of Object.entries(sulkers)) {
+    for (const name of attendees) {
       const d = this.dinoByName(name);
-      if (d) this.showBubble(d, sulkLine(foe));
+      if (!d || name === leader) continue;
+      this.showBubble(d, sulkers[name] ? sulkLine(sulkers[name]) : rite.bubble);
     }
     void this.saveGame();
   }
@@ -4256,6 +4270,11 @@ export class WorldScene extends Phaser.Scene {
     const f = this.festival;
     if (!f || f.phase !== 'open') return;
     f.phase = 'leaving';
+    this.festivalMark?.obj.destroy();
+    this.festivalMark = null;
+    for (const name of f.attendees) {
+      if (this.dinoByName(name)) this.festivalTales[name] = { season: f.season, leader: f.leader, foe: f.sulkers[name] };
+    }
     this.logEvent(festivalClosedLine(f.season));
     if (!Object.keys(f.guests).length) this.festival = null;
   }
@@ -8512,6 +8531,7 @@ ${e.short}`;
   private applyObjectVisibility(): void {
     // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
+    this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
     // BACKLOG-494: a landmark whose ruin has been drawn swaps to it and keeps full opacity — disrepair
@@ -9481,6 +9501,9 @@ ${e.short}`;
     // BACKLOG-139: who talked it round, below the three openers about *here* and above the last tone.
     const thank = caught || glad || missedTrace ? undefined : this.thanks[target.name];
     if (thank) delete this.thanks[target.name];
+    // BACKLOG-595: how the last festival went for it, below the thanks and above the last tone.
+    const tale = caught || glad || missedTrace || thank ? undefined : this.festivalTales[target.name];
+    if (tale) delete this.festivalTales[target.name];
     const opener = caught
       ? caughtOpener(register, this.ticAxisFor(target))
       : glad
@@ -9489,7 +9512,9 @@ ${e.short}`;
           ? missedOpener(missedTrace.grade)
           : thank
             ? thankfulOpener(thank, target.traits)
-            : toneEcho(prevTone, id, target.traits); // BACKLOG-148: the last tone, at the bottom of the chain
+            : tale
+              ? festivalOpener(target.name, tale, target.traits)
+              : toneEcho(prevTone, id, target.traits); // BACKLOG-148: the last tone, at the bottom of the chain
     // BACKLOG-423: the ritual's own aside, between the frozen opener and the reply. Only a caught dino gets
     // one — the glad-of-company opener (411) and the plain greet are byte-identical to before.
     // BACKLOG-300: and a dino that was *not* mid-ritual names what it was doing instead. One aside or the

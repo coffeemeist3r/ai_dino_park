@@ -14590,3 +14590,5 @@ Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. 
 ## Cycle 184 — designer: 597 (four rites + the pond mark) + 595 (the festival in the next greet)
 
 ## Cycle 184 — code-planner: festival.ts rite table + tale opener; WorldScene glue; reachability keys
+
+## Cycle 184 — coder: BACKLOG-597 + BACKLOG-595 shipped; build clean, unit 3309, e2e 901/901

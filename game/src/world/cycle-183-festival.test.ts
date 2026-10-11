@@ -73,9 +73,9 @@ describe('BACKLOG-594 who leads and who sulks', () => {
 
   it('each attendee files its own day', () => {
     const s = { Mossback: 'Twitch' };
-    expect(festivalMemory('Sunny', 'spring', 'Sunny', s)).toBe('opened the spring festival at the bowl pond');
+    expect(festivalMemory('Sunny', 'spring', 'Sunny', s)).toBe('opened the spring festival — led the blossom ring');
     expect(festivalMemory('Mossback', 'spring', 'Sunny', s)).toBe('the spring festival — kept to the edge; Twitch was there');
-    expect(festivalMemory('Rex', 'spring', 'Sunny', s)).toBe('the spring festival at the bowl pond — Sunny opened it');
-    expect(festivalMemory('Rex', 'spring', null, {})).toBe('the spring festival at the bowl pond');
+    expect(festivalMemory('Rex', 'spring', 'Sunny', s)).toBe('the spring festival — the blossom ring; Sunny opened it');
+    expect(festivalMemory('Rex', 'spring', null, {})).toBe('the spring festival — the blossom ring');
   });
 });
