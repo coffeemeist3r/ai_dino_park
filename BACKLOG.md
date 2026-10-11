@@ -20,7 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-597 [core] Each season's rite + a drawn festival mark (Milestone 28 — full text in the cycle-183 structure block below).
+- [~] BACKLOG-597 [core] Each season's rite + a drawn festival mark (Milestone 28 — full text in the cycle-183 structure block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
@@ -665,7 +665,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 183 (Structure-smith)
 
-- [ ] BACKLOG-597 [core] Each season's rite + a drawn mark — the four festivals differ: spring's is a blossom ring, summer's a sun dance, fall's a harvest heap, winter's a lantern vigil. Each has its own banner, bubble and memory, and a festival prop at the pond the Artist can draw (the host this item creates). Builds on 596.
+- [~] BACKLOG-597 [core] Each season's rite + a drawn mark — the four festivals differ: spring's is a blossom ring, summer's a sun dance, fall's a harvest heap, winter's a lantern vigil. Each has its own banner, bubble and memory, and a festival prop at the pond the Artist can draw (the host this item creates). Builds on 596.
 
 ## Cycle 184 lore additions — the festival's marks (2026-10-11)
 

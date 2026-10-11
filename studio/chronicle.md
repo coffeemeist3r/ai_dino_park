@@ -14584,3 +14584,5 @@ Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. 
 ## Cycle 183-art — artist: no-op. The art queue is empty, and the festival's mark is BACKLOG-597's to host: tonight's festival draws no prop at the pond, so the cycle-145 rule means nothing is drawn ahead of its host. CI on `main`: last run `success`.
 
 ## Cycle 184 — lore-smith: the morning after — BACKLOG-595 (the festival remembered) next; seeded BACKLOG-598 [art] festival marks
+
+## Cycle 184 — structure-smith: BACKLOG-597 each season's rite + the pond mark (host for 598)
