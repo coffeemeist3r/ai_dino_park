@@ -14588,3 +14588,5 @@ Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. 
 ## Cycle 184 — structure-smith: BACKLOG-597 each season's rite + the pond mark (host for 598)
 
 ## Cycle 184 — designer: 597 (four rites + the pond mark) + 595 (the festival in the next greet)
+
+## Cycle 184 — code-planner: festival.ts rite table + tale opener; WorldScene glue; reachability keys
