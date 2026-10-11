@@ -1,5 +1,13 @@
 # Backlog Archive — closed items
 
+## Cycle 184 — closed
+
+- [x] BACKLOG-026 [social] Festivals — once per in-game season, NPCs gather at a landmark (shipped as Milestone 28: 596/594/597/595, cycles 183–184)
+
+- [x] BACKLOG-595 [social] The festival, remembered — greeted after a festival, a dino opens with how it went for it, in its register: the leader proud, the sulker sore, a warm dino glad, a solitary one glad it is over. Said once, then consumed, like 139's thankful line. Builds on 594.
+
+- [x] BACKLOG-597 [core] Each season's rite + a drawn mark — the four festivals differ: spring's is a blossom ring, summer's a sun dance, fall's a harvest heap, winter's a lantern vigil. Each has its own banner, bubble and memory, and a festival prop at the pond the Artist can draw (the host this item creates). Builds on 596.
+
 ## Cycle 178-art — closed
 
 - [x] BACKLOG-584 [art] The seek mark — a small pixel mark over a dino the moment its mind picks someone to go looking for (BACKLOG-582's 👀 glyph until drawn). Host: `popMark(d, SEEK_ART_KEY, SEEK_GLYPH)` shipping cycle 178. Reads as *looking for*, not *looking at* — eyes with a direction, not a stare.

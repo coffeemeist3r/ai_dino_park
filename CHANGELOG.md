@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 184 — 2026-10-11 (the rites and the morning after; Milestone 28 ships)
+- BACKLOG-597: Each season's rite — the festival is no longer the same 🎏 all year. Spring's is a blossom ring (🌸), summer's a sun dance (☀️), fall's a harvest heap (🍂), winter's a lantern vigil (🏮): each has its own banner, a bubble over the circle, its own memory, and a mark that stands at the pond's east bank for the festival's length (the glyph until the Artist draws `festival-<season>`).
+- BACKLOG-595: The festival, remembered — greeted after a festival, a dino opens with how it went for it: the leader proud (*"I opened the spring festival. Everyone came to the blossom ring."*), the sulker sore (*"The spring festival. Twitch was there, so I kept to the edge."*), a warm dino glad, a solitary one relieved, a prickly one lukewarm. Said once. Sits in the opener chain below the thanks and above the tone echo. **Milestone 28 SHIPPED.**
+
+---
+
 ## Cycle 183 — 2026-10-10 (the first festival; Milestone 28 tentpole opens)
 - BACKLOG-596: The festival gathering — on the first day of each season at 10:00 the whole park gathers at the bowl pond. Residents of the other grounds walk in from the east edge as guests, ring the pond with the bowl's own, and walk home at 12:00. It happens once a season and the save records it (`festivalSeason`, additive). A save taken mid-festival writes every guest home. On a fresh save the first one opens two real minutes in.
 - BACKLOG-594: Who leads and who sulks — the attendee with the most bond to the circle opens the festival in its own register (on the founding park, Sunny: *"Everyone's here! Spring's come round again — come stand by the water!"*). Any attendee whose rival is present keeps to the edge (*"😤 not standing anywhere near Twitch"*). Every attendee files its own memory of the day.

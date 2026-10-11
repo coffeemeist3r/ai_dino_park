@@ -14594,3 +14594,28 @@ Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. 
 ## Cycle 184 — coder: BACKLOG-597 + BACKLOG-595 shipped; build clean, unit 3309, e2e 901/901
 
 ## Cycle 184 — qa: 11/11 criteria pass; e2e 901/901 first full run
+
+## Cycle 184 — APPROVED / APPROVED: the rites and the morning after (Milestone 28, the festivals tentpole, ships)
+
+Yesterday the park held its first festival and it was a crowd in a ring with a 🎏 over it. It would have looked
+exactly the same in December. Tonight the seasons got their own rites. Start a new park and wait two minutes: the
+banner reads *a blossom ring at the bowl pond*, a 🌸 stands on the pond's east bank, and as Sunny calls everyone
+to the water the rest of the circle answers *"🌸 round the ring!"*. Come back on day 8 and it is a sun dance; on
+day 15, a harvest heap; on day 22, a lantern vigil, *"🏮 hush… watch the light"*. Each one is filed in every
+attendee's book under its own name.
+
+Then the festival ends and the park starts talking about it. Wait until noon and greet Sunny: *"I opened the
+spring festival. Everyone came to the blossom ring."* Greet Mossback, who spent the whole two hours at the edge
+of the circle glaring across it: *"The spring festival. Twitch was there, so I kept to the edge."* A warm dino
+says it was lovely and names who opened it. A solitary one says it is glad it is over, *"That was a lot of
+dinos."* A prickly one gives it *"fine, I suppose."* It is the same day told ten ways, each dino says it once,
+and then it is gone.
+
+That closes **Milestone 28**, the second tentpole, in two cycles with no rework. The festival built no new
+relationship state at all. Who leads, who sulks and how each one tells it afterwards are all read off the bond
+and grudge graphs the park has kept for a hundred cycles. What it added was a stage: one hour each season when
+every resident of every ground stands in the same place. Next is a normal milestone, which weaves the festival
+into the rest of the park. Then the third tentpole: growing up.
+
+Board: build clean, **3309 unit** green, e2e **901/901** on the first full run. No save change. CI green going
+in (cycle 183-art: `success`). The pond mark is a host now; BACKLOG-598 asks the Artist to draw it.

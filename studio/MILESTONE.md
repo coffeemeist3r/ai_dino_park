@@ -8,21 +8,8 @@
 
 ## Current milestone
 
-**Milestone 28 (TENTPOLE): The park holds a festival — once a season every ground walks to the bowl pond, and who leads and who sulks at the edge reads off the bonds and grudges**
-**Status:** ACTIVE (opened cycle 183)
-
-The second tentpole (CHARTER v9, queue item 2, BACKLOG-026). Until now the park's one collective beat was the sky
-event, which gathers each ground on its own grid by chance at night. A festival is the opposite: scheduled, daytime,
-and the only moment the whole cast stands on one ground. Reachable by construction: a fresh save boots on day 1, the
-first day of spring, at 08:00, and the festival opens at 10:00, two real minutes in at the default clock.
-
-**Lore arcs:**
-- [x] Who leads and who sulks: the best-loved attendee opens the festival in its own voice; a dino whose foe is in the circle keeps to the edge; every attendee files the day (BACKLOG-594 — cycle 183)
-- [ ] The festival is remembered: greeted after it, a dino talks about the festival in its own register, and who led it (BACKLOG-595)
-
-**Structure arcs:**
-- [x] The gathering: on the first day of each season at mid-morning every ground's residents walk to the bowl pond, ring it, and walk home when it ends (BACKLOG-596 — cycle 183)
-- [ ] Each season's festival has its own rite and a drawn mark at the pond, so spring's does not look like winter's (BACKLOG-597)
+_No milestone is ACTIVE. Milestone 28 (the festivals tentpole) shipped cycle 184; the next one is a **normal**
+milestone (CHARTER v9: the one after a tentpole polishes and weaves it in). The smiths draft it next cycle._
 
 ---
 
@@ -51,13 +38,39 @@ first day of spring, at 08:00, and the festival opens at 10:00, two real minutes
    goes, whom it seeks, how it answers an event), and at dusk it sums its day into a memory that shapes tomorrow's
    choices. The player should be able to watch two dinos with the same circumstances make different days. Builds on
    012 (daily plan) and 393 (brain-biased intent); deterministic persona-driven floor when no model is loaded.
-2. **Festivals** (BACKLOG-026) — once a season the whole park gathers at a landmark for a festival with its own
+2. ~~**Festivals**~~ — SHIPPED as Milestone 28, cycle 184. (BACKLOG-026) — once a season the whole park gathers at a landmark for a festival with its own
    ritual, dialogue and memories, and who comes, who leads and who sulks at the edge reads off the bond and grudge
    graphs. At the default clock a season must arrive within a sitting, or the first festival must be reachable early.
 3. **Growing up** (BACKLOG-023) — dinos molt into an adult form: a new sprite, a shifted temperament, a book entry
    for the change. Hatchlings from the egg arc should be the first to do it.
 
 ## Shipped milestones
+
+### Milestone 28 (TENTPOLE): The park holds a festival — SHIPPED cycle 184 (opened cycle 183)
+
+Two cycles, four arcs, no REWORK. The second tentpole. Once a season the whole park walks to the bowl pond, the
+best-loved dino opens it, a dino whose foe is in the circle keeps to the edge, each season has its own rite and a
+mark at the water, and afterwards every attendee tells the keeper how it went for it.
+
+**The lesson worth keeping:** a tentpole is cheap when the graphs it reads already exist. The festival built no new
+relationship state at all — leader, sulkers and tales are all reads of the bond and grudge graphs the park has kept
+for a hundred cycles. What it built was a *stage*: one hour where every resident stands in one place.
+
+**Milestone 28 (TENTPOLE): The park holds a festival — once a season every ground walks to the bowl pond, and who leads and who sulks at the edge reads off the bonds and grudges**
+**Status:** SHIPPED cycle 184 (opened cycle 183)
+
+The second tentpole (CHARTER v9, queue item 2, BACKLOG-026). Until now the park's one collective beat was the sky
+event, which gathers each ground on its own grid by chance at night. A festival is the opposite: scheduled, daytime,
+and the only moment the whole cast stands on one ground. Reachable by construction: a fresh save boots on day 1, the
+first day of spring, at 08:00, and the festival opens at 10:00, two real minutes in at the default clock.
+
+**Lore arcs:**
+- [x] Who leads and who sulks: the best-loved attendee opens the festival in its own voice; a dino whose foe is in the circle keeps to the edge; every attendee files the day (BACKLOG-594 — cycle 183)
+- [x] The festival is remembered: greeted after it, a dino talks about the festival in its own register, and who led it (BACKLOG-595 — cycle 184)
+
+**Structure arcs:**
+- [x] The gathering: on the first day of each season at mid-morning every ground's residents walk to the bowl pond, ring it, and walk home when it ends (BACKLOG-596 — cycle 183)
+- [x] Each season's festival has its own rite and a drawn mark at the pond, so spring's does not look like winter's (BACKLOG-597 — cycle 184)
 
 ### Milestone 27: The new minds are woven in — SHIPPED cycle 182 (opened cycle 181)
 

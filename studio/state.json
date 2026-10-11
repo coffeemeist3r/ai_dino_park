@@ -1,8 +1,8 @@
 {
   "cycle": 184,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-595: the festival, remembered",
-  "structureItem": "BACKLOG-597: each season's rite + a drawn festival mark",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-10-11T08:11:00.409Z",
     "coder": "2026-10-11T08:24:38.766Z",
     "qa": "2026-10-11T08:24:54.586Z",
-    "validator": "2026-10-10T08:30:17.063Z",
+    "validator": "2026-10-11T08:25:42.129Z",
     "artist": "2026-10-10T08:30:32.521Z"
   },
   "lastSoloCycle": 151,
