@@ -14586,3 +14586,5 @@ Board: build clean, **3302 unit** green, e2e **898/898** on the first full run. 
 ## Cycle 184 — lore-smith: the morning after — BACKLOG-595 (the festival remembered) next; seeded BACKLOG-598 [art] festival marks
 
 ## Cycle 184 — structure-smith: BACKLOG-597 each season's rite + the pond mark (host for 598)
+
+## Cycle 184 — designer: 597 (four rites + the pond mark) + 595 (the festival in the next greet)
