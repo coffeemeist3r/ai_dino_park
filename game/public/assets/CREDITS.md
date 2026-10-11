@@ -79,3 +79,4 @@ STYLE-GUIDE.
 - **Reflect mark** (a thought rising off a dino at the dusk turn, BACKLOG-587) — `game/src/art/propArt.ts` `REFLECT_RIG`, cycle 179-art, 2026-10-06. Claude-authored procedural pixel art.
 - **Errand mark** (a bindle over a dino setting off for another ground, BACKLOG-590) — `game/src/art/propArt.ts` `ERRAND_RIG`, cycle 180-art, 2026-10-07. Claude-authored procedural pixel art.
 - **Welcome mark** (a sprig over each resident answering a newcomer, BACKLOG-593) — `game/src/art/propArt.ts` `WELCOME_RIG`, cycle 181-art, 2026-10-08. Claude-authored procedural pixel art.
+- **Festival marks, spring + summer** (a blossom wreath and a sun pole on the bowl pond's east bank while a festival is open, BACKLOG-598) — `game/src/art/propArt.ts` `FESTIVAL_SPRING_RIG` / `FESTIVAL_SUMMER_RIG`, cycle 184-art, 2026-10-11. Claude-authored procedural pixel art. Drawn inline in the consolidated session.

@@ -2515,6 +2515,75 @@ const WELCOME_RIG: PropRig = {
   },
 };
 
+// `festival-spring` / `festival-summer` (BACKLOG-598, cycle 184-art): the rite marks that stand on the bowl pond's
+// east bank while a festival is open (host: `openFestival`, BACKLOG-597). Unlike the marks over a dino these sit on
+// the ground for two hours, so each is a *thing*, not a symbol. **Spring is a blossom wreath**: a ring of leaves,
+// lit upper left and shaded lower right, with four pink blossoms on it at the quarters. **Summer is a sun pole**: a
+// disc on a post with rays. Fall's heap and winter's lantern still render their glyphs.
+const FESTIVAL_SPRING_GRID: ReadonlyArray<string> = [
+  '.......oo.......',
+  '....ooohlooo....',
+  '...ollhyplllo...',
+  '..ollllplllldo..',
+  '.ollllooooldddo.',
+  '.olllo....odddo.',
+  '.ohlo......oddo.',
+  'ohypo......odhdo',
+  'olplo......ohypo',
+  '.ollo......odpo.',
+  '.olllo....odddo.',
+  '.ollddooooddddo.',
+  '..odddddhddddo..',
+  '...odddhypddo...',
+  '....ooodpooo....',
+  '.......oo.......',
+];
+
+const FESTIVAL_SPRING_RIG: PropRig = {
+  size: 16,
+  grid: FESTIVAL_SPRING_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    l: 0x58b048, // the wreath's lit leaves
+    d: 0x2f7a3a, // its shaded leaves
+    p: 0xf090b8, // blossom petals
+    h: 0xf8c8dc, // their light edge, upper left
+    y: 0xf8d848, // the blossom's heart
+  },
+};
+
+const FESTIVAL_SUMMER_GRID: ReadonlyArray<string> = [
+  '.......yy.......',
+  '..y....oo....y..',
+  '.....ooyyoo.....',
+  '.....oyhhyo.....',
+  '.y..oyhhyrro..y.',
+  '....oyhyrrro....',
+  '.....oyrrro.....',
+  '.....orrrro.....',
+  '..y...obko...y..',
+  '......obko......',
+  '......obko......',
+  '......obko......',
+  '......obko......',
+  '......obko......',
+  '......obko......',
+  '......oooo......',
+];
+
+const FESTIVAL_SUMMER_RIG: PropRig = {
+  size: 16,
+  grid: FESTIVAL_SUMMER_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    y: 0xf8d030, // the sun and its rays
+    h: 0xfff0a0, // its light, upper left
+    r: 0xe88830, // its shade, lower right
+    b: 0x9a6a3a, // the post, lit
+    k: 0x6a4424, // the post, shaded
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2782,6 +2851,9 @@ export const PROP_RIGS: Record<string, PropRig> = {
   errand: ERRAND_RIG,
   // BACKLOG-593 (cycle 181-art): drawn for a host that shipped the same cycle — `answerNewcomer` (589/592).
   welcome: WELCOME_RIG,
+  // BACKLOG-598 (cycle 184-art): drawn the night their host shipped — `openFestival`'s rite mark (597).
+  'festival-spring': FESTIVAL_SPRING_RIG,
+  'festival-summer': FESTIVAL_SUMMER_RIG,
 };
 
 /**

@@ -23,6 +23,8 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'doze', // BACKLOG-520: the shut end of the hours axis, drawn the night 109 shipped its host
       'egg', // BACKLOG-491: the egg by the den
       'errand', // BACKLOG-590 (cycle 180-art): a bindle over a dino setting off for another ground (hosts 586/588)
+      'festival-spring', // BACKLOG-598 (cycle 184-art): the blossom wreath at the pond for spring's festival (host 597)
+      'festival-summer', // BACKLOG-598 (cycle 184-art): the sun pole at the pond for summer's festival (host 597)
       'food_berries', // BACKLOG-490
       'food_fish', // BACKLOG-490: keyed `food_<id>` so `dropFood` looks one up per piece
       'food_greens', // BACKLOG-490 (cycle 137)

@@ -656,4 +656,4 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 184 lore additions — the festival's marks (2026-10-11)
 
-- [ ] BACKLOG-598 [art] The four festival marks — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.
+- [ ] BACKLOG-598 [art] The four festival marks (spring wreath + summer sun pole drawn cycle 184-art; fall heap + winter lantern left) — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.
