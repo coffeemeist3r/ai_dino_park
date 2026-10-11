@@ -661,8 +661,12 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Milestone 28 is the festivals tentpole. These are its lore arcs: the festival is a stage the bond and grudge graphs
 > already populate, so what is new is that the park *reads* them in public.
 
-- [ ] BACKLOG-595 [social] The festival, remembered — greeted after a festival, a dino opens with how it went for it, in its register: the leader proud, the sulker sore, a warm dino glad, a solitary one glad it is over. Said once, then consumed, like 139's thankful line. Builds on 594.
+- [~] BACKLOG-595 [social] The festival, remembered — greeted after a festival, a dino opens with how it went for it, in its register: the leader proud, the sulker sore, a warm dino glad, a solitary one glad it is over. Said once, then consumed, like 139's thankful line. Builds on 594.
 
 ## Cycle 183 (Structure-smith)
 
 - [ ] BACKLOG-597 [core] Each season's rite + a drawn mark — the four festivals differ: spring's is a blossom ring, summer's a sun dance, fall's a harvest heap, winter's a lantern vigil. Each has its own banner, bubble and memory, and a festival prop at the pond the Artist can draw (the host this item creates). Builds on 596.
+
+## Cycle 184 lore additions — the festival's marks (2026-10-11)
+
+- [ ] BACKLOG-598 [art] The four festival marks — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.

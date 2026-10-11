@@ -1,7 +1,7 @@
 {
-  "cycle": 183,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 184,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-595: the festival, remembered",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-10-10T08:11:22.918Z",
+    "lore-smith": "2026-10-11T08:09:53.999Z",
     "structure-smith": "2026-10-10T08:11:39.155Z",
     "designer": "2026-10-10T08:13:14.506Z",
     "code-planner": "2026-10-10T08:18:01.536Z",
