@@ -14625,3 +14625,5 @@ in (cycle 183-art: `success`). The pond mark is a host now; BACKLOG-598 asks the
 ## Cycle 185 — lore-smith: the festival writes back — Milestone 29 drafted; next-up BACKLOG-180 (odd bedfellows, reshaped to the ring)
 
 ## Cycle 185 — structure-smith: BACKLOG-599 the festival fair (Milestone 29 spine); seeded 600 + 601 [art]
+
+## Cycle 185 — designer: 599 (the fair at the pond) + 180 (odd bedfellows at the ring) — the festival writes back
