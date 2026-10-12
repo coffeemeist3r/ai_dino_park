@@ -9,6 +9,7 @@ import {
   ringFriendLine,
   ringFriends,
   ringPairs,
+  ringPartners,
 } from './festival';
 import { worldPlacedProps } from './reachability';
 import { barterSwap, structureRecipe } from './resource';
@@ -50,6 +51,20 @@ describe('BACKLOG-180 — odd bedfellows at the ring', () => {
       ['Glade', 'Rex'],
       ['Pip', 'Rex'],
     ]);
+  });
+
+  it('each dino keeps company with one neighbour, strangers first', () => {
+    const pairs: [string, string][] = [
+      ['Glade', 'Rex'],
+      ['Pip', 'Rex'],
+      ['Glade', 'Pip'],
+      ['Murk', 'Pip'],
+    ];
+    const out = ringPartners({ 'Glade|Rex': 20 }, pairs);
+    expect(out).toEqual([['Glade', 'Pip']]);
+    expect(ringPartners({}, [['Murk', 'Pip'], ['Glade', 'Rex']])).toEqual([['Glade', 'Rex'], ['Murk', 'Pip']]);
+    const names = out.flat();
+    expect(new Set(names).size).toBe(names.length);
   });
 
   it('every pair gains the ring bond; only floor-crossers are new friends', () => {

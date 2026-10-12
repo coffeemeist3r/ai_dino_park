@@ -43,3 +43,8 @@
   take 🪵, then Pip — the grove's second guest — bring the 🪵 straight back and take the 🪨. Net nothing, two lines
   of noise. The ground's first guest carries its trade; the design's "each guest" now reads "each ground".
 - Build clean; unit 3328 green (321 files); e2e 904/904 first full run. web-llm boundary intact. No save change.
+- **QA finding, fixed before the QA verdict: the ring flooded the graph.** The circle stands inside a 3×3, so nearly
+  every pair is within one tile — the first probe made **seventeen** new friendships at one close and a ticker of
+  seventeen 🌱 lines. That is not "odd bedfellows", it is everyone befriending everyone. `ringPartners` now gives
+  each circle member one neighbour for the day, strangers first (lowest bond, then name). A fresh save makes three:
+  **Bramble–Ember, Murk–Pip, Rex–Thornback**, all across grounds. Unit 3329.

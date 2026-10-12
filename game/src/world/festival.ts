@@ -195,6 +195,24 @@ export function ringPairs(positions: Record<string, Tile>): [string, string][] {
   return out;
 }
 
+/**
+ * Who spends the festival beside whom: each circle member keeps company with at most one neighbour. Strangers pair
+ * first (lowest bond, then name), so the ring is where unlikely pairs meet; a crowd of ten makes a handful of pairs,
+ * not forty-five.
+ */
+export function ringPartners(bonds: Bonds, pairs: readonly [string, string][]): [string, string][] {
+  const taken = new Set<string>();
+  const out: [string, string][] = [];
+  const ordered = [...pairs].sort((x, y) => bondPoints(bonds, x[0], x[1]) - bondPoints(bonds, y[0], y[1]) || x.join('|').localeCompare(y.join('|')));
+  for (const [a, b] of ordered) {
+    if (taken.has(a) || taken.has(b)) continue;
+    taken.add(a);
+    taken.add(b);
+    out.push([a, b]);
+  }
+  return out;
+}
+
 /** Each pair gains `RING_BOND`; `crossed` is the pairs that went from under the friend floor to at or over it. */
 export function ringFriends(bonds: Bonds, pairs: readonly [string, string][], floor = LONER_FLOOR): { bonds: Bonds; crossed: [string, string][] } {
   let next = bonds;

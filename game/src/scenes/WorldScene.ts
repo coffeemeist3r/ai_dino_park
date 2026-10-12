@@ -394,7 +394,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
-import { FAIR_ART_KEY, FAIR_GLYPH, FAIR_TILE, FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, fairLine, fairMemory, fairTrade, ringFriendMemory, ringFriends, ringFriendTicker, ringPairs, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
+import { FAIR_ART_KEY, FAIR_GLYPH, FAIR_TILE, FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, fairLine, fairMemory, fairTrade, ringFriendMemory, ringFriends, ringFriendTicker, ringPairs, ringPartners, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
 import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
@@ -4326,7 +4326,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Odd bedfellows (BACKLOG-180): circle members standing side by side at the close gain the ring bond, and a pair
+   * Odd bedfellows (BACKLOG-180): each circle member spent the festival beside one neighbour (strangers first); the
+   * pair gains the ring bond, and a pair
    * that crosses the friend floor walks away friends. Returns each new friend's first new friend (by name).
    */
   private ringMakesFriends(season: Season, attendees: readonly string[], sulkers: Record<string, string>): Record<string, string> {
@@ -4335,7 +4336,7 @@ export class WorldScene extends Phaser.Scene {
       const d = this.dinoByName(name);
       if (d && !sulkers[name] && zoneOf(this.dinoZones, name, BOWL_ID) === BOWL_ID) positions[name] = this.tileOf(d);
     }
-    const { bonds, crossed } = ringFriends(this.bonds, ringPairs(positions));
+    const { bonds, crossed } = ringFriends(this.bonds, ringPartners(this.bonds, ringPairs(positions)));
     this.bonds = bonds;
     this.festivalFriends = crossed;
     const friendOf: Record<string, string> = {};
