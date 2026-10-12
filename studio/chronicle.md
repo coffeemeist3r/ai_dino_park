@@ -14662,3 +14662,4 @@ sulking at the edge.
 Board: build clean, **3329 unit** green, e2e **904/904** on two full runs. No save change. CI green going in
 (cycle 184-art: `success`).
 
+## Cycle 185-art — artist: BACKLOG-601, the fair basket. The host shipped tonight, so the basket at the pond is drawn: wicker under an arched handle, lit and shaded in a two-tone weave, and heaped with the four things the grounds trade — two stones, a frond, a chip of the Ridge's black glass, a branch. A plain basket read as a picnic; the goods in it are what make it a fair. Fall's heap and winter's lantern (598) still render their glyphs. Drawn inline, not by sub-agent. Unit 3335 green; art + festival e2e green. CI on `main`: last run `success`.

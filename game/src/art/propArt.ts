@@ -2584,6 +2584,42 @@ const FESTIVAL_SUMMER_RIG: PropRig = {
   },
 };
 
+// `festival-fair` (BACKLOG-601, cycle 185-art): the fair basket beside the rite mark while a festival is open
+// (host: `holdFair`, BACKLOG-599). A wicker basket under an arched handle, the four goods the grounds trade heaped
+// in it — two stones, a frond, the Ridge's black glass and a branch — so the basket says *trade*, not *picnic*.
+const FESTIVAL_FAIR_GRID: ReadonlyArray<string> = [
+  '................',
+  '.....oooooo.....',
+  '....owwwwwwo....',
+  '...ow......wo...',
+  '...ow..oo..wo...',
+  '...ow.osso.wo...',
+  '..oowognnfowoo..',
+  '.owwwwwwwwwwwwo.',
+  '.okwkwkwkwkwkwo.',
+  '..owkwkwkwkwko..',
+  '..okwkwkwkwkwo..',
+  '..owkwkwkwkwko..',
+  '...okwkwkwkwo...',
+  '...okkkkkkkko...',
+  '....oooooooo....',
+  '................',
+];
+
+const FESTIVAL_FAIR_RIG: PropRig = {
+  size: 16,
+  grid: FESTIVAL_FAIR_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    w: 0xd8a860, // wicker, lit
+    k: 0x9a6a3a, // wicker, shaded
+    s: 0x9aa0a8, // stone
+    g: 0x58b048, // frond
+    n: 0x3a3550, // obsidian
+    f: 0x8a5a2a, // branch
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2854,6 +2890,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-598 (cycle 184-art): drawn the night their host shipped — `openFestival`'s rite mark (597).
   'festival-spring': FESTIVAL_SPRING_RIG,
   'festival-summer': FESTIVAL_SUMMER_RIG,
+  // BACKLOG-601 (cycle 185-art): drawn the night its host shipped — `holdFair`'s basket (599).
+  'festival-fair': FESTIVAL_FAIR_RIG,
 };
 
 /**
