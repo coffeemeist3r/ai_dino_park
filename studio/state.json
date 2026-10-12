@@ -2,7 +2,7 @@
   "cycle": 185,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-180: odd bedfellows at the festival ring",
-  "structureItem": null,
+  "structureItem": "BACKLOG-599: the festival fair",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-12T08:12:07.025Z",
-    "structure-smith": "2026-10-11T08:09:59.383Z",
+    "structure-smith": "2026-10-12T08:12:19.046Z",
     "designer": "2026-10-11T08:10:38.114Z",
     "code-planner": "2026-10-11T08:11:00.409Z",
     "coder": "2026-10-11T08:24:38.766Z",

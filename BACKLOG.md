@@ -21,6 +21,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
+- [~] BACKLOG-599 [core] The festival fair (full text in the cycle-185 block below).
+- [ ] BACKLOG-600 [core] The keeper in the ring (full text in the cycle-185 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
@@ -657,3 +659,9 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 184 lore additions — the festival's marks (2026-10-11)
 
 - [ ] BACKLOG-598 [art] The four festival marks (spring wreath + summer sun pole drawn cycle 184-art; fall heap + winter lantern left) — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.
+
+## Cycle 185 (Structure-smith) — the festival writes back (2026-10-12)
+
+- [~] BACKLOG-599 [core] The festival fair — a guest does not come to the bowl empty-handed. When a festival opens, each guest trades between its home ground's pile and the bowl's: it hands the bowl what the bowl is short of for its next structure and takes home what its own ground is short of (`barterSwap`, the 358 edge-meet rule, run once per guest at the pond). A ticker line names each trade, the guest files it, the bowl's heap moves, and a basket stands at the pond while the festival is open. Weaves the festival into the economy: four times a year every ground's surplus meets in one place. Builds on 596 / 358 / 504.
+- [ ] BACKLOG-600 [core] The keeper in the ring — the festival counts only dinos; the keeper standing at the pond is scenery. When the keeper is within the circle at the opening, the keeper is an attendee: the leader's opening line turns to the keeper, each attendee's player-friendship ticks for the shared day, and the tales that follow say "you were there". A keeper who missed it hears that too. Builds on 596 / 595 / 155.
+- [ ] BACKLOG-601 [art] The fair basket — a pixel prop for the `festival-fair` mark BACKLOG-599 places beside the rite mark at the pond while a festival is open (renders 🧺 until drawn). A woven basket, goods heaped in it. Host: 599.

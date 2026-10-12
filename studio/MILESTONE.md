@@ -20,6 +20,9 @@ back: the bond graph, the grounds' piles, the keeper's place in the circle.
 - [ ] (drafted next cycle, from the queue)
 
 **Structure arcs:**
+- [ ] The fair: each guest trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599)
+- [ ] The keeper in the ring: a keeper standing in the circle at the opening is an attendee, and the park remembers it (BACKLOG-600)
+
 ---
 
 ### Format (use this when drafting)
