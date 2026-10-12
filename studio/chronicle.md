@@ -14633,3 +14633,32 @@ in (cycle 183-art: `success`). The pond mark is a host now; BACKLOG-598 asks the
 ## Cycle 185 — coder: BACKLOG-599 + BACKLOG-180 shipped; build clean, unit 3328, e2e 904/904
 
 ## Cycle 185 — qa: 10/10 criteria pass; e2e 904/904; one finding (ring flooded the graph) fixed before the verdict
+
+## Cycle 185 — APPROVED / APPROVED: the festival writes back (Milestone 29 opens)
+
+Yesterday's festival was a stage. Ten dinos stood shoulder to shoulder for two hours, and afterwards they were
+exactly as close as they had been, with exactly the same things in their piles. Tonight the festival leaves marks.
+
+Start a new park and wait two minutes. The guests come in from the east edge as before, but now they come
+carrying things. Bramble brings a stone down from the Grove and takes a branch home. Old Thornback arrives from
+the Fernreach with nothing and leaves with a stone, the first thing that ground has ever had in its pile. Ember
+brings the Ridge's one stone. A basket stands by the water while it lasts. Four times a year every ground's
+surplus now meets in one place.
+
+Then wait for noon. The circle stood packed around Sunny for two hours, and each of them spent it beside someone.
+The park pairs strangers first, so the friendships it makes are unlikely ones. Bramble from the Grove and Ember from
+the Ridge. Murk from the Hollow and little Pip. Rex, the bowl's prickly one, and old Thornback. A 🌱 pops over all
+six, and greeting Rex afterwards gets the most Rex sentence the park has produced: *"Stood next to Thornback the
+whole time. Thornback is alright."*
+
+The first build did not pick partners. The circle stands inside a three-by-three, so nearly every pair counted as
+"side by side", and the first probe made seventeen friendships at once. That is a park where everyone likes
+everyone, which is the opposite of the point. It was caught before the verdict and fixed: one neighbour each.
+
+That closes two of Milestone 29's four arcs on its opening night. Still open: the keeper's own place in the ring
+(600), and a second lore arc. The obvious one is Twitch, who has no friend at all and spends every festival
+sulking at the edge.
+
+Board: build clean, **3329 unit** green, e2e **904/904** on two full runs. No save change. CI green going in
+(cycle 184-art: `success`).
+

@@ -21,7 +21,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [~] BACKLOG-599 [core] The festival fair (full text in the cycle-185 block below).
 - [ ] BACKLOG-600 [core] The keeper in the ring (full text in the cycle-185 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
@@ -215,7 +214,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > behaviour you can watch — the den packing at dusk in winter. Next-up is the already-queued
 > **BACKLOG-171** (winter huddle pull); these extend the seasonal night once it lands.
 
-- [~] BACKLOG-180 [emergent] Odd bedfellows — **reshaped cycle 185 (Milestone 29):** as first written (two low-bond dinos huddled in the winter den) this was unreachable — the den admits only pairs already over the huddle bar (`huddleThreshold`), so a low-bond pair never shares it. The one place the park now puts unlikely pairs shoulder to shoulder is the festival ring. When a festival closes, every two circle members standing side by side gain a flat ring bond; a pair that crosses the friend floor walks away friends (🌱 over each), and each names the other in its festival tale ("I stood next to Pip in the ring — we're friends now"). Sulkers at the edge stand next to nobody. Builds on 594 / 595 / 571 / 013.
 - [ ] BACKLOG-182 [pokemon] Night ledger — the collection book counts shared den nights per dino ("most nights kept warm with Sunny"), the sleeping pile's history made legible alongside the closest-friend line. Builds on 041 / 021 / 134.
 
 ## Cycle 43 lore additions — the cold has a cost (2026-06-11)
@@ -662,6 +660,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 185 (Structure-smith) — the festival writes back (2026-10-12)
 
-- [~] BACKLOG-599 [core] The festival fair — a guest does not come to the bowl empty-handed. When a festival opens, each guest trades between its home ground's pile and the bowl's: it hands the bowl what the bowl is short of for its next structure and takes home what its own ground is short of (`barterSwap`, the 358 edge-meet rule, run once per guest at the pond). A ticker line names each trade, the guest files it, the bowl's heap moves, and a basket stands at the pond while the festival is open. Weaves the festival into the economy: four times a year every ground's surplus meets in one place. Builds on 596 / 358 / 504.
 - [ ] BACKLOG-600 [core] The keeper in the ring — the festival counts only dinos; the keeper standing at the pond is scenery. When the keeper is within the circle at the opening, the keeper is an attendee: the leader's opening line turns to the keeper, each attendee's player-friendship ticks for the shared day, and the tales that follow say "you were there". A keeper who missed it hears that too. Builds on 596 / 595 / 155.
 - [ ] BACKLOG-601 [art] The fair basket — a pixel prop for the `festival-fair` mark BACKLOG-599 places beside the rite mark at the pond while a festival is open (renders 🧺 until drawn). A woven basket, goods heaped in it. Host: 599.

@@ -16,11 +16,11 @@ Milestone 28 built a stage that only *reads* the bond, grudge and calendar state
 back: the bond graph, the grounds' piles, the keeper's place in the circle.
 
 **Lore arcs:**
-- [ ] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped)
+- [x] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped — cycle 185)
 - [ ] (drafted next cycle, from the queue)
 
 **Structure arcs:**
-- [ ] The fair: each guest trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599)
+- [x] The fair: each ground trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599 — cycle 185)
 - [ ] The keeper in the ring: a keeper standing in the circle at the opening is an attendee, and the park remembers it (BACKLOG-600)
 
 ---

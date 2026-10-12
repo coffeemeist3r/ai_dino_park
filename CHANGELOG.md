@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 185 — 2026-10-12 (the festival writes back; Milestone 29 opens)
+- BACKLOG-599: The festival fair — when a festival opens, each ground's first guest trades its home pile against the bowl's (the 358 barter, each ground's own recipe): it brings what the bowl is short of and takes home what its ground is. One trade per ground, a ticker line each (*"🧺 Bramble brought 🪨 from The Grove and took 🪵 home"*), a memory for the guest, and a 🧺 basket at the pond while it lasts (`festival-fair`, art BACKLOG-601).
+- BACKLOG-180: Odd bedfellows, at the ring (reshaped from the unreachable den version) — at the close each circle member has spent the day beside one neighbour, strangers first; the pair gains a flat ring bond of 10, and a pair that crosses the friend floor walks away friends: 🌱 over each, a ticker line, a memory, and a sentence in the festival tale in its register (*"Stood next to Thornback the whole time. Thornback is alright."*). On a fresh save: Bramble–Ember, Murk–Pip, Rex–Thornback.
+
+---
+
 ## Cycle 184 — 2026-10-11 (the rites and the morning after; Milestone 28 ships)
 - BACKLOG-597: Each season's rite — the festival is no longer the same 🎏 all year. Spring's is a blossom ring (🌸), summer's a sun dance (☀️), fall's a harvest heap (🍂), winter's a lantern vigil (🏮): each has its own banner, a bubble over the circle, its own memory, and a mark that stands at the pond's east bank for the festival's length (the glyph until the Artist draws `festival-<season>`).
 - BACKLOG-595: The festival, remembered — greeted after a festival, a dino opens with how it went for it: the leader proud (*"I opened the spring festival. Everyone came to the blossom ring."*), the sulker sore (*"The spring festival. Twitch was there, so I kept to the edge."*), a warm dino glad, a solitary one relieved, a prickly one lukewarm. Said once. Sits in the opener chain below the thanks and above the tone echo. **Milestone 28 SHIPPED.**
