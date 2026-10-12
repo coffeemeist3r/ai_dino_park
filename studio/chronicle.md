@@ -14621,3 +14621,5 @@ Board: build clean, **3309 unit** green, e2e **901/901** on the first full run. 
 in (cycle 183-art: `success`). The pond mark is a host now; BACKLOG-598 asks the Artist to draw it.
 
 ## Cycle 184-art — artist: BACKLOG-598, spring + summer festival marks. The host shipped tonight, so the first festival a new park sees now has a drawn mark at the water: **a blossom wreath** — a ring of leaves lit upper left and shaded lower right, four pink blossoms on its quarters — and, for day 8, **a sun pole**, a disc with rays on a two-tone post. Both sit on the ground for two hours rather than popping over a dino, so they are drawn as things, not symbols; the first wreath draft put its blossoms on the rim and they read as broken outline, so they moved into the leaf band. Fall's heap and winter's lantern still render 🍂/🏮 (598 stays open for them). Drawn inline, not by sub-agent. Unit 3322 green; the art and festival e2e specs green. CI on `main`: last run `success`.
+
+## Cycle 185 — lore-smith: the festival writes back — Milestone 29 drafted; next-up BACKLOG-180 (odd bedfellows, reshaped to the ring)

@@ -213,7 +213,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > behaviour you can watch — the den packing at dusk in winter. Next-up is the already-queued
 > **BACKLOG-171** (winter huddle pull); these extend the seasonal night once it lands.
 
-- [ ] BACKLOG-180 [emergent] Odd bedfellows — when the winter den packs, two *low-bond* dinos who end up huddled the same cold night gain a small extra bond bump beyond the normal meet gain ("we kept each other warm"); the cold manufactures unlikely friendships the summer never would. Builds on 171 / 041 / 013.
+- [~] BACKLOG-180 [emergent] Odd bedfellows — **reshaped cycle 185 (Milestone 29):** as first written (two low-bond dinos huddled in the winter den) this was unreachable — the den admits only pairs already over the huddle bar (`huddleThreshold`), so a low-bond pair never shares it. The one place the park now puts unlikely pairs shoulder to shoulder is the festival ring. When a festival closes, every two circle members standing side by side gain a flat ring bond; a pair that crosses the friend floor walks away friends (🌱 over each), and each names the other in its festival tale ("I stood next to Pip in the ring — we're friends now"). Sulkers at the edge stand next to nobody. Builds on 594 / 595 / 571 / 013.
 - [ ] BACKLOG-182 [pokemon] Night ledger — the collection book counts shared den nights per dino ("most nights kept warm with Sunny"), the sleeping pile's history made legible alongside the closest-friend line. Builds on 041 / 021 / 134.
 
 ## Cycle 43 lore additions — the cold has a cost (2026-06-11)

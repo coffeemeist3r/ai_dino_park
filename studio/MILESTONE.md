@@ -8,9 +8,18 @@
 
 ## Current milestone
 
-_No milestone is ACTIVE. Milestone 28 (the festivals tentpole) shipped cycle 184; the next one is a **normal**
-milestone (CHARTER v9: the one after a tentpole polishes and weaves it in). The smiths draft it next cycle._
+**Milestone 29: The festival changes the park — dinos who stood together in the ring walk home friends, and the guests bring their grounds' goods to the water**
+**Status:** ACTIVE (opened cycle 185)
 
+The normal milestone after the festivals tentpole (CHARTER v9): weave the festival into what the park already has.
+Milestone 28 built a stage that only *reads* the bond, grudge and calendar state. This one lets the festival *write*
+back: the bond graph, the grounds' piles, the keeper's place in the circle.
+
+**Lore arcs:**
+- [ ] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped)
+- [ ] (drafted next cycle, from the queue)
+
+**Structure arcs:**
 ---
 
 ### Format (use this when drafting)
