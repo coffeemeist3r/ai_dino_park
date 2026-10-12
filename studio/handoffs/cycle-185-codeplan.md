@@ -36,3 +36,10 @@
 - `tests/e2e/cycle-185-festival-fair-ring.spec.ts` — fresh save: open at day 1 10:00, fair trades + basket + pile
   conservation; step the world until the ring forms, close, check bonds/friends/memory/greet. `foundingState()` per
   the ratchet.
+
+## Shipped (coder)
+
+- As planned, one deviation: **one trade per ground, not per guest.** The first live run had Bramble bring 🪨 and
+  take 🪵, then Pip — the grove's second guest — bring the 🪵 straight back and take the 🪨. Net nothing, two lines
+  of noise. The ground's first guest carries its trade; the design's "each guest" now reads "each ground".
+- Build clean; unit 3328 green (321 files); e2e 904/904 first full run. web-llm boundary intact. No save change.

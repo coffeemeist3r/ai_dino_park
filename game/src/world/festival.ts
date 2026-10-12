@@ -8,9 +8,13 @@
 
 import type { GameTime } from './clock';
 import { SEASON_LENGTH_DAYS, type Season } from './seasons';
-import { bondPoints, type Bonds } from '../social/bonds';
+import { bondPoints, strengthen, type Bonds } from '../social/bonds';
 import { worstRival } from '../social/grudges';
 import type { Personality } from '../ai/personality';
+import { LONER_FLOOR } from './loner';
+import type { Tile } from './movement';
+import { barterSwap, RESOURCE_GLYPH, structureRecipe, type BarterSwap, type ResourceKind, type Stockpile } from './resource';
+import { BOWL_ID } from './zones';
 
 export const FESTIVAL_HOUR = 10;
 export const FESTIVAL_HOURS = 2;
@@ -135,10 +139,17 @@ export interface FestivalTale {
   season: Season;
   leader: string | null;
   foe?: string;
+  /** BACKLOG-180: who it stood beside in the ring and walked away friends with. */
+  friend?: string;
 }
 
 /** The opener a dino leads its next greet with after a festival, in its register (the 139 split). */
 export function festivalOpener(name: string, tale: FestivalTale, traits?: Personality): string {
+  const head = festivalHead(name, tale, traits);
+  return tale.friend ? `${head} ${ringFriendLine(tale.friend, traits)}` : head;
+}
+
+function festivalHead(name: string, tale: FestivalTale, traits?: Personality): string {
   const { season, leader, foe } = tale;
   const rite = festivalRite(season).name;
   const prickly = !!traits && traits.agreeableness < 0.35;
@@ -165,4 +176,70 @@ export function zonesWithGuestsHome(zones: Record<string, string>, guests: Recor
   const out = { ...zones };
   for (const [name, g] of Object.entries(guests)) out[name] = g.home;
   return out;
+}
+
+/** The bump two circle members get for standing side by side through a festival (BACKLOG-180). Flat: a one-off beat. */
+export const RING_BOND = 10;
+
+/** Every pair of the given dinos standing within one tile of each other (Chebyshev), each once, a < b, sorted. */
+export function ringPairs(positions: Record<string, Tile>): [string, string][] {
+  const names = Object.keys(positions).sort();
+  const out: [string, string][] = [];
+  for (let i = 0; i < names.length; i++) {
+    for (let j = i + 1; j < names.length; j++) {
+      const a = positions[names[i]];
+      const b = positions[names[j]];
+      if (Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY)) <= 1) out.push([names[i], names[j]]);
+    }
+  }
+  return out;
+}
+
+/** Each pair gains `RING_BOND`; `crossed` is the pairs that went from under the friend floor to at or over it. */
+export function ringFriends(bonds: Bonds, pairs: readonly [string, string][], floor = LONER_FLOOR): { bonds: Bonds; crossed: [string, string][] } {
+  let next = bonds;
+  const crossed: [string, string][] = [];
+  for (const [a, b] of pairs) {
+    const before = bondPoints(next, a, b);
+    next = strengthen(next, a, b, RING_BOND);
+    if (before < floor && bondPoints(next, a, b) >= floor) crossed.push([a, b]);
+  }
+  return { bonds: next, crossed };
+}
+
+/** The sentence a dino adds to its festival tale for a friend made in the ring, in its register. */
+export function ringFriendLine(friend: string, traits?: Personality): string {
+  if (traits && traits.agreeableness < 0.35) return `Stood next to ${friend} the whole time. ${friend} is alright.`;
+  if (traits && traits.sociability < 0.35) return `${friend} stood by me. I didn't mind.`;
+  return `I stood next to ${friend} in the ring — we're friends now.`;
+}
+
+export function ringFriendMemory(season: Season, friend: string): string {
+  return `the ${season} festival — stood beside ${friend}; friends now`;
+}
+
+export function ringFriendTicker(a: string, b: string): string {
+  return `🌱 ${a} and ${b} stood together in the ring — friends now`;
+}
+
+/** The fair (BACKLOG-599): a guest's basket stands here, beside the rite, while the festival is open. */
+export const FAIR_TILE = { tileX: 7, tileY: 3 };
+export const FAIR_ART_KEY = 'festival-fair';
+export const FAIR_GLYPH = '🧺';
+
+/** What a guest trades at the pond: its home gives the bowl what the bowl is short of, and takes home what it is. */
+export function fairTrade(home: string, homePile: Stockpile, bowlPile: Stockpile): BarterSwap {
+  return barterSwap(homePile, bowlPile, structureRecipe(home), structureRecipe(BOWL_ID));
+}
+
+export function fairLine(name: string, ground: string, gave: ResourceKind | null, took: ResourceKind | null): string | null {
+  if (gave && took) return `${FAIR_GLYPH} ${name} brought ${RESOURCE_GLYPH[gave]} from ${ground} and took ${RESOURCE_GLYPH[took]} home`;
+  if (gave) return `${FAIR_GLYPH} ${name} brought ${RESOURCE_GLYPH[gave]} from ${ground}`;
+  if (took) return `${FAIR_GLYPH} ${name} took ${RESOURCE_GLYPH[took]} home to ${ground}`;
+  return null;
+}
+
+export function fairMemory(season: Season, gave: ResourceKind | null, took: ResourceKind | null): string {
+  const parts = [gave && `brought ${RESOURCE_GLYPH[gave]}`, took && `took ${RESOURCE_GLYPH[took]}`].filter(Boolean);
+  return `the ${season} festival fair — ${parts.join(', ')}`;
 }

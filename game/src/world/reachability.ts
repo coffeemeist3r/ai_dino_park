@@ -78,7 +78,7 @@ import { ERRAND_ART_KEY } from '../ai/place'; // BACKLOG-586
 import { WELCOME_ART_KEY } from '../ai/welcome'; // BACKLOG-592
 import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
 import { COLD_ART_KEY } from './cold'; // BACKLOG-557
-import { FESTIVAL_ART_KEYS } from './festival'; // BACKLOG-597
+import { FAIR_ART_KEY, FESTIVAL_ART_KEYS } from './festival'; // BACKLOG-597/599
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -194,6 +194,7 @@ export function worldPlacedProps(): Set<string> {
   out.add(REGRET_ART_KEY); // BACKLOG-391: popped over a gobbler that shoved past a friend, by `regretShove`
   out.add(SEEK_ART_KEY); // BACKLOG-582: popped over a dino whose mind just picked whom to go looking for, by `chooseSeek`
   out.add(REFLECT_ART_KEY); // BACKLOG-583: popped over every dino in view at the dusk turn, by `checkReflection`
+  out.add(FAIR_ART_KEY); // BACKLOG-599: the fair basket beside the rite while a festival is open
   for (const k of FESTIVAL_ART_KEYS) out.add(k); // BACKLOG-597: the rite's mark at the pond, one per season, by `openFestival`
   out.add(ERRAND_ART_KEY); // BACKLOG-586: popped over a dino setting off on its plan's errand, by `runErrand`
   out.add(WELCOME_ART_KEY); // BACKLOG-592: popped over each resident answering a newcomer, by `answerNewcomer`

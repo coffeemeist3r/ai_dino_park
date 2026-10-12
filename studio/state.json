@@ -1,6 +1,6 @@
 {
   "cycle": 185,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-180: odd bedfellows at the festival ring",
   "structureItem": "BACKLOG-599: the festival fair",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-12T08:12:19.046Z",
     "designer": "2026-10-12T08:13:02.513Z",
     "code-planner": "2026-10-12T08:13:30.531Z",
-    "coder": "2026-10-11T08:24:38.766Z",
+    "coder": "2026-10-12T08:27:52.136Z",
     "qa": "2026-10-11T08:24:54.586Z",
     "validator": "2026-10-11T08:25:42.129Z",
     "artist": "2026-10-11T08:27:45.470Z"

@@ -394,7 +394,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
-import { FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
+import { FAIR_ART_KEY, FAIR_GLYPH, FAIR_TILE, FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, fairLine, fairMemory, fairTrade, ringFriendMemory, ringFriends, ringFriendTicker, ringPairs, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
 import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
@@ -1266,6 +1266,11 @@ export class WorldScene extends Phaser.Scene {
   private festivalMark: { key: string; obj: Phaser.GameObjects.Text | Phaser.GameObjects.Image } | null = null;
   /** BACKLOG-595: attendee → how the last festival went for it, until it tells the keeper. Transient, spoken once. */
   private festivalTales: Record<string, FestivalTale> = {};
+  /** BACKLOG-599: the trades of the current/last festival's fair, and the basket standing at the pond. */
+  private festivalFair: { name: string; home: string; gave: ResourceKind | null; took: ResourceKind | null }[] = [];
+  private fairBasket: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
+  /** BACKLOG-180: the pairs that walked out of the last festival's ring as new friends. */
+  private festivalFriends: [string, string][] = [];
   private skyStartAbsMin = 0;
   /** In-game day of the last sky event — caps the spectacle at one per day. */
   private skyFiredDay = -1;
@@ -4207,6 +4212,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__festivalSeason = () => this.festivalSeason;
     (window as any).__festivalMark = () => (this.festivalMark ? { key: this.festivalMark.key, tileX: Math.floor(this.festivalMark.obj.x / TILE), tileY: Math.floor((this.festivalMark.obj.y - 1) / TILE) } : null);
     (window as any).__festivalTales = () => ({ ...this.festivalTales });
+    (window as any).__festivalFair = () => this.festivalFair.map((t) => ({ ...t }));
+    (window as any).__festivalBasket = () => (this.fairBasket ? { tileX: Math.floor(this.fairBasket.x / TILE), tileY: Math.floor((this.fairBasket.y - 1) / TILE) } : null);
+    (window as any).__festivalFriends = () => this.festivalFriends.map((p) => [...p]);
     (window as any).__saveZones = () => this.currentSaveData().dinoZones;
   }
 
@@ -4252,6 +4260,7 @@ export class WorldScene extends Phaser.Scene {
     this.festivalMark = { key: rite.artKey, obj: mark };
     this.showFestivalBanner(festivalBanner(season));
     this.logEvent(festivalBanner(season));
+    this.holdFair(season, guests);
     const lead = leader ? this.dinoByName(leader) : null;
     if (lead) {
       const line = openingLine(season, lead.traits);
@@ -4272,11 +4281,76 @@ export class WorldScene extends Phaser.Scene {
     f.phase = 'leaving';
     this.festivalMark?.obj.destroy();
     this.festivalMark = null;
+    this.fairBasket?.destroy();
+    this.fairBasket = null;
+    const friendOf = this.ringMakesFriends(f.season, f.attendees, f.sulkers);
     for (const name of f.attendees) {
-      if (this.dinoByName(name)) this.festivalTales[name] = { season: f.season, leader: f.leader, foe: f.sulkers[name] };
+      if (this.dinoByName(name)) this.festivalTales[name] = { season: f.season, leader: f.leader, foe: f.sulkers[name], friend: friendOf[name] };
     }
     this.logEvent(festivalClosedLine(f.season));
     if (!Object.keys(f.guests).length) this.festival = null;
+  }
+
+  /**
+   * The fair (BACKLOG-599): each ground's first guest trades its home pile against the bowl's, in arrival order, through
+   * the 504 seam so both heaps re-sync. A basket stands at the pond while anything moved.
+   */
+  private holdFair(season: Season, guests: Record<string, Guest>): void {
+    this.festivalFair = [];
+    const traded = new Set<string>();
+    for (const [name, g] of Object.entries(guests)) {
+      if (traded.has(g.home)) continue; // one trade per ground: two grove guests would only swap it back
+      traded.add(g.home);
+      const { aGives: gave, bGives: took } = fairTrade(g.home, this.pileFor(g.home), this.pileFor(BOWL_ID));
+      if (gave) {
+        this.setPile(g.home, takeResource(this.pileFor(g.home), gave));
+        this.setPile(BOWL_ID, bankResource(this.pileFor(BOWL_ID), gave));
+      }
+      if (took) {
+        this.setPile(BOWL_ID, takeResource(this.pileFor(BOWL_ID), took));
+        this.setPile(g.home, bankResource(this.pileFor(g.home), took));
+      }
+      const line = fairLine(name, zoneById(g.home).name, gave, took);
+      if (!line) continue;
+      this.festivalFair.push({ name, home: g.home, gave, took });
+      this.logEvent(line);
+      this.memory = remember(this.memory, name, fairMemory(season, gave, took));
+    }
+    this.fairBasket?.destroy();
+    this.fairBasket = this.festivalFair.length
+      ? this.makeHourMark(FAIR_ART_KEY, FAIR_GLYPH)
+          .setPosition(FAIR_TILE.tileX * TILE + TILE / 2, (FAIR_TILE.tileY + 1) * TILE)
+          .setDepth(3)
+          .setVisible(this.zoneId === BOWL_ID)
+      : null;
+  }
+
+  /**
+   * Odd bedfellows (BACKLOG-180): circle members standing side by side at the close gain the ring bond, and a pair
+   * that crosses the friend floor walks away friends. Returns each new friend's first new friend (by name).
+   */
+  private ringMakesFriends(season: Season, attendees: readonly string[], sulkers: Record<string, string>): Record<string, string> {
+    const positions: Record<string, { tileX: number; tileY: number }> = {};
+    for (const name of attendees) {
+      const d = this.dinoByName(name);
+      if (d && !sulkers[name] && zoneOf(this.dinoZones, name, BOWL_ID) === BOWL_ID) positions[name] = this.tileOf(d);
+    }
+    const { bonds, crossed } = ringFriends(this.bonds, ringPairs(positions));
+    this.bonds = bonds;
+    this.festivalFriends = crossed;
+    const friendOf: Record<string, string> = {};
+    for (const [a, b] of crossed) {
+      friendOf[a] ??= b;
+      friendOf[b] ??= a;
+      this.memory = remember(this.memory, a, ringFriendMemory(season, b));
+      this.memory = remember(this.memory, b, ringFriendMemory(season, a));
+      this.logEvent(ringFriendTicker(a, b));
+    }
+    for (const name of Object.keys(friendOf)) {
+      const d = this.dinoByName(name);
+      if (d) this.popFriendFoundMark(d);
+    }
+    return friendOf;
   }
 
   /** One world-step of the festival. True while it is open (it owns every dino's step); the walk home is false. */
@@ -8532,6 +8606,7 @@ ${e.short}`;
     // BACKLOG-314: each zone's resource sprite shows only while the keeper stands in that zone.
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
+    this.fairBasket?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-599: and the fair basket beside it
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
     // BACKLOG-494: a landmark whose ruin has been drawn swaps to it and keeps full opacity — disrepair
