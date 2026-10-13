@@ -14667,3 +14667,5 @@ Board: build clean, **3329 unit** green, e2e **904/904** on two full runs. No sa
 ## Cycle 186 — lore-smith: nobody left at the edge on purpose — BACKLOG-133 reshaped to the ring (the leader fetches the sulkers); Milestone 29 lore arc 2 drafted
 
 ## Cycle 186 — structure-smith: BACKLOG-600 the keeper in the ring (Milestone 29 last spine arc)
+
+## Cycle 186 — designer: 133 (the leader fetches the sulkers) + 600 (the keeper in the ring)
