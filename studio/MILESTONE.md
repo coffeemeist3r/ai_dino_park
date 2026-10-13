@@ -8,20 +8,7 @@
 
 ## Current milestone
 
-**Milestone 29: The festival changes the park — dinos who stood together in the ring walk home friends, and the guests bring their grounds' goods to the water**
-**Status:** ACTIVE (opened cycle 185)
-
-The normal milestone after the festivals tentpole (CHARTER v9): weave the festival into what the park already has.
-Milestone 28 built a stage that only *reads* the bond, grudge and calendar state. This one lets the festival *write*
-back: the bond graph, the grounds' piles, the keeper's place in the circle.
-
-**Lore arcs:**
-- [x] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped — cycle 185)
-- [ ] The leader fetches the sulkers: whoever opens the festival walks out to each dino keeping to the edge and asks it in; one that comes in stands in the ring, a prickly one refuses to its face (BACKLOG-133, reshaped — cycle 186)
-
-**Structure arcs:**
-- [x] The fair: each ground trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599 — cycle 185)
-- [ ] The keeper in the ring: a keeper standing in the circle at the opening is an attendee, and the park remembers it (BACKLOG-600)
+_(none — Milestone 30 is the third tentpole, **Growing up** (BACKLOG-023); the smiths draft its arcs at the open of cycle 187.)_
 
 ---
 
@@ -57,6 +44,31 @@ back: the bond graph, the grounds' piles, the keeper's place in the circle.
    for the change. Hatchlings from the egg arc should be the first to do it.
 
 ## Shipped milestones
+
+### Milestone 29: The festival changes the park — SHIPPED cycle 186 (opened cycle 185)
+
+Two cycles, four arcs, no REWORK. The normal milestone after the festivals tentpole: the festival now *writes back*.
+Guests bring their grounds' goods to a fair at the water, strangers who stand side by side walk home friends, the
+leader walks out to the dinos sulking at the edge and asks them in, and the keeper standing in the ring is counted.
+
+**The lesson worth keeping:** the one-neighbour rule (180) and the fetch (133) met in an unplanned way — the fetch
+itself, not the ring, is what gave Twitch its first friend. Systems that write to the same graph compose; check what
+the second one does to the first one's population before asserting on it.
+
+**Milestone 29: The festival changes the park — dinos who stood together in the ring walk home friends, and the guests bring their grounds' goods to the water**
+**Status:** SHIPPED cycle 186 (opened cycle 185)
+
+The normal milestone after the festivals tentpole (CHARTER v9): weave the festival into what the park already has.
+Milestone 28 built a stage that only *reads* the bond, grudge and calendar state. This one lets the festival *write*
+back: the bond graph, the grounds' piles, the keeper's place in the circle.
+
+**Lore arcs:**
+- [x] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped — cycle 185)
+- [x] The leader fetches the sulkers: whoever opens the festival walks out to each dino keeping to the edge and asks it in; one that comes in stands in the ring, a prickly one refuses to its face (BACKLOG-133, reshaped — cycle 186)
+
+**Structure arcs:**
+- [x] The fair: each ground trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599 — cycle 185)
+- [x] The keeper in the ring: a keeper standing in the circle at the opening is an attendee, and the park remembers it (BACKLOG-600 — cycle 186)
 
 ### Milestone 28 (TENTPOLE): The park holds a festival — SHIPPED cycle 184 (opened cycle 183)
 

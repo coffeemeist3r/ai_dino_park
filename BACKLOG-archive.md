@@ -1,5 +1,11 @@
 # Backlog Archive — closed items
 
+## Cycle 186 — closed
+
+- [x] BACKLOG-133 [social] Walk-it-off, at the ring (reshaped cycle 186) — the festival leader walks out to each sulker at the edge, most-bonded first, and asks it in; a sulker that is not prickly comes into the circle (bond with the leader, eligible for a ring partner), a prickly one refuses to its face and stays out. Was: instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
+
+- [x] BACKLOG-600 [core] The keeper in the ring — the festival counts only dinos; the keeper standing at the pond is scenery. When the keeper is within the circle at the opening, the keeper is an attendee: the leader's opening line turns to the keeper, each attendee's player-friendship ticks for the shared day, and the tales that follow say "you were there". A keeper who missed it hears that too. Builds on 596 / 595 / 155.
+
 ## Cycle 184 — closed
 
 - [x] BACKLOG-026 [social] Festivals — once per in-game season, NPCs gather at a landmark (shipped as Milestone 28: 596/594/597/595, cycles 183–184)

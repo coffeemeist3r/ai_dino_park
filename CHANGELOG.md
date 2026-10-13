@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 186 — 2026-10-13 (nobody left at the edge; Milestone 29 ships)
+- BACKLOG-133: Walk-it-off, at the ring (reshaped) — half an in-game hour into a festival the leader, unless it is prickly itself, walks out to each sulker at the edge, most-bonded first, and asks it in, in its register (*"Come on, Twitch — it's spring. Stand with us."*). A sulker that is not prickly comes in: it joins the circle, gains a bond with the leader (🌱 over both if that makes them friends), and can take a ring partner at the close. A prickly one refuses to its face (*"😤 Not while Twitch's in there."*). Ticker, memories, and the tales tell it afterwards. On a fresh save: Mossback refuses; Twitch comes in and finds its first friend in Sunny.
+- BACKLOG-600: The keeper in the ring — the first time, while a festival is open, the keeper stands within its outer ring, the leader turns and welcomes it (*"The keeper came too! Come stand with us, AETHER-1!"*, by designation until it has earned the nickname), every attendee gains a friendship tick and files *"the keeper came"*, and each festival tale afterwards ends on whether the keeper was there (*"You were there too!"* / *"You missed it — come next season?"*). **Milestone 29 SHIPPED.**
+
+---
+
 ## Cycle 185 — 2026-10-12 (the festival writes back; Milestone 29 opens)
 - BACKLOG-599: The festival fair — when a festival opens, each ground's first guest trades its home pile against the bowl's (the 358 barter, each ground's own recipe): it brings what the bowl is short of and takes home what its ground is. One trade per ground, a ticker line each (*"🧺 Bramble brought 🪨 from The Grove and took 🪵 home"*), a memory for the guest, and a 🧺 basket at the pond while it lasts (`festival-fair`, art BACKLOG-601).
 - BACKLOG-180: Odd bedfellows, at the ring (reshaped from the unreachable den version) — at the close each circle member has spent the day beside one neighbour, strangers first; the pair gains a flat ring bond of 10, and a pair that crosses the friend floor walks away friends: 🌱 over each, a ticker line, a memory, and a sentence in the festival tale in its register (*"Stood next to Thornback the whole time. Thornback is alright."*). On a fresh save: Bramble–Ember, Murk–Pip, Rex–Thornback.

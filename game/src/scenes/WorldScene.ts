@@ -4469,7 +4469,7 @@ export class WorldScene extends Phaser.Scene {
     f.keeper = true;
     const lead = f.leader ? this.dinoByName(f.leader) : null;
     if (lead) {
-      const line = keeperWelcome(keeperById(this.keeperId).name, lead.traits);
+      const line = keeperWelcome(keeperAddress(keeperById(this.keeperId), heartsFromPoints(this.friendship[lead.name] ?? 0)), lead.traits);
       this.showBubble(lead, line);
       this.logEvent(`${festivalRite(f.season).glyph} ${lead.name}: ${line}`);
     } else this.logEvent(keeperJoinedTicker(f.season));

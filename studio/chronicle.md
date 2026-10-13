@@ -14675,3 +14675,37 @@ Board: build clean, **3329 unit** green, e2e **904/904** on two full runs. No sa
 ## Cycle 186 — coder: BACKLOG-133 + BACKLOG-600 shipped; build clean, unit 3343, e2e 908/908
 
 ## Cycle 186 — qa: 10/10 criteria pass; e2e 908/908 first full run
+
+## Cycle 186 — APPROVED / APPROVED: nobody left at the edge (Milestone 29 ships)
+
+Every festival so far has had the same two dinos standing outside it. Mossback and Twitch have had their feud since
+the day the park was founded, and when the whole park gathers at the pond each of them keeps to the outer ring,
+glaring across the water at the other, for two hours. Last night the ring started making friends, but only of the
+dinos standing in it, so the two at the edge stayed exactly as they were. Twitch, jittery and watchful and the
+least sociable dino in the park, has never had a friend.
+
+Tonight, half an hour into the festival, Sunny steps out of the middle of the ring and walks over to Mossback.
+*"Come on, Mossback — it's spring. Stand with us."* Mossback is slow to trust and not inclined to be told:
+*"😤 Not while Twitch's in there."* So Sunny walks round to Twitch and asks again. Twitch says *"Oh — alright!"*,
+walks into the circle, and a 🌱 pops over the two of them. Twitch's first friend is the dino that came out to fetch it.
+Mossback stays at the edge alone, which is very Mossback. Greet Sunny afterwards and the festival story ends *"Twitch
+came in from the edge, too."*
+
+That wasn't the plan. The design expected Twitch to find a friend in the ring, beside whoever it ended up standing
+next to. But by the time the strangers-first pairing got to Twitch, everyone near it had been claimed, so it paired
+with Sunny again. The friendship came from Sunny walking over, not from the ring. Two systems wrote to the same
+graph and produced a better story than either was designed for.
+
+The other half is you. Until tonight the keeper could stand at the pond through a whole festival and the park did
+not notice. Now the first time you step inside the ring, the leader turns: *"The keeper came too! Come stand with
+us, AETHER-1!"* Every dino there gets a friendship tick and remembers that you came. Afterwards each one ends its
+festival story by telling you whether you were there: *"You were there too!"*, or *"You missed it — come next
+season?"*, or from the prickly ones just *"You weren't there."* The keeper starts the game standing beside the pond,
+so if you leave a new park running you are counted without doing anything.
+
+That closes **Milestone 29** in two cycles with no rework. The festival now feeds back into the park: goods move
+between grounds, strangers become friends, the leader fetches the dinos at the edge, and the keeper is part of it.
+Next comes the third tentpole: **growing up**. The hatchlings molt.
+
+Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. No save change. CI green going in
+(cycle 185-art: `success`).
