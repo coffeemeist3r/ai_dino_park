@@ -121,7 +121,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Next-up this cycle is the already-queued **BACKLOG-130** (comforting nuzzle, in the cycle-32 block);
 > these items extend it once it lands.
 
-- [ ] BACKLOG-133 [social] Walk-it-off — instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
+- [~] BACKLOG-133 [social] Walk-it-off, at the ring (reshaped cycle 186) — the festival leader walks out to each sulker at the edge, most-bonded first, and asks it in; a sulker that is not prickly comes into the circle (bond with the leader, eligible for a ring partner), a prickly one refuses to its face and stays out. Was: instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.
 
 ## Cycle 34 lore additions — the bond graph wakes up (2026-06-07)
 

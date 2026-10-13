@@ -17,7 +17,7 @@ back: the bond graph, the grounds' piles, the keeper's place in the circle.
 
 **Lore arcs:**
 - [x] The ring makes friends: circle members who stood side by side gain a bond; a pair that crosses the friend floor walks home friends and says so (BACKLOG-180, reshaped — cycle 185)
-- [ ] (drafted next cycle, from the queue)
+- [ ] The leader fetches the sulkers: whoever opens the festival walks out to each dino keeping to the edge and asks it in; one that comes in stands in the ring, a prickly one refuses to its face (BACKLOG-133, reshaped — cycle 186)
 
 **Structure arcs:**
 - [x] The fair: each ground trades its home ground's goods with the bowl at the pond, and the heaps move (BACKLOG-599 — cycle 185)
