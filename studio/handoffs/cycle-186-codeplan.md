@@ -30,3 +30,13 @@ keeperInRing(this.playerTile())` → `keeperJoins()`. Close writes `keeper` into
 **Reuse.** `bumpPoints`, `keeperById(this.keeperId).name`, `playerTile`, `__setPlayer` (e2e).
 
 **Tests.** Unit S1/S2; e2e S3/S4.
+
+## Shipped (coder)
+
+Both tracks shipped as planned. Build clean; unit 3343 green (323 files); e2e 908/908 first full run.
+
+**Deviation (lore).** The first e2e run showed Twitch, once fetched in, ending up ring-paired with Sunny — every other
+neighbour had been claimed by a stranger pair first, so Sunny|Twitch went 10 → 20. Honest behaviour, not changed. And
+since the fetch itself lifts Sunny|Twitch from 0 to `RING_BOND` (10 ≥ `LONER_FLOOR` 8), the fetch is where Twitch, the
+park's one friendless founder, finds its first friend: `resolveCoax` now pops the 🌱 friend-found mark over both when
+the ask crosses the floor. The e2e asserts Twitch gains a ring bond with *someone*, not with a non-leader.

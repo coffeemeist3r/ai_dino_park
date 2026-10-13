@@ -394,7 +394,7 @@ import {
 } from '../input/touch';
 import { strengthen, bondPoints, closestFriend, meetGain, driftBonds, BOND_DRIFT, type Bonds } from '../social/bonds';
 import { worstRival, rivalLine, RIVAL_BAR, GRUDGE_PER_CONTEST, GRUDGE_DRIFT } from '../social/grudges';
-import { FAIR_ART_KEY, FAIR_GLYPH, FAIR_TILE, FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, fairLine, fairMemory, fairTrade, ringFriendMemory, ringFriends, ringFriendTicker, ringPairs, ringPartners, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
+import { COAX_AFTER_MIN, RING_BOND, coaxAnswer, coaxLine, coaxMemory, coaxOrder, coaxTicker, KEEPER_FESTIVAL_GAIN, keeperFestivalMemory, keeperInRing, keeperJoinedTicker, keeperWelcome, FAIR_ART_KEY, FAIR_GLYPH, FAIR_TILE, FESTIVAL_CHECK_MS, FESTIVAL_DURATION_MIN, FESTIVAL_TILE, RITE_TILE, SULK_RING, fairLine, fairMemory, fairTrade, ringFriendMemory, ringFriends, ringFriendTicker, ringPairs, ringPartners, festivalBanner, festivalOpener, festivalRite, type FestivalTale, festivalClosedLine, festivalDue, festivalLeader, festivalMemory, festivalRing, festivalSulkers, openingLine, seasonIndex, sulkLine, zonesWithGuestsHome, type Guest } from '../world/festival';
 import { squareOff, backOffTile, standoffDue, standoffLine, heldMemory, backedMemory, STANDOFF_ART_KEY, STANDOFF_GLYPH } from '../social/standoff';
 import { innerCircle, circleLine, joinedLine, newcomers, CIRCLE_ART_KEY, CIRCLE_GLYPH } from '../social/circle';
 import { bestFriend, friendLine, shiftLine, CLOSE_BOND } from '../social/closest';
@@ -1259,6 +1259,12 @@ export class WorldScene extends Phaser.Scene {
     guests: Record<string, Guest>;
     leader: string | null;
     sulkers: Record<string, string>;
+    /** BACKLOG-133: the sulkers the leader still has to walk out to; null until the fetch starts. */
+    coax: string[] | null;
+    fetched: string[];
+    refused: string[];
+    /** BACKLOG-600: the keeper stood in the ring while it was open. */
+    keeper: boolean;
   } | null = null;
   /** The last season index whose festival was held (BACKLOG-596). Persisted; -1 on a park that has held none. */
   private festivalSeason = -1;
@@ -4215,6 +4221,9 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__festivalFair = () => this.festivalFair.map((t) => ({ ...t }));
     (window as any).__festivalBasket = () => (this.fairBasket ? { tileX: Math.floor(this.fairBasket.x / TILE), tileY: Math.floor((this.fairBasket.y - 1) / TILE) } : null);
     (window as any).__festivalFriends = () => this.festivalFriends.map((p) => [...p]);
+    (window as any).__coaxFestival = () => { this.startCoax(); return this.festival ? { coax: this.festival.coax && [...this.festival.coax], fetched: [...this.festival.fetched], refused: [...this.festival.refused] } : null; };
+    (window as any).__festivalCoax = () => (this.festival ? { coax: this.festival.coax && [...this.festival.coax], fetched: [...this.festival.fetched], refused: [...this.festival.refused] } : null);
+    (window as any).__festivalKeeper = () => this.festival?.keeper ?? null;
     (window as any).__saveZones = () => this.currentSaveData().dinoZones;
   }
 
@@ -4247,7 +4256,7 @@ export class WorldScene extends Phaser.Scene {
     }
     const sulkers = festivalSulkers(attendees, this.grudges);
     const leader = festivalLeader(attendees, this.bonds, sulkers);
-    this.festival = { season, index, startAbsMin: this.absMinNow(), phase: 'open', attendees, guests, leader, sulkers };
+    this.festival = { season, index, startAbsMin: this.absMinNow(), phase: 'open', attendees, guests, leader, sulkers, coax: null, fetched: [], refused: [], keeper: false };
     this.festivalSeason = Math.max(this.festivalSeason, index);
     for (const name of attendees) this.memory = remember(this.memory, name, festivalMemory(name, season, leader, sulkers));
     this.applyZoneVisibility();
@@ -4285,7 +4294,17 @@ export class WorldScene extends Phaser.Scene {
     this.fairBasket = null;
     const friendOf = this.ringMakesFriends(f.season, f.attendees, f.sulkers);
     for (const name of f.attendees) {
-      if (this.dinoByName(name)) this.festivalTales[name] = { season: f.season, leader: f.leader, foe: f.sulkers[name], friend: friendOf[name] };
+      if (!this.dinoByName(name)) continue;
+      this.festivalTales[name] = {
+        season: f.season,
+        leader: f.leader,
+        foe: f.sulkers[name],
+        friend: friendOf[name],
+        fetchedBy: f.fetched.includes(name) ? f.leader ?? undefined : undefined,
+        refused: f.refused.includes(name) || undefined,
+        broughtIn: name === f.leader && f.fetched.length ? [...f.fetched] : undefined,
+        keeper: f.keeper,
+      };
     }
     this.logEvent(festivalClosedLine(f.season));
     if (!Object.keys(f.guests).length) this.festival = null;
@@ -4361,11 +4380,25 @@ export class WorldScene extends Phaser.Scene {
     if (f.phase === 'open' && this.absMinNow() - f.startAbsMin >= FESTIVAL_DURATION_MIN) this.closeFestival();
     if (!this.festival) return false;
     if (f.phase === 'open') {
+      if (f.coax === null && this.absMinNow() - f.startAbsMin >= COAX_AFTER_MIN) this.startCoax();
+      if (!f.keeper && this.zoneId === BOWL_ID && keeperInRing(this.playerTile())) this.keeperJoinsFestival();
       for (const name of f.attendees) {
         const d = this.dinoByName(name);
         if (!d) continue;
-        const ring = festivalRing(name, f.leader, f.sulkers);
         const cur = this.tileOf(d);
+        // BACKLOG-133: the leader walks out to the next sulker on its list, and asks once it is beside it
+        const target = name === f.leader && f.coax?.length ? this.dinoByName(f.coax[0]) : null;
+        if (target) {
+          const at = this.tileOf(target);
+          if (Math.max(Math.abs(cur.tileX - at.tileX), Math.abs(cur.tileY - at.tileY)) <= 1) this.resolveCoax(d, target);
+          else {
+            const next = stepToward(cur, at, COLS, ROWS);
+            d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+          }
+          this.activityById[name] = 'socializing';
+          continue;
+        }
+        const ring = festivalRing(name, f.leader, f.sulkers);
         // a sulker stands at the edge: inside the outer ring but never pressed into the circle
         const tooClose = ring === SULK_RING && atGather(cur, FESTIVAL_TILE, ring - 1);
         const next = tooClose ? this.stepAway(cur, FESTIVAL_TILE) : atGather(cur, FESTIVAL_TILE, ring) ? cur : stepToward(cur, FESTIVAL_TILE, COLS, ROWS);
@@ -4394,6 +4427,57 @@ export class WorldScene extends Phaser.Scene {
     }
     this.applyZoneVisibility();
     return false;
+  }
+
+  /** BACKLOG-133: the leader's list of sulkers to walk out to (once per festival). */
+  private startCoax(): void {
+    const f = this.festival;
+    if (!f || f.phase !== 'open' || f.coax !== null) return;
+    f.coax = coaxOrder(f.leader, f.sulkers, this.bonds, f.leader ? this.dinoByName(f.leader)?.traits : undefined);
+  }
+
+  /** BACKLOG-133: the leader asks the sulker beside it in; a sulker that comes leaves the edge for the circle. */
+  private resolveCoax(lead: Dino, sulker: Dino): void {
+    const f = this.festival!;
+    f.coax!.shift();
+    const foe = f.sulkers[sulker.name];
+    if (!foe) return;
+    const ask = coaxLine(sulker.name, f.season, lead.traits);
+    const { comes, line } = coaxAnswer(foe, sulker.traits);
+    this.showBubble(lead, ask);
+    this.time.delayedCall(1200, () => this.dinoByName(sulker.name) && this.showBubble(sulker, line));
+    this.logEvent(`${lead.name}: ${ask}`);
+    this.logEvent(coaxTicker(lead.name, sulker.name, comes));
+    this.memory = remember(this.memory, lead.name, coaxMemory(f.season, sulker.name, comes, true));
+    this.memory = remember(this.memory, sulker.name, coaxMemory(f.season, lead.name, comes, false));
+    if (comes) {
+      delete f.sulkers[sulker.name];
+      f.fetched.push(sulker.name);
+      const before = bondPoints(this.bonds, lead.name, sulker.name);
+      this.bonds = strengthen(this.bonds, lead.name, sulker.name, RING_BOND);
+      // a sulker with no friend in the park can find its first one in whoever walked out to fetch it
+      if (before < LONER_FLOOR && bondPoints(this.bonds, lead.name, sulker.name) >= LONER_FLOOR) {
+        this.popFriendFoundMark(lead);
+        this.popFriendFoundMark(sulker);
+      }
+    } else f.refused.push(sulker.name);
+  }
+
+  /** BACKLOG-600: the keeper stepped into the ring — the leader turns to it and the whole circle counts the day. */
+  private keeperJoinsFestival(): void {
+    const f = this.festival!;
+    f.keeper = true;
+    const lead = f.leader ? this.dinoByName(f.leader) : null;
+    if (lead) {
+      const line = keeperWelcome(keeperById(this.keeperId).name, lead.traits);
+      this.showBubble(lead, line);
+      this.logEvent(`${festivalRite(f.season).glyph} ${lead.name}: ${line}`);
+    } else this.logEvent(keeperJoinedTicker(f.season));
+    for (const name of f.attendees) {
+      if (!this.dinoByName(name)) continue;
+      this.friendship = bumpPoints(this.friendship, name, KEEPER_FESTIVAL_GAIN);
+      this.memory = remember(this.memory, name, keeperFestivalMemory(f.season));
+    }
   }
 
   /** One tile directly away from `from`, clamped to the grid. */

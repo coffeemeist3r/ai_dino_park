@@ -15,6 +15,7 @@ import { LONER_FLOOR } from './loner';
 import type { Tile } from './movement';
 import { barterSwap, RESOURCE_GLYPH, structureRecipe, type BarterSwap, type ResourceKind, type Stockpile } from './resource';
 import { BOWL_ID } from './zones';
+import { BASE_GAIN } from '../social/friendship';
 
 export const FESTIVAL_HOUR = 10;
 export const FESTIVAL_HOURS = 2;
@@ -141,12 +142,24 @@ export interface FestivalTale {
   foe?: string;
   /** BACKLOG-180: who it stood beside in the ring and walked away friends with. */
   friend?: string;
+  /** BACKLOG-133: the leader who fetched it in from the edge. */
+  fetchedBy?: string;
+  /** BACKLOG-133: a sulker that refused the leader's ask. */
+  refused?: boolean;
+  /** BACKLOG-133: the leader's tale — who came in from the edge when it asked. */
+  broughtIn?: string[];
+  /** BACKLOG-600: whether the keeper stood in the ring; undefined on a tale that predates the question. */
+  keeper?: boolean;
 }
 
 /** The opener a dino leads its next greet with after a festival, in its register (the 139 split). */
 export function festivalOpener(name: string, tale: FestivalTale, traits?: Personality): string {
-  const head = festivalHead(name, tale, traits);
-  return tale.friend ? `${head} ${ringFriendLine(tale.friend, traits)}` : head;
+  const parts = [festivalHead(name, tale, traits)];
+  if (tale.broughtIn?.length) parts.push(`${tale.broughtIn.join(' and ')} came in from the edge, too.`);
+  if (tale.refused && tale.leader) parts.push(`${tale.leader} came to fetch me. No.`);
+  if (tale.friend) parts.push(ringFriendLine(tale.friend, traits));
+  if (tale.keeper !== undefined) parts.push(keeperTaleLine(tale.keeper, traits));
+  return parts.join(' ');
 }
 
 function festivalHead(name: string, tale: FestivalTale, traits?: Personality): string {
@@ -159,6 +172,7 @@ function festivalHead(name: string, tale: FestivalTale, traits?: Personality): s
       : `I opened the ${season} festival. Everyone came to the ${rite}.`;
   }
   if (foe) return `The ${season} festival. ${foe} was there, so I kept to the edge.`;
+  if (tale.fetchedBy) return `The ${season} festival. I was keeping to the edge, but ${tale.fetchedBy} came and fetched me in.`;
   if (prickly) return leader ? `The ${season} festival. ${leader} opened it. It was fine, I suppose.` : `The ${season} festival. It was fine, I suppose.`;
   if (traits && traits.sociability < 0.35) return `The ${season} festival's over. Good. That was a lot of dinos.`;
   return leader ? `The ${season} festival was lovely — ${leader} opened the ${rite}.` : `The ${season} festival was lovely.`;
@@ -260,4 +274,64 @@ export function fairLine(name: string, ground: string, gave: ResourceKind | null
 export function fairMemory(season: Season, gave: ResourceKind | null, took: ResourceKind | null): string {
   const parts = [gave && `brought ${RESOURCE_GLYPH[gave]}`, took && `took ${RESOURCE_GLYPH[took]}`].filter(Boolean);
   return `the ${season} festival fair — ${parts.join(', ')}`;
+}
+
+/** BACKLOG-133: how long (in-game minutes) after the opening the leader walks out to the edge. */
+export const COAX_AFTER_MIN = 30;
+
+const prickly = (t?: Personality) => !!t && t.agreeableness < 0.35;
+const shy = (t?: Personality) => !!t && t.sociability < 0.35;
+
+/** The sulkers a leader walks out to, most-bonded first then by name; a prickly leader fetches nobody. */
+export function coaxOrder(leader: string | null, sulkers: Record<string, string>, bonds: Bonds, traits?: Personality): string[] {
+  if (!leader || prickly(traits)) return [];
+  return Object.keys(sulkers).sort((a, b) => bondPoints(bonds, leader, b) - bondPoints(bonds, leader, a) || a.localeCompare(b));
+}
+
+export function coaxLine(target: string, season: Season, traits?: Personality): string {
+  if (shy(traits)) return `...${target}? There's room by me.`;
+  return `Come on, ${target} — it's ${season}. Stand with us.`;
+}
+
+/** A sulker's answer to the leader: it comes in unless it is prickly, in which case it says why not to its face. */
+export function coaxAnswer(foe: string, traits?: Personality): { comes: boolean; line: string } {
+  if (prickly(traits)) return { comes: false, line: `😤 Not while ${foe}'s in there.` };
+  return { comes: true, line: shy(traits) ? '...alright. Just for a bit.' : 'Oh — alright!' };
+}
+
+export function coaxTicker(leader: string, sulker: string, comes: boolean): string {
+  return comes ? `🤝 ${leader} fetched ${sulker} in from the edge` : `😤 ${sulker} wouldn't come in from the edge`;
+}
+
+export function coaxMemory(season: Season, other: string, comes: boolean, asLeader: boolean): string {
+  if (asLeader) return comes ? `the ${season} festival — brought ${other} in from the edge` : `the ${season} festival — ${other} wouldn't come in`;
+  return comes ? `the ${season} festival — ${other} fetched me in from the edge` : `the ${season} festival — ${other} came for me; I stayed out`;
+}
+
+/** BACKLOG-600: the keeper counts as an attendee once it stands within the festival's outer ring. */
+export function keeperInRing(tile: Tile): boolean {
+  return Math.max(Math.abs(tile.tileX - FESTIVAL_TILE.tileX), Math.abs(tile.tileY - FESTIVAL_TILE.tileY)) <= SULK_RING;
+}
+
+/** The keeper-friendship every attendee gains for the shared day. */
+export const KEEPER_FESTIVAL_GAIN = BASE_GAIN;
+
+export function keeperWelcome(keeper: string, traits?: Personality): string {
+  if (prickly(traits)) return 'Oh. The keeper. Fine — stand there, then.';
+  if (shy(traits)) return '...You came. Good.';
+  return `The keeper came too! Come stand with us, ${keeper}!`;
+}
+
+export function keeperJoinedTicker(season: Season): string {
+  return `${festivalRite(season).glyph} the keeper joined the ${season} festival`;
+}
+
+export function keeperFestivalMemory(season: Season): string {
+  return `the ${season} festival — the keeper came`;
+}
+
+/** The last sentence of a festival tale: whether the keeper was there, in the dino's register. */
+export function keeperTaleLine(present: boolean, traits?: Personality): string {
+  if (present) return prickly(traits) ? 'You were there. I saw.' : 'You were there too!';
+  return prickly(traits) || shy(traits) ? "You weren't there." : 'You missed it — come next season?';
 }
