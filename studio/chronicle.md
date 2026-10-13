@@ -14669,3 +14669,5 @@ Board: build clean, **3329 unit** green, e2e **904/904** on two full runs. No sa
 ## Cycle 186 — structure-smith: BACKLOG-600 the keeper in the ring (Milestone 29 last spine arc)
 
 ## Cycle 186 — designer: 133 (the leader fetches the sulkers) + 600 (the keeper in the ring)
+
+## Cycle 186 — code-planner: festival.ts fetch + keeper helpers; stepFestival glue; one unit + one e2e spec
