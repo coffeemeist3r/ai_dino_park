@@ -2584,6 +2584,76 @@ const FESTIVAL_SUMMER_RIG: PropRig = {
   },
 };
 
+// `festival-fall` / `festival-winter` (BACKLOG-598, cycle 186-art): the last two rite marks. **Fall is a harvest
+// heap**: a ribbed pumpkin, lit upper left, sitting on a drift of red and gold leaves. First draft was a wheat sheaf;
+// three ears in sixteen cells read as a broom. The pumpkin is the one autumn silhouette nothing else in the park owns.
+// **Winter is a lantern**: a red paper lantern on a dark cap and hook, lit from inside — the glow sits off-centre,
+// upper left, and the red shades down to the lower right, so it reads as light *in* a thing rather than a gold disc.
+const FESTIVAL_FALL_GRID: ReadonlyArray<string> = [
+  '................',
+  '.......oo.......',
+  '......osso......',
+  '....oooooooo....',
+  '..oohhprpphproo.',
+  '.ohhpprpppprrro.',
+  '.ohppprppppprro.',
+  '.ohppprppppprro.',
+  '.oppprppppprrro.',
+  '..oprrppppprro..',
+  '.olo.oooooo.olo.',
+  'olylooyllyoolylo',
+  'oyllylyyllylllyo',
+  'olllyllllyllllyo',
+  '.oooooooooooooo.',
+  '................',
+];
+
+const FESTIVAL_FALL_RIG: PropRig = {
+  size: 16,
+  grid: FESTIVAL_FALL_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    h: 0xf8b060, // the pumpkin, lit
+    p: 0xe87820, // the pumpkin
+    r: 0xb04818, // its ribs and shade
+    s: 0x6a4424, // the stem
+    l: 0xc04030, // red leaves
+    y: 0xe8b030, // gold leaves
+  },
+};
+
+const FESTIVAL_WINTER_GRID: ReadonlyArray<string> = [
+  '.......oo.......',
+  '......okko......',
+  '.....okkkko.....',
+  '....orryyrro....',
+  '...orryhhyrro...',
+  '..orryhhhhyrro..',
+  '..orryhhhhyrro..',
+  '..orrryhhyrrdo..',
+  '..orrrryyrrddo..',
+  '...orrrrrrddo...',
+  '....orrrrddo....',
+  '.....okkkko.....',
+  '......okko......',
+  '.......oo.......',
+  '......oyyo......',
+  '.......oo.......',
+];
+
+const FESTIVAL_WINTER_RIG: PropRig = {
+  size: 16,
+  grid: FESTIVAL_WINTER_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    k: 0x3a2a1a, // the cap and hook
+    r: 0xd83a30, // red paper
+    d: 0x8a2028, // its shade, lower right
+    y: 0xf8d048, // the glow, and the tassel
+    h: 0xfff0b0, // the flame's heart
+  },
+};
+
 // `festival-fair` (BACKLOG-601, cycle 185-art): the fair basket beside the rite mark while a festival is open
 // (host: `holdFair`, BACKLOG-599). A wicker basket under an arched handle, the four goods the grounds trade heaped
 // in it — two stones, a frond, the Ridge's black glass and a branch — so the basket says *trade*, not *picnic*.
@@ -2890,6 +2960,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   // BACKLOG-598 (cycle 184-art): drawn the night their host shipped — `openFestival`'s rite mark (597).
   'festival-spring': FESTIVAL_SPRING_RIG,
   'festival-summer': FESTIVAL_SUMMER_RIG,
+  'festival-fall': FESTIVAL_FALL_RIG,
+  'festival-winter': FESTIVAL_WINTER_RIG,
   // BACKLOG-601 (cycle 185-art): drawn the night its host shipped — `holdFair`'s basket (599).
   'festival-fair': FESTIVAL_FAIR_RIG,
 };

@@ -3,9 +3,9 @@ import { PROP_RIGS, propCharsUsed } from './propArt';
 import { festivalRite } from '../world/festival';
 import { worldPlacedProps } from '../world/reachability';
 
-/** BACKLOG-598 — the spring and summer rite marks at the pond (host 597). */
+/** BACKLOG-598 — the four rite marks at the pond (host 597): spring + summer cycle 184-art, fall + winter 186-art. */
 describe('cycle 184-art — festival marks', () => {
-  for (const season of ['spring', 'summer'] as const) {
+  for (const season of ['spring', 'summer', 'fall', 'winter'] as const) {
     const key = festivalRite(season).artKey;
     const rig = PROP_RIGS[key];
     it(`${key} is a square 16px grid whose palette is exactly what it inks, on the family rim, and placed`, () => {
@@ -24,12 +24,16 @@ describe('cycle 184-art — festival marks', () => {
     const hearts = g.flatMap((row, y) => [...row].map((c, x) => (c === 'y' ? [x, y] : null)).filter(Boolean));
     expect(hearts).toHaveLength(4);
   });
+  it('the harvest heap is a pumpkin on a drift of leaves, and the lantern glows from inside', () => {
+    const fall = PROP_RIGS['festival-fall'].grid;
+    expect(fall.slice(11, 14).join('')).toMatch(/l/);
+    expect(fall.slice(11, 14).join('')).toMatch(/y/);
+    const lamp = PROP_RIGS['festival-winter'].grid;
+    expect(lamp[5].indexOf('h')).toBeGreaterThan(lamp[5].indexOf('r'));
+    expect(lamp[5].lastIndexOf('r')).toBeGreaterThan(lamp[5].lastIndexOf('h'));
+  });
   it('the sun stands on a post that reaches the ground', () => {
     const g = PROP_RIGS['festival-summer'].grid;
     for (let y = 8; y <= 14; y++) expect(g[y]).toContain('bk');
-  });
-  it('fall and winter are still undrawn and keep their glyphs', () => {
-    expect(PROP_RIGS['festival-fall']).toBeUndefined();
-    expect(PROP_RIGS['festival-winter']).toBeUndefined();
   });
 });

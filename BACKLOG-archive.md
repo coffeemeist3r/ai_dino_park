@@ -1,5 +1,9 @@
 # Backlog Archive — closed items
 
+## Cycle 186-art — closed
+
+- [x] BACKLOG-598 [art] The four festival marks (spring + summer drawn cycle 184-art; fall + winter cycle 186-art) — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.
+
 ## Cycle 186 — closed
 
 - [x] BACKLOG-133 [social] Walk-it-off, at the ring (reshaped cycle 186) — the festival leader walks out to each sulker at the edge, most-bonded first, and asks it in; a sulker that is not prickly comes into the circle (bond with the leader, eligible for a ring partner), a prickly one refuses to its face and stays out. Was: instead of leaving after a 🫂, the comforter nudges the sulker back toward the cluster/den so it isn't left alone at the edge; comfort becomes a tiny procession. Builds on 130 / 041.

@@ -651,10 +651,3 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 177 (Structure-smith)
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
-
-## Cycle 184 lore additions — the festival's marks (2026-10-11)
-
-- [ ] BACKLOG-598 [art] The four festival marks (spring wreath + summer sun pole drawn cycle 184-art; fall heap + winter lantern left) — pixel props for the rite stands BACKLOG-597 places at the bowl pond for a festival's length: `festival-spring` (a blossom ring), `festival-summer` (a sun pole), `festival-fall` (a harvest heap), `festival-winter` (a lantern). Each renders the season glyph until drawn. Host: 597.
-
-## Cycle 185 (Structure-smith) — the festival writes back (2026-10-12)
-

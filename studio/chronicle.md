@@ -14709,3 +14709,5 @@ Next comes the third tentpole: **growing up**. The hatchlings molt.
 
 Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. No save change. CI green going in
 (cycle 185-art: `success`).
+
+## Cycle 186-art — artist: BACKLOG-598 closes — the fall and winter festival marks. All four seasons now stand something drawn at the pond. **Fall is a harvest heap**: a ribbed orange pumpkin, lit upper left, on a drift of red and gold leaves. The first idea was a wheat sheaf, but three ears in sixteen cells read as a broom, and the first pumpkin had a flat top that read as a lidded box until its shoulders were rounded. **Winter is a lantern**: red paper on a dark cap and hook, with the glow off-centre to the upper left and the red shading down to the lower right, so it reads as light inside a thing rather than a gold coin. The art queue is now empty. Tonight's two features (the fetch and the keeper in the ring) use bubbles and ticker lines, so nothing new needs drawing. Drawn inline, not by sub-agent. Unit 3353 green; art + festival e2e green. CI on `main`: last run `success`.
