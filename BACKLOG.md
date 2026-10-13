@@ -21,7 +21,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
-- [ ] BACKLOG-600 [core] The keeper in the ring (full text in the cycle-185 block below).
+- [~] BACKLOG-600 [core] The keeper in the ring (full text in the cycle-185 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 
 ---
@@ -660,4 +660,4 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 185 (Structure-smith) — the festival writes back (2026-10-12)
 
-- [ ] BACKLOG-600 [core] The keeper in the ring — the festival counts only dinos; the keeper standing at the pond is scenery. When the keeper is within the circle at the opening, the keeper is an attendee: the leader's opening line turns to the keeper, each attendee's player-friendship ticks for the shared day, and the tales that follow say "you were there". A keeper who missed it hears that too. Builds on 596 / 595 / 155.
+- [~] BACKLOG-600 [core] The keeper in the ring — the festival counts only dinos; the keeper standing at the pond is scenery. When the keeper is within the circle at the opening, the keeper is an attendee: the leader's opening line turns to the keeper, each attendee's player-friendship ticks for the shared day, and the tales that follow say "you were there". A keeper who missed it hears that too. Builds on 596 / 595 / 155.
