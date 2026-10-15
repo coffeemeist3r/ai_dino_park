@@ -30,7 +30,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Pokemon flavor
 
 - [ ] BACKLOG-022 [pokemon] Befriend ritual — feed favorite item N times → "caught" → entered in book formally
-- [ ] BACKLOG-023 [pokemon] Evolution / molt — NPC grows up after X in-game days, sprite swap, personality may shift. *(Reshaped cycle 187 as Milestone 30's first lore arc: a youngster molts when its youth runs out — a shed-skin puff, full size, a voice that drops, and a temperament nudge read off its bond/grudge record (a grudge hardens it, a friend softens it, neither leaves it as it was); it says so in its own register, and the book records the molt. Founding Pip molts inside a sitting. Builds on 602.)*
+- [~] BACKLOG-023 [pokemon] Evolution / molt — NPC grows up after X in-game days, sprite swap, personality may shift. *(Reshaped cycle 187 as Milestone 30's first lore arc: a youngster molts when its youth runs out — a shed-skin puff, full size, a voice that drops, and a temperament nudge read off its bond/grudge record (a grudge hardens it, a friend softens it, neither leaves it as it was); it says so in its own register, and the book records the molt. Founding Pip molts inside a sitting. Builds on 602.)*
 - [ ] BACKLOG-025 [pokemon] Gym landmarks — three named locations run by veteran NPCs; visit grants flavor lore
 
 ## Stardew flavor

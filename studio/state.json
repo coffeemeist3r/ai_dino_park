@@ -1,6 +1,6 @@
 {
   "cycle": 187,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-023: the first molt",
   "structureItem": "BACKLOG-602: life stages",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-15T01:45:56.561Z",
     "structure-smith": "2026-10-15T01:46:13.265Z",
-    "designer": "2026-10-13T08:12:13.934Z",
+    "designer": "2026-10-15T01:48:42.520Z",
     "code-planner": "2026-10-13T08:12:26.572Z",
     "coder": "2026-10-13T08:26:37.870Z",
     "qa": "2026-10-13T08:26:53.243Z",

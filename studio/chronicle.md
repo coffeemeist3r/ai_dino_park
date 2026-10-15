@@ -14715,3 +14715,5 @@ Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. 
 ## Cycle 187 — lore-smith: Milestone 30 opens, the third tentpole — Growing up. Nobody in this park has ever been small; tonight Pip is. Reshaped 023 (the first molt), seeded 605 (the park sees it grow up) and art 603 (the shed skin).
 
 ## Cycle 187 — structure-smith: seeded 602 (life stages) + 604 (egg-born dinos grow up) as Milestone 30 spine arcs; chose 602 — an age on every dino, and a founding youngster so the tentpole is reachable tonight.
+
+## Cycle 187 — designer: 023 (the molt) + 602 (life stages), cut at growth.ts / molt.ts. Pip is young at boot and grows up at 14:00 on day one.
