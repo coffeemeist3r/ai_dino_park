@@ -1,6 +1,6 @@
 {
   "cycle": 188,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-605: The park sees it grow up",
   "structureItem": "BACKLOG-604: Egg-born dinos grow up",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-15T08:14:26.179Z",
     "code-planner": "2026-10-15T08:14:26.423Z",
     "coder": "2026-10-15T08:18:10.131Z",
-    "qa": "2026-10-15T02:06:35.655Z",
+    "qa": "2026-10-15T08:56:18.053Z",
     "validator": "2026-10-15T02:07:41.889Z",
     "artist": "2026-10-15T02:11:44.788Z"
   },

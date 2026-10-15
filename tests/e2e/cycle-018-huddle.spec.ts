@@ -5,9 +5,10 @@ import { boot } from './helpers';
 test('bonded dinos huddle at the den at night', async ({ page }) => {
   await boot(page);
 
-  // Force a strong bond between Rex and Mossback.
+  // Force a strong bond between Sunny and Mossback. Not Rex: Rex is an owl (BACKLOG-109) and is up at 22:00, so it
+  // only ever "huddled" here when its random walk happened to end on the den (found cycle 188).
   await page.evaluate(() =>
-    ((window as Record<string, unknown>).__bondPair as (a: string, b: string) => number)('Rex', 'Mossback'),
+    ((window as Record<string, unknown>).__bondPair as (a: string, b: string) => number)('Sunny', 'Mossback'),
   );
 
   // Advance into night (08:00 + 840 min = 22:00).
@@ -21,7 +22,7 @@ test('bonded dinos huddle at the den at night', async ({ page }) => {
     return who();
   });
 
-  expect(huddlers).toContain('Rex');
+  expect(huddlers).toContain('Sunny');
   expect(huddlers).toContain('Mossback');
 });
 
