@@ -68,7 +68,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ')` (`WorldScene.ts:1318`); there is no per-line sprite, so an engraved register has nothing to be blitted onto and a `streak` key would redden the reachability register the same way a `sulk` key would. What this needs first is a plaque that draws its keeper lines as their own object rather than as two rows of the same string. Until then it stays queued under the cycle-145 amendment — which is what that amendment is for, and this entry was seeded before the amendment's condition was checked against the code. Builds on 122 / 058 / 504.
 
-
+- [ ] BACKLOG-606 [art] The shell cap — a youngster wears a scrap of its own eggshell on its head until it molts: a jagged cream half-shell, two or three cells tall, tipped slightly over one eye, outlined dark, readable at Pip's half size. Host: the cycle-188 scene places prop key `shellcap` over every young dino (emoji-less — no mark until drawn), and drops it at the molt. Builds on 602 / 603.
 
 
 
