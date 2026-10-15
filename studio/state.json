@@ -1,8 +1,8 @@
 {
   "cycle": 188,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-605: The park sees it grow up",
-  "structureItem": "BACKLOG-604: Egg-born dinos grow up",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-10-15T08:14:26.423Z",
     "coder": "2026-10-15T08:18:10.131Z",
     "qa": "2026-10-15T08:56:18.053Z",
-    "validator": "2026-10-15T02:07:41.889Z",
+    "validator": "2026-10-15T08:57:17.438Z",
     "artist": "2026-10-15T02:11:44.788Z"
   },
   "lastSoloCycle": 151,

@@ -8,23 +8,7 @@
 
 ## Current milestone
 
-**Milestone 30 (TENTPOLE): Growing up — a small dino in the park sheds its skin, comes out grown, and is not quite the same dino it was**
-**Status:** ACTIVE (opened cycle 187)
-
-The third tentpole (CHARTER v9). The park has had eggs and hatchlings since cycle 42, and not one of them has ever
-been small: a hatchling spawns at full size and is an adult from its first frame. Growing up makes youth a stage a
-dino passes through, and the molt the moment it leaves it — a new size, a voice that drops, a temperament shifted by
-what its youth held, and a line in the book for the change. Reachability (v7): an egg needs a clear night and three
-in-game days, so the founding park ships a youngster — Pip, the grove's "small, loud" one — and its first molt lands
-inside a sitting.
-
-**Lore arcs:**
-- [x] The first molt: a hatchling sheds its skin and comes out full size, and its temperament shifts by what its youth held — a grudge hardens it, a friend softens it; it says so, and the book records the change (BACKLOG-023 — cycle 187)
-- [ ] The park sees it grow up: friends and kin remark on the grown dino, and it greets the keeper as an adult rather than a youngster (BACKLOG-605)
-
-**Structure arcs:**
-- [x] Life stages: every dino has an age and a stage that persists in the save; a youngster is visibly small and pipes high, and the founding park ships one (BACKLOG-602 — cycle 187)
-- [ ] Egg-born dinos grow up: a dino that hatches from an egg starts young and molts on the same clock, and its parents are there when it does (BACKLOG-604)
+_No milestone is ACTIVE. Milestone 30 shipped cycle 188; the next is a **normal** milestone (CHARTER v9: the one after a tentpole), drafted by the smiths at the next cycle open. The tentpole queue is now empty — see the note under it._
 
 ---
 
@@ -56,10 +40,37 @@ inside a sitting.
 2. ~~**Festivals**~~ — SHIPPED as Milestone 28, cycle 184. (BACKLOG-026) — once a season the whole park gathers at a landmark for a festival with its own
    ritual, dialogue and memories, and who comes, who leads and who sulks at the edge reads off the bond and grudge
    graphs. At the default clock a season must arrive within a sitting, or the first festival must be reachable early.
-3. **Growing up** (BACKLOG-023) — dinos molt into an adult form: a new sprite, a shifted temperament, a book entry
+3. ~~**Growing up**~~ — SHIPPED as Milestone 30, cycle 188. (BACKLOG-023) — dinos molt into an adult form: a new sprite, a shifted temperament, a book entry
    for the change. Hatchlings from the egg arc should be the first to do it.
 
+> **Queue empty after cycle 188.** All three operator-chosen tentpoles have shipped. Milestone 31 is a normal milestone;
+> Milestone 32 would be the next tentpole, and the operator owns this list — it needs refilling before then.
+
 ## Shipped milestones
+
+### Milestone 30 (TENTPOLE): Growing up — SHIPPED cycle 188 (opened cycle 187)
+
+Two cycles, four arcs, no REWORK. Pip boots young and grows up at 14:00 on day one, shaped by its youth; Bramble walks over and says so; every egg-born dino now starts young, and its parents come to its molt.
+
+**The lesson worth keeping:** a new walker on the shared random stream moves every other dino's dice. The cycle-018 huddle spec had passed for ~140 cycles on an owl (Rex) whose random walk happened to end on the den; one extra priority branch took it somewhere else. A spec that asserts on a rolled outcome is asserting on the stream, not the rule.
+
+**Milestone 30 (TENTPOLE): Growing up — a small dino in the park sheds its skin, comes out grown, and is not quite the same dino it was**
+**Status:** SHIPPED cycle 188 (opened cycle 187)
+
+The third tentpole (CHARTER v9). The park has had eggs and hatchlings since cycle 42, and not one of them has ever
+been small: a hatchling spawns at full size and is an adult from its first frame. Growing up makes youth a stage a
+dino passes through, and the molt the moment it leaves it — a new size, a voice that drops, a temperament shifted by
+what its youth held, and a line in the book for the change. Reachability (v7): an egg needs a clear night and three
+in-game days, so the founding park ships a youngster — Pip, the grove's "small, loud" one — and its first molt lands
+inside a sitting.
+
+**Lore arcs:**
+- [x] The first molt: a hatchling sheds its skin and comes out full size, and its temperament shifts by what its youth held — a grudge hardens it, a friend softens it; it says so, and the book records the change (BACKLOG-023 — cycle 187)
+- [x] The park sees it grow up: friends and kin remark on the grown dino, and it greets the keeper as an adult rather than a youngster (BACKLOG-605 — cycle 188)
+
+**Structure arcs:**
+- [x] Life stages: every dino has an age and a stage that persists in the save; a youngster is visibly small and pipes high, and the founding park ships one (BACKLOG-602 — cycle 187)
+- [x] Egg-born dinos grow up: a dino that hatches from an egg starts young and molts on the same clock, and its parents are there when it does (BACKLOG-604 — cycle 188)
 
 ### Milestone 29: The festival changes the park — SHIPPED cycle 186 (opened cycle 185)
 

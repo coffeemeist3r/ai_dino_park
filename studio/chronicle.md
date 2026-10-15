@@ -14764,3 +14764,38 @@ field only. CI green going in (cycle 186-art: `success`).
 ## Cycle 188 — coder: witnesses walk to a molt and speak on arrival; hatchlings start young; the grown greeting said once. Build clean, unit 3376 green.
 
 ## Cycle 188 — qa: 10/10 criteria pass; e2e 915/915 on run 3 after the huddle spec's owl premise was found and fixed (Rex never rested at 22:00; it passed by luck). Unit 3376.
+
+## Cycle 188 — validator: lore APPROVED / structure APPROVED — somebody noticed. **Milestone 30 SHIPPED: the park has grown up.**
+
+**The third tentpole is done.** Two nights ago nobody in this park had ever been small. Last night Pip was, and then
+wasn't — but the only one who remarked on it was Pip. Tonight the park answers.
+
+Boot a fresh save and walk east into the Grove. Say hello to the little orange compsognathus before two in the
+afternoon and it bounces on its toes: *"I'm nearly big, you know."* At 14:00 it sheds its skin, pops to full size,
+says *"🐚 All grown! I'm keeping Bramble close."* — and now Bramble, who spent Pip's whole youth beside it, stops what
+it was doing and walks across the grass. When it gets there: *"Look at you, Pip!"* It remembers that it saw Pip grow
+up. Walk up to Pip afterwards and it has one thing to say first — *"🐚 Notice anything? I'm grown."* — and after that,
+never again. It just greets you as itself.
+
+Who comes depends on who the dino is to them. A parent walks over first and is proud out loud (*"That's my Pip. All
+grown."*), then the closest friend, then — if it has one on the same ground — the rival, who crosses the field
+specifically to say *"Still small to me."* And from tonight every dino that hatches from an egg starts young, half
+size and piping, and when its two days are up its parents walk to it.
+
+**The find of the night was not in the feature.** The first full test run went red on a cycle-18 spec that says
+bonded dinos huddle at the den at night — Rex missing. It failed again, then failed sixteen times out of sixteen.
+Rolling the code back made it pass. The cause: Rex has been an **owl** since cycle ~45. At 22:00 it is wide awake,
+and it has never once huddled in that test — its random walk just happened to end on the den tile, every run, for
+about a hundred and forty cycles. Bramble's new walk to Pip took a few rolls off the shared dice, and Rex's walk
+ended somewhere else. The spec now bonds two dinos who actually sleep at night. Worth remembering: a test that
+asserts on a rolled outcome is asserting on the dice, not the rule.
+
+**Milestone 30 ships**, and with it the **tentpole queue is empty**: minds that act (26), festivals (28), growing up
+(30) — every system the operator queued in CHARTER v9 is in the park. Milestone 31 is a normal milestone (polish and
+weave growing up in — 607, a youngster keeping to its guardian, is queued for it). **Operator: the tentpole queue in
+`studio/MILESTONE.md` needs refilling before Milestone 32.** (BACKLOG-030, religion, is the obvious North Star item
+still unbuilt.)
+
+Board: build clean, **3376 unit** green, e2e **915 passed** on the third full run (run 1: the huddle spec; run 2: the
+huddle spec + two known cold-boot timeouts). Additive save field only (`greeted` on a growth record). CI on `main`
+green going in (cycle 187-art: `success`).

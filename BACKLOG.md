@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-604 [core] Egg-born dinos grow up (full text in the cycle-187 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-607 [core] A youngster keeps to its guardian (full text in the cycle-188 block below).
@@ -653,14 +652,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 177 (Structure-smith)
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
-
-## Cycle 187 lore additions — growing up (2026-10-14)
-
-- [~] BACKLOG-605 [social] The park sees it grow up — when a youngster molts, the dinos that know it remark on it, each in its own register (a friend: *"Look at you!"*; a rival: *"Still small to me."*; a parent, when it has one, proudly), and the grown dino stops greeting the keeper as a youngster does. Milestone 30 lore arc 2. Builds on 023 / 602.
-
-## Cycle 187 (Structure-smith) — growing up
-
-- [~] BACKLOG-604 [core] Egg-born dinos grow up — `hatchEgg` writes a growth record at the hatch minute, so every dino born from an egg starts young and molts on the 602 clock; at the molt its parents, if they are on the same ground, walk to it. Milestone 30 structure arc 2. Builds on 602 / 023 / 042.
 
 ## Cycle 188 (Structure-smith) — growing up
 

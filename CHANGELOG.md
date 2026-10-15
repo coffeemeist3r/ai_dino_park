@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 188 — 2026-10-15 (somebody noticed; Milestone 30, the growing-up tentpole, ships)
+- BACKLOG-604: Egg-born dinos grow up — a dino hatched from an egg now starts young (half size, piping) and molts on the same two-day clock. At any molt, the dinos it belongs to on its own ground walk over: its parents, then its closest friend, then its worst rival. On a fresh save: Bramble walks to Pip at 14:00 on day one.
+- BACKLOG-605: The park sees it grow up — each witness, on reaching the grown dino, says so in its own capacity (a parent *"🐚 That's my Pip. All grown."*, a friend *"Look at you, Pip!"*, a rival *"Still small to me."*) and remembers it. A youngster greets the keeper as one (*"\*bounces\* I'm nearly big, you know."*); the first greet after its molt says *"🐚 Notice anything? I'm grown."*, once, kept in the save. **Milestone 30 SHIPPED.**
+
+---
+
 ## Cycle 187 — 2026-10-14 (growing up; Milestone 30, the third tentpole, opens)
 - BACKLOG-602: Life stages — every dino may carry a growth record (hatch minute, and once grown, when and how), persisted as one additive save field; no record means adult. A youngster is drawn at half size and pipes half again as high. The founding park ships one: Pip, on the Grove, whose youth runs out at 14:00 on day one — about six real minutes in.
 - BACKLOG-023: The first molt — when a youngster's youth runs out it molts: it pops to full size, leaves a 🐚 husk on its tile, says so in its own words, and comes out shaped by what its youth held — a grudge hardens it, a close friend softens it, neither leaves it bolder (one trait, ±0.15, kept across reloads). Ticker, memory and the book record it (*"🐚 grew up on day 1 — came out softer"*). On a fresh save: Pip, close to Bramble, comes out softer.
