@@ -14723,3 +14723,30 @@ Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. 
 ## Cycle 187 — coder: growth.ts + molt.ts shipped; Pip boots at half size and molts at 14:00 on day one. Build clean, unit 3365 green.
 
 ## Cycle 187 — qa: 12/12 criteria pass; e2e 910/910 (1 pre-existing skip) first run, unit 3365.
+
+## Cycle 187 — validator: lore APPROVED / structure APPROVED — somebody in the park was small, and then wasn't
+
+**The third tentpole opens: Growing up.** Eggs have hatched in this park since cycle 42, and every hatchling in its
+history stepped out of the shell at full size and was, for every purpose the park had, an adult from its first frame.
+Nobody here had ever been young. Tonight one dino is.
+
+Boot a fresh save and walk one edge east into the Grove. Beside Bramble there is a little orange compsognathus at
+half the size of everything else, piping half an octave up: Pip, the grove's *"small, loud, certain it is in charge"*
+one, whose book entry says *"🥚 young — grows up in ~6 h"*. Six real minutes later — two in the afternoon on day one,
+after the spring festival has closed — Pip pops up to full size, leaves a 🐚 husk on the grass, and announces
+*"🐚 All grown! I'm keeping Bramble close."* The ticker posts *"🐚 Pip molted — came out softer"*.
+
+It came out softer because of who it spent its youth beside. The molt reads what the young dino carries: a close
+friend softens it, a grudge hardens it (a grudge wins — it is the louder thing), and a youth with neither leaves it
+bolder. One trait, one nudge, kept in the save. A Pip born into a park where it had a feud would have grown up
+prickly, and said *"Grown. And I haven't forgotten Twitch."* instead.
+
+Structurally the night was one quiet field: a growth record per dino, absent meaning adult, so every founder and every
+old save is untouched — and a founding youngster calibrated, in a unit test against the clock and the festival window,
+to grow up inside a sitting rather than three in-game days and a clear night from now.
+
+Next on the tentpole: the park notices (605 — friends say *"Look at you!"*, a rival says *"Still small to me."*) and
+egg-born dinos start young too, with their parents walking over when they molt (604). The Artist has the husk (603).
+
+Board: build clean, **3365 unit** green, e2e **910 passed** (1 pre-existing skip) on the first full run. Additive save
+field only. CI green going in (cycle 186-art: `success`).

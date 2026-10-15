@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-602 [core] Life stages — every dino has an age and a stage, persisted; the founding park ships a youngster (full text in the cycle-187 block below).
 - [ ] BACKLOG-604 [core] Egg-born dinos grow up (full text in the cycle-187 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
@@ -30,7 +29,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Pokemon flavor
 
 - [ ] BACKLOG-022 [pokemon] Befriend ritual — feed favorite item N times → "caught" → entered in book formally
-- [~] BACKLOG-023 [pokemon] Evolution / molt — NPC grows up after X in-game days, sprite swap, personality may shift. *(Reshaped cycle 187 as Milestone 30's first lore arc: a youngster molts when its youth runs out — a shed-skin puff, full size, a voice that drops, and a temperament nudge read off its bond/grudge record (a grudge hardens it, a friend softens it, neither leaves it as it was); it says so in its own register, and the book records the molt. Founding Pip molts inside a sitting. Builds on 602.)*
 - [ ] BACKLOG-025 [pokemon] Gym landmarks — three named locations run by veteran NPCs; visit grants flavor lore
 
 ## Stardew flavor
@@ -662,5 +660,4 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 187 (Structure-smith) — growing up
 
-- [~] BACKLOG-602 [core] Life stages — a pure `world/growth.ts`: each dino may carry a growth record `{ hatchedAtMin, moltedAtMin? }` against the world clock's absolute minute, and `stageOf(record, nowMin)` answers `young` until `hatchedAtMin + YOUTH_MIN`, `adult` after (no record → adult, so every founder and every old save reads unchanged). Persisted as one additive save field. The stage is drawn: a youngster's sprite renders at a reduced scale and its chirp is pitched up; the inspector names the stage. **Founding (v7):** Pip ships young, with its youth calibrated to run out a few real minutes into a fresh session at the default clock — otherwise the whole tentpole sits behind three in-game days and a clear night. Milestone 30 structure arc 1. Builds on 042 / 195 / 495.
 - [ ] BACKLOG-604 [core] Egg-born dinos grow up — `hatchEgg` writes a growth record at the hatch minute, so every dino born from an egg starts young and molts on the 602 clock; at the molt its parents, if they are on the same ground, walk to it. Milestone 30 structure arc 2. Builds on 602 / 023 / 042.

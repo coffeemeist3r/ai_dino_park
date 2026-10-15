@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 187 — 2026-10-14 (growing up; Milestone 30, the third tentpole, opens)
+- BACKLOG-602: Life stages — every dino may carry a growth record (hatch minute, and once grown, when and how), persisted as one additive save field; no record means adult. A youngster is drawn at half size and pipes half again as high. The founding park ships one: Pip, on the Grove, whose youth runs out at 14:00 on day one — about six real minutes in.
+- BACKLOG-023: The first molt — when a youngster's youth runs out it molts: it pops to full size, leaves a 🐚 husk on its tile, says so in its own words, and comes out shaped by what its youth held — a grudge hardens it, a close friend softens it, neither leaves it bolder (one trait, ±0.15, kept across reloads). Ticker, memory and the book record it (*"🐚 grew up on day 1 — came out softer"*). On a fresh save: Pip, close to Bramble, comes out softer.
+
+---
+
 ## Cycle 186 — 2026-10-13 (nobody left at the edge; Milestone 29 ships)
 - BACKLOG-133: Walk-it-off, at the ring (reshaped) — half an in-game hour into a festival the leader, unless it is prickly itself, walks out to each sulker at the edge, most-bonded first, and asks it in, in its register (*"Come on, Twitch — it's spring. Stand with us."*). A sulker that is not prickly comes in: it joins the circle, gains a bond with the leader (🌱 over both if that makes them friends), and can take a ring partner at the close. A prickly one refuses to its face (*"😤 Not while Twitch's in there."*). Ticker, memories, and the tales tell it afterwards. On a fresh save: Mossback refuses; Twitch comes in and finds its first friend in Sunny.
 - BACKLOG-600: The keeper in the ring — the first time, while a festival is open, the keeper stands within its outer ring, the leader turns and welcomes it (*"The keeper came too! Come stand with us, AETHER-1!"*, by designation until it has earned the nickname), every attendee gains a friendship tick and files *"the keeper came"*, and each festival tale afterwards ends on whether the keeper was there (*"You were there too!"* / *"You missed it — come next season?"*). **Milestone 29 SHIPPED.**
