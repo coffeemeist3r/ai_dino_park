@@ -14721,3 +14721,5 @@ Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. 
 ## Cycle 187 — code-planner: growth.ts + molt.ts, ~11 files; risk named — clock-jumping specs will now see Pip grow up.
 
 ## Cycle 187 — coder: growth.ts + molt.ts shipped; Pip boots at half size and molts at 14:00 on day one. Build clean, unit 3365 green.
+
+## Cycle 187 — qa: 12/12 criteria pass; e2e 910/910 (1 pre-existing skip) first run, unit 3365.

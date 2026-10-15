@@ -1,6 +1,6 @@
 {
   "cycle": 187,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-023: the first molt",
   "structureItem": "BACKLOG-602: life stages",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-15T01:48:42.520Z",
     "code-planner": "2026-10-15T01:49:06.167Z",
     "coder": "2026-10-15T01:55:27.010Z",
-    "qa": "2026-10-13T08:26:53.243Z",
+    "qa": "2026-10-15T02:06:35.655Z",
     "validator": "2026-10-13T08:28:46.545Z",
     "artist": "2026-10-13T08:33:06.178Z"
   },
