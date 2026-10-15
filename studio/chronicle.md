@@ -14758,3 +14758,5 @@ field only. CI green going in (cycle 186-art: `success`).
 ## Cycle 188 — structure-smith: chose 604 (egg-born dinos grow up; kin walk to a molt); seeded 607 (a youngster keeps to its guardian).
 
 ## Cycle 188 — designer: 605 (witness lines + the grown greeting) + 604 (hatchlings start young; kin walk to a molt). Shared seam: moltDino.
+
+## Cycle 188 — code-planner: molt.ts witnesses + lines, a scene walk + stage opener, ~7 files; risk named — Bramble leaves its wander after 14:00.
