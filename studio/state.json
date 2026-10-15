@@ -1,7 +1,7 @@
 {
   "cycle": 188,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-605: The park sees it grow up",
   "structureItem": "BACKLOG-604: Egg-born dinos grow up",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-15T08:11:58.059Z",
     "structure-smith": "2026-10-15T08:12:23.296Z",
-    "designer": "2026-10-15T01:48:42.520Z",
+    "designer": "2026-10-15T08:14:26.179Z",
     "code-planner": "2026-10-15T01:49:06.167Z",
     "coder": "2026-10-15T01:55:27.010Z",
     "qa": "2026-10-15T02:06:35.655Z",

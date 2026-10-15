@@ -656,7 +656,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 187 lore additions — growing up (2026-10-14)
 
-- [ ] BACKLOG-605 [social] The park sees it grow up — when a youngster molts, the dinos that know it remark on it, each in its own register (a friend: *"Look at you!"*; a rival: *"Still small to me."*; a parent, when it has one, proudly), and the grown dino stops greeting the keeper as a youngster does. Milestone 30 lore arc 2. Builds on 023 / 602.
+- [~] BACKLOG-605 [social] The park sees it grow up — when a youngster molts, the dinos that know it remark on it, each in its own register (a friend: *"Look at you!"*; a rival: *"Still small to me."*; a parent, when it has one, proudly), and the grown dino stops greeting the keeper as a youngster does. Milestone 30 lore arc 2. Builds on 023 / 602.
 
 ## Cycle 187 (Structure-smith) — growing up
 

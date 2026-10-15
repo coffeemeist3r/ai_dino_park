@@ -14756,3 +14756,5 @@ field only. CI green going in (cycle 186-art: `success`).
 ## Cycle 188 — lore-smith: somebody noticed. Suggested 605 (the park sees Pip grow up); seeded art 606 (the shell cap).
 
 ## Cycle 188 — structure-smith: chose 604 (egg-born dinos grow up; kin walk to a molt); seeded 607 (a youngster keeps to its guardian).
+
+## Cycle 188 — designer: 605 (witness lines + the grown greeting) + 604 (hatchlings start young; kin walk to a molt). Shared seam: moltDino.
