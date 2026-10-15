@@ -22,6 +22,7 @@ import type { Egg, BornDino } from '../social/breeding';
 import type { AwayEntry } from './awaylog';
 import type { Streak } from './streak';
 import type { SessionRecord } from './session';
+import type { GrowthRecord } from './growth';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -238,6 +239,8 @@ export interface SaveData {
   harvestedByZone?: Record<string, number>;
   eggs: Egg[];
   born: BornDino[];
+  /** Life stages (BACKLOG-602) — name → growth record. Additive; absent → {} (every dino adult). */
+  growth?: Record<string, GrowthRecord>;
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
   savedAt?: number;
   /** Realtime multiplier in effect at save. Additive; absent → 1×. */
@@ -1070,6 +1073,27 @@ export function deserialize(json: string): SaveData | null {
   // palate (BACKLOG-068) — dino name → food id → meals eaten. The `tasted` block's discipline directly
   // above, plus the `satchel` block's number check: an unknown name or food id is *kept* (a save from a
   // future roster is a save), but a count that is not a finite non-negative number is a corrupt save.
+  // growth (BACKLOG-602) — name → { hatchedAtMin, molt fields? }. A finite hatch minute is required; a molted
+  // record's traits, when present, must be a full 0..1 trait set or the save is corrupt.
+  let growth: Record<string, GrowthRecord> | undefined;
+  if (o.growth !== undefined) {
+    if (typeof o.growth !== 'object' || o.growth === null || Array.isArray(o.growth)) return null;
+    growth = {};
+    for (const [name, raw] of Object.entries(o.growth as Record<string, unknown>)) {
+      if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return null;
+      const r = raw as Record<string, unknown>;
+      if (!isNum(r.hatchedAtMin)) return null;
+      if (r.moltedAtMin !== undefined && !isNum(r.moltedAtMin)) return null;
+      if (r.moltedDay !== undefined && !isNum(r.moltedDay)) return null;
+      if (r.came !== undefined && r.came !== 'softer' && r.came !== 'harder' && r.came !== 'bolder') return null;
+      if (r.traits !== undefined) {
+        const t = r.traits as Record<string, unknown>;
+        if (typeof t !== 'object' || t === null || !AXES.every((a) => isNum(t[a.key]) && (t[a.key] as number) >= 0 && (t[a.key] as number) <= 1)) return null;
+      }
+      growth[name] = r as unknown as GrowthRecord;
+    }
+  }
+
   let palate: Record<string, Record<string, number>> | undefined;
   if (o.palate !== undefined) {
     if (typeof o.palate !== 'object' || o.palate === null || Array.isArray(o.palate)) return null;
@@ -1174,6 +1198,7 @@ export function deserialize(json: string): SaveData | null {
     harvestedByZone,
     eggs,
     born,
+    growth,
     savedAt,
     scale,
     visitHours,

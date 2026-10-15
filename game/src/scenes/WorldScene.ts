@@ -226,7 +226,9 @@ import {
   type Mend,
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
-import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges } from '../world/founding';
+import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges, foundingGrowth } from '../world/founding';
+import { YOUNG_SCALE, YOUTH_MIN, growthLine, moltDue, stageOf, youngVoice, type GrowthRecord } from '../world/growth';
+import { MOLT_ART_KEY, MOLT_GLYPH, moltKind, moltLine, moltMemory, moltTicker, moltTraits } from '../world/molt';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -794,7 +796,9 @@ export class WorldScene extends Phaser.Scene {
   private callNotes = 0;
   private lastArrival: { zone: string; pairs: [string, string][]; late: string[]; cues: ChorusEntry[] } | null = null;
   private eggs: Egg[] = [];
+  private moltHusks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = []; // BACKLOG-023
   private born: BornDino[] = [];
+  private growth: Record<string, GrowthRecord> = {}; // BACKLOG-602: life stages; no record → adult
   private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
   /** BACKLOG-520: baked rig where one is drawn, the glyph where one is not — the same per-item fallback
    *  `dropFood` and `drawPlotSprite` use, so a mark never waits on its art. */
@@ -2548,6 +2552,9 @@ export class WorldScene extends Phaser.Scene {
     if (!this.bondsCleared) this.grudges = { ...foundingGrudges(), ...this.grudges }; // BACKLOG-574: and one feud
     if (!this.bondsCleared) this.seedFoundingReflections(); // BACKLOG-583: and a yesterday
     this.refreshBestFriends(false);
+    // BACKLOG-602: the founding youngster. `??=` so a record a spec (or a restore) already wrote wins.
+    for (const [n, r] of Object.entries(foundingGrowth())) this.growth[n] ??= r;
+    this.applyGrowth();
     if (this.foundingCleared) return; // a spec restored the pre-v7 empty grounds before the DB read resolved
     if (this.cairns.length) return; // one-shot: never seed a second founding ruin over an existing skyline
     const ruin: Landmark = { ...FOUNDING_RUIN, derelict: true };
@@ -4881,6 +4888,67 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  /** This dino's life stage now (BACKLOG-602). */
+  private stageNow(name: string): 'young' | 'adult' {
+    return stageOf(this.growth[name], timeToAbs(getWorldClock().now()));
+  }
+
+  /** Its voice: the trait-pitched chirp, piped up while it is young (BACKLOG-602). */
+  private chirpOf(d: Dino): ChirpParams {
+    const p = chirpParams(d.traits);
+    return this.stageNow(d.name) === 'young' ? youngVoice(p) : p;
+  }
+
+  /** Put every dino's growth on screen: a grown temperament restored, a youngster drawn small (BACKLOG-602). */
+  private applyGrowth(): void {
+    for (const d of this.dinos) {
+      const rec = this.growth[d.name];
+      if (rec?.traits) d.traits = { ...rec.traits };
+      d.sprite.setScale(this.stageNow(d.name) === 'young' ? YOUNG_SCALE : 1);
+    }
+  }
+
+  /** Any youngster whose youth has run out molts now (BACKLOG-023). Live tick only. */
+  private checkMolts(): void {
+    for (const name of moltDue(this.growth, timeToAbs(getWorldClock().now()))) {
+      const d = this.dinoByName(name);
+      if (d) this.moltDino(d);
+    }
+  }
+
+  /**
+   * The molt (BACKLOG-023): it comes out shaped by what its youth held — read off its closest friend and its worst
+   * rival — steps out of its skin at full size, says so, calls once in its grown voice, and leaves the husk behind.
+   */
+  private moltDino(d: Dino): void {
+    const rec = this.growth[d.name];
+    if (!rec || rec.moltedAtMin !== undefined) return;
+    const friend = this.bestFriendOf[d.name] ?? null;
+    const rival = worstRival(d.name, this.grudges, this.dinoNames());
+    const kind = moltKind({
+      friendPts: friend ? bondPoints(this.bonds, d.name, friend) : 0,
+      grudgePts: rival ? bondPoints(this.grudges, d.name, rival) : 0,
+    });
+    const now = getWorldClock().now();
+    d.traits = moltTraits(d.traits, kind);
+    this.growth[d.name] = { ...rec, moltedAtMin: timeToAbs(now), moltedDay: now.day, came: kind, traits: { ...d.traits } };
+    const husk = hasPropArt(MOLT_ART_KEY)
+      ? this.add.image(d.x, d.y, bakePropArt(this, MOLT_ART_KEY)!)
+      : this.add.text(d.x, d.y, MOLT_GLYPH, { fontSize: '12px' });
+    husk.setOrigin(0.5, 0.5).setDepth(3).setVisible(this.inView(d));
+    this.moltHusks.push(husk);
+    this.time.delayedCall(90_000, () => {
+      husk.destroy();
+      this.moltHusks = this.moltHusks.filter((h) => h !== husk);
+    });
+    this.tweens.add({ targets: d.sprite, scale: 1, duration: 600, ease: 'Back.Out' });
+    this.showBubble(d, moltLine(kind, kind === 'softer' ? friend ?? undefined : rival ?? undefined));
+    this.chirpFor(d);
+    this.memory = remember(this.memory, d.name, moltMemory(kind));
+    this.logEvent(moltTicker(d.name, kind));
+    void this.saveGame();
+  }
+
   private hatchEgg(egg: Egg): void {
     // remove the clutch regardless of outcome so a missing parent can't wedge it forever
     this.eggs = this.eggs.filter((e) => e.id !== egg.id);
@@ -5627,7 +5695,8 @@ export class WorldScene extends Phaser.Scene {
       name: d.name,
       // BACKLOG-195: the selected entry names its own voice; the others stay as they read before.
       selected: i === cursor,
-      voice: i === cursor ? voiceLine(chirpParams(d.traits), this.voiceParentsOf(d)) : undefined,
+      voice: i === cursor ? voiceLine(this.chirpOf(d), this.voiceParentsOf(d)) : undefined,
+      growth: growthLine(this.growth[d.name], timeToAbs(getWorldClock().now())), // BACKLOG-602/023
       species: d.species,
       hearts: heartsFromPoints(this.friendship[d.name] ?? 0),
       topBond: Math.round(this.maxBond(d.name)), // BACKLOG-567: bonds are fractional now; the page shows whole points
@@ -7696,8 +7765,8 @@ ${e.short}`;
     const b = this.dinoByName(parents[1]);
     if (!a || !b) return undefined;
     return [
-      { name: a.name, params: chirpParams(a.traits) },
-      { name: b.name, params: chirpParams(b.traits) },
+      { name: a.name, params: this.chirpOf(a) },
+      { name: b.name, params: this.chirpOf(b) },
     ];
   }
 
@@ -7731,7 +7800,7 @@ ${e.short}`;
    */
   private chirpFor(d: Dino, distancePx = this.distanceToKeeper(d.x, d.y)): void {
     if (soundMuted()) return;
-    const params = chirpParams(d.traits);
+    const params = this.chirpOf(d);
     this.lastSound = { kind: 'chirp', name: d.name, params, gain: gainFor('chirp', { distancePx }) };
     playChirp(params, 'chirp', { distancePx });
   }
@@ -10161,6 +10230,7 @@ ${e.short}`;
     this.councilTermDay = Math.max(this.councilTermDay, clock.now().day); // BACKLOG-484: same arming for the term
 
     clock.onHour((t) => this.checkSeasonTurn(t));
+    clock.onTick(() => this.checkMolts()); // BACKLOG-023: a youngster whose youth has run out molts — live only
     // A pantry that spoils (BACKLOG-455) — its own live-only onHour listener, so a hoard at/near cap bleeds
     // one unit per in-game day. Separate from the season turn / dawn chorus so none disturbs the others.
     clock.onHour((t) => this.checkSpoilage(t));
@@ -10172,6 +10242,18 @@ ${e.short}`;
     clock.onHour((t) => this.checkDawnChorus(t));
     clock.onHour((t) => this.checkReflection(t)); // BACKLOG-583: dawn snapshot, dusk reflection — live-only
 
+    // any: dev-only Playwright hooks — growing up (BACKLOG-602/023)
+    (window as any).__growth = () => JSON.parse(JSON.stringify(this.growth));
+    (window as any).__stageOf = (name: string) => this.stageNow(name);
+    (window as any).__dinoScale = (name: string) => this.dinoByName(name)?.sprite.scaleX ?? null;
+    (window as any).__traitsOf = (name: string) => ({ ...(this.dinoByName(name)?.traits ?? {}) });
+    (window as any).__moltHusks = () => this.moltHusks.length;
+    (window as any).__moltNow = (name: string) => {
+      const rec = this.growth[name];
+      if (rec && rec.moltedAtMin === undefined) this.growth[name] = { ...rec, hatchedAtMin: timeToAbs(getWorldClock().now()) - YOUTH_MIN };
+      this.checkMolts();
+      return JSON.parse(JSON.stringify(this.growth[name] ?? null));
+    };
     // any: dev-only Playwright hooks — seasons (BACKLOG-159)
     (window as any).__season = () => seasonFor(getWorldClock().now().day);
     // any: dev-only Playwright hook — the season's grip on the daytime socialize roll (BACKLOG-178)
@@ -10635,6 +10717,7 @@ ${e.short}`;
       lastProviderByZone: this.lastProviderByZone, // BACKLOG-467: who last held each zone's say (additive)
       eggs: this.eggs,
       born: this.born,
+      growth: this.growth, // BACKLOG-602 (additive)
       savedAt: Date.now(),
       scale: this.activeScale, // BACKLOG-493: the chosen watching rate, not a hidden tab's AWAY_SCALE
       visitHours: this.visitHours, // BACKLOG-121: the hours you tend to open the park at (additive)
@@ -10826,6 +10909,8 @@ ${e.short}`;
       for (const b of this.born) this.spawnDino(b);
       this.eggs = save.eggs ?? [];
       for (const e of this.eggs) this.drawEgg(e);
+      this.growth = save.growth ?? {}; // BACKLOG-602: absent in every pre-187 save → every dino adult
+      this.applyGrowth();
       this.applyZoneVisibility(); // a save restored into the grove must not show the bowl's dinos
       this.clockHud.setText(this.fmtClock(clock.now()));
       this.applyTint(clock.now());

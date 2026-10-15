@@ -255,6 +255,8 @@ export interface BookRow {
    *  named only once it has eaten that one. Always present in-game; optional so older BookRow literals
    *  stay valid. Built by `menuLine`. */
   menu?: string;
+  /** Life stage (BACKLOG-602/023) — `growthLine`'s text; absent for a dino with no growth record. */
+  growth?: string;
   /** What this dino sounds like (BACKLOG-195), from `voiceLine` — and, for a hatchling whose parents
    *  are both still in the roster, where its voice sits between theirs. Present on the **selected**
    *  row only: the book plays one cry at a time, so it names one voice at a time. */
@@ -310,6 +312,7 @@ export function bookLines(rows: BookRow[], away: string[] = [], circle?: string)
     if (r.struck) out.push(`  ${r.struck}`); // BACKLOG-347: the ground it is still full of
     if (r.wander) out.push(`  ${r.wander}`); // BACKLOG-361: the lifetime read — homebody, rambler, wanderer
     if (r.parents) out.push(`  child of ${r.parents[0]} + ${r.parents[1]}`);
+    if (r.growth) out.push(`  ${r.growth}`); // BACKLOG-602/023: young, or when it grew up and how
     if (r.foodweb) out.push(`  ${r.foodweb}`); // BACKLOG-443: food-web standing (catches / escapes)
     if (r.manner) out.push(`  ${r.manner}`); // BACKLOG-402: the manner at the hatch, beside the other food read
     if (r.pecking) out.push(`  ${r.pecking}`); // BACKLOG-401: who it has faced down and who it gives way to

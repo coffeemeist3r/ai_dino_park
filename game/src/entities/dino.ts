@@ -18,7 +18,8 @@ export class Dino {
   readonly name: string;
   readonly species: string;
   readonly personality: string;
-  readonly traits: Personality;
+  /** Writable since BACKLOG-023: the molt reshapes a temperament. */
+  traits: Personality;
   readonly color: number;
   /** Procedural-art animation key, or null when this species falls back to a rectangle. */
   readonly artKey: string | null;

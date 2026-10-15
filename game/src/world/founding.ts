@@ -18,6 +18,8 @@
  */
 
 import { BOWL_ID, GROVE_ID, RIDGE_ID, zoneChain } from './zones';
+import { FOUNDING_DAY, timeToAbs } from './clock';
+import { YOUTH_MIN, type GrowthRecord } from './growth';
 import { bankStep } from './bank';
 import type { Stockpile } from './resource';
 import type { FoundingKind, Pioneers } from './pioneer';
@@ -299,4 +301,16 @@ export function foundingBonds(): Bonds {
   const out: Bonds = {};
   for (const [a, b, v] of FOUNDING_BONDS) out[pairKey(a, b)] = v;
   return out;
+}
+
+/**
+ * The founding youngster (BACKLOG-602, Milestone 30). An egg needs a clear night and three in-game days, so a park
+ * that waited on eggs would never show anybody growing up inside a sitting. Pip — "small, loud, certain it is in
+ * charge" — boots young, and its youth runs out at 14:00 on day one: six in-game hours (~6 real minutes at the
+ * default clock) after the 08:00 founding, and after the spring festival has closed at noon.
+ */
+export const FOUNDING_MOLT_AT = { day: FOUNDING_DAY, hour: 14, minute: 0 } as const;
+
+export function foundingGrowth(): Record<string, GrowthRecord> {
+  return { Pip: { hatchedAtMin: timeToAbs(FOUNDING_MOLT_AT) - YOUTH_MIN } };
 }

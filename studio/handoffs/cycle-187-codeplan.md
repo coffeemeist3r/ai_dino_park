@@ -39,3 +39,21 @@ Watch Pip-touching specs in the full run.
 `molt` so 603's rig has a host.
 
 **Estimated touch count:** ~11 files.
+
+## Shipped
+
+**Files touched:** `game/src/world/growth.ts` (new), `game/src/world/molt.ts` (new), `game/src/world/founding.ts`,
+`game/src/world/saveGame.ts`, `game/src/world/reachability.ts`, `game/src/entities/dino.ts`, `game/src/ui/lenses.ts`,
+`game/src/scenes/WorldScene.ts`, `game/src/world/cycle-187-growth.test.ts` (new), `game/src/world/cycle-187-molt.test.ts`
+(new), `tests/e2e/cycle-187-growing-up.spec.ts` (new). 11 files.
+
+**Deviations:**
+- Scope creep (1 file): `world/reachability.ts` registers `molt` as a world-placed prop, so 603's rig has a host the
+  register can see before the Artist draws it.
+- The scene's helper is `chirpOf(d)`, not `voiceOf` — `voiceOf` already names the 585 day-voice. The test hook is
+  `__traitsOf(name)`: a later `__dinoTraits` (dinos[0] only) already exists and overrode the first attempt.
+- The voice change reaches the book, `chirpFor` (meet speaker + chorus) and the parents' voice line; the callback cue
+  and distress cry still read raw traits (they go through `callbackCues`/`distressParams`) — noted, not widened.
+- The husk is drawn only if its tile is in view at the molt (90 s life); not re-shown on a zone change.
+
+**Build:** clean. **Unit:** 3365 green (325 files). **Boundary:** web-llm only under `game/src/ai/`.
