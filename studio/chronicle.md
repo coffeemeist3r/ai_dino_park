@@ -14799,3 +14799,5 @@ still unbuilt.)
 Board: build clean, **3376 unit** green, e2e **915 passed** on the third full run (run 1: the huddle spec; run 2: the
 huddle spec + two known cold-boot timeouts). Additive save field only (`greeted` on a growth record). CI on `main`
 green going in (cycle 187-art: `success`).
+
+## Cycle 188-art — artist: BACKLOG-606 closes — the shell cap, drawn the night its host shipped. Pip now boots wearing the top of its own egg: a cream dome broken off in a zigzag along the bottom, tipped a little to the right as if it slid there, lit upper left, on the family's dark rim. Same cream as the husk it leaves at the molt — it is the same shell, one stage earlier — and it is gone the moment Pip grows up. The first draft sat centred and level and read as a helmet; tipping it is what made it a scrap of shell. Baked at the youngster's own half scale so it stays one screen pixel per cell. Art queue empty again. Drawn inline, not by sub-agent. Unit 3382 green; art + reach + growing-up e2e green (76).

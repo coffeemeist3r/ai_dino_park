@@ -2690,6 +2690,40 @@ const FESTIVAL_FAIR_RIG: PropRig = {
   },
 };
 
+// `shellcap` (BACKLOG-606, cycle 188-art): the scrap of its own eggshell a youngster wears until it molts (host:
+// `refreshShellCaps`, BACKLOG-604). The top of an egg, dome up, broken off in a zigzag along the bottom and tipped a
+// little to the right, as if it slid there. Inked low in the grid: the image hangs from its bottom edge onto the head.
+// Same cream family as the husk it will become — it is the same shell, one stage earlier.
+const SHELLCAP_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......ooo......',
+  '......ohhpo.....',
+  '.....ohhpppo....',
+  '....ohhpppppo...',
+  '....ohppppqqo...',
+  '....opqpqpqqo...',
+  '....oqoqoqoqo...',
+  '.....o.o.o.o....',
+];
+
+const SHELLCAP_RIG: PropRig = {
+  size: 16,
+  grid: SHELLCAP_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    h: 0xfaf4e2, // the lit shoulder of the dome
+    p: 0xe6dcc2, // shell
+    q: 0xc4b894, // shell, shaded
+  },
+};
+
 // `molt` (BACKLOG-603, cycle 187-art): the shed skin a youngster leaves on its tile when it grows up (host:
 // `moltDino`, BACKLOG-023). A small dino's husk lying curled on its side — head up and to the right, a tail curling
 // round under it — papery and pale, split open along the back so the inside shows through. Lit upper left like the
@@ -3001,6 +3035,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   'festival-fair': FESTIVAL_FAIR_RIG,
   // BACKLOG-603 (cycle 187-art): drawn the night its host shipped — `moltDino`'s husk (023).
   molt: MOLT_RIG,
+  // BACKLOG-606 (cycle 188-art): drawn the night its host shipped — the youngster's cap (604).
+  shellcap: SHELLCAP_RIG,
 };
 
 /**

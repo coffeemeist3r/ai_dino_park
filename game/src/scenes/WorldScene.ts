@@ -4997,7 +4997,7 @@ export class WorldScene extends Phaser.Scene {
         continue;
       }
       if (!cap) {
-        cap = this.add.image(d.x, d.y, bakePropArt(this, SHELLCAP_ART_KEY)!).setOrigin(0.5, 1).setDepth(11);
+        cap = this.add.image(d.x, d.y, bakePropArt(this, SHELLCAP_ART_KEY)!).setOrigin(0.5, 1).setDepth(11).setScale(YOUNG_SCALE);
         this.shellCaps.set(d.name, cap);
       }
       cap.setPosition(d.x, d.y - d.sprite.displayHeight * 0.3).setVisible(this.inView(d));
@@ -10333,6 +10333,7 @@ ${e.short}`;
     (window as any).__traitsOf = (name: string) => ({ ...(this.dinoByName(name)?.traits ?? {}) });
     (window as any).__moltHusks = () => this.moltHusks.length;
     (window as any).__moltVisits = () => JSON.parse(JSON.stringify(this.moltVisits)); // BACKLOG-604
+    (window as any).__shellCaps = () => [...this.shellCaps.keys()]; // BACKLOG-606
     (window as any).__moltNow = (name: string) => {
       const rec = this.growth[name];
       if (rec && rec.moltedAtMin === undefined) this.growth[name] = { ...rec, hatchedAtMin: timeToAbs(getWorldClock().now()) - YOUTH_MIN };

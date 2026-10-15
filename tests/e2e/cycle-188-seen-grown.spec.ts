@@ -56,3 +56,11 @@ test('a hatchling starts young, and its parents come to its molt (BACKLOG-604)',
   expect(visits.Rex).toMatchObject({ to: baby, role: 'parent' });
   expect(visits.Sunny).toMatchObject({ to: baby, role: 'parent' });
 });
+
+test('Pip wears a scrap of shell until it molts (BACKLOG-606)', async ({ page }) => {
+  await boot(page);
+  await foundingState(page, 'as-shipped');
+  await expect.poll(() => ev<string[]>(page, '__shellCaps'), { timeout: 5_000 }).toEqual(['Pip']);
+  await ev(page, '__moltNow', 'Pip');
+  await expect.poll(() => ev<string[]>(page, '__shellCaps'), { timeout: 5_000 }).toEqual([]);
+});
