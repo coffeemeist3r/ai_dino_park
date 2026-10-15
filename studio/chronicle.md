@@ -14717,3 +14717,5 @@ Board: build clean, **3343 unit** green, e2e **908/908** on the first full run. 
 ## Cycle 187 — structure-smith: seeded 602 (life stages) + 604 (egg-born dinos grow up) as Milestone 30 spine arcs; chose 602 — an age on every dino, and a founding youngster so the tentpole is reachable tonight.
 
 ## Cycle 187 — designer: 023 (the molt) + 602 (life stages), cut at growth.ts / molt.ts. Pip is young at boot and grows up at 14:00 on day one.
+
+## Cycle 187 — code-planner: growth.ts + molt.ts, ~11 files; risk named — clock-jumping specs will now see Pip grow up.
