@@ -14754,3 +14754,5 @@ field only. CI green going in (cycle 186-art: `success`).
 ## Cycle 187-art — artist: BACKLOG-603 closes — the shed skin, drawn the night its host shipped. When Pip grows up it leaves a husk on the grass: a small dino's outline lying curled on its side, head up and to the right, tail curled round under it, papery cream lit upper left, split open along the back so the dark inside shows through. Deliberately none of Pip's orange — a husk is the part that is not alive. The register now has a `molt` host, so the rig shipped with somewhere to stand. Art queue empty again. Drawn inline, not by sub-agent. Unit 3371 green; art + reach + growing-up e2e green (102 + 5). CI on `main`: last run `success`.
 
 ## Cycle 188 — lore-smith: somebody noticed. Suggested 605 (the park sees Pip grow up); seeded art 606 (the shell cap).
+
+## Cycle 188 — structure-smith: chose 604 (egg-born dinos grow up; kin walk to a molt); seeded 607 (a youngster keeps to its guardian).

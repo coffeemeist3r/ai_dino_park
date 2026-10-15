@@ -20,9 +20,10 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-604 [core] Egg-born dinos grow up (full text in the cycle-187 block below).
+- [~] BACKLOG-604 [core] Egg-born dinos grow up (full text in the cycle-187 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
+- [ ] BACKLOG-607 [core] A youngster keeps to its guardian (full text in the cycle-188 block below).
 
 ---
 
@@ -659,4 +660,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 187 (Structure-smith) — growing up
 
-- [ ] BACKLOG-604 [core] Egg-born dinos grow up — `hatchEgg` writes a growth record at the hatch minute, so every dino born from an egg starts young and molts on the 602 clock; at the molt its parents, if they are on the same ground, walk to it. Milestone 30 structure arc 2. Builds on 602 / 023 / 042.
+- [~] BACKLOG-604 [core] Egg-born dinos grow up — `hatchEgg` writes a growth record at the hatch minute, so every dino born from an egg starts young and molts on the 602 clock; at the molt its parents, if they are on the same ground, walk to it. Milestone 30 structure arc 2. Builds on 602 / 023 / 042.
+
+## Cycle 188 (Structure-smith) — growing up
+
+- [ ] BACKLOG-607 [core] A youngster keeps to its guardian — while young, a dino's wander is tethered within a few tiles of its guardian (a parent on the same ground, else its closest friend there), so a youngster reads as somebody's from across the screen; the tether releases at the molt and the grown dino's first wander takes it further than it has ever been. Pure tether read beside `wanderStep`; no save field (derived from growth + born + bonds). Builds on 602 / 604.

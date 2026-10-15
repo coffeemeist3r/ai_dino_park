@@ -2,7 +2,7 @@
   "cycle": 188,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-604: Egg-born dinos grow up",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-15T08:11:58.059Z",
-    "structure-smith": "2026-10-15T01:46:13.265Z",
+    "structure-smith": "2026-10-15T08:12:23.296Z",
     "designer": "2026-10-15T01:48:42.520Z",
     "code-planner": "2026-10-15T01:49:06.167Z",
     "coder": "2026-10-15T01:55:27.010Z",
