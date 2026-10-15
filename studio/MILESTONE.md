@@ -8,7 +8,23 @@
 
 ## Current milestone
 
-_(none — Milestone 30 is the third tentpole, **Growing up** (BACKLOG-023); the smiths draft its arcs at the open of cycle 187.)_
+**Milestone 30 (TENTPOLE): Growing up — a small dino in the park sheds its skin, comes out grown, and is not quite the same dino it was**
+**Status:** ACTIVE (opened cycle 187)
+
+The third tentpole (CHARTER v9). The park has had eggs and hatchlings since cycle 42, and not one of them has ever
+been small: a hatchling spawns at full size and is an adult from its first frame. Growing up makes youth a stage a
+dino passes through, and the molt the moment it leaves it — a new size, a voice that drops, a temperament shifted by
+what its youth held, and a line in the book for the change. Reachability (v7): an egg needs a clear night and three
+in-game days, so the founding park ships a youngster — Pip, the grove's "small, loud" one — and its first molt lands
+inside a sitting.
+
+**Lore arcs:**
+- [ ] The first molt: a hatchling sheds its skin and comes out full size, and its temperament shifts by what its youth held — a grudge hardens it, a friend softens it; it says so, and the book records the change (BACKLOG-023)
+- [ ] The park sees it grow up: friends and kin remark on the grown dino, and it greets the keeper as an adult rather than a youngster (BACKLOG-605)
+
+**Structure arcs:**
+- [ ] Life stages: every dino has an age and a stage that persists in the save; a youngster is visibly small and pipes high, and the founding park ships one (BACKLOG-602)
+- [ ] Egg-born dinos grow up: a dino that hatches from an egg starts young and molts on the same clock, and its parents are there when it does (BACKLOG-604)
 
 ---
 

@@ -28,7 +28,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Pokemon flavor
 
 - [ ] BACKLOG-022 [pokemon] Befriend ritual — feed favorite item N times → "caught" → entered in book formally
-- [ ] BACKLOG-023 [pokemon] Evolution / molt — NPC grows up after X in-game days, sprite swap, personality may shift
+- [ ] BACKLOG-023 [pokemon] Evolution / molt — NPC grows up after X in-game days, sprite swap, personality may shift. *(Reshaped cycle 187 as Milestone 30's first lore arc: a youngster molts when its youth runs out — a shed-skin puff, full size, a voice that drops, and a temperament nudge read off its bond/grudge record (a grudge hardens it, a friend softens it, neither leaves it as it was); it says so in its own register, and the book records the molt. Founding Pip molts inside a sitting. Builds on 602.)*
 - [ ] BACKLOG-025 [pokemon] Gym landmarks — three named locations run by veteran NPCs; visit grants flavor lore
 
 ## Stardew flavor
@@ -71,6 +71,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
+
+- [ ] BACKLOG-603 [art] The shed skin — a pixel prop for the `molt` mark BACKLOG-023 leaves on the tile where a youngster molted (renders 🐚 until drawn): a pale, papery, half-curled husk in the outline of a small dino, a little translucent. Host: 023 (cycle 187).
 
 ## Cycle 163 structure additions — the watcher is a save field (2026-09-17)
 
@@ -651,3 +653,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 177 (Structure-smith)
 
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk — every hatch read (401 disposition, 389 berth, 397 cowed, 403 mercy, and now 577's standoffs) is derived from the six-slot recall ring, and that ring is shared with everything else a dino remembers: one `you ran into X` per meeting, gossip, the cold, the grove. On a lively bowl a hatch beat rolls off the end within a few meetings, so a history the pecking order needs two beats of can evaporate between two drops for reasons that have nothing to do with the hatch. Weigh a small separate lane for contested-drop beats (persisted, additive save field, same strings and builders so every reader keeps parsing through `hatchPattern`), or a ring that keeps the newest N hatch beats when it trims. Measure first: how often does a disposition that existed at one drop vanish by the next on a fresh-save ten-minute run? Builds on 401 / 483 / 577.
+
+## Cycle 187 lore additions — growing up (2026-10-14)
+
+- [ ] BACKLOG-605 [social] The park sees it grow up — when a youngster molts, the dinos that know it remark on it, each in its own register (a friend: *"Look at you!"*; a rival: *"Still small to me."*; a parent, when it has one, proudly), and the grown dino stops greeting the keeper as a youngster does. Milestone 30 lore arc 2. Builds on 023 / 602.
