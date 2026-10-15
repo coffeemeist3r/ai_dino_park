@@ -228,7 +228,22 @@ import {
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
 import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges, foundingGrowth } from '../world/founding';
 import { YOUNG_SCALE, YOUTH_MIN, growthLine, moltDue, stageOf, youngVoice, type GrowthRecord } from '../world/growth';
-import { MOLT_ART_KEY, MOLT_GLYPH, moltKind, moltLine, moltMemory, moltTicker, moltTraits } from '../world/molt';
+import {
+  MOLT_ART_KEY,
+  MOLT_GLYPH,
+  MOLT_VISIT_STEPS,
+  SHELLCAP_ART_KEY,
+  moltKind,
+  moltLine,
+  moltMemory,
+  moltTicker,
+  moltTraits,
+  moltWitnesses,
+  stageOpener,
+  witnessLine,
+  witnessMemory,
+  type WitnessRole,
+} from '../world/molt';
 import { votedSpend, votedWork, type SeatExperience } from '../world/ballot'; // BACKLOG-492
 import { thawedThroughWinter, thawLine, thawMemory, THAW_LIFT } from '../world/thaw';
 import {
@@ -799,6 +814,9 @@ export class WorldScene extends Phaser.Scene {
   private moltHusks: Array<Phaser.GameObjects.Text | Phaser.GameObjects.Image> = []; // BACKLOG-023
   private born: BornDino[] = [];
   private growth: Record<string, GrowthRecord> = {}; // BACKLOG-602: life stages; no record → adult
+  /** BACKLOG-604: who is walking to whose molt, and since which world step. Live only, never saved. */
+  private moltVisits: Record<string, { to: string; role: WitnessRole; since: number }> = {};
+  private shellCaps = new Map<string, Phaser.GameObjects.Image>(); // BACKLOG-604/606: worn while young
   private eggSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>(); // BACKLOG-491: baked rig or emoji fallback
   /** BACKLOG-520: baked rig where one is drawn, the glyph where one is not — the same per-item fallback
    *  `dropFood` and `drawPlotSprite` use, so a mark never waits on its art. */
@@ -4942,11 +4960,48 @@ export class WorldScene extends Phaser.Scene {
       this.moltHusks = this.moltHusks.filter((h) => h !== husk);
     });
     this.tweens.add({ targets: d.sprite, scale: 1, duration: 600, ease: 'Back.Out' });
+    this.shellCaps.get(d.name)?.destroy();
+    this.shellCaps.delete(d.name);
+    // BACKLOG-604: the ones it belongs to walk over — parents, its closest friend, its rival — if they share its ground.
+    for (const w of moltWitnesses({
+      name: d.name,
+      parents: this.born.find((b) => b.name === d.name)?.parents,
+      friend,
+      rival,
+      groundOf: (n) => (this.dinoByName(n) ? zoneOf(this.dinoZones, n, BOWL_ID) : undefined),
+    })) {
+      this.moltVisits[w.who] = { to: d.name, role: w.role, since: this.worldSteps };
+    }
     this.showBubble(d, moltLine(kind, kind === 'softer' ? friend ?? undefined : rival ?? undefined));
     this.chirpFor(d);
     this.memory = remember(this.memory, d.name, moltMemory(kind));
     this.logEvent(moltTicker(d.name, kind));
     void this.saveGame();
+  }
+
+  /** BACKLOG-605: a witness reaches the grown dino and says what it thinks of it, in its own capacity. */
+  private arriveAtMolt(d: Dino, grown: string, role: WitnessRole): void {
+    const line = witnessLine(role, grown);
+    this.showBubble(d, line);
+    this.memory = remember(this.memory, d.name, witnessMemory(grown));
+    this.logEvent(`${d.name} → ${grown}: ${line}`);
+  }
+
+  /** BACKLOG-604/606: a youngster wears a scrap of its shell — only once the Artist has drawn one. */
+  private refreshShellCaps(): void {
+    if (!hasPropArt(SHELLCAP_ART_KEY)) return;
+    for (const d of this.dinos) {
+      let cap = this.shellCaps.get(d.name);
+      if (this.stageNow(d.name) !== 'young') {
+        if (cap) { cap.destroy(); this.shellCaps.delete(d.name); }
+        continue;
+      }
+      if (!cap) {
+        cap = this.add.image(d.x, d.y, bakePropArt(this, SHELLCAP_ART_KEY)!).setOrigin(0.5, 1).setDepth(11);
+        this.shellCaps.set(d.name, cap);
+      }
+      cap.setPosition(d.x, d.y - d.sprite.displayHeight * 0.3).setVisible(this.inView(d));
+    }
   }
 
   private hatchEgg(egg: Egg): void {
@@ -4978,6 +5033,9 @@ export class WorldScene extends Phaser.Scene {
     );
     this.born.push(baby);
     const dino = this.spawnDino(baby);
+    // BACKLOG-604: anybody born starts young and grows up on the 602 clock.
+    this.growth[name] = { hatchedAtMin: timeToAbs(getWorldClock().now()) };
+    dino.sprite.setScale(YOUNG_SCALE);
     this.showBubble(dino, `${name} hatches! 🐣`);
     this.logEvent(`🐣 ${name} hatched (${egg.parentA} + ${egg.parentB})`);
     void this.saveGame();
@@ -6749,6 +6807,24 @@ ${e.short}`;
         }
       }
 
+      // BACKLOG-604: a witness walks to the molt it was called to; on arrival it speaks (605) and is done.
+      const visit = this.moltVisits[d.name];
+      if (visit) {
+        const grown = this.dinoByName(visit.to);
+        if (!grown || this.worldSteps - visit.since > MOLT_VISIT_STEPS) {
+          delete this.moltVisits[d.name];
+        } else if (this.chebyTiles(cur, this.tileOf(grown)) <= 1) {
+          delete this.moltVisits[d.name];
+          this.arriveAtMolt(d, grown.name, visit.role);
+          continue;
+        } else {
+          const step = stepToward(cur, this.tileOf(grown), COLS, ROWS);
+          d.setPosition(step.tileX * TILE + TILE / 2, step.tileY * TILE + TILE / 2);
+          this.activityById[d.name] = 'responding';
+          continue;
+        }
+      }
+
       // Visible zone crossing (BACKLOG-334): a migrating dino is on a committed journey — it walks to its
       // zone's linked edge and crosses, rather than teleporting (the old `relocate`). Above food/huddle (a
       // crossing dino ignores snacks), below inspection/response (a startle can still pre-empt). The home
@@ -8320,6 +8396,7 @@ ${e.short}`;
     // Runs before the dialog early-return: the chips/stick swap tracks dialog state.
     this.syncTouchUi();
     this.checkCircle(); // BACKLOG-127: above the dialog return — a greet bumps friendship with the dialog open
+    this.refreshShellCaps(); // BACKLOG-604/606
     if (this.dialogOpen) return;
 
     const speed = 2;
@@ -9753,7 +9830,14 @@ ${e.short}`;
       : doingNow
         ? activityAside(doingNow, target.name)
         : null;
-    const text = [opener, aside, reply.text].filter(Boolean).join(' ');
+    // BACKLOG-605: a fact about the speaker, not an event — it sits beside the one-or-none chain, not inside it.
+    const growRec = this.growth[target.name];
+    const grownLine = stageOpener(this.stageNow(target.name), growRec);
+    if (growRec && growRec.moltedAtMin !== undefined && !growRec.greeted) {
+      this.growth[target.name] = { ...growRec, greeted: true };
+      void this.saveGame();
+    }
+    const text = [opener, grownLine, aside, reply.text].filter(Boolean).join(' ');
     const filedKey = `${target.name}:${register}`;
     if (caught && !this.ticCaughtFiled.has(filedKey)) {
       const label = this.ticFor(target).label; // BACKLOG-407: it names the ritual it actually performs
@@ -10248,6 +10332,7 @@ ${e.short}`;
     (window as any).__dinoScale = (name: string) => this.dinoByName(name)?.sprite.scaleX ?? null;
     (window as any).__traitsOf = (name: string) => ({ ...(this.dinoByName(name)?.traits ?? {}) });
     (window as any).__moltHusks = () => this.moltHusks.length;
+    (window as any).__moltVisits = () => JSON.parse(JSON.stringify(this.moltVisits)); // BACKLOG-604
     (window as any).__moltNow = (name: string) => {
       const rec = this.growth[name];
       if (rec && rec.moltedAtMin === undefined) this.growth[name] = { ...rec, hatchedAtMin: timeToAbs(getWorldClock().now()) - YOUTH_MIN };

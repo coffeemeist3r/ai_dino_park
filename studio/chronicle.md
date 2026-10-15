@@ -14760,3 +14760,5 @@ field only. CI green going in (cycle 186-art: `success`).
 ## Cycle 188 — designer: 605 (witness lines + the grown greeting) + 604 (hatchlings start young; kin walk to a molt). Shared seam: moltDino.
 
 ## Cycle 188 — code-planner: molt.ts witnesses + lines, a scene walk + stage opener, ~7 files; risk named — Bramble leaves its wander after 14:00.
+
+## Cycle 188 — coder: witnesses walk to a molt and speak on arrival; hatchlings start young; the grown greeting said once. Build clean, unit 3376 green.

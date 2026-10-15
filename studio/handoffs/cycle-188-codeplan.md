@@ -35,3 +35,17 @@ Bramble's activity/position after day-1 14:00 may shift.
 **Test plan:** unit (same file) registers + opener; e2e greet before/after molt, Rex unchanged, reload keeps `greeted`.
 
 **Estimated touch count:** ~7 files.
+
+## Shipped
+
+**Files touched:** `game/src/world/molt.ts`, `game/src/world/growth.ts`, `game/src/world/reachability.ts`,
+`game/src/scenes/WorldScene.ts`, `game/src/world/cycle-188-witness.test.ts` (new),
+`tests/e2e/cycle-188-seen-grown.spec.ts` (new). 6 files.
+
+**Deviations:**
+- The witness walk is a branch in the world-step loop beside the console walk (no separate method); arrival calls
+  `arriveAtMolt`, which carries the lore line, memory and ticker post (`Bramble → Pip: Look at you, Pip!`).
+- The shell cap is placed per frame from `update()` and costs one `hasPropArt` check while the rig is undrawn.
+
+**Build:** clean. **Unit:** 3376 green (327 files). **e2e (new + 187):** 6/6 (two cold-boot timeouts on the first
+run, green on re-run). **Boundary:** web-llm only under `game/src/ai/`.

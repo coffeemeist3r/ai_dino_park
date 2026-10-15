@@ -79,7 +79,7 @@ import { WELCOME_ART_KEY } from '../ai/welcome'; // BACKLOG-592
 import { FRIEND_FOUND_ART_KEY } from './loner'; // BACKLOG-571
 import { COLD_ART_KEY } from './cold'; // BACKLOG-557
 import { FAIR_ART_KEY, FESTIVAL_ART_KEYS } from './festival'; // BACKLOG-597/599
-import { MOLT_ART_KEY } from './molt'; // BACKLOG-023/603
+import { MOLT_ART_KEY, SHELLCAP_ART_KEY } from './molt'; // BACKLOG-023/603/606
 
 /** One claim the shipping park makes about itself. */
 export interface ReachabilityEntry {
@@ -196,6 +196,7 @@ export function worldPlacedProps(): Set<string> {
   out.add(SEEK_ART_KEY); // BACKLOG-582: popped over a dino whose mind just picked whom to go looking for, by `chooseSeek`
   out.add(REFLECT_ART_KEY); // BACKLOG-583: popped over every dino in view at the dusk turn, by `checkReflection`
   out.add(MOLT_ART_KEY); // BACKLOG-023: the shed skin a youngster leaves on its tile when it molts
+  out.add(SHELLCAP_ART_KEY); // BACKLOG-604/606: the scrap of shell a youngster wears until it molts
   out.add(FAIR_ART_KEY); // BACKLOG-599: the fair basket beside the rite while a festival is open
   for (const k of FESTIVAL_ART_KEYS) out.add(k); // BACKLOG-597: the rite's mark at the pond, one per season, by `openFestival`
   out.add(ERRAND_ART_KEY); // BACKLOG-586: popped over a dino setting off on its plan's errand, by `runErrand`

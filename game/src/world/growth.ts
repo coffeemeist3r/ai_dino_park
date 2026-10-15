@@ -18,6 +18,8 @@ export interface GrowthRecord {
   came?: MoltKind;
   /** The temperament it came out of the molt with — restored over the name-seeded traits on load. */
   traits?: Personality;
+  /** It has told the keeper it grew up (BACKLOG-605) — the grown greeting is said once. */
+  greeted?: boolean;
 }
 
 export type LifeStage = 'young' | 'adult';
