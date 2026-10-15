@@ -72,7 +72,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 
 
-- [ ] BACKLOG-603 [art] The shed skin — a pixel prop for the `molt` mark BACKLOG-023 leaves on the tile where a youngster molted (renders 🐚 until drawn): a pale, papery, half-curled husk in the outline of a small dino, a little translucent. Host: 023 (cycle 187).
 
 ## Cycle 163 structure additions — the watcher is a save field (2026-09-17)
 

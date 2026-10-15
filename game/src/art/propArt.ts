@@ -2690,6 +2690,41 @@ const FESTIVAL_FAIR_RIG: PropRig = {
   },
 };
 
+// `molt` (BACKLOG-603, cycle 187-art): the shed skin a youngster leaves on its tile when it grows up (host:
+// `moltDino`, BACKLOG-023). A small dino's husk lying curled on its side — head up and to the right, a tail curling
+// round under it — papery and pale, split open along the back so the inside shows through. Lit upper left like the
+// rest of the family; no colour of the dino it came off, because a husk is the part that is not alive.
+const MOLT_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '...........oo...',
+  '..........ohho..',
+  '..........ophqo.',
+  '....ooooo.opqqo.',
+  '...ohhhppoopqo..',
+  '..ohppssspppqo..',
+  '.ohpso...ospqo..',
+  '.ohpo.....oqqo..',
+  '.oqpo....opqo...',
+  '..oqqo..opqqo...',
+  '...oqqooqqqo.o..',
+  '....oqqqqqoooqo.',
+  '.....ooooo...o..',
+  '................',
+];
+
+const MOLT_RIG: PropRig = {
+  size: 16,
+  grid: MOLT_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    h: 0xfaf4e2, // papery highlight
+    p: 0xe6dcc2, // husk
+    q: 0xc4b894, // husk, shaded
+    s: 0x8e8268, // the split — the inside showing
+  },
+};
+
 // `streak` (BACKLOG-539) is the twelfth rig and the **first that is not a mark**. The eleven before it
 // hang over a dinosaur or sit on the ground; this one is engraved into the brass, beside the one line on
 // the plaque that is about the player. So it is drawn against the plaque, not against the mark family:
@@ -2964,6 +2999,8 @@ export const PROP_RIGS: Record<string, PropRig> = {
   'festival-winter': FESTIVAL_WINTER_RIG,
   // BACKLOG-601 (cycle 185-art): drawn the night its host shipped — `holdFair`'s basket (599).
   'festival-fair': FESTIVAL_FAIR_RIG,
+  // BACKLOG-603 (cycle 187-art): drawn the night its host shipped — `moltDino`'s husk (023).
+  molt: MOLT_RIG,
 };
 
 /**

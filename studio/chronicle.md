@@ -14750,3 +14750,5 @@ egg-born dinos start young too, with their parents walking over when they molt (
 
 Board: build clean, **3365 unit** green, e2e **910 passed** (1 pre-existing skip) on the first full run. Additive save
 field only. CI green going in (cycle 186-art: `success`).
+
+## Cycle 187-art — artist: BACKLOG-603 closes — the shed skin, drawn the night its host shipped. When Pip grows up it leaves a husk on the grass: a small dino's outline lying curled on its side, head up and to the right, tail curled round under it, papery cream lit upper left, split open along the back so the dark inside shows through. Deliberately none of Pip's orange — a husk is the part that is not alive. The register now has a `molt` host, so the rig shipped with somewhere to stand. Art queue empty again. Drawn inline, not by sub-agent. Unit 3371 green; art + reach + growing-up e2e green (102 + 5). CI on `main`: last run `success`.
