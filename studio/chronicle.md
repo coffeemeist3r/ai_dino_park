@@ -14807,3 +14807,5 @@ green going in (cycle 187-art: `success`).
 ## Cycle 189 — structure-smith: BACKLOG-607 chosen (a youngster keeps to its guardian); 609 seeded (the molt changes the work).
 
 ## Cycle 189 — designer: 320 (the youngster copies its guardian's quirk) + 607 (tethered to its guardian), one shared `guardianOf`.
+
+## Cycle 189 — codeplan: guardianOf + tetherStep in growth.ts, copy strings in fidget.ts, four scene seams.
