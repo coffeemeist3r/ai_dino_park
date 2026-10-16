@@ -2,7 +2,7 @@
   "cycle": 189,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-320: the youngster copies its guardian",
-  "structureItem": null,
+  "structureItem": "BACKLOG-607: a youngster keeps to its guardian",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-16T08:17:53.835Z",
-    "structure-smith": "2026-10-15T08:12:23.296Z",
+    "structure-smith": "2026-10-16T08:18:25.375Z",
     "designer": "2026-10-15T08:14:26.179Z",
     "code-planner": "2026-10-15T08:14:26.423Z",
     "coder": "2026-10-15T08:18:10.131Z",

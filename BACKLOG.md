@@ -22,7 +22,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
-- [ ] BACKLOG-607 [core] A youngster keeps to its guardian (full text in the cycle-188 block below).
+- [~] BACKLOG-607 [core] A youngster keeps to its guardian (full text in the cycle-188 block below).
+- [ ] BACKLOG-609 [core] The molt changes the work (full text in the cycle-189 block below).
 
 ---
 
@@ -654,8 +655,12 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 188 (Structure-smith) — growing up
 
-- [ ] BACKLOG-607 [core] A youngster keeps to its guardian — while young, a dino's wander is tethered within a few tiles of its guardian (a parent on the same ground, else its closest friend there), so a youngster reads as somebody's from across the screen; the tether releases at the molt and the grown dino's first wander takes it further than it has ever been. Pure tether read beside `wanderStep`; no save field (derived from growth + born + bonds). Builds on 602 / 604.
+- [~] BACKLOG-607 [core] A youngster keeps to its guardian — while young, a dino's wander is tethered within a few tiles of its guardian (a parent on the same ground, else its closest friend there), so a youngster reads as somebody's from across the screen; the tether releases at the molt and the grown dino's first wander takes it further than it has ever been. Pure tether read beside `wanderStep`; no save field (derived from growth + born + bonds). Builds on 602 / 604.
 
 ## Cycle 189 lore additions — the youngster's look (2026-10-16)
 
 - [ ] BACKLOG-608 [art] The youngster's own proportions — a young dino is the adult rig baked at half scale; give the founding youngster's species a youth pose (bigger head on a smaller body, stubby tail, oversized eyes) that the scene draws while `stageOf` is young and swaps for the adult rig at the molt. Host exists (602 young stage, `YOUNG_SCALE`). Builds on 602 / 606.
+
+## Cycle 189 (Structure-smith) — youth in the systems
+
+- [ ] BACKLOG-609 [core] The molt changes the work — a dino's share of its ground's work (the regrowth/work-priority reads, the haul) is graded by stage: a youngster pulls half a share and the grown dino a whole one, so the ground's work line reads differently the hour Pip grows up. Measure first which work reads carry a per-dino weight today (`workPriorityFor`, `workRegrowth`, the ferry/haul), and grade only those; no save field (derived from growth). Builds on 602 / 524 / 607.
