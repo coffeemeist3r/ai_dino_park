@@ -47,3 +47,22 @@ ticker line, the memory, and Pip's own quirk in the book.
 **Risks:** `__activityMark` only updates on a refresh tick — poll it.
 
 **Estimated touch count:** ~3 files (shared WorldScene/test files).
+
+## Shipped
+
+**Files touched:** `game/src/world/growth.ts` (`guardianOf`, `TETHER_TILES`, `tetherStep`), `game/src/world/fidget.ts`
+(`copyLine`, `stopCopyingTicker`, `copiedMemory`), `game/src/scenes/WorldScene.ts` (`guardianNow`/`guardianFor`, the
+idle-wander leash, the copied idle mark, the book quirk, the molt's finding-its-own beat, `__guardian`/`__tether`),
+`game/src/world/cycle-189-guardian.test.ts`, `tests/e2e/cycle-189-guardian.spec.ts`. 5 files.
+
+**Deviations:**
+- Unit test lives beside its siblings in `game/src/world/` (as cycles 187/188 did), not `tests/unit/`.
+- `guardianFor` split out of `guardianNow`: by the time `moltDue` fires, youth has already run out, so a stage-gated
+  read at the molt would always say nobody. The molt asks the ungated one.
+- The molt's flourish reuses `liftMood` (325) whole rather than writing `liftedUntil` by hand.
+- **Found while testing — Pip is an owl.** On a fresh save it is asleep at the den from boot until 13:00, so its
+  *waking* youth is the one in-game hour before its 14:00 molt (~a real minute, ~5 minutes into a sitting). The specs
+  advance to 13:01. Pip's hours were deliberately left alone: the 08:00 Grove of one day-dino keeping watch over a
+  sleeping owl is the founding tableau two specs (147, 148) and the watch system are built on.
+
+**Build:** clean. **Unit:** 3386 passed (329 files). Boundary: `@mlc-ai/web-llm` only under `game/src/ai/`.

@@ -85,3 +85,16 @@ export function moodFidget(p: Personality, mood?: Mood): Quirk {
 export function reliefFlourish(p: Personality): string {
   return `${fidget(p).glyph}✨`;
 }
+
+/** A youngster idles with its guardian's quirk (BACKLOG-320) — the book says whose. */
+export function copyLine(guardian: string, label: string): string {
+  return `copies ${guardian} — ${label}`;
+}
+
+export function stopCopyingTicker(name: string, guardian: string, ownLabel: string): string {
+  return `${name} stops copying ${guardian} — ${ownLabel} now`;
+}
+
+export function copiedMemory(guardian: string, label: string): string {
+  return `you used to copy ${guardian} — ${label}`;
+}

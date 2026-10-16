@@ -14809,3 +14809,5 @@ green going in (cycle 187-art: `success`).
 ## Cycle 189 — designer: 320 (the youngster copies its guardian's quirk) + 607 (tethered to its guardian), one shared `guardianOf`.
 
 ## Cycle 189 — codeplan: guardianOf + tetherStep in growth.ts, copy strings in fidget.ts, four scene seams.
+
+## Cycle 189 — coder: the leash and the copy shipped (5 files). Found: Pip is an owl, so its waking youth is the hour 13:00–14:00.

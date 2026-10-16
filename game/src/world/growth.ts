@@ -9,6 +9,7 @@
 import type { Personality } from '../ai/personality';
 import type { ChirpParams } from '../audio/chirp';
 import type { MoltKind } from './molt';
+import { stepToward, type Tile } from './movement';
 
 export interface GrowthRecord {
   /** Absolute world minute (`timeToAbs`) the dino hatched. May be negative for a founder born before day 1. */
@@ -53,4 +54,31 @@ export function growthLine(rec: GrowthRecord | undefined, nowMin: number): strin
   if (rec.moltedAtMin !== undefined) return `🐚 grew up on day ${rec.moltedDay ?? '?'} — came out ${rec.came ?? 'grown'}`;
   const hours = Math.max(1, Math.ceil((rec.hatchedAtMin + YOUTH_MIN - nowMin) / 60));
   return `🥚 young — grows up in ~${hours} h`;
+}
+
+/**
+ * Who a youngster belongs to (BACKLOG-607/320): the first of its parents on its own ground, else its closest friend
+ * there, else nobody. Adults have no guardian — the caller checks the stage.
+ */
+export function guardianOf(o: {
+  name: string;
+  parents?: readonly string[];
+  friend?: string | null;
+  groundOf: (n: string) => string | undefined;
+}): string | null {
+  const ground = o.groundOf(o.name);
+  const here = (n: string | null | undefined): n is string =>
+    !!n && n !== o.name && ground !== undefined && o.groundOf(n) === ground;
+  return (o.parents ?? []).find(here) ?? (here(o.friend) ? o.friend : null);
+}
+
+/** How far (Chebyshev tiles) a youngster's idle wander may take it from its guardian. */
+export const TETHER_TILES = 3;
+
+const cheby = (a: Tile, b: Tile): number => Math.max(Math.abs(a.tileX - b.tileX), Math.abs(a.tileY - b.tileY));
+
+/** The leash on an idle step: past the tether, head back; within it, take the wander step unless it leaves. */
+export function tetherStep(cur: Tile, guardian: Tile, wander: Tile, cols: number, rows: number): Tile {
+  if (cheby(cur, guardian) > TETHER_TILES) return stepToward(cur, guardian, cols, rows);
+  return cheby(wander, guardian) > TETHER_TILES ? { ...cur } : wander;
 }

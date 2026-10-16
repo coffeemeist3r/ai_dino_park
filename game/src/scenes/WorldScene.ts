@@ -227,7 +227,7 @@ import {
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
 import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges, foundingGrowth } from '../world/founding';
-import { YOUNG_SCALE, YOUTH_MIN, growthLine, moltDue, stageOf, youngVoice, type GrowthRecord } from '../world/growth';
+import { YOUNG_SCALE, YOUTH_MIN, TETHER_TILES, growthLine, guardianOf, moltDue, stageOf, tetherStep, youngVoice, type GrowthRecord } from '../world/growth';
 import {
   MOLT_ART_KEY,
   MOLT_GLYPH,
@@ -307,7 +307,7 @@ import { BANK_TILE, bankStep, pileArtKey } from '../world/bank';
 import { quarryDest, quarryGround, quarryEvent, quarryMemory, shortfallLine } from '../world/quarry';
 // BACKLOG-507: the ritual's worn ground, laid on the haunt 421 persists.
 import { marksOn, type WornMark } from '../world/wear';
-import { fidget, moodFidget, reliefFlourish, type Mood } from '../world/fidget';
+import { fidget, moodFidget, reliefFlourish, copyLine, stopCopyingTicker, copiedMemory, type Mood } from '../world/fidget';
 import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
 import { zoneStandings, providerOf, councilOf, standingLines, type Standing } from '../world/standings';
@@ -4911,6 +4911,22 @@ export class WorldScene extends Phaser.Scene {
     return stageOf(this.growth[name], timeToAbs(getWorldClock().now()));
   }
 
+  /** Who this youngster belongs to right now (BACKLOG-607) — null for an adult or one alone on its ground. */
+  private guardianNow(d: Dino): Dino | undefined {
+    return this.stageNow(d.name) === 'young' ? this.guardianFor(d) : undefined;
+  }
+
+  /** The guardian read without the stage check — the molt asks it the moment youth has already run out. */
+  private guardianFor(d: Dino): Dino | undefined {
+    const g = guardianOf({
+      name: d.name,
+      parents: this.born.find((b) => b.name === d.name)?.parents,
+      friend: this.bestFriendOf[d.name] ?? null,
+      groundOf: (n) => (this.dinoByName(n) ? zoneOf(this.dinoZones, n, BOWL_ID) : undefined),
+    });
+    return g ? this.dinoByName(g) : undefined;
+  }
+
   /** Its voice: the trait-pitched chirp, piped up while it is young (BACKLOG-602). */
   private chirpOf(d: Dino): ChirpParams {
     const p = chirpParams(d.traits);
@@ -4941,6 +4957,7 @@ export class WorldScene extends Phaser.Scene {
   private moltDino(d: Dino): void {
     const rec = this.growth[d.name];
     if (!rec || rec.moltedAtMin !== undefined) return;
+    const copied = this.guardianFor(d); // BACKLOG-320: whose quirk it wore
     const friend = this.bestFriendOf[d.name] ?? null;
     const rival = worstRival(d.name, this.grudges, this.dinoNames());
     const kind = moltKind({
@@ -4976,6 +4993,11 @@ export class WorldScene extends Phaser.Scene {
     this.chirpFor(d);
     this.memory = remember(this.memory, d.name, moltMemory(kind));
     this.logEvent(moltTicker(d.name, kind));
+    if (copied) {
+      this.liftMood(d); // BACKLOG-320: it finds its own quirk — the 325 flourish shows it first
+      this.memory = remember(this.memory, d.name, copiedMemory(copied.name, fidget(copied.traits).label));
+      this.logEvent(stopCopyingTicker(d.name, copied.name, fidget(d.traits).label));
+    }
     void this.saveGame();
   }
 
@@ -5770,7 +5792,7 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-069: the favorite is read live (season-aware) on every open; the record only stores
       // which foods went down. A palate that moves in winter shows the winter answer.
       menu: this.menuFor(d),
-      quirk: fidget(d.traits).label, // BACKLOG-303: signature idle quirk, in step with the live mark
+      quirk: ((g) => (g ? copyLine(g.name, fidget(g.traits).label) : fidget(d.traits).label))(this.guardianNow(d)), // BACKLOG-303/320
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
@@ -7065,6 +7087,8 @@ ${e.short}`;
         // BACKLOG-393: a restless day re-rolls a "stay" pick once — moves more, never forbidden to rest.
         const dir = rerollStay(intent, Math.floor(rand() * 5), () => Math.floor(rand() * 5));
         next = wanderStep(cur, dir, COLS, ROWS);
+        const guardian = this.guardianNow(d); // BACKLOG-607: a youngster's idle drift is leashed to its guardian
+        if (guardian) next = tetherStep(cur, this.tileOf(guardian), next, COLS, ROWS);
       }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
       this.activityById[d.name] = dinoActivity({
@@ -7286,7 +7310,9 @@ ${e.short}`;
         // BACKLOG-325: a just-recovered dino (no current mood) idles with the brightened flourish glyph
         // for a short window before settling back to its plain signature quirk.
         const lifted = !mood && Date.now() < (this.liftedUntil[d.name] ?? 0);
-        const wanderGlyph = lifted ? reliefFlourish(d.traits) : moodFidget(d.traits, mood).glyph;
+        // BACKLOG-320: a youngster idles the way its guardian does.
+        const copied = !mood && !lifted ? this.guardianNow(d) : undefined;
+        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : moodFidget(d.traits, mood).glyph;
         mark.setText(act === 'wandering' ? wanderGlyph : ACTIVITY_GLYPH[act]);
       }
     });
@@ -10333,6 +10359,11 @@ ${e.short}`;
     (window as any).__traitsOf = (name: string) => ({ ...(this.dinoByName(name)?.traits ?? {}) });
     (window as any).__moltHusks = () => this.moltHusks.length;
     (window as any).__moltVisits = () => JSON.parse(JSON.stringify(this.moltVisits)); // BACKLOG-604
+    (window as any).__guardian = (name: string) => {
+      const d = this.dinoByName(name);
+      return (d && this.guardianNow(d)?.name) ?? null;
+    }; // BACKLOG-607
+    (window as any).__tether = () => TETHER_TILES;
     (window as any).__shellCaps = () => [...this.shellCaps.keys()]; // BACKLOG-606
     (window as any).__moltNow = (name: string) => {
       const rec = this.growth[name];
