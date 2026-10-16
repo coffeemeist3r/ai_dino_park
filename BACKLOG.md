@@ -507,7 +507,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > dialogue, the book, proximity, and the resting loop itself.
 
 - [ ] BACKLOG-319 [social] Greeting reads the funk — the keeper's greeting of a dino in a mood leans on its *mood-shaded* fidget ("Rex paces, still sulking —"), layering 310 onto the spoken beat; deterministic fallback per mood, LLM colour behind the NPCBrain boundary. Builds on 310 / 311 / 051.
-- [ ] BACKLOG-320 [emergent] Contagious posture — a dino idling within a tile of a sulking friend briefly mirrors the glum posture (a short one-shot echo), so funk leaks through proximity the way gossip and comfort already do. Builds on 310 / 130 / 019.
+- [~] BACKLOG-320 [emergent] Contagious posture — **reshaped cycle 189 (Milestone 31): a youngster copies its guardian.** While a dino is young its idle mark is its guardian's quirk, not its own (guardian = a parent on the same ground, else its closest friend there — the same read 607 tethers to), and the book's quirk line says whose it is ("copies Bramble — hums to itself"). At the molt it finds its own: the grown dino flourishes its *own* signature quirk, the ticker says it stopped copying, and it files a memory of whose habit it wore. *Why reshaped:* as written (an adult mirroring a sulking friend) it overlaps the 310/544 funk shading and never reads as anyone's; youth is the impressionable stage, and the founding park has a youngster beside its friend from frame one. Builds on 298 / 602 / 607.
 - [ ] BACKLOG-321 [pokemon] Mood in the book — the collection book's body-language line shows a dino's *current* mood-shaded fidget while a funk is active, falling back to its signature quirk when calm, so the book reads live feeling not just temperament. Builds on 310 / 303.
 - [ ] BACKLOG-322 [emergent] Shake-it-out — a dino idle a long while occasionally breaks its signature quirk for a one-off different gesture (a stretch / a yawn) before settling back, so even the resting tell isn't perfectly looped. Builds on 298 / 108.
 
@@ -655,3 +655,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 188 (Structure-smith) — growing up
 
 - [ ] BACKLOG-607 [core] A youngster keeps to its guardian — while young, a dino's wander is tethered within a few tiles of its guardian (a parent on the same ground, else its closest friend there), so a youngster reads as somebody's from across the screen; the tether releases at the molt and the grown dino's first wander takes it further than it has ever been. Pure tether read beside `wanderStep`; no save field (derived from growth + born + bonds). Builds on 602 / 604.
+
+## Cycle 189 lore additions — the youngster's look (2026-10-16)
+
+- [ ] BACKLOG-608 [art] The youngster's own proportions — a young dino is the adult rig baked at half scale; give the founding youngster's species a youth pose (bigger head on a smaller body, stubby tail, oversized eyes) that the scene draws while `stageOf` is young and swaps for the adult rig at the molt. Host exists (602 young stage, `YOUNG_SCALE`). Builds on 602 / 606.

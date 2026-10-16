@@ -8,7 +8,21 @@
 
 ## Current milestone
 
-_No milestone is ACTIVE. Milestone 30 shipped cycle 188; the next is a **normal** milestone (CHARTER v9: the one after a tentpole), drafted by the smiths at the next cycle open. The tentpole queue is now empty — see the note under it._
+**Milestone 31: A youngster is somebody's — you can tell from across the grass who it belongs to, and when it grows up you can see what it kept**
+**Status:** ACTIVE (opened cycle 189)
+
+The normal milestone after the Growing-up tentpole (CHARTER v9): weave youth into what the park already has. Milestone 30
+made youth a stage with a size, a voice and a molt — but between the boot and the molt a youngster wanders exactly like a
+grown dino, only smaller. This one gives youth a *shape*: it keeps to someone, it copies them, and the grown dino that
+comes out of the molt carries something it picked up.
+
+**Lore arcs:**
+- [ ] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
+- [ ] The grown dino looks back: drafted next cycle
+
+**Structure arcs:**
+- [ ] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
+- [ ] drafted next cycle
 
 ---
 
