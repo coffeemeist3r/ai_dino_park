@@ -14805,3 +14805,5 @@ green going in (cycle 187-art: `success`).
 ## Cycle 189 — lore-smith: youth gets a shape. Milestone 31 drafted ("A youngster is somebody's"); BACKLOG-320 reshaped into a youngster copying its guardian's quirk; art 608 seeded (youth proportions).
 
 ## Cycle 189 — structure-smith: BACKLOG-607 chosen (a youngster keeps to its guardian); 609 seeded (the molt changes the work).
+
+## Cycle 189 — designer: 320 (the youngster copies its guardian's quirk) + 607 (tethered to its guardian), one shared `guardianOf`.
