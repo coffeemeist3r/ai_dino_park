@@ -4939,6 +4939,7 @@ export class WorldScene extends Phaser.Scene {
       const rec = this.growth[d.name];
       if (rec?.traits) d.traits = { ...rec.traits };
       d.sprite.setScale(this.stageNow(d.name) === 'young' ? YOUNG_SCALE : 1);
+      d.setYoung(this.stageNow(d.name) === 'young'); // BACKLOG-608: the youth pose, where its species has one
     }
   }
 
@@ -4977,6 +4978,7 @@ export class WorldScene extends Phaser.Scene {
       this.moltHusks = this.moltHusks.filter((h) => h !== husk);
     });
     this.tweens.add({ targets: d.sprite, scale: 1, duration: 600, ease: 'Back.Out' });
+    d.setYoung(false); // BACKLOG-608
     this.shellCaps.get(d.name)?.destroy();
     this.shellCaps.delete(d.name);
     // BACKLOG-604: the ones it belongs to walk over — parents, its closest friend, its rival — if they share its ground.
@@ -5058,6 +5060,7 @@ export class WorldScene extends Phaser.Scene {
     // BACKLOG-604: anybody born starts young and grows up on the 602 clock.
     this.growth[name] = { hatchedAtMin: timeToAbs(getWorldClock().now()) };
     dino.sprite.setScale(YOUNG_SCALE);
+    dino.setYoung(true); // BACKLOG-608
     this.showBubble(dino, `${name} hatches! 🐣`);
     this.logEvent(`🐣 ${name} hatched (${egg.parentA} + ${egg.parentB})`);
     void this.saveGame();
@@ -10364,6 +10367,7 @@ ${e.short}`;
       return (d && this.guardianNow(d)?.name) ?? null;
     }; // BACKLOG-607
     (window as any).__tether = () => TETHER_TILES;
+    (window as any).__youngArt = (name: string) => !!this.dinoByName(name)?.isYoungArt(); // BACKLOG-608
     (window as any).__shellCaps = () => [...this.shellCaps.keys()]; // BACKLOG-606
     (window as any).__moltNow = (name: string) => {
       const rec = this.growth[name];

@@ -656,7 +656,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 189 lore additions — the youngster's look (2026-10-16)
 
-- [ ] BACKLOG-608 [art] The youngster's own proportions — a young dino is the adult rig baked at half scale; give the founding youngster's species a youth pose (bigger head on a smaller body, stubby tail, oversized eyes) that the scene draws while `stageOf` is young and swaps for the adult rig at the molt. Host exists (602 young stage, `YOUNG_SCALE`). Builds on 602 / 606.
 
 ## Cycle 189 (Structure-smith) — youth in the systems
 

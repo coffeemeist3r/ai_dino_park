@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import type { NPCBrain, NPCContext, Reply } from '../ai/brain';
 import { seededPersonality, type Personality } from '../ai/personality';
-import { makeDinoArt, ensureDown } from '../art/bake';
+import { makeDinoArt, ensureDown, ensureYoungWalk } from '../art/bake';
 
 const TILE = 32;
 
@@ -28,6 +28,8 @@ export class Dino {
   private readonly brain: NPCBrain;
   /** BACKLOG-522: which pose is playing, so the swap happens on the edge and not every world step. */
   private down = false;
+  /** BACKLOG-608: drawn in its youth pose (only where the species has one). */
+  private young = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cfg: DinoConfig) {
     this.name = cfg.name;
@@ -59,10 +61,31 @@ export class Dino {
   setAsleep(asleep: boolean): void {
     if (asleep === this.down) return;
     if (!(this.sprite instanceof Phaser.GameObjects.Sprite) || !this.artKey) return;
-    const key = asleep ? ensureDown(this.sprite.scene, this.species, this.color) : this.artKey;
+    const key = asleep ? ensureDown(this.sprite.scene, this.species, this.color) : this.walkKey();
     if (!key) return; // undrawn asleep — keep ambling in place, the graceful fallback
     this.down = asleep;
     this.sprite.play(key);
+  }
+
+  /**
+   * Young / grown (BACKLOG-608): swap the walk for the youth pose and back. Asleep it keeps the down pose and picks
+   * the right walk when it wakes. A species with no youth pose keeps its adult walk — drawn small by the scene.
+   */
+  setYoung(young: boolean): void {
+    if (young === this.young) return;
+    this.young = young;
+    if (this.down || !(this.sprite instanceof Phaser.GameObjects.Sprite)) return;
+    const key = this.walkKey();
+    if (key) this.sprite.play(key);
+  }
+
+  /** True when the youth pose is the walk playing (BACKLOG-608) — the e2e hook reads this. */
+  isYoungArt(): boolean {
+    return this.sprite instanceof Phaser.GameObjects.Sprite && !!this.sprite.anims.currentAnim?.key.includes('_young_');
+  }
+
+  private walkKey(): string | null {
+    return (this.young && this.artKey && ensureYoungWalk(this.sprite.scene, this.species, this.color)) || this.artKey;
   }
 
   /** True when this dino is showing its sleeping pose (BACKLOG-522) — the e2e hook reads this. */

@@ -19,6 +19,9 @@ export interface PixelRig {
   /** BACKLOG-522: the sleeping pose, two frames of breathing. Optional — a species without one keeps
    *  its standing frame while it rests, which is the graceful fallback and the control for this path. */
   down?: ReadonlyArray<ReadonlyArray<string>>;
+  /** BACKLOG-608: the youth pose, same frame order as `frames`. Optional — a species without one is drawn as its
+   *  adult rig at half scale while young, the fallback every hatchling of an undrawn species keeps. */
+  young?: ReadonlyArray<ReadonlyArray<string>>;
   /** Char → color for a roster base color. ≤ 15 colors + transparency (GBA OBJ discipline). */
   palette(base: number): Record<string, number>;
 }
@@ -502,6 +505,51 @@ const COMP_DOWN_B: ReadonlyArray<string> = [
 
 const COMP_DOWN: ReadonlyArray<ReadonlyArray<string>> = [COMP_DOWN_A, COMP_DOWN_B];
 
+/** Pip young (BACKLOG-608): the same compsognathus redrawn as a child, not shrunk. The head is the size of the body
+ *  — it was a third of it — and sits up over the chest where the shell cap lands; the eye is a 2×2 block, so it reads
+ *  as wide and new at half scale; the tail is a stub and the legs are a row shorter. The dorsal stripe stays: it is
+ *  the family marking and the one thing that says *this is what it will grow into*. **The first draft was rejected:**
+ *  it kept the adult's head out front on a long neck at the same size, and at 20 screen pixels it read as a smaller
+ *  Twitch, not a younger one. Pulling the head up and back over the body is what made it a baby. */
+const COMP_YOUNG_STAND: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '......ooooo.........',
+  '.....obbbbbo........',
+  '....obbbbbbbo.......',
+  '...obeebbbbbo.......',
+  '..obbeebbbbbo.......',
+  '..obbbbbbbbo........',
+  '...oobbbbbo.........',
+  '.....okbbbo.........',
+  '....obkbbbbo........',
+  '....obkbbbbbbbo.....',
+  '....obllbbbbo.......',
+  '.....obllbbo........',
+  '......dd.dd.........',
+  '......dd.dd.........',
+  '.....odd.ddo........',
+  '....................',
+];
+
+const COMP_YOUNG_STEP_L: ReadonlyArray<string> = [
+  ...COMP_YOUNG_STAND.slice(0, 16),
+  '.....dd...dd........',
+  '.....dd...dd........',
+  '....odd...ddo.......',
+  '....................',
+];
+
+const COMP_YOUNG_STEP_R: ReadonlyArray<string> = [
+  ...COMP_YOUNG_STAND.slice(0, 16),
+  '.......dd.dd........',
+  '.......dd.dd........',
+  '......odd.ddo.......',
+  '....................',
+];
+
 function compPalette(base: number): Record<string, number> {
   return {
     o: shade(base, -0.75), // near-black warm outline (never pure black)
@@ -519,6 +567,7 @@ export const COMP_RIG: PixelRig = {
   frames: [COMP_STAND, COMP_STEP_L, COMP_STEP_R],
   sequence: [0, 1, 0, 2],
   down: COMP_DOWN, // BACKLOG-525
+  young: [COMP_YOUNG_STAND, COMP_YOUNG_STEP_L, COMP_YOUNG_STEP_R], // BACKLOG-608
   palette: compPalette,
 };
 

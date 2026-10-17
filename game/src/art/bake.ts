@@ -40,15 +40,16 @@ function drawShape(g: Phaser.GameObjects.Graphics, s: Shape): void {
  * Texture keys follow the same `${animKey}_${i}` convention the vector path uses, so the
  * factory's `_0` base-texture contract holds for both pipelines.
  */
-function ensurePixelWalk(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+function ensurePixelWalk(scene: Phaser.Scene, species: string, baseColor: number, young = false): string | null {
   const rig = PIXEL_SPECIES[species];
-  if (!rig) return null;
-  const animKey = `${rig.prefix}_walk_${baseColor.toString(16)}`;
+  const grids = young ? rig?.young : rig?.frames;
+  if (!rig || !grids) return null;
+  const animKey = `${rig.prefix}_${young ? 'young' : 'walk'}_${baseColor.toString(16)}`;
   if (scene.anims.exists(animKey)) return animKey;
 
   const scale = Math.max(1, Math.floor(SIZE / rig.size));
   const pal = rig.palette(baseColor);
-  const texKeys = rig.frames.map((grid, i) => {
+  const texKeys = grids.map((grid, i) => {
     const key = `${animKey}_${i}`;
     if (!scene.textures.exists(key)) {
       const g = scene.add.graphics();
@@ -114,6 +115,16 @@ export function ensureDown(scene: Phaser.Scene, species: string, baseColor: numb
   // 1.5fps: a breath, not a gait. The walk runs at 6.
   scene.anims.create({ key: animKey, frames: texKeys, frameRate: 1.5, repeat: -1 });
   return animKey;
+}
+
+/** The youth walk (BACKLOG-608), or null when this species has no youth pose — the caller keeps the adult walk. */
+export function ensureYoungWalk(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+  return ensurePixelWalk(scene, species, baseColor, true);
+}
+
+/** Is this species drawn young (BACKLOG-608)? */
+export function hasYoungArt(species: string): boolean {
+  return !!PIXEL_SPECIES[species]?.young?.length;
 }
 
 /** Is this species drawn asleep (BACKLOG-522)? Species without a down pose keep their standing frame. */
