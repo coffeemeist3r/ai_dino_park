@@ -1,8 +1,8 @@
 {
   "cycle": 189,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-320: the youngster copies its guardian",
-  "structureItem": "BACKLOG-607: a youngster keeps to its guardian",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-10-16T08:20:12.731Z",
     "coder": "2026-10-16T08:27:10.117Z",
     "qa": "2026-10-17T08:21:31.914Z",
-    "validator": "2026-10-15T08:57:17.438Z",
+    "validator": "2026-10-17T08:22:24.788Z",
     "artist": "2026-10-15T09:01:08.823Z"
   },
   "lastSoloCycle": 151,

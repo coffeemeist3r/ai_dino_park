@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 189 — 2026-10-17 (a youngster is somebody's; Milestone 31 opens)
+- BACKLOG-607: A youngster keeps to its guardian — while young, a dino's idle wander is leashed within 3 tiles of its guardian (a parent on its own ground, else its closest friend there); past the leash it heads back, at the edge it holds. Released at the molt. On a fresh save: Pip keeps to Bramble.
+- BACKLOG-320: The youngster copies — while young a dino idles with its guardian's quirk glyph, and the book says whose (*"copies Bramble — …"*). At the molt it finds its own: the relief flourish shows its own quirk first, the ticker logs *"Pip stops copying Bramble — … now"*, and it remembers whose habit it wore.
+
+---
+
 ## Cycle 188 — 2026-10-15 (somebody noticed; Milestone 30, the growing-up tentpole, ships)
 - BACKLOG-604: Egg-born dinos grow up — a dino hatched from an egg now starts young (half size, piping) and molts on the same two-day clock. At any molt, the dinos it belongs to on its own ground walk over: its parents, then its closest friend, then its worst rival. On a fresh save: Bramble walks to Pip at 14:00 on day one.
 - BACKLOG-605: The park sees it grow up — each witness, on reaching the grown dino, says so in its own capacity (a parent *"🐚 That's my Pip. All grown."*, a friend *"Look at you, Pip!"*, a rival *"Still small to me."*) and remembers it. A youngster greets the keeper as one (*"\*bounces\* I'm nearly big, you know."*); the first greet after its molt says *"🐚 Notice anything? I'm grown."*, once, kept in the save. **Milestone 30 SHIPPED.**

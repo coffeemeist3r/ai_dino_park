@@ -14813,3 +14813,31 @@ green going in (cycle 187-art: `success`).
 ## Cycle 189 — coder: the leash and the copy shipped (5 files). Found: Pip is an owl, so its waking youth is the hour 13:00–14:00.
 
 ## Cycle 189 — qa: 10/10 criteria pass; e2e 916/918, the two reds the known cold-boot timeout (controls-help, green isolated). Dossier spec taught that a youngster copies.
+
+## Cycle 189 — validator: lore APPROVED / structure APPROVED — a youngster is somebody's.
+
+Milestone 31 asked for something small and specific: you should be able to tell, from across the grass, who a
+youngster belongs to. Two nights ago Pip was a half-size adult who happened to stand near Bramble. Tonight it is
+Bramble's.
+
+Boot a fresh save, walk east into the Grove and wait. Pip sleeps at the den until one in the afternoon — it is an
+owl, a fact the coder only discovered while testing, and which means its waking childhood lasts exactly one in-game
+hour. But in that hour: it never strays more than three tiles from Bramble. When Bramble wanders off, Pip's next
+idle step is *toward* it; at the edge of the leash it just stands there rather than go further. And the little
+glyph that floats over an idle dino — every dino's signature fidget — over Pip shows *Bramble's*. Open the book and
+Pip's quirk line says so outright: *copies Bramble — …*
+
+At 14:00 Pip molts, and the leash comes off. The first thing the grown dino does is flourish its **own** quirk, with
+the sparkle the park uses for a dino that has just come back to itself. The ticker says *Pip stops copying Bramble*,
+and Pip remembers whose habit it wore. The book now gives Pip's own line.
+
+**The find of the night:** the previous run got through the coder and stopped. QA picked it back up this morning
+with one uncommitted test change waiting — the cycle-67 dossier spec, which has insisted since that cycle that every
+book row's quirk equals that dino's own fidget. Pip's row no longer does, on purpose. The spec now knows that a
+youngster copies.
+
+Milestone 31: two of four arcs done; the second lore and structure arcs are drafted next cycle (609, the molt
+changes the work, is queued). **Operator reminder:** the tentpole queue for Milestone 32 is still empty.
+
+Board: build clean, **3386 unit** green, e2e **916/918** — the two reds were the known cold-boot `__ready` timeout
+in `controls-help`, green isolated (3/3). No save change. CI on `main` going in: `success` (cycle 188-art).

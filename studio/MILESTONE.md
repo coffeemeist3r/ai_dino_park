@@ -17,11 +17,11 @@ grown dino, only smaller. This one gives youth a *shape*: it keeps to someone, i
 comes out of the molt carries something it picked up.
 
 **Lore arcs:**
-- [ ] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
+- [x] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
 - [ ] The grown dino looks back: drafted next cycle
 
 **Structure arcs:**
-- [ ] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
+- [x] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
 - [ ] drafted next cycle
 
 ---
