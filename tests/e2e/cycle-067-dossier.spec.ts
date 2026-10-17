@@ -19,7 +19,12 @@ test('the book names each dino\'s signature quirk, matching its live fidget', as
   // every row carries a quirk label, and it matches that dino's live fidget label.
   for (const r of rows) {
     expect(r.quirk, `${r.name} has a quirk label`).toBeTruthy();
-    const live = await page.evaluate((n) => (window as W).__fidget(n)?.label as string, r.name);
+    // BACKLOG-320: a youngster idles with its guardian's quirk, and the book says whose.
+    const live = await page.evaluate((n) => {
+      const w = window as W;
+      const g = w.__guardian(n) as string | null;
+      return g ? `copies ${g} — ${w.__fidget(g).label}` : (w.__fidget(n)?.label as string);
+    }, r.name);
     expect(r.quirk).toBe(live);
   }
 

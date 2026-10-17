@@ -14811,3 +14811,5 @@ green going in (cycle 187-art: `success`).
 ## Cycle 189 — codeplan: guardianOf + tetherStep in growth.ts, copy strings in fidget.ts, four scene seams.
 
 ## Cycle 189 — coder: the leash and the copy shipped (5 files). Found: Pip is an owl, so its waking youth is the hour 13:00–14:00.
+
+## Cycle 189 — qa: 10/10 criteria pass; e2e 916/918, the two reds the known cold-boot timeout (controls-help, green isolated). Dossier spec taught that a youngster copies.
