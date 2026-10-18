@@ -22,6 +22,8 @@ export interface PixelRig {
   /** BACKLOG-608: the youth pose, same frame order as `frames`. Optional — a species without one is drawn as its
    *  adult rig at half scale while young, the fallback every hatchling of an undrawn species keeps. */
   young?: ReadonlyArray<ReadonlyArray<string>>;
+  /** BACKLOG-610: the youth sleep pose, same shape as `down`. Optional — a youngster without one sleeps in `down`. */
+  youngDown?: ReadonlyArray<ReadonlyArray<string>>;
   /** Char → color for a roster base color. ≤ 15 colors + transparency (GBA OBJ discipline). */
   palette(base: number): Record<string, number>;
 }
@@ -550,6 +552,41 @@ const COMP_YOUNG_STEP_R: ReadonlyArray<string> = [
   '....................',
 ];
 
+/** Pip asleep (BACKLOG-610): the youth pose curled up. The big head rests on the body instead of floating over it, the
+ *  eye is a shut lid (an outline dash) and the stub tail wraps round the haunch. **First draft rejected:** it reused the
+ *  youth stand's 2×2 open eye, and a sleeping child staring out of the den read as awake; shutting the lid is what made
+ *  it sleep. **Second draft rejected on a number:** at 123 inked pixels it out-weighed the adult curl (117) — a child that
+ *  lies down bigger than its parent. Drawn a column narrower and a row lower, to ~100. The belly band breathes a column. */
+const COMP_YOUNG_DOWN_A: ReadonlyArray<string> = [
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....................',
+  '....oooo............',
+  '...obbbbo...........',
+  '..obbbbbbo..........',
+  '..oboobbbbooo.......',
+  '..obbbbbbokkbo......',
+  '...oobbbkkbbbo......',
+  '....obllllbbbbo.....',
+  '....obllllbbobo.....',
+  '.....obbbbbo.obo....',
+  '.....odd.ddoooo.....',
+  '.....ooo.ooo........',
+  '....................',
+];
+
+const COMP_YOUNG_DOWN_B: ReadonlyArray<string> = [
+  ...COMP_YOUNG_DOWN_A.slice(0, 14),
+  '....obbllllbbbo.....',
+  '....obbllllbobo.....',
+  ...COMP_YOUNG_DOWN_A.slice(16),
+];
+
 function compPalette(base: number): Record<string, number> {
   return {
     o: shade(base, -0.75), // near-black warm outline (never pure black)
@@ -568,6 +605,7 @@ export const COMP_RIG: PixelRig = {
   sequence: [0, 1, 0, 2],
   down: COMP_DOWN, // BACKLOG-525
   young: [COMP_YOUNG_STAND, COMP_YOUNG_STEP_L, COMP_YOUNG_STEP_R], // BACKLOG-608
+  youngDown: [COMP_YOUNG_DOWN_A, COMP_YOUNG_DOWN_B], // BACKLOG-610
   palette: compPalette,
 };
 

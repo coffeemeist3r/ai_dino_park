@@ -86,15 +86,16 @@ function ensurePixelWalk(scene: Phaser.Scene, species: string, baseColor: number
  * and every species in the roster is drawn in pixel, so a vector down-pose would be a branch with no
  * caller — exactly the speculative generality the park does not need.
  */
-export function ensureDown(scene: Phaser.Scene, species: string, baseColor: number): string | null {
+export function ensureDown(scene: Phaser.Scene, species: string, baseColor: number, young = false): string | null {
   const rig = PIXEL_SPECIES[species];
-  if (!rig?.down?.length) return null;
-  const animKey = `${rig.prefix}_down_${baseColor.toString(16)}`;
+  const frames = (young && rig?.youngDown) || rig?.down; // BACKLOG-610: a youngster curls in its own pose where drawn
+  if (!rig || !frames?.length) return null;
+  const animKey = `${rig.prefix}_${frames === rig.down ? 'down' : 'ydown'}_${baseColor.toString(16)}`;
   if (scene.anims.exists(animKey)) return animKey;
 
   const scale = Math.max(1, Math.floor(SIZE / rig.size));
   const pal = rig.palette(baseColor);
-  const texKeys = rig.down.map((grid, i) => {
+  const texKeys = frames.map((grid, i) => {
     const key = `${animKey}_${i}`;
     if (!scene.textures.exists(key)) {
       const g = scene.add.graphics();

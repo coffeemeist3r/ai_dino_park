@@ -662,7 +662,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 190 lore additions — the youngster asleep (2026-10-18)
 
-- [ ] BACKLOG-610 [art] The youngster's sleep pose — 608 drew Pip's youth walk, but asleep a youngster drops back to the adult down pose, and Pip sleeps from boot until 13:00 — the first thing a player sees of the park's child is the grown silhouette, shrunk. A curled `young` down frame on the compsognathus rig (big head tucked onto the body, stub tail wrapped), baked through the same `ensureYoungWalk`/`setYoung` seam. Host exists (602's young stage + 608's frame set).
 
 ## Cycle 190 (Structure-smith) — youth in the reads
 

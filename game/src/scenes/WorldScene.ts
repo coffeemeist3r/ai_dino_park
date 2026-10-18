@@ -10381,6 +10381,7 @@ ${e.short}`;
     }; // BACKLOG-607
     (window as any).__tether = () => TETHER_TILES;
     (window as any).__youngArt = (name: string) => !!this.dinoByName(name)?.isYoungArt(); // BACKLOG-608
+    (window as any).__youngDownArt = (name: string) => !!this.dinoByName(name)?.isYoungDownArt(); // BACKLOG-610
     (window as any).__shellCaps = () => [...this.shellCaps.keys()]; // BACKLOG-606
     (window as any).__moltNow = (name: string) => {
       const rec = this.growth[name];

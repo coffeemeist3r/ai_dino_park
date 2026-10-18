@@ -61,27 +61,33 @@ export class Dino {
   setAsleep(asleep: boolean): void {
     if (asleep === this.down) return;
     if (!(this.sprite instanceof Phaser.GameObjects.Sprite) || !this.artKey) return;
-    const key = asleep ? ensureDown(this.sprite.scene, this.species, this.color) : this.walkKey();
+    const key = asleep ? ensureDown(this.sprite.scene, this.species, this.color, this.young) : this.walkKey();
     if (!key) return; // undrawn asleep — keep ambling in place, the graceful fallback
     this.down = asleep;
     this.sprite.play(key);
   }
 
   /**
-   * Young / grown (BACKLOG-608): swap the walk for the youth pose and back. Asleep it keeps the down pose and picks
-   * the right walk when it wakes. A species with no youth pose keeps its adult walk — drawn small by the scene.
+   * Young / grown (BACKLOG-608): swap the walk for the youth pose and back — asleep, the youth down pose (610) and
+   * back, and the right walk when it wakes. A species with no youth pose keeps its adult walk — drawn small by the scene.
    */
   setYoung(young: boolean): void {
     if (young === this.young) return;
     this.young = young;
-    if (this.down || !(this.sprite instanceof Phaser.GameObjects.Sprite)) return;
-    const key = this.walkKey();
+    if (!(this.sprite instanceof Phaser.GameObjects.Sprite)) return;
+    // BACKLOG-610: asleep, swap between the youth and adult down poses; awake, the walks.
+    const key = this.down ? ensureDown(this.sprite.scene, this.species, this.color, young) : this.walkKey();
     if (key) this.sprite.play(key);
   }
 
   /** True when the youth pose is the walk playing (BACKLOG-608) — the e2e hook reads this. */
   isYoungArt(): boolean {
     return this.sprite instanceof Phaser.GameObjects.Sprite && !!this.sprite.anims.currentAnim?.key.includes('_young_');
+  }
+
+  /** True when the youth sleep pose is playing (BACKLOG-610) — the e2e hook reads this. */
+  isYoungDownArt(): boolean {
+    return this.sprite instanceof Phaser.GameObjects.Sprite && !!this.sprite.anims.currentAnim?.key.includes('_ydown_');
   }
 
   private walkKey(): string | null {
