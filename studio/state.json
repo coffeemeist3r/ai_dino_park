@@ -1,6 +1,6 @@
 {
   "cycle": 190,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-313: the kept habit (a grown dino still does its guardian's quirk now and then)",
   "structureItem": "BACKLOG-609: the molt changes the work \u2014 a youngster holds no standing (seat/provider) until it grows up",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-18T08:12:47.090Z",
     "structure-smith": "2026-10-18T08:13:00.861Z",
-    "designer": "2026-10-16T08:19:34.520Z",
+    "designer": "2026-10-18T08:13:37.379Z",
     "code-planner": "2026-10-16T08:20:12.731Z",
     "coder": "2026-10-16T08:27:10.117Z",
     "qa": "2026-10-17T08:21:31.914Z",

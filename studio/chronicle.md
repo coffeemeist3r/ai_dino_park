@@ -14847,3 +14847,5 @@ in `controls-help`, green isolated (3/3). No save change. CI on `main` going in:
 ## Cycle 190 — lore-smith: what it kept. BACKLOG-313 reshaped into the kept habit (Milestone 31 lore arc 2); art 610 seeded (youth sleep pose).
 
 ## Cycle 190 — structure-smith: BACKLOG-609 reshaped and chosen (a youngster holds no standing — the Grove seat is Bramble's until Pip grows up); 611 seeded.
+
+## Cycle 190 — designer: 313 (the kept habit, one idle beat in four) + 609 (no standing while young; the seat moves at the molt).
