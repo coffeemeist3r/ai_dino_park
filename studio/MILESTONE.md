@@ -22,7 +22,7 @@ comes out of the molt carries something it picked up.
 
 **Structure arcs:**
 - [x] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
-- [ ] drafted next cycle
+- [ ] A youngster holds no standing: Bramble keeps the Grove's seat through Pip's youth, and Pip takes it the hour it grows up (BACKLOG-609 reshaped)
 
 ---
 
