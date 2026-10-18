@@ -8,21 +8,9 @@
 
 ## Current milestone
 
-**Milestone 31: A youngster is somebody's — you can tell from across the grass who it belongs to, and when it grows up you can see what it kept**
-**Status:** ACTIVE (opened cycle 189)
-
-The normal milestone after the Growing-up tentpole (CHARTER v9): weave youth into what the park already has. Milestone 30
-made youth a stage with a size, a voice and a molt — but between the boot and the molt a youngster wanders exactly like a
-grown dino, only smaller. This one gives youth a *shape*: it keeps to someone, it copies them, and the grown dino that
-comes out of the molt carries something it picked up.
-
-**Lore arcs:**
-- [x] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
-- [ ] The grown dino keeps it: after the molt it still does its guardian's quirk now and then, and the book says whose (BACKLOG-313 reshaped)
-
-**Structure arcs:**
-- [x] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
-- [ ] A youngster holds no standing: Bramble keeps the Grove's seat through Pip's youth, and Pip takes it the hour it grows up (BACKLOG-609 reshaped)
+*None active — Milestone 31 shipped cycle 190. Milestone 32 is a **tentpole** (CHARTER v9) and the tentpole queue is
+empty: the operator owns that list and needs to refill it. CHARTER v9 does not say what the smiths do with an empty
+queue; whatever they draft next, the handoff must name the gap.*
 
 ---
 
@@ -61,6 +49,31 @@ comes out of the molt carries something it picked up.
 > Milestone 32 would be the next tentpole, and the operator owns this list — it needs refilling before then.
 
 ## Shipped milestones
+
+### Milestone 31: A youngster is somebody's — SHIPPED cycle 190 (opened cycle 189)
+
+Two cycles, four arcs, no REWORK. Pip keeps to Bramble and idles with Bramble's quirk; at 14:00 it grows up, takes
+the Grove's seat its tally had earned, and still hums Bramble's tune one idle beat in four.
+
+**The lesson worth keeping:** a seat placed on a knife edge for reachability (492) is a promise about *temperament*,
+and the stage system quietly broke it two milestones later — the softer molt moved Pip off the line in cycle 187
+and nobody noticed until this cycle moved the seat. Filed as BACKLOG-612.
+
+**Milestone 31: A youngster is somebody's — you can tell from across the grass who it belongs to, and when it grows up you can see what it kept**
+**Status:** SHIPPED cycle 190 (opened cycle 189)
+
+The normal milestone after the Growing-up tentpole (CHARTER v9): weave youth into what the park already has. Milestone 30
+made youth a stage with a size, a voice and a molt — but between the boot and the molt a youngster wanders exactly like a
+grown dino, only smaller. This one gives youth a *shape*: it keeps to someone, it copies them, and the grown dino that
+comes out of the molt carries something it picked up.
+
+**Lore arcs:**
+- [x] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
+- [x] The grown dino keeps it: after the molt it still does its guardian's quirk now and then, and the book says whose (BACKLOG-313 reshaped)
+
+**Structure arcs:**
+- [x] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
+- [x] A youngster holds no standing: Bramble keeps the Grove's seat through Pip's youth, and Pip takes it the hour it grows up (BACKLOG-609 reshaped)
 
 ### Milestone 30 (TENTPOLE): Growing up — SHIPPED cycle 188 (opened cycle 187)
 

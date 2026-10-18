@@ -14855,3 +14855,36 @@ in `controls-help`, green isolated (3/3). No save change. CI on `main` going in:
 ## Cycle 190 — coder: the kept habit and the seat that waits (9 files). Found: the founding molt is softer, so the Grove has had no knife-edge ballot after 14:00 since cycle 187 — and now none before it either.
 
 ## Cycle 190 — qa: 12/12 criteria pass; e2e 920/921 twice — a real red (138 billcall: Bramble calls walls, not stores) fixed, then the known cold-boot flake (014, green isolated).
+
+## Cycle 190 — validator: lore APPROVED / structure APPROVED — what it kept. **Milestone 31 ships.**
+
+Last night Pip grew up and let go of everything at once: the leash, Bramble's quirk, the lot. It was tidy, and it
+was wrong — nobody grows up and sheds the whole of who raised them.
+
+So tonight it keeps something. Boot a fresh save, walk east into the Grove and wait for two in the afternoon. Pip
+molts, steps out at full size, flourishes its own quirk — and then, every fourth idle beat or so, it hums. That is
+Bramble's 🎵, not Pip's. The book says it plainly: Pip *paces, and still Bramble's hums to itself now and then*. It is
+written into the save, so the habit outlives a reload, and it outlives Bramble too, if Bramble ever leaves.
+
+The other half is about who gets a say. Since cycle 166 the Grove's one council seat has belonged to Pip, because
+Pip had banked two units to Bramble's one — which meant the ground's pantry and labour calls were being voted by a
+child. Not any more. A youngster holds no standing: all morning the seat is Bramble's, and when the old ruin is
+mended the Grove's council calls for walls instead of stores, because Bramble is the energetic one. At 14:00 Pip grows
+up into the seat its tally had already earned, and the ticker says so: *🗳️ Pip takes a seat on the Grove's council —
+grown now.* The first time this park's governance has changed hands inside a sitting on a fresh save.
+
+**The find of the night, and the cost.** The structure-smith assumed Pip's molt was *bolder*. It is *softer* — the
+founding bond was set one point over the line in cycle 187 so that Pip comes out "keeping Bramble close" — and softer
+adds 0.15 agreeableness. Cycle 137 put the Grove's seat on Pip *because* its 0.522 sat twenty-two thousandths over the
+pantry threshold, a vote a life could turn. Since cycle 187 that knife edge has quietly died at 14:00; since tonight
+the morning seat is Bramble's 0.870. The Grove now has no turnable ballot at any hour. Filed as **BACKLOG-612** rather
+than buried, and the 137 spec says in its own words that it is holding its premise up by hook.
+
+**Milestone 31 ships** — *A youngster is somebody's*: it keeps to its guardian, copies it, grows up into its own say,
+and keeps a little of it anyway. Two cycles, four arcs, no REWORK. **Operator: Milestone 32 is a tentpole and the
+tentpole queue in `studio/MILESTONE.md` is empty.** BACKLOG-030, religion, is still the obvious unbuilt North Star item.
+
+Board: build clean, **3393 unit** green, e2e **920/921** twice — run 1's red was real (`cycle-138-billcall` pinned
+Pip's "fills its stores first"; Bramble calls walls) and fixed; run 2's red the known cold-boot canvas timeout in
+`cycle-014-npc-convo`, green isolated ×3. Additive save field (`kept` on a growth record). CI on `main` going in:
+`success` (cycle 189-art).

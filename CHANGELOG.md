@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 190 — 2026-10-18 (what it kept; Milestone 31 ships)
+- BACKLOG-313: The kept habit — a dino that copied its guardian while young keeps that quirk after the molt: one idle beat in four the grown dino still does it, and the book says so (*"…, and still Bramble's hums to itself now and then"*). Kept on the growth record (additive `kept` field). On a fresh save: grown Pip still hums like Bramble.
+- BACKLOG-609: A youngster holds no standing — while young a dino holds no council seat and no provider claim (its tally is kept, not counted); at the molt it steps into what that tally earns, with a 🗳️ ticker beat. On a fresh save Bramble holds the Grove's seat all morning and Pip takes it at 14:00. **Milestone 31 SHIPPED.**
+
+---
+
 ## Cycle 189 — 2026-10-17 (a youngster is somebody's; Milestone 31 opens)
 - BACKLOG-607: A youngster keeps to its guardian — while young, a dino's idle wander is leashed within 3 tiles of its guardian (a parent on its own ground, else its closest friend there); past the leash it heads back, at the edge it holds. Released at the molt. On a fresh save: Pip keeps to Bramble.
 - BACKLOG-320: The youngster copies — while young a dino idles with its guardian's quirk glyph, and the book says whose (*"copies Bramble — …"*). At the molt it finds its own: the relief flourish shows its own quirk first, the ticker logs *"Pip stops copying Bramble — … now"*, and it remembers whose habit it wore.

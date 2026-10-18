@@ -22,7 +22,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
-- [~] BACKLOG-609 [core] The molt changes the work — reshaped: a youngster holds no standing (full text in the cycle-189 block below).
+- [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
 - [ ] BACKLOG-611 [core] A youngster is half a head (full text in the cycle-190 block below).
 
 ---
@@ -498,7 +498,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > motion-as-character beat into mood, dialogue, the scan, and proximity.
 
 - [ ] BACKLOG-311 [social] Greeting names the quirk — the keeper's greeting reply leans on whatever the dino's doing right then ("Rex looks up mid-pace, then —"), so the spoken beat reads the live fidget; deterministic fallback line per quirk, LLM colour behind the NPCBrain boundary. Builds on 298 / 051 / 148.
-- [~] BACKLOG-313 [emergent] Caught habit — **reshaped cycle 190 (Lore-smith) into the youth register:** the adult version (a dino slowly catching a close friend's tic) shipped as 407's `ticEchoes`; the habit that is actually caught is the one a youngster wore. A dino that copied its guardian's quirk while young (320) **keeps it** after the molt — now and then (one idle beat in four) the grown dino still does its guardian's quirk, the book says so ("…, and still Bramble's <label> now and then"), and the kept habit persists on the growth record (additive `kept` field). Reachable: Pip copies Bramble from boot and molts at 14:00. Builds on 320 / 298 / 602.
 
 ## Cycle 70 lore additions — the motion reads the mood (2026-06-22)
 
@@ -660,7 +659,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 189 (Structure-smith) — youth in the systems
 
-- [~] BACKLOG-609 [core] The molt changes the work — **measured and reshaped cycle 190 (Structure-smith):** no work read carries a per-dino weight (`workRegrowth` and the work priority are per-ground; a gather is one whole pickup), so a "half share" has nothing to halve. The one per-dino work read that matters is the *say*: the standings fold (482) seats the Grove's founding council off banked tallies, and the seat is Pip — a youngster. So: **a youngster holds no standing.** While young a dino reads as an unbanked wanderer to `zoneCandidates` (no council seat, no provider claim — its own tally is kept, not spent), and at the molt it steps into what its tally earns: on a fresh save Bramble holds the Grove's seat through the morning and Pip takes it at 14:00, with a 🗳️ ticker beat and the ground's call re-voted by a different temperament. No save field (derived from growth). Builds on 602 / 482 / 492 / 484.
 
 ## Cycle 190 lore additions — the youngster asleep (2026-10-18)
 
@@ -669,3 +667,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 190 (Structure-smith) — youth in the reads
 
 - [ ] BACKLOG-611 [core] A youngster is half a head — the per-head reads (`TILES_PER_HEAD` crowding, prosperity's heads signal, the waking-heads gate) count a youngster as a whole resident; weigh it at half while young so a ground's crowding and prosperity lines shift the hour its youngster grows. Measure first which reads take a head count; no save field. Builds on 602 / 524 / 609.
+- [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge — filed by the cycle-190 Validator. 492 seated the Grove's founding council on Pip *because* its 0.522 agreeableness made the pantry call turnable by a life inside a sitting. Since cycle 187 the founding molt is `softer` (+0.15 → 0.672) and the stake nudge on a two-head ground is capped at −0.1, so the knife edge died at 14:00; since cycle 190 the morning seat is Bramble's (0.870, unturnable), so the founding park now holds **no turnable Grove ballot at any hour**, and `cycle-137-ballot` holds its mechanism premise by `__setTrait`. Restore a reachable turnable seat without un-shipping 609 — e.g. the labour call (energy axis) as the Grove's live split, or a founding stake/ledger that puts grown Pip within reach of the line. Measure first which call, if any, a fresh-save life can still turn on each ground. Builds on 492 / 497 / 609.
+
