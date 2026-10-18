@@ -14849,3 +14849,5 @@ in `controls-help`, green isolated (3/3). No save change. CI on `main` going in:
 ## Cycle 190 — structure-smith: BACKLOG-609 reshaped and chosen (a youngster holds no standing — the Grove seat is Bramble's until Pip grows up); 611 seeded.
 
 ## Cycle 190 — designer: 313 (the kept habit, one idle beat in four) + 609 (no standing while young; the seat moves at the molt).
+
+## Cycle 190 — codeplan: standingCandidate + kept/keptBeat/keptLine in growth.ts, grownSeatLine in term.ts, three scene seams.
