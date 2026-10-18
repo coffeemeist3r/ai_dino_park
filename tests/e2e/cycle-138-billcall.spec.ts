@@ -61,7 +61,9 @@ test('THE ITEM — when the ruin is mended, the ground says who is deciding now'
   // different authority that had never been heard, and now it is.
   // BACKLOG-499: this line asserted "the **The** Grove's council" verbatim — the doubled article the park
   // printed on every governance beat for seven cycles, pinned by a spec that was about something else.
-  expect(after).toEqual(["🗳️ the Grove's council calls it: fills its stores first"]);
+  // BACKLOG-609: the morning seat is Bramble's now (Pip is young and holds no standing), and Bramble's energy
+  // votes the other way — so the council that is finally heard calls for walls, not stores.
+  expect(after).toEqual(["🗳️ the Grove's council calls it: raises its walls first"]);
 
   // ...and only once. A second step with nothing changed announces nothing.
   await step(page);

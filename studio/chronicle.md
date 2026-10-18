@@ -14853,3 +14853,5 @@ in `controls-help`, green isolated (3/3). No save change. CI on `main` going in:
 ## Cycle 190 — codeplan: standingCandidate + kept/keptBeat/keptLine in growth.ts, grownSeatLine in term.ts, three scene seams.
 
 ## Cycle 190 — coder: the kept habit and the seat that waits (9 files). Found: the founding molt is softer, so the Grove has had no knife-edge ballot after 14:00 since cycle 187 — and now none before it either.
+
+## Cycle 190 — qa: 12/12 criteria pass; e2e 920/921 twice — a real red (138 billcall: Bramble calls walls, not stores) fixed, then the known cold-boot flake (014, green isolated).
