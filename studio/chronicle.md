@@ -14863,10 +14863,10 @@ was wrong — nobody grows up and sheds the whole of who raised them.
 
 So tonight it keeps something. Boot a fresh save, walk east into the Grove and wait for two in the afternoon. Pip
 molts, steps out at full size, flourishes its own quirk — and then, every fourth idle beat or so, it hums. That is
-Bramble's 🎵, not Pip's. The book says it plainly: Pip *paces, and still Bramble's hums to itself now and then*. It is
+Bramble's 🎵, not Pip's. The book says it plainly: Pip *peeks around timidly, and still Bramble's hums to itself now and then*. It is
 written into the save, so the habit outlives a reload, and it outlives Bramble too, if Bramble ever leaves.
 
-The other half is about who gets a say. Since cycle 166 the Grove's one council seat has belonged to Pip, because
+The other half is about who gets a say. Since cycle 137 the Grove's one council seat has belonged to Pip, because
 Pip had banked two units to Bramble's one — which meant the ground's pantry and labour calls were being voted by a
 child. Not any more. A youngster holds no standing: all morning the seat is Bramble's, and when the old ruin is
 mended the Grove's council calls for walls instead of stores, because Bramble is the energetic one. At 14:00 Pip grows
