@@ -120,7 +120,9 @@ export const FOUNDING_PILE_STEPS: Record<string, number> = Object.fromEntries(
  * provider exists to shadow the seat and the tie-break is `null`: the founding call is a genuine single
  * ballot rather than a monarchy wearing a council's badge.
  *
- * And the seat is Pip, deliberately. Pip's name-seeded agreeableness is **0.522** — twenty-two thousandths
+ * Through the morning the seat is Bramble's: Pip is young, and a youngster holds no standing (BACKLOG-609). At the
+ * 14:00 molt Pip's two banked units out-bank Bramble's one and the seat passes to it — governance changing hands
+ * inside the first sitting. From then on the seat is Pip, deliberately. Pip's name-seeded agreeableness is **0.522** — twenty-two thousandths
  * over the pantry call's threshold — so its ballot is one a life can actually turn, in both directions,
  * inside a session. A founding state that seats an unturnable council would have satisfied the letter of the
  * reachability bar and none of it.

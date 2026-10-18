@@ -1090,6 +1090,10 @@ export function deserialize(json: string): SaveData | null {
         const t = r.traits as Record<string, unknown>;
         if (typeof t !== 'object' || t === null || !AXES.every((a) => isNum(t[a.key]) && (t[a.key] as number) >= 0 && (t[a.key] as number) <= 1)) return null;
       }
+      if (r.kept !== undefined) {
+        const k = r.kept as Record<string, unknown>; // BACKLOG-313
+        if (typeof k !== 'object' || k === null || !['from', 'glyph', 'label'].every((f) => typeof k[f] === 'string')) return null;
+      }
       growth[name] = r as unknown as GrowthRecord;
     }
   }

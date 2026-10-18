@@ -21,6 +21,8 @@ export interface GrowthRecord {
   traits?: Personality;
   /** It has told the keeper it grew up (BACKLOG-605) — the grown greeting is said once. */
   greeted?: boolean;
+  /** The quirk it wore as a youngster and kept (BACKLOG-313) — whose it was, snapshotted at the molt. */
+  kept?: { from: string; glyph: string; label: string };
 }
 
 export type LifeStage = 'young' | 'adult';
@@ -81,4 +83,24 @@ const cheby = (a: Tile, b: Tile): number => Math.max(Math.abs(a.tileX - b.tileX)
 export function tetherStep(cur: Tile, guardian: Tile, wander: Tile, cols: number, rows: number): Tile {
   if (cheby(cur, guardian) > TETHER_TILES) return stepToward(cur, guardian, cols, rows);
   return cheby(wander, guardian) > TETHER_TILES ? { ...cur } : wander;
+}
+
+/** A grown dino still does its kept quirk on one idle beat in this many (BACKLOG-313). */
+export const KEPT_EVERY = 4;
+
+export function keptBeat(step: number): boolean {
+  return step % KEPT_EVERY === 0;
+}
+
+/** The book's quirk line for a dino that kept its guardian's habit. */
+export function keptLine(ownLabel: string, kept: { from: string; label: string }): string {
+  return `${ownLabel}, and still ${kept.from}'s ${kept.label} now and then`;
+}
+
+/**
+ * A youngster holds no standing (BACKLOG-609): to the standings fold it is an unbanked wanderer — no seat, no
+ * provider claim — while its stored tally is left alone, so the molt steps it into whatever that tally earns.
+ */
+export function standingCandidate<C extends { role: string; foodBanked: number }>(c: C, young: boolean): C {
+  return young ? { ...c, role: 'wanderer', foodBanked: 0 } : c;
 }

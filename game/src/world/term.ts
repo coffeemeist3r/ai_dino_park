@@ -97,3 +97,8 @@ export function turnoverLine(zoneName: string, seated: readonly string[]): strin
   if (!seated.length) return `🗳️ ${theZone(zoneName)}'s council empties — nobody holds a seat now`;
   return `🗳️ ${theZone(zoneName)}'s council turns over: ${seated.join(', ')}`;
 }
+
+/** BACKLOG-609: a dino that grows up into a seat its tally had already earned takes it at the molt. */
+export function grownSeatLine(name: string, zoneName: string): string {
+  return `🗳️ ${name} takes a seat on ${theZone(zoneName)}'s council — grown now`;
+}

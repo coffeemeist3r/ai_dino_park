@@ -66,5 +66,5 @@ test('Pip idles like Bramble until it grows up, then finds its own (BACKLOG-320)
   expect(await ev<string[]>(page, '__ticker')).toContain(`Pip stops copying Bramble — ${grown.label} now`);
   expect((await ev<Record<string, string[]>>(page, '__memory')).Pip).toContain(`you used to copy Bramble — ${bramble.label}`);
   expect(await ev(page, '__lifted', 'Pip')).toBe(true);
-  expect((await pipRow()).quirk).toBe(grown.label);
+  expect((await pipRow()).quirk).toBe(`${grown.label}, and still Bramble's ${bramble.label} now and then`); // BACKLOG-313
 });

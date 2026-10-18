@@ -14851,3 +14851,5 @@ in `controls-help`, green isolated (3/3). No save change. CI on `main` going in:
 ## Cycle 190 — designer: 313 (the kept habit, one idle beat in four) + 609 (no standing while young; the seat moves at the molt).
 
 ## Cycle 190 — codeplan: standingCandidate + kept/keptBeat/keptLine in growth.ts, grownSeatLine in term.ts, three scene seams.
+
+## Cycle 190 — coder: the kept habit and the seat that waits (9 files). Found: the founding molt is softer, so the Grove has had no knife-edge ballot after 14:00 since cycle 187 — and now none before it either.

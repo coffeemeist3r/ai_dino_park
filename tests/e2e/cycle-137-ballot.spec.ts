@@ -22,6 +22,12 @@ const setNeed = (p: Page, n: string, v: number) =>
   p.evaluate(([nn, vv]) => (window as W).__setNeed(nn, 'hunger', vv), [n, v] as const);
 const ticker = (p: Page) => p.evaluate(() => (window as W).__ticker() as string[]);
 const step = (p: Page) => p.evaluate(() => (window as W).__stepWorld());
+// BACKLOG-609: a youngster holds no standing, so Pip's seat is Bramble's until it grows up. The founding molt is
+// `softer` (+0.15 agreeableness, cycle 187), which already lifted grown Pip off the knife edge at 14:00 — so the
+// mechanism tests below put Pip's name-seeded 0.522 back by hook. The founding park no longer carries a
+// turnable Grove seat; that is BACKLOG-612.
+const grow = (p: Page) => p.evaluate(() => (window as W).__moltNow('Pip'));
+const knifeEdge = (p: Page) => p.evaluate(() => (window as W).__setTrait('Pip', 'agreeableness', 0.5216355540324003));
 
 test('the founding park seats a council — one Grove seat, and it is Pip', async ({ page }) => {
   const errors: string[] = [];
@@ -30,6 +36,8 @@ test('the founding park seats a council — one Grove seat, and it is Pip', asyn
 
   // Criterion 7. This is the reachability claim itself: before 492 every ground read `[]` here on a fresh
   // save, so the lens showed the unset badge and no vote in the park could be observed at boot.
+  expect((await councils(page)).grove).toEqual(['Bramble']); // BACKLOG-609: the morning seat, while Pip is young
+  await grow(page);
   const seated = await councils(page);
   expect(seated.grove).toEqual(['Pip']);
 
@@ -42,6 +50,8 @@ test('the founding park seats a council — one Grove seat, and it is Pip', asyn
 
 test('the founding seat votes its life, not only its birth', async ({ page }) => {
   await boot(page);
+  await grow(page);
+  await knifeEdge(page);
 
   // Criterion 8. Pip's name-seeded agreeableness is 0.522 — feed, unlived. It holds 2 of the Grove's 3
   // banked units, and that stake carries its ballot across the line: the founding Grove banks.
@@ -53,6 +63,8 @@ test('a hungry seat turns its ground back to feeding, and the ticker says so', a
   const errors: string[] = [];
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await boot(page);
+  await grow(page);
+  await knifeEdge(page);
 
   // Criterion 9 — the beat a player can actually watch. `checkCouncilCall` seeds silently on the first
   // record, so step once to seed 'bank', then let Pip get hungry and step again for the turn.

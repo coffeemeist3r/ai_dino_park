@@ -227,7 +227,7 @@ import {
 } from '../world/mending';
 // CHARTER v7: a fresh park ships a ruin, so the disrepair systems are reachable on the save a new player opens.
 import { FOUNDING_RUIN, FOUNDING_LANDMARKS, FOUNDING_PILES, FOUNDING_BANKED, foundingPioneers, foundingBonds, foundingGrudges, foundingGrowth } from '../world/founding';
-import { YOUNG_SCALE, YOUTH_MIN, TETHER_TILES, growthLine, guardianOf, moltDue, stageOf, tetherStep, youngVoice, type GrowthRecord } from '../world/growth';
+import { YOUNG_SCALE, YOUTH_MIN, TETHER_TILES, growthLine, guardianOf, keptBeat, keptLine, moltDue, stageOf, standingCandidate, tetherStep, youngVoice, type GrowthRecord } from '../world/growth';
 import {
   MOLT_ART_KEY,
   MOLT_GLYPH,
@@ -311,7 +311,7 @@ import { fidget, moodFidget, reliefFlourish, copyLine, stopCopyingTicker, copied
 import { recordPioneer, pioneerEvent, pioneerOf, type Pioneers } from '../world/pioneer';
 // BACKLOG-482: pioneer / provider / council derived in one place, in one shape.
 import { zoneStandings, providerOf, councilOf, standingLines, type Standing } from '../world/standings';
-import { heldSeats, reseat, turnoverLine, type Seating } from '../world/term';
+import { grownSeatLine, heldSeats, reseat, turnoverLine, type Seating } from '../world/term';
 import { isUnsettled, isHollowed, unsettledNeighbor, settleMemory, settleLine, settleEvent, hollowedLine, UNSETTLED_BADGE, HOLLOWED_BADGE } from '../world/frontier';
 import {
   markLeft,
@@ -4967,7 +4967,8 @@ export class WorldScene extends Phaser.Scene {
     });
     const now = getWorldClock().now();
     d.traits = moltTraits(d.traits, kind);
-    this.growth[d.name] = { ...rec, moltedAtMin: timeToAbs(now), moltedDay: now.day, came: kind, traits: { ...d.traits } };
+    const kept = copied ? { from: copied.name, ...fidget(copied.traits) } : undefined; // BACKLOG-313
+    this.growth[d.name] = { ...rec, moltedAtMin: timeToAbs(now), moltedDay: now.day, came: kind, traits: { ...d.traits }, ...(kept && { kept }) };
     const husk = hasPropArt(MOLT_ART_KEY)
       ? this.add.image(d.x, d.y, bakePropArt(this, MOLT_ART_KEY)!)
       : this.add.text(d.x, d.y, MOLT_GLYPH, { fontSize: '12px' });
@@ -5000,6 +5001,8 @@ export class WorldScene extends Phaser.Scene {
       this.memory = remember(this.memory, d.name, copiedMemory(copied.name, fidget(copied.traits).label));
       this.logEvent(stopCopyingTicker(d.name, copied.name, fidget(d.traits).label));
     }
+    const zone = zoneOf(this.dinoZones, d.name, BOWL_ID);
+    if (this.councilFor(zone).includes(d.name)) this.logEvent(grownSeatLine(d.name, zoneById(zone).name)); // BACKLOG-609
     void this.saveGame();
   }
 
@@ -5583,12 +5586,17 @@ export class WorldScene extends Phaser.Scene {
   /** The roster as the standings reads see it — where each dino lives, what it settled into, what it has
    *  banked. One builder so `providerFor` (453) and `councilFor` (479) can never drift apart. */
   private zoneCandidates(): ProviderCandidate[] {
-    return this.dinos.map((d) => ({
-      name: d.name,
-      zoneId: zoneOf(this.dinoZones, d.name, BOWL_ID),
-      role: this.roleOf(d.name),
-      foodBanked: this.foodBanked[d.name] ?? 0,
-    }));
+    return this.dinos.map((d) =>
+      standingCandidate(
+        {
+          name: d.name,
+          zoneId: zoneOf(this.dinoZones, d.name, BOWL_ID),
+          role: this.roleOf(d.name),
+          foodBanked: this.foodBanked[d.name] ?? 0,
+        },
+        this.stageNow(d.name) === 'young', // BACKLOG-609: a youngster holds no standing
+      ),
+    );
   }
 
   /** Each zone's council (BACKLOG-479) — the map lens's 👥 read and the book's seat line, keyed by zone id.
@@ -5795,7 +5803,10 @@ export class WorldScene extends Phaser.Scene {
       // BACKLOG-069: the favorite is read live (season-aware) on every open; the record only stores
       // which foods went down. A palate that moves in winter shows the winter answer.
       menu: this.menuFor(d),
-      quirk: ((g) => (g ? copyLine(g.name, fidget(g.traits).label) : fidget(d.traits).label))(this.guardianNow(d)), // BACKLOG-303/320
+      quirk: ((g, kept) => (g ? copyLine(g.name, fidget(g.traits).label) : kept ? keptLine(fidget(d.traits).label, kept) : fidget(d.traits).label))(
+        this.guardianNow(d),
+        this.growth[d.name]?.kept,
+      ), // BACKLOG-303/320/313
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
@@ -7315,7 +7326,9 @@ ${e.short}`;
         const lifted = !mood && Date.now() < (this.liftedUntil[d.name] ?? 0);
         // BACKLOG-320: a youngster idles the way its guardian does.
         const copied = !mood && !lifted ? this.guardianNow(d) : undefined;
-        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : moodFidget(d.traits, mood).glyph;
+        // BACKLOG-313: a grown dino that copied still does the habit it kept, one idle beat in four.
+        const kept = !mood && !lifted && keptBeat(this.worldSteps) ? this.growth[d.name]?.kept : undefined;
+        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : kept ? kept.glyph : moodFidget(d.traits, mood).glyph;
         mark.setText(act === 'wandering' ? wanderGlyph : ACTIVITY_GLYPH[act]);
       }
     });
