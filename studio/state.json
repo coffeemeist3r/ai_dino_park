@@ -1,7 +1,7 @@
 {
-  "cycle": 189,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 190,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-313: the kept habit (a grown dino still does its guardian's quirk now and then)",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-10-16T08:17:53.835Z",
+    "lore-smith": "2026-10-18T08:12:47.090Z",
     "structure-smith": "2026-10-16T08:18:25.375Z",
     "designer": "2026-10-16T08:19:34.520Z",
     "code-planner": "2026-10-16T08:20:12.731Z",

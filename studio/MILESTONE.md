@@ -18,7 +18,7 @@ comes out of the molt carries something it picked up.
 
 **Lore arcs:**
 - [x] The youngster copies: while young a dino idles with its guardian's quirk, the book says whose, and at the molt it finds its own (BACKLOG-320 reshaped)
-- [ ] The grown dino looks back: drafted next cycle
+- [ ] The grown dino keeps it: after the molt it still does its guardian's quirk now and then, and the book says whose (BACKLOG-313 reshaped)
 
 **Structure arcs:**
 - [x] A youngster keeps to its guardian: tethered within a few tiles while young, released at the molt (BACKLOG-607)
