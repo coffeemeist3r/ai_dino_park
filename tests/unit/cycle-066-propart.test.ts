@@ -23,6 +23,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'doze', // BACKLOG-520: the shut end of the hours axis, drawn the night 109 shipped its host
       'egg', // BACKLOG-491: the egg by the den
       'errand', // BACKLOG-590 (cycle 180-art): a bindle over a dino setting off for another ground (hosts 586/588)
+      'faith-stone', // BACKLOG-616 (cycle 191-art): the faith's stone where the first sermon was given (host 613)
       'festival-fair', // BACKLOG-601 (cycle 185-art): the fair basket at the pond (host 599)
       'festival-fall', // BACKLOG-598 (cycle 186-art): the harvest heap at the pond for fall's festival (host 597)
       'festival-spring', // BACKLOG-598 (cycle 184-art): the blossom wreath at the pond for spring's festival (host 597)

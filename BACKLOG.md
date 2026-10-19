@@ -675,7 +675,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > the milestone duty** — a fresh milestone has to name its arcs — and said so here rather than slipped in.
 
 - [ ] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613.
-- [ ] BACKLOG-616 [art] The singing stone — a GBA-pixel prop for the faith's place by the bowl pond: a low mossy stone with a carved mark, drawn under the creed glyph until it exists. Host: 613's service spot (placed with a glyph fallback via the same `makeHourMark` seam the festival rite uses).
 
 ## Cycle 191 (Structure-smith) — faith in the systems
 

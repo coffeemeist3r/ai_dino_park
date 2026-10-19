@@ -14926,9 +14926,11 @@ doesn't cross grounds yet. The owls don't know any of this happened. That is nex
 **Not a tentpole, and the gap is named.** CHARTER v9 makes Milestone 32 a tentpole; the queue is empty and is the
 operator's to fill. The smiths drafted religion — the North Star's last unbuilt headline, open since cycle 1 — as a
 normal milestone rather than stall. **Operator: if you want it promoted, or something else in the slot, the queue in
-`studio/MILESTONE.md` is yours.** Two items (615, 613/614) were seeded over the depth caps under the milestone duty,
+`studio/MILESTONE.md` is yours.** Three items (615, 613, 614) were seeded over the depth caps under the milestone duty,
 named in the handoffs.
 
 Board: build clean, **3404 unit** green, e2e **925/925** on the first full run (the faith spec's first isolated run
 hit the known cold-boot timeout, green on rerun). Additive save field (`faith`). No live browser check this run — the
 preview request was declined in the unattended session. CI on `main` going in: `success` (cycle 190-art).
+
+## Cycle 191-art — artist: BACKLOG-616 closes — the faith has a stone. Where Glade preached, the pond bank now carries a low grey boulder with a moss cap and a spiral cut into its face, instead of a floating 🎶. **First idea rejected before it was inked:** a standing stone, tall and narrow, which is what "sacred stone" means in every other game — and which read here as one more cairn, the Grove's own landmark, in the wrong ground. The faith's place is low on purpose: something you sit beside rather than something somebody built. The spiral is creed-agnostic — the park has six creeds and the stone has to serve whichever one gets preached — so the creed stays with the believers' idle glyph, and the stone just says *here*. Six colours on the family rim; wired through the same `makeHourMark` seam the festival rite uses, placed the night it was drawn (reachability register updated). Unit 3410 green; art, prop and faith e2e green (74). Art queue empty again.

@@ -2690,6 +2690,42 @@ const FESTIVAL_FAIR_RIG: PropRig = {
   },
 };
 
+// `faith-stone` (BACKLOG-616, cycle 191-art): the faith's place by the bowl pond, where the first sermon was given
+// (host: `placeFaithMark`, BACKLOG-613). A low boulder with a moss cap and a spiral cut into its face — low on
+// purpose: a standing stone read as one more cairn, and the Grove already has one of those. The spiral is the
+// creed-agnostic mark; the creed itself is the glyph the believers idle with.
+const FAITH_STONE_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '......oooo......',
+  '....oommmmoo....',
+  '...ommmmmmmmo...',
+  '..ohmmsssmmddo..',
+  '..ohsccccssddo..',
+  '.ohsscsscsssddo.',
+  '.ohsscsccssdddo.',
+  '.ohsssssssddddo.',
+  '..oddddddddddo..',
+  '...oooooooooo...',
+  '................',
+];
+
+const FAITH_STONE_RIG: PropRig = {
+  size: 16,
+  grid: FAITH_STONE_GRID,
+  palette: {
+    o: 0x2b3344, // the family rim, verbatim from `rouse`
+    m: 0x58a048, // moss on the crown
+    h: 0xc8ccd0, // stone, catching the light on the left
+    s: 0x9aa0a8, // stone
+    d: 0x6a7078, // its shade, right and under
+    c: 0x3e4450, // the cut spiral
+  },
+};
+
 // `shellcap` (BACKLOG-606, cycle 188-art): the scrap of its own eggshell a youngster wears until it molts (host:
 // `refreshShellCaps`, BACKLOG-604). The top of an egg, dome up, broken off in a zigzag along the bottom and tipped a
 // little to the right, as if it slid there. Inked low in the grid: the image hangs from its bottom edge onto the head.
@@ -3033,6 +3069,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   'festival-winter': FESTIVAL_WINTER_RIG,
   // BACKLOG-601 (cycle 185-art): drawn the night its host shipped — `holdFair`'s basket (599).
   'festival-fair': FESTIVAL_FAIR_RIG,
+  'faith-stone': FAITH_STONE_RIG,
   // BACKLOG-603 (cycle 187-art): drawn the night its host shipped — `moltDino`'s husk (023).
   molt: MOLT_RIG,
   // BACKLOG-606 (cycle 188-art): drawn the night its host shipped — the youngster's cap (604).
