@@ -40,7 +40,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Project Sid flavor (emergent)
 
 - [ ] BACKLOG-029 [emergent] Inventory + crafting — NPCs gather, trade, craft simple items
-- [ ] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread
+- [~] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread. **Reshaped cycle 191 (Milestone 32 lore arc 1):** the first sermon. When the day-one festival closes, the most curious *awake* dino of the host ground stays behind at the pond and preaches a creed its own persona picks (Glade: the song under the grass). Every awake attendee hears it: one that loves the preacher (bond ≥ 12) believes; one that holds a grudge against the preacher or against a believer scoffs; the rest are unmoved. Sleepers miss it. Believers idle with the creed glyph now and then; the book says who follows whose word and who will not.
 - [ ] BACKLOG-031 [emergent] Governance — at threshold population, NPCs vote on a simple rule (e.g., quiet hours)
 
 ## Art (procedural vector pipeline — Artist fires per character)
@@ -667,4 +667,13 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-611 [core] A youngster is half a head — the per-head reads (`TILES_PER_HEAD` crowding, prosperity's heads signal, the waking-heads gate) count a youngster as a whole resident; weigh it at half while young so a ground's crowding and prosperity lines shift the hour its youngster grows. Measure first which reads take a head count; no save field. Builds on 602 / 524 / 609.
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge — filed by the cycle-190 Validator. 492 seated the Grove's founding council on Pip *because* its 0.522 agreeableness made the pantry call turnable by a life inside a sitting. Since cycle 187 the founding molt is `softer` (+0.15 → 0.672) and the stake nudge on a two-head ground is capped at −0.1, so the knife edge died at 14:00; since cycle 190 the morning seat is Bramble's (0.870, unturnable), so the founding park now holds **no turnable Grove ballot at any hour**, and `cycle-137-ballot` holds its mechanism premise by `__setTrait`. Restore a reachable turnable seat without un-shipping 609 — e.g. the labour call (energy axis) as the Grove's live split, or a founding stake/ledger that puts grown Pip within reach of the line. Measure first which call, if any, a fresh-save life can still turn on each ground. Builds on 492 / 497 / 609.
+
+## Cycle 191 lore additions — something to believe in (2026-10-19)
+
+> Milestone 32 is drafted as a **normal** milestone because the tentpole queue is empty (operator-owned). Religion is the
+> North Star's last unbuilt headline (030, open since cycle 1). The social queue is over its cap; **615 is seeded under
+> the milestone duty** — a fresh milestone has to name its arcs — and said so here rather than slipped in.
+
+- [ ] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613.
+- [ ] BACKLOG-616 [art] The singing stone — a GBA-pixel prop for the faith's place by the bowl pond: a low mossy stone with a carved mark, drawn under the creed glyph until it exists. Host: 613's service spot (placed with a glyph fallback via the same `makeHourMark` seam the festival rite uses).
 

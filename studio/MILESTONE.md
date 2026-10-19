@@ -8,9 +8,22 @@
 
 ## Current milestone
 
-*None active — Milestone 31 shipped cycle 190. Milestone 32 is a **tentpole** (CHARTER v9) and the tentpole queue is
-empty: the operator owns that list and needs to refill it. CHARTER v9 does not say what the smiths do with an empty
-queue; whatever they draft next, the handoff must name the gap.*
+**Milestone 32: Something to believe in — a dino stands up and preaches, and who believes it reads off who loves it**
+**Status:** ACTIVE (opened cycle 191)
+
+**Not a tentpole, and that is the gap named.** CHARTER v9 makes Milestone 32 a tentpole, and the tentpole queue below
+is empty: the operator owns it, and the routines may not add to it. Rather than stall, the smiths drafted a normal
+milestone around the North Star's last unbuilt headline — "occasionally invent religions" (BACKLOG-030, open since
+cycle 1). If the operator wants religion promoted to the tentpole slot, or something else in it, the queue is theirs.
+
+Reachability (v7): the first festival closes at 12:00 on day one (~4 real minutes in), with the whole park gathered at
+the bowl pond. That is the congregation. The sermon lands there; the first service lands at 16:00 the same day.
+
+**Lore arcs:**
+- [ ] The first sermon: when the festival closes, the most curious awake dino on the bowl preaches a creed of its own; the dinos that love it believe, the ones with a grudge in the way scoff, and the book says who follows whose word (BACKLOG-030 reshaped)
+- [ ] The word travels: believers carry the creed into meetings, so a friend who missed the sermon can believe secondhand and a rival scoffs (BACKLOG-615)
+
+**Structure arcs:**
 
 ---
 
