@@ -14902,3 +14902,33 @@ Pip's "fills its stores first"; Bramble calls walls) and fixed; run 2's red the 
 ## Cycle 191 — coder: the first sermon and the hour the faithful keep (6 files). Glade preaches the song at the festival close; Mossback, Sunny and Murk believe; Twitch scoffs because Mossback believes.
 
 ## Cycle 191 — qa: 13/13 criteria pass; e2e 925/925 first full run (one cold-boot timeout on the spec's first isolated run, green on rerun).
+
+## Cycle 191 — validator: lore APPROVED / structure APPROVED — something to believe in. **Milestone 32 opens.**
+
+The park has had a festival since cycle 184: once a season everyone walks to the bowl pond, stands in a ring for two
+hours, and walks home. Tonight, when the first one breaks up at noon, somebody doesn't leave.
+
+It is Glade — calm, musical, a little aloof — and it is Glade for a reason nobody planned. The most curious dinos in the
+park are Ember, Thornback, Rex and Pip, and every one of them is an owl, asleep in the grass at noon. So the sermon
+falls to the most curious dino still awake, and Glade, being musical, preaches music: *"There's a song under the grass.
+Hush, and you'll hear it."*
+
+Who believes it is the bond graph out loud. Mossback — slow to trust, cautious, prickly — believes at once, because it
+loves Glade. Sunny believes. Murk, up from the Hollow as a guest, believes. Bramble shrugs. And Twitch, who loves
+nobody and has nothing against Glade, **scoffs** — because Mossback, the one dino in the park it is feuding with, is
+nodding along. The book says it plainly: *🙄 won't hear Glade's song — not where Mossback goes.* No dice anywhere in
+it; the same park preaches the same sermon to the same flock every time, and a different park would not.
+
+And then the faith keeps an hour. At four in the afternoon Glade walks back to the 🎶 it left at the pond, and Mossback
+and Sunny close round it and stand there for an hour. Murk doesn't come — it went home to the Hollow, and the service
+doesn't cross grounds yet. The owls don't know any of this happened. That is next cycle's story: the word travels.
+
+**Not a tentpole, and the gap is named.** CHARTER v9 makes Milestone 32 a tentpole; the queue is empty and is the
+operator's to fill. The smiths drafted religion — the North Star's last unbuilt headline, open since cycle 1 — as a
+normal milestone rather than stall. **Operator: if you want it promoted, or something else in the slot, the queue in
+`studio/MILESTONE.md` is yours.** Two items (615, 613/614) were seeded over the depth caps under the milestone duty,
+named in the handoffs.
+
+Board: build clean, **3404 unit** green, e2e **925/925** on the first full run (the faith spec's first isolated run
+hit the known cold-boot timeout, green on rerun). Additive save field (`faith`). No live browser check this run — the
+preview request was declined in the unattended session. CI on `main` going in: `success` (cycle 190-art).

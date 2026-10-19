@@ -7,6 +7,12 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 191 — 2026-10-19 (something to believe in; Milestone 32 opens)
+- BACKLOG-030: The first sermon — when the park's first festival closes, the most curious awake dino of the bowl stays at the pond and preaches a creed its persona picks (six creeds: the song, the stones, the sun, the water, the old ways, the sky). Every awake attendee who loves it (bond ≥ 10) believes; one with a grudge against the preacher or a believer scoffs; the rest are unmoved — no dice. Bubbles, ticker, memories, a book line (*"🎶 follows Glade's word: the song under the grass"*), and believers idle with the creed glyph one beat in five. On a fresh save: at noon Glade preaches the song; Mossback, Sunny and Murk believe; Twitch scoffs, because Mossback believes.
+- BACKLOG-613: The faithful keep an hour — the faith is an additive, validated save field, marked by its glyph where the sermon was given, and every day at 16:00 the preacher and its believers on that ground walk to the spot and stand in a ring for an hour. On a fresh save: Glade, Mossback and Sunny gather at the pond at 16:00 on day one.
+
+---
+
 ## Cycle 190 — 2026-10-18 (what it kept; Milestone 31 ships)
 - BACKLOG-313: The kept habit — a dino that copied its guardian while young keeps that quirk after the molt: one idle beat in four the grown dino still does it, and the book says so (*"…, and still Bramble's hums to itself now and then"*). Kept on the growth record (additive `kept` field). On a fresh save: grown Pip still hums like Bramble.
 - BACKLOG-609: A youngster holds no standing — while young a dino holds no council seat and no provider claim (its tally is kept, not counted); at the molt it steps into what that tally earns, with a 🗳️ ticker beat. On a fresh save Bramble holds the Grove's seat all morning and Pip takes it at 14:00. **Milestone 31 SHIPPED.**

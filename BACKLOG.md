@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-613 [emergent] The faithful keep an hour (full text in the cycle-191 block below). **Milestone 32 structure arc 1 — chosen cycle 191.**
 - [ ] BACKLOG-614 [emergent] The faith raises a stone (full text in the cycle-191 block below). Milestone 32 structure arc 2.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
@@ -42,7 +41,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Project Sid flavor (emergent)
 
 - [ ] BACKLOG-029 [emergent] Inventory + crafting — NPCs gather, trade, craft simple items
-- [~] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread. **Reshaped cycle 191 (Milestone 32 lore arc 1):** the first sermon. When the day-one festival closes, the most curious *awake* dino of the host ground stays behind at the pond and preaches a creed its own persona picks (Glade: the song under the grass). Every awake attendee hears it: one that loves the preacher (bond ≥ 12) believes; one that holds a grudge against the preacher or against a believer scoffs; the rest are unmoved. Sleepers miss it. Believers idle with the creed glyph now and then; the book says who follows whose word and who will not.
 - [ ] BACKLOG-031 [emergent] Governance — at threshold population, NPCs vote on a simple rule (e.g., quiet hours)
 
 ## Art (procedural vector pipeline — Artist fires per character)
@@ -685,6 +683,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > lore-smith took for 615. 563 / 581 / 611 / 612 stay queued below them; 612 is the Validator's and is next once the
 > milestone's spine stands.
 
-- [~] BACKLOG-613 [emergent] The faithful keep an hour — a faith is persisted state, and it has a calendar. The sermon's outcome (creed, preacher, believers, scoffers, the day it was preached, the tile it was preached on) is an additive save field, validated on load. Every day at `SERVICE_HOUR` (16:00) the preacher and every awake, non-migrating believer standing on the faith's ground walk to the sermon spot and sit in a ring for half an in-game hour, preacher at the centre; the ticker announces it and names who came, and each attendee files a memory. A believer on another ground does not come (no cross-ground walk; that is a later item). First service in a fresh save: 16:00 day one, ~8 real minutes in. Builds on 030 / 596 (the festival ring's walk).
 - [ ] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488.
 

@@ -20,11 +20,11 @@ Reachability (v7): the first festival closes at 12:00 on day one (~4 real minute
 the bowl pond. That is the congregation. The sermon lands there; the first service lands at 16:00 the same day.
 
 **Lore arcs:**
-- [ ] The first sermon: when the festival closes, the most curious awake dino on the bowl preaches a creed of its own; the dinos that love it believe, the ones with a grudge in the way scoff, and the book says who follows whose word (BACKLOG-030 reshaped)
+- [x] The first sermon: when the festival closes, the most curious awake dino on the bowl preaches a creed of its own; the dinos that love it believe, the ones with a grudge in the way scoff, and the book says who follows whose word (BACKLOG-030 reshaped — cycle 191)
 - [ ] The word travels: believers carry the creed into meetings, so a friend who missed the sermon can believe secondhand and a rival scoffs (BACKLOG-615)
 
 **Structure arcs:**
-- [ ] The faithful keep an hour: the faith is in the save, and every afternoon at 16:00 the preacher and its believers gather at the sermon spot (BACKLOG-613)
+- [x] The faithful keep an hour: the faith is in the save, and every afternoon at 16:00 the preacher and its believers gather at the sermon spot (BACKLOG-613 — cycle 191)
 - [ ] The faith raises a stone: three believers haul stone to put up a shrine where the sermon was given (BACKLOG-614)
 
 ---
