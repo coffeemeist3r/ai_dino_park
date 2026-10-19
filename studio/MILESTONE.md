@@ -24,6 +24,8 @@ the bowl pond. That is the congregation. The sermon lands there; the first servi
 - [ ] The word travels: believers carry the creed into meetings, so a friend who missed the sermon can believe secondhand and a rival scoffs (BACKLOG-615)
 
 **Structure arcs:**
+- [ ] The faithful keep an hour: the faith is in the save, and every afternoon at 16:00 the preacher and its believers gather at the sermon spot (BACKLOG-613)
+- [ ] The faith raises a stone: three believers haul stone to put up a shrine where the sermon was given (BACKLOG-614)
 
 ---
 

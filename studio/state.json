@@ -2,7 +2,7 @@
   "cycle": 191,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-030: the first sermon",
-  "structureItem": null,
+  "structureItem": "BACKLOG-613: the faithful keep an hour",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-19T08:14:13.754Z",
-    "structure-smith": "2026-10-18T08:13:00.861Z",
+    "structure-smith": "2026-10-19T08:14:34.925Z",
     "designer": "2026-10-18T08:13:37.379Z",
     "code-planner": "2026-10-18T08:14:04.197Z",
     "coder": "2026-10-18T08:19:17.933Z",
