@@ -1,6 +1,6 @@
 {
   "cycle": 191,
-  "phase": "codeplan-pending",
+  "phase": "coder-pending",
   "currentItem": "BACKLOG-030: the first sermon",
   "structureItem": "BACKLOG-613: the faithful keep an hour",
   "lastVerdict": "APPROVED",
@@ -12,7 +12,7 @@
     "lore-smith": "2026-10-19T08:14:13.754Z",
     "structure-smith": "2026-10-19T08:14:34.925Z",
     "designer": "2026-10-19T08:16:06.443Z",
-    "code-planner": "2026-10-18T08:14:04.197Z",
+    "code-planner": "2026-10-19T08:17:21.126Z",
     "coder": "2026-10-18T08:19:17.933Z",
     "qa": "2026-10-18T08:40:35.470Z",
     "validator": "2026-10-18T08:41:28.879Z",
