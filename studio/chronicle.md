@@ -14894,3 +14894,5 @@ Pip's "fills its stores first"; Bramble calls walls) and fixed; run 2's red the 
 ## Cycle 191 — lore-smith: something to believe in. Milestone 32 drafted (normal — tentpole queue empty, gap named); BACKLOG-030 reshaped into the first sermon; 615 + art 616 seeded.
 
 ## Cycle 191 — structure-smith: BACKLOG-613 chosen (the faith is in the save, and it keeps an hour — 16:00 at the sermon spot); 614 seeded (the shrine).
+
+## Cycle 191 — designer: 030 (the first sermon at the festival close; love believes, a grudge in the way scoffs) + 613 (the faith in the save; the faithful keep 16:00 at the pond).
