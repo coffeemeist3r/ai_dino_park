@@ -14898,3 +14898,5 @@ Pip's "fills its stores first"; Bramble calls walls) and fixed; run 2's red the 
 ## Cycle 191 — designer: 030 (the first sermon at the festival close; love believes, a grudge in the way scoffs) + 613 (the faith in the save; the faithful keep 16:00 at the pond).
 
 ## Cycle 191 — codeplan: one pure world/faith.ts (creed, preacher, hearing, service), a save field, the sermon at closeFestival, the service in forceStep.
+
+## Cycle 191 — coder: the first sermon and the hour the faithful keep (6 files). Glade preaches the song at the festival close; Mossback, Sunny and Murk believe; Twitch scoffs because Mossback believes.

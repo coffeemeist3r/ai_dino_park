@@ -23,6 +23,7 @@ import type { AwayEntry } from './awaylog';
 import type { Streak } from './streak';
 import type { SessionRecord } from './session';
 import type { GrowthRecord } from './growth';
+import { isFaith, type Faith } from './faith';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -241,6 +242,8 @@ export interface SaveData {
   born: BornDino[];
   /** Life stages (BACKLOG-602) — name → growth record. Additive; absent → {} (every dino adult). */
   growth?: Record<string, GrowthRecord>;
+  /** The park's faith (BACKLOG-030/613) — creed, preacher, who believes. Additive; absent → none preached yet. */
+  faith?: Faith;
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
   savedAt?: number;
   /** Realtime multiplier in effect at save. Additive; absent → 1×. */
@@ -1098,6 +1101,10 @@ export function deserialize(json: string): SaveData | null {
     }
   }
 
+  // faith (BACKLOG-613): well-formed or the save is corrupt.
+  if (o.faith !== undefined && !isFaith(o.faith)) return null;
+  const faith = o.faith as Faith | undefined;
+
   let palate: Record<string, Record<string, number>> | undefined;
   if (o.palate !== undefined) {
     if (typeof o.palate !== 'object' || o.palate === null || Array.isArray(o.palate)) return null;
@@ -1203,6 +1210,7 @@ export function deserialize(json: string): SaveData | null {
     eggs,
     born,
     growth,
+    faith,
     savedAt,
     scale,
     visitHours,

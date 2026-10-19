@@ -54,3 +54,21 @@ seen on the activity mark; reload keeps the faith.
 
 **Risks:** specs asserting exact ticker contents after `__closeFestival` (grep `__closeFestival`); the per-dino service
 branch must not touch festival guests (skip sits above it).
+
+## Shipped
+
+**Files touched:** `game/src/world/faith.ts` (new), `game/src/world/saveGame.ts` (`faith` field + `isFaith`),
+`game/src/ui/lenses.ts` (`BookRow.faith`), `game/src/scenes/WorldScene.ts` (`setupFaith`, `preachSermon`,
+`placeFaithMark`, `checkService`/`stepService`/`closeService`, service branch in the per-dino ladder, faith glyph in
+`refreshActivityMarks`, book row, object visibility, save/restore), `game/src/world/cycle-191-faith.test.ts`,
+`tests/e2e/cycle-191-faith.spec.ts`. 6 files.
+
+**Deviations / found:**
+- The creed reads the roster one-liner (`d.personality`), not the cached persona text: an LLM-authored persona would
+  give a device-dependent creed, and the faith is a save fact. Noted for a later brain-sermon item.
+- The faith mark (`faith-stone`) is placed with its glyph fallback now, so 616's rig has a host the night it is drawn.
+- A service with fewer than two attendees is skipped but still marked held for the day, so it does not re-check
+  every 3 s.
+
+**Build:** clean. **Unit:** 3404 passed (333 files). Targeted e2e (191 + 183–190): green. Boundary: `@mlc-ai/web-llm`
+only under `game/src/ai/`.

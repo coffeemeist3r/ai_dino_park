@@ -142,6 +142,7 @@ import {
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName, COLD_ART_KEY, COLD_GLYPH } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
+import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith } from '../world/faith';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
@@ -1299,6 +1300,12 @@ export class WorldScene extends Phaser.Scene {
   private fairBasket: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** BACKLOG-180: the pairs that walked out of the last festival's ring as new friends. */
   private festivalFriends: [string, string][] = [];
+  /** The park's faith (BACKLOG-030/613), once somebody has preached. Persisted. */
+  private faith: Faith | null = null;
+  /** The afternoon service in progress (BACKLOG-613), or null. Transient: a reload mid-service just ends it. */
+  private service: { startAbsMin: number; attendees: string[] } | null = null;
+  /** The faith's mark where the sermon was given (BACKLOG-613/616). */
+  private faithMark: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   private skyStartAbsMin = 0;
   /** In-game day of the last sky event — caps the spectacle at one per day. */
   private skyFiredDay = -1;
@@ -1501,6 +1508,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupPlot();
     this.setupSkyEvent();
     this.setupFestival();
+    this.setupFaith();
     this.setupMigration();
     this.setupPlaque();
     this.setupScan();
@@ -4252,6 +4260,90 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__saveZones = () => this.currentSaveData().dinoZones;
   }
 
+  /** Faith (BACKLOG-030/613). The service is checked on a real-time cadence, like the festival. */
+  private setupFaith(): void {
+    this.time.addEvent({ delay: FESTIVAL_CHECK_MS, loop: true, callback: () => { if (!this.ambientPaused) this.checkService(); } });
+    (window as any).__faith = () => (this.faith ? { ...this.faith, believers: [...this.faith.believers], scoffers: { ...this.faith.scoffers } } : null);
+    (window as any).__service = () => (this.service ? { attendees: [...this.service.attendees] } : null);
+    (window as any).__holdService = () => { this.checkService(); return (window as any).__service(); };
+    (window as any).__closeService = () => { this.closeService(); return (window as any).__service(); };
+    (window as any).__faithMark = () => (this.faithMark ? { tileX: Math.floor(this.faithMark.x / TILE), tileY: Math.floor((this.faithMark.y - 1) / TILE), visible: this.faithMark.visible } : null);
+  }
+
+  /**
+   * The first sermon (BACKLOG-030): as the festival breaks up, the most curious awake dino of the bowl stays at the
+   * pond and preaches. Love believes, a grudge in the way scoffs, everyone else is unmoved. No dice.
+   */
+  private preachSermon(f: { attendees: string[]; guests: Record<string, Guest> }): void {
+    const awake = f.attendees.map((n) => this.dinoByName(n)).filter((d): d is Dino => !!d && !this.isResting(d));
+    const name = pickPreacher(
+      awake.map((d) => ({ name: d.name, curiosity: d.traits.curiosity, awake: true, home: f.guests[d.name]?.home ?? BOWL_ID })),
+      BOWL_ID,
+    );
+    const preacher = name ? this.dinoByName(name) : undefined;
+    if (!preacher) return;
+    const creed = creedFor(preacher.personality);
+    const h = hearSermon(preacher.name, awake.map((d) => d.name), this.bonds, this.grudges);
+    const at = this.tileOf(preacher);
+    this.faith = { creed: creed.id, preacher: preacher.name, zone: BOWL_ID, tileX: at.tileX, tileY: at.tileY, day: getWorldClock().now().day, believers: h.believers, scoffers: h.scoffers };
+    this.showBubble(preacher, `${creed.glyph} ${creed.sermon}`);
+    this.logEvent(sermonTicker(preacher.name, creed));
+    this.memory = remember(this.memory, preacher.name, preachMemory(creed));
+    for (const b of h.believers) {
+      const d = this.dinoByName(b);
+      if (d) this.showBubble(d, `${creed.glyph} ${creed.believe}`);
+      this.memory = remember(this.memory, b, believeMemory(preacher.name, creed));
+    }
+    for (const [sc, foe] of Object.entries(h.scoffers)) {
+      const d = this.dinoByName(sc);
+      if (d) this.showBubble(d, SCOFF_GLYPH);
+      this.memory = remember(this.memory, sc, scoffMemory(preacher.name, creed, foe));
+    }
+    const heard = heardTicker(preacher.name, creed, h);
+    if (heard) this.logEvent(heard);
+    this.placeFaithMark();
+  }
+
+  private placeFaithMark(): void {
+    this.faithMark?.destroy();
+    this.faithMark = null;
+    const f = this.faith;
+    if (!f) return;
+    this.faithMark = this.makeHourMark(FAITH_ART_KEY, creedById(f.creed).glyph)
+      .setPosition(f.tileX * TILE + TILE / 2, (f.tileY + 1) * TILE)
+      .setDepth(3)
+      .setVisible(this.zoneId === f.zone);
+  }
+
+  /** The afternoon service (BACKLOG-613): due once a day at `SERVICE_HOUR`, never over a festival or a sky event. */
+  private checkService(): void {
+    const f = this.faith;
+    if (!f || this.service || this.festival || this.activeSky) return;
+    const t = getWorldClock().now();
+    if (!serviceDue(t, f)) return;
+    f.lastServiceDay = t.day;
+    const attendees = serviceAttendees(
+      f,
+      this.dinos.map((d) => ({ name: d.name, zone: zoneOf(this.dinoZones, d.name, BOWL_ID), awake: !this.isResting(d), migrating: this.migrating.has(d.name) })),
+    );
+    if (attendees.length < 2) return;
+    this.service = { startAbsMin: this.absMinNow(), attendees };
+    const creed = creedById(f.creed);
+    this.logEvent(serviceTicker(f.preacher, creed, attendees.filter((n) => n !== f.preacher)));
+    for (const n of attendees) this.memory = remember(this.memory, n, serviceMemory(f.preacher, creed));
+  }
+
+  private closeService(): void {
+    if (!this.service || !this.faith) return;
+    this.service = null;
+    this.logEvent(serviceClosedLine(creedById(this.faith.creed)));
+  }
+
+  /** One world-step of the service: it ends on time; the walk itself is the per-dino ladder's. */
+  private stepService(): void {
+    if (this.service && this.absMinNow() - this.service.startAbsMin >= SERVICE_MIN) this.closeService();
+  }
+
   private festivalState() {
     const f = this.festival;
     return f
@@ -4318,6 +4410,7 @@ export class WorldScene extends Phaser.Scene {
     this.fairBasket?.destroy();
     this.fairBasket = null;
     const friendOf = this.ringMakesFriends(f.season, f.attendees, f.sulkers);
+    if (!this.faith) this.preachSermon(f); // BACKLOG-030: the first festival's close is the first congregation
     for (const name of f.attendees) {
       if (!this.dinoByName(name)) continue;
       this.festivalTales[name] = {
@@ -5810,6 +5903,7 @@ export class WorldScene extends Phaser.Scene {
       hours: chronotypeLine(this.chronoOf(d)), // BACKLOG-109: which hours this dino keeps
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
+      faith: faithBookLine(this.faith, d.name), // BACKLOG-030
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
       seeking: ((c) => (c ? seekingLine(c) : undefined))(this.seeking[d.name]), // BACKLOG-582
@@ -6755,6 +6849,7 @@ ${e.short}`;
       this.refreshActivityMarks();
       return;
     }
+    this.stepService(); // BACKLOG-613
 
     // BACKLOG-297/314: age every zone's resource so each zone's fetch grace can elapse (a grove resource
     // is past its grace and ready when the keeper crosses in).
@@ -6883,6 +6978,16 @@ ${e.short}`;
       if (this.arriving.has(d.name)) {
         this.arriving.delete(d.name);
         this.activityById[d.name] = 'wandering';
+        continue;
+      }
+
+      // The afternoon service (BACKLOG-613): the preacher stands on the spot, its believers close round it.
+      if (this.service?.attendees.includes(d.name) && this.faith && zoneOf(this.dinoZones, d.name, BOWL_ID) === this.faith.zone) {
+        const spot = { tileX: this.faith.tileX, tileY: this.faith.tileY };
+        const ring = d.name === this.faith.preacher ? 0 : 1;
+        const next = atGather(cur, spot, ring) ? cur : stepToward(cur, spot, COLS, ROWS);
+        d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+        this.activityById[d.name] = 'socializing';
         continue;
       }
 
@@ -7328,7 +7433,10 @@ ${e.short}`;
         const copied = !mood && !lifted ? this.guardianNow(d) : undefined;
         // BACKLOG-313: a grown dino that copied still does the habit it kept, one idle beat in four.
         const kept = !mood && !lifted && keptBeat(this.worldSteps) ? this.growth[d.name]?.kept : undefined;
-        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : kept ? kept.glyph : moodFidget(d.traits, mood).glyph;
+        // BACKLOG-030: a believer (or the preacher) idles with the creed's glyph, one beat in five.
+        const part = faithOf(this.faith, d.name);
+        const faithful = !mood && !lifted && !copied && !kept && faithBeat(this.worldSteps) && (part === 'preacher' || part === 'believer');
+        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : kept ? kept.glyph : faithful ? creedById(this.faith!.creed).glyph : moodFidget(d.traits, mood).glyph;
         mark.setText(act === 'wandering' ? wanderGlyph : ACTIVITY_GLYPH[act]);
       }
     });
@@ -8880,6 +8988,7 @@ ${e.short}`;
     for (const z of Object.keys(this.resourceSpriteByZone)) this.resourceSpriteByZone[z].setVisible(z === this.zoneId);
     this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
     this.fairBasket?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-599: and the fair basket beside it
+    this.faithMark?.setVisible(this.zoneId === this.faith?.zone); // BACKLOG-613: the faith's place
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
     // BACKLOG-494: a landmark whose ruin has been drawn swaps to it and keeps full opacity — disrepair
@@ -10853,6 +10962,7 @@ ${e.short}`;
       eggs: this.eggs,
       born: this.born,
       growth: this.growth, // BACKLOG-602 (additive)
+      faith: this.faith ?? undefined, // BACKLOG-613 (additive)
       savedAt: Date.now(),
       scale: this.activeScale, // BACKLOG-493: the chosen watching rate, not a hidden tab's AWAY_SCALE
       visitHours: this.visitHours, // BACKLOG-121: the hours you tend to open the park at (additive)
@@ -11045,6 +11155,8 @@ ${e.short}`;
       this.eggs = save.eggs ?? [];
       for (const e of this.eggs) this.drawEgg(e);
       this.growth = save.growth ?? {}; // BACKLOG-602: absent in every pre-187 save → every dino adult
+      this.faith = save.faith ?? null; // BACKLOG-613: a pre-191 park has preached nothing
+      this.placeFaithMark();
       this.applyGrowth();
       this.applyZoneVisibility(); // a save restored into the grove must not show the bowl's dinos
       this.clockHud.setText(this.fmtClock(clock.now()));
