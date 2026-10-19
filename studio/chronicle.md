@@ -14900,3 +14900,5 @@ Pip's "fills its stores first"; Bramble calls walls) and fixed; run 2's red the 
 ## Cycle 191 — codeplan: one pure world/faith.ts (creed, preacher, hearing, service), a save field, the sermon at closeFestival, the service in forceStep.
 
 ## Cycle 191 — coder: the first sermon and the hour the faithful keep (6 files). Glade preaches the song at the festival close; Mossback, Sunny and Murk believe; Twitch scoffs because Mossback believes.
+
+## Cycle 191 — qa: 13/13 criteria pass; e2e 925/925 first full run (one cold-boot timeout on the spec's first isolated run, green on rerun).

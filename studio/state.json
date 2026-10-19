@@ -1,6 +1,6 @@
 {
   "cycle": 191,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-030: the first sermon",
   "structureItem": "BACKLOG-613: the faithful keep an hour",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-19T08:16:06.443Z",
     "code-planner": "2026-10-19T08:17:21.126Z",
     "coder": "2026-10-19T08:23:52.855Z",
-    "qa": "2026-10-18T08:40:35.470Z",
+    "qa": "2026-10-19T08:33:28.616Z",
     "validator": "2026-10-18T08:41:28.879Z",
     "artist": "2026-10-18T08:45:00.158Z"
   },
