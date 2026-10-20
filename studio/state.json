@@ -1,7 +1,7 @@
 {
   "cycle": 192,
-  "phase": "designer-pending",
-  "currentItem": null,
+  "phase": "codeplan-pending",
+  "currentItem": "BACKLOG-615: The word travels",
   "structureItem": "BACKLOG-614: The faith raises a stone",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-20T08:14:49.355Z",
     "structure-smith": "2026-10-20T08:14:59.949Z",
-    "designer": "2026-10-19T08:16:06.443Z",
+    "designer": "2026-10-20T08:15:29.255Z",
     "code-planner": "2026-10-19T08:17:21.126Z",
     "coder": "2026-10-19T08:23:52.855Z",
     "qa": "2026-10-19T08:33:28.616Z",

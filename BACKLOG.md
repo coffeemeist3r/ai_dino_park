@@ -674,7 +674,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > North Star's last unbuilt headline (030, open since cycle 1). The social queue is over its cap; **615 is seeded under
 > the milestone duty** — a fresh milestone has to name its arcs — and said so here rather than slipped in.
 
-- [ ] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613.
+- [~] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613.
 
 ## Cycle 191 (Structure-smith) — faith in the systems
 

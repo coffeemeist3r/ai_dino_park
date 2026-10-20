@@ -14938,3 +14938,5 @@ preview request was declined in the unattended session. CI on `main` going in: `
 ## Cycle 192 — lore-smith: the word travels. Next-up 615 (the creed passes through ordinary meetings); art 617 seeded (the shrine).
 
 ## Cycle 192 — structure-smith: BACKLOG-614, the faith raises a stone (a shrine from the pile, owed upkeep like any wall).
+
+## Cycle 192 — designer: 615 (the creed passes through meetings; friends believe secondhand, rivals scoff) + 614 (a 2-stone shrine raised at the service, owed upkeep).
