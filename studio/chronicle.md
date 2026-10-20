@@ -14944,3 +14944,5 @@ preview request was declined in the unattended session. CI on `main` going in: `
 ## Cycle 192 — codeplan: hearWord + shrine in faith.ts; a meeting beat beside teachBeat; the shrine joins the landmark lists so upkeep and mending need no second path.
 
 ## Cycle 192 — coder: the word travels and the shrine goes up (4 files). Sunny tells Rex; three believers haul two stone at the service.
+
+## Cycle 192 — qa: 13/13 criteria pass; e2e 930/931 first run, the one red was the 191-art spec pinning the old __faithMark shape (loosened, green).

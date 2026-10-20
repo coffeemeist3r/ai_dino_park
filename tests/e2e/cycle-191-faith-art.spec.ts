@@ -11,5 +11,5 @@ test('the faith stone ships as pixel art at the sermon spot (BACKLOG-616)', asyn
   expect(await page.evaluate(() => (window as W).__hasPropArt('faith-stone'))).toBe(true);
   await page.evaluate(() => { (window as W).__setClock(1, 10, 0); (window as W).__checkFestival(); (window as W).__closeFestival(); });
   const f = await page.evaluate(() => (window as W).__faith());
-  expect(await page.evaluate(() => (window as W).__faithMark())).toEqual({ tileX: f.tileX, tileY: f.tileY, visible: true });
+  expect(await page.evaluate(() => (window as W).__faithMark())).toMatchObject({ tileX: f.tileX, tileY: f.tileY, visible: true });
 });
