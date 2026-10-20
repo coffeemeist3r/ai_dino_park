@@ -7,6 +7,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 192 — 2026-10-20 (the word travels; the faith raises a stone; Milestone 32 SHIPPED)
+- BACKLOG-615: The word travels — in any ordinary meeting, a member of the flock (the preacher or a believer) tells a dino with no part in the faith. A grudge at the rival bar scoffs, naming the carrier; otherwise a bond ≥ 12 believes secondhand. No dice. Bubbles, ticker, memories, and the book names who told it (*"🎶 follows Glade's word: the song under the grass (heard it from Sunny)"*). On a fresh save, the owls who slept through the sermon hear it from their friends once they wake.
+- BACKLOG-614: The faith raises a stone — at the service, a faith with three believers and three present hauls two stone out of its ground's pile and raises a 🛐 shrine at the sermon spot. The shrine is a landmark: it is owed upkeep, can lapse and fade, and can be mended. On a fresh save it goes up at 16:00 on day one.
+
 ## Cycle 191 — 2026-10-19 (something to believe in; Milestone 32 opens)
 - BACKLOG-030: The first sermon — when the park's first festival closes, the most curious awake dino of the bowl stays at the pond and preaches a creed its persona picks (six creeds: the song, the stones, the sun, the water, the old ways, the sky). Every awake attendee who loves it (bond ≥ 10) believes; one with a grudge against the preacher or a believer scoffs; the rest are unmoved — no dice. Bubbles, ticker, memories, a book line (*"🎶 follows Glade's word: the song under the grass"*), and believers idle with the creed glyph one beat in five. On a fresh save: at noon Glade preaches the song; Mossback, Sunny and Murk believe; Twitch scoffs, because Mossback believes.
 - BACKLOG-613: The faithful keep an hour — the faith is an additive, validated save field, marked by its glyph where the sermon was given, and every day at 16:00 the preacher and its believers on that ground walk to the spot and stand in a ring for an hour. On a fresh save: Glade, Mossback and Sunny gather at the pond at 16:00 on day one.

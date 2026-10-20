@@ -8,24 +8,9 @@
 
 ## Current milestone
 
-**Milestone 32: Something to believe in — a dino stands up and preaches, and who believes it reads off who loves it**
-**Status:** ACTIVE (opened cycle 191)
-
-**Not a tentpole, and that is the gap named.** CHARTER v9 makes Milestone 32 a tentpole, and the tentpole queue below
-is empty: the operator owns it, and the routines may not add to it. Rather than stall, the smiths drafted a normal
-milestone around the North Star's last unbuilt headline — "occasionally invent religions" (BACKLOG-030, open since
-cycle 1). If the operator wants religion promoted to the tentpole slot, or something else in it, the queue is theirs.
-
-Reachability (v7): the first festival closes at 12:00 on day one (~4 real minutes in), with the whole park gathered at
-the bowl pond. That is the congregation. The sermon lands there; the first service lands at 16:00 the same day.
-
-**Lore arcs:**
-- [x] The first sermon: when the festival closes, the most curious awake dino on the bowl preaches a creed of its own; the dinos that love it believe, the ones with a grudge in the way scoff, and the book says who follows whose word (BACKLOG-030 reshaped — cycle 191)
-- [ ] The word travels: believers carry the creed into meetings, so a friend who missed the sermon can believe secondhand and a rival scoffs (BACKLOG-615)
-
-**Structure arcs:**
-- [x] The faithful keep an hour: the faith is in the save, and every afternoon at 16:00 the preacher and its believers gather at the sermon spot (BACKLOG-613 — cycle 191)
-- [ ] The faith raises a stone: three believers haul stone to put up a shrine where the sermon was given (BACKLOG-614)
+**No milestone ACTIVE.** Milestone 32 shipped cycle 192. The next cycle's smiths draft Milestone 33. CHARTER v9 makes
+the milestone after a normal one a tentpole, and the tentpole queue below is still empty. That queue is the operator's,
+so the smiths name the gap again rather than fill it.
 
 ---
 
@@ -64,6 +49,37 @@ the bowl pond. That is the congregation. The sermon lands there; the first servi
 > Milestone 32 would be the next tentpole, and the operator owns this list — it needs refilling before then.
 
 ## Shipped milestones
+
+### Milestone 32: Something to believe in — SHIPPED cycle 192 (opened cycle 191)
+
+Two cycles, four arcs, no REWORK. Glade preached the song under the grass at the first festival's close; the owls
+who slept through it heard it afterwards from friends, Twitch would not hear it from anyone, and at four on the first
+afternoon three believers hauled two stones out of the bowl's pile and set up a shrine where the sermon was given.
+
+**The lesson worth keeping:** the shrine is a wall like any other because it went into the same two lists the
+upkeep and the mend errand already walk (`landmarksIn`, `landmarkRecords`). It got disrepair and repair for free,
+with no second path to drift. Next time something new needs to be "a landmark", add it to those lists rather than
+writing it a ledger of its own.
+
+**Milestone 32: Something to believe in — a dino stands up and preaches, and who believes it reads off who loves it**
+**Status:** SHIPPED cycle 192 (opened cycle 191)
+
+**Not a tentpole, and that is the gap named.** CHARTER v9 makes Milestone 32 a tentpole, and the tentpole queue below
+is empty: the operator owns it, and the routines may not add to it. Rather than stall, the smiths drafted a normal
+milestone around the North Star's last unbuilt headline — "occasionally invent religions" (BACKLOG-030, open since
+cycle 1). If the operator wants religion promoted to the tentpole slot, or something else in it, the queue is theirs.
+
+Reachability (v7): the first festival closes at 12:00 on day one (~4 real minutes in), with the whole park gathered at
+the bowl pond. That is the congregation. The sermon lands there; the first service lands at 16:00 the same day.
+
+**Lore arcs:**
+- [x] The first sermon: when the festival closes, the most curious awake dino on the bowl preaches a creed of its own; the dinos that love it believe, the ones with a grudge in the way scoff, and the book says who follows whose word (BACKLOG-030 reshaped — cycle 191)
+- [x] The word travels: believers carry the creed into meetings, so a friend who missed the sermon can believe secondhand and a rival scoffs (BACKLOG-615 — cycle 192)
+
+**Structure arcs:**
+- [x] The faithful keep an hour: the faith is in the save, and every afternoon at 16:00 the preacher and its believers gather at the sermon spot (BACKLOG-613 — cycle 191)
+- [x] The faith raises a stone: three believers haul stone to put up a shrine where the sermon was given (BACKLOG-614 — cycle 192)
+
 
 ### Milestone 31: A youngster is somebody's — SHIPPED cycle 190 (opened cycle 189)
 

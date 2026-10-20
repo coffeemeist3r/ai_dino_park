@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-614 [emergent] The faith raises a stone (full text in the cycle-191 block below). Milestone 32 structure arc 2.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -667,23 +666,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-611 [core] A youngster is half a head — the per-head reads (`TILES_PER_HEAD` crowding, prosperity's heads signal, the waking-heads gate) count a youngster as a whole resident; weigh it at half while young so a ground's crowding and prosperity lines shift the hour its youngster grows. Measure first which reads take a head count; no save field. Builds on 602 / 524 / 609.
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge — filed by the cycle-190 Validator. 492 seated the Grove's founding council on Pip *because* its 0.522 agreeableness made the pantry call turnable by a life inside a sitting. Since cycle 187 the founding molt is `softer` (+0.15 → 0.672) and the stake nudge on a two-head ground is capped at −0.1, so the knife edge died at 14:00; since cycle 190 the morning seat is Bramble's (0.870, unturnable), so the founding park now holds **no turnable Grove ballot at any hour**, and `cycle-137-ballot` holds its mechanism premise by `__setTrait`. Restore a reachable turnable seat without un-shipping 609 — e.g. the labour call (energy axis) as the Grove's live split, or a founding stake/ledger that puts grown Pip within reach of the line. Measure first which call, if any, a fresh-save life can still turn on each ground. Builds on 492 / 497 / 609.
-
-## Cycle 191 lore additions — something to believe in (2026-10-19)
-
-> Milestone 32 is drafted as a **normal** milestone because the tentpole queue is empty (operator-owned). Religion is the
-> North Star's last unbuilt headline (030, open since cycle 1). The social queue is over its cap; **615 is seeded under
-> the milestone duty** — a fresh milestone has to name its arcs — and said so here rather than slipped in.
-
-- [~] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613.
-
-## Cycle 191 (Structure-smith) — faith in the systems
-
-> Seeded over the X=4 depth under the milestone duty (a fresh milestone needs its spine named), the same exception the
-> lore-smith took for 615. 563 / 581 / 611 / 612 stay queued below them; 612 is the Validator's and is next once the
-> milestone's spine stands.
-
-- [~] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488.
-
 
 ## Cycle 192 lore additions — the word travels (2026-10-20)
 

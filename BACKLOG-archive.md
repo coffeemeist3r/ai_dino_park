@@ -1568,3 +1568,21 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 - [x] BACKLOG-030 [emergent] Religion seed — one NPC may spontaneously start preaching; affinity-weighted spread. **Reshaped cycle 191 (Milestone 32 lore arc 1):** the first sermon. When the day-one festival closes, the most curious *awake* dino of the host ground stays behind at the pond and preaches a creed its own persona picks (Glade: the song under the grass). Every awake attendee hears it: one that loves the preacher (bond ≥ 12) believes; one that holds a grudge against the preacher or against a believer scoffs; the rest are unmoved. Sleepers miss it. Believers idle with the creed glyph now and then; the book says who follows whose word and who will not. — shipped cycle 191.
 - [x] BACKLOG-613 [emergent] The faithful keep an hour — a faith is persisted state, and it has a calendar. The sermon's outcome (creed, preacher, believers, scoffers, the day it was preached, the tile it was preached on) is an additive save field, validated on load. Every day at `SERVICE_HOUR` (16:00) the preacher and every awake, non-migrating believer standing on the faith's ground walk to the sermon spot and sit in a ring for half an in-game hour, preacher at the centre; the ticker announces it and names who came, and each attendee files a memory. A believer on another ground does not come (no cross-ground walk; that is a later item). First service in a fresh save: 16:00 day one, ~8 real minutes in. Builds on 030 / 596 (the festival ring's walk). — shipped cycle 191.
 - [x] BACKLOG-616 [art] The singing stone — a GBA-pixel prop for the faith's place by the bowl pond: a low mossy stone with a carved mark, drawn under the creed glyph until it exists. Host: 613's service spot (placed with a glyph fallback via the same `makeHourMark` seam the festival rite uses). — shipped cycle 191-art.
+
+## Closed cycle 192 — the word travels; the faith raises a stone (2026-10-20)
+
+## Cycle 191 lore additions — something to believe in (2026-10-19)
+
+> Milestone 32 is drafted as a **normal** milestone because the tentpole queue is empty (operator-owned). Religion is the
+> North Star's last unbuilt headline (030, open since cycle 1). The social queue is over its cap; **615 is seeded under
+> the milestone duty** — a fresh milestone has to name its arcs — and said so here rather than slipped in.
+
+- [x] BACKLOG-615 [emergent] The word travels — a believer carries its creed into an ordinary meeting: a friend (bond ≥ 12) of a believer that missed the sermon can come to believe secondhand ("Mossback told me about the song"), a rival of the believer scoffs on the spot, and the owls that slept through the first sermon hear it this way. The book's faith line names who it heard it from. Builds on 030 / 613. — shipped cycle 192.
+
+## Cycle 191 (Structure-smith) — faith in the systems
+
+> Seeded over the X=4 depth under the milestone duty (a fresh milestone needs its spine named), the same exception the
+> lore-smith took for 615. 563 / 581 / 611 / 612 stay queued below them; 612 is the Validator's and is next once the
+> milestone's spine stands.
+
+- [x] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488. — shipped cycle 192.

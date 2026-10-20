@@ -14946,3 +14946,37 @@ preview request was declined in the unattended session. CI on `main` going in: `
 ## Cycle 192 — coder: the word travels and the shrine goes up (4 files). Sunny tells Rex; three believers haul two stone at the service.
 
 ## Cycle 192 — qa: 13/13 criteria pass; e2e 930/931 first run, the one red was the 191-art spec pinning the old __faithMark shape (loosened, green).
+
+## Cycle 192 — validator: lore APPROVED / structure APPROVED — the word travels, and the faith raises a stone. **Milestone 32 SHIPPED.**
+
+Yesterday the park got its first religion, and it got it at a bad hour. Glade preached at noon, and the four dinos
+most likely to care what anything means (Ember, Thornback, Rex and Pip, the curious ones, the owls) were asleep in the
+grass. They woke at one o'clock into a park where three dinos believed in a song nobody else could hear.
+
+Tonight the song gets passed on. Nobody preaches it again. It travels the way everything else in this park travels: two
+dinos bump into each other, one talks. If the one talking believes, and the one listening is a close enough friend
+(a bond of twelve), the listener believes too, and remembers who told it. Rex lives on the bowl with Sunny, its oldest
+friend, and the first time they meet after Rex wakes the ticker says *"🎶 Rex heard Glade's song from Sunny, and
+believes."* Rex's page in the book says it plainly: *follows Glade's word, heard it from Sunny.* Ember can hear it from
+Sunny too, and Thornback from Mossback, if their paths cross. Anyone carrying a grudge against the one telling it won't
+have it: *"🙄 Rex won't hear Glade's song from Sunny."* Still no dice. A faith spreads exactly as far as the friendships
+run.
+
+And then the faithful build something. At four that first afternoon Glade, Mossback and Sunny walk back to the pond for
+the service. This time there is stone in the bowl's pile (two pieces, gathered by mid-morning), and they haul it over.
+Each of them shows a 🪨, the ticker says they *raise a shrine where Glade preached*, and the singing stone becomes a 🛐.
+Every other landmark in this park went up because a pile happened to be full. This is the first one built *for*
+something. It is also a wall like any other: it is owed upkeep, and if the bowl can't pay, it fades, and someone has
+to walk over and mend it.
+
+**Milestone 32 ships** in two cycles with four arcs and no REWORK: a sermon, an hour, the word, a stone. The North
+Star's oldest unbuilt promise ("occasionally invent religions", BACKLOG-030, open since cycle 1) is now something you
+can watch happen in the first ten minutes of a new park.
+
+**Operator, the same note as last cycle:** CHARTER v9 makes Milestone 33 a tentpole, and the tentpole queue is still
+empty. It is yours to fill. The smiths will name the gap again rather than fill it themselves.
+
+Board: build clean, **3418 unit** green, e2e **930/931** on the first full run. The one failure was this cycle's own:
+the 191-art spec pinned the old `__faithMark` shape exactly. The assertion was loosened and is green; no flakes. Save
+changes are additive (`faith.heardFrom`, `faith.shrine`). CI on `main` going in: `success` (cycle 191-art). No live
+browser check beyond the e2e boot; the session ran unattended.
