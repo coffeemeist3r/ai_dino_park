@@ -1,6 +1,6 @@
 {
   "cycle": 192,
-  "phase": "coder-pending",
+  "phase": "qa-pending",
   "currentItem": "BACKLOG-615: The word travels",
   "structureItem": "BACKLOG-614: The faith raises a stone",
   "lastVerdict": "APPROVED",
@@ -13,7 +13,7 @@
     "structure-smith": "2026-10-20T08:14:59.949Z",
     "designer": "2026-10-20T08:15:29.255Z",
     "code-planner": "2026-10-20T08:15:58.289Z",
-    "coder": "2026-10-19T08:23:52.855Z",
+    "coder": "2026-10-20T08:20:33.613Z",
     "qa": "2026-10-19T08:33:28.616Z",
     "validator": "2026-10-19T08:33:56.936Z",
     "artist": "2026-10-19T08:37:36.170Z"

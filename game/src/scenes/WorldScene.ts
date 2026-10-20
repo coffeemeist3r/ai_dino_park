@@ -142,7 +142,7 @@ import {
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName, COLD_ART_KEY, COLD_GLYPH } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
-import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith } from '../world/faith';
+import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith, HAUL_GLYPH, SHRINE_ART_KEY, SHRINE_GLYPH, canRaiseShrine, shrineMemory, hearWord, raiseShrine, shrineTicker, toldLine, toldMemory, wordScoffMemory, wordScoffTicker, wordTicker } from '../world/faith';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
 import { mannerLine, lastHatchOutcome } from '../world/manner'; // BACKLOG-402: the contested-drop trio read as one character note; BACKLOG-404: the latest of them, for the voice
@@ -4076,7 +4076,7 @@ export class WorldScene extends Phaser.Scene {
 
   /** Every landmark in a zone, maintained or not (BACKLOG-480) — the four arrays as one list. */
   private landmarksIn(zone: string): Landmark[] {
-    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.beacons, ...this.granaries].filter((s) => s.zone === zone);
+    return [...this.cairns, ...this.shelters, ...this.thatches, ...this.beacons, ...this.granaries, ...this.shrines()].filter((s) => s.zone === zone);
   }
 
   /** How many of a zone's landmarks are standing (BACKLOG-480) — what upkeep is owed on. */
@@ -4263,11 +4263,42 @@ export class WorldScene extends Phaser.Scene {
   /** Faith (BACKLOG-030/613). The service is checked on a real-time cadence, like the festival. */
   private setupFaith(): void {
     this.time.addEvent({ delay: FESTIVAL_CHECK_MS, loop: true, callback: () => { if (!this.ambientPaused) this.checkService(); } });
-    (window as any).__faith = () => (this.faith ? { ...this.faith, believers: [...this.faith.believers], scoffers: { ...this.faith.scoffers } } : null);
+    (window as any).__faith = () => (this.faith ? structuredClone(this.faith) : null);
     (window as any).__service = () => (this.service ? { attendees: [...this.service.attendees] } : null);
     (window as any).__holdService = () => { this.checkService(); return (window as any).__service(); };
     (window as any).__closeService = () => { this.closeService(); return (window as any).__service(); };
-    (window as any).__faithMark = () => (this.faithMark ? { tileX: Math.floor(this.faithMark.x / TILE), tileY: Math.floor((this.faithMark.y - 1) / TILE), visible: this.faithMark.visible } : null);
+    (window as any).__faithMark = () => (this.faithMark ? { tileX: Math.floor(this.faithMark.x / TILE), tileY: Math.floor((this.faithMark.y - 1) / TILE), visible: this.faithMark.visible, alpha: this.faithMark.alpha, shrine: !!this.faith?.shrine } : null);
+    // BACKLOG-615: the faith's word passed in a meeting, without waiting on the brain's reply.
+    (window as any).__hearWord = (a: string, b: string) => { this.faithWordBeat(a, b); return (window as any).__faith(); };
+  }
+
+  /**
+   * The word travels (BACKLOG-615): in a meeting, a flock member tells a dino with no part in the faith. Beside the
+   * gossip cascade, not a rung in it — like `teachBeat`, so no shipped rumor gets rarer. Either dino may carry it.
+   */
+  private faithWordBeat(a: string, b: string): boolean {
+    const f = this.faith;
+    if (!f) return false;
+    const pair = hearWord(f, a, b, this.bonds, this.grudges) ? [a, b] : hearWord(f, b, a, this.bonds, this.grudges) ? [b, a] : null;
+    if (!pair) return false;
+    const [carrier, listener] = pair;
+    const kind = hearWord(f, carrier, listener, this.bonds, this.grudges)!;
+    const creed = creedById(f.creed);
+    const d = this.dinoByName(listener);
+    if (kind === 'scoff') {
+      f.scoffers[listener] = carrier;
+      if (d) this.showBubble(d, SCOFF_GLYPH);
+      this.memory = remember(this.memory, listener, wordScoffMemory(carrier, creed));
+      this.logEvent(wordScoffTicker(listener, carrier, f.preacher, creed));
+    } else {
+      f.believers.push(listener);
+      f.heardFrom = { ...f.heardFrom, [listener]: carrier };
+      if (d) this.showBubble(d, toldLine(carrier, creed));
+      this.memory = remember(this.memory, listener, toldMemory(carrier, creed));
+      this.logEvent(wordTicker(listener, carrier, f.preacher, creed));
+    }
+    void this.saveGame();
+    return true;
   }
 
   /**
@@ -4309,10 +4340,35 @@ export class WorldScene extends Phaser.Scene {
     this.faithMark = null;
     const f = this.faith;
     if (!f) return;
-    this.faithMark = this.makeHourMark(FAITH_ART_KEY, creedById(f.creed).glyph)
+    // BACKLOG-614: once raised, the shrine stands where the singing stone was.
+    this.faithMark = (f.shrine ? this.makeHourMark(SHRINE_ART_KEY, SHRINE_GLYPH) : this.makeHourMark(FAITH_ART_KEY, creedById(f.creed).glyph))
       .setPosition(f.tileX * TILE + TILE / 2, (f.tileY + 1) * TILE)
       .setDepth(3)
-      .setVisible(this.zoneId === f.zone);
+      .setVisible(this.zoneId === f.zone)
+      .setAlpha(f.shrine?.derelict ? DERELICT_ALPHA : 1);
+  }
+
+  /** The shrine (BACKLOG-614) as a landmark list, so upkeep, lapsing and the mend errand reach it unchanged. */
+  private shrines(): Landmark[] {
+    return this.faith?.shrine ? [this.faith.shrine] : [];
+  }
+
+  /** At the service, three believers haul the shrine's stone out of the faith's ground pile (BACKLOG-614). */
+  private maybeRaiseShrine(f: Faith, attendees: string[]): void {
+    const pile = this.pileFor(f.zone);
+    if (!canRaiseShrine(f, attendees, pile)) return;
+    this.setPile(f.zone, raiseShrine(pile));
+    f.shrine = { tileX: f.tileX, tileY: f.tileY, zone: f.zone };
+    const creed = creedById(f.creed);
+    for (const n of attendees) {
+      const d = this.dinoByName(n);
+      if (d) this.showBubble(d, HAUL_GLYPH);
+      this.memory = remember(this.memory, n, shrineMemory(creed));
+    }
+    this.logEvent(shrineTicker(f.preacher, attendees));
+    this.placeFaithMark();
+    this.refreshPlaque();
+    void this.saveGame();
   }
 
   /** The afternoon service (BACKLOG-613): due once a day at `SERVICE_HOUR`, never over a festival or a sky event. */
@@ -4331,6 +4387,7 @@ export class WorldScene extends Phaser.Scene {
     const creed = creedById(f.creed);
     this.logEvent(serviceTicker(f.preacher, creed, attendees.filter((n) => n !== f.preacher)));
     for (const n of attendees) this.memory = remember(this.memory, n, serviceMemory(f.preacher, creed));
+    this.maybeRaiseShrine(f, attendees);
   }
 
   private closeService(): void {
@@ -7637,6 +7694,7 @@ ${e.short}`;
       // it — a rung would make one of the eight shipped beats silently rarer, and a worry and a postcard
       // are different registers anyway.
       this.teachBeat(a.name, b.name);
+      this.faithWordBeat(a.name, b.name); // BACKLOG-615: the word travels, beside the cascade like the teaching
     } finally {
       this.convoInFlight = false;
     }
@@ -8989,6 +9047,7 @@ ${e.short}`;
     this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
     this.fairBasket?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-599: and the fair basket beside it
     this.faithMark?.setVisible(this.zoneId === this.faith?.zone); // BACKLOG-613: the faith's place
+    this.faithMark?.setAlpha(this.faith?.shrine?.derelict ? DERELICT_ALPHA : 1); // BACKLOG-614: a lapsed shrine fades like any wall
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
     // BACKLOG-494: a landmark whose ruin has been drawn swaps to it and keeps full opacity — disrepair
@@ -10686,6 +10745,7 @@ ${e.short}`;
       ...of(this.thatches, THATCH_GLYPH),
       ...of(this.beacons, BEACON_GLYPH), // BACKLOG-503
       ...of(this.granaries, GRANARY_GLYPH),
+      ...of(this.shrines(), SHRINE_GLYPH), // BACKLOG-614: the newest wall, so the first to lapse on a short bill
     ];
   }
 

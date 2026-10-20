@@ -10,6 +10,8 @@
 import type { GameTime } from './clock';
 import { bondPoints, type Bonds } from '../social/bonds';
 import { worstRival } from '../social/grudges';
+import type { ResourceKind, Stockpile } from './resource';
+import type { Landmark } from './upkeep';
 
 export type CreedId = 'song' | 'stones' | 'sun' | 'water' | 'old' | 'sky';
 
@@ -102,6 +104,10 @@ export interface Faith {
   scoffers: Record<string, string>;
   /** The last in-game day a service was held (or skipped for want of a congregation). */
   lastServiceDay?: number;
+  /** Secondhand believers (BACKLOG-615): listener → the flock member who told it. Additive. */
+  heardFrom?: Record<string, string>;
+  /** The shrine raised at the sermon spot (BACKLOG-614). A landmark like any other: owed upkeep, can lapse. */
+  shrine?: Landmark;
 }
 
 export type FaithPart = 'preacher' | 'believer' | 'scoffer';
@@ -142,7 +148,10 @@ export function faithBookLine(faith: Faith | null, name: string): string | undef
   if (!faith || !part) return undefined;
   const c = creedById(faith.creed);
   if (part === 'preacher') return `${c.glyph} preaches ${c.name} (since day ${faith.day})`;
-  if (part === 'believer') return `${c.glyph} follows ${faith.preacher}'s word: ${c.name}`;
+  if (part === 'believer') {
+    const from = faith.heardFrom?.[name];
+    return `${c.glyph} follows ${faith.preacher}'s word: ${c.name}${from ? ` (heard it from ${from})` : ''}`;
+  }
   const foe = faith.scoffers[name];
   return `${SCOFF_GLYPH} won't hear ${faith.preacher}'s ${c.short}${foe !== faith.preacher ? ` — not where ${foe} goes` : ''}`;
 }
@@ -186,6 +195,64 @@ export function serviceAttendees(faith: Faith, present: readonly Present[]): str
   return present.filter((p) => flock.has(p.name) && p.zone === faith.zone && p.awake && !p.migrating).map((p) => p.name);
 }
 
+/** The word travels (BACKLOG-615): a friend this close believes on a flock member's say-so. */
+export const WORD_BOND = 12;
+
+/**
+ * A flock member (preacher or believer) meets a dino with no part in the faith. A grudge at the rival bar scoffs,
+ * whatever the bond; else a bond at `WORD_BOND` believes; else nothing. No dice, like the sermon.
+ */
+export function hearWord(faith: Faith | null, carrier: string, listener: string, bonds: Bonds, grudges: Bonds): 'believe' | 'scoff' | null {
+  const part = faithOf(faith, carrier);
+  if (part !== 'preacher' && part !== 'believer') return null;
+  if (carrier === listener || faithOf(faith, listener)) return null;
+  if (worstRival(listener, grudges, [carrier])) return 'scoff';
+  return bondPoints(bonds, carrier, listener) >= WORD_BOND ? 'believe' : null;
+}
+
+export function toldLine(carrier: string, c: Creed): string {
+  return `${c.glyph} ${carrier} told me about the ${c.short}.`;
+}
+export function wordTicker(listener: string, carrier: string, preacher: string, c: Creed): string {
+  return `${c.glyph} ${listener} heard ${preacher}'s ${c.short} from ${carrier}, and believes.`;
+}
+export function wordScoffTicker(listener: string, carrier: string, preacher: string, c: Creed): string {
+  return `${SCOFF_GLYPH} ${listener} won't hear ${preacher}'s ${c.short} from ${carrier}.`;
+}
+export function toldMemory(carrier: string, c: Creed): string {
+  return `${carrier} told me about ${c.name}, and I believed it`;
+}
+export function wordScoffMemory(carrier: string, c: Creed): string {
+  return `${carrier} tried to tell me about ${c.name}; I wasn't having it`;
+}
+
+/** The shrine (BACKLOG-614): what the congregation hauls out of its ground's pile, and how many it takes. */
+export const SHRINE_RECIPE: Partial<Record<ResourceKind, number>> = { stone: 2 };
+export const SHRINE_BELIEVERS = 3;
+export const SHRINE_GLYPH = '🛐';
+export const SHRINE_ART_KEY = 'shrine';
+export const HAUL_GLYPH = '🪨';
+
+/** No shrine yet, a faith of three believers, three at the service to haul, and the pile can spare the stone. */
+export function canRaiseShrine(faith: Faith, attendees: readonly string[], pile: Stockpile): boolean {
+  if (faith.shrine || faith.believers.length < SHRINE_BELIEVERS || attendees.length < SHRINE_BELIEVERS) return false;
+  return (Object.keys(SHRINE_RECIPE) as ResourceKind[]).every((k) => (pile[k] ?? 0) >= (SHRINE_RECIPE[k] ?? 0));
+}
+
+/** The pile minus the shrine's stone. Pure; call only after `canRaiseShrine`. */
+export function raiseShrine(pile: Stockpile): Stockpile {
+  const next: Stockpile = { ...pile };
+  for (const k of Object.keys(SHRINE_RECIPE) as ResourceKind[]) next[k] = (next[k] ?? 0) - (SHRINE_RECIPE[k] ?? 0);
+  return next;
+}
+
+export function shrineTicker(preacher: string, haulers: readonly string[]): string {
+  return `${SHRINE_GLYPH} ${joinNames(haulers)} haul stone from the pile and raise a shrine where ${preacher} preached.`;
+}
+export function shrineMemory(c: Creed): string {
+  return `we hauled stone to raise a shrine for ${c.name}`;
+}
+
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 
 /** Save validation: a faith is either well-formed or the save is corrupt. */
@@ -197,7 +264,17 @@ export function isFaith(raw: unknown): raw is Faith {
   if (!isNum(f.tileX) || !isNum(f.tileY) || !isNum(f.day)) return false;
   if (f.lastServiceDay !== undefined && !isNum(f.lastServiceDay)) return false;
   if (!Array.isArray(f.believers) || !f.believers.every((b) => typeof b === 'string')) return false;
-  const s = f.scoffers;
+  if (!isNameMap(f.scoffers)) return false;
+  if (f.heardFrom !== undefined && !isNameMap(f.heardFrom)) return false;
+  if (f.shrine !== undefined) {
+    const sh = f.shrine as Record<string, unknown> | null;
+    if (typeof sh !== 'object' || sh === null || !isNum(sh.tileX) || !isNum(sh.tileY) || typeof sh.zone !== 'string') return false;
+    if (sh.derelict !== undefined && typeof sh.derelict !== 'boolean') return false;
+  }
+  return true;
+}
+
+function isNameMap(s: unknown): s is Record<string, string> {
   if (typeof s !== 'object' || s === null || Array.isArray(s)) return false;
   return Object.values(s).every((v) => typeof v === 'string');
 }

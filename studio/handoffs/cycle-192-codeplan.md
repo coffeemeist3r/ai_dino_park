@@ -42,3 +42,17 @@ and may be asleep — `converse` does not gate on sleep, so `__forceConverse` is
 **Risks:** the shrine is the newest landmark in `landmarkRecords`, so upkeep lapses it first when the bill can't be paid — acceptable (newest-first is the existing rule). `baseLandmarks` must not include it (granary gate). Specs that hit 16:00 after a sermon with ≥2 bowl stone will now see a shrine; the 191 spec sets the clock with ~0 stone, so it is unaffected.
 
 **Estimated touch count:** same 4 files.
+
+## Shipped
+
+**Files touched:** `game/src/world/faith.ts`, `game/src/scenes/WorldScene.ts`, `game/src/world/cycle-192-faith.test.ts` (new),
+`tests/e2e/cycle-192-faith.spec.ts` (new). 4 files, both tracks.
+
+**Deviations:**
+- `haulMemory` collided with `foodstore.ts`'s export of the same name in WorldScene's imports; the faith one is `shrineMemory`.
+- `__faith` now returns `structuredClone(this.faith)` (the nested `heardFrom` / `shrine` would otherwise leak live refs).
+- Added a `__hearWord(a, b)` dev hook (the beat without the brain's await) for the scoff spec; the believe spec goes
+  through the production `__forceConverse` path.
+- E2E seeds the bill with the existing `__seedGranaryReady('bowl', 2)` rather than a new hook.
+
+**Build:** clean. **Unit:** 3418 passed / 3 skipped (335 files). **E2E (new + 191 faith):** 8/8.
