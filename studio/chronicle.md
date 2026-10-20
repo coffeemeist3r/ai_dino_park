@@ -14940,3 +14940,5 @@ preview request was declined in the unattended session. CI on `main` going in: `
 ## Cycle 192 — structure-smith: BACKLOG-614, the faith raises a stone (a shrine from the pile, owed upkeep like any wall).
 
 ## Cycle 192 — designer: 615 (the creed passes through meetings; friends believe secondhand, rivals scoff) + 614 (a 2-stone shrine raised at the service, owed upkeep).
+
+## Cycle 192 — codeplan: hearWord + shrine in faith.ts; a meeting beat beside teachBeat; the shrine joins the landmark lists so upkeep and mending need no second path.
