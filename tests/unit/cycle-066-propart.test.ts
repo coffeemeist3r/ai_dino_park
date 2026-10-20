@@ -70,6 +70,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'shellcap', // BACKLOG-606 (cycle 188-art): the scrap of eggshell a youngster wears until it molts (host 604)
       'shelter',
       'shelter_derelict', // BACKLOG-494
+      'shrine', // BACKLOG-617 (cycle 192-art): the faith's raised shrine at the sermon spot (host 614)
       // BACKLOG-561 (cycle 168-art): the fourteenth rig — this sitting's hourglass, the middle of the
       // three keeper lines. Drawn as a pair with `watch` below, because two registers about time sitting
       // eleven pixels apart have to differ in silhouette or the player reads either one as both.

@@ -1586,3 +1586,4 @@ _(section drained whole and archived at cycle 156 — BACKLOG-541 and BACKLOG-54
 > milestone's spine stands.
 
 - [x] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488. — shipped cycle 192.
+- [x] BACKLOG-617 [art] The shrine — a GBA-pixel prop for the faith's raised stone (BACKLOG-614): the singing stone (616) built up into something hauled and set, still low and sat-beside rather than a tall standing stone, distinct from the bowl's cairn. Drawn under the 🛐 glyph until it exists. Host: 614's shrine at the sermon spot, which ships this cycle. — shipped cycle 192-art.
