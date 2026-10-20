@@ -2,7 +2,7 @@
   "cycle": 192,
   "phase": "designer-pending",
   "currentItem": null,
-  "structureItem": null,
+  "structureItem": "BACKLOG-614: The faith raises a stone",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-20T08:14:49.355Z",
-    "structure-smith": "2026-10-19T08:14:34.925Z",
+    "structure-smith": "2026-10-20T08:14:59.949Z",
     "designer": "2026-10-19T08:16:06.443Z",
     "code-planner": "2026-10-19T08:17:21.126Z",
     "coder": "2026-10-19T08:23:52.855Z",

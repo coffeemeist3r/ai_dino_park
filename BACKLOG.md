@@ -20,7 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [ ] BACKLOG-614 [emergent] The faith raises a stone (full text in the cycle-191 block below). Milestone 32 structure arc 2.
+- [~] BACKLOG-614 [emergent] The faith raises a stone (full text in the cycle-191 block below). Milestone 32 structure arc 2.
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -682,7 +682,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > lore-smith took for 615. 563 / 581 / 611 / 612 stay queued below them; 612 is the Validator's and is next once the
 > milestone's spine stands.
 
-- [ ] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488.
+- [~] BACKLOG-614 [emergent] The faith raises a stone — the building arc meets the faith: once a faith holds three believers, the congregation hauls stone from its ground's pile to raise a shrine landmark at the sermon spot (a structure kind with its own recipe, paying into upkeep like any landmark), and the service gathers at it. Builds on 613 / 480 / 488.
 
 
 ## Cycle 192 lore additions — the word travels (2026-10-20)
