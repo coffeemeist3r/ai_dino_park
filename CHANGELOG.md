@@ -7,6 +7,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 193 — 2026-10-21 (sweet on each other; Milestone 33 opens)
+- BACKLOG-618: The first courtship — in an ordinary meeting, two grown, unpaired dinos who are each other's closest friend at a bond of 24 pair up: the bolder courts with a gift out of its own persona (a fern, a pretty stone, a song, a warm spot in the sun, a cool drink at the pond, a long walk), the other says yes. One-sided courtships are turned down gently, and the courter waits a day. Book line `💕 sweet on X (since day N)`; a paired dino idles with 💕 one beat in five. Reshapes BACKLOG-027. No dice.
+- BACKLOG-620: A pair keeps company — `pairs` is an additive, validated save field, and a paired dino's idle step is leashed to its mate on the same ground with the youngster's `tetherStep` (three tiles), after the wander draw so no RNG stream moves.
+
 ## Cycle 192 — 2026-10-20 (the word travels; the faith raises a stone; Milestone 32 SHIPPED)
 - BACKLOG-615: The word travels — in any ordinary meeting, a member of the flock (the preacher or a believer) tells a dino with no part in the faith. A grudge at the rival bar scoffs, naming the carrier; otherwise a bond ≥ 12 believes secondhand. No dice. Bubbles, ticker, memories, and the book names who told it (*"🎶 follows Glade's word: the song under the grass (heard it from Sunny)"*). On a fresh save, the owls who slept through the sermon hear it from their friends once they wake.
 - BACKLOG-614: The faith raises a stone — at the service, a faith with three believers and three present hauls two stone out of its ground's pile and raises a 🛐 shrine at the sermon spot. The shrine is a landmark: it is owed upkeep, can lapse and fade, and can be mended. On a fresh save it goes up at 16:00 on day one.

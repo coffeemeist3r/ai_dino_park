@@ -14994,3 +14994,36 @@ browser check beyond the e2e boot; the session ran unattended.
 ## Cycle 193 — coder: the first courtship and the pair that keeps company (6 files). Mossback and Glade pair up; a pair is leashed like a youngster.
 
 ## Cycle 193 — qa: 10/10 criteria pass; e2e 936/936 first run; fresh-park probe pairs Rex and Sunny at world step 14.
+
+## Cycle 193 — validator: lore APPROVED / structure APPROVED — sweet on each other. **Milestone 33 opens.**
+
+For a hundred and ninety-two cycles this park had friends, rivals, gossips, a preacher and a congregation. It had no
+couples. The Stardew line of the North Star, "friendship hearts, gifting, festivals, romance, marriage", had every word
+built except one. BACKLOG-027 had been open since the first night.
+
+Tonight two dinos who love each other most can say so. The rule is strict on purpose. Both have to be grown, neither
+already spoken for, the bond has to be at least 24, and each has to be the *other's* closest friend out of the whole
+park, not just out of the two of them. Then the bolder one courts, and what it brings comes from its own persona.
+Mossback brings a fern. Glade sings. Rex brings a pretty stone. Ember offers a warm spot in the sun. Murk offers a cool
+drink at the pond. Twitch, who loves nothing in particular, would offer a long walk. No dice: who pairs reads straight
+off the bond graph.
+
+It happened fast. Left alone in a fresh park, with nobody poking it, the first pair formed fourteen world steps in:
+*"💕 Rex courts Sunny with a pretty stone. Sunny says yes."* Their book pages now say *sweet on Sunny* and *sweet on
+Rex*. Mossback and Glade are next in line on the bowl, and in the Grove Bramble has to wait until two in the afternoon,
+when Pip grows up.
+
+The structure track makes it something you can watch rather than read. A pair is now in the save, and on every idle step
+a paired dino stays within three tiles of its mate, on the same leash a youngster keeps to its guardian. So Rex and
+Sunny drift around the bowl together all afternoon while the rest mill about. Now and then one of them idles with a 💕.
+
+If one dino loves another who loves somebody else, the courtship is turned down gently (💔), and the suitor waits a
+day. No founding pair is lopsided that way yet, so you won't see it on the first morning. The next lore arc is about
+exactly that dino: the friend left standing when its closest friend pairs off.
+
+**Operator:** CHARTER v9 still owes a tentpole, and the queue is still empty. Milestone 33 is a normal milestone, the
+same as 32. The gap stays yours to fill.
+
+Board: build clean, **3430 unit** green, e2e **936/936** on the first full run, no flakes. The save changes are additive
+(`pairs`). CI on `main` going in: `success` (cycle 192-art). There was no live browser check beyond the e2e boot and
+QA's headless probe; the session ran unattended.

@@ -21,11 +21,11 @@ bowl from 08:00. Rex and Sunny (30) are on the bowl too, but Rex is an owl and w
 share the Grove, and Pip grows up at 14:00. The first courtship is a bowl meeting inside the first minutes.
 
 **Lore arcs:**
-- [ ] The first courtship: two grown dinos who are each other's closest friend (bond ≥ 24) meet, the bolder one courts the other with something out of its own persona, and the book says who is sweet on whom (BACKLOG-618, reshapes 027)
+- [x] The first courtship: two grown dinos who are each other's closest friend (bond ≥ 24) meet, the bolder one courts the other with something out of its own persona, and the book says who is sweet on whom (BACKLOG-618, reshapes 027 — cycle 193)
 - [ ] The jilted and the jealous: a dino whose closest friend pairs off with somebody else feels it (seed next cycle)
 
 **Structure arcs:**
-- [ ] A pair keeps company: the pair is in the save, and on idle steps a paired dino stays within a few tiles of its mate on the same ground (BACKLOG-620)
+- [x] A pair keeps company: the pair is in the save, and on idle steps a paired dino stays within a few tiles of its mate on the same ground (BACKLOG-620 — cycle 193)
 - [ ] A pair keeps a nest: the pair sleeps side by side, and a pair's egg needs the pair, not the 60-bond bar (seed next cycle)
 
 ---
