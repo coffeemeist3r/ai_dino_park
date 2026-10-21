@@ -187,6 +187,8 @@ export interface BookRow {
   name: string;
   /** Its part in the park's faith (BACKLOG-030) — `faithBookLine`'s text, absent when it has none. */
   faith?: string;
+  /** Who it is sweet on (BACKLOG-618) — `mateBookLine`'s text. */
+  mate?: string;
   species: string;
   hearts: number; // 0–10
   topBond: number; // 0–100
@@ -301,6 +303,7 @@ export function bookLines(rows: BookRow[], away: string[] = [], circle?: string)
     if (r.dream) out.push(`  ${r.dream}`); // BACKLOG-307: what it dreams when it has had no day yet
     if (r.tic) out.push(`  ${r.tic}`); // BACKLOG-409: the ritual it has actually fallen into, under the quirk
     if (r.faith) out.push(`  ${r.faith}`); // BACKLOG-030: whose word it follows, or won't
+    if (r.mate) out.push(`  ${r.mate}`); // BACKLOG-618: who it is sweet on
     if (r.intent) out.push(`  today: ${r.intent}`); // BACKLOG-393: the day's intent, the mind made legible
     if (r.plans) out.push(`  plans: ${r.plans}`); // BACKLOG-012: the day's shape across its phases
     if (r.seeking) out.push(`  seeking: ${r.seeking}`); // BACKLOG-582: whom the mind chose to go looking for

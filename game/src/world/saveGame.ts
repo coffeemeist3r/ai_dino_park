@@ -24,6 +24,7 @@ import type { Streak } from './streak';
 import type { SessionRecord } from './session';
 import type { GrowthRecord } from './growth';
 import { isFaith, type Faith } from './faith';
+import { isPairs, type Pairs } from '../social/courtship';
 import { AXES } from '../ai/personality';
 
 /** The axis names a BACKLOG-407 echo may name — read off the personality table itself, so the save's
@@ -244,6 +245,8 @@ export interface SaveData {
   growth?: Record<string, GrowthRecord>;
   /** The park's faith (BACKLOG-030/613) — creed, preacher, who believes. Additive; absent → none preached yet. */
   faith?: Faith;
+  /** Who is sweet on whom (BACKLOG-618/620). Additive; absent → nobody paired. */
+  pairs?: Pairs;
   /** Real epoch ms at save — seed for offline catch-up (BACKLOG-106). Additive. */
   savedAt?: number;
   /** Realtime multiplier in effect at save. Additive; absent → 1×. */
@@ -1104,6 +1107,9 @@ export function deserialize(json: string): SaveData | null {
   // faith (BACKLOG-613): well-formed or the save is corrupt.
   if (o.faith !== undefined && !isFaith(o.faith)) return null;
   const faith = o.faith as Faith | undefined;
+  // pairs (BACKLOG-620): well-formed or the save is corrupt.
+  if (o.pairs !== undefined && !isPairs(o.pairs)) return null;
+  const pairs = o.pairs as Pairs | undefined;
 
   let palate: Record<string, Record<string, number>> | undefined;
   if (o.palate !== undefined) {
@@ -1211,6 +1217,7 @@ export function deserialize(json: string): SaveData | null {
     born,
     growth,
     faith,
+    pairs,
     savedAt,
     scale,
     visitHours,

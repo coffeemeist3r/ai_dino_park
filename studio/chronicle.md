@@ -14990,3 +14990,5 @@ browser check beyond the e2e boot; the session ran unattended.
 ## Cycle 193 — designer: BACKLOG-618 the first courtship + BACKLOG-620 a pair keeps company (10 criteria).
 
 ## Cycle 193 — codeplan: one pure module (courtship.ts) for both tracks; ~6 files.
+
+## Cycle 193 — coder: the first courtship and the pair that keeps company (6 files). Mossback and Glade pair up; a pair is leashed like a youngster.

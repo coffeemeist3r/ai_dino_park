@@ -142,6 +142,7 @@ import {
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName, COLD_ART_KEY, COLD_GLYPH } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
+import { COURT_BOND, PAIR_BOND, MATE_GLYPH, courtGift, courtLine, courtTicker, courtedMemory, courterMemory, courtship, mateBeat, mateBookLine, pairUp, type Pairs } from '../social/courtship';
 import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith, HAUL_GLYPH, SHRINE_ART_KEY, SHRINE_GLYPH, canRaiseShrine, shrineMemory, hearWord, raiseShrine, shrineTicker, toldLine, toldMemory, wordScoffMemory, wordScoffTicker, wordTicker } from '../world/faith';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
@@ -1300,6 +1301,10 @@ export class WorldScene extends Phaser.Scene {
   private fairBasket: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** BACKLOG-180: the pairs that walked out of the last festival's ring as new friends. */
   private festivalFriends: [string, string][] = [];
+  /** Who is sweet on whom (BACKLOG-618/620): name → mate + the day the pair formed. Persisted. */
+  private pairs: Pairs = {};
+  /** A turned-down courter waits a day before it tries again (BACKLOG-618). Scene-local. */
+  private courtedDay: Record<string, number> = {};
   /** The park's faith (BACKLOG-030/613), once somebody has preached. Persisted. */
   private faith: Faith | null = null;
   /** The afternoon service in progress (BACKLOG-613), or null. Transient: a reload mid-service just ends it. */
@@ -1509,6 +1514,7 @@ export class WorldScene extends Phaser.Scene {
     this.setupSkyEvent();
     this.setupFestival();
     this.setupFaith();
+    this.setupCourtship();
     this.setupMigration();
     this.setupPlaque();
     this.setupScan();
@@ -4260,6 +4266,46 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__saveZones = () => this.currentSaveData().dinoZones;
   }
 
+  private setupCourtship(): void {
+    (window as any).__pairs = () => structuredClone(this.pairs);
+    (window as any).__court = (a: string, b: string) => { this.courtBeat(a, b); return (window as any).__pairs(); };
+  }
+
+  /**
+   * The first courtship (BACKLOG-618): two grown dinos who are each other's closest friend pair up when they meet.
+   * Beside the gossip cascade like `faithWordBeat`, so no shipped beat gets rarer. No dice.
+   */
+  private courtBeat(a: string, b: string): boolean {
+    const day = getWorldClock().now().day;
+    if (this.courtedDay[a] === day || this.courtedDay[b] === day) return false;
+    if (bondPoints(this.bonds, a, b) < COURT_BOND) return false;
+    const names = this.dinos.map((d) => d.name);
+    const c = courtship(a, b, {
+      bonds: this.bonds,
+      names,
+      bravery: Object.fromEntries(this.dinos.map((d) => [d.name, d.traits.bravery])),
+      young: new Set(names.filter((n) => this.stageNow(n) === 'young')),
+      pairs: this.pairs,
+    });
+    if (!c) return false;
+    const courter = this.dinoByName(c.courter);
+    const gift = courtGift(courter?.personality ?? '');
+    if (courter) this.showBubble(courter, courtLine(gift));
+    this.memory = remember(this.memory, c.courter, courterMemory(c, gift));
+    if (c.accept) {
+      this.pairs = pairUp(this.pairs, c.courter, c.courted, day);
+      this.bonds = strengthen(this.bonds, c.courter, c.courted, PAIR_BOND);
+      const courted = this.dinoByName(c.courted);
+      if (courted) this.showBubble(courted, MATE_GLYPH);
+      this.memory = remember(this.memory, c.courted, courtedMemory(c, gift));
+    } else {
+      this.courtedDay[c.courter] = day;
+    }
+    this.logEvent(courtTicker(c, gift));
+    void this.saveGame();
+    return true;
+  }
+
   /** Faith (BACKLOG-030/613). The service is checked on a real-time cadence, like the festival. */
   private setupFaith(): void {
     this.time.addEvent({ delay: FESTIVAL_CHECK_MS, loop: true, callback: () => { if (!this.ambientPaused) this.checkService(); } });
@@ -5054,6 +5100,14 @@ export class WorldScene extends Phaser.Scene {
     for (const egg of [...this.eggs]) {
       if (isHatched(egg, day)) this.hatchEgg(egg);
     }
+  }
+
+  /** This dino's mate, when it stands settled on the same ground (BACKLOG-620). */
+  private mateOnGround(d: Dino): Dino | undefined {
+    const name = this.pairs[d.name]?.mate;
+    const mate = name ? this.dinoByName(name) : undefined;
+    if (!mate || this.migrating.has(mate.name)) return undefined;
+    return zoneOf(this.dinoZones, mate.name, BOWL_ID) === zoneOf(this.dinoZones, d.name, BOWL_ID) ? mate : undefined;
   }
 
   /** This dino's life stage now (BACKLOG-602). */
@@ -5961,6 +6015,7 @@ export class WorldScene extends Phaser.Scene {
       dream: dreamBookLine(d.traits), // BACKLOG-307: what it dreams with no day behind it yet
       tic: this.ticBookEntry(d), // BACKLOG-409: the ritual, once it has actually formed
       faith: faithBookLine(this.faith, d.name), // BACKLOG-030
+      mate: mateBookLine(this.pairs, d.name), // BACKLOG-618
       intent: this.intents[d.name]?.note, // BACKLOG-393: today's lean, the mind made legible
       plans: planShape(this.ensurePlan(d, getWorldClock().now().day)), // BACKLOG-012: the day's shape, dawn→night
       seeking: ((c) => (c ? seekingLine(c) : undefined))(this.seeking[d.name]), // BACKLOG-582
@@ -7265,6 +7320,8 @@ ${e.short}`;
         next = wanderStep(cur, dir, COLS, ROWS);
         const guardian = this.guardianNow(d); // BACKLOG-607: a youngster's idle drift is leashed to its guardian
         if (guardian) next = tetherStep(cur, this.tileOf(guardian), next, COLS, ROWS);
+        const mate = this.mateOnGround(d); // BACKLOG-620: a pair keeps company, leashed the way a youngster is
+        if (mate) next = tetherStep(cur, this.tileOf(mate), next, COLS, ROWS);
       }
       d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
       this.activityById[d.name] = dinoActivity({
@@ -7493,7 +7550,8 @@ ${e.short}`;
         // BACKLOG-030: a believer (or the preacher) idles with the creed's glyph, one beat in five.
         const part = faithOf(this.faith, d.name);
         const faithful = !mood && !lifted && !copied && !kept && faithBeat(this.worldSteps) && (part === 'preacher' || part === 'believer');
-        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : kept ? kept.glyph : faithful ? creedById(this.faith!.creed).glyph : moodFidget(d.traits, mood).glyph;
+        const sweet = !mood && !lifted && !copied && !kept && !faithful && mateBeat(this.worldSteps) && !!this.pairs[d.name]; // BACKLOG-618
+        const wanderGlyph = lifted ? reliefFlourish(d.traits) : copied ? fidget(copied.traits).glyph : kept ? kept.glyph : faithful ? creedById(this.faith!.creed).glyph : sweet ? MATE_GLYPH : moodFidget(d.traits, mood).glyph;
         mark.setText(act === 'wandering' ? wanderGlyph : ACTIVITY_GLYPH[act]);
       }
     });
@@ -7695,6 +7753,7 @@ ${e.short}`;
       // are different registers anyway.
       this.teachBeat(a.name, b.name);
       this.faithWordBeat(a.name, b.name); // BACKLOG-615: the word travels, beside the cascade like the teaching
+      this.courtBeat(a.name, b.name); // BACKLOG-618: the first courtship, beside the cascade too
     } finally {
       this.convoInFlight = false;
     }
@@ -11023,6 +11082,7 @@ ${e.short}`;
       born: this.born,
       growth: this.growth, // BACKLOG-602 (additive)
       faith: this.faith ?? undefined, // BACKLOG-613 (additive)
+      pairs: this.pairs, // BACKLOG-620 (additive)
       savedAt: Date.now(),
       scale: this.activeScale, // BACKLOG-493: the chosen watching rate, not a hidden tab's AWAY_SCALE
       visitHours: this.visitHours, // BACKLOG-121: the hours you tend to open the park at (additive)
@@ -11216,6 +11276,7 @@ ${e.short}`;
       for (const e of this.eggs) this.drawEgg(e);
       this.growth = save.growth ?? {}; // BACKLOG-602: absent in every pre-187 save → every dino adult
       this.faith = save.faith ?? null; // BACKLOG-613: a pre-191 park has preached nothing
+      this.pairs = save.pairs ?? {}; // BACKLOG-620: a pre-193 park has paired nobody
       this.placeFaithMark();
       this.applyGrowth();
       this.applyZoneVisibility(); // a save restored into the grove must not show the bowl's dinos

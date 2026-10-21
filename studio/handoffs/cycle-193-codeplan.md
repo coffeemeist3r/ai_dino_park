@@ -50,3 +50,7 @@ the leash brings a separated pair within 3 tiles inside 20 steps and holds it fo
 must come after `rand()` so unpaired dinos' streams do not move.
 
 **Estimated touch count:** ~6 files.
+
+## Shipped (coder)
+
+Both tracks shipped as planned in 6 files (new: `social/courtship.ts`, its unit test, `cycle-193-courtship.spec.ts`; modified: `WorldScene.ts`, `saveGame.ts`, `ui/lenses.ts`). Build clean; unit 3430 green; the new spec 4/4. No blocker.
