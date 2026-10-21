@@ -20,6 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
+- [~] BACKLOG-620 [core] A pair keeps company (full text in the cycle-193 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -671,3 +672,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [~] BACKLOG-618 [social] The first courtship — reshapes 027 (romance + pair-bonding). In an ordinary meeting, two grown dinos with no mate, each the other's closest friend at a bond of 24 or more: the bolder one courts the other with something out of its own persona (a fern, a pretty stone, a song, a warm spot in the sun, a long walk), the other says yes, and they are a pair. A one-sided courtship (the courted one's closest friend is somebody else) is turned down gently. No dice. Memories both ways, a ticker line, and a book line: "💕 sweet on Glade (since day 1)". A paired dino shows 💕 on one idle beat in five. Founding read: Mossback and Glade (24) on the bowl from 08:00. Builds on 013 / 565 / 602.
 - [ ] BACKLOG-619 [art] The lapsed shrine — a GBA-pixel ruin rig for a derelict shrine (BACKLOG-614/617). Every other landmark has drawn its ruin by now (494 / 532); the shrine is the last one still faded by alpha. Follow the ruin rule: the same stones, at the ground line, the side stones tipped off the slab, not the shrine shorter or greyer. Host: a derelict shrine (`faith.shrine.derelict`), which ships already.
+
+## Cycle 193 (Structure-smith) — the pair in the systems
+
+- [~] BACKLOG-620 [core] A pair keeps company — the pair (618) is a save field (`pairs`: name → mate, plus the day it formed; additive, validated), and on an idle wander step a paired dino on the same ground as its mate is leashed to it the way a youngster is leashed to its guardian (`tetherStep`, three tiles): past the leash it heads back, inside it it wanders freely. The wander draw is taken first, so the RNG stream does not move. A youngster's own leash still wins. Builds on 618 / 607.
