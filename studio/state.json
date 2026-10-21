@@ -1,6 +1,6 @@
 {
   "cycle": 193,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-618: the first courtship",
   "structureItem": "BACKLOG-620: a pair keeps company",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-21T08:13:17.685Z",
     "code-planner": "2026-10-21T08:14:02.251Z",
     "coder": "2026-10-21T08:17:32.233Z",
-    "qa": "2026-10-20T08:30:21.322Z",
+    "qa": "2026-10-21T08:27:13.231Z",
     "validator": "2026-10-20T08:31:31.495Z",
     "artist": "2026-10-20T08:34:38.640Z"
   },
