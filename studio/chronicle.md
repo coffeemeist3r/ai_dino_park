@@ -14986,3 +14986,5 @@ browser check beyond the e2e boot; the session ran unattended.
 ## Cycle 193 — lore-smith: sweet on each other. Milestone 33 drafted (romance, BACKLOG-027 reshaped as 618); art 619 seeded (the lapsed shrine). Tentpole queue still empty, named again.
 
 ## Cycle 193 — structure-smith: BACKLOG-620 a pair keeps company (the pair in the save, leashed like a youngster).
+
+## Cycle 193 — designer: BACKLOG-618 the first courtship + BACKLOG-620 a pair keeps company (10 criteria).

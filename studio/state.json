@@ -1,6 +1,6 @@
 {
   "cycle": 193,
-  "phase": "designer-pending",
+  "phase": "codeplan-pending",
   "currentItem": "BACKLOG-618: the first courtship",
   "structureItem": "BACKLOG-620: a pair keeps company",
   "lastVerdict": "APPROVED",
@@ -11,7 +11,7 @@
   "lastFire": {
     "lore-smith": "2026-10-21T08:12:15.351Z",
     "structure-smith": "2026-10-21T08:12:28.246Z",
-    "designer": "2026-10-20T08:15:29.255Z",
+    "designer": "2026-10-21T08:13:17.685Z",
     "code-planner": "2026-10-20T08:15:58.289Z",
     "coder": "2026-10-20T08:20:33.613Z",
     "qa": "2026-10-20T08:30:21.322Z",
