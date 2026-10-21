@@ -4313,7 +4313,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__service = () => (this.service ? { attendees: [...this.service.attendees] } : null);
     (window as any).__holdService = () => { this.checkService(); return (window as any).__service(); };
     (window as any).__closeService = () => { this.closeService(); return (window as any).__service(); };
-    (window as any).__faithMark = () => (this.faithMark ? { tileX: Math.floor(this.faithMark.x / TILE), tileY: Math.floor((this.faithMark.y - 1) / TILE), visible: this.faithMark.visible, alpha: this.faithMark.alpha, shrine: !!this.faith?.shrine } : null);
+    (window as any).__faithMark = () => (this.faithMark ? { tileX: Math.floor(this.faithMark.x / TILE), tileY: Math.floor((this.faithMark.y - 1) / TILE), visible: this.faithMark.visible, alpha: this.faithMark.alpha, shrine: !!this.faith?.shrine, texture: (this.faithMark as Phaser.GameObjects.Image).texture?.key } : null);
     // BACKLOG-615: the faith's word passed in a meeting, without waiting on the brain's reply.
     (window as any).__hearWord = (a: string, b: string) => { this.faithWordBeat(a, b); return (window as any).__faith(); };
   }
@@ -9125,6 +9125,7 @@ ${e.short}`;
         }
         s.setAlpha(rec?.derelict && !drawnRuin ? DERELICT_ALPHA : 1);
       });
+    if (this.faith?.shrine && this.faithMark) showLandmarks([this.faithMark], [this.faith.shrine], SHRINE_ART_KEY); // BACKLOG-619: a drawn ruin, not a fade
     showLandmarks(this.cairnSprites, this.cairns, 'cairn');
     showLandmarks(this.shelterSprites, this.shelters, 'shelter'); // BACKLOG-315
     showLandmarks(this.thatchSprites, this.thatches, 'thatch'); // BACKLOG-417

@@ -201,6 +201,7 @@ export function worldPlacedProps(): Set<string> {
   out.add(FAIR_ART_KEY); // BACKLOG-599: the fair basket beside the rite while a festival is open
   out.add(FAITH_ART_KEY); // BACKLOG-613: the faith's stone where the sermon was given, by `placeFaithMark`
   out.add(SHRINE_ART_KEY); // BACKLOG-614/617: the shrine that stands in the faith stone's place once raised, by `placeFaithMark`
+  out.add(`${SHRINE_ART_KEY}_derelict`); // BACKLOG-619: a lapsed shrine swaps to its ruin in `applyObjectVisibility`
   for (const k of FESTIVAL_ART_KEYS) out.add(k); // BACKLOG-597: the rite's mark at the pond, one per season, by `openFestival`
   out.add(ERRAND_ART_KEY); // BACKLOG-586: popped over a dino setting off on its plan's errand, by `runErrand`
   out.add(WELCOME_ART_KEY); // BACKLOG-592: popped over each resident answering a newcomer, by `answerNewcomer`

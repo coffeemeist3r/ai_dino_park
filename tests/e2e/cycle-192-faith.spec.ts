@@ -93,7 +93,7 @@ test('short of stone the service still gathers and nothing is raised (BACKLOG-61
   expect(await ev(page, '__zoneStockpile', 'bowl')).toEqual({ stone: 1 });
 });
 
-test('a shrine the bowl cannot keep up lapses and fades, like any wall (BACKLOG-614)', async ({ page }) => {
+test('a shrine the bowl cannot keep up lapses into its ruin, like any wall (BACKLOG-614/619)', async ({ page }) => {
   await preach(page);
   await ev(page, '__setZonePile', 'bowl', { stone: 2 });
   await ev(page, '__setClock', 1, 16, 0);
@@ -105,6 +105,6 @@ test('a shrine the bowl cannot keep up lapses and fades, like any wall (BACKLOG-
   const lines = await ev<string[]>(page, '__runUpkeep', 1);
   expect(lines.some((l) => l.includes('🛐'))).toBe(true);
   expect((await ev<Faith>(page, '__faith')).shrine?.derelict).toBe(true);
-  const mark = await ev<{ alpha: number }>(page, '__faithMark');
-  expect(mark.alpha).toBeLessThan(1);
+  // BACKLOG-619 (cycle 193-art): the lapse now swaps to the drawn ruin at full opacity instead of fading.
+  expect(await ev(page, '__faithMark')).toMatchObject({ alpha: 1, texture: 'prop_shrine_derelict' });
 });

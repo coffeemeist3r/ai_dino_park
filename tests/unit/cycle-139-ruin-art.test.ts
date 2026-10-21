@@ -18,12 +18,14 @@ const RUINS = Object.keys(PROP_RIGS).filter((k) => k.endsWith('_derelict'));
 
 // Amended cycle 151-art (BACKLOG-532): five, not four. The beacon was the one landmark whose derelict
 // state was the lit rig at `DERELICT_ALPHA`, and on a ground made of black glass that reads as night.
-it('all five landmarks now have a fallen twin', () => {
+// Amended cycle 193-art (BACKLOG-619): six. The shrine was the last landmark still faded by alpha.
+it('all six landmarks now have a fallen twin', () => {
   expect(RUINS.sort()).toEqual([
     'beacon_derelict',
     'cairn_derelict',
     'granary_derelict',
     'shelter_derelict',
+    'shrine_derelict',
     'thatch_derelict',
   ]);
 });
@@ -66,6 +68,9 @@ describe.each(RUINS)('%s', (name) => {
       return used;
     };
     const standing = cols(intact.grid);
+    // Amended cycle 193-art: a standing rig that already inks every column (the shrine's slab runs edge to edge) has
+    // nowhere to spill; the crown rule below still holds it to having come down.
+    if (standing.size === intact.size) return;
     expect([...cols(rig.grid)].some((x) => !standing.has(x))).toBe(true);
   });
 

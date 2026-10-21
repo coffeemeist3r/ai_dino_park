@@ -71,6 +71,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       'shelter',
       'shelter_derelict', // BACKLOG-494
       'shrine', // BACKLOG-617 (cycle 192-art): the faith's raised shrine at the sermon spot (host 614)
+      'shrine_derelict', // BACKLOG-619 (cycle 193-art): the lapsed shrine, the sixth and last landmark ruin
       // BACKLOG-561 (cycle 168-art): the fourteenth rig — this sitting's hourglass, the middle of the
       // three keeper lines. Drawn as a pair with `watch` below, because two registers about time sitting
       // eleven pixels apart have to differ in silhouette or the player reads either one as both.

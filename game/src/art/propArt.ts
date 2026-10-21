@@ -2763,6 +2763,34 @@ const SHRINE_RIG: PropRig = {
   },
 };
 
+// `shrine_derelict` (BACKLOG-619, cycle 193-art): the shrine a ground could not keep up. It was the last landmark still
+// fading by alpha. The first draft was the shrine with its side stones deleted, which is the alpha-fade again drawn in
+// pixels: the same thing, less of it. The ruin rule asks what a shrine *is*, and it is stones somebody hauled and set.
+// So the hauled stones are the ones that go: both lie on their sides in the grass in front, the slab under them has
+// split and grown over with moss, and the singing stone has settled back and leans, a row lower than it stood, but it
+// is still there: it was there before anyone believed anything. The shrine already fills its tile edge to edge, so this
+// is the one ruin that cannot spill sideways; it comes down instead. Same palette object, spread: the same stone.
+const SHRINE_RUIN_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.......oooo.....',
+  '......ommmmo....',
+  '.....ommmmmmo...',
+  '.....ohcsscdo...',
+  '.....ohssssdo...',
+  'ooooooddddddoooo',
+  'olllllollmmllllo',
+  'odddddoddddddddo',
+  'ooooooo.oooooooo',
+  'ohsdo......ohsdo',
+  'ooooo......ooooo',
+];
+
+const SHRINE_RUIN_RIG: PropRig = { size: 16, grid: SHRINE_RUIN_GRID, palette: { ...SHRINE_RIG.palette } };
+
 // `shellcap` (BACKLOG-606, cycle 188-art): the scrap of its own eggshell a youngster wears until it molts (host:
 // `refreshShellCaps`, BACKLOG-604). The top of an egg, dome up, broken off in a zigzag along the bottom and tipped a
 // little to the right, as if it slid there. Inked low in the grid: the image hangs from its bottom edge onto the head.
@@ -3109,6 +3137,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   'faith-stone': FAITH_STONE_RIG,
   // BACKLOG-617 (cycle 192-art): drawn the night its host shipped — the shrine `placeFaithMark` swaps in (614).
   shrine: SHRINE_RIG,
+  shrine_derelict: SHRINE_RUIN_RIG, // BACKLOG-619 (cycle 193-art): the lapsed shrine, by the `<name>_derelict` convention
   // BACKLOG-603 (cycle 187-art): drawn the night its host shipped — `moltDino`'s husk (023).
   molt: MOLT_RIG,
   // BACKLOG-606 (cycle 188-art): drawn the night its host shipped — the youngster's cap (604).
