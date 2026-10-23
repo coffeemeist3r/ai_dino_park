@@ -15046,8 +15046,8 @@ QA's headless probe; the session ran unattended.
 
 Last night two dinos chose each other for the first time. Tonight the park noticed.
 
-Ember lives up on the Ridge and has loved Sunny best since the founding: eighteen points, nobody closer. Eight
-minutes into a fresh park, down on the bowl, Rex courts Sunny with a pretty stone and Sunny says yes. On the same step
+Ember lives up on the Ridge and has loved Sunny best since the founding: eighteen points, nobody closer. Under a
+minute into a fresh park, down on the bowl, Rex courts Sunny with a pretty stone and Sunny says yes. On the same step
 Ember says *"🥲 Good for you, Sunny."* and files it away: *Sunny paired off with Rex. I'm glad for them.* Ember is
 warm, just barely (agreeableness 0.503), and so Ember is glad. Murk, in the Hollow, is not warm. If Glade ever pairs
 with Mossback, Murk will say *"😒 Mossback took Glade."*, sulk for two minutes, and Mossback will be its rival in the
