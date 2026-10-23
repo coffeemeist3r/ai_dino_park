@@ -2,7 +2,7 @@
   "cycle": 194,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-621: the jilted friend",
-  "structureItem": null,
+  "structureItem": "BACKLOG-622: a pair keeps a nest",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-23T08:11:48.743Z",
-    "structure-smith": "2026-10-21T08:12:28.246Z",
+    "structure-smith": "2026-10-23T08:12:00.308Z",
     "designer": "2026-10-21T08:13:17.685Z",
     "code-planner": "2026-10-21T08:14:02.251Z",
     "coder": "2026-10-21T08:17:32.233Z",
