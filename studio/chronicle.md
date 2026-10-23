@@ -15033,3 +15033,5 @@ QA's headless probe; the session ran unattended.
 ## Cycle 194 — lore-smith: the one left standing. BACKLOG-621 (the jilted friend) seeded under the milestone duty; art 623 (the nest) seeded.
 
 ## Cycle 194 — structure-smith: BACKLOG-622 a pair keeps a nest (where the pair sleeps, and where its egg comes from).
+
+## Cycle 194 — designer: BACKLOG-621 the jilted friend + BACKLOG-622 a pair keeps a nest (10 criteria).
