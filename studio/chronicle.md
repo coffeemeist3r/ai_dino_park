@@ -15035,3 +15035,5 @@ QA's headless probe; the session ran unattended.
 ## Cycle 194 — structure-smith: BACKLOG-622 a pair keeps a nest (where the pair sleeps, and where its egg comes from).
 
 ## Cycle 194 — designer: BACKLOG-621 the jilted friend + BACKLOG-622 a pair keeps a nest (10 criteria).
+
+## Cycle 194 — codeplan: courtship.ts grows the jilt and the nest; breeding.ts's bar yields to a pair; ~7 files.
