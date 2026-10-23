@@ -27,3 +27,14 @@
 
 - Unit `game/src/social/cycle-194-jilted.test.ts`: criteria 1, 5.
 - e2e `tests/e2e/cycle-194-jilted-nest.spec.ts`: criteria 2, 3, 6–9.
+
+## Shipped (coder)
+
+7 files: `courtship.ts` (jilt + nest + berths + `NEST_ART_KEY`), `expiry.ts` (`jilted` funk), `breeding.ts` (`paired`),
+`WorldScene.ts` (`jiltBeat`, `drawNests`, `berthNow`, `maybeLayNestEggs`, `__nests`), the unit test, the e2e spec, and
+`cycle-193-courtship.spec.ts` (its two `toEqual`s on a pair entry now `toMatchObject`: an entry carries a nest).
+
+One change from the plan, found by the full suite: `cycle-156-sulk-shakeoff` went red because a dino already sulking
+at the keeper (Glade, slighted at homecoming) was then jilted, and the fresh `jilted` funk replaced the sulk the
+keeper's make-up greet is meant to mend. A dino already in a funk now keeps the one it has; the memory and the grudge
+still land.

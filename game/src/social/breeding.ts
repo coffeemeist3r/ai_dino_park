@@ -85,6 +85,7 @@ export interface LayOpts {
   isClearNight: boolean;
   bothHuddling: boolean;
   hasEggForPair: boolean; // a clutch from this pair is already waiting
+  paired?: boolean; // BACKLOG-622: a pair at its nest needs no bond bar — the pair is the stronger fact
 }
 
 /** Decide whether a bonded, huddling pair lays an egg this moment. */
@@ -93,7 +94,7 @@ export function shouldLay(o: LayOpts): boolean {
     o.isClearNight &&
     o.bothHuddling &&
     !o.hasEggForPair &&
-    o.bond >= EGG_BOND_THRESHOLD &&
+    (o.paired || o.bond >= EGG_BOND_THRESHOLD) &&
     o.population < MAX_POPULATION
   );
 }

@@ -142,7 +142,7 @@ import {
 import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warmMemory, neglectMemory, spreadColdWord, coldWordLine, spreadWarmWord, warmWordLine, sympathyVisit, sympathyLine, SYMPATHY_BOND, selfCorrect, reliefLine, spreadReliefWord, reliefMemory, clearedName, gratefulLine, GRATEFUL_BOND, gratefulMemory, whoClearedMyName, COLD_ART_KEY, COLD_GLYPH } from '../world/cold';
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
-import { COURT_BOND, PAIR_BOND, MATE_GLYPH, courtGift, courtLine, courtTicker, courtedMemory, courterMemory, courtship, mateBeat, mateBookLine, pairUp, type Pairs } from '../social/courtship';
+import { COURT_BOND, PAIR_BOND, MATE_GLYPH, NEST_ART_KEY, NEST_GLYPH, berthOf, courtGift, courtLine, courtTicker, courtedMemory, courterMemory, courtship, jiltLine, jiltMemory, jiltTicker, jilted, mateBeat, mateBookLine, pairUp, type Pairs } from '../social/courtship';
 import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith, HAUL_GLYPH, SHRINE_ART_KEY, SHRINE_GLYPH, canRaiseShrine, shrineMemory, hearWord, raiseShrine, shrineTicker, toldLine, toldMemory, wordScoffMemory, wordScoffTicker, wordTicker } from '../world/faith';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
@@ -1305,6 +1305,8 @@ export class WorldScene extends Phaser.Scene {
   private pairs: Pairs = {};
   /** A turned-down courter waits a day before it tries again (BACKLOG-618). Scene-local. */
   private courtedDay: Record<string, number> = {};
+  /** Each pair's nest on the ground (BACKLOG-622), keyed by `pairKey`: the baked rig or 🪺. */
+  private nestSprites = new Map<string, Phaser.GameObjects.Text | Phaser.GameObjects.Image>();
   /** The park's faith (BACKLOG-030/613), once somebody has preached. Persisted. */
   private faith: Faith | null = null;
   /** The afternoon service in progress (BACKLOG-613), or null. Transient: a reload mid-service just ends it. */
@@ -3615,7 +3617,7 @@ export class WorldScene extends Phaser.Scene {
     if (!due.length) return;
     for (const { name, kind } of due) {
       this.funks = clearFunk(this.funks, name);
-      const sulking = kind === 'sulk';
+      const sulking = kind !== 'shoulder'; // BACKLOG-621: a jilted dino gets over it in the sulk's words
       this.memory = remember(this.memory, name, sulking ? shookItOffMemory(name) : shookOffShoulderMemory(name));
       const dino = this.dinoByName(name);
       if (dino) {
@@ -3623,7 +3625,7 @@ export class WorldScene extends Phaser.Scene {
         this.liftMood(dino); // the same recovery the make-up greet earns, arriving by the other road
       }
       this.logEvent(
-        sulking ? `✨ ${name} got over its sulk on its own` : `✨ ${name} got over the hatch on its own`,
+        kind === 'jilted' ? `✨ ${name} got over the pairing on its own` : sulking ? `✨ ${name} got over its sulk on its own` : `✨ ${name} got over the hatch on its own`,
       );
     }
     void this.saveGame();
@@ -4269,6 +4271,50 @@ export class WorldScene extends Phaser.Scene {
   private setupCourtship(): void {
     (window as any).__pairs = () => structuredClone(this.pairs);
     (window as any).__court = (a: string, b: string) => { this.courtBeat(a, b); return (window as any).__pairs(); };
+    (window as any).__nests = () =>
+      [...this.nestSprites.entries()].map(([pair, s]) => ({ pair, x: s.x, y: s.y, visible: s.visible, drawn: s instanceof Phaser.GameObjects.Image }));
+  }
+
+  /** Draw every pair's nest (BACKLOG-622): one per pair, on its own ground only. */
+  private drawNests(): void {
+    for (const s of this.nestSprites.values()) s.destroy();
+    this.nestSprites.clear();
+    for (const [name, p] of Object.entries(this.pairs)) {
+      if (!p.nest || name > p.mate) continue;
+      const tex = hasPropArt(NEST_ART_KEY) ? bakePropArt(this, NEST_ART_KEY) : null;
+      const px = p.nest.tileX * TILE + TILE / 2;
+      const py = p.nest.tileY * TILE + TILE / 2;
+      const s = tex ? this.add.image(px, py, tex) : this.add.text(px, py, NEST_GLYPH, { fontSize: '16px' });
+      this.nestSprites.set(pairKey(name, p.mate), s.setOrigin(0.5).setDepth(2).setVisible(p.nest.zone === this.zoneId));
+    }
+  }
+
+  /** Where this resting dino lies down tonight (BACKLOG-622): its berth at the pair's nest, when it stands on that ground. */
+  private berthNow(d: Dino): { tileX: number; tileY: number } | undefined {
+    const nest = this.pairs[d.name]?.nest;
+    if (!nest || this.migrating.has(d.name) || zoneOf(this.dinoZones, d.name, BOWL_ID) !== nest.zone) return undefined;
+    return berthOf(this.pairs, d.name, COLS);
+  }
+
+  /**
+   * The one left standing (BACKLOG-621): whoever loved one of the new pair best takes the news in its own temper.
+   * A warm dino is glad for them; a prickly one sulks and holds it against the one who took its friend.
+   */
+  private jiltBeat(a: string, b: string): void {
+    const names = this.dinos.map((d) => d.name);
+    const agreeableness = Object.fromEntries(this.dinos.map((d) => [d.name, d.traits.agreeableness]));
+    for (const j of jilted(a, b, { bonds: this.bonds, names, agreeableness, pairs: this.pairs })) {
+      const d = this.dinoByName(j.name);
+      if (d) this.showBubble(d, jiltLine(j));
+      this.memory = remember(this.memory, j.name, jiltMemory(j));
+      if (j.mood === 'jealous') {
+        // A dino already sore keeps the funk it has, so a slight the keeper can still mend is not overwritten.
+        if (!inFunk(this.funks, j.name)) this.funks = enterFunk(this.funks, j.name, 'jilted', this.worldSteps);
+        const held = bondPoints(this.grudges, j.name, j.rival);
+        if (held < RIVAL_BAR) this.grudges = strengthen(this.grudges, j.name, j.rival, RIVAL_BAR - held);
+      }
+      this.logEvent(jiltTicker(j));
+    }
   }
 
   /**
@@ -4293,15 +4339,19 @@ export class WorldScene extends Phaser.Scene {
     if (courter) this.showBubble(courter, courtLine(gift));
     this.memory = remember(this.memory, c.courter, courterMemory(c, gift));
     if (c.accept) {
-      this.pairs = pairUp(this.pairs, c.courter, c.courted, day);
-      this.bonds = strengthen(this.bonds, c.courter, c.courted, PAIR_BOND);
       const courted = this.dinoByName(c.courted);
+      // BACKLOG-622: the nest is where the courted one stood when it said yes.
+      const nest = courted ? { zone: zoneOf(this.dinoZones, c.courted, BOWL_ID), ...this.tileOf(courted) } : undefined;
+      this.pairs = pairUp(this.pairs, c.courter, c.courted, day, nest);
+      this.bonds = strengthen(this.bonds, c.courter, c.courted, PAIR_BOND);
       if (courted) this.showBubble(courted, MATE_GLYPH);
       this.memory = remember(this.memory, c.courted, courtedMemory(c, gift));
+      this.drawNests();
     } else {
       this.courtedDay[c.courter] = day;
     }
     this.logEvent(courtTicker(c, gift));
+    if (c.accept) this.jiltBeat(c.courter, c.courted); // BACKLOG-621: after the news, the ones it lands on
     void this.saveGame();
     return true;
   }
@@ -5048,14 +5098,14 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /** Lay an egg from a bonded pair by the den. Returns the egg, or null if one is already pending. */
-  private layEgg(a: string, b: string): Egg | null {
+  private layEgg(a: string, b: string, at?: { tileX: number; tileY: number }): Egg | null {
     if (this.hasEggForPair(a, b)) return null;
     const day = getWorldClock().now().day;
-    const tile = { tileX: HUDDLE_TILE.tileX + 1, tileY: HUDDLE_TILE.tileY };
+    const tile = at ? { ...at } : { tileX: HUDDLE_TILE.tileX + 1, tileY: HUDDLE_TILE.tileY };
     const egg = makeEgg(a, b, day, tile);
     this.eggs.push(egg);
     this.drawEgg(egg);
-    this.logEvent(`🥚 ${a} & ${b} nested by the den`);
+    this.logEvent(at ? `🥚 ${a} & ${b} laid an egg in their nest` : `🥚 ${a} & ${b} nested by the den`);
     void this.saveGame();
     return egg;
   }
@@ -5074,6 +5124,7 @@ export class WorldScene extends Phaser.Scene {
   /** Scan huddling pairs on a clear night; bonded enough → an egg appears by the den. */
   private maybeLayEggs(): void {
     if (!this.isClearNight()) return;
+    this.maybeLayNestEggs();
     const huddlers = this.dinos.filter((d) => this.isHuddling(d));
     for (let i = 0; i < huddlers.length; i++) {
       for (let j = i + 1; j < huddlers.length; j++) {
@@ -5090,6 +5141,36 @@ export class WorldScene extends Phaser.Scene {
         ) {
           this.layEgg(a.name, b.name);
         }
+      }
+    }
+  }
+
+  /**
+   * A pair's egg (BACKLOG-622): both mates asleep on their berths at the nest. The pair stands in for the bond bar.
+   * shortcut: bowl nests only — eggs and the born spawn on the den's ground; a nest elsewhere is a bed until eggs carry a zone.
+   */
+  private maybeLayNestEggs(): void {
+    for (const [name, p] of Object.entries(this.pairs)) {
+      if (!p.nest || p.nest.zone !== BOWL_ID || name > p.mate) continue;
+      const a = this.dinoByName(name);
+      const b = this.dinoByName(p.mate);
+      if (!a || !b) continue;
+      const atBerth = (d: Dino): boolean => {
+        const berth = this.berthNow(d);
+        const at = this.tileOf(d);
+        return !!berth && this.isResting(d) && berth.tileX === at.tileX && berth.tileY === at.tileY;
+      };
+      if (
+        shouldLay({
+          bond: bondPoints(this.bonds, a.name, b.name),
+          population: this.dinos.length + this.eggs.length,
+          isClearNight: true,
+          bothHuddling: atBerth(a) && atBerth(b),
+          hasEggForPair: this.hasEggForPair(a.name, b.name),
+          paired: true,
+        })
+      ) {
+        this.layEgg(a.name, b.name, p.nest);
       }
     }
   }
@@ -7225,7 +7306,8 @@ ${e.short}`;
       // glyph the player sees can never disagree with what the dino actually did this step (BACKLOG-295).
       // Winter opens the huddle window at dusk and lowers the bar; summer waits until late.
       const resting = atRest(hourNow, this.chronoOf(d), season); // BACKLOG-109
-      const huddling = resting && this.maxBond(d.name) >= huddleThreshold(season);
+      const berth = resting ? this.berthNow(d) : undefined; // BACKLOG-622: a pair sleeps at its nest, not the den
+      const huddling = resting && !berth && this.maxBond(d.name) >= huddleThreshold(season);
       const gathering =
         !huddling &&
         !resting && // BACKLOG-109: a sleeping dino does not go fetch things
@@ -7275,7 +7357,9 @@ ${e.short}`;
       if (this.stungNow(d.name)) ticAfter = Math.min(ticAfter, TIC_AFTER_STEPS_STUNG);
       const ticcing = aloneNow && !moping && inventsTic(this.soloSteps[d.name] ?? 0, ticAfter);
       let next;
-      if (huddling) {
+      if (berth) {
+        next = stepToward(cur, berth, COLS, ROWS); // BACKLOG-622: side by side at the nest
+      } else if (huddling) {
         next = stepToward(cur, HUDDLE_TILE, COLS, ROWS); // sleep beats gathering
       } else if (gathering) {
         next = stepToward(cur, dres!, COLS, ROWS); // a curious dino fetches it (BACKLOG-146)
@@ -7329,7 +7413,7 @@ ${e.short}`;
         inspecting: false,
         responding: false,
         feeding: false,
-        huddling,
+        huddling: huddling || !!berth, // BACKLOG-622: asleep at the nest reads as asleep
         gathering,
         socializing,
       });
@@ -9106,6 +9190,9 @@ ${e.short}`;
     this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
     this.fairBasket?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-599: and the fair basket beside it
     this.faithMark?.setVisible(this.zoneId === this.faith?.zone); // BACKLOG-613: the faith's place
+    for (const [name, p] of Object.entries(this.pairs)) {
+      if (p.nest && name < p.mate) this.nestSprites.get(pairKey(name, p.mate))?.setVisible(p.nest.zone === this.zoneId); // BACKLOG-622
+    }
     this.faithMark?.setAlpha(this.faith?.shrine?.derelict ? DERELICT_ALPHA : 1); // BACKLOG-614: a lapsed shrine fades like any wall
     // BACKLOG-480: the same pass sets each landmark's alpha, so disrepair is visible where it happened
     // rather than only on the ticker. One helper over all four parallel sprite arrays.
@@ -11278,6 +11365,7 @@ ${e.short}`;
       this.growth = save.growth ?? {}; // BACKLOG-602: absent in every pre-187 save → every dino adult
       this.faith = save.faith ?? null; // BACKLOG-613: a pre-191 park has preached nothing
       this.pairs = save.pairs ?? {}; // BACKLOG-620: a pre-193 park has paired nobody
+      this.drawNests(); // BACKLOG-622: a pre-194 pair has no nest and draws none
       this.placeFaithMark();
       this.applyGrowth();
       this.applyZoneVisibility(); // a save restored into the grove must not show the bowl's dinos

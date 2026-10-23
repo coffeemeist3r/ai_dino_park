@@ -13,8 +13,16 @@ export const PAIR_BOND = 6;
 export const MATE_EVERY = 5;
 export const MATE_GLYPH = '💕';
 export const DECLINE_GLYPH = '💔';
+export const GLAD_GLYPH = '🥲';
+/** `PROP_RIGS` key for the pair's nest (BACKLOG-622/623); `🪺` until it is drawn. */
+export const NEST_ART_KEY = 'nest';
+export const NEST_GLYPH = '🪺';
+/** A friend below this was never close enough to be left behind (BACKLOG-621). */
+export const JILT_FLOOR = 10;
 
-export type Pairs = Record<string, { mate: string; day: number }>;
+/** Where a pair sleeps (BACKLOG-622): the ground and tile the courted one stood on when it said yes. */
+export type Nest = { zone: string; tileX: number; tileY: number };
+export type Pairs = Record<string, { mate: string; day: number; nest?: Nest }>;
 
 /** Table order is match order; the fallback has no keywords. */
 const GIFTS: ReadonlyArray<readonly [RegExp, string]> = [
@@ -58,8 +66,61 @@ export function courtship(a: string, b: string, ctx: CourtContext): Courtship | 
   return null;
 }
 
-export function pairUp(pairs: Pairs, a: string, b: string, day: number): Pairs {
-  return { ...pairs, [a]: { mate: b, day }, [b]: { mate: a, day } };
+export function pairUp(pairs: Pairs, a: string, b: string, day: number, nest?: Nest): Pairs {
+  const n = nest ? { nest: { ...nest } } : {};
+  return { ...pairs, [a]: { mate: b, day, ...n }, [b]: { mate: a, day, ...n } };
+}
+
+/** Side by side at the nest: the alphabetically first mate lies on it, the other beside it (inward at the east edge). */
+export function berthOf(pairs: Pairs, name: string, cols: number): { tileX: number; tileY: number } | undefined {
+  const p = pairs[name];
+  if (!p?.nest) return undefined;
+  const { tileX, tileY } = p.nest;
+  if (name < p.mate) return { tileX, tileY };
+  return { tileX: tileX + 1 < cols ? tileX + 1 : tileX - 1, tileY };
+}
+
+export interface Jilt {
+  name: string;
+  /** The one it loved best. */
+  friend: string;
+  /** The one who took it. */
+  rival: string;
+  mood: 'glad' | 'jealous';
+}
+
+/**
+ * Who is left standing when `a` and `b` pair (BACKLOG-621): every unpaired dino whose closest friend of all was one of
+ * them. Its own temper decides how it takes the news. No dice.
+ */
+export function jilted(
+  a: string,
+  b: string,
+  ctx: { bonds: Bonds; names: readonly string[]; agreeableness: Readonly<Record<string, number>>; pairs: Pairs },
+): Jilt[] {
+  const out: Jilt[] = [];
+  for (const name of ctx.names) {
+    if (name === a || name === b || ctx.pairs[name]) continue;
+    const friend = closestFriend(name, ctx.bonds, ctx.names as string[], JILT_FLOOR);
+    if (friend !== a && friend !== b) continue;
+    const rival = friend === a ? b : a;
+    out.push({ name, friend, rival, mood: (ctx.agreeableness[name] ?? 0.5) >= 0.5 ? 'glad' : 'jealous' });
+  }
+  return out;
+}
+
+export function jiltLine(j: Jilt): string {
+  return j.mood === 'glad' ? `${GLAD_GLYPH} Good for you, ${j.friend}.` : `😒 ${j.rival} took ${j.friend}.`;
+}
+export function jiltMemory(j: Jilt): string {
+  return j.mood === 'glad'
+    ? `${j.friend} paired off with ${j.rival}. I'm glad for them`
+    : `${j.friend} paired off with ${j.rival}. ${j.rival} took my friend`;
+}
+export function jiltTicker(j: Jilt): string {
+  return j.mood === 'glad'
+    ? `${GLAD_GLYPH} ${j.name} is glad for ${j.friend} and ${j.rival}`
+    : `😒 ${j.name} watches ${j.friend} pair off with ${j.rival}, and sulks`;
 }
 
 /** One idle beat in `MATE_EVERY` shows 💕 (offset so it never lands on the faith glyph's beat). */
@@ -92,6 +153,11 @@ export function isPairs(raw: unknown): raw is Pairs {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return false;
   return Object.values(raw).every((v) => {
     const p = v as Record<string, unknown> | null;
-    return typeof p === 'object' && p !== null && typeof p.mate === 'string' && typeof p.day === 'number' && Number.isFinite(p.day);
+    return typeof p === 'object' && p !== null && typeof p.mate === 'string' && typeof p.day === 'number' && Number.isFinite(p.day) && (p.nest === undefined || isNest(p.nest));
   });
+}
+
+function isNest(raw: unknown): raw is Nest {
+  const n = raw as Record<string, unknown> | null;
+  return typeof n === 'object' && n !== null && typeof n.zone === 'string' && Number.isInteger(n.tileX) && Number.isInteger(n.tileY);
 }

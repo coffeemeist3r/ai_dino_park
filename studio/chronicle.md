@@ -15037,3 +15037,5 @@ QA's headless probe; the session ran unattended.
 ## Cycle 194 — designer: BACKLOG-621 the jilted friend + BACKLOG-622 a pair keeps a nest (10 criteria).
 
 ## Cycle 194 — codeplan: courtship.ts grows the jilt and the nest; breeding.ts's bar yields to a pair; ~7 files.
+
+## Cycle 194 — coder: the one left standing and the pair's nest (7 files). A sore dino keeps the funk it has when it is jilted (cycle-156 caught it).

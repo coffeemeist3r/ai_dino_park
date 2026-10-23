@@ -29,7 +29,8 @@ import { SULK_FADES_AFTER_STEPS } from './sulk';
  * winner that wouldn't budge, or it was the winner that ceded to a gobbler). Both wear the same 😒,
  * because from the player's side they are the same feeling arriving by different doors.
  */
-export type FunkKind = 'sulk' | 'shoulder';
+/** `jilted` (BACKLOG-621): a prickly dino whose closest friend just paired off with somebody else. */
+export type FunkKind = 'sulk' | 'shoulder' | 'jilted';
 
 export interface Funk {
   kind: FunkKind;
@@ -70,6 +71,7 @@ export const SULK_ART_KEY = 'sulk';
 export const FUNK_WINDOW: Readonly<Record<FunkKind, number>> = {
   sulk: SULK_FADES_AFTER_STEPS,
   shoulder: 20,
+  jilted: SULK_FADES_AFTER_STEPS, // being left for somebody else is a sulk by another door
 };
 
 /** Enter a funk (or restart one — a fresh slight re-anchors the clock rather than inheriting an old one). */

@@ -23,8 +23,8 @@ test('Mossback and Glade meet and pair up, and the book says so (BACKLOG-618)', 
   await start(page);
   await ev(page, '__forceConverse', 'Mossback', 'Glade');
   const pairs = await ev<Pairs>(page, '__pairs');
-  expect(pairs.Mossback).toEqual({ mate: 'Glade', day: 1 });
-  expect(pairs.Glade).toEqual({ mate: 'Mossback', day: 1 });
+  expect(pairs.Mossback).toMatchObject({ mate: 'Glade', day: 1 }); // cycle 194: and a nest (BACKLOG-622)
+  expect(pairs.Glade).toMatchObject({ mate: 'Mossback', day: 1 });
 
   const ticker = await ev<string[]>(page, '__ticker');
   const lines = ticker.filter((l) => PAIRED.test(l));
@@ -48,8 +48,8 @@ test('Mossback and Glade meet and pair up, and the book says so (BACKLOG-618)', 
   await page.reload();
   await page.locator('canvas').waitFor({ state: 'visible', timeout: 30_000 });
   await expect
-    .poll(() => page.evaluate(() => ((window as W).__pairs?.() as Pairs | undefined)?.Glade ?? null), { timeout: 30_000 })
-    .toEqual({ mate: 'Mossback', day: 1 });
+    .poll(() => page.evaluate(() => ((window as W).__pairs?.() as Pairs | undefined)?.Glade?.mate ?? null), { timeout: 30_000 })
+    .toBe('Mossback');
 });
 
 test('Ember courts Sunny and is turned down gently, and waits a day (BACKLOG-618)', async ({ page }) => {
