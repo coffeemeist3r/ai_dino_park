@@ -8,25 +8,10 @@
 
 ## Current milestone
 
-**Milestone 33: Sweet on each other — two dinos who love each other most become a pair, and the park can see it**
-**Status:** ACTIVE (opened cycle 193)
-
-**Not a tentpole, and that is the gap named again.** CHARTER v9 still owes the park a tentpole, and the tentpole queue
-below is still empty. The operator owns it. So the smiths draft a normal milestone around the next unbuilt North Star
-headline: the Stardew line, "friendship hearts, gifting, festivals, romance, marriage". Hearts, gifts and festivals all
-exist. Romance (BACKLOG-027) has been open since cycle 1.
-
-Reachability (v7): three founding pairs are each other's closest friend. Mossback and Glade (24) are both awake on the
-bowl from 08:00. Rex and Sunny (30) are on the bowl too, but Rex is an owl and wakes at 13:00. Bramble and Pip (26)
-share the Grove, and Pip grows up at 14:00. The first courtship is a bowl meeting inside the first minutes.
-
-**Lore arcs:**
-- [x] The first courtship: two grown dinos who are each other's closest friend (bond ≥ 24) meet, the bolder one courts the other with something out of its own persona, and the book says who is sweet on whom (BACKLOG-618, reshapes 027 — cycle 193)
-- [ ] The jilted and the jealous: a dino whose closest friend pairs off with somebody else feels it (seed next cycle)
-
-**Structure arcs:**
-- [x] A pair keeps company: the pair is in the save, and on idle steps a paired dino stays within a few tiles of its mate on the same ground (BACKLOG-620 — cycle 193)
-- [ ] A pair keeps a nest: the pair sleeps side by side, and a pair's egg needs the pair, not the 60-bond bar (seed next cycle)
+**No milestone ACTIVE.** Milestone 33 shipped cycle 194. The next Lore-smith drafts Milestone 34 (headline + lore
+arcs), the Structure-smith adds its spine. Per CHARTER v9 Milestone 34 is owed as a tentpole, and the tentpole queue
+below is empty: the operator's to fill. If it is still empty when the smiths draft, they draft a normal milestone and
+name the gap again.
 
 ---
 
@@ -65,6 +50,36 @@ share the Grove, and Pip grows up at 14:00. The first courtship is a bowl meetin
 > Milestone 32 would be the next tentpole, and the operator owns this list — it needs refilling before then.
 
 ## Shipped milestones
+
+### Milestone 33: Sweet on each other — SHIPPED cycle 194 (opened cycle 193)
+
+Two cycles, four arcs, no REWORK. Rex courted Sunny with a pretty stone inside the first minute of a fresh park; Ember,
+who had loved Sunny best since the founding, was glad for them. A pair now keeps a nest where it formed, sleeps at it
+side by side, and lays its egg there without the 60-bond bar that no founding pair could reach.
+
+**The lesson worth keeping:** two feelings can land on the same dino on the same step. The jilted funk first
+*replaced* a homecoming sulk, which silently took the keeper's make-up greet away from it, and only an old spec
+(`cycle-156-sulk-shakeoff`) noticed. When a new beat enters a funk, ask what is already there.
+
+**Milestone 33: Sweet on each other — two dinos who love each other most become a pair, and the park can see it**
+**Status:** SHIPPED cycle 194 (opened cycle 193)
+
+**Not a tentpole, and that is the gap named again.** CHARTER v9 still owes the park a tentpole, and the tentpole queue
+below is still empty. The operator owns it. So the smiths draft a normal milestone around the next unbuilt North Star
+headline: the Stardew line, "friendship hearts, gifting, festivals, romance, marriage". Hearts, gifts and festivals all
+exist. Romance (BACKLOG-027) has been open since cycle 1.
+
+Reachability (v7): three founding pairs are each other's closest friend. Mossback and Glade (24) are both awake on the
+bowl from 08:00. Rex and Sunny (30) are on the bowl too, but Rex is an owl and wakes at 13:00. Bramble and Pip (26)
+share the Grove, and Pip grows up at 14:00. The first courtship is a bowl meeting inside the first minutes.
+
+**Lore arcs:**
+- [x] The first courtship: two grown dinos who are each other's closest friend (bond ≥ 24) meet, the bolder one courts the other with something out of its own persona, and the book says who is sweet on whom (BACKLOG-618, reshapes 027 — cycle 193)
+- [x] The jilted and the jealous: a dino whose closest friend pairs off with somebody else feels it, in its own temper — glad, or jealous of the one who took its friend (BACKLOG-621 — cycle 194)
+
+**Structure arcs:**
+- [x] A pair keeps company: the pair is in the save, and on idle steps a paired dino stays within a few tiles of its mate on the same ground (BACKLOG-620 — cycle 193)
+- [x] A pair keeps a nest: the pair sleeps side by side at a nest drawn where it formed, and a pair's egg needs the pair, not the 60-bond bar (BACKLOG-622 — cycle 194)
 
 ### Milestone 32: Something to believe in — SHIPPED cycle 192 (opened cycle 191)
 

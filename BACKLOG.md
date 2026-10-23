@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-622 [core] A pair keeps a nest (full text in the cycle-194 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -669,6 +668,5 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 194 — the jilted and the nest (Milestone 33)
 
-- [~] BACKLOG-621 [social] The jilted friend — when a pair forms, every unpaired dino whose closest friend (bond ≥ 10) was one of the two feels it, in its own temper. A warm one (agreeableness ≥ 0.5) is glad for them: 🥲 bubble, a memory, a ticker line. A prickly one is jealous: a 😒 funk that runs the sulk's window, a grudge against the new mate raised to the rival bar (the book names it), and its own bitter memory. No dice. Founding read: Rex + Sunny pair inside the first minute and Ember (closest: Sunny) is glad; Mossback + Glade leave Thornback glad and Murk jealous of Mossback. Milestone 33 lore arc 2. Builds on 618.
-- [~] BACKLOG-622 [core] A pair keeps a nest — a pair gets a nest on the ground where it formed (in the save, additive on `pairs`), drawn there. A resting paired dino on that ground sleeps at the nest, side by side with its mate, instead of at the den or where it stood. On a night when both mates lie at the nest, the pair lays its egg there: a pair's egg needs the pair, not the 60-bond bar. Milestone 33 structure arc 2. Builds on 620 / 042.
+- [ ] BACKLOG-624 [social] A grudge in the way — filed by the cycle-194 Validator. Courtship (618) reads bonds and never grudges, so on a fresh-save probe Mossback courted Twitch at 09:54: the founding feud (grudge 40, standoff shoves) paired up the morning the park opened. Enemies who come round can be a story, but it should be one the park tells, not a blind spot: weigh the grudge against the bond in `courtship` (a held grudge at the rival bar turns the courted one down, or the courter does not try), and if a feud *does* end in a pair let the ticker say so. Builds on 618 / 574.
 - [ ] BACKLOG-623 [art] The nest — a 16px pixel prop rig for the pair's nest (`nest` key), woven twigs and fern in the family palette, replacing the 🪺 glyph by the same `hasPropArt` seam the egg uses. Host ships with 622.

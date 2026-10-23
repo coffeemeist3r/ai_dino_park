@@ -7,6 +7,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 194 — 2026-10-23 (the one left standing; the nest; Milestone 33 SHIPPED)
+- BACKLOG-621: The jilted friend — when a pair forms, every unpaired dino whose closest friend (bond ≥ 10) was one of the two takes it in its own temper. A warm one is glad (🥲 bubble, memory, ticker). A prickly one is jealous: a 😒 funk on the sulk's clock, a grudge on the new mate raised to the rival bar (the book names it), and a bitter memory. A dino already sore keeps the funk it has. No dice. On a fresh save Ember is glad for Sunny and Rex at 08:42.
+- BACKLOG-622: A pair keeps a nest — a pair gets a nest where the courted one stood (additive on `pairs`), drawn on its ground as 🪺. A resting paired dino sleeps there side by side with its mate instead of at the den, and on a night both mates lie at a bowl nest the pair lays its egg there without the 60-bond bar.
+
 ## Cycle 193 — 2026-10-21 (sweet on each other; Milestone 33 opens)
 - BACKLOG-618: The first courtship — in an ordinary meeting, two grown, unpaired dinos who are each other's closest friend at a bond of 24 pair up: the bolder courts with a gift out of its own persona (a fern, a pretty stone, a song, a warm spot in the sun, a cool drink at the pond, a long walk), the other says yes. One-sided courtships are turned down gently, and the courter waits a day. Book line `💕 sweet on X (since day N)`; a paired dino idles with 💕 one beat in five. Reshapes BACKLOG-027. No dice.
 - BACKLOG-620: A pair keeps company — `pairs` is an additive, validated save field, and a paired dino's idle step is leashed to its mate on the same ground with the youngster's `tetherStep` (three tiles), after the wander draw so no RNG stream moves.

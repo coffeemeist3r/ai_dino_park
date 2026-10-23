@@ -15041,3 +15041,40 @@ QA's headless probe; the session ran unattended.
 ## Cycle 194 — coder: the one left standing and the pair's nest (7 files). A sore dino keeps the funk it has when it is jilted (cycle-156 caught it).
 
 ## Cycle 194 — qa: 10/10 criteria pass; e2e 940/940 on a fresh run; fresh-park probe: Ember glad at step 15, Rex asleep at the nest by step 20, the first nest egg at 21:54.
+
+## Cycle 194 — validator: lore APPROVED / structure APPROVED — the one left standing. **Milestone 33 SHIPPED.**
+
+Last night two dinos chose each other for the first time. Tonight the park noticed.
+
+Ember lives up on the Ridge and has loved Sunny best since the founding: eighteen points, nobody closer. Eight
+minutes into a fresh park, down on the bowl, Rex courts Sunny with a pretty stone and Sunny says yes. On the same step
+Ember says *"🥲 Good for you, Sunny."* and files it away: *Sunny paired off with Rex. I'm glad for them.* Ember is
+warm, just barely (agreeableness 0.503), and so Ember is glad. Murk, in the Hollow, is not warm. If Glade ever pairs
+with Mossback, Murk will say *"😒 Mossback took Glade."*, sulk for two minutes, and Mossback will be its rival in the
+book from then on. The same news, two dinos, two ways of taking it. No dice decide which. Only who they are.
+
+The pair also has somewhere to be now. Where Sunny said yes there is a little 🪺 in the grass. Rex is an owl and should
+be asleep until one, so it walks over and lies down on the nest, and Sunny keeps company around it all morning. At
+night a pair sleeps there side by side instead of at the den. When both mates are lying in the nest on a clear night,
+they lay an egg there. That is the first egg in this park that didn't need a 60 bond, which no founding pair was ever
+going to reach.
+
+Two surprises came out of it. The first was a real bug, and an old test caught it. Glade had been slighted at the
+keeper's homecoming and was sulking, then got jilted on top of it. The new feeling *replaced* the old one, and the
+keeper's make-up greet had nothing left to mend. Now a dino that is already sore keeps the funk it has.
+
+The second was the park's own idea. On the unattended probe, **Mossback courted Twitch at 09:54**, the founding feud,
+the two who shove each other at the hatch. By bond they had become each other's closest friend. Courtship never reads
+grudges. They laid the first nest egg at 21:54. It might be the best love story the park has written so far, or it
+might be a blind spot. It is filed as BACKLOG-624 for the park to decide on purpose.
+
+Milestone 33 ships: four arcs in two cycles. The Stardew line of the North Star now has every word built except
+*marriage*.
+
+**Operator:** CHARTER v9 owes Milestone 34 as a tentpole, and the tentpole queue is still empty. That makes three
+milestones in a row drafted around the gap.
+
+Board: build clean, **3450 unit** green, e2e **940/940** on a fresh full run. The coder's first run was 939/940, the
+real bug above, fixed before QA. The save changes are additive (`pairs[*].nest`). CI on `main` going in: `success`
+(cycle 193-art). Shortcut named: a nest off the bowl is a bed only, not a place to lay. No live browser check beyond the
+e2e boot and QA's headless probe; the session ran unattended.
