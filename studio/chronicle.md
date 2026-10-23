@@ -15039,3 +15039,5 @@ QA's headless probe; the session ran unattended.
 ## Cycle 194 — codeplan: courtship.ts grows the jilt and the nest; breeding.ts's bar yields to a pair; ~7 files.
 
 ## Cycle 194 — coder: the one left standing and the pair's nest (7 files). A sore dino keeps the funk it has when it is jilted (cycle-156 caught it).
+
+## Cycle 194 — qa: 10/10 criteria pass; e2e 940/940 on a fresh run; fresh-park probe: Ember glad at step 15, Rex asleep at the nest by step 20, the first nest egg at 21:54.

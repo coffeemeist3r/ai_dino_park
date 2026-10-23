@@ -1,6 +1,6 @@
 {
   "cycle": 194,
-  "phase": "qa-pending",
+  "phase": "validator-pending",
   "currentItem": "BACKLOG-621: the jilted friend",
   "structureItem": "BACKLOG-622: a pair keeps a nest",
   "lastVerdict": "APPROVED",
@@ -14,7 +14,7 @@
     "designer": "2026-10-23T08:12:23.887Z",
     "code-planner": "2026-10-23T08:13:10.156Z",
     "coder": "2026-10-23T08:28:48.044Z",
-    "qa": "2026-10-21T08:27:13.231Z",
+    "qa": "2026-10-23T08:38:17.925Z",
     "validator": "2026-10-21T08:27:32.209Z",
     "artist": "2026-10-21T08:32:26.195Z"
   },
