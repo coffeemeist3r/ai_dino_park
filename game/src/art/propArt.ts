@@ -3000,6 +3000,41 @@ const REGISTER_PALETTE = {
 const WATCH_RIG: PropRig = { size: 16, grid: WATCH_GRID, palette: { ...REGISTER_PALETTE } };
 const SITTING_RIG: PropRig = { size: 16, grid: SITTING_GRID, palette: { ...REGISTER_PALETTE } };
 
+// `nest` (BACKLOG-623, cycle 194-art): where a pair sleeps and lays (host: `drawNests`, BACKLOG-622). Low and wide, a
+// shallow ring of woven twigs with a fern lining in the hollow. A deep twig bowl was drawn first and rejected: it read
+// as the fair basket (599). The egg sits on the same tile, so the nest shares the egg's outline and ground-shadow.
+const NEST_GRID: ReadonlyArray<string> = [
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '................',
+  '.f.f......f..f..',
+  '..foooooooooof..',
+  '.oTtdfdddfdtTto.',
+  'otTtTdddddTtTtTo',
+  'otTtTtTtTtTtTtto',
+  '.otttTttTttTtto.',
+  '..oooooooooooo..',
+  '...ssssssssss...',
+  '................',
+];
+
+const NEST_RIG: PropRig = {
+  size: 16,
+  grid: NEST_GRID,
+  palette: {
+    o: EGG_RIG.palette.o, // the egg's own outline: the two are one picture when it lays
+    t: 0x8a6236, // woven twig
+    T: 0xb8894e, // the lit side of a twig
+    d: 0x3a2a18, // the hollow where they lie
+    f: 0x5f8f3a, // fern lining, poking out at the rim
+    s: EGG_RIG.palette.s, // the same ground the egg is set down on
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -3029,6 +3064,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   food_mushrooms: FOOD_MUSHROOMS_RIG,
   food_seeds: FOOD_SEEDS_RIG,
   egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
+  nest: NEST_RIG, // BACKLOG-623: the pair's nest, where the egg now comes from (622)
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,
   shelter_derelict: SHELTER_RUIN_RIG,

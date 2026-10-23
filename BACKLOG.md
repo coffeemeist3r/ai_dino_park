@@ -669,4 +669,3 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 ## Cycle 194 — the jilted and the nest (Milestone 33)
 
 - [ ] BACKLOG-624 [social] A grudge in the way — filed by the cycle-194 Validator. Courtship (618) reads bonds and never grudges, so on a fresh-save probe Mossback courted Twitch at 09:54: the founding feud (grudge 40, standoff shoves) paired up the morning the park opened. Enemies who come round can be a story, but it should be one the park tells, not a blind spot: weigh the grudge against the bond in `courtship` (a held grudge at the rival bar turns the courted one down, or the courter does not try), and if a feud *does* end in a pair let the ticker say so. Builds on 618 / 574.
-- [ ] BACKLOG-623 [art] The nest — a 16px pixel prop rig for the pair's nest (`nest` key), woven twigs and fern in the family palette, replacing the 🪺 glyph by the same `hasPropArt` seam the egg uses. Host ships with 622.

@@ -59,6 +59,7 @@ describe('resource + cairn pixel props (BACKLOG-296)', () => {
       // earlier in the same cycle, which is the condition the cycle-145 amendment asks for.
       'need_hunger',
       'need_thirst',
+      'nest', // BACKLOG-623 (cycle 194-art): the pair's nest (host 622)
       'obsidian', // BACKLOG-508: the Ridge's black glass (503) - the park's first zone-exclusive resource
       'pile_1', // BACKLOG-506: the ground's bank at its three fullness steps (504) — step 0 draws nothing
       'pile_2',
