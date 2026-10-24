@@ -2,7 +2,7 @@
   "cycle": 195,
   "phase": "designer-pending",
   "currentItem": "BACKLOG-624: a grudge in the way",
-  "structureItem": null,
+  "structureItem": "BACKLOG-625: the wedding",
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -10,7 +10,7 @@
   "artPipelineReady": true,
   "lastFire": {
     "lore-smith": "2026-10-24T08:11:28.881Z",
-    "structure-smith": "2026-10-23T08:12:00.308Z",
+    "structure-smith": "2026-10-24T08:11:38.604Z",
     "designer": "2026-10-23T08:12:23.887Z",
     "code-planner": "2026-10-23T08:13:10.156Z",
     "coder": "2026-10-23T08:28:48.044Z",
