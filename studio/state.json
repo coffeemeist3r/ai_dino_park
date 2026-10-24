@@ -1,8 +1,8 @@
 {
   "cycle": 195,
-  "phase": "validator-pending",
-  "currentItem": "BACKLOG-624: a grudge in the way",
-  "structureItem": "BACKLOG-625: the wedding",
+  "phase": "lore-pending",
+  "currentItem": null,
+  "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
   "reworkCount": {},
@@ -15,7 +15,7 @@
     "code-planner": "2026-10-24T08:12:33.129Z",
     "coder": "2026-10-24T08:26:52.914Z",
     "qa": "2026-10-24T08:27:28.969Z",
-    "validator": "2026-10-23T08:39:12.583Z",
+    "validator": "2026-10-24T08:28:10.234Z",
     "artist": "2026-10-23T08:41:34.251Z"
   },
   "lastSoloCycle": 151,

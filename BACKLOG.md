@@ -20,7 +20,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
-- [~] BACKLOG-625 [core] The wedding (Milestone 34 spine; full text in the cycle-195 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -668,11 +667,3 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 - [ ] BACKLOG-611 [core] A youngster is half a head — the per-head reads (`TILES_PER_HEAD` crowding, prosperity's heads signal, the waking-heads gate) count a youngster as a whole resident; weigh it at half while young so a ground's crowding and prosperity lines shift the hour its youngster grows. Measure first which reads take a head count; no save field. Builds on 602 / 524 / 609.
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge — filed by the cycle-190 Validator. 492 seated the Grove's founding council on Pip *because* its 0.522 agreeableness made the pantry call turnable by a life inside a sitting. Since cycle 187 the founding molt is `softer` (+0.15 → 0.672) and the stake nudge on a two-head ground is capped at −0.1, so the knife edge died at 14:00; since cycle 190 the morning seat is Bramble's (0.870, unturnable), so the founding park now holds **no turnable Grove ballot at any hour**, and `cycle-137-ballot` holds its mechanism premise by `__setTrait`. Restore a reachable turnable seat without un-shipping 609 — e.g. the labour call (energy axis) as the Grove's live split, or a founding stake/ledger that puts grown Pip within reach of the line. Measure first which call, if any, a fresh-save life can still turn on each ground. Builds on 492 / 497 / 609.
-
-## Cycle 194 — the jilted and the nest (Milestone 33)
-
-- [~] BACKLOG-624 [social] A grudge in the way — filed by the cycle-194 Validator. Courtship (618) reads bonds and never grudges, so on a fresh-save probe Mossback courted Twitch at 09:54: the founding feud (grudge 40, standoff shoves) paired up the morning the park opened. Enemies who come round can be a story, but it should be one the park tells, not a blind spot: weigh the grudge against the bond in `courtship` (a held grudge at the rival bar turns the courted one down, or the courter does not try), and if a feud *does* end in a pair let the ticker say so. Builds on 618 / 574.
-
-## Cycle 195 — the wedding (Milestone 34)
-
-- [~] BACKLOG-625 [core] The wedding — at `WEDDING_HOUR` (15:00) on or after the day a pair formed, a pair whose mates are both awake and settled on their nest's ground is wed there, once. Guests are the awake, settled dinos on that ground with a bond ≥ `GUEST_BOND` to either mate; they walk to the nest and stand round it for `WEDDING_MIN`, the mates on their berths, then drift home. The day is in the save (`pairs[*].wed`, additive), the book's mate line becomes "wed to X (day N)", every guest and mate files a memory, the ticker names who came. Never over a festival, a service or a sky event. Builds on 618 / 620 / 622 / 613 (the service's gather is the template).

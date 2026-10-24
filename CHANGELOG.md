@@ -7,6 +7,10 @@ Append-only. Validator adds an entry on APPROVED verdicts. Format:
 - BACKLOG-NNN: <title> — <one-line outcome>
 ```
 
+## Cycle 195 — 2026-10-24 (not after everything; the wedding; Milestone 34 opened)
+- BACKLOG-624: A grudge in the way — courtship reads the grudge graph. A suitor whose beloved still holds a grudge at the rival bar is refused in public (`💔 … hasn't forgiven …`, a 🙄 answer, the courter's memory); a feud cooled below the bar that pairs anyway reads "Old rivals, come round." The founding feud no longer pairs on the first morning.
+- BACKLOG-625: The wedding — at 15:00 on or after the day a pair formed, with both mates awake on their nest's ground, the pair is wed at its nest, once. Friends of either mate (bond ≥ 10) on that ground walk over and ring the nest for an hour while the mates stand on their berths; a 💍 mark stands at the nest; every mate and guest files a memory; the book reads "wed to X (day N)". Additive save field `pairs[*].wed`. Never over a festival, a service or a sky event.
+
 ## Cycle 194 — 2026-10-23 (the one left standing; the nest; Milestone 33 SHIPPED)
 - BACKLOG-621: The jilted friend — when a pair forms, every unpaired dino whose closest friend (bond ≥ 10) was one of the two takes it in its own temper. A warm one is glad (🥲 bubble, memory, ticker). A prickly one is jealous: a 😒 funk on the sulk's clock, a grudge on the new mate raised to the rival bar (the book names it), and a bitter memory. A dino already sore keeps the funk it has. No dice. On a fresh save Ember is glad for Sunny and Rex at 08:42.
 - BACKLOG-622: A pair keeps a nest — a pair gets a nest where the courted one stood (additive on `pairs`), drawn on its ground as 🪺. A resting paired dino sleeps there side by side with its mate instead of at the den, and on a night both mates lie at a bowl nest the pair lays its egg there without the 60-bond bar.

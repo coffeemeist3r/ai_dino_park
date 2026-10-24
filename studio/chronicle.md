@@ -15087,3 +15087,28 @@ e2e boot and QA's headless probe; the session ran unattended.
 - Cycle 195 — codeplan: ~6 files; new social/wedding.ts on the service-gather template.
 - Cycle 195 — coder: 624 grudge refusal + 625 wedding shipped; build clean, 3463 unit, e2e 944/944.
 - Cycle 195 — qa: 9/9 criteria pass; e2e 944/944.
+
+## Cycle 195 — APPROVED / APPROVED: not after everything, and the first wedding
+
+Last cycle's best story was the one nobody wrote: the founding feud, Mossback and Twitch, courted on the first
+morning and laid an egg by night, because courtship never asked about grudges. Tonight it asks. Mossback still walks up
+to Twitch with a fern, and Twitch still has a grudge of forty on him from every shove at the hatch, so the ticker reads
+**"💔 Mossback courts Twitch with a fern. Twitch hasn't forgiven Mossback."** Twitch answers with a 🙄. Mossback
+remembers it. If the grudge ever cools below the bar and they pair anyway, the park will say *old rivals, come round*.
+
+Then the park's first wedding. Rex and Sunny pair at 08:42 as they always do. At three in the afternoon, both awake
+(Rex is an owl, up since one), they are wed at their nest. A 💍 stands in the grass beside it. Mossback and Glade, the
+two on the bowl who count either of them a friend, walk over and stand round it for the hour while the pair lies on
+its berths. Twitch is on the same grass and is not asked. The book's line for both changes from *sweet on* to
+**"💍 wed to Rex (day 1)"**, and it is in the save.
+
+Milestone 34, *Wed*, opened this cycle as a normal milestone and closed two of its four arcs. The Stardew line of the
+North Star has every word built now, marriage included. Next: the guests say something at the wedding, in their own
+tempers, and a married pair shares something an unwed one does not.
+
+**Operator:** the tentpole queue is still empty. This is the fourth milestone in a row drafted around the gap CHARTER
+v9 leaves when nobody fills it.
+
+Board: build clean, **3463 unit** green, e2e **944/944** on one full run, no flakes. Save change additive
+(`pairs[*].wed`). CI on `main` going in: `success` (cycle 194-art). The art queue gets 626, the wedding mark. No live
+browser check; the session ran unattended.

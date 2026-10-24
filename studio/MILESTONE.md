@@ -20,11 +20,11 @@ real minutes in at the 60x active clock, and Rex (an owl) is awake from 13:00. T
 Mossback courts Twitch.
 
 **Lore arcs:**
-- [ ] A grudge in the way: the founding feud cannot pair the morning the park opens — a courted dino still holding a grudge at the rival bar turns the courter down, and a feud that has cooled below it and pairs anyway gets its own line (BACKLOG-624)
+- [x] A grudge in the way: the founding feud cannot pair the morning the park opens — a courted dino still holding a grudge at the rival bar turns the courter down, and a feud that has cooled below it and pairs anyway gets its own line (BACKLOG-624 — cycle 195)
 - [ ] The wedding toast: guests speak at the wedding in their own temper — drafted from the queue next cycle
 
 **Structure arcs:**
-- [ ] The wedding: at 15:00 a pair is wed at its nest, the friends on its ground walk over and stand round it, and the save and the book remember the day (BACKLOG-625)
+- [x] The wedding: at 15:00 a pair is wed at its nest, the friends on its ground walk over and stand round it, and the save and the book remember the day (BACKLOG-625 — cycle 195)
 - [ ] A married pair shares: drafted next cycle
 
 ---
