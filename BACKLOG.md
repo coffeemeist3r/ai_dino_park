@@ -20,6 +20,7 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > structural items when fewer than **X=4** open items remain here (drain before invent).
 > Ordered top = next. Full item text lives in the main body below; these are pointers.
 
+- [~] BACKLOG-625 [core] The wedding (Milestone 34 spine; full text in the cycle-195 block below).
 - [ ] BACKLOG-563 [infra] Three last-sound fields, three different rules — `lastSound` / `lastAnswer` / `lastDistress` drifted (full text in the cycle-168 block below).
 - [ ] BACKLOG-581 [core] The pecking order outlives small talk (full text in the cycle-177 block below).
 - [ ] BACKLOG-612 [core] The Grove's ballot lost its knife edge (full text in the cycle-190 block below).
@@ -54,6 +55,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > on the two founder's-stake rigs drawn the night before. Authoring ahead of the host is still allowed;
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
+
+- [ ] BACKLOG-626 [art] The wedding mark — a small flower ring / garland prop (`PROP_RIGS` key `wedding`) shown at the pair's nest for the hour of the wedding (BACKLOG-625 hosts it through `makeHourMark`, glyph 💍 until drawn). Should read beside the nest (623) as a thing set down for a day, not a second bed.
 
 
 
@@ -668,4 +671,8 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 
 ## Cycle 194 — the jilted and the nest (Milestone 33)
 
-- [ ] BACKLOG-624 [social] A grudge in the way — filed by the cycle-194 Validator. Courtship (618) reads bonds and never grudges, so on a fresh-save probe Mossback courted Twitch at 09:54: the founding feud (grudge 40, standoff shoves) paired up the morning the park opened. Enemies who come round can be a story, but it should be one the park tells, not a blind spot: weigh the grudge against the bond in `courtship` (a held grudge at the rival bar turns the courted one down, or the courter does not try), and if a feud *does* end in a pair let the ticker say so. Builds on 618 / 574.
+- [~] BACKLOG-624 [social] A grudge in the way — filed by the cycle-194 Validator. Courtship (618) reads bonds and never grudges, so on a fresh-save probe Mossback courted Twitch at 09:54: the founding feud (grudge 40, standoff shoves) paired up the morning the park opened. Enemies who come round can be a story, but it should be one the park tells, not a blind spot: weigh the grudge against the bond in `courtship` (a held grudge at the rival bar turns the courted one down, or the courter does not try), and if a feud *does* end in a pair let the ticker say so. Builds on 618 / 574.
+
+## Cycle 195 — the wedding (Milestone 34)
+
+- [~] BACKLOG-625 [core] The wedding — at `WEDDING_HOUR` (15:00) on or after the day a pair formed, a pair whose mates are both awake and settled on their nest's ground is wed there, once. Guests are the awake, settled dinos on that ground with a bond ≥ `GUEST_BOND` to either mate; they walk to the nest and stand round it for `WEDDING_MIN`, the mates on their berths, then drift home. The day is in the save (`pairs[*].wed`, additive), the book's mate line becomes "wed to X (day N)", every guest and mate files a memory, the ticker names who came. Never over a festival, a service or a sky event. Builds on 618 / 620 / 622 / 613 (the service's gather is the template).

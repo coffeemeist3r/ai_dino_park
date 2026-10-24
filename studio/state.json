@@ -1,7 +1,7 @@
 {
-  "cycle": 194,
-  "phase": "lore-pending",
-  "currentItem": null,
+  "cycle": 195,
+  "phase": "designer-pending",
+  "currentItem": "BACKLOG-624: a grudge in the way",
   "structureItem": null,
   "lastVerdict": "APPROVED",
   "structureVerdict": "APPROVED",
@@ -9,7 +9,7 @@
   "lockedFiles": [],
   "artPipelineReady": true,
   "lastFire": {
-    "lore-smith": "2026-10-23T08:11:48.743Z",
+    "lore-smith": "2026-10-24T08:11:28.881Z",
     "structure-smith": "2026-10-23T08:12:00.308Z",
     "designer": "2026-10-23T08:12:23.887Z",
     "code-planner": "2026-10-23T08:13:10.156Z",

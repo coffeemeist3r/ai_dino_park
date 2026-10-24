@@ -8,10 +8,24 @@
 
 ## Current milestone
 
-**No milestone ACTIVE.** Milestone 33 shipped cycle 194. The next Lore-smith drafts Milestone 34 (headline + lore
-arcs), the Structure-smith adds its spine. Per CHARTER v9 Milestone 34 is owed as a tentpole, and the tentpole queue
-below is empty: the operator's to fill. If it is still empty when the smiths draft, they draft a normal milestone and
-name the gap again.
+**Milestone 34: Wed — two who love each other say so in front of the park, and old enemies don't get to skip the making-up**
+**Status:** ACTIVE (opened cycle 195)
+
+**Not a tentpole, and that is the gap named a fourth time.** CHARTER v9 owes the park a tentpole, and the tentpole
+queue below is still empty; the operator owns it. The smiths draft a normal milestone around the last unbuilt word of
+the Stardew line in the North Star, "friendship hearts, gifting, festivals, romance, *marriage*".
+
+Reachability (v7): Rex and Sunny pair on the bowl at 08:42 (step 15) in a fresh save. The wedding hour is 15:00, seven
+real minutes in at the 60x active clock, and Rex (an owl) is awake from 13:00. The feud's refusal lands at 09:54, when
+Mossback courts Twitch.
+
+**Lore arcs:**
+- [ ] A grudge in the way: the founding feud cannot pair the morning the park opens — a courted dino still holding a grudge at the rival bar turns the courter down, and a feud that has cooled below it and pairs anyway gets its own line (BACKLOG-624)
+- [ ] The wedding toast: guests speak at the wedding in their own temper — drafted from the queue next cycle
+
+**Structure arcs:**
+- [ ] The wedding: at 15:00 a pair is wed at its nest, the friends on its ground walk over and stand round it, and the save and the book remember the day (BACKLOG-625)
+- [ ] A married pair shares: drafted next cycle
 
 ---
 
