@@ -15083,3 +15083,4 @@ e2e boot and QA's headless probe; the session ran unattended.
 
 ## Cycle 195 — lore-smith: Milestone 34 *Wed* drafted (normal; tentpole queue still empty, fourth time named). Lore pick BACKLOG-624, a grudge in the way: the founding feud no longer pairs on the first morning. Art seeded: 626 the wedding mark.
 - Cycle 195 — structure-smith: BACKLOG-625 the wedding (M34 spine), built on the service gather (613) with the nest (622) as the spot.
+- Cycle 195 — designer: 624 (grudge refuses a suitor) + 625 (15:00 wedding at the nest, guests ring round).
