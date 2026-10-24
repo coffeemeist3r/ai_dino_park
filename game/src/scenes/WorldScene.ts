@@ -143,6 +143,7 @@ import { sleptCold, coldShiver, coldMemory, WARM_BONUS, warmGain, warmLine, warm
 import { DISTRESS_STEPS, mostDistressed, hearLine, heardMemory, distressEventLine, callbackDelayMs } from '../world/distress';
 import { wanderStep, stepToward, pickNearest, type Tile } from '../world/movement';
 import { COURT_BOND, PAIR_BOND, MATE_GLYPH, NEST_ART_KEY, NEST_GLYPH, berthOf, courtGift, courtLine, courtTicker, courtedMemory, courterMemory, courtship, jiltLine, jiltMemory, jiltTicker, jilted, mateBeat, mateBookLine, pairUp, type Pairs } from '../social/courtship';
+import { WEDDING_ART_KEY, WEDDING_MIN, WED_GLYPH, guestWeddingMemory, mateWeddingMemory, settledOn, wed, weddingClosedLine, weddingDue, weddingGuests, weddingTicker } from '../social/wedding';
 import { FAITH_ART_KEY, SERVICE_MIN, believeMemory, creedById, creedFor, faithBeat, faithBookLine, faithOf, hearSermon, heardTicker, pickPreacher, preachMemory, scoffMemory, SCOFF_GLYPH, sermonTicker, serviceAttendees, serviceClosedLine, serviceDue, serviceMemory, serviceTicker, type Faith, HAUL_GLYPH, SHRINE_ART_KEY, SHRINE_GLYPH, canRaiseShrine, shrineMemory, hearWord, raiseShrine, shrineTicker, toldLine, toldMemory, wordScoffMemory, wordScoffTicker, wordTicker } from '../world/faith';
 import { isCarnivore, dietOf } from '../world/diet';
 import { nearestPrey, fleeStep, huntCaught, huntSucceeds, recentHunter, fearsHunter, foodwebStanding, WARY_RANGE } from '../world/foodweb';
@@ -1311,6 +1312,9 @@ export class WorldScene extends Phaser.Scene {
   private faith: Faith | null = null;
   /** The afternoon service in progress (BACKLOG-613), or null. Transient: a reload mid-service just ends it. */
   private service: { startAbsMin: number; attendees: string[] } | null = null;
+  /** BACKLOG-625: the wedding under way, and the mark set down beside the nest for it. */
+  private wedding: { a: string; b: string; startAbsMin: number; guests: string[] } | null = null;
+  private weddingMark: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   /** The faith's mark where the sermon was given (BACKLOG-613/616). */
   private faithMark: Phaser.GameObjects.Text | Phaser.GameObjects.Image | null = null;
   private skyStartAbsMin = 0;
@@ -4271,6 +4275,12 @@ export class WorldScene extends Phaser.Scene {
   private setupCourtship(): void {
     (window as any).__pairs = () => structuredClone(this.pairs);
     (window as any).__court = (a: string, b: string) => { this.courtBeat(a, b); return (window as any).__pairs(); };
+    // BACKLOG-625: the wedding is checked on the festival's real-time cadence, like the service.
+    this.time.addEvent({ delay: FESTIVAL_CHECK_MS, loop: true, callback: () => { if (!this.ambientPaused) this.checkWedding(); } });
+    (window as any).__wedding = () => (this.wedding ? { ...this.wedding, guests: [...this.wedding.guests] } : null);
+    (window as any).__holdWedding = () => { this.checkWedding(); return (window as any).__wedding(); };
+    (window as any).__closeWedding = () => { this.closeWedding(); return (window as any).__wedding(); };
+    (window as any).__weddingMark = () => (this.weddingMark ? { x: this.weddingMark.x, y: this.weddingMark.y, visible: this.weddingMark.visible } : null);
     (window as any).__nests = () =>
       [...this.nestSprites.entries()].map(([pair, s]) => ({ pair, x: s.x, y: s.y, visible: s.visible, drawn: s instanceof Phaser.GameObjects.Image }));
   }
@@ -4332,6 +4342,7 @@ export class WorldScene extends Phaser.Scene {
       bravery: Object.fromEntries(this.dinos.map((d) => [d.name, d.traits.bravery])),
       young: new Set(names.filter((n) => this.stageNow(n) === 'young')),
       pairs: this.pairs,
+      grudges: this.grudges, // BACKLOG-624
     });
     if (!c) return false;
     const courter = this.dinoByName(c.courter);
@@ -4349,11 +4360,59 @@ export class WorldScene extends Phaser.Scene {
       this.drawNests();
     } else {
       this.courtedDay[c.courter] = day;
+      const courted = c.grudge ? this.dinoByName(c.courted) : undefined;
+      if (courted) this.showBubble(courted, SCOFF_GLYPH); // BACKLOG-624: not after everything
     }
     this.logEvent(courtTicker(c, gift));
     if (c.accept) this.jiltBeat(c.courter, c.courted); // BACKLOG-621: after the news, the ones it lands on
     void this.saveGame();
     return true;
+  }
+
+  /**
+   * The wedding (BACKLOG-625): in the wedding hour a pair is wed at its nest, once, with its friends on that ground
+   * standing round. Waits while either mate is asleep, travelling or off the nest's ground. Never over a festival, a
+   * service or a sky event.
+   */
+  private checkWedding(): void {
+    if (this.wedding || this.festival || this.service || this.activeSky) return;
+    const t = getWorldClock().now();
+    const due = weddingDue(t, this.pairs);
+    if (!due) return;
+    const [a, b] = due;
+    const zone = this.pairs[a].nest!.zone;
+    const present = this.dinos.map((d) => ({ name: d.name, zone: zoneOf(this.dinoZones, d.name, BOWL_ID), awake: !this.isResting(d), migrating: this.migrating.has(d.name) }));
+    if (![a, b].every((n) => settledOn(present.find((p) => p.name === n), zone))) return;
+    const guests = weddingGuests(a, b, zone, present, this.bonds);
+    this.pairs = wed(this.pairs, a, b, t.day);
+    this.wedding = { a, b, startAbsMin: this.absMinNow(), guests };
+    for (const [n, mate] of [[a, b], [b, a]]) {
+      this.memory = remember(this.memory, n, mateWeddingMemory(mate));
+      const d = this.dinoByName(n);
+      if (d) this.showBubble(d, WED_GLYPH);
+    }
+    for (const g of guests) this.memory = remember(this.memory, g, guestWeddingMemory(a, b));
+    const nest = this.pairs[a].nest!;
+    this.weddingMark?.destroy();
+    this.weddingMark = this.makeHourMark(WEDDING_ART_KEY, WED_GLYPH)
+      .setPosition(nest.tileX * TILE + TILE / 2, nest.tileY * TILE)
+      .setVisible(this.zoneId === zone);
+    this.logEvent(weddingTicker(a, b, guests));
+    this.refreshPlaque();
+    void this.saveGame();
+  }
+
+  private closeWedding(): void {
+    if (!this.wedding) return;
+    const { a, b } = this.wedding;
+    this.wedding = null;
+    this.weddingMark?.destroy();
+    this.weddingMark = null;
+    this.logEvent(weddingClosedLine(a, b));
+  }
+
+  private stepWedding(): void {
+    if (this.wedding && this.absMinNow() - this.wedding.startAbsMin >= WEDDING_MIN) this.closeWedding();
   }
 
   /** Faith (BACKLOG-030/613). The service is checked on a real-time cadence, like the festival. */
@@ -7043,6 +7102,7 @@ ${e.short}`;
       return;
     }
     this.stepService(); // BACKLOG-613
+    this.stepWedding(); // BACKLOG-625
 
     // BACKLOG-297/314: age every zone's resource so each zone's fetch grace can elapse (a grove resource
     // is past its grace and ready when the keeper crosses in).
@@ -7179,6 +7239,18 @@ ${e.short}`;
         const spot = { tileX: this.faith.tileX, tileY: this.faith.tileY };
         const ring = d.name === this.faith.preacher ? 0 : 1;
         const next = atGather(cur, spot, ring) ? cur : stepToward(cur, spot, COLS, ROWS);
+        d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
+        this.activityById[d.name] = 'socializing';
+        continue;
+      }
+
+      // The wedding (BACKLOG-625): the mates stand on their berths at the nest, the guests close round it.
+      const w = this.wedding;
+      const wnest = w ? this.pairs[w.a]?.nest : undefined;
+      if (w && wnest && (d.name === w.a || d.name === w.b || w.guests.includes(d.name)) && zoneOf(this.dinoZones, d.name, BOWL_ID) === wnest.zone) {
+        const mate = d.name === w.a || d.name === w.b;
+        const spot = mate ? berthOf(this.pairs, d.name, COLS)! : { tileX: wnest.tileX, tileY: wnest.tileY };
+        const next = mate ? (cur.tileX === spot.tileX && cur.tileY === spot.tileY ? cur : stepToward(cur, spot, COLS, ROWS)) : atGather(cur, spot, 1) ? cur : stepToward(cur, spot, COLS, ROWS);
         d.setPosition(next.tileX * TILE + TILE / 2, next.tileY * TILE + TILE / 2);
         this.activityById[d.name] = 'socializing';
         continue;
@@ -9190,6 +9262,7 @@ ${e.short}`;
     this.festivalMark?.obj.setVisible(this.zoneId === BOWL_ID); // BACKLOG-597: the rite stands at the bowl pond
     this.fairBasket?.setVisible(this.zoneId === BOWL_ID); // BACKLOG-599: and the fair basket beside it
     this.faithMark?.setVisible(this.zoneId === this.faith?.zone); // BACKLOG-613: the faith's place
+    if (this.wedding) this.weddingMark?.setVisible(this.zoneId === this.pairs[this.wedding.a]?.nest?.zone); // BACKLOG-625
     for (const [name, p] of Object.entries(this.pairs)) {
       if (p.nest && name < p.mate) this.nestSprites.get(pairKey(name, p.mate))?.setVisible(p.nest.zone === this.zoneId); // BACKLOG-622
     }

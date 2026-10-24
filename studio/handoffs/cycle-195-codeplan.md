@@ -23,3 +23,14 @@
 **Risks:** the ladder branch pulls dinos around 15:00–16:00 on day 1, which could shift RNG streams in long e2e specs (RNG-stream luck memory); the branch draws no `rand()`, but positions differ. Run the full suite.
 
 **Estimated touch count:** ~6 files.
+
+## Shipped
+
+- **Touched:** `game/src/social/courtship.ts` (grudge refusal, came-round line, `wed` field, book line, `isPairs`),
+  `game/src/social/wedding.ts` (new), `game/src/scenes/WorldScene.ts` (`checkWedding` / `closeWedding` /
+  `stepWedding`, ladder branch, mark visibility, hooks, `courtBeat` grudges + scoff bubble),
+  `game/src/social/cycle-195-grudge.test.ts`, `game/src/social/cycle-195-wedding.test.ts`,
+  `tests/e2e/cycle-195-wedding.spec.ts`.
+- **Deviations:** none. The refusal is unit-level symmetric (grudges are pair-keyed), so "the courter does not try" and
+  "the courted turns it down" are one case; the design's reading (courter tries, is refused) shipped.
+- **Build:** clean. **Unit:** 3463 passed / 3 skipped. Web-llm boundary: no import outside `game/src/ai/`.

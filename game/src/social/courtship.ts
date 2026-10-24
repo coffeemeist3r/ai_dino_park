@@ -7,6 +7,7 @@
  */
 
 import { bondPoints, closestFriend, type Bonds } from './bonds';
+import { RIVAL_BAR } from './grudges';
 
 export const COURT_BOND = 24;
 export const PAIR_BOND = 6;
@@ -22,7 +23,8 @@ export const JILT_FLOOR = 10;
 
 /** Where a pair sleeps (BACKLOG-622): the ground and tile the courted one stood on when it said yes. */
 export type Nest = { zone: string; tileX: number; tileY: number };
-export type Pairs = Record<string, { mate: string; day: number; nest?: Nest }>;
+/** `wed` is the day the pair was wed at its nest (BACKLOG-625). */
+export type Pairs = Record<string, { mate: string; day: number; nest?: Nest; wed?: number }>;
 
 /** Table order is match order; the fallback has no keywords. */
 const GIFTS: ReadonlyArray<readonly [RegExp, string]> = [
@@ -45,12 +47,18 @@ export interface CourtContext {
   bravery: Readonly<Record<string, number>>;
   young: ReadonlySet<string>;
   pairs: Pairs;
+  /** BACKLOG-624: a grudge at the rival bar turns the courter down; one below it is a feud come round. */
+  grudges?: Bonds;
 }
 
 export interface Courtship {
   courter: string;
   courted: string;
   accept: boolean;
+  /** Turned down for a grudge it still holds (BACKLOG-624). */
+  grudge?: true;
+  /** Paired across an old grudge that has cooled below the bar. */
+  cameRound?: true;
 }
 
 /** The bolder of the two courts if the other is its closest friend; else the other way round; else nobody. */
@@ -61,7 +69,11 @@ export function courtship(a: string, b: string, ctx: CourtContext): Courtship | 
   const bold = (n: string): number => ctx.bravery[n] ?? 0;
   const order = bold(a) > bold(b) || (bold(a) === bold(b) && a < b) ? [a, b] : [b, a];
   for (const [courter, courted] of [order, [order[1], order[0]]]) {
-    if (closest(courter) === courted) return { courter, courted, accept: closest(courted) === courter };
+    if (closest(courter) !== courted) continue;
+    const held = ctx.grudges ? bondPoints(ctx.grudges, courter, courted) : 0;
+    if (held >= RIVAL_BAR) return { courter, courted, accept: false, grudge: true };
+    const accept = closest(courted) === courter;
+    return accept && held > 0 ? { courter, courted, accept, cameRound: true } : { courter, courted, accept };
   }
   return null;
 }
@@ -130,6 +142,7 @@ export function mateBeat(step: number): boolean {
 
 export function mateBookLine(pairs: Pairs, name: string): string | undefined {
   const p = pairs[name];
+  if (p?.wed !== undefined) return `💍 wed to ${p.mate} (day ${p.wed})`;
   return p ? `${MATE_GLYPH} sweet on ${p.mate} (since day ${p.day})` : undefined;
 }
 
@@ -137,11 +150,13 @@ export function courtLine(gift: string): string {
   return `${MATE_GLYPH} I brought you ${gift}.`;
 }
 export function courtTicker(c: Courtship, gift: string): string {
+  if (c.grudge) return `${DECLINE_GLYPH} ${c.courter} courts ${c.courted} with ${gift}. ${c.courted} hasn't forgiven ${c.courter}.`;
   return c.accept
-    ? `${MATE_GLYPH} ${c.courter} courts ${c.courted} with ${gift}. ${c.courted} says yes.`
+    ? `${MATE_GLYPH} ${c.courter} courts ${c.courted} with ${gift}. ${c.courted} says yes.${c.cameRound ? ' Old rivals, come round.' : ''}`
     : `${DECLINE_GLYPH} ${c.courter} courts ${c.courted} with ${gift}. ${c.courted} turns ${c.courter} down gently.`;
 }
 export function courterMemory(c: Courtship, gift: string): string {
+  if (c.grudge) return `I courted ${c.courted} with ${gift}; ${c.courted} hasn't forgiven me`;
   return c.accept ? `I courted ${c.courted} with ${gift}, and ${c.courted} said yes` : `I courted ${c.courted} with ${gift}; ${c.courted} turned me down gently`;
 }
 export function courtedMemory(c: Courtship, gift: string): string {
@@ -153,7 +168,7 @@ export function isPairs(raw: unknown): raw is Pairs {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) return false;
   return Object.values(raw).every((v) => {
     const p = v as Record<string, unknown> | null;
-    return typeof p === 'object' && p !== null && typeof p.mate === 'string' && typeof p.day === 'number' && Number.isFinite(p.day) && (p.nest === undefined || isNest(p.nest));
+    return typeof p === 'object' && p !== null && typeof p.mate === 'string' && typeof p.day === 'number' && Number.isFinite(p.day) && (p.nest === undefined || isNest(p.nest)) && (p.wed === undefined || (typeof p.wed === 'number' && Number.isFinite(p.wed)));
   });
 }
 
