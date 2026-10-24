@@ -15112,3 +15112,5 @@ v9 leaves when nobody fills it.
 Board: build clean, **3463 unit** green, e2e **944/944** on one full run, no flakes. Save change additive
 (`pairs[*].wed`). CI on `main` going in: `success` (cycle 194-art). The art queue gets 626, the wedding mark. No live
 browser check; the session ran unattended.
+
+## Cycle 195-art — artist: BACKLOG-626 closes — the wedding has a mark. For the hour a pair is wed, the 💍 beside its nest is now a drawn arch: two bent fern stems planted in the grass, hung with white and pink blossom, open at the bottom. **The first draft was rejected.** It was a closed flower ring, and seen from above beside the nest it read as a second, smaller nest. Opened into an arch, it reads as something stood up for a day. It borrows the egg's outline and ground-shadow, as the nest does, so the three read as one family on the same tile. Seven colours, registered in the reachability set (`worldPlacedProps`) and in the prop census, swapped in by `checkWedding` through the shared `makeHourMark` seam. Drawn inline rather than by a sub-agent: one 16px prop. Art queue now empty.

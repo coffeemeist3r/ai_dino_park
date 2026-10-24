@@ -55,7 +55,6 @@ Designer pulls from the top. Lore-smith appends to the bottom.
 > *shipping* ahead of it is not. A drawn rig with no host is a red build, so an `[art]` item whose host
 > does not exist yet stays in this queue until it does. That is why 518 was seeded and not drawn.
 
-- [ ] BACKLOG-626 [art] The wedding mark — a small flower ring / garland prop (`PROP_RIGS` key `wedding`) shown at the pair's nest for the hour of the wedding (BACKLOG-625 hosts it through `makeHourMark`, glyph 💍 until drawn). Should read beside the nest (623) as a thing set down for a day, not a second bed.
 
 
 

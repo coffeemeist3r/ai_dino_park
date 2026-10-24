@@ -4280,7 +4280,7 @@ export class WorldScene extends Phaser.Scene {
     (window as any).__wedding = () => (this.wedding ? { ...this.wedding, guests: [...this.wedding.guests] } : null);
     (window as any).__holdWedding = () => { this.checkWedding(); return (window as any).__wedding(); };
     (window as any).__closeWedding = () => { this.closeWedding(); return (window as any).__wedding(); };
-    (window as any).__weddingMark = () => (this.weddingMark ? { x: this.weddingMark.x, y: this.weddingMark.y, visible: this.weddingMark.visible } : null);
+    (window as any).__weddingMark = () => (this.weddingMark ? { x: this.weddingMark.x, y: this.weddingMark.y, visible: this.weddingMark.visible, drawn: this.weddingMark instanceof Phaser.GameObjects.Image } : null);
     (window as any).__nests = () =>
       [...this.nestSprites.entries()].map(([pair, s]) => ({ pair, x: s.x, y: s.y, visible: s.visible, drawn: s instanceof Phaser.GameObjects.Image }));
   }

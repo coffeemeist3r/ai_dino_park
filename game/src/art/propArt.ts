@@ -3035,6 +3035,43 @@ const NEST_RIG: PropRig = {
   },
 };
 
+// `wedding` (BACKLOG-626, cycle 195-art): the mark set down beside a pair's nest for the hour it is wed (host:
+// `checkWedding`, BACKLOG-625). An arch of two bent fern stems planted in the grass, hung with white and pink blossom.
+// A closed flower ring was drawn first and rejected: from above it read as a second, smaller nest. Open at the
+// bottom, it reads as something stood up for a day. It shares the egg's outline and ground, like the nest it stands by.
+const WEDDING_GRID: ReadonlyArray<string> = [
+  '................',
+  '......owwo......',
+  '....owpyywpo....',
+  '...ogwwoowwgo...',
+  '..oGgo....ogGo..',
+  '..owpo....owpo..',
+  '..oGgo....oGgo..',
+  '..ogGo....oGgo..',
+  '.owpyo....oypwo.',
+  '..oGgo....ogGo..',
+  '..ogGo....oGgo..',
+  '..oGgo....ogGo..',
+  '..owpo....opwo..',
+  '..oGgo....oGgo..',
+  '.osssso..osssso.',
+  '................',
+];
+
+const WEDDING_RIG: PropRig = {
+  size: 16,
+  grid: WEDDING_GRID,
+  palette: {
+    o: EGG_RIG.palette.o,
+    g: 0x4f7a30, // fern stem
+    G: 0x7fae4a, // the lit side of the stem
+    w: 0xf4f0e2, // white blossom
+    p: 0xe89ab0, // pink blossom
+    y: 0xf2cf5b, // the blossom's eye
+    s: EGG_RIG.palette.s,
+  },
+};
+
 export const PROP_RIGS: Record<string, PropRig> = {
   branch: BRANCH_RIG,
   stone: STONE_RIG,
@@ -3065,6 +3102,7 @@ export const PROP_RIGS: Record<string, PropRig> = {
   food_seeds: FOOD_SEEDS_RIG,
   egg: EGG_RIG, // BACKLOG-491: the one prop in this park that turns into a character
   nest: NEST_RIG, // BACKLOG-623: the pair's nest, where the egg now comes from (622)
+  wedding: WEDDING_RIG, // BACKLOG-626: the arch beside the nest for the hour a pair is wed (625)
   // BACKLOG-494: ruin variants, keyed `<name>_derelict` so `ruinKey` can look one up by convention.
   cairn_derelict: CAIRN_RUIN_RIG,
   shelter_derelict: SHELTER_RUIN_RIG,
